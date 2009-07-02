@@ -5,4 +5,3 @@ ALTER TABLE `characters` ADD COLUMN `bgx` float NOT NULL default '0' AFTER `bgma
 ALTER TABLE `characters` ADD COLUMN `bgy` float NOT NULL default '0' AFTER `bgx`;
 ALTER TABLE `characters` ADD COLUMN `bgz` float NOT NULL default '0' AFTER `bgy`;
 ALTER TABLE `characters` ADD COLUMN `bgo` float NOT NULL default '0' AFTER `bgz`;
-
