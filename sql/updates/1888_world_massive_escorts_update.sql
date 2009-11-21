@@ -734,8 +734,8 @@ INSERT INTO `escort_waypoints` VALUES
 (17312, 30, -5354.240000, -11171.940000, 6.890000, 0, '');
 
 -- Quest 863
-DELETE FROM `script_waypoint` WHERE `entry`=3439;
-INSERT INTO `script_waypoint` VALUES
+DELETE FROM `escort_waypoints` WHERE `entry`=3439;
+INSERT INTO `escort_waypoints` VALUES
 (3439, 0, 1105.090332, -3101.254150, 82.706, 1000, 'SAY_STARTUP1'),
 (3439, 1, 1103.204468, -3104.345215, 83.113, 1000, ''),
 (3439, 2, 1107.815186, -3106.495361, 82.739, 1000, ''),
