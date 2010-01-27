@@ -1,0 +1,2 @@
+DELETE FROM creature WHERE id = 18707;
+INSERT INTO event_scripts VALUES (13894, 2, 10, 18707, 300000, 0, 0, 0, 0, 0);
