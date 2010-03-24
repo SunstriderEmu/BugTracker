@@ -1,0 +1,1 @@
+UPDATE creature_template SET scriptname = "npc_jhordy_lapforge" WHERE entry = 14743;
