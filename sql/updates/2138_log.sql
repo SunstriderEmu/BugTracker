@@ -4,8 +4,8 @@ CREATE TABLE `arena_match` (
   `type` tinyint(3) unsigned NOT NULL default '0' COMMENT 'Arena type : 2,3 or 5',
   `team1` mediumint(8) unsigned NOT NULL default '0' COMMENT 'Team 1 GUID',
   `team2` mediumint(8) unsigned NOT NULL default '0' COMMENT 'Team 2 GUID',
-  `start_time` timestamp NOT NULL default '0000-00-00 00:00:00' COMMENT 'Start time',
-  `end_time` timestamp NOT NULL default '0000-00-00 00:00:00' COMMENT 'End time',
+  `start_time` bigint(11) NOT NULL default '0' COMMENT 'Start time',
+  `end_time` bigint(11) NOT NULL default '0' COMMENT 'End time',
   `winner` mediumint(8) unsigned NOT NULL default '0' COMMENT 'Winning team GUID',
   `rating_change` tinyint(3) unsigned NOT NULL default '0' COMMENT 'Rating change for both teams',
   PRIMARY KEY (`id`)
