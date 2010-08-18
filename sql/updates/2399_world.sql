@@ -1,0 +1,12 @@
+UPDATE script_texts SET content_default = "Pain and suffering are all that await you!", content_loc2 = "Douleur et souffrance, voilà tout ce qui vous attend !" WHERE entry = -1564047;
+UPDATE script_texts SET content_default = "You will die in the name of Lady Vashj!", content_loc2 = "Vous allez mourir, au nom de Dame Vashj !" WHERE entry = -1564000;
+UPDATE script_texts SET content_default = "The ground begins to crack open!", content_loc2 = "- Le sol commence à se fissurer !" WHERE entry = -1564012;
+UPDATE script_texts SET content_default = "%s punches the ground in anger!", content_loc2 = "De rage, %s frappe le sol !" WHERE entry = -1564011;
+UPDATE script_texts SET content_default = "Horde will... crush you.", content_loc2 = "La Horde... va... vous écraser." WHERE entry = -1564029;
+UPDATE script_texts SET content_default = "You can have anything you desire... for a price.", content_loc2 = "Vous pouvez avoir tout ce que vous désirez... en y mettant le prix." WHERE entry = -1564055;
+UPDATE script_texts SET content_default = "So... business or pleasure?", content_loc2 = "Alors... Vous êtes en vacances ?" WHERE entry = -1564021;
+UPDATE script_texts SET content_default = "You wish to test me?", content_loc2 = "Vous voulez me tester ?" WHERE entry = -1564069;
+UPDATE script_texts SET content_default = "Common... such a crude language. Bandal!", content_loc2 = "Allons donc... quelle grossièreté. Bandal !" WHERE entry = -1564072;
+UPDATE script_texts SET content_default = "I have better things to do...", content_loc2 = "J'ai mieux à faire..." WHERE entry = -1564070;
+UPDATE script_texts SET content_default = "Flee or die!", content_loc2 = "Fuyez ou mourez !" WHERE entry = -1564071;
+UPDATE script_texts SET content_default = "Vengeance is mine!", content_loc2 = "À moi la vengeance !" WHERE entry = -1564038;
