@@ -9,7 +9,7 @@ INSERT INTO script_texts (entry,content_default,content_loc2,sound,type,language
 (-1000513,'Ok, now let''s get out of here!','OK, maintenant filons d''ici !',0,0,0,0,'stinky - say6'),
 (-1000514,'I can make it from here.  Thanks, $N!  And talk to my employer about a reward!','Je peux me débrouiller à partir d''ici. Merci, $N ! Et parlez à mon employeur pour une récompense !',0,0,0,0,'stinky - quest complete'),
 (-1000515,'Help! The beast is on me!','A l''aide, la bête est sur moi ',0,0,0,0,'stinky - aggro'),
-(-1000516,'%s disappears back into the swamp.','%s disparaît dans le marais',0,2,0,0,'stinky - emote disapper');
+(-1000516,'%s disappears back into the swamp.','%s disparaît dans le marécage',0,2,0,0,'stinky - emote disapper');
 
 DELETE FROM escort_waypoints WHERE entry=4880;
 INSERT INTO `escort_waypoints` VALUES
