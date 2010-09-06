@@ -1,0 +1,37 @@
+-- Pathing of Davitt Hickson, Selina Pickman, & Reginald Grimsford Undercity "sniff"
+SET @NPC := 41682;
+SET @PATH := @NPC*10;
+UPDATE `creature` SET `spawndist`=0,`MovementType`=2 WHERE `guid`=@NPC;
+DELETE FROM `creature_addon` WHERE `guid`=@NPC;
+INSERT INTO `creature_addon` (`guid`,`path_id`,`bytes2`) VALUES (@NPC,@PATH,257);
+DELETE FROM `waypoint_data` WHERE `id`=@PATH;
+INSERT INTO `waypoint_data` (`id`,`point`,`position_x`,`position_y`,`position_z`,`delay`,`move_flag`,`action`,`action_chance`,`wpguid`) VALUES
+(@PATH,1,1595.171,162.9508,-62.17748,0,0,0,100,0),
+(@PATH,2,1602.332,171.4672,-62.17764,0,0,0,100,0),
+(@PATH,3,1621.163,172.4547,-62.18092,0,0,0,100,0),
+(@PATH,4,1637.843,183.2352,-62.18354,0,0,0,100,0),
+(@PATH,5,1653.123,196.9179,-62.17804,0,0,0,100,0),
+(@PATH,6,1663.925,224.7858,-62.17735,0,0,0,100,0),
+(@PATH,7,1665.338,231.9701,-62.17743,0,0,0,100,0),
+(@PATH,8,1672.969,238.7478,-62.17746,0,0,0,100,0),
+(@PATH,9,1704.572,239.495,-62.17768,0,0,0,100,0),
+(@PATH,10,1717.831,238.901,-62.17768,0,0,0,100,0),
+(@PATH,11,1730.292,228.6781,-62.17768,0,0,0,100,0),
+(@PATH,12,1637.843,183.2352,-62.18354,0,0,0,100,0),
+(@PATH,13,1653.123,196.9179,-62.17804,0,0,0,100,0),
+(@PATH,14,1663.925,224.7858,-62.17735,0,0,0,100,0),
+(@PATH,15,1665.338,231.9701,-62.17743,0,0,0,100,0),
+(@PATH,16,1672.969,238.7478,-62.17746,0,0,0,100,0),
+(@PATH,17,1704.572,239.495,-62.17768,0,0,0,100,0),
+(@PATH,18,1717.831,238.901,-62.17768,0,0,0,100,0),
+(@PATH,19,1730.292,228.6781,-62.17768,0,0,0,100,0),
+(@PATH,20,1634.449,109.5717,-62.1846,0,0,0,100,0),
+(@PATH,21,1624.993,107.0384,-62.17768,0,0,0,100,0),
+(@PATH,22,1607.531,104.4705,-62.17768,0,0,0,100,0),
+(@PATH,23,1596.203,116.5128,-62.17768,0,0,0,100,0);
+-- Add Selina Pickman & Reginald Grimsford to formation
+DELETE FROM `creature_formations` WHERE `leaderGUID`=41830;
+INSERT INTO `creature_formations` (`leaderGUID`,`memberGUID`,`dist`,`angle`,`groupAI`) VALUES
+(41682,41682,0,0,0),
+(41682,41684,2,30,0),
+(41682,41683,2,330,0);
