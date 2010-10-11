@@ -7,7 +7,7 @@ INSERT INTO `script_texts` VALUES ('-1000405', 'Rin''ji needs help!', null, 'Rin
 INSERT INTO `script_texts` VALUES ('-1000404', 'Attack my sisters! The troll must not escape!', null, 'Attaquez mes soeurs ! Le troll ne doit pas s''échapper !', null, null, null, null, null, null, '0', '0', '0', '0', 'SAY_RIN_BY_OUTRUNNER');
 INSERT INTO `script_texts` VALUES ('-1000403', 'Rin''ji is free!', null, 'Rin''ji est libre !', null, null, null, null, null, null, '0', '0', '0', '0', 'SAY_RIN_FREE');
 
-UPDATE `creature_template` SET `ScriptName` = 'npc_OOXO9HL' WHERE `entry` = '7806';
+UPDATE `creature_template` SET `ScriptName` = 'npc_OOxO9hl' WHERE `entry` = '7806';
 UPDATE `creature_template` SET `ScriptName` = 'npc_rinji' WHERE `entry` = '7780';
 UPDATE `quest_template` SET `SpecialFlags` = '2' WHERE `entry` = '836';
 UPDATE `quest_template` SET `SpecialFlags` = '2' WHERE `entry` = '2742';
