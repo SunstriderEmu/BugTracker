@@ -1,0 +1,1 @@
+UPDATE trinity_string SET content_default = "%d - %d - |cffffffff|Hgameobject:%d|h[%s X:%f Y:%f Z:%f MapId:%d]|h|r", content_loc2 = "%d - %d - |cffffffff|Hgameobject:%d|h[%s X:%f Y:%f Z:%f MapId:%d]|h|r" WHERE entry = 517;
