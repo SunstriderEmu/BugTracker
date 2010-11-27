@@ -2,7 +2,7 @@
 DELETE FROM spell_proc_event WHERE entry IN (33297, 33370, 38348, 34321, 18350, 42084, 60066, 33649, 60061, 33370, 32848, 39959, 33511, 33513, 38299, 38324, 28578, 34585, 34598, 34597);
 
 -- Quagmirran's Eye http://www.wowhead.com/item=27683
-INSERT INTO spell_proc_event (entry, Cooldown) VALUES (33297, 45), (33370, 45);
+INSERT INTO spell_proc_event (entry, Cooldown) VALUES (33297, 45);
 
 -- Sextant of Unstable Currents http://www.wowhead.com/item=30626
 UPDATE spell_proc_event SET cooldown = 45 WHERE entry = 38347;
