@@ -1,0 +1,1 @@
+INSERT INTO spell_linked_spell VALUES (-41608, -41606, 0, "Relentless Assault of Shattrath"), (-41609, -41607, 0, "Fortification of Shattrath"), (-46839, -46840, 0, "Blinding Light of Shattrath"), (-41611, -41604, 0, "Supreme Power of Shattrath"), (-41610, -41605, 0, "Mighty Restoration of Shattrath"), (-46837, -46838, 0, "Pure Death of Shattrath");
