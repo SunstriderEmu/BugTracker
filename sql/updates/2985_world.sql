@@ -1,0 +1,1 @@
+UPDATE gameobject SET spawntimesecs = -180 WHERE id IN (185596, 185597, 185591, 185598, 185914);
