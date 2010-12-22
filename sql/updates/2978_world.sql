@@ -1,0 +1,6 @@
+DELETE FROM creature WHERE id = 23037;
+INSERT INTO creature (id, map, position_x, position_y, position_z, orientation, spawntimesecs) VALUES
+(23037, 530, 3515.026855, 5526.860840, 21, 1.306465, 10),
+(23037, 530, 3493.039062, 5529.834961, 21, 1.023476, 10),
+(23037, 530, 3465.503906, 5563.136230, 21, 0.336036, 10),
+(23037, 530, 3472.966309, 5579.556152, 21, 0.195534, 10);
