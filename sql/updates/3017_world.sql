@@ -11,3 +11,8 @@ INSERT INTO creature (id, map, spawnmask, position_x, position_y, position_z, or
 UPDATE creature_template SET scale = 5, flags_extra = 130 WHERE entry = 23116;
 DELETE FROM creature_template_addon WHERE entry = 23116;
 INSERT INTO creature_template_addon (entry, auras) VALUES (23116, "40158 0");
+
+DELETE FROM spell_script_target WHERE entry = 40380;
+INSERT INTO spell_script_target VALUES (40380, 1, 23059);
+
+UPDATE creature_template SET scriptname = "npc_lr_trigger" WHERE entry = 23260;
