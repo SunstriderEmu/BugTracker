@@ -1,0 +1,1 @@
+INSERT INTO command VALUES ("reskin", 0, "UTILISATION: .reskin <nom d'un autre personnage>. Change votre apparence pour celle du personnage indiqué. ATTENTION: Le personnage doit être de même race et sexe que votre personnage, et se trouver sur le même compte. Vous serez déconnecté du serveur, et aurez votre nouvelle apparence lors de votre reconnexion.");
