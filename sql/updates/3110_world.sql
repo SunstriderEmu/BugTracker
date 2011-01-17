@@ -1,1 +1,1 @@
-DELETE FROM spell_disabled WHERE spell IN (31801, 42463);
+DELETE FROM spell_disabled WHERE entry IN (31801, 42463);
