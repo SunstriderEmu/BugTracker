@@ -49,3 +49,5 @@ UPDATE creature_template SET mindmg = 422, maxdmg = 586, attackpower = 642 WHERE
 UPDATE creature_model_info SET bounding_radius = 1, combat_reach = 1 WHERE modelid = 23447;
 
 UPDATE instance_template SET script = "instance_slave_pens" WHERE map = 547;
+
+UPDATE creature_template SET mindmg = 200, maxdmg = 400, attackpower = 100 WHERE entry IN (25755, 25756, 25757);
