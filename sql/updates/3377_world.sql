@@ -1,6 +1,6 @@
 DELETE FROM npc_text WHERE ID IN (43, 44, 45, 46);
 INSERT INTO npc_text (ID, text2_0) VALUES
-(43, "Bonjour, tu viens pour t'inscrire à la lotterie WoW Mania ? N'oublie pas qu'elle est réservée aux personnages ayant plus de 30 jours de /played. Attention, une seule inscription par compte !"),
+(43, "Bonjour, tu viens pour t'inscrire à la loterie WoW Mania ? N'oublie pas qu'elle est réservée aux personnages ayant plus de 30 jours de /played. Attention, une seule inscription par compte !"),
 (44, "Parfait, te voilà inscrit(e)."),
 (45, "Désolé, il y a déjà une inscription sur ce compte."),
 (46, "Désolé mais tu n'as pas les 30 jours de jeu nécessaires pour t'inscrire.");
