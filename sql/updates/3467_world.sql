@@ -46,11 +46,11 @@ INSERT INTO smart_scripts VALUES
 DELETE FROM creature_text WHERE entry = 23093;
 INSERT INTO creature_text VALUES
 (23093, 0, 0, "[PH] Pose du totem", 0, 0, 100, 1, 0, 0, "Text 0"),
-(23093, 1, 0, "[PH] Acolyte d'Air", 0, 0, 100, 1, 0, 0, "Text 1"),
-(23093, 2, 0, "[PH] Acolyte d'Eau", 0, 0, 100, 1, 0, 0, "Text 2"),
-(23093, 3, 0, "[PH] Acolyte de Terre", 0, 0, 100, 1, 0, 0, "Text 3"),
-(23093, 4, 0, "[PH] Acolyte de Feu", 0, 0, 100, 1, 0, 0, "Text 4"),
-(23093, 5, 0, "[PH] Elémentaire des arcanes sans défaut !", 1, 0, 100, 5, 0, 0, "Text 5");
+(23093, 1, 0, "[PH] Acolyte de l'Air", 0, 0, 100, 1, 0, 0, "Text 1"),
+(23093, 2, 0, "[PH] Acolyte de l'Eau", 0, 0, 100, 1, 0, 0, "Text 2"),
+(23093, 3, 0, "[PH] Acolyte de la Terre", 0, 0, 100, 1, 0, 0, "Text 3"),
+(23093, 4, 0, "[PH] Acolyte du Feu", 0, 0, 100, 1, 0, 0, "Text 4"),
+(23093, 5, 0, "[PH] ElÃ©mentaire des arcanes sans dÃ©faut !", 1, 0, 100, 5, 0, 0, "Text 5");
 
 -- DELETE FROM waypoints WHERE entry = 23093;
 -- INSERT INTO waypoints VALUES
