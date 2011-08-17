@@ -1,1 +1,1 @@
-UPDATE creature_template SET minhealth=832750, maxhealth=832750 WHERE entry=14887 OR entry=14889 OR entry=14890;
+UPDATE creature_template SET minhealth = 17936, maxhealth = 17936 WHERE entry = 14438;
