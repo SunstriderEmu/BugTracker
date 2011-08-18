@@ -4,7 +4,7 @@ UPDATE creature SET position_x = 2580.9, position_y = 943.369, position_z = 61.1
 UPDATE creature_template SET AIName = "SmartAI", ScriptName = "" WHERE entry IN (8516, 7356);
 DELETE FROM smart_scripts WHERE entryorguid IN (8516, 7356, 851600);
 INSERT INTO smart_scripts VALUES
-(8516, 0, 0, 1, 19, 0, 100, 2, 3525, 0, 0, 0, 53, 1, 8516, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, "Start path on quest 3525 accept"), -- TODO change 1 to 0 to walk instead of run
+(8516, 0, 0, 1, 19, 0, 100, 2, 3525, 0, 0, 0, 53, 0, 8516, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, "Start path on quest 3525 accept"),
 (8516, 0, 1, 0, 61, 0, 100, 2, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Say text on quest accept"),
 (8516, 0, 2, 0, 6, 0, 100, 2, 0, 0, 0, 0, 6, 3525, 0, 0, 0, 0, 0, 18, 50, 0, 0, 0, 0, 0, 0, "Fail quest 3525 on death"),
 (8516, 0, 3, 0, 40, 0, 100, 2, 11, 0, 0, 0, 80, 851600, 0, 2, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Start timed action list when reaching last waypoint"),
