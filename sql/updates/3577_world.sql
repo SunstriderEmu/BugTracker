@@ -1,6 +1,6 @@
 UPDATE gameobject_template SET size = 3, AIName = "SmartGameObjectAI" WHERE entry IN (185519, 185522);
 
-DELETE FROM gameobject WHERE id = 185519 AND map = 557;
+DELETE FROM gameobject WHERE id IN (185519, 185522) AND map = 557;
 INSERT INTO gameobject (id, map, spawnmask, position_x, position_y, position_z, orientation, rotation2, rotation3, spawntimesecs, state) VALUES
 (185519, 557, 2, 12.533, -223.088, -0.95259, 3.10777, 0.999857, 0.016909, 25, 1),
 (185522, 557, 2, -249.201, -3.4634, 14.6605, 1.85204, 0.799233, 0.601021, 86400, 1);
