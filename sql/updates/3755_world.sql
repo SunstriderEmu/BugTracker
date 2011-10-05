@@ -1,0 +1,24 @@
+UPDATE script_texts SET content_loc2 = "Grande démoniste Alythess dirige Conflagration sur $N" WHERE entry = -1580065;
+UPDATE script_texts SET content_loc2 = "Dame Sacrocingle dirige Nova d'ombre sur $N" WHERE entry = -1580064;
+UPDATE script_texts SET content_loc2 = "Tels sont les pilliers..." WHERE entry = -1580063;
+UPDATE script_texts SET content_loc2 = "Tels sont les repères..." WHERE entry = -1580062;
+UPDATE script_texts SET content_loc2 = "Chaos..." WHERE entry = -1580061;
+UPDATE script_texts SET content_loc2 = "Défiance..." WHERE entry = -1580060;
+UPDATE script_texts SET content_loc2 = "Haine..." WHERE entry = -1580059;
+UPDATE script_texts SET content_loc2 = "Confusion..." WHERE entry = -1580058;
+UPDATE script_texts SET content_loc2 = "Dépravation..." WHERE entry = -1580057;
+UPDATE script_texts SET content_loc2 = "Détresse..." WHERE entry = -1580056;
+UPDATE script_texts SET content_loc2 = "Le temps est un luxe que vous ne possédez plus !" WHERE entry = -1580055;
+UPDATE script_texts SET content_loc2 = "Je... m'estompe." WHERE entry = -1580055;
+UPDATE script_texts SET content_loc2 = "Ee'nok... kayul !" WHERE entry = -1580053;
+UPDATE script_texts SET content_loc2 = "Les ombres submergent." WHERE entry = -1580052;
+UPDATE script_texts SET content_loc2 = "Alythess ! Ton feu brûle en moi !" WHERE entry = -1580051;
+UPDATE script_texts SET content_loc2 = "L'ombre au secours du feu !" WHERE entry = -1580050;
+UPDATE script_texts SET content_loc2 = "Votre chance est passée !" WHERE entry = -1580049;
+UPDATE script_texts SET content_loc2 = "Der'ek... manul." WHERE entry = -1580048;
+UPDATE script_texts SET content_loc2 = "Edir harach !" WHERE entry = -1580047;
+UPDATE script_texts SET content_loc2 = "Le feu consume." WHERE entry = -1580046;
+UPDATE script_texts SET content_loc2 = "Sacrocingle !" WHERE entry = -1580045;
+UPDATE script_texts SET content_loc2 = "Le feu au secours de l'ombre !" WHERE entry = -1580044;
+
+UPDATE creature_template SET mindmg = 11300, maxdmg = 13100, attackpower = 19250 WHERE entry = 25165;
