@@ -1,0 +1,2 @@
+DELETE FROM spell_template WHERE id = 31934;
+INSERT INTO spell_template (id, procFlags, procChance, procCharges, durationIndex, rangeIndex, equippedItemClass, effect1, effectBasePoints1, effectImplicitTargetA1, effectApplyAuraName1, effectMiscValue1, spellName3, spellFamilyName, dmgMultiplier1, dmgMultiplier2, dmgMultiplier3, schoolMask) VALUES (31934, 1049256, 100, 1, 21, 1, -1, 6, -50, 1, 87, 127, "Vie bénie (proc)", 10, 1, 1, 1, 1);
