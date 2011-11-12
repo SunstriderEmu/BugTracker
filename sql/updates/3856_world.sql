@@ -1,0 +1,16 @@
+UPDATE script_texts SET content_loc2 = "Venez, $N. Le seigneur Hurlorage ne va pas tarder." WHERE entry = -1000206;
+UPDATE script_texts SET content_loc2 = "Le Seigneur Illidan va arriver." WHERE entry = -1000207;
+UPDATE script_texts SET content_loc2 = "Seigneur Illidan, voici le Gueule-de-dragon dont moi, et les autres, vous avons parlé. Il va nous mener à la victoire !" WHERE entry = -1000208;
+UPDATE script_texts SET content_loc2 = "Mais... Monseigneur, je ne comprends pas. $N... Il est l'orc qui a..." WHERE entry = -1000209;
+UPDATE script_texts SET content_loc2 = "Ce sera fait, monseigneur." WHERE entry = -1000210;
+UPDATE script_texts SET content_loc2 = "Alors vous croyiez pouvoir vous moquer de Mor'ghor, hein ? Avant que vous soyiez livré au Seigneur Illidan, vous allez ressentir une douleur que vous ne croyiez pas possible. Je vais prendre plaisir à exercer ma propre vengeance." WHERE entry = -1000211;
+UPDATE script_texts SET content_loc2 = "Guerriers Gueule-de-dragon, écoutez-moi ! Un de vous a obtenu le rang de Grand Seigneur ! Inclinez vos têtes en signe de révérence ! Montrez votre respect et votre allégeance au Seigneur $N !" WHERE entry = -1000212;
+UPDATE script_texts SET content_loc2 = "Tous te saluent, Seigneur Illidan !" WHERE entry = -1000213;
+UPDATE script_texts SET content_loc2 = "Que signifie tout ceci, Mor'ghor ?" WHERE entry = -1000214;
+UPDATE script_texts SET content_loc2 = "SILENCE !" WHERE entry = -1000215;
+UPDATE script_texts SET content_loc2 = "Espèce d'idiot. Tu n'es qu'un bouffon incompétent..." WHERE entry = -1000216;
+UPDATE script_texts SET content_loc2 = "CECI est ton héros ?" WHERE entry = -1000217;
+UPDATE script_texts SET content_loc2 = "Tu as été trompé, imbécile." WHERE entry = -1000218;
+UPDATE script_texts SET content_loc2 = "Cette... opération... toute entière... A ÉTÉ COMPROMISE !" WHERE entry = -1000219;
+UPDATE script_texts SET content_loc2 = "Je m'attends à voir la carcasse de cet insecte en morceaux dans mon antre dans l'heure. Echoue et tu vivras un destin bien pire que la mort." WHERE entry = -1000220;
+UPDATE script_texts SET content_loc2 = "Vous ne ferez aucun mal au garçon, Mor'ghor. Vite, $N, grimpez sur mon dos !" WHERE entry = -1000221;
