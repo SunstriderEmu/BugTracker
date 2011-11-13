@@ -1,0 +1,2 @@
+DELETE FROM spell_target_position WHERE id = 41570;
+INSERT INTO spell_target_position VALUES (41570, 564, 652.639099, 305.634674, 271.689117, 0.017114);
