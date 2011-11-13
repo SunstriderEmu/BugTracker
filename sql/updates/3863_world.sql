@@ -1,0 +1,2 @@
+DELETE FROM spell_template WHERE id = 22841;
+INSERT INTO spell_template (id, attributes, castingTimeIndex, procChance, durationIndex, rangeIndex, equippedItemClass, effect1, effectDieSides1, effectBaseDice1, effectBasePoints1, effectImplicitTargetA1, effectApplyAuraName1, effectMiscValue1, spellIconID, spellName3, dmgMultiplier1, dmgMultiplier2, dmgMultiplier3, schoolMask) VALUES (22841, 192, 1, 101, 21, 1, -1, 6, 1, 1, 9, 1, 189, 393216, 1, "Arcanum de rapidité", 1, 1, 1, 1);
