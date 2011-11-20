@@ -1,0 +1,3 @@
+UPDATE creature_template SET AIName = "SmartAI", ScriptName = "" WHERE entry = 22310;
+DELETE FROM smart_scripts WHERE entryorguid = 22310;
+INSERT INTO smart_scripts VALUES (22310, 0, 0, 0, 1, 0, 100, 0, 500, 500, 600000, 600000, 11, 12550, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Storming Wind-Ripper - Cast Lightning Shield every 10 minutes out of combat"), (23310, 0, 1, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 12550, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Storming Wind-Ripper - Cast Lightning Shield on reset"), (23310, 0, 2, 0, 1, 0, 100, 0, 2000, 5000, 8000, 12000, 11, 20295, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, "Storming Wind-Ripper - Cast Lightning Bolt on victim");
