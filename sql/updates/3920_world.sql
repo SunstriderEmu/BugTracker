@@ -1,0 +1,28 @@
+DELETE FROM creature_addon WHERE guid = 89424;
+INSERT INTO creature_addon (guid, path_id, bytes0, bytes2) VALUES (89424, 13602, 16777472, 4097);
+DELETE FROM creature_template_addon WHERE entry = 13602;
+INSERT INTO creature_template_addon (entry, path_id, bytes0, bytes2) VALUES (13602, 13602, 16777472, 4097);
+DELETE FROM waypoints WHERE entry = 13602;
+INSERT INTO waypoints (entry, pointid, position_x, position_y, position_z) VALUES
+(13602, 0, 545.717102, -138.456085, 145.171951),
+(13602, 1, 477.053894, -64.208344, 147.708557),
+(13602, 2, 436.354706, -50.921364, 145.551941),
+(13602, 3, 369.669861, -24.117619, 142.513367),
+(13602, 4, 295.736725, -59.837917, 140.371048),
+(13602, 5, 234.002380, -149.709518, 140.772751),
+(13602, 6, 190.191055, -187.212845, 143.844711),
+(13602, 7, 203.227966, -289.348846, 151.856979),
+(13602, 8, 327.586670, -367.656891, 169.939285),
+(13602, 9, 311.403717, -458.984192, 158.816772),
+(13602, 10, 205.527313, -377.043243, 154.402664),
+(13602, 11, 191.590286, -185.639862, 143.545105),
+(13602, 12, 342.846466, -31.041451, 142.451096),
+(13602, 13, 406.328735, -30.160217, 141.964188),
+(13602, 14, 450.992828, -58.749222, 147.708557),
+(13602, 15, 496.448395, -87.844818, 148.229019),
+(13602, 16, 550.814880, -124.379456, 145.211777);
+
+UPDATE creature SET position_x = 541.851746, position_y = -156.594070, position_z = 144.393433, spawntimesecs = 300 WHERE id = 13602;
+UPDATE creature_template SET AIName = "SmartAI", ScriptName = "" WHERE entry = 13602;
+DELETE FROM smart_scripts WHERE entryorguid = 13602;
+INSERT INTO smart_scripts VALUES (13602, 0, 0, 0, 25, 0, 100, 0, 0, 0, 0, 0, 53, 0, 13602, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "The Abominable Greench - Start path on reset");
