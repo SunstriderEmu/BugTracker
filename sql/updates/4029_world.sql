@@ -41,3 +41,5 @@ UPDATE `creature_template` SET `ScriptName` = 'npc_foul_purge' WHERE entry = '22
 DELETE FROM eventai_scripts WHERE creature_id = 22505;
 INSERT INTO eventai_scripts VALUES ('2250501', '22505', '1', '0', '100', '0', '1000', '1000', '0', '0', '11', '39300', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'Slimer Bunny - Cast Aura on Spawn');
 INSERT INTO eventai_scripts VALUES ('2250502', '22505', '1', '0', '100', '0', '1000', '1000', '0', '0', '12', '22506', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'Slimer Bunny - Summon Foul Purge on Spawn');
+
+UPDATE locales_quest SET ObjectiveText1_loc2 = "", EndText_loc2 = "Colonel Jules sauvé" WHERE entry = 10935;
