@@ -1,6 +1,6 @@
 -- Scripts
-UPDATE creature_template SET ScriptName = "npc_chesspiece" WHERE entry IN (21726, 21748, 21747, 21750, 21752, 17469, 21160, 21664, 21682, 21684, 21683, 17211);
-UPDATE creature_template SET ScriptName = "npc_echo_of_medivh", npcflag = npcflag | 0x1 WHERE entry = 16816;
+-- UPDATE creature_template SET ScriptName = "npc_chesspiece" WHERE entry IN (21726, 21748, 21747, 21750, 21752, 17469, 21160, 21664, 21682, 21684, 21683, 17211);
+-- UPDATE creature_template SET ScriptName = "npc_echo_of_medivh", npcflag = npcflag | 0x1 WHERE entry = 16816;
 UPDATE creature_template SET ScriptName = "chess_move_trigger" WHERE entry = 22519;
 UPDATE creature_template SET flags_extra = flags_extra | 128 WHERE entry = 22519;
 UPDATE creature_template SET regenhealth = 0 WHERE entry IN (21726, 21748, 21747, 21750, 21752, 17469, 21160, 21664, 21682, 21684, 21683, 17211);
