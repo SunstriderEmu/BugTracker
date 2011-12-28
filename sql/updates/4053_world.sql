@@ -1,0 +1,20 @@
+UPDATE creature_template SET unit_flags = 0 WHERE entry = 3678;
+
+UPDATE script_texts SET content_loc2 = "On m'attaque ! Aidez-moi à me débarrasser de ce maudit $N !" WHERE entry = -1043017;
+UPDATE script_texts SET content_loc2 = "Nous devons aller rejoindre les autres Disciples. Il y a beaucoup de travail à faire avant que je ne puisse à nouveau tenter de rétablir les Tarides. Adieu, braves âmes !" WHERE entry = -1043016;
+UPDATE script_texts SET content_loc2 = "Ah, être enfin arraché aux griffes du redoutable cauchemar ! Je vous remercie, mon fidèle Disciple, ainsi que vos braves compagnons." WHERE entry = -1043015;
+UPDATE script_texts SET content_loc2 = "Enfin ! Naralex émerge de son cauchemar." WHERE entry = -1043014;
+UPDATE script_texts SET content_loc2 = "ENFIN JE SUIS ÉVEILLÉ !" WHERE entry = -1043013;
+UPDATE script_texts SET content_loc2 = "Mutanus le Dévoreur est sûrement au service du cauchemar de Naralex !" WHERE entry = -1043012;
+UPDATE script_texts SET content_default = "dreams up a horrendous vision. Something stirs beneath the murky waters.", content_loc2 = "semble rêver d'une chose horrible. Quelque chose remue à la surface de l'eau trouble." WHERE entry = -1043011;
+UPDATE script_texts SET content_default = "writhes in agony. The Disciple seems to be breaking through.", content_loc2 = "se tord, à l'agonie. Le Disciple semble progresser." WHERE entry = -1043010;
+UPDATE script_texts SET content_default = "tosses fitfully in troubled sleep.", content_loc2 = "se retourne par à-coups dans un sommeil troublé." WHERE entry = -1043009;
+UPDATE script_texts SET content_default = "begins to perform the awakening ritual on Naralex.", content_loc2 = "commence à effectuer le rituel de réveil sur Naralex." WHERE entry = -1043008;
+UPDATE script_texts SET content_loc2 = "Accordez-moi votre protection, âmes courageuses, pendant que je fouille dans les profondeurs du Rêve d'émeraude pour secourir Naralex et mettre un terme à cette corruption !" WHERE entry = -1043007;
+UPDATE script_texts SET content_loc2 = "Au-delà de ce couloir, Naralex dort d'un sommeil agité. Allons le réveiller avant qu’il ne soit trop tard." WHERE entry = -1043006;
+UPDATE script_texts SET content_loc2 = "Les cavernes ont été purifiées. Allons dans les appartements de Naralex !" WHERE entry = -1043005;
+UPDATE script_texts SET content_loc2 = "Au sein de ce cercle de feu, je dois lancer le sort qui bannira les esprits des seigneurs-Croc tombés au champ d’honneur." WHERE entry = -1043004;
+UPDATE script_texts SET content_loc2 = "Venez. Nous devons continuer ! Il y a encore beaucoup à faire avant de pouvoir tirer Naralex de son cauchemar." WHERE entry = -1043003;
+UPDATE script_texts SET content_loc2 = "Ces cavernes furent jadis un temple de résurrection dans les Tarides. Aujourd’hui, elles sont les salles des cauchemars." WHERE entry = -1043002;
+UPDATE script_texts SET content_loc2 = "Je dois faire les préparatifs nécessaires avant de pouvoir commencer le rituel de réveil. Vous devez me protéger !" WHERE entry = -1043001;
+UPDATE script_texts SET content_loc2 = "Enfin ! Vous pouvez réveiller Naralex ! Venez m'aider, braves aventuriers !" WHERE entry = -1043000;
