@@ -89,18 +89,59 @@ UPDATE spell_template SET effectImplicitTargetA1 = 38 WHERE id IN (26516, 26517,
 DELETE FROM spell_script_target WHERE entry IN (26516, 26517, 26518, 26519, 26488, 26490, 26325, 26304, 26329, 26328, 26327, 26326);
 INSERT INTO spell_script_target VALUES (26516, 0, 180772), (26517, 0, 180772), (26518, 0, 180772), (26519, 0, 180772), (26488, 0, 180772), (26490, 0, 180772), (26325, 0, 180772), (26304, 0, 180772), (26329, 0, 180772), (26328, 0, 180772), (26327, 0, 180772), (26326, 0, 180772);
 
-UPDATE spell_template SET effectMiscValue2 = 15887 WHERE id = 26516; -- Was 15913
-UPDATE spell_template SET effectMiscValue2 = 15888 WHERE id = 26517; -- Was 15914
-UPDATE spell_template SET effectMiscValue2 = 15889 WHERE id = 26518; -- Was 15915
-UPDATE spell_template SET effectMiscValue2 = 15890 WHERE id = 26519; -- Was 15916
-UPDATE spell_template SET effectMiscValue2 = 15885 WHERE id = 26488; -- Was 15911
-UPDATE spell_template SET effectMiscValue2 = 15886 WHERE id = 26490; -- Was 15912
-UPDATE spell_template SET effectMiscValue2 = 15880 WHERE id = 26325; -- Was 15874
-UPDATE spell_template SET effectMiscValue2 = 15879 WHERE id = 26304; -- Was 15872
-UPDATE spell_template SET effectMiscValue2 = 15883 WHERE id = 26329; -- Was 15877
-UPDATE spell_template SET effectMiscValue2 = 15884 WHERE id = 26328; -- Was 15876
-UPDATE spell_template SET effectMiscValue2 = 15882 WHERE id = 26327; -- Was 15873
-UPDATE spell_template SET effectMiscValue2 = 15881 WHERE id = 26326; -- Was 15875
+UPDATE spell_template SET effectMiscValue2 = 15913 WHERE id = 26516;
+UPDATE spell_template SET effectMiscValue2 = 15914 WHERE id = 26517;
+UPDATE spell_template SET effectMiscValue2 = 15915 WHERE id = 26518;
+UPDATE spell_template SET effectMiscValue2 = 15916 WHERE id = 26519; 
+UPDATE spell_template SET effectMiscValue2 = 15911 WHERE id = 26488;
+UPDATE spell_template SET effectMiscValue2 = 15912 WHERE id = 26490;
+UPDATE spell_template SET effectMiscValue2 = 15874 WHERE id = 26325;
+UPDATE spell_template SET effectMiscValue2 = 15872 WHERE id = 26304;
+UPDATE spell_template SET effectMiscValue2 = 15877 WHERE id = 26329;
+UPDATE spell_template SET effectMiscValue2 = 15876 WHERE id = 26328;
+UPDATE spell_template SET effectMiscValue2 = 15873 WHERE id = 26327;
+UPDATE spell_template SET effectMiscValue2 = 15875 WHERE id = 26326;
+
+UPDATE creature_template SET AIName = "SmartAI", ScriptName = "" WHERE entry IN (15913, 15914, 15915, 15916, 15911, 15912, 15874, 15872, 15877, 15876, 15873, 15875);
+DELETE FROM smart_scripts WHERE entryorguid IN (15913, 15914, 15915, 15916, 15911, 15912, 15874, 15872, 15877, 15876, 15873, 15875);
+INSERT INTO smart_scripts VALUES
+(15913, 0, 0, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26353, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Big Purple Cluster"),
+(15913, 0, 1, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26353, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Big Purple Cluster"),
+(15913, 0, 2, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26353, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Big Purple Cluster"),
+(15914, 0, 0, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26354, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Big Red Cluster"),
+(15914, 0, 1, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26354, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Big Red Cluster"),
+(15914, 0, 2, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26354, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Big Red Cluster"),
+(15915, 0, 0, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26355, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Big White Cluster"),
+(15915, 1, 0, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26355, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Big White Cluster"),
+(15915, 2, 0, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26355, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Big White Cluster"),
+(15916, 0, 0, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26356, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Big Yellow Cluster"),
+(15916, 0, 1, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26356, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Big Yellow Cluster"),
+(15916, 0, 2, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26356, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Big Yellow Cluster"),
+(15911, 0, 0, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26351, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Big Blue Cluster"),
+(15911, 0, 1, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26351, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Big Blue Cluster"),
+(15911, 0, 2, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26351, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Big Blue Cluster"),
+(15912, 0, 0, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26352, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Big Green Cluster"),
+(15912, 0, 1, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26352, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Big Green Cluster"),
+(15912, 0, 2, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26352, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Big Green Cluster"),
+
+(15874, 0, 0, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26345, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Green Cluster"),
+(15874, 0, 1, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26345, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Green Cluster"),
+(15874, 0, 2, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26345, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Green Cluster"),
+(15872, 0, 0, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26344, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Blue Cluster"),
+(15872, 0, 1, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26344, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Blue Cluster"),
+(15872, 0, 2, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26344, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Blue Cluster"),
+(15877, 0, 0, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26349, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Yellow Cluster"),
+(15877, 0, 1, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26349, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Yellow Cluster"),
+(15877, 0, 2, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26349, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Yellow Cluster"),
+(15876, 0, 0, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26348, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - White Cluster"),
+(15876, 0, 1, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26348, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - White Cluster"),
+(15876, 0, 2, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26348, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - White Cluster"),
+(15873, 0, 0, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26347, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Red Cluster"),
+(15873, 0, 1, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26347, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Red Cluster"),
+(15873, 0, 2, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26347, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Red Cluster"),
+(15875, 0, 0, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26346, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Purple Cluster"),
+(15875, 0, 1, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26346, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Purple Cluster"),
+(15875, 0, 2, 0, 25, 0, 100, 0, 0, 0, 0, 0, 11, 26346, 3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, "Lunar Festival - Purple Cluster");
 
 UPDATE creature_template SET faction_a = 14, faction_h = 14 WHERE entry = 15466;
 UPDATE creature_template SET minhealth = 1044860, maxhealth = 1044860, flags_extra = flags_extra | 0x40000, regenhealth = 0 WHERE entry = 15467;
