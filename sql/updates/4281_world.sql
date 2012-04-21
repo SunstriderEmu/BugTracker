@@ -1,5 +1,3 @@
-UPDATE creature_template SET ScriptName = "npc_prospector_remtravel" WHERE entry = 2917;
-
 DELETE FROM escort_waypoints WHERE entry = 2917;
 INSERT INTO escort_waypoints VALUES
 (2917, 0, 4672.996094, 600.763977, 16.072538, 0, 'SAY_REM_START'),
