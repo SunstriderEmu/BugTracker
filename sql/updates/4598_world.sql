@@ -1,0 +1,22 @@
+DELETE FROM `creature_addon` WHERE `guid` = 56686;
+INSERT INTO `creature_addon` (`guid`, `path_id`, `bytes2`) VALUES (56686, 3000, 4097);
+
+DELETE FROM `waypoint_data` WHERE `id` = 3000;
+INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `delay`) VALUES (3000, 1, 1652.84, 1061.08, 16.11, 0);
+INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `delay`) VALUES (3000, 2, 1649.50, 1071.08, 16.11, 0);
+INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `delay`) VALUES (3000, 3, 1645.48, 1073.42, 16.11, 0);
+INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `delay`) VALUES (3000, 4, 1640.51, 1073.92, 16.11, 0);
+INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `delay`) VALUES (3000, 5, 1634.13, 1072.28, 16.11, 0);
+INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `delay`) VALUES (3000, 6, 1630.61, 1067.66, 16.11, 0);
+INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `delay`) VALUES (3000, 7, 1629.09, 1061.59, 16.11, 0);
+INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `delay`) VALUES (3000, 8, 1631.25, 1054.55, 16.11, 0);
+INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `delay`) VALUES (3000, 9, 1637.84, 1050.42, 16.11, 0);
+INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `delay`) VALUES (3000, 10, 1646.89, 1051.17, 16.11, 5000);
+INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `delay`) VALUES (3000, 11, 1637.84, 1050.42, 16.11, 0);
+INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `delay`) VALUES (3000, 12, 1631.25, 1054.55, 16.11, 0);
+INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `delay`) VALUES (3000, 13, 1629.09, 1061.59, 16.11, 0);
+INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `delay`) VALUES (3000, 14, 1630.61, 1067.66, 16.11, 0);
+INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `delay`) VALUES (3000, 15, 1634.13, 1072.28, 16.11, 0);
+INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `delay`) VALUES (3000, 16, 1640.51, 1073.92, 16.11, 0);
+INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `delay`) VALUES (3000, 17, 1645.48, 1073.42, 16.11, 0);
+INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `delay`) VALUES (3000, 18, 1649.50, 1071.08, 16.11, 0);
