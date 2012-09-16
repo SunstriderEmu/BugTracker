@@ -1,5 +1,5 @@
-DELETE FROM `creature_addon` WHERE `guid` = 56686;
-INSERT INTO `creature_addon` (`guid`, `path_id`, `bytes2`) VALUES (56686, 3000, 4097);
+DELETE FROM `creature_addon` WHERE `guid` = 56124;
+INSERT INTO `creature_addon` (`guid`, `path_id`, `bytes2`) VALUES (56124, 3000, 4097);
 
 DELETE FROM `waypoint_data` WHERE `id` = 3000;
 INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `delay`) VALUES (3000, 1, 1652.84, 1061.08, 16.11, 0);
