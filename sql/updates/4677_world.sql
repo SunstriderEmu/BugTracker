@@ -29,3 +29,12 @@ UPDATE `creature_template` SET
     `mindmg` = ROUND(`mindmg` - `attackpower` / 7), 
     `maxdmg` = ROUND(`maxdmg` - `attackpower` / 7) 
   WHERE `entry` = 24850;
+
+/* Damage for  Sunblade Dusk Priest */
+UPDATE `creature_template` SET 
+    `mindmg` = 10000, 
+    `maxdmg` = 15000, 
+    `attackpower` = ROUND((`mindmg` + `maxdmg`) / 4 * 7), 
+    `mindmg` = ROUND(`mindmg` - `attackpower` / 7), 
+    `maxdmg` = ROUND(`maxdmg` - `attackpower` / 7) 
+  WHERE `entry` = 25370;
