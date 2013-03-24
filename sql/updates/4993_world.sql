@@ -11,8 +11,8 @@ UPDATE script_texts SET content_loc2 = "MEURT INSECTE !" WHERE entry = -1409017;
 UPDATE script_texts SET content_loc2 = "MA PATIENCE S'ÉPUISE, VENEZ VOUS FAIRE TUER ! MOUCHERONS !" WHERE entry = -1409018;
 
 UPDATE creature_template SET ScriptName = "mob_eventai", minlevel = 73, maxlevel = 73, faction_A = 91, faction_H = 91 WHERE entry = 13148;
-DELETE FROM `creature_ai_scripts` WHERE `creature_id` = 13148;
-INSERT INTO `creature_ai_scripts` (`creature_id`, `event_type`, `event_inverse_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_type`, `action1_param1`, `action1_param2`, `action1_param3`, `action2_type`, `action2_param1`, `action2_param2`, `action2_param3`, `action3_type`, `action3_param1`, `action3_param2`, `action3_param3`, `comment`) values('13148','0','0','100','0','0','0','0','0','11','21155','0','3','0','0','0','0','0','0','0','0','Flame of Ragnaros - Intense Heat');
+DELETE FROM `eventai_scripts` WHERE `creature_id` = 13148;
+INSERT INTO `eventai_scripts` (`creature_id`, `event_type`, `event_inverse_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_type`, `action1_param1`, `action1_param2`, `action1_param3`, `action2_type`, `action2_param1`, `action2_param2`, `action2_param3`, `action3_type`, `action3_param1`, `action3_param2`, `action3_param3`, `comment`) values('13148','0','0','100','0','0','0','0','0','11','21155','0','3','0','0','0','0','0','0','0','0','Flame of Ragnaros - Intense Heat');
 
 INSERT INTO `spell_target_position` (`id`, `target_map`, `target_position_x`, `target_position_y`, `target_position_z`, `target_orientation`) values('21886','409','818.972290','-870.415100','-229.0','0');
 INSERT INTO `spell_target_position` (`id`, `target_map`, `target_position_x`, `target_position_y`, `target_position_z`, `target_orientation`) values('21900','409','839.632568','-874.043518','-229.0','0');
