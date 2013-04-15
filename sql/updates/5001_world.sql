@@ -7,4 +7,4 @@ DELETE FROM `creature_scripts` WHERE `entryorguid` = 21865;
 INSERT INTO `creature_scripts` VALUES (21865, 'Mob_Coilfang_Ambusher');
 
 DELETE FROM `creature_scripts` WHERE `entryorguid` = 21217;
-INSERT INTO `creature_scripts` VALUES (21865, 'Boss_Lurker_Below');
+INSERT INTO `creature_scripts` VALUES (21217, 'Boss_Lurker_Below');
