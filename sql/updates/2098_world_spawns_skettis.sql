@@ -1,4 +1,4 @@
-INSERT INTO `creature` (id, map, spawnMask, modelid, equipment_id, position_x, position_y, position_z, oritnetation, spawntimesecs, spawndist, currentwaypoint, curhealth, curmana, deathstate, movementtype) VALUES
+INSERT INTO `creature` (id, map, spawnMask, modelid, equipment_id, position_x, position_y, position_z, orientation, spawntimesecs, spawndist, currentwaypoint, curhealth, curmana, deathstate, movementtype) VALUES
 (21651,530,1,0,628,-4030.96,3338.67,281.731,3.44602,90,0,0,7181,0,0,0),
 (21651,530,1,0,628,-4047.23,3331.52,286.119,3.13993,90,0,0,7181,0,0,0),
 (21651,530,1,0,628,-4071.6,3360.03,285.765,2.02096,90,0,0,6986,0,0,0),
