@@ -1,0 +1,1 @@
+UPDATE gameobject_template SET type = 15 WHERE entry = 20827;
