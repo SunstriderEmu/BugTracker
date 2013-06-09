@@ -1,0 +1,1 @@
+update command set help = "Syntax: .npc addweapon #weaponId [#slot]\n\n#slot = 1 : right hand, 2 : left hand, 3 : ranged" where name = "npc addweapon";
