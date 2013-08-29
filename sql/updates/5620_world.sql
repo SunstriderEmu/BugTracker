@@ -1,0 +1,1 @@
+REPLACE INTO player_factionchange_items (alliance_id, horde_id) VALUES (19045,19046);
