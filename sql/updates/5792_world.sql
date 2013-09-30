@@ -1,0 +1,1 @@
+﻿INSERT INTO game_tele (position_x,position_y,position_z,orientation,map,NAME) VALUES ('1866.71','1341.64','142.264','1.4629','1','duelzone');
