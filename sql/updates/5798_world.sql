@@ -42,6 +42,6 @@ REPLACE INTO creature_equip_template (entry,equipmodel1,equipinfo1,equipslot1) V
 UPDATE creature_template SET minhealth =  28000, maxhealth = 28000, mindmg = 2932, maxdmg = 5994, equipment_id = 91469, flags_extra = 0x00200000 WHERE entry = 23318;
 REPLACE INTO creature_equip_template VALUES (91469,28789,28789,0,33492738,33490690,0,781,781,0);-- armes 12582 dagues x2
 
-/* Défenseur cendrelangue */s
+/* Défenseur cendrelangue */
 UPDATE creature_template SET minhealth =  79000, maxhealth = 79000, mindmg = 4146, maxdmg = 8476, equipment_id = 91470 WHERE entry = 23216;
 REPLACE INTO creature_equip_template VALUES (91470,12284,47250,0,33490690,33490436,0,781,1038,0); -- armes 32660 (épée), 34011 (bouclier)
