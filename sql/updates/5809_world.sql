@@ -8,4 +8,3 @@ UPDATE creature_equip_template SET equipmodel1 = 28525, equipmodel2 = 28525, equ
 REPLACE INTO spell_script_target values (40902,1,22841);
 UPDATE spell_template SET rangeIndex = 6 WHERE id = 40927;
 UPDATE spell_template SET targets = 11,rangeIndex = 6, effectImplicitTargetA1 = 38 WHERE id = 40855;
-REPLACE INTO spell_script_target VALUES (40855,1,22990);
