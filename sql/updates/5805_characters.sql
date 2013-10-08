@@ -1,4 +1,6 @@
-ALTER_TABLE `item_instance`
+/* WIll create an error if applied twice, but just ignore it */
+LOCK TABLES `item_instance` WRITE;
+ALTER TABLE `item_instance`
   ADD COLUMN `template` mediumint(8) unsigned NOT NULL DEFAULT '0',
   ADD COLUMN `container_guid` BIGINT(12) unsigned NOT NULL DEFAULT '0',
   ADD COLUMN `creator` BIGINT(12) unsigned NOT NULL DEFAULT '0',
@@ -50,6 +52,6 @@ ALTER_TABLE `item_instance`
   ADD COLUMN `durability` mediumint(8) unsigned NOT NULL DEFAULT '0',
   ADD COLUMN `max_durability` mediumint(8) unsigned NOT NULL DEFAULT '0',
   ADD COLUMN `num_slots` mediumint(8) unsigned NOT NULL DEFAULT '0';
-	
+UNLOCK TABLES;
 ALTER TABLE `characters`
     MODIFY `extra_flags` SMALLINT(4);
