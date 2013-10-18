@@ -37,7 +37,7 @@ REPLACE INTO script_texts (entry,content_default,content_loc2, sound, type, comm
 VALUES (-1801013,"Pity, no time for a slow death!","Dommage, pas le temps de vous faire mourir à petit feu.",11039,1,"Anatheron - On slay 3");
 
 REPLACE INTO script_texts (entry,content_default,content_loc2, sound, type, comment)
-VALUES (-1801014,"The swarm is eager to feed!","L'essaim est affamé,10979,1,"Anatheron - Swarm 1");
+VALUES (-1801014,"The swarm is eager to feed!","L'essaim est affamé",10979,1,"Anatheron - Swarm 1");
 REPLACE INTO script_texts (entry,content_default,content_loc2, sound, type, comment)
 VALUES (-1801015,"Pestilence upon you!","La peste soit sur vous !",11037,1,"Anatheron - Swarm 2");
 
