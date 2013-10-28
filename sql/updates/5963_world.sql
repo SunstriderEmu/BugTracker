@@ -1,0 +1,1 @@
+UPDATE spell_template SET attributes = 64 WHERE id = 53086;
