@@ -5,4 +5,4 @@ REPLACE INTO creature_template_addon (entry,auras) VALUES (25506,"45769 0 45769 
 REPLACE INTO creature_template_addon (entry,auras) VALUES (25373,"45769 0 45769 1");
 
 DELETE FROM eventai_scripts WHERE id IN (2550901,2559501,2559701,2559901,2586701);
-DELETE FROM smartscripts WHERE entryorguid = 25948;
+DELETE FROM smart_scripts WHERE entryorguid = 25948;
