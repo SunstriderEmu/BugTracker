@@ -8,4 +8,4 @@ UPDATE spell_template SET AttributesEx3 = 0x00040000 WHERE id = 27173;
 
 REPLACE INTO creature_template_addon (entry, mount) values (17948,6074);
 # arc
-UPDATE creature_template set equipment_id 812 WHERE entry = 17943;
+UPDATE creature_template set equipment_id = 812 WHERE entry = 17943;
