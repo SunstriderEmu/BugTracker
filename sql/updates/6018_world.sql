@@ -1,4 +1,4 @@
-DATE VERSION SET core_version = "Winrunner Rev: 6018";
+UPDATE version SET core_version = "Winrunner Rev: 6018";
 
 UPDATE spell_template
 SET effect2 = 6, effectImplicitTargetA2 = 1, effectApplyAuraName2 = 23, effectAmplitude2 = 15000
