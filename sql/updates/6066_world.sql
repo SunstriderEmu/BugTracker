@@ -7,4 +7,4 @@ UPDATE creature_model_info SET bounding_radius = 19, combat_reach = 18 WHERE mod
 #Muru : 2s void zone immune when bumped by 46264
 UPDATE spell_template SET durationIndex = 39, effect2 = 6, effectApplyAuraName2 = 259, effectImplicitTargetA2 = 6, effectMiscValue2 = 46264 WHERE id = 46264;
 #some immune for void sentinels
-UPDATE creature_template SET mechanic_immune_mask = 617299803 WHEN entry = 25772;
+UPDATE creature_template SET mechanic_immune_mask = 617299803 WHERE entry = 25772;
