@@ -1,0 +1,1 @@
+UPDATE spell_template SET casterAuraState = 0, AttributesEx2 = 0x4, preventionType = 0 WHERE id = 41467;
