@@ -1,0 +1,1 @@
+REPLACE INTO command VALUES ("arenarename",2,"Syntax: .arenarename <player name> <new team name> \r\n\r\n Rename an arena team, takes effect only after a reboot",0);
