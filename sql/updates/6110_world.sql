@@ -1,0 +1,1 @@
+INSERT INTO spell_linked_spell VALUES (40810,43690,0,"Saber lash immunity");
