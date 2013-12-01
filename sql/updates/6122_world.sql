@@ -1,0 +1,1 @@
+UPDATE spell_template SET dmgClass = 1 WHERE id = 42058
