@@ -1,0 +1,1 @@
+UPDATE spell_proc_event SET procFlags = 40 WHERE entry = 30482;
