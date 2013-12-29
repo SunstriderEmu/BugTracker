@@ -1,0 +1,1 @@
+REPLACE INTO command VALUES ("arenarename",2,"Syntax: .arenarename <player name> <type> <new team name> \r\n\r\n Rename an arena team of given player. Type must be 2, 3 or 5. This is not effective in-game before a server restart.",0);
