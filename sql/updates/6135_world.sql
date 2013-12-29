@@ -1,0 +1,1 @@
+UPDATE creature_template SET minhealth = 1746500, maxhealth = 1746500 WHERE entry IN (22951,22949,22952,22950);
