@@ -8,7 +8,7 @@ REPLACE INTO script_texts (entry,content_default,content_loc2,sound,type,emote,c
 REPLACE INTO script_texts (entry,content_default,content_loc2,sound,type,emote,comment) VALUES (-1566038,"I thank you for your aid, brothers. Our people will be redeemed!","Merci pour votre aide, mes frères. Notre peuple aura sa rédemption !",0,0,1,"SAY_AKAMA_THANKS");
 
 REPLACE INTO npc_text (ID,text0_0) VALUES (450,"I'm ready, Akama.");
-REPLACE INTO locales_npc_text (entry,Text0_0_loc2) VALUES (450,"Je suis prêt;, Akama.");
+REPLACE INTO locales_npc_text (entry,Text0_0_loc2) VALUES (450,"Je suis prêt, Akama.");
 REPLACE INTO npc_text (ID,text0_0) VALUES (451,"The time has come to face Illidan, $N. Are you ready ?");
 REPLACE INTO locales_npc_text (entry,Text0_0_loc2) VALUES (451,"Il est temps d'affronter Illidan, $N. Êtes-vous prêt$g:e; ?");
 REPLACE INTO npc_text (ID,text0_0) VALUES (452,"We are ready to face Illidan");
