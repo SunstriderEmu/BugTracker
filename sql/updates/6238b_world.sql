@@ -2703,6 +2703,5 @@ replace into `smart_scripts` values('25145','0','13','0','61','0','100','0','0',
 replace into `smart_scripts` values('25145','0','14','0','7','0','100','0','0','0','0','0','40','1','0','0','0','0','0','1','0','0','0','0','0','0','0','Budd\'s Bodyguard - On Evade - Display melee weapon');
 replace into `smart_scripts` values('25882','0','0','1','11','0','100','0','0','0','0','0','11','46804','0','0','0','0','0','1','0','0','0','0','0','0','0','Multiphase Disturbance - On Respawn - Cast Dark Fire Shield State');
 replace into `smart_scripts` values('25882','0','1','0','61','0','100','0','0','0','0','0','11','46272','0','0','0','0','0','1','0','0','0','0','0','0','0','Multiphase Disturbance - On Respawn - Cast Oshu\'gun Cloud Invisibility');
-replace into `smart_scripts` values('25955','0','0','0','11','0','100','0','0','0','0','0','11','46757','0','0','0','0','0','1','0','0','0','0','0','0','0','Hand of the Deciever - Cast Shadow Channelling on spawn');
 replace into `smart_scripts` values('26560','0','0','1','4','0','100','0','0','0','0','0','12','9521','4','30000','0','0','0','1','0','0','0','0','0','0','0','Ohura - On Aggro - Summon Enraged Felbat');
 replace into `smart_scripts` values('26560','0','1','0','61','0','100','0','0','0','0','0','12','9521','4','30000','0','0','0','1','0','0','0','0','0','0','0','Ohura - On Aggro - Summon Enraged Felbat');
