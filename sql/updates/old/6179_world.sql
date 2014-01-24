@@ -14,7 +14,7 @@ UPDATE creature_template SET equipment_id = 91498 WHERE entry = 17727;
 REPLACE INTO creature_equip_template VALUES (91499,20215,18662,0,33490690,33490436,0,781,1038,0);
 UPDATE creature_template SET equipment_id = 91499 WHERE entry = 17735;
 
-#Porte-épieu bourbesang :
+#Porte-Ã©pieu bourbesang :
 REPLACE INTO creature_equip_template VALUES (91500,39874,21144,0,3330,3330,0,21,22,0);
 UPDATE creature_template SET equipment_id = 91500 WHERE entry = 17729;
 
@@ -38,11 +38,11 @@ UPDATE creature_template SET equipment_id = 91504 WHERE entry = 17309;
 REPLACE INTO creature_equip_template VALUES (91505,36729,0,0,1538,0,0,17,0,0);
 UPDATE creature_template SET equipment_id = 91505 WHERE entry = 17537;
 
-#Affameur mâche-les-os :
+#Affameur mÃ¢che-les-os :
 REPLACE INTO creature_equip_template VALUES (91506,42749,18793,0,2,33490436,0,21,1038,0);
 UPDATE creature_template SET equipment_id = 91506 WHERE entry = 17259;
 
-#Vorace mâche-les-os :
+#Vorace mÃ¢che-les-os :
 REPLACE INTO creature_equip_template VALUES (91507,20122,29769,0,33490690,33490436,0,781,781,0);
 UPDATE creature_template SET equipment_id = 91507 WHERE entry = 17264;
 
@@ -50,7 +50,7 @@ UPDATE creature_template SET equipment_id = 91507 WHERE entry = 17264;
 REPLACE INTO creature_equip_template VALUES (91508,22478,0,31748,258,0,514,13,0,15);
 UPDATE creature_template SET equipment_id = 91508 WHERE entry = 17270;
 
-#Destructeur mâche-les-os :
+#Destructeur mÃ¢che-les-os :
 REPLACE INTO creature_equip_template VALUES (91509,28207,0,0,3842,0,0,13,0,0);
 UPDATE creature_template SET equipment_id = 91509 WHERE entry = 17271;
 
@@ -62,11 +62,11 @@ UPDATE creature_template SET equipment_id = 91510 WHERE entry = 17269;
 REPLACE INTO creature_equip_template VALUES (91511,43817,0,0,722,0,0,10,0,0);
 UPDATE creature_template SET equipment_id = 91511 WHERE entry = 17478;
 
-#Eventreur mâche-les-os :
+#Eventreur mÃ¢che-les-os :
 REPLACE INTO creature_equip_template VALUES (91512,15720,15720,0,3330,3330,0,21,22,0);
 UPDATE creature_template SET equipment_id = 91512 WHERE entry = 17281;
 
-#Belluaire mâche-les-os :
+#Belluaire mÃ¢che-les-os :
 REPLACE INTO creature_equip_template VALUES (91513,39874,0,0,3330,0,0,21,0,0);
 UPDATE creature_template SET equipment_id = 91513 WHERE entry = 17455;
 
