@@ -6,11 +6,11 @@ UPDATE creature_template SET equipment_id = 91487 WHERE entry = 17798;
 REPLACE INTO creature_equip_template VALUES (91488,20029,18702,0,33490690,33490436,0,781,1038,0);
 UPDATE creature_template SET equipment_id = 91488 WHERE entry = 17802;
 
-#Ingénieur de Glissecroc :
+#IngÃ©nieur de Glissecroc :
 REPLACE INTO creature_equip_template VALUES (91489,8568,0,0,1026,0,0,21,0,0);
 UPDATE creature_template SET equipment_id = 91489 WHERE entry = 17721;
 
-#Sirène de Glissecroc :
+#SirÃ¨ne de Glissecroc :
 REPLACE INTO creature_equip_template VALUES (91490,10654,0,0,772,0,0,10,0,0);
 UPDATE creature_template SET equipment_id = 91490 WHERE entry = 17801;
 
@@ -18,7 +18,7 @@ UPDATE creature_template SET equipment_id = 91490 WHERE entry = 17801;
 REPLACE INTO creature_equip_template VALUES (91491,22241,0,0,1538,0,0,17,0,0);
 UPDATE creature_template SET equipment_id = 91491 WHERE entry = 17803;
 
-#Maître d'esclaves de Glissecroc :
+#MaÃ®tre d'esclaves de Glissecroc :
 REPLACE INTO creature_equip_template VALUES (91492,22241,0,0,1538,0,0,17,0,0);
 UPDATE creature_template SET equipment_id = 91492 WHERE entry = 17805;
 
@@ -30,7 +30,7 @@ UPDATE creature_template SET equipment_id = 91493 WHERE entry = 17800;
 REPLACE INTO creature_equip_template VALUES (91494,19234,0,0,258,0,0,21,0,0);
 UPDATE creature_template SET equipment_id = 91494 WHERE entry = 17799;
 
-#Sorcière de Glissecroc :
+#SorciÃ¨re de Glissecroc :
 REPLACE INTO creature_equip_template VALUES (91495,20412,0,0,772,0,0,10,0,0);
 UPDATE creature_template SET equipment_id = 91495 WHERE entry = 17722; 
 
@@ -70,11 +70,11 @@ UPDATE creature_template SET equipment_id = 91478 WHERE entry = 17963;
 REPLACE INTO creature_equip_template VALUES (91479,31174,0,0,1538,0,0,17,0,0);
 UPDATE creature_template SET equipment_id = 91479 WHERE entry = 17957;
 
-#Défenseur de glissecroc :
+#DÃ©fenseur de glissecroc :
 REPLACE INTO creature_equip_template VALUES (91480,39474,18749,0,33490690,33490436,0,781,1038,0);
 UPDATE creature_template SET equipment_id = 91480 WHERE entry = 17958;
 
-#Soigne-écaille de Glissecroc :
+#Soigne-Ã©caille de Glissecroc :
 REPLACE INTO creature_equip_template VALUES (91481,10654,0,0,772,0,0,10,0,0);
 UPDATE creature_template SET equipment_id = 91481 WHERE entry = 21126;
 
