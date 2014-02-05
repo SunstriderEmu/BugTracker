@@ -1,4 +1,4 @@
-UPDATE creature_template SET faction_A = 14, faction_B = 14 WHERE entry = 25735;
+UPDATE creature_template SET faction_A = 14, faction_H = 14 WHERE entry = 25735;
 
 REPLACE INTO npc_text (ID,text0_0) VALUES (25319,"Anveena's sacrifice gave us a new hope.");
 REPLACE INTO locales_npc_text(entry,Text0_0_loc2) VALUES (25319,"Le sacrifice d\'Anveena nous a donné à tous un nouvel espoir pour l\'avenir.");
