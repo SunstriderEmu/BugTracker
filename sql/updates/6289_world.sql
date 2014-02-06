@@ -3,7 +3,7 @@ UPDATE creature_template SET faction_A = 14, faction_H = 14 WHERE entry = 25735;
 REPLACE INTO npc_text (ID,text0_0) VALUES (25319,"Anveena's sacrifice gave us a new hope.");
 REPLACE INTO locales_npc_text(entry,Text0_0_loc2) VALUES (25319,"Le sacrifice d\'Anveena nous a donné à tous un nouvel espoir pour l\'avenir.");
 
-replace into `creature_text` (`entry`, `groupid`, `id`, `text_en`,`text_fr`, `type`, `language`, `probability`, `emote`, `duration`, `sound`, `comment`) values('25315','8','0','%s begins to channel dark energy.','%s commence à canaliser des énergies noires.','3','0','100','0','0','0','KJ - EMOTE_KJ_DARKNESS');
+replace into `creature_text` (`entry`, `groupid`, `id`, `text_en`,`text_fr`, `type`, `language`, `probability`, `emote`, `duration`, `sound`, `comment`) values('25315','8','0','%s begins to channel dark energy','%s commence à canaliser des énergies noires','3','0','100','0','0','0','KJ - EMOTE_KJ_DARKNESS');
 replace into `creature_text` (`entry`, `groupid`, `id`, `text_en`,`text_fr`, `type`, `language`, `probability`, `emote`, `duration`, `sound`, `comment`) values('25315','3','0','The expendible have perished... So be it! Now I shall succeed where Sargeras could not! I will bleed this wretched world and secure my place as the true master of the Burning Legion. The end has come! Let the unraveling of this world commence!','Les troupes sacrifiables ont péries... tant pis. Je vais réussir où Sargeras avait échoué, je vais saigner ce misérable monde et assurer ma place de véritable maître de la Légion Ardente ! La fin est venue ! Que la dissolution du monde commence !','1','0','100','0','0','12500','KJ - SAY_KJ_EMERGE');
 replace into `creature_text` (`entry`, `groupid`, `id`, `text_en`,`text_fr`, `type`, `language`, `probability`, `emote`, `duration`, `sound`, `comment`) values('25315','1','0','Another step towards destruction!','Un autre pas vers la destruction !','1','0','100','0','0','12501','KJ - SAY_KJ_SLAY1');
 replace into `creature_text` (`entry`, `groupid`, `id`, `text_en`,`text_fr`, `type`, `language`, `probability`, `emote`, `duration`, `sound`, `comment`) values('25315','1','1','Anak-ky\'ri!','Anak-ky\'ri!','1','0','100','0','0','12502','KJ - SAY_KJ_SLAY2');
@@ -28,3 +28,10 @@ replace into `creature_text` (`entry`, `groupid`, `id`, `text_en`,`text_fr`, `ty
 replace into `creature_text` (`entry`, `groupid`, `id`, `text_en`,`text_fr`, `type`, `language`, `probability`, `emote`, `duration`, `sound`, `comment`) values('25319','8','0','Yes, Anveena! Let fate embrace you now!','<Texte manquant>','1','0','100','0','0','12448','KJ - SAY_KALECGOS_FATE');
 replace into `creature_text` (`entry`, `groupid`, `id`, `text_en`,`text_fr`, `type`, `language`, `probability`, `emote`, `duration`, `sound`, `comment`) values('25319','9','0','Goodbye, Anveena, my love. Few will remember your name, yet this day you change the course of destiny. What was once corrupt is now pure. Heroes, do not let her sacrifice be in vain.','<Texte manquant>','1','0','100','0','0','12450','KJ - SAY_KALECGOS_GOODBYE');
 replace into `creature_text` (`entry`, `groupid`, `id`, `text_en`,`text_fr`, `type`, `language`, `probability`, `emote`, `duration`, `sound`, `comment`) values('25319','10','0','You are not alone. The Blue Dragonflight shall help you vanquish the Deceiver.','Vous n\'êtes pas seuls, le Vol Draconique Bleu vous aidera à vaincre le Trompeur !','1','0','100','0','0','12438','KJ - SAY_KALECGOS_JOIN');
+
+#resize argmagedon visual
+UPDATE spell_template SET effectRadiusIndex1 = 15 WHERE id = 45911;
+#CREATURE_INVISIBLE_DUMMY should fly
+UPDATE creature_template SET InhabitType = 7 WHERE entry = 9;
+#added talk emote to some texts
+UPDATE script_texts SET emote = 1 WHERE entry IN (-1580090,-1580099,-1580100,-1580111,-1580101,-1580107,-1580102,-1580108,-1580103,-1580104,-1580109,-1580105,-1580106);
