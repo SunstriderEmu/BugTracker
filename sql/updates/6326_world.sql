@@ -1,0 +1,1 @@
+# Timbal's Focusing Crystal (34470) should only proc on alliesUPDATE spell_proc_event SET procFlags = 0x00010000 + 0x00040000 WHERE entry = 45054;
