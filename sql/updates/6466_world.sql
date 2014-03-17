@@ -1,0 +1,1 @@
+UPDATE spell_template SET AttributesEx3 = 0x00040000 WHERE id = 34709;
