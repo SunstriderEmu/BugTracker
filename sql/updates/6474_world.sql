@@ -23,7 +23,7 @@ REPLACE INTO npc_text (ID, text0_0) VALUES (@ID, @TEXT);
 
 SET @ID := 20038;
 SET @TEXT := 'I\'ve heard your name spoken only in whispers, mage. Who are you ?';
-SET @TEXTFR := 'Votre nom n\'est jamais évoqué qu\'à demi-mot, mage. Qui êtes-vous .';
+SET @TEXTFR := 'Votre nom n\'est jamais évoqué qu\'à demi-mot, mage. Qui êtes-vous ?';
 
 REPLACE INTO locales_npc_text (entry,Text0_0_loc2) VALUES (@ID, @TEXTFR);
 REPLACE INTO npc_text (ID, text0_0) VALUES (@ID, @TEXT);
