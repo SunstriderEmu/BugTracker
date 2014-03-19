@@ -24,6 +24,15 @@ CREATE TABLE `item_delete` (
   PRIMARY KEY (`playerguid`,`entry`,`count`,`time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `item_mail` (
+  `senderguid` int(11) unsigned DEFAULT NULL,
+  `receiverguid` int(11) unsigned NOT NULL,
+  `itemguid` int(11) unsigned NOT NULL,
+  `itementry` mediumint(8) unsigned NOT NULL,
+  `itemcount` smallint(5) unsigned NOT NULL,
+  `time` bigint(20) unsigned NOT NULL COMMENT 'send time'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
