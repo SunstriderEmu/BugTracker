@@ -2,16 +2,15 @@
 UPDATE creature_template SET InhabitType = 2 WHERE entry = 18750;
 
 #Subtlety resist dispell effect should affect every spell
-UPDATE spell_affect SET SpellFamilyMask = 0x7FFFFFFFFFFFFF where entry IN (17118,17119,17120,17121,17122) AND effectId = 1;
+UPDATE spell_affect SET SpellFamilyMask = 0x7FFFFFFFFFFFFFFF where entry IN (17118,17119,17120,17121,17122) AND effectId = 1;
 
 #Sanctified Seals should apply on Seal of the Crusader
 UPDATE spell_affect SET SpellFamilyMask = 4398214283776 WHERE entry IN (32043,35396,35397);
 
 #Healing Grace resist dispell effect should affect every spell
-UPDATE spell_affect SET SpellFamilyMask = 0x7FFFFFFFFFFFFF where entry IN (29187,29189,19191);
-
+UPDATE spell_affect SET SpellFamilyMask = 0x7FFFFFFFFFFFFFFF where entry IN (29187,29189,29191);
 #Stoicism resist dispell effect should affect every spell
-UPDATE spell_affect SET SpellFamilyMask = 0x7FFFFFFFFFFFFF where entry IN (31844,31845);
+UPDATE spell_affect SET SpellFamilyMask = 0x7FFFFFFFFFFFFFFF where entry IN (31844,31845);
 
 #Righteous Defense should be subjet to MELEE hit chance
 UPDATE spell_template SET dmgClass = 2 WHERE id = 31790;
