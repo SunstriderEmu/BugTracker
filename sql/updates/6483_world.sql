@@ -75,7 +75,7 @@ UPDATE spell_template SET effectTriggerSpell1 = 33898 WHERE id = 33896;
 UPDATE spell_template SET effectTriggerSpell1 = 33926 WHERE id = 24905;
 
 #Leader of the Pack
-UPDATE spell_template SET effectTriggerSpell1 = 34299 WHERE id = 24932;
+UPDATE spell_template SET effectTriggerSpell2 = 34299 WHERE id = 24932;
 
 #Lightning Capacitor
 UPDATE spell_template SET effectTriggerSpell1 = 37661 WHERE id = 37657;
