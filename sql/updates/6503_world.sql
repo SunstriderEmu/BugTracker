@@ -13,7 +13,7 @@ UPDATE `creature_template` SET `mindmg` = '1611', `maxdmg` = '2365' WHERE `entry
  
 #Destructeur mâche-les-os
 #UPDATE `creature_template` SET `mindmg` = '', `maxdmg` = '' WHERE `entry` = 17271;
-UPDATE `creature_template` SET `mindmg` = '2289', `maxdmg` = '3323' WHERE `entry` = 17043;
+UPDATE `creature_template` SET `mindmg` = '2289', `maxdmg` = '3323' WHERE `entry` = 18052;
  
 #Archer de l'Orbite-sanglante
 #UPDATE `creature_template` SET `mindmg` = '', `maxdmg` = '' WHERE `entry` = 17270;
