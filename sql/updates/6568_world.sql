@@ -1,0 +1,1 @@
+REPLACE INTO trinity_string (entry,content_default,content_loc2) VALUES (716,"|cffff0000[BG Queue Announcer]:|r %s -- [%u-%u] Started!|r","|cffff0000[Annonceur BG]:|r %s -- [%u] a commencé !|r");
