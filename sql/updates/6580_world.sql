@@ -1,0 +1,1 @@
+UPDATE creature_template SET mechanic_immune_mask = 617299807 WHERE entry IN (89054,11496,11489,11492,11486,89039,89035,89038,89032)
