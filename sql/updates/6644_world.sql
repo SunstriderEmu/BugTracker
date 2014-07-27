@@ -1,0 +1,1 @@
+ALTER TABLE `waypoint_data` CHANGE `move_flag` `move_type` MEDIUMINT(8) NOT NULL DEFAULT 0;
