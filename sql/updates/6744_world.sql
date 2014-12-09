@@ -505,3 +505,99 @@ sct.DamageModifier = 2ct.DamageModifier,
 sct.ExperienceModifier = 2ct.ExperienceModifier,
 sct.BaseVariance = 2ct.BaseVariance,
 sct.RangeVariance = 2ct.RangeVariance; */
+
+#fix some wrong expansions
+UPDATE creature_template 
+JOIN creature_classlevelstats ON level = minlevel AND class = unit_class AND exp = 1
+SET exp = 0 
+WHERE (exp = 1 AND basehp1 = 1) OR (exp = 2 and basehp2 = 1);
+
+UPDATE creature_template set exp = 0 where entry = 10184;
+
+/*
+##HP DIFF
+
+#check HP differences with old world
+SELECT ct.entry, ct.minlevel, ct.exp, ct.name, cls.basehp1, ct.HealthModifier, ROUND(cls.basehp1*ct.HealthModifier) AS result, cto.minhealth
+FROM creature_classlevelstats  cls
+JOIN creature_template ct ON LEVEL = ct.minlevel AND cls.class = ct.unit_class
+JOIN oldworld.creature_template cto ON cto.entry = ct.entry
+
+#adapt
+UPDATE creature_template ct
+JOIN creature_classlevelstats cls ON level = ct.minlevel AND cls.class = ct.unit_class AND ct.exp = 0
+JOIN oldworld.creature_template cto ON cto.entry = ct.entry
+SET ct.HealthModifier = cto.minhealth / cls.basehp0;
+
+UPDATE creature_template ct
+JOIN creature_classlevelstats cls ON level = ct.minlevel AND cls.class = ct.unit_class AND ct.exp = 1
+JOIN oldworld.creature_template cto ON cto.entry = ct.entry
+SET ct.HealthModifier = cto.minhealth / cls.basehp1;
+
+UPDATE creature_template ct
+JOIN creature_classlevelstats cls ON level = ct.minlevel AND cls.class = ct.unit_class AND ct.exp = 2
+JOIN oldworld.creature_template cto ON cto.entry = ct.entry
+SET ct.HealthModifier = cto.minhealth / cls.basehp2;
+
+#MANA DIFF
+
+#check
+SELECT ct.entry, ct.unit_class, ct.minlevel, ct.name, cls.basemana, ct.ManaModifier, ROUND(cls.basemana*ct.ManaModifier) AS result, cto.minmana
+FROM creature_classlevelstats  cls
+JOIN creature_template ct ON LEVEL = ct.minlevel AND cls.class = ct.unit_class
+JOIN oldworld.creature_template cto ON cto.entry = ct.entry
+
+#update
+UPDATE creature_classlevelstats  cls
+JOIN creature_template ct ON LEVEL = ct.minlevel AND cls.class = ct.unit_class
+JOIN oldworld.creature_template cto ON cto.entry = ct.entry
+SET ct.ManaModifier = cto.minmana / cls.basemana;
+
+##DMG DIFF
+
+#check
+SELECT ct.entry, ct.minlevel, ct.exp, ct.name, cls.damage_exp1, ct.DamageModifier, ct.BaseVariance, cto.mindmg, cto.maxdmg
+FROM creature_classlevelstats  cls
+JOIN creature_template ct ON LEVEL = ct.minlevel AND cls.class = ct.unit_class and ct.exp = 1
+JOIN oldworld.creature_template cto ON cto.entry = ct.entry
+
+#adapt variance
+UPDATE creature_template ct
+JOIN creature_classlevelstats cls ON LEVEL = ct.minlevel AND cls.class = ct.unit_class AND ct.exp = 1
+JOIN oldworld.creature_template cto ON cto.entry = ct.entry
+SET ct.BaseVariance = (cto.maxdmg / cto.mindmg) - 1;
+
+#update expansion 0 damage
+UPDATE creature_template ct
+JOIN creature_classlevelstats cls ON cls.level = ct.minlevel AND cls.class = ct.unit_class AND ct.exp = 0
+JOIN oldworld.creature_template cto ON cto.entry = ct.entry
+SET ct.DamageModifier = cto.mindmg / (cls.damage_base + (cls.attackpower / 14 * ct.BaseAttackTime/1000));
+
+#update expansion 1 damage
+UPDATE creature_template ct
+JOIN creature_classlevelstats cls ON cls.level = ct.minlevel AND cls.class = ct.unit_class and ct.exp = 1
+JOIN oldworld.creature_template cto ON cto.entry = ct.entry
+SET ct.DamageModifier = cto.mindmg / (cls.damage_exp1 + (cls.attackpower / 14 * ct.BaseAttackTime/1000));
+
+#update expansion 2 damage
+UPDATE creature_template ct
+JOIN creature_classlevelstats cls ON cls.level = ct.minlevel AND cls.class = ct.unit_class AND ct.exp = 2
+JOIN oldworld.creature_template cto ON cto.entry = ct.entry
+SET ct.DamageModifier = cto.mindmg / (cls.damage_exp2 + (cls.attackpower / 14 * ct.BaseAttackTime/1000));
+
+##ARMOR DIFF
+
+#check
+ SELECT ct.entry, ct.exp, ct.name, ct.ArmorModifier, cto.armor, cls.basearmor, ct.ArmorModifier * cls.basearmor AS result
+FROM creature_classlevelstats  cls
+JOIN creature_template ct ON LEVEL = ct.minlevel AND cls.class = ct.unit_class
+JOIN oldworld.creature_template cto ON cto.entry = ct.entry 
+
+#update
+UPDATE creature_classlevelstats  cls
+JOIN creature_template ct ON LEVEL = ct.minlevel AND cls.class = ct.unit_class
+JOIN oldworld.creature_template cto ON cto.entry = ct.entry
+SET ct.ArmorModifier = cto.armor / cls.basearmor;
+
+##
+*/
