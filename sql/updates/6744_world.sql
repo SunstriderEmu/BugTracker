@@ -563,7 +563,7 @@ JOIN oldworld.creature_template cto ON cto.entry = ct.entry
 
 #adapt variance
 UPDATE creature_template ct
-JOIN creature_classlevelstats cls ON LEVEL = ct.minlevel AND cls.class = ct.unit_class AND ct.exp = 1
+JOIN creature_classlevelstats cls ON LEVEL = ct.minlevel AND cls.class = ct.unit_class
 JOIN oldworld.creature_template cto ON cto.entry = ct.entry
 SET ct.BaseVariance = (cto.maxdmg / cto.mindmg) - 1;
 
@@ -571,19 +571,19 @@ SET ct.BaseVariance = (cto.maxdmg / cto.mindmg) - 1;
 UPDATE creature_template ct
 JOIN creature_classlevelstats cls ON cls.level = ct.minlevel AND cls.class = ct.unit_class AND ct.exp = 0
 JOIN oldworld.creature_template cto ON cto.entry = ct.entry
-SET ct.DamageModifier = cto.mindmg / (cls.damage_base + (cls.attackpower / 14 * ct.BaseAttackTime/1000));
+SET ct.DamageModifier = cto.mindmg*4/3 / (cls.damage_base + (cls.attackpower / 14 * ct.BaseAttackTime/1000));
 
 #update expansion 1 damage
 UPDATE creature_template ct
 JOIN creature_classlevelstats cls ON cls.level = ct.minlevel AND cls.class = ct.unit_class and ct.exp = 1
 JOIN oldworld.creature_template cto ON cto.entry = ct.entry
-SET ct.DamageModifier = cto.mindmg / (cls.damage_exp1 + (cls.attackpower / 14 * ct.BaseAttackTime/1000));
+SET ct.DamageModifier = cto.mindmg*4/3 / (cls.damage_exp1 + (cls.attackpower / 14 * ct.BaseAttackTime/1000));
 
 #update expansion 2 damage
 UPDATE creature_template ct
 JOIN creature_classlevelstats cls ON cls.level = ct.minlevel AND cls.class = ct.unit_class AND ct.exp = 2
 JOIN oldworld.creature_template cto ON cto.entry = ct.entry
-SET ct.DamageModifier = cto.mindmg / (cls.damage_exp2 + (cls.attackpower / 14 * ct.BaseAttackTime/1000));
+SET ct.DamageModifier = cto.mindmg*4/3 / (cls.damage_exp2 + (cls.attackpower / 14 * ct.BaseAttackTime/1000));
 
 ##ARMOR DIFF
 
