@@ -1,0 +1,20 @@
+ALTER TABLE `creature` DROP COLUMN `DeathState`;
+
+insert into creature_addon (`guid`, auras) values('6102','29266');
+insert into creature_addon (`guid`, auras) values('62493','29266');
+insert into creature_addon (`guid`, auras) values('62852','29266');
+insert into creature_addon (`guid`, auras) values('80214','29266');
+insert into creature_addon (`guid`, auras) values('85441','29266');
+insert into creature_addon (`guid`, auras) values('85442','29266');
+insert into creature_addon (`guid`, auras) values('85443','29266');
+insert into creature_addon (`guid`, auras) values('85444','29266');
+insert into creature_addon (`guid`, auras) values('85445','29266');
+insert into creature_addon (`guid`, auras) values('85446','29266');
+insert into creature_addon (`guid`, auras) values('95145','29266');
+insert into creature_addon (`guid`, auras) values('95146','29266');
+insert into creature_addon (`guid`, auras) values('95147','29266');
+insert into creature_addon (`guid`, auras) values('310141','29266');
+insert into creature_addon (`guid`, auras) values('310131','29266');
+insert into creature_addon (`guid`, auras) values('310167','29266');
+insert into creature_addon (`guid`, auras) values('310166','29266');
+update creature_addon set auras = '310166' where guid = 39536;
