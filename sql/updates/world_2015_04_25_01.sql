@@ -1,0 +1,25 @@
+UPDATE npc_text SET text0_1 = "" WHERE text0_0 = text0_1;
+UPDATE npc_text SET text1_1 = "" WHERE text1_0 = text1_1;
+UPDATE npc_text SET text2_1 = "" WHERE text2_0 = text2_1;
+UPDATE npc_text SET text3_1 = "" WHERE text3_0 = text3_1;
+UPDATE npc_text SET text4_1 = "" WHERE text4_0 = text4_1;
+UPDATE npc_text SET text5_1 = "" WHERE text5_0 = text5_1;
+UPDATE npc_text SET text6_1 = "" WHERE text6_0 = text6_1;
+UPDATE npc_text SET text7_1 = "" WHERE text7_0 = text7_1;
+
+UPDATE npc_text SET text0_0 = NULL WHERE text0_0 = '';
+UPDATE npc_text SET text0_1 = NULL WHERE text0_1 = '';
+UPDATE npc_text SET text1_0 = NULL WHERE text1_0 = '';
+UPDATE npc_text SET text1_1 = NULL WHERE text1_1 = '';
+UPDATE npc_text SET text2_0 = NULL WHERE text2_0 = '';
+UPDATE npc_text SET text2_1 = NULL WHERE text2_1 = '';
+UPDATE npc_text SET text3_0 = NULL WHERE text3_0 = '';
+UPDATE npc_text SET text3_1 = NULL WHERE text3_1 = '';
+UPDATE npc_text SET text4_0 = NULL WHERE text4_0 = '';
+UPDATE npc_text SET text4_1 = NULL WHERE text4_1 = '';
+UPDATE npc_text SET text5_0 = NULL WHERE text5_0 = '';
+UPDATE npc_text SET text5_1 = NULL WHERE text5_1 = '';
+UPDATE npc_text SET text6_0 = NULL WHERE text6_0 = '';
+UPDATE npc_text SET text6_1 = NULL WHERE text6_1 = '';
+UPDATE npc_text SET text7_0 = NULL WHERE text7_0 = '';
+UPDATE npc_text SET text7_1 = NULL WHERE text7_1 = '';
