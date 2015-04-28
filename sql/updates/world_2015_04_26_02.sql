@@ -9,7 +9,8 @@ ALTER TABLE npc_option
 ALTER TABLE npc_text
  RENAME TO gossip_text;
 ALTER TABLE locales_npc_text
-  RENAME TO locales_gossip_text;
+  RENAME TO locales_gossip_text,
+  CHANGE entry id MEDIUMINT(8) UNSIGNED NOT NULL DEFAULT '0';
   
 DROP TABLE IF EXISTS `gossip_menu`;
 CREATE TABLE `gossip_menu` (
