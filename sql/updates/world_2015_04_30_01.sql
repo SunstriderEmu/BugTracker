@@ -35,8 +35,3 @@ DELETE FROM quest_start_scripts WHERE id = 9962 and dataint = 2000000001;
 DELETE FROM quest_start_scripts WHERE id = 9962 and dataint = 2000000003;
 DELETE FROM quest_start_scripts WHERE id = 9962 and dataint = 2000000002;
  
-
-
-
-#setting teleport visual target as "any"
-UPDATE spell_template SET effectImplicitTargetA1 = 25 WHERE entry = 41232;
