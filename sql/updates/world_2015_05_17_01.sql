@@ -1,0 +1,1 @@
+REPLACE INTO command VALUES ("debug batchmelee", 3, "Syntax: .debug batchmelee <count> [type]\r\nDelivers given count of melee attacks to current victim, with type:\r\n0 - Basic attack\r\n1 - Left hand\r\n2 - Ranged", 0);
