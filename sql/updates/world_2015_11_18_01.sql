@@ -1,1 +1,1 @@
-INSERT INTO command VALUES ("reload smart_scripts", 4, "Usage: .reload smart_scripts [reload existing creatures]\nReloading existing creatures is an experimental feature and should not be used on production.\n[reload existing creatures] default to false",1);
+REPLACE INTO command VALUES ("reload smart_scripts", 4, "Usage: .reload smart_scripts [reload existing creatures]\nReloading existing creatures is an experimental feature and should not be used on production.\n[reload existing creatures] default to false",1);
