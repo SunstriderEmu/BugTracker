@@ -1,0 +1,1 @@
+REPLACE INTO command VALUES ("debug mapheight", 3, "Syntax: .debug mapheight [walkableOnly] [teleport]", 0);
