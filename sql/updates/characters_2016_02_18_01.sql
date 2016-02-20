@@ -28,3 +28,10 @@ CREATE TABLE `gameobject_respawn` (
 
 ALTER TABLE `corpse`   
   CHANGE `instance` `instanceId` INT(11) UNSIGNED DEFAULT 0  NOT NULL;
+  
+ALTER TABLE `instance_reset`   
+  CHANGE `mapid` `mapid` SMALLINT(5) UNSIGNED DEFAULT 0  NOT NULL,
+  CHANGE `difficulty` `difficulty` TINYINT(3) UNSIGNED DEFAULT 0  NOT NULL  AFTER `mapid`,
+  CHANGE `resettime` `resettime` INT(11) UNSIGNED DEFAULT 0  NOT NULL, 
+  DROP PRIMARY KEY,
+  ADD PRIMARY KEY (`mapid`, `difficulty`);
