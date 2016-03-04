@@ -1,4 +1,4 @@
-ALTER TABLE `sunworld`.`creature_formations`   
+ALTER TABLE `creature_formations`   
   CHANGE `dist_min` `dist` FLOAT UNSIGNED DEFAULT 0  NOT NULL,
   DROP COLUMN `dist_max`;
 
