@@ -1,0 +1,2 @@
+
+REPLACE INTO `trinity_string` (`entry`, `content_default`, `content_loc1`, `content_loc2`, `content_loc3`, `content_loc4`, `content_loc5`, `content_loc6`, `content_loc7`, `content_loc8`) values('1143','The instance you were in crashed, and you were automatically teleported outside of it. The Sunstrider team has been warned of this issue.',NULL,'L\'instance dans laquelle vous vous trouviez a rencontré un problème et vous avez été automatiquement téléporté en dehors. L\'équipe Sunstrider a été prévenue du problème.',NULL,NULL,NULL,NULL,NULL,NULL);
