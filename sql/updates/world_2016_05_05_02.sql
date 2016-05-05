@@ -1,0 +1,3 @@
+REPLACE INTO command (name, security, help, ircAllowed) VALUES ("debug setzonemusic", 4, "Syntax: .debug zonemusic #musicId\n\nExample: .debug setzonemusic 12924", 0);
+REPLACE INTO command (name, security, help, ircAllowed) VALUES ("debug setzonelight", 4, "Syntax: .debug zonelight #newLightId\n\nExample: .debug setzonelight 520", 0);
+REPLACE INTO command (name, security, help, ircAllowed) VALUES ("debug setzoneweather", 4, "Syntax: .debug zoneweather #weatherId [#intensity]\n\nWith intensity between 0 and 1. weatherId is WeatherState in core. Note that weather must be compatible with current zone (no snow in Elwynn for example).\nExample: .debug zoneweather 5 0.5", 0);
