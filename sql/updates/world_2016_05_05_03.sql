@@ -4,3 +4,4 @@ replace into `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event
 update creature_template set AIName = "SmartAI", HealthModifier = 1, flags_extra = 0x80 where entry = 27989;
 replace into `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) values('190351','1','0','0','64','0','100','0','0','0','0','0','85','50493','0','0','0','0','0','7','0','0','0','0','0','0','0','Disco - On gossip hello - cast Listening to Music');
 update gameobject_template set AIName = "SmartGameObjectAI" where entry = 190351;
+update spell_template set auraInterruptFlags = 0x8 where entry = 50493;
