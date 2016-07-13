@@ -1,0 +1,1 @@
+DROP TABLE spell_scripts_new;
