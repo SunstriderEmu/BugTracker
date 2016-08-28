@@ -1,0 +1,2 @@
+ALTER TABLE `account`   
+  ADD COLUMN `build` SMALLINT(5) UNSIGNED NULL AFTER `os`;
