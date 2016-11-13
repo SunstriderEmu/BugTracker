@@ -23,6 +23,7 @@ EndScriptData */
 
 
 #include "SimpleAI.h"
+#include "ScriptedCreature.h"
 
 SimpleAI::SimpleAI(Creature *c) : ScriptedAI(c)
 {

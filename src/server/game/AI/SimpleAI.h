@@ -4,6 +4,7 @@
 
 #ifndef SC_SIMPLEAI_H
 #define SC_SIMPLEAI_H
+#include "ScriptedCreature.h"
 
 enum CastTarget
 {
