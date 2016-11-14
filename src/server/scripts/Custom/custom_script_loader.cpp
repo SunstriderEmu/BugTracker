@@ -1,5 +1,6 @@
 void AddSC_beta_utility_npc();
 void AddSC_custom_example();
+void AddSC_custom_hostwap_demo();
 void AddSC_custom_gnominizer();
 void AddSC_custom_gossip_codebox();
 void AddSC_npc_lottery();
@@ -14,6 +15,7 @@ void AddCustomScripts()
 {
     AddSC_beta_utility_npc();
     AddSC_custom_example();
+	AddSC_custom_hostwap_demo();
     AddSC_custom_gnominizer();
     AddSC_custom_gossip_codebox();
     AddSC_npc_lottery();

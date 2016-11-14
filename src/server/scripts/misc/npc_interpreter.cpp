@@ -35,7 +35,7 @@ CreatureAI* GetAI_npc_interpreter(Creature *_Creature)
 void AddSC_npc_interpreter()
 {
     OLDScript *newscript;
-
+	
     newscript = new OLDScript;
     newscript->Name="npc_interpreter";
     newscript->GetAI = &GetAI_npc_interpreter;
