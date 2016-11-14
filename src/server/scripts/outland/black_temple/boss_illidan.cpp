@@ -23,6 +23,7 @@ EndScriptData */
 
 
 #include "def_black_temple.h"
+#include "NullCreatureAI.h"
 
 #define GETGO(obj, guid)      GameObject* obj = GameObject::GetGameObject(*me, guid)
 #define GETUNIT(unit, guid)   Unit* unit = ObjectAccessor::GetUnit(*me, guid)

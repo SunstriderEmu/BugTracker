@@ -23,6 +23,7 @@ EndScriptData */
 
 
 #include "def_magisters_terrace.h"
+#include <list>
 
 #define SAY_AGGRO                       -1585000
 #define SAY_ENERGY                      -1585001
@@ -63,7 +64,7 @@ struct boss_selin_fireheartAI : public ScriptedAI
             for(uint8 i = 0; i < size; ++i)
             {
                 uint64 guid = pInstance->GetData64(DATA_FEL_CRYSTAL);
-                Crystals.push_back(guid);
+                Crystals.push_back(unsigned long(guid));
             }
         }
         Heroic = c->GetMap()->IsHeroic();

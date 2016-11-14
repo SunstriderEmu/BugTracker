@@ -1,5 +1,4 @@
 void AddSC_alterac_mountains();
-void AddSC_AV_Warmasters();
 void AddSC_alterac_bowman();
 void AddSC_boss_balinda();
 void AddSC_boss_drekthar();
@@ -162,7 +161,6 @@ void AddSC_instance_zulgurub();
 void AddEasternKingdomsScripts()
 {
     AddSC_alterac_mountains();
-    AddSC_AV_Warmasters();
     AddSC_alterac_bowman();
     AddSC_boss_balinda();
     AddSC_boss_drekthar();

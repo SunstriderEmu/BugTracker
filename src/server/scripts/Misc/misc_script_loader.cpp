@@ -17,7 +17,7 @@ void AddSC_npc_xp_blocker();
 void AddSC_npcs_special();
 void AddSC_generic_creature();
 
-void AddmiscScripts()
+void AddMiscScripts()
 {
     AddSC_areatrigger_scripts();
     AddSC_go_scripts();

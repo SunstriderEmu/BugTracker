@@ -20,19 +20,20 @@ enum CastTarget
     CAST_JUSTDIED_KILLER,           //Only works within JustDied function
 };
 
-struct SimpleAI : public ScriptedAI
+class TC_GAME_API SimpleAI : public ScriptedAI
 {
+public:
     SimpleAI(Creature *c);// : ScriptedAI(c);
 
-    void Reset();
+    void Reset() override;
 
-    void EnterCombat(Unit *who);
+    void EnterCombat(Unit *who) override;
 
-    void KilledUnit(Unit *victim);
+    void KilledUnit(Unit *victim) override;
 
-    void DamageTaken(Unit *killer, uint32 &damage);
+    void DamageTaken(Unit *killer, uint32 &damage) override;
 
-    void UpdateAI(const uint32 diff);
+    void UpdateAI(const uint32 diff) override;
 
 public:
 
