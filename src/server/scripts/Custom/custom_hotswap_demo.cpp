@@ -32,13 +32,13 @@ public:
 				});
 				*/
 
-				scheduler.Schedule(Seconds(6), [=](TaskContext context)
+				scheduler.Schedule(Seconds(15), [=](TaskContext context)
 				{
-					me->Yell("Nested scheduling begin...", LANG_UNIVERSAL);
+					me->Say("Nested scheduling begin...", LANG_UNIVERSAL);
 
 					context.Schedule(Seconds(2), [=](TaskContext context)
 					{
-						me->Yell("Hi you!", LANG_UNIVERSAL);
+						me->Say("Hi you!", LANG_UNIVERSAL);
 						me->HandleEmoteCommand(EMOTE_ONESHOT_WAVE);
 
 						context.Schedule(Seconds(2), [=](TaskContext context)
