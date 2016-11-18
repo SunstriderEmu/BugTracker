@@ -1,20 +1,6 @@
-/* Copyright (C) 2006 - 2008 WoWMania Core <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
-// TODO : This won't work for multiple npc's (they'll conflift with each other)
+/* TODO : This won't work with multiple npc's (they'll conflift with each other)
+*/
 
 /* ScriptData
 SDName: npc_zone_silence
@@ -23,9 +9,9 @@ SDComment: Custom NPC acting like a totem silencing nearby players
 SDCategory: Custom
 EndScriptData */
 
-
  
 #define SPELL_SILENCE 42201 //can only be cast on self
+#define SILENCE_RANGE 30.0f
  
 struct npc_zonedesilenceAI : public ScriptedAI
 {
@@ -39,7 +25,7 @@ struct npc_zonedesilenceAI : public ScriptedAI
     void MoveInLineOfSight2(Unit *who)
     override {
         if (who->GetTypeId() == TYPEID_PLAYER) {
-            if (who->GetDistance(me) < 30 ) {
+            if (who->GetDistance(me) < SILENCE_RANGE ) {
                 if(!who->HasAuraEffect(SPELL_SILENCE, 0) && who->IsAlive())
                     who->AddAura(SPELL_SILENCE, who); //pas un cast sinon rendement décroissant qui s'applique
             }

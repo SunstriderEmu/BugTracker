@@ -1,6 +1,5 @@
 
-
-#define GOSSIP_TELEPORT "Teleportez-moi"
+#define GOSSIP_TELEPORT "Teleport me"
 #define QUEST_TELEPORT_HORDE    80000
 #define QUEST_TELEPORT_ALLIANCE 80001
 
@@ -57,7 +56,8 @@ CreatureAI* GetAI_npc_pack58_teleporterAI(Creature *_Creature)
 
 #define QUEST_DUEL_HORDE    80004
 #define QUEST_DUEL_ALLIANCE 80005
-#define GOSSIP_DUEL "Defier en duel"
+#define GOSSIP_DUEL "Challenge to duel"
+//#define GOSSIP_DUEL "Defier en duel"
 
 enum DuelGuyMessages
 {
