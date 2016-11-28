@@ -64,7 +64,7 @@ struct boss_selin_fireheartAI : public ScriptedAI
             for(uint8 i = 0; i < size; ++i)
             {
                 uint64 guid = pInstance->GetData64(DATA_FEL_CRYSTAL);
-                Crystals.push_back(unsigned long(guid));
+                Crystals.push_back(guid);
             }
         }
         Heroic = c->GetMap()->IsHeroic();
