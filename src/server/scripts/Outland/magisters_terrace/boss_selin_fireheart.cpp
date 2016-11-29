@@ -72,7 +72,7 @@ struct boss_selin_fireheartAI : public ScriptedAI
 
     InstanceScript* pInstance;
 
-    std::list<uint64> Crystals;
+    std::vector<uint64> Crystals;
 
     uint32 DrainLifeTimer;
     uint32 DrainManaTimer;
