@@ -96,12 +96,15 @@ public:
 
         void MovementInform(uint32 type, uint32 id) override
         {
-            if (type == POINT_MOTION_TYPE)
-                if(id == MOVINFORM_CENTER)
-                    events.RescheduleEvent(EVENT_ENTER_LAND_PHASE, 1);
-				else if (id == MOVINFORM_FLIGHT) {
+			if (type == POINT_MOTION_TYPE)
+			{
+				if (id == MOVINFORM_CENTER)
+					events.RescheduleEvent(EVENT_ENTER_LAND_PHASE, 1);
+				else {
+					if (id == MOVINFORM_FLIGHT)
 						events.RescheduleEvent(EVENT_SWITCH_SIDE, 1, 0, PHASE_FLIGHT);
 				}
+			}
         }
 
         void SetPhase(NazanPhases phase)
