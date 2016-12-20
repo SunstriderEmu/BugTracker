@@ -80,7 +80,7 @@ struct npc_blood_knight_stillbladeAI : public ScriptedAI
         {
             (Hitter->ToPlayer())->AreaExploredOrEventHappens(QUEST_REDEEMING_THE_DEAD);
             DoCast(me,SPELL_REVIVE_SELF);
-            me->SetUInt32Value(UNIT_FIELD_BYTES_1,0);
+            me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
             me->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 0);
             //me->RemoveAllAuras();
             DoScriptText(SAY_HEAL, me);
