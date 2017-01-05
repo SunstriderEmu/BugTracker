@@ -1,0 +1,1 @@
+UPDATE smart_scripts SET action_param1 = 0, target_z = 5.0 WHERE entryorguid = 2172201 AND id = 1;
