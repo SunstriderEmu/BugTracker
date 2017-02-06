@@ -9,6 +9,7 @@ EndScriptData */
 
 #include "ObjectMgr.h"
 #include <cstring>
+#include "CharacterCache.h"
 
 /*######
 ## npc_lottery
@@ -62,7 +63,7 @@ bool GossipSelect_npc_lottery(Player* pPlayer, Creature* pCreature, uint32 sende
             Field* fields = result->Fetch();
             
             winner = fields[0].GetUInt32();
-            sObjectMgr->GetPlayerNameByGUID(winner, winner_str);
+            sCharacterCache->GetCharacterNameByGuid(winner, winner_str);
             
             oss << "Le gagnant numéro " << num << " est " << winner_str << " !";
             pCreature->Yell(oss.str().c_str(), LANG_UNIVERSAL, nullptr);
