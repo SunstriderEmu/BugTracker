@@ -83,8 +83,7 @@ struct npc_converted_sentryAI : public ScriptedAI
     {
         if (Creature* sentry = me->FindNearestCreature(24972, 10.0f, false))
         {
-            sentry->SetDeathState(JUST_DIED);
-            sentry->RemoveCorpse();
+            sentry->DespawnOrUnsummon();
         }
     }
 

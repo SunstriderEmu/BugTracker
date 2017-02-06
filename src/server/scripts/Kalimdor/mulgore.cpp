@@ -251,8 +251,7 @@ struct npc_plains_visionAI  : public ScriptedAI
         }
         else
         {
-            me->SetDeathState(JUST_DIED);
-            me->RemoveCorpse();
+            me->DespawnOrUnsummon();
         }
     }
 

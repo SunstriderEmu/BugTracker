@@ -84,8 +84,7 @@ struct boss_the_black_stalkerAI : public ScriptedAI
             if(Creature *strider = ObjectAccessor::GetCreature(*me, Strider))
             {
                 strider->SetLootRecipient(nullptr);
-                strider->DealDamage(strider,strider->GetMaxHealth(),nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-                strider->RemoveCorpse();
+                strider->DespawnOrUnsummon();
             }
     }
 

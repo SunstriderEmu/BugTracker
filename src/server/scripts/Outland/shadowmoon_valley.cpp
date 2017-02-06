@@ -254,8 +254,7 @@ struct mob_enslaved_netherwing_drakeAI : public ScriptedAI
             }
             me->SetVisibility(VISIBILITY_OFF);
             me->SetDisableGravity(false);
-            me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-            me->RemoveCorpse();
+            me->DespawnOrUnsummon();
         }
     }
 

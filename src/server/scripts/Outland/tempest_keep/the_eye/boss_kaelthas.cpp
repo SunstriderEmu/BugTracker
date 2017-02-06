@@ -1440,7 +1440,7 @@ struct mob_phoenix_tkAI : public ScriptedAI
             if(z == INVALID_HEIGHT)
                 z = ROOM_BASE_Z;
             me->SummonCreature(PHOENIX_EGG,x,y,z,me->GetOrientation(),TEMPSUMMON_TIMED_DESPAWN,16000);
-            me->RemoveCorpse();
+            me->DespawnOrUnsummon();
         }
     }
 

@@ -588,8 +588,7 @@ struct npc_hungry_nether_rayAI : public ScriptedAI
             {
                 lastCredit = feedCredit->GetGUID();
                 (me->GetOwner()->ToPlayer())->KilledMonsterCredit(RAY_FEED_CREDIT, feedCredit->GetGUID());
-                feedCredit->DealDamage(feedCredit, feedCredit->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-                feedCredit->RemoveCorpse();
+                feedCredit->DespawnOrUnsummon();
                 checkTimer = 5000;
             }
         }else checkTimer -= diff;

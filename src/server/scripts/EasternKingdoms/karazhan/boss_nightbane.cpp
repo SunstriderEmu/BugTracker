@@ -120,8 +120,7 @@ struct boss_nightbaneAI : public ScriptedAI
 
         if(pInstance->GetData(DATA_NIGHTBANE_EVENT) == DONE || pInstance->GetData(DATA_NIGHTBANE_EVENT) == IN_PROGRESS)
         {
-            me->DealDamage(me, me->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-            me->RemoveCorpse();
+            me->DespawnOrUnsummon();
         }
         else
         {

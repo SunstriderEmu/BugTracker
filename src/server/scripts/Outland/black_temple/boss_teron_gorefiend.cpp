@@ -499,13 +499,8 @@ struct boss_teron_gorefiendAI : public ScriptedAI
         me->VisitNearbyGridObject(MAX_SEARCHER_DISTANCE, searcher);
 
         if(!ConstructList.empty())
-        {
             for(auto & itr : ConstructList)
-            {
-                itr->SetDeathState(JUST_DIED);
-                itr->RemoveCorpse();
-            }
-        }
+                itr->DespawnOrUnsummon();
     }
 };
 

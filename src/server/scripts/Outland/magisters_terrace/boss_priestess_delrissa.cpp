@@ -132,9 +132,7 @@ struct boss_priestess_delrissaAI : public ScriptedAI
 
         CombatPulseTimer  = 5000;
 
-        //CheckAdds();
-        ClearAddsList();
-        SummonAdds();
+        ResetAdds();
 
         if(pInstance)
         {
@@ -158,10 +156,16 @@ struct boss_priestess_delrissaAI : public ScriptedAI
                 pAdd->AI()->AttackStart(who);
     }
 
-    void SummonAdds()
+    void ResetAdds()
     {
-        /*if (me->IsDead())
-            return;*/
+        for (uint32 i : AddEntry) 
+        {
+            if (Creature* add = me->FindNearestCreature(i, 30.0f, true))
+                add->DisappearAndDie();
+        }
+
+        Adds.clear();
+
         std::vector<uint32> AddList;
         for(uint32 i : AddEntry)
             AddList.push_back(i);
@@ -182,61 +186,7 @@ struct boss_priestess_delrissaAI : public ScriptedAI
         if (pInstance)
             pInstance->SetData(HAS_DELRISSA_SUMMONED, DONE);
     }
-
-    void CheckAdds()
-    {
-        //if (me->IsDead())
-        //  return;
-        /*if(Adds.empty() && pInstance && !pInstance->GetData(HAS_DELRISSA_SUMMONED))
-        {
-            SummonAdds();
-            return;
-        }*/
-        for(uint8 i = 0; i < Adds.size(); ++i)
-        {
-            Creature* pAdd = (ObjectAccessor::GetCreature(*me, Adds[i]->guid));
-            if(pAdd && pAdd->IsAlive())
-            {
-                pAdd->AI()->EnterEvadeMode();
-                pAdd->GetMotionMaster()->MovePoint(0,LackeyLocations[i][0], LackeyLocations[i][1], POS_Z);
-            }
-            else if(!pAdd || (pAdd && pAdd->IsDead()))
-            {
-                if(pAdd)
-                    pAdd->RemoveCorpse();//looks stupid if mob is alive but has a dead corpse in front of him :)
-                Creature* pAdd = me->SummonCreature(Adds[i]->entry, LackeyLocations[i][0], LackeyLocations[i][1], POS_Z, ORIENT, TEMPSUMMON_DEAD_DESPAWN, 0);
-                if(pAdd)
-                    Adds[i]->guid = pAdd->GetGUID();
-            }
-        }
-    }
     
-    void ClearAddsList()
-    {
-        /*for(uint8 i = 0; i < Adds.size(); ++i)
-        {
-            Creature* pAdd = (ObjectAccessor::GetCreature(*me, Adds[i]->guid));
-            if(pAdd)
-                pAdd->DisappearAndDie();
-        }
-        
-        Adds.clear();
-        
-        // Also despawn adds' pets if needed
-        if (Creature* fizzle = me->FindNearestCreature(24656, 30.0f, true))
-            fizzle->DisappearAndDie();
-        if (Creature* sliver = me->FindNearestCreature(24552, 30.0f, true))
-            sliver->DisappearAndDie();*/
-            
-        // You want war? I'll give it to you!
-        for (uint32 i : AddEntry) {
-            if (Creature* add = me->FindNearestCreature(i, 30.0f, true))
-                add->DisappearAndDie();
-        }
-        
-        Adds.clear();
-    }
-
     void KilledUnit(Unit* victim)
     override {
         if(victim->GetTypeId() != TYPEID_PLAYER || me->IsDead())

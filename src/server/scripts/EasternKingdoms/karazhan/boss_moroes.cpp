@@ -215,8 +215,7 @@ struct boss_moroesAI : public ScriptedAI
                 if (Temp && Temp->IsAlive())
                 {
                     (*Temp).GetMotionMaster()->Clear(true);
-                    Temp->DealDamage(Temp, Temp->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-                    Temp->RemoveCorpse();
+                    Temp->DespawnOrUnsummon();
                 }
 
             }

@@ -66,8 +66,7 @@ struct mobs_spitelashesAI : public ScriptedAI
         // we mustn't remove the creature in the same round in which we cast the summon spell, otherwise there will be no summons
         if( spellhit && morphtimer>=5000 )
         {
-            me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-            me->RemoveCorpse();                     //you don't see any corpse on off.
+            me->DespawnOrUnsummon();
             EnterEvadeMode();                               //spellhit will be set to false
             return;
         }
@@ -276,8 +275,7 @@ struct mob_rizzle_sprysprocketAI : public ScriptedAI
 
     void Despawn()
     {
-        me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-        me->RemoveCorpse();
+        me->DespawnOrUnsummon();
     }
 
     void UpdateAI(const uint32 diff) override
@@ -458,8 +456,7 @@ struct mob_depth_chargeAI : public ScriptedAI
         {
             if(must_die_timer < diff)
             {
-                me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-                me->RemoveCorpse();
+                me->DespawnOrUnsummon();
             } else { must_die_timer -= diff; }
         }
         return;

@@ -214,8 +214,7 @@ public:
                 Creature *target = instance->GetCreature(archaedasWallMinion);
                 if (!target || target->IsDead() || target->GetFaction() != 14)
                     continue;
-                target->SetDeathState(JUST_DIED);
-                target->RemoveCorpse();
+                target->DespawnOrUnsummon();
             }
 
             // Vault Walkers
@@ -224,8 +223,7 @@ public:
                 Creature *target = instance->GetCreature(i);
                 if (!target || target->IsDead() || target->GetFaction() != 14)
                     continue;
-                target->SetDeathState(JUST_DIED);
-                target->RemoveCorpse();
+                target->DespawnOrUnsummon();
             }
 
             // Earthen Guardians
@@ -234,8 +232,7 @@ public:
                 Creature *target = instance->GetCreature(i);
                 if (!target || target->IsDead() || target->GetFaction() != 14)
                     continue;
-                target->SetDeathState(JUST_DIED);
-                target->RemoveCorpse();
+                target->DespawnOrUnsummon();
             }
         }
 

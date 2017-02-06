@@ -532,8 +532,7 @@ struct npc_image_of_medivhAI : public ScriptedAI
             Step = 0;
         }else
         {
-            me->DealDamage(me,me->GetHealth(),nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-            me->RemoveCorpse();
+            me->DespawnOrUnsummon();
         }
     }
     void EnterCombat(Unit* who)override {}

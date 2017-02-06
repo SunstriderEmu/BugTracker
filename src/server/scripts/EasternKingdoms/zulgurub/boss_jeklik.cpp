@@ -252,8 +252,7 @@ struct mob_batriderAI : public ScriptedAI
             {
                 if(pInstance->GetData(DATA_JEKLIKISDEAD))
                 {
-                    me->SetDeathState(JUST_DIED);
-                    me->RemoveCorpse();
+                    me->DespawnOrUnsummon();
                 }
             }
 

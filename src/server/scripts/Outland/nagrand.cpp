@@ -245,8 +245,7 @@ struct mob_sunspring_villagerAI : public ScriptedAI
     override {
         if(spell->Id == 32146)
         {
-            me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-            me->RemoveCorpse();
+            me->DespawnOrUnsummon();
         }
     }
 };

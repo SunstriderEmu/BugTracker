@@ -654,11 +654,6 @@ struct boss_shadeoftaerarAI : public ScriptedAI
         SCDPoisonBreath = new SimpleCooldown(TIMER_POISONBREATH_SHADES);
     }
 
-    void Instakill(Unit* Target)
-    {
-        Target->DealDamage(Target, Target->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-    }
-
     void Reset()
     override {
         SCDPoisonCLoud->resetAtStart();
@@ -674,8 +669,7 @@ struct boss_shadeoftaerarAI : public ScriptedAI
         if(!Taerar || Taerar->IsDead() || !Taerar->IsInCombat() )
         {
             // Suicide
-            Instakill(me);
-            me->RemoveCorpse();
+            me->DespawnOrUnsummon();
         }
         
         if (!UpdateVictim())

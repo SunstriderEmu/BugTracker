@@ -614,8 +614,7 @@ struct mob_nestlewood_owlkinAI : public ScriptedAI
     override {
         if(ChannelTimer < diff && !Channeled && Hitted)
         {
-            me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-            me->RemoveCorpse();
+            me->DespawnOrUnsummon();
             me->SummonCreature(INOCULATED_OWLKIN, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0.0f, TEMPSUMMON_TIMED_DESPAWN, 180000);
             Channeled = true;
         }else ChannelTimer -= diff;

@@ -850,8 +850,7 @@ struct mob_phase_hunterAI : public ScriptedAI
                 Level = me->GetLevel();
 
                 me->AttackStop(); // delete the normal mob
-                me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-                me->RemoveCorpse();
+                me->DespawnOrUnsummon();
 
                 Creature* DrainedPhaseHunter = nullptr;
 

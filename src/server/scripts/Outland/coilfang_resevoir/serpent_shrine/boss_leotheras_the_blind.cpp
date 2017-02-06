@@ -1,18 +1,3 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /* ScriptData
 SDName: Boss_Leotheras_The_Blind
@@ -207,22 +192,19 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
         for(uint8 i = 0; i < 3; i++)
         {
             Creature *add = ObjectAccessor::GetCreature(*me,SpellBinderGUID[i]);
-            if (add && add->IsAlive())
-            {
-                add->SetDeathState(DEAD);
-                add->RemoveCorpse();
-            }else{
-                if(add && add->IsDead())
-                    add->RemoveCorpse();
-            }
+            if(add)
+                add->DespawnOrUnsummon();
+
             float nx = x;
             float ny = y;
             float o = 2.4f;
-            if (i == 0) {nx += 10; ny -= 5; o=2.5f;}
-            if (i == 1) {nx -= 8; ny -= 7; o=0.9f;}
-            if (i == 2) {nx -= 3; ny += 9; o=5.0f;}
-            Creature* binder = me->SummonCreature(MOB_SPELLBINDER,nx,ny,z,o,TEMPSUMMON_DEAD_DESPAWN,0);
-            if (binder)
+            switch (i)
+            {
+                case 0: nx += 10; ny -= 5; o = 2.5f; break;
+                case 1: nx -= 8; ny -= 7; o = 0.9f; break;
+                case 2: nx -= 3; ny += 9; o = 5.0f; break;
+            }
+            if (Creature* binder = me->SummonCreature(MOB_SPELLBINDER, nx, ny, z, o, TEMPSUMMON_DEAD_DESPAWN, 0))
                 SpellBinderGUID[i] = binder->GetGUID();
 
         }

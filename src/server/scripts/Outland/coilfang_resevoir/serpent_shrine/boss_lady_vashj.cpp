@@ -838,8 +838,7 @@ struct mob_toxic_sporebatAI : public ScriptedAI
                 if(!Vashj || (Vashj && !Vashj->IsAlive()) || (Vashj && ((boss_lady_vashjAI*)(Vashj->ToCreature())->AI())->Phase != 3))
                 {
                     //remove
-                    me->SetDeathState(DEAD);
-                    me->RemoveCorpse();
+                    me->DespawnOrUnsummon();
                     me->SetFaction(35);
                 }
             }

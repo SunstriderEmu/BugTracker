@@ -120,9 +120,8 @@ struct boss_nefarianAI : public ScriptedAI
         {
             if(!UpdateVictim())
             {
-                me->SetHealth(0);
-                me->SetDeathState(JUST_DIED);
-                me->RemoveCorpse();
+                me->DespawnOrUnsummon();
+                return;
             }
             DespawnTimer = 5000;
         }else DespawnTimer -= diff;

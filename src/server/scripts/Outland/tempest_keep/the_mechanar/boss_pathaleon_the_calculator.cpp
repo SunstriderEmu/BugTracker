@@ -229,8 +229,7 @@ struct mob_nether_wraithAI : public ScriptedAI
         {
             if (Die_Timer < diff)
             {
-                me->SetDeathState(JUST_DIED);
-                me->RemoveCorpse();
+                me->DespawnOrUnsummon();
             }else Die_Timer -= diff;
         }
 

@@ -224,8 +224,7 @@ struct mob_towering_infernalAI : public ScriptedAI
                 Creature* boss = ObjectAccessor::GetCreature((*me),AnetheronGUID);
                 if(!boss || (boss && boss->IsDead()))
                 {
-                    me->SetDeathState(JUST_DIED);
-                    me->RemoveCorpse();
+                    me->DespawnOrUnsummon();
                     return;
                 }
             }

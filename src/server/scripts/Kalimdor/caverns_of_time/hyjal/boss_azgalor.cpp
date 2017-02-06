@@ -254,8 +254,7 @@ struct mob_lesser_doomguardAI : public hyjal_trashAI
                 Creature* boss = ObjectAccessor::GetCreature((*me),AzgalorGUID);
                 if(!boss || boss->IsDead())
                 {
-                    me->SetDeathState(JUST_DIED);
-                    me->RemoveCorpse();
+                    me->DespawnOrUnsummon();
                     return;
                 }
             }

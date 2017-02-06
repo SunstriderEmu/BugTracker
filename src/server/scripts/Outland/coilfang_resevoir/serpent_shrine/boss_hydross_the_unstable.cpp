@@ -148,8 +148,7 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
             Creature* mob = ObjectAccessor::GetCreature(*me,beam);
             if(mob)
             {
-                mob->SetDeathState(DEAD);
-                mob->RemoveCorpse();
+                mob->DespawnOrUnsummon();
             }
         }
     }

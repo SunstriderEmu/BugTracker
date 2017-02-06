@@ -752,8 +752,7 @@ struct npc_infused_crystalAI : public ScriptedAI
                 else
                     player->KilledMonsterCredit(16364, 0);
             }
-            me->DealDamage(me,me->GetHealth(),nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-            me->RemoveCorpse();
+            me->DespawnOrUnsummon();
         } else EndTimer -= diff;
 
         if (WaveTimer < diff && !Completed && Progress)

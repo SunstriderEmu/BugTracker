@@ -224,9 +224,7 @@ struct mob_ragin_flamesAI : public ScriptedAI
             {
                 if(pInstance->GetData(DATA_NETHERMANCER) != IN_PROGRESS)
                 {
-                    //remove
-                    me->SetDeathState(JUST_DIED);
-                    me->RemoveCorpse();
+                    me->DespawnOrUnsummon();
                 }
             }
             Check_Timer = 1000;

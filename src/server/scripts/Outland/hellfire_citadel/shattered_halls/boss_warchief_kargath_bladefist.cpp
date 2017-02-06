@@ -171,26 +171,22 @@ struct boss_warchief_kargath_bladefistAI : public ScriptedAI
     {
         for(uint64 & add : adds)
         {
-            Unit* temp = ObjectAccessor::GetUnit((*me),add);
-            if(temp && temp->IsAlive())
+            Creature* c = ObjectAccessor::GetCreature((*me),add);
+            if (c)
             {
-                (temp->ToCreature())->SetDisableReputationGain(true); //no reputation gain
-                (*temp).GetMotionMaster()->Clear(true);
-                me->DealDamage(temp,temp->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-                (temp->ToCreature())->RemoveCorpse();
+                c->SetDisableReputationGain(true); //no reputation gain
+                c->DespawnOrUnsummon();
             }
         }
         adds.clear();
 
         for(uint64 & assassin : assassins)
         {
-            Unit* temp = ObjectAccessor::GetUnit((*me),assassin);
-            if(temp && temp->IsAlive())
+            Creature* c = ObjectAccessor::GetCreature((*me), assassin);
+            if (c)
             {
-                (temp->ToCreature())->SetDisableReputationGain(true); //no reputation gain
-                (*temp).GetMotionMaster()->Clear(true);
-                me->DealDamage(temp,temp->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-                (temp->ToCreature())->RemoveCorpse();
+                c->SetDisableReputationGain(true); //no reputation gain
+                c->DespawnOrUnsummon();
             }
         }
         assassins.clear();

@@ -582,8 +582,7 @@ struct mob_abominationAI : public hyjal_trashAI
         {
             if((faction == 0 && LastOverronPos == 17) || (faction == 1 && LastOverronPos == 21))
             {
-                me->SetDeathState(DEAD);
-                me->RemoveCorpse();
+                me->DespawnOrUnsummon();
             }
         }
     }
@@ -680,8 +679,7 @@ struct mob_ghoulAI : public hyjal_trashAI
             me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_ONESHOT_ATTACKUNARMED);
             if((faction == 0 && LastOverronPos == 17) || (faction == 1 && LastOverronPos == 21))
             {
-                me->SetDeathState(DEAD);
-                me->RemoveCorpse();
+                me->DespawnOrUnsummon();
             }
 
         }

@@ -213,7 +213,7 @@ struct mob_illidari_councilAI : public ScriptedAI
             {
                 if(!pMember->IsAlive())
                 {
-                    pMember->RemoveCorpse();
+                    pMember->DespawnOrUnsummon();
                     pMember->Respawn();
                 }
                 pMember->AI()->EnterEvadeMode();
