@@ -579,8 +579,9 @@ CreatureAI* GetAI_npc_geezleAI(Creature *pCreature)
 
 enum eNestlewoodOwlkin
 {
-INOCULATION_CHANNEL = 29528,
-INOCULATED_OWLKIN   = 16534
+	INOCULATION_CHANNEL		= 29528,
+	INOCULATION_EMOTE		= 0,
+	INOCULATED_OWLKIN		= 16534
 };
 
 struct mob_nestlewood_owlkinAI : public ScriptedAI
@@ -588,11 +589,13 @@ struct mob_nestlewood_owlkinAI : public ScriptedAI
     mob_nestlewood_owlkinAI(Creature *c) : ScriptedAI(c) {}
 
     uint32 ChannelTimer;
+	uint64 PlayerGUID;
     bool Channeled;
     bool Hitted;
 
     void Reset()
     override {
+		PlayerGUID = 0;
         ChannelTimer = 0;
         Channeled = false;
         Hitted = false;
@@ -603,10 +606,11 @@ struct mob_nestlewood_owlkinAI : public ScriptedAI
         if(!caster)
             return;
 
-        if(caster->GetTypeId() == TYPEID_PLAYER && spell->Id == INOCULATION_CHANNEL)
+        if(!Hitted && caster->GetTypeId() == TYPEID_PLAYER && spell->Id == INOCULATION_CHANNEL)
         {
             ChannelTimer = 3000;
             Hitted = true;
+			PlayerGUID = caster->GetGUID();
         }
     }
 
@@ -614,9 +618,15 @@ struct mob_nestlewood_owlkinAI : public ScriptedAI
     override {
         if(ChannelTimer < diff && !Channeled && Hitted)
         {
-            me->DespawnOrUnsummon();
-            me->SummonCreature(INOCULATED_OWLKIN, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0.0f, TEMPSUMMON_TIMED_DESPAWN, 180000);
-            Channeled = true;
+			Channeled = true;
+			me->UpdateEntry(INOCULATED_OWLKIN);
+			me->SetRespawnRadius(10.0f); 
+			me->DespawnOrUnsummon(10 * SECOND * IN_MILLISECONDS);
+			Talk(INOCULATION_EMOTE);
+
+			if(Player* channeler = me->GetMap()->GetPlayer(PlayerGUID))
+				channeler->CastedCreatureOrGO(INOCULATED_OWLKIN, me->GetGUID(), INOCULATION_CHANNEL);
+	
         }else ChannelTimer -= diff;
 
         DoMeleeAttackIfReady();
