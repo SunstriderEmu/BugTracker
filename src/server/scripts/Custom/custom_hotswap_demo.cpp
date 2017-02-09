@@ -1,6 +1,5 @@
 #include "TaskScheduler.h"
 
-//AI for Hand of the Deceiver
 class custom_hostwap_demo : public CreatureScript
 {
 public:
