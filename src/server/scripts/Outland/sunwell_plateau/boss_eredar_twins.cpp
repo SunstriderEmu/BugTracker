@@ -525,7 +525,7 @@ struct boss_alythessAI : public EredarTwin
         if(IntroStepCounter < 9) //10 = intro already done
         {
             if(IntroStepCounter == 0 && IntroYellTimer == 0)
-                if(me->FindNearestPlayer(60.0f))
+                if(me->SelectNearestPlayer(60.0f))
                     IntroYellTimer = 1; //start intro
 
             if(IntroYellTimer)
