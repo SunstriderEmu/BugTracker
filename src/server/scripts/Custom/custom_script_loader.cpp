@@ -10,6 +10,14 @@ void AddSC_zone_silence();
 void AddSC_theinform();
 void AddSC_training_dummy();
 void AddSC_pack58();
+void AddSC_npc_interpreter();
+void AddSC_mylittlebombling();
+void AddSC_arenabeastmaster();
+void AddSC_catapultmaster();
+void AddSC_firework_controller();
+void AddSC_arena_spectator_script();
+void AddSC_npc_teleporter_pvpzone();
+void AddSC_npc_xp_blocker();
 
 void AddCustomScripts()
 {
@@ -25,4 +33,12 @@ void AddCustomScripts()
     AddSC_theinform();
     AddSC_training_dummy();
     AddSC_pack58();
+    AddSC_arenabeastmaster();
+    AddSC_catapultmaster();
+    AddSC_firework_controller();
+    AddSC_arena_spectator_script();
+    AddSC_npc_teleporter_pvpzone();
+    AddSC_npc_xp_blocker();
+    AddSC_npc_interpreter();
+    AddSC_mylittlebombling();
 }
