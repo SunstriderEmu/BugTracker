@@ -729,10 +729,6 @@ CreatureAI* GetAI_npc_death_ravagerAI(Creature* pCreature)
 
 enum BristlelimbCage
 {
-    CAPITIVE_SAY_1                      = -1600474,
-    CAPITIVE_SAY_2                      = -1600475,
-    CAPITIVE_SAY_3                      = -1600476,
-
     QUEST_THE_PROPHECY_OF_AKIDA         = 9544,
     NPC_STILLPINE_CAPITIVE              = 17375,
     GO_BRISTELIMB_CAGE                  = 181714
@@ -784,7 +780,7 @@ public:
             Creature* pCreature = go->FindNearestCreature(NPC_STILLPINE_CAPITIVE, 5.0f, true);
             if (pCreature)
             {
-                DoScriptText(RAND(CAPITIVE_SAY_1, CAPITIVE_SAY_2, CAPITIVE_SAY_3), pCreature, p);
+				pCreature->AI()->Talk(0, p);
                 pCreature->GetMotionMaster()->MoveFleeing(p);
                 p->KilledMonsterCredit(pCreature->GetEntry(), pCreature->GetGUID());
                 CAST_AI(npc_stillpine_capitiveAI, pCreature->AI())->FleeTimer = 3500;
