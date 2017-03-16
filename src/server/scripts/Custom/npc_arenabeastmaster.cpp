@@ -48,7 +48,7 @@ bool GossipHello_arenabeastmaster(Player *player, Creature *me)
 {    
     if(player->GetClass() != CLASS_HUNTER)
     {
-        me->Whisper("I offer my services only to hunters!", LANG_UNIVERSAL, player);
+        me->Whisper("My services are reserved to hunters!", LANG_UNIVERSAL, player);
         return true;
     }
 

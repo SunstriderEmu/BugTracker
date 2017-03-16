@@ -355,7 +355,7 @@ class Boss_Ragnaros : public CreatureScript
                         Intro_Timer = 3000;
                         break;        
                     case 10:
-                        if(Player* faceMe = me->FindNearestPlayer(50.0f))
+                        if(Player* faceMe = me->SelectNearestPlayer(50.0f))
                         {
                             me->SetInFront(faceMe);
                             me->StopMoving();
