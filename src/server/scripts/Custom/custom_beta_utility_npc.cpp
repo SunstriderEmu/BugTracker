@@ -50,14 +50,19 @@ public:
         MAIN_MENU_ACTION_TELEPORT,
         MAIN_MENU_ACTION_MONEY,
         MAIN_MENU_ACTION_MOUNT,
+        MAIN_MENU_ACTION_RESET_TALENTS,
     };
 
+    //note that client does not update this correctly if event is started/stopped after player has already talked to the creature, there is some cache involved
     bool OnGossipHello(Player* player, Creature* creature) override
     {
+        bool betaActive = sGameEventMgr->IsActiveEvent(GAME_EVENT_BETA);
+        bool instant70active = sGameEventMgr->IsActiveEvent(GAME_EVENT_INSTANT_70_SERVER);
+
         //prevent usage of this npc when beta is not enabled
-        if (player->GetSession()->GetSecurity() == SEC_PLAYER && !sGameEventMgr->IsActiveEvent(GAME_EVENT_BETA))
+        if (player->GetSession()->GetSecurity() == SEC_PLAYER && !betaActive && !instant70active)
         {
-            creature->Whisper("Server must be in beta mode/you must be a gamemaster", LANG_UNIVERSAL, player);
+            creature->Whisper("Server must be in beta/instant70 mode", LANG_UNIVERSAL, player);
             return true;
         }
 
@@ -67,8 +72,14 @@ public:
         player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Professions", MENU_MAIN, MAIN_MENU_ACTION_PROFESSION);
         player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Learn me some skills", MENU_MAIN, MAIN_MENU_ACTION_SKILLS);
         player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Teleport me", MENU_MAIN, MAIN_MENU_ACTION_TELEPORT);
-        player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Give me some money", MENU_MAIN, MAIN_MENU_ACTION_MONEY);
         player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Give me a mount", MENU_MAIN, MAIN_MENU_ACTION_MOUNT);
+        player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Reset my talents", MENU_MAIN, MAIN_MENU_ACTION_RESET_TALENTS);
+
+        if (betaActive)
+        {
+            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Give me some money", MENU_MAIN, MAIN_MENU_ACTION_MONEY);
+        }
+
         SEND_PREPARED_GOSSIP_MENU(player, creature);
 
         return true;
@@ -78,14 +89,15 @@ public:
     {
         switch (action)
         {
-        case MAIN_MENU_ACTION_LEVEL:     SendLevelMenu(p, creature);       break;
-        case MAIN_MENU_ACTION_EQUIPMENT: SendEquipmentMenu(p, creature);   break;
-        case MAIN_MENU_ACTION_SPELLS:    SendSpellsMenu(p, creature);      break;
-        case MAIN_MENU_ACTION_PROFESSION:SendProfessionsMenu(p, creature); break;
-        case MAIN_MENU_ACTION_SKILLS:    SendSkillsMenu(p, creature);      break;
-        case MAIN_MENU_ACTION_TELEPORT:  SendTeleportMenu(p, creature);    break;
-        case MAIN_MENU_ACTION_MONEY:     p->ModifyMoney(2000 * GOLD); p->CLOSE_GOSSIP_MENU();  break;
-        case MAIN_MENU_ACTION_MOUNT:     SendMountMenu(p, creature);       break;
+        case MAIN_MENU_ACTION_LEVEL:         SendLevelMenu(p, creature);                           break;
+        case MAIN_MENU_ACTION_EQUIPMENT:     SendEquipmentMenu(p, creature);                       break;
+        case MAIN_MENU_ACTION_SPELLS:        SendSpellsMenu(p, creature);                          break;
+        case MAIN_MENU_ACTION_PROFESSION:    SendProfessionsMenu(p, creature);                     break;
+        case MAIN_MENU_ACTION_SKILLS:        SendSkillsMenu(p, creature);                          break;
+        case MAIN_MENU_ACTION_TELEPORT:      SendTeleportMenu(p, creature);                        break;
+        case MAIN_MENU_ACTION_MONEY:         p->ModifyMoney(2000 * GOLD); p->CLOSE_GOSSIP_MENU();  break;
+        case MAIN_MENU_ACTION_MOUNT:         SendMountMenu(p, creature);                           break;
+        case MAIN_MENU_ACTION_RESET_TALENTS: p->ResetTalents(true); p->CLOSE_GOSSIP_MENU();        break;
         }
     }
     
