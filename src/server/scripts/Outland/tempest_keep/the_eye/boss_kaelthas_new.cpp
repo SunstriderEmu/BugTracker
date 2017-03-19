@@ -206,7 +206,7 @@ class boss_kaelthas : public CreatureScript
 				{
 					for (SummonList::const_iterator i = summons.begin(); i != summons.end(); ++i)
 						if (Creature* summon = ObjectAccessor::GetCreature(*me, *i))
-							if (summon->GetDBTableGUIDLow())
+							if (summon->GetSpawnId())
 							{
 								summon->SetReactState(REACT_PASSIVE);
 								summon->SetDeathState(JUST_RESPAWNED);
@@ -276,11 +276,11 @@ class boss_kaelthas : public CreatureScript
 				if (phase == PHASE_FINAL)
 					return;
 
-				if (summon->GetDBTableGUIDLow() && phase == PHASE_ALL_ADVISORS)
+				if (summon->GetSpawnId() && phase == PHASE_ALL_ADVISORS)
 				{
 					for (SummonList::const_iterator i = summons.begin(); i != summons.end(); ++i)
 						if (Creature* summon = ObjectAccessor::GetCreature(*me, *i))
-							if (summon->GetDBTableGUIDLow() && summon->IsAlive())
+							if (summon->GetSpawnId() && summon->IsAlive())
 								return;
 
 					events2.ScheduleEvent(EVENT_PREFIGHT_PHASE71, 2000);
@@ -437,7 +437,7 @@ class boss_kaelthas : public CreatureScript
 						for (SummonList::const_iterator i = summons.begin(); i != summons.end(); ++i)
 						{
 							if (Creature* summon = ObjectAccessor::GetCreature(*me, *i))
-								if (!summon->GetDBTableGUIDLow())
+								if (!summon->GetSpawnId())
 								{
 									summon->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE|UNIT_FLAG_NON_ATTACKABLE);
                                     summon->AI()->DoZoneInCombat();
@@ -459,7 +459,7 @@ class boss_kaelthas : public CreatureScript
 					case EVENT_PREFIGHT_PHASE63:
 						for (SummonList::const_iterator i = summons.begin(); i != summons.end(); ++i)
 							if (Creature* summon = ObjectAccessor::GetCreature(*me, *i))
-								if (summon->GetDBTableGUIDLow())
+								if (summon->GetSpawnId())
 								{
 									summon->SetReactState(REACT_AGGRESSIVE);
 									summon->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
