@@ -77,7 +77,7 @@ public:
             return false;
         }
 
-        void OnCreatureCreate(Creature* pCreature, uint32) override
+        void OnCreatureCreate(Creature* pCreature) override
         {
             switch (pCreature->GetEntry())
             {

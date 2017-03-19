@@ -149,7 +149,7 @@ public:
             return 0;
         }
 
-        void OnCreatureCreate(Creature *creature, uint32 entry) override
+        void OnCreatureCreate(Creature *creature) override
         {
             switch (creature->GetEntry())
             {

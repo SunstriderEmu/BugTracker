@@ -88,9 +88,9 @@ public:
             }
         }
 
-        void OnCreatureCreate(Creature *creature, uint32 creature_entry) override
+        void OnCreatureCreate(Creature *creature) override
         {
-            switch (creature_entry)
+            switch (creature->GetEntry())
             {
             case 18732:
                 GrandmasterVorpil = creature->GetGUID();

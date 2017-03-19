@@ -122,7 +122,7 @@ public:
             }
         }
 
-        void OnCreatureCreate(Creature *creature, uint32 creature_entry) override
+        void OnCreatureCreate(Creature *creature) override 
         {
             if (creature->GetEntry() == MELLICHAR)
                 MellicharGUID = creature->GetGUID();

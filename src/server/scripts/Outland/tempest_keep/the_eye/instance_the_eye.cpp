@@ -65,9 +65,9 @@ public:
             return false;
         }
 
-        void OnCreatureCreate(Creature *creature, uint32 creature_entry) override
+        void OnCreatureCreate(Creature *creature) override 
         {
-            switch (creature_entry)
+            switch (creature->GetEntry())
             {
             case NPC_THALADRED: ThaladredTheDarkener = creature->GetGUID(); break;
             case NPC_TELONICUS: MasterEngineerTelonicus = creature->GetGUID(); break;

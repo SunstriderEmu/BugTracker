@@ -113,7 +113,7 @@ public:
             SetData(EVENT_PYRAMID, PYRAMID_NOT_STARTED);
         }
 
-        void OnCreatureCreate(Creature* pCreature, uint32 entry)
+        void OnCreatureCreate(Creature* pCreature)
             override {
             switch (pCreature->GetEntry())
             {

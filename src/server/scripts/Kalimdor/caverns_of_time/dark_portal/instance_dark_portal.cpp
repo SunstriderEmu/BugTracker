@@ -152,7 +152,7 @@ public:
             player->SendUpdateWorldState(WORLD_STATE_BM, 0);
         }
 
-        void OnCreatureCreate(Creature *pCreature, uint32 creature_entry) override
+        void OnCreatureCreate(Creature *pCreature) override
         {
             if (pCreature->GetEntry() == C_MEDIVH)
                 MedivhGUID = pCreature->GetGUID();

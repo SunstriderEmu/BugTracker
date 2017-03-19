@@ -80,9 +80,9 @@ public:
             }
         }
 
-        void OnCreatureCreate(Creature *creature, uint32 creature_entry)
+        void OnCreatureCreate(Creature *creature)
             override {
-            switch (creature_entry)
+            switch (creature->GetEntry())
             {
             case ENTRY_HORSEMAN:    HorsemanGUID = creature->GetGUID(); break;
             case ENTRY_HEAD:        HeadGUID = creature->GetGUID(); break;

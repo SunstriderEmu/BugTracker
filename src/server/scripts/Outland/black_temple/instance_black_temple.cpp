@@ -136,9 +136,9 @@ public:
             return false;
         }
 
-        void OnCreatureCreate(Creature *creature, uint32 creature_entry) override
+        void OnCreatureCreate(Creature *creature) override
         {
-            switch (creature_entry)
+            switch (creature->GetEntry())
             {
             case 22887:    Najentus = creature->GetGUID();                  break;
             case 23089:    Akama = creature->GetGUID();                     break;
@@ -170,9 +170,9 @@ public:
             }
         }
 
-        void OnCreatureRespawn(Creature* creature, uint32 creature_entry) override
+        void OnCreatureRespawn(Creature* creature) override
         {
-            switch (creature_entry) {
+            switch (creature->GetEntry()) {
             case 22844:
             case 22845:
             case 22846:

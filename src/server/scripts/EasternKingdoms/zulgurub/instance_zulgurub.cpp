@@ -49,9 +49,9 @@ public:
 
         uint32 GahzrankaStatus;
 
-        void OnCreatureCreate(Creature *creature, uint32 creature_entry)
+        void OnCreatureCreate(Creature *creature)
             override {
-            switch (creature_entry)
+            switch (creature->GetEntry())
             {
             case 11347:
                 LorKhanGUID = creature->GetGUID();

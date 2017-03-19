@@ -130,9 +130,9 @@ public:
             return false;
         }
 
-        void OnCreatureCreate(Creature *creature, uint32 creature_entry) override
+        void OnCreatureCreate(Creature *creature) override
         {
-            switch (creature_entry)
+            switch (creature->GetEntry())
             {
             case 24175: AmanishiLookoutGUID = creature->GetGUID(); break;
             case 23578://janalai

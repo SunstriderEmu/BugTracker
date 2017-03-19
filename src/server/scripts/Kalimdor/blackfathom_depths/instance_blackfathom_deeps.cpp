@@ -82,7 +82,7 @@ public:
             m_uiCountFires = 0;
         }
 
-        void OnCreatureCreate(Creature* pCreature, uint32 entry) override
+        void OnCreatureCreate(Creature* pCreature) override
         {
             switch (pCreature->GetEntry())
             {

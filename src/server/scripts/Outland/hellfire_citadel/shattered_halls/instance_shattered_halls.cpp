@@ -105,23 +105,23 @@ public:
             }
         }
 
-        void OnCreatureCreate(Creature* pCreature, uint32 creature_entry) override
+        void OnCreatureCreate(Creature* creature) override
         {
             uint8 pTeam = 0;
             if (Player* tempPlayer = GetPlayer())
                 pTeam = tempPlayer->GetTeam();
 
-            switch (creature_entry) {
+            switch (creature->GetEntry()) {
             case 16807:     // Nethekurse
-                NethekurseGUID = pCreature->GetGUID();
+                NethekurseGUID = creature->GetGUID();
                 break;
             case 17301:     // Executioner
-                ExecutionerGUID = pCreature->GetGUID();
-                pCreature->SetKeepActive(true);
+                ExecutionerGUID = creature->GetGUID();
+                creature->SetKeepActive(true);
                 if (GetData(DATA_NETHEKURSE_EVENT) == NOT_STARTED)
-                    pCreature->SetVisibility(VISIBILITY_OFF);
+                    creature->SetVisibility(VISIBILITY_OFF);
                 if (GetData(DATA_BLADEFIST_EVENT) == NOT_STARTED)
-                    pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
+                    creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                 break;
             }
         }

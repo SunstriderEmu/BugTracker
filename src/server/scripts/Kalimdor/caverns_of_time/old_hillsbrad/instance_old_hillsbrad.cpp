@@ -92,9 +92,9 @@ public:
                 TC_LOG_ERROR("FIXME", "TSCR: Instance Old Hillsbrad: UpdateOHWorldState, but PlayerList is empty!");
         }
 
-        void OnCreatureCreate(Creature *creature, uint32 creature_entry) override
+        void OnCreatureCreate(Creature *creature) override
         {
-            switch (creature_entry)
+            switch (creature->GetEntry())
             {
             case THRALL_ENTRY:
                 ThrallGUID = creature->GetGUID();

@@ -68,9 +68,9 @@ public:
             return false;
         }
 
-        void OnCreatureCreate(Creature *creature, uint32 entry) override
+        void OnCreatureCreate(Creature *creature) override
         {
-            switch (entry) {
+            switch (creature->GetEntry()) {
             case 10899:
                 if (isEventActive())
                     creature->SetDisplayId(15760);

@@ -293,9 +293,9 @@ public:
                 Door->SetUInt32Value(GAMEOBJECT_STATE, open ? 0 : 1);
         }
 
-        void OnCreatureCreate(Creature *creature, uint32 creature_entry) override
+        void OnCreatureCreate(Creature *creature) override
         {
-            switch (creature_entry)
+            switch (creature->GetEntry())
             {
             case 21212: LadyVashj = creature->GetGUID();            break;
             case 21214: Karathress = creature->GetGUID();           break;

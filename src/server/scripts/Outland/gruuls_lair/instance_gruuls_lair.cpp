@@ -81,9 +81,9 @@ public:
             return false;
         }
 
-        void OnCreatureCreate(Creature *creature, uint32 creature_entry) override
+        void OnCreatureCreate(Creature *creature) override
         {
-            switch (creature_entry)
+            switch (creature->GetEntry())
             {
             case 18835: KigglerTheCrazed = creature->GetGUID(); break;
             case 18836: BlindeyeTheSeer = creature->GetGUID();  break;

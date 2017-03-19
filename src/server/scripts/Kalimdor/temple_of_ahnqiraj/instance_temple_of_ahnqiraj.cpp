@@ -69,9 +69,9 @@ public:
             CthunPhase = 0;
         }
 
-        void OnCreatureCreate(Creature *creature, uint32 creature_entry)
-            override {
-            switch (creature_entry)
+        void OnCreatureCreate(Creature *creature) override
+        {
+            switch (creature->GetEntry())
             {
             case 15263: SkeramGUID = creature->GetGUID(); break;
             case 15544: VemGUID = creature->GetGUID(); break;

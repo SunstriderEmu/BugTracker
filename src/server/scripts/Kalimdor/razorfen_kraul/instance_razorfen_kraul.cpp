@@ -61,9 +61,9 @@ public:
             }
         }
 
-        void OnCreatureCreate(Creature* pCreature, uint32 creature_entry)
+        void OnCreatureCreate(Creature* creature)
             override {
-            switch (creature_entry)
+            switch (creature->GetEntry())
             {
             case 4625:
                 WardKeeperAlive++;
