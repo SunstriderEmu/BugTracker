@@ -102,7 +102,7 @@ struct mob_mature_netherwing_drakeAI : public ScriptedAI
         if(caster->GetTypeId() == TYPEID_PLAYER && spell->Id == SPELL_PLACE_CARCASS && !me->HasAuraEffect(SPELL_JUST_EATEN, 0) && !PlayerGUID)
         {
             float PlayerX, PlayerY, PlayerZ;
-            caster->GetClosePoint(PlayerX, PlayerY, PlayerZ, me->GetObjectSize());
+            caster->GetClosePoint(PlayerX, PlayerY, PlayerZ, me->GetCombatReach());
             me->SetDisableGravity(true);
             me->GetMotionMaster()->MovePoint(1, PlayerX, PlayerY, PlayerZ);
             PlayerGUID = caster->GetGUID();
@@ -344,7 +344,7 @@ struct mob_dragonmaw_peonAI : public ScriptedAI
 
             Tapped = true;
             float x, y, z;
-            caster->GetClosePoint(x, y, z, me->GetObjectSize());
+            caster->GetClosePoint(x, y, z, me->GetCombatReach());
 
             me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
             me->GetMotionMaster()->MovePoint(1, x, y, z);

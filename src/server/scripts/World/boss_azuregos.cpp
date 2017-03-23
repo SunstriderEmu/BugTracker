@@ -92,7 +92,7 @@ public:
                 case EV_TELEPORT:
                 {
                     float x, y, z;
-                    me->GetNearPoint(me, x, y, z, me->GetObjectSize(), 5.0f, 0.0f);
+                    me->GetNearPoint(me, x, y, z, me->GetCombatReach(), 5.0f, 0.0f);
 
                     std::list<Player*> players;
                     Trinity::AnyPlayerInObjectRangeCheck check(me, 25.0f);
