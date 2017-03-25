@@ -162,8 +162,8 @@ struct boss_harbinger_skyrissAI : public ScriptedAI
                 {
                     case 1:
                          DoScriptText(SAY_INTRO, me);
-                        if (GameObject* Sphere = GameObject::GetGameObject(*me,pInstance->GetData64(DATA_SPHERE_SHIELD)))
-                            Sphere->SetGoState(GO_STATE_ACTIVE);
+                         if (GameObject* Sphere = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_SPHERE_SHIELD)))
+                             Sphere->UseDoorOrButton();
                         ++Intro_Phase;
                         Intro_Timer = 25000;
                         break;

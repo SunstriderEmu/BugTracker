@@ -95,8 +95,8 @@ struct boss_vexallusAI : public ScriptedAI
 
             GameObject* Door = nullptr;
             Door = GameObject::GetGameObject((*me), pInstance->GetData64(DATA_VEXALLUS_DOOR));
-            if(Door)
-                Door->SetGoState(GO_STATE_ACTIVE);
+            if (Door)
+                Door->UseDoorOrButton();
         }
     }
 

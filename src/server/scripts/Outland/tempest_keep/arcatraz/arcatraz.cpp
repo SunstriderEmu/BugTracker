@@ -331,7 +331,7 @@ struct npc_warden_mellicharAI : public ScriptedAI
         {
             pInstance->SetData(TYPE_HARBINGERSKYRISS,IN_PROGRESS);
             if (GameObject* Sphere = GameObject::GetGameObject(*me,pInstance->GetData64(DATA_SPHERE_SHIELD)))
-                Sphere->SetGoState(GO_STATE_READY);
+                Sphere->ResetDoorOrButton();
             IsRunning = true;
         }
     }
@@ -372,7 +372,7 @@ struct npc_warden_mellicharAI : public ScriptedAI
                     DoCast(me,SPELL_TARGET_ALPHA);
                     pInstance->SetData(TYPE_WARDEN_1,IN_PROGRESS);
                     if (GameObject *Sphere = GameObject::GetGameObject(*me,pInstance->GetData64(DATA_SPHERE_SHIELD)))
-                        Sphere->SetGoState(GO_STATE_READY);
+                        Sphere->ResetDoorOrButton();
                     break;
                 case 3:
                     DoCast(me,SPELL_TARGET_BETA);

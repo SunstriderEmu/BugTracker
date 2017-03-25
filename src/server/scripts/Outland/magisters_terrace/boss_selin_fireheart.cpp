@@ -104,8 +104,8 @@ struct boss_selin_fireheartAI : public ScriptedAI
                 }
             }
             GameObject* Door = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_SELIN_ENCOUNTER_DOOR));
-            if( Door )
-                Door->SetGoState(GO_STATE_ACTIVE);                        // Open the big encounter door. Close it in Aggro and open it only in JustDied(and here)
+            if (Door)
+                Door->UseDoorOrButton();                        // Open the big encounter door. Close it in Aggro and open it only in JustDied(and here)
                                                             // Small door opened after event are expected to be closed by default
             // Set Inst data for encounter
             if (me->IsDead())
@@ -190,7 +190,7 @@ struct boss_selin_fireheartAI : public ScriptedAI
         {
             GameObject* EncounterDoor = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_SELIN_ENCOUNTER_DOOR));
             if( EncounterDoor )
-                EncounterDoor->SetGoState(GO_STATE_READY);               //Close the encounter door, open it in JustDied/Reset
+                EncounterDoor->ResetDoorOrButton();               //Close the encounter door, open it in JustDied/Reset
         }
     }
 
@@ -236,11 +236,11 @@ struct boss_selin_fireheartAI : public ScriptedAI
 
         GameObject* EncounterDoor = GameObject::GetGameObject((*me), pInstance->GetData64(DATA_SELIN_ENCOUNTER_DOOR));
         if( EncounterDoor )
-            EncounterDoor->SetGoState(GO_STATE_ACTIVE);                   // Open the encounter door
+            EncounterDoor->UseDoorOrButton();                   // Open the encounter door
 
         GameObject* ContinueDoor = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_SELIN_DOOR));
-        if( ContinueDoor )
-            ContinueDoor->SetGoState(GO_STATE_ACTIVE);                    // Open the door leading further in
+        if (ContinueDoor)
+            ContinueDoor->UseDoorOrButton();                    // Open the door leading further in
 
     }
 

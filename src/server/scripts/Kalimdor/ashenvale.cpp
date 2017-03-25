@@ -243,7 +243,7 @@ struct npc_ruul_snowhoofAI : public npc_escortAI
 
         GameObject* Cage = FindGameObject(GO_CAGE, 20, me);
         if(Cage)
-            Cage->SetGoState(GO_STATE_READY);
+            Cage->ResetDoorOrButton();
             
         completed = false;
     }

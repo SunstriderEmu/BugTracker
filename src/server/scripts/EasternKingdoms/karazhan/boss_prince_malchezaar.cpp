@@ -347,7 +347,7 @@ struct boss_malchezaarAI : public ScriptedAI
             GameObject* Door = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_GAMEOBJECT_NETHER_DOOR));
             if(Door)
             {
-                Door->SetGoState(GO_STATE_ACTIVE);
+                Door->UseDoorOrButton();
             }
 
             pInstance->SetData(DATA_MALCHEZZAR_EVENT, NOT_STARTED);
@@ -381,7 +381,7 @@ struct boss_malchezaarAI : public ScriptedAI
             GameObject* Door = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_GAMEOBJECT_NETHER_DOOR));
             if(Door)
             {
-                Door->SetGoState(GO_STATE_ACTIVE);
+                Door->UseDoorOrButton();
             }
 
             pInstance->SetData(DATA_MALCHEZZAR_EVENT, DONE);
@@ -397,7 +397,7 @@ struct boss_malchezaarAI : public ScriptedAI
             GameObject* Door = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_GAMEOBJECT_NETHER_DOOR));
             if(Door)
             {
-                Door->SetGoState(GO_STATE_READY);
+                Door->ResetDoorOrButton();
             }
 
             pInstance->SetData(DATA_MALCHEZZAR_EVENT, IN_PROGRESS);

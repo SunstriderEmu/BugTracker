@@ -145,19 +145,19 @@ public:
 
         void ShootCannon()
         {
-            DefiasCannon->SetUInt32Value(GAMEOBJECT_STATE, 0);
+            DefiasCannon->UseDoorOrButton();
             DoPlaySound(DefiasCannon, SOUND_CANNONFIRE);
         }
 
         void BlastOutDoor()
         {
-            IronCladDoor->SetUInt32Value(GAMEOBJECT_STATE, 2);
+            IronCladDoor->UseDoorOrButton(0, true);
             DoPlaySound(IronCladDoor, SOUND_DESTROYDOOR);
         }
 
         void LeverStucked()
         {
-            DoorLever->SetUInt32Value(GAMEOBJECT_FLAGS, 4);
+            DoorLever->SetUInt32Value(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND);
         }
 
         void OnGameObjectCreate(GameObject *go)

@@ -117,8 +117,8 @@ public:
                 break;
 
             case ANCIENT_VAULT_DOOR:
-                go->SetUInt32Value(GAMEOBJECT_STATE, 1);
-                go->SetUInt32Value(GAMEOBJECT_FLAGS, 33);
+                go->ResetDoorOrButton();
+                go->SetUInt32Value(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN | GO_FLAG_IN_USE);
                 ancientVaultDoor = go->GetGUID();
 
                 if (Encounters[1] == DONE)

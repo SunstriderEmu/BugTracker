@@ -261,7 +261,7 @@ struct  npc_harrison_jonesAI : public ScriptedAI
         if (suicideTimer) {
             if (suicideTimer <= diff) {
                 if (GameObject* massiveDoor = me->FindNearestGameObject(MASSIVEGATE_ENTRY, 50.0f))
-                    massiveDoor->SetUInt32Value(GAMEOBJECT_STATE, 0);
+                    massiveDoor->UseDoorOrButton();
                 suicideTimer = 0;
                 deathTimer = 5000;
             }

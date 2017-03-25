@@ -115,7 +115,7 @@ public:
 
         if (GameObject *trigger = SearchMausoleumGo(player, GO_TRIGGER, 30))
         {
-            trigger->SetGoState(GO_STATE_READY);
+            trigger->ResetDoorOrButton();
             player->SummonCreature(C_ULAG, 2390.26, 336.47, 40.01, 2.26, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 300000);
             return false;
         }
@@ -137,7 +137,7 @@ public:
 
         if (GameObject *door = SearchMausoleumGo(player, GO_DOOR, 30))
         {
-            _GO->SetGoState(GO_STATE_ACTIVE);
+            _GO->UseDoorOrButton();
             door->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND);
             return true;
         }

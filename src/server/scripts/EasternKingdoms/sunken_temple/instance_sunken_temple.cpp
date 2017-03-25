@@ -168,8 +168,8 @@ public:
             if (tbd1 && tbd2 && tbd3 && tbd4 && tbd5 && tbd6)
                 if (GameObject* pGo = instance->GetGameObject(GOForceField))
                 {
-                    pGo->SetUInt32Value(GAMEOBJECT_FLAGS, 33);
-                    pGo->SetGoState(GO_STATE_ACTIVE);
+                    pGo->SetUInt32Value(GAMEOBJECT_FLAGS, GO_FLAG_NODESPAWN | GO_FLAG_IN_USE);
+                    pGo->UseDoorOrButton();
                 }
         };
 
@@ -179,7 +179,7 @@ public:
                 return;
 
             pGo->SummonGameObject(GO_ATALAI_LIGHT1, Position(pGo->GetPositionX(), pGo->GetPositionY(), pGo->GetPositionZ(), 0), G3D::Quat(), 0);
-            pGo->SetUInt32Value(GAMEOBJECT_FLAGS, 4);
+            pGo->SetUInt32Value(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND);
         }
 
         void UseLastStatue()

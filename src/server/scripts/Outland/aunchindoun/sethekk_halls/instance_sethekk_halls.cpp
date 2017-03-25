@@ -67,7 +67,7 @@ public:
             {
             case DATA_IKISSDOOREVENT:
                 if (IkissDoor)
-                    IkissDoor->SetGoState(GO_STATE_ACTIVE);
+                    IkissDoor->UseDoorOrButton();
                 break;
             }
         }

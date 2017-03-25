@@ -388,9 +388,9 @@ struct boss_felblood_kaelthasAI : public ScriptedAI
                                 if(pInstance)
                                 {
                                     GameObject* KaelLeft = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_KAEL_STATUE_LEFT));
-                                    if(KaelLeft) KaelLeft->SetGoState(GO_STATE_ACTIVE);
+                                    if(KaelLeft) KaelLeft->UseDoorOrButton();
                                     GameObject* KaelRight = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_KAEL_STATUE_RIGHT));
-                                    if(KaelRight) KaelRight->SetGoState(GO_STATE_ACTIVE);
+                                    if (KaelRight) KaelRight->UseDoorOrButton();
                                 }
                             }else
                             {

@@ -137,7 +137,7 @@ public:
                 if (data != IN_PROGRESS)
                 {
                     if (GameObject *Door = instance->GetGameObject(DoorGUID))
-                        Door->SetGoState(GO_STATE_ACTIVE);
+                        Door->UseDoorOrButton();
                 }
                 break;
             case DATA_CHANNELER_EVENT:
@@ -159,7 +159,7 @@ public:
                         }
                         CageTimer = 0;
                         if (GameObject *Door = instance->GetGameObject(DoorGUID))
-                            Door->SetGoState(GO_STATE_ACTIVE);
+                            Door->UseDoorOrButton();
                     }break;
                 case IN_PROGRESS: // Event start.
                     if (Encounters[1] != IN_PROGRESS)
@@ -180,7 +180,7 @@ public:
                             CageTimer = 120000;
                         }
                         if (GameObject *Door = instance->GetGameObject(DoorGUID))
-                            Door->SetGoState(GO_STATE_READY);
+                            Door->ResetDoorOrButton();
                     }break;
                 case DONE: // Add buff and check if all channelers are dead.
                     for (uint64 i : ChannelerGUID)

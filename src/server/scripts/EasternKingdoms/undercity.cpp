@@ -128,7 +128,7 @@ struct npc_lady_sylvanas_windrunnerAI : public ScriptedAI
             return;
             
         if (GameObject* wickerman = me->FindNearestGameObject(180433, 30.0f))
-            wickerman->SetGoState(GO_STATE_READY);
+            wickerman->ResetDoorOrButton();
     }
 
     void UpdateAI(const uint32 diff)
@@ -186,7 +186,7 @@ struct npc_lady_sylvanas_windrunnerAI : public ScriptedAI
                         break;
                     case 6:
                         if (GameObject* wickerman = me->FindNearestGameObject(180433, 30.0f))
-                            wickerman->SetGoState(GO_STATE_ACTIVE);
+                            wickerman->UseDoorOrButton();
                         talkId = 0;
                         TalkTimer = 0;
                     default:

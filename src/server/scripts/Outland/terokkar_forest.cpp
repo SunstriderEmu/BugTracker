@@ -403,7 +403,7 @@ struct npc_isla_starmaneAI : public npc_escortAI
             {
             GameObject* Cage = FindGameObject(GO_CAGE, 10, me);
             if(Cage)
-                Cage->SetGoState(GO_STATE_ACTIVE);
+                Cage->UseDoorOrButton();
             }break;
         case 2: DoScriptText(SAY_PROGRESS_1, me, player); break;
         case 5: DoScriptText(SAY_PROGRESS_2, me, player); break;
@@ -619,7 +619,7 @@ struct npc_kaliri_egg_triggerAI : public ScriptedAI
         me->VisitNearbyGridObject(MAX_SEARCHER_DISTANCE, searcher);
 
         if(eggGO)
-            eggGO->SetGoState(GO_STATE_READY);
+            eggGO->ResetDoorOrButton();
     }
 
     void EnterCombat(Unit *who) override {}
@@ -636,7 +636,7 @@ struct npc_kaliri_egg_triggerAI : public ScriptedAI
             me->VisitNearbyGridObject(MAX_SEARCHER_DISTANCE, searcher);
 
             if(eggGO)
-                eggGO->SetGoState(GO_STATE_ACTIVE);
+                eggGO->UseDoorOrButton();
                 
             caster->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
         }
@@ -652,8 +652,8 @@ bool EffectDummyCreature_npc_kaliri_egg_trigger(Unit* caster, uint32 spellId, ui
         Trinity::GameObjectLastSearcher<Trinity::NearestGameObjectEntryInObjectRangeCheck> searcher(target, eggGO, go_check);
         caster->VisitNearbyGridObject(MAX_SEARCHER_DISTANCE, searcher);
 
-        if(eggGO)
-            eggGO->SetGoState(GO_STATE_ACTIVE);
+        if (eggGO)
+            eggGO->UseDoorOrButton();
 
         caster->DealDamage(target, target->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
 

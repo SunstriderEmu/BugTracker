@@ -111,16 +111,16 @@ public:
             case GOBJECT_DOOR_ORC:
                 HordeGate = go->GetGUID();
                 if (allianceRetreat)
-                    go->SetGoState(GO_STATE_ACTIVE);
+                    go->UseDoorOrButton();
                 else
-                    go->SetGoState(GO_STATE_READY);
+                    go->ResetDoorOrButton();
                 break;
             case GOBJECT_DOOR_ELF:
                 ElfGate = go->GetGUID();
                 if (hordeRetreat)
-                    go->SetGoState(GO_STATE_ACTIVE);
+                    go->UseDoorOrButton();
                 else
-                    go->SetGoState(GO_STATE_READY);
+                    go->ResetDoorOrButton();
                 break;
             }
         }

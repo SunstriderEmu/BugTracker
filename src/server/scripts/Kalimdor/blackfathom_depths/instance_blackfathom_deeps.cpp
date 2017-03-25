@@ -102,22 +102,22 @@ public:
             {
             case GO_FIRE_OF_AKU_MAI_1:
                 m_uiShrine1GUID = pGo->GetGUID();
-                pGo->SetGoState(GO_STATE_READY);
+                pGo->ResetDoorOrButton();
                 pGo->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NOT_SELECTABLE);
                 break;
             case GO_FIRE_OF_AKU_MAI_2:
                 m_uiShrine2GUID = pGo->GetGUID();
-                pGo->SetGoState(GO_STATE_READY);
+                pGo->ResetDoorOrButton();
                 pGo->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NOT_SELECTABLE);
                 break;
             case GO_FIRE_OF_AKU_MAI_3:
                 m_uiShrine3GUID = pGo->GetGUID();
-                pGo->SetGoState(GO_STATE_READY);
+                pGo->ResetDoorOrButton();
                 pGo->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NOT_SELECTABLE);
                 break;
             case GO_FIRE_OF_AKU_MAI_4:
                 m_uiShrine4GUID = pGo->GetGUID();
-                pGo->SetGoState(GO_STATE_READY);
+                pGo->ResetDoorOrButton();
                 pGo->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NOT_SELECTABLE);
                 break;
             case GO_SHRINE_OF_GELIHAST:

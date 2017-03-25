@@ -176,7 +176,7 @@ struct npc_ranger_lilathaAI : public npc_escortAI
             me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
             GameObject* Cage = FindGameObject(GO_CAGE, 20, me);
             if(Cage)
-                Cage->SetGoState(GO_STATE_ACTIVE);
+                Cage->UseDoorOrButton();
             DoScriptText(SAY_START, me, player);
             break;
             }
@@ -226,8 +226,8 @@ struct npc_ranger_lilathaAI : public npc_escortAI
             me->SetFaction(1602);
 
         GameObject* Cage = FindGameObject(GO_CAGE, 20, me);
-        if(Cage)
-            Cage->SetGoState(GO_STATE_READY);
+        if (Cage)
+            Cage->ResetDoorOrButton();
     }
 
     void JustDied(Unit* killer)

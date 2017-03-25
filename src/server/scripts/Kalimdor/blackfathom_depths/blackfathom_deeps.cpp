@@ -31,7 +31,7 @@ public:
 
         if (pInstance)
         {
-            go->SetGoState(GO_STATE_ACTIVE);
+            go->UseDoorOrButton();
             go->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NOT_SELECTABLE);
             switch (go->GetEntry()) {
             case 21118: // North West

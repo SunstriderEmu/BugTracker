@@ -471,7 +471,7 @@ struct boss_illidan_stormrageAI : public ScriptedAI
         {
             GameObject* Door = GameObject::GetGameObject((*me), pInstance->GetData64(i));
             if(Door)
-                Door->SetUInt32Value(GAMEOBJECT_STATE, 0); // Open Doors
+                Door->UseDoorOrButton(); // Open Doors
         }
     }
 
@@ -1194,7 +1194,7 @@ struct npc_akama_illidanAI : public ScriptedAI
     {
         for(uint64 i : DoorGUID)
             if(GETGO(Door, i))
-                Door->SetUInt32Value(GAMEOBJECT_STATE, 0);
+                Door->UseDoorOrButton();
     }
 
     void BeginChannel()
@@ -1421,7 +1421,7 @@ struct npc_akama_illidanAI : public ScriptedAI
             Spirit[0]->InterruptNonMeleeSpells(true);
             Spirit[1]->InterruptNonMeleeSpells(true);
             if(GETGO(Gate, GateGUID))
-                Gate->SetUInt32Value(GAMEOBJECT_STATE, 0);
+                Gate->UseDoorOrButton();
             Timer = 2000;
             break;
         case 9:
@@ -1901,7 +1901,7 @@ public:
             ((cage_trap_triggerAI*)trigger->AI())->Active = true;
             ((cage_trap_triggerAI*)trigger->AI())->CageTrapGUID = go->GetGUID();
         }
-        go->SetUInt32Value(GAMEOBJECT_STATE, 0);
+        go->UseDoorOrButton();
         go->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_IN_USE);
         return true;
     }

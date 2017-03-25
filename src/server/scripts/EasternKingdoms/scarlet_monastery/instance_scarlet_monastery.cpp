@@ -101,7 +101,7 @@ public:
             {
                 GameObject *Shrine = instance->GetGameObject(PumpkinShrineGUID);
                 if (Shrine)
-                    Shrine->SetUInt32Value(GAMEOBJECT_STATE, 1);
+                    Shrine->ResetDoorOrButton();
             }break;
             case DATA_HORSEMAN_EVENT:
                 if (data == DONE)
@@ -115,7 +115,7 @@ public:
                     HorsemanAdds.clear();
                     GameObject *Shrine = instance->GetGameObject(PumpkinShrineGUID);
                     if (Shrine)
-                        Shrine->SetUInt32Value(GAMEOBJECT_STATE, 1);
+                        Shrine->ResetDoorOrButton();
                 }
                 break;
             }

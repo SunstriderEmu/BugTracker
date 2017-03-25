@@ -138,12 +138,12 @@ public:
                 if (data == SPECIAL)
                 {
                     if (GameObject *_go = GameObject::GetGameObject(*player, AccessPanelHydro))
-                        _go->SetGoState(GO_STATE_ACTIVE);
+                        _go->UseDoorOrButton();
 
                     if (GetData(TYPE_MEKGINEER_STEAMRIGGER) == SPECIAL)
                     {
                         if (GameObject *_go = GameObject::GetGameObject(*player, MainChambersDoor))
-                            _go->SetGoState(GO_STATE_ACTIVE);
+                            _go->UseDoorOrButton();
                     }
                 }
                 Encounter[0] = data;
@@ -152,12 +152,12 @@ public:
                 if (data == SPECIAL)
                 {
                     if (GameObject *_go = GameObject::GetGameObject(*player, AccessPanelMek))
-                        _go->SetGoState(GO_STATE_ACTIVE);
+                        _go->UseDoorOrButton();
 
                     if (GetData(TYPE_HYDROMANCER_THESPIA) == SPECIAL)
                     {
                         if (GameObject *_go = GameObject::GetGameObject(*player, MainChambersDoor))
-                            _go->SetGoState(GO_STATE_ACTIVE);
+                            _go->UseDoorOrButton();
                     }
                 }
                 Encounter[1] = data;

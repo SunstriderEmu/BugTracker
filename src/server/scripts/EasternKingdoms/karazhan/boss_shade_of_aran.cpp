@@ -144,7 +144,7 @@ struct boss_aranAI : public ScriptedAI
                 pInstance->SetData(DATA_SHADEOFARAN_EVENT, NOT_STARTED);
 
             if(GameObject* Door = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_GAMEOBJECT_LIBRARY_DOOR)))
-                Door->SetGoState(GO_STATE_ACTIVE);
+                Door->UseDoorOrButton();
         }
     }
 
@@ -166,7 +166,7 @@ struct boss_aranAI : public ScriptedAI
             pInstance->SetData(DATA_SHADEOFARAN_EVENT, DONE);
 
             if(GameObject* Door = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_GAMEOBJECT_LIBRARY_DOOR)))
-                Door->SetGoState(GO_STATE_ACTIVE);
+                Door->UseDoorOrButton();
         }
         
         if (victim->GetTypeId() != TYPEID_PLAYER)
@@ -186,7 +186,7 @@ struct boss_aranAI : public ScriptedAI
         {
             pInstance->SetData(DATA_SHADEOFARAN_EVENT, IN_PROGRESS);
             if(GameObject* Door = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_GAMEOBJECT_LIBRARY_DOOR)))
-                Door->SetGoState(GO_STATE_READY);
+                Door->ResetDoorOrButton();
         }
     }
 
@@ -243,7 +243,7 @@ struct boss_aranAI : public ScriptedAI
                 if(pInstance)
                 {
                     if(GameObject* Door = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_GAMEOBJECT_LIBRARY_DOOR)))
-                        Door->SetGoState(GO_STATE_READY);
+                        Door->ResetDoorOrButton();
                     CloseDoorTimer = 0;
                 }
             }else CloseDoorTimer -= diff;

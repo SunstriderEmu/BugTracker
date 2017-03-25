@@ -165,7 +165,7 @@ public:
             case 186667: KrazsPackageGUID = go->GetGUID(); break;
             case 186728:
                 if (GetData(DATA_GONG_EVENT) == DONE)
-                    go->SetUInt32Value(GAMEOBJECT_STATE, 0);
+                    go->UseDoorOrButton();
                 break;
             default: break;
 

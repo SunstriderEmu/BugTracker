@@ -222,8 +222,8 @@ struct boss_priestess_delrissaAI : public ScriptedAI
 
         pInstance->SetData(DATA_DELRISSA_DEATH_COUNT, 1);
         pInstance->SetData(DATA_DELRISSA_EVENT, DONE);
-        if(GameObject* Door = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_DELRISSA_DOOR)))
-            Door->SetGoState(GO_STATE_ACTIVE);
+        if (GameObject* Door = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_DELRISSA_DOOR)))
+            Door->UseDoorOrButton();
     }
 
     void CheckLootable()
