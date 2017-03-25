@@ -27,26 +27,36 @@ EndScriptData */
 #define ENCOUNTERS     7
 #define RAND_VENDOR    2
 
+//to check
+//186750 //Fudgerick's Fireworks
+//186748 //Harkor's Brew Keg
+//also check the firework launchers (180771)
+//Zungam's Ball and Chain -> 186430
+//fires in front of Zul Jin activation ! Such as 186860
+
+//timer chests :
 //187021 //Harkor's Satchel
 //186648 //Tanzar's Trunk
 //186672 //Ashli's Bag
 //186667 //Kraz's Package
+
 // Chests spawn at bear/eagle/dragonhawk/lynx bosses
 // The loots depend on how many bosses have been killed, but not the entries of the chests
 // But we cannot add loots to gameobject, so we have to use the fixed loot_template
 struct SHostageInfo
 {
     uint32 npc, go;
-    float x, y, z, o;
+    Position chestPosition;
+    G3D::Quat chestRotation;
+    Position npcPosition;
 };
 
 static SHostageInfo HostageInfo[] =
 {
-    {23790, 186648, -57, 1343, 40.77, 3.2}, // bear
-    {23999, 187021, 400, 1414, 74.36, 3.3}, // eagle
-    {24001, 186672, -35, 1134, 18.71, 1.9}, // dragonhawk
-    {24024, 186667, 413, 1117,  6.32, 3.1}  // lynx
-
+    {23790, 186648, { -135.194f, 1333.05f, 48.1739f },  { 0.0f, 0.0f, 0.930417f, 0.366502f  }, { -57.0f, 1343.0f, 40.77f, 3.2f} }, // bear
+    {23999, 187021, { 305.775f, 1467.31f, 81.5875f  },  { 0.0f, 0.0f, 0.694658f, 0.71934f   }, { 400.0f, 1414.0f, 74.36f, 3.3f} }, // eagle
+    {24001, 186672, { 424.102f, 1083.67f, 6.60312f  },  { 0.0f, 0.0f, 0.333806f, 0.942642f  }, { -35.0f, 1134.0f, 18.71f, 1.9f} }, // dragonhawk
+    {24024, 186667, { -80.0906f, 1125.3f, 5.594f    },  { 0.0f, 0.0f, -0.601814f, 0.798636f }, { 413.0f, 1117.0f,  6.32f, 3.1f} }, // lynx
 };
 
 class instance_zulaman : public InstanceMapScript
@@ -191,7 +201,7 @@ public:
             Map::PlayerList::const_iterator i = PlayerList.begin();
             if (Player* i_pl = i->GetSource())
             {
-                if (Unit* Hostage = i_pl->SummonCreature(HostageInfo[num].npc, HostageInfo[num].x, HostageInfo[num].y, HostageInfo[num].z, HostageInfo[num].o, TEMPSUMMON_DEAD_DESPAWN, 0))
+                if (Unit* Hostage = i_pl->SummonCreature(HostageInfo[num].npc, POSITION_GET_X_Y_Z_O(&HostageInfo[num].npcPosition), TEMPSUMMON_DEAD_DESPAWN, 0))
                 {
                     Hostage->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     Hostage->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);

@@ -208,12 +208,12 @@ struct  npc_harrison_jonesAI : public ScriptedAI
     
     void EnterCombat(Unit* pWho) override {}
     
-    void IncreaseClick(uint64 pGUID)
+    bool IncreaseClick(uint64 pGUID)
     {
         // Don't allow the same player to click several times
         for (std::vector<uint64>::const_iterator itr = clickGUIDs.begin(); itr != clickGUIDs.end(); itr++) {
             if ((*itr) == pGUID)
-                return;
+                return false;
         }
         
         gongClicked++;
@@ -221,7 +221,8 @@ struct  npc_harrison_jonesAI : public ScriptedAI
         if (gongClicked < 4)
             s = "s";
         std::stringstream sst;
-        sst << "Encore " << 5 - gongClicked << " personne" << s << " !";
+        //sst << "Encore " << 5 - gongClicked << " personne" << s << " !";
+        sst << "Need " << 5 - gongClicked << " more person" << s << "!";
         if (gongClicked < 5)
             me->Say(sst.str().c_str(), LANG_UNIVERSAL, nullptr);
         
@@ -229,6 +230,8 @@ struct  npc_harrison_jonesAI : public ScriptedAI
         
         if (gongClicked >= 5)
             OpenDoorAndStartTimer();
+
+        return true;
     }
     
     void OpenDoorAndStartTimer()
@@ -303,7 +306,7 @@ bool GossipSelect_npc_harrison_jones(Player* pPlayer, Creature* pCreature, uint3
         pPlayer->PlayerTalkClass->SendCloseGossip();
         if (GameObject* pGo = pCreature->FindNearestGameObject(GONG_ENTRY, 15.0f)) {
             pGo->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_LOCKED);
-            pCreature->SetOrientation(5.7499);
+            pCreature->SetFacingTo(5.7499);
             pCreature->Say("Help me to hit the gong!", LANG_UNIVERSAL, nullptr);
             pCreature->AddAura(45225, pCreature);
         }
@@ -334,12 +337,14 @@ public:
             return false;
         else {
             if (Creature* harrisonJones = pGo->FindNearestCreature(HARRISON_ENTRY, 15.0f, true)) {
-                CAST_AI(npc_harrison_jonesAI, (harrisonJones->AI()))->IncreaseClick(pPlayer->GetGUID());
-                pPlayer->InterruptNonMeleeSpells(true);
-                pPlayer->CastSpell(pPlayer, 45226, true);
-                //pPlayer->CastSpell(pPlayer, 44762, true);
-                if (!pPlayer->HasAuraEffect(45225))
-                    pPlayer->AddAura(45225, pPlayer);
+                if (CAST_AI(npc_harrison_jonesAI, (harrisonJones->AI()))->IncreaseClick(pPlayer->GetGUID()))
+                {
+                    pPlayer->InterruptNonMeleeSpells(true);
+                    pPlayer->CastSpell(pPlayer, 45226, true);
+                    //pPlayer->CastSpell(pPlayer, 44762, true);
+                    /*if (!pPlayer->HasAuraEffect(45225))
+                        pPlayer->AddAura(45225, pPlayer);*/
+                }
             }
 
             return true;
