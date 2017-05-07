@@ -38,23 +38,23 @@ EndScriptData */
 
 const float PortalCoord[3][3] =
 {
-    {-11195.353516, -1613.237183, 278.237258}, // Left side
-    {-11137.846680, -1685.607422, 278.239258}, // Right side
-    {-11094.493164, -1591.969238, 279.949188}  // Back side
+    {-11195.353516f, -1613.237183f, 278.237258f }, // Left side
+    {-11137.846680f, -1685.607422f, 278.239258f }, // Right side
+    {-11094.493164f, -1591.969238f, 279.949188f }  // Back side
 };
 
 enum Netherspite_Portal{
-    RED_PORTAL = 0, // Perseverence
+    RED_PORTAL   = 0, // Perseverence
     GREEN_PORTAL = 1, // Serenity
-    BLUE_PORTAL = 2 // Dominance
+    BLUE_PORTAL  = 2 // Dominance
 };
 
-const uint32 PortalID[3] = {17369, 17367, 17368};
-const uint32 PortalVisual[3] = {30487,30490,30491};
-const uint32 PortalBeam[3] = {30465,30464,30463};
-const uint32 PlayerBuff[3] = {30421,30422,30423};
-const uint32 NetherBuff[3] = {30466,30467,30468};
-const uint32 PlayerDebuff[3] = {38637,38638,38639};
+const uint32 PortalID[3] =     {17369, 17367, 17368};
+const uint32 PortalVisual[3] = {30487, 30490, 30491};
+const uint32 PortalBeam[3] =   {30465, 30464, 30463};
+const uint32 PlayerBuff[3] =   {30421, 30422, 30423};
+const uint32 NetherBuff[3] =   {30466, 30467, 30468};
+const uint32 PlayerDebuff[3] = {38637, 38638, 38639};
 
 struct  boss_netherspiteAI : public ScriptedAI
 {

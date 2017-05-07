@@ -14,7 +14,7 @@ bool GossipHello_npc_teleporter_pvpzone(Player *pPlayer, Creature *pCreature)
 
 bool GossipSelect_npc_teleporter_pvpzone(Player *pPlayer, Creature *pCreature, uint32 sender, uint32 action)
 {
-    float x,y,z,o;
+	float x = {}, y = {}, z = {}, o = {};
     uint32 map = 0;
 	bool loaded = false;
 
