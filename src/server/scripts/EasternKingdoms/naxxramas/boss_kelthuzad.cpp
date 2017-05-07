@@ -256,6 +256,8 @@ struct boss_kelthuzadAI : public ScriptedAI
                     Walk_Pos_Y = ADDY_RIGHT_NEAR;
                     Walk_Pos_Z = ADDZ_RIGHT_NEAR;
                     break;
+				default:
+					return; //will never happen but will silence compiler warning
             }
             pUnit->MonsterMoveWithSpeed(Walk_Pos_X, Walk_Pos_Y, Walk_Pos_Z, 0);
         }
@@ -338,7 +340,7 @@ struct boss_kelthuzadAI : public ScriptedAI
             }else FrostBlast_Timer -= diff;
 
             //start phase 3 when we are 40% health
-            if(!Phase3 && (me->GetHealth()*100 / me->GetMaxHealth()) < 40)
+            if(!Phase3 && me->GetHealthPct() < 40)
             {
                 Phase3 = true;
                     DoScriptText(SAY_REQUEST_AID, me);
@@ -401,6 +403,8 @@ struct boss_kelthuzadAI : public ScriptedAI
                             Walk_Pos_Y = WALKY_RIGHT_NEAR;
                             Walk_Pos_Z = WALKZ_RIGHT_NEAR;
                             break;
+						default:
+							return; //will never happen but will silence compiler warning
                     }
                 
                     if (pUnit)

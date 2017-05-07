@@ -116,7 +116,7 @@ struct boss_huhuranAI : public ScriptedAI
             FrenzyBack_Timer = 15000;
         }else FrenzyBack_Timer -= diff;
 
-        if ( !Berserk && me->GetHealth()*100 / me->GetMaxHealth() < 31 )
+        if ( !Berserk && me->GetHealthPct() < 31 )
         {
             me->InterruptNonMeleeSpells(false);
             me->TextEmote("is going berserk", nullptr);

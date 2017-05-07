@@ -189,10 +189,10 @@ struct Locations
 
 static Locations SpawnPosition[]=
 {
-    {5.3, -11.8, 0.361, 4.2},
-    {11.2, -29.17, 0.361, 2.7},
-    {-5.7, -34.85, 0.361, 1.09},
-    {-11.9, -18, 0.361, 5.87}
+    {  5.3f,  -11.80f, 0.361f, 4.20f},
+    { 11.2f,  -29.17f, 0.361f, 2.70f},
+    { -5.7f,  -34.85f, 0.361f, 1.09f},
+    { -11.9f, -18.00f, 0.361f, 5.87f}
 };
 
 static uint32 PaladinEntry[]= {CHAMPION_BLOODWRATH, CHAMPION_LIGHTREND, CHAMPION_SWIFTBLADE, CHAMPION_SUNSTRIKER};
@@ -285,7 +285,7 @@ struct npc_secondTrialAI : public ScriptedAI
         // healer
         if (spellFlashLight)
         {
-            if (me->GetHealth()*100 / me->GetMaxHealth() < 70)
+            if (me->GetHealthPct() < 70)
             {
                 if (timerFlashLight < diff)
                 {
@@ -345,9 +345,10 @@ struct master_kelerun_bloodmournAI : public ScriptedAI
 
     void Reset() override {
       questPhase = 0;
-      timer = 60000;
+      timer = 60 * SECOND * IN_MILLISECONDS;
       paladinPhase = 0;
-      uint64 paladinGuid[] = {0,0,0,0};
+	  for (uint8 i = 0; i < 4; i++)
+		  paladinGuid[i] = 0;
     }
 
     void EnterCombat(Unit* pWho) override {}
@@ -661,14 +662,14 @@ struct Location
 
 static Location SpawnLocations[]=
 {
-    {8270.68, -7188.53, 139.619},
-    {8284.27, -7187.78, 139.603},
-    {8297.43, -7193.53, 139.603},
-    {8303.5, -7201.96, 139.577},
-    {8273.22, -7241.82, 139.382},
-    {8254.89, -7222.12, 139.603},
-    {8278.51, -7242.13, 139.162},
-    {8267.97, -7239.17, 139.517}
+    {8270.68f, -7188.53f, 139.619f},
+    {8284.27f, -7187.78f, 139.603f},
+    {8297.43f, -7193.53f, 139.603f},
+    {8303.50f, -7201.96f, 139.577f},
+    {8273.22f, -7241.82f, 139.382f},
+    {8254.89f, -7222.12f, 139.603f},
+    {8278.51f, -7242.13f, 139.162f},
+    {8267.97f, -7239.17f, 139.517f}
 };
 
 struct npc_infused_crystalAI : public ScriptedAI

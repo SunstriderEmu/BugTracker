@@ -88,7 +88,7 @@ struct mylittlebomblingAI : public ScriptedAI
         if(!normalizePlayerName(name))
             return false;
 
-        Player *target = sObjectAccessor->FindConnectedPlayerByName(name.c_str());
+        Player *target = ObjectAccessor::FindConnectedPlayerByName(name.c_str());
 
         if(target) {
             AttackStart(target);

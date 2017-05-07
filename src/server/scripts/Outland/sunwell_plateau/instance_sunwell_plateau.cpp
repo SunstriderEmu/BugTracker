@@ -278,7 +278,7 @@ public:
                 HandleGameObject(0, false, pGo);
                 break;
             case 188119:
-                IceBarrier = pGo->GetGUID(); break;
+                IceBarrier = pGo->GetGUID();
                 pGo->SetKeepActive(true);
                 break;
             }

@@ -158,7 +158,7 @@ struct npc_lady_sylvanas_windrunnerAI : public ScriptedAI
         else if (WickermanEvent) {
             if (TalkTimer) {
                 if (TalkTimer <= diff) {
-                    uint32 talkId = 0;
+                    int32 talkId = 0;
                     switch (TalkPhase) {
                     case 0:
                         talkId = YELL_WICKERMAN_1;

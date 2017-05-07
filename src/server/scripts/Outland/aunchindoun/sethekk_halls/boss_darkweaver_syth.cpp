@@ -132,19 +132,19 @@ struct boss_darkweaver_sythAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (((me->GetHealth()*100) / me->GetMaxHealth() < 90) && !summon90)
+        if ((me->GetHealthPct() < 90) && !summon90)
         {
             SythSummoning();
             summon90 = true;
         }
 
-        if (((me->GetHealth()*100) / me->GetMaxHealth() < 50) && !summon50)
+        if ((me->GetHealthPct() < 50) && !summon50)
         {
             SythSummoning();
             summon50 = true;
         }
 
-        if (((me->GetHealth()*100) / me->GetMaxHealth() < 10) && !summon10)
+        if ((me->GetHealthPct() < 10) && !summon10)
         {
             SythSummoning();
             summon10 = true;

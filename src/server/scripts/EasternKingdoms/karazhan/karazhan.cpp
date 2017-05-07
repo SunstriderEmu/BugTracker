@@ -95,12 +95,12 @@ float Spawns[6][2]=
 
 float StageLocations[6][2]=
 {
-    {-10866.711, -1779.816},                                // Open door, begin walking (0)
-    {-10894.917, -1775.467},                                // (1)
-    {-10896.044, -1782.619},                                // Begin Speech after this (2)
-    {-10894.917, -1775.467},                                // Resume walking (back to spawn point now) after speech (3)
-    {-10866.711, -1779.816},                                // (4)
-    {-10866.700, -1781.030}                                 // Summon mobs, open curtains, close door (5)
+    {-10866.711f, -1779.816f},                                // Open door, begin walking (0)
+    {-10894.917f, -1775.467f},                                // (1)
+    {-10896.044f, -1782.619f},                                // Begin Speech after this (2)
+    {-10894.917f, -1775.467f},                                // Resume walking (back to spawn point now) after speech (3)
+    {-10866.711f, -1779.816f},                                // (4)
+    {-10866.700f, -1781.030f}                                 // Summon mobs, open curtains, close door (5)
 };
 
 #define CREATURE_SPOTLIGHT  19525
@@ -565,11 +565,11 @@ struct npc_image_of_medivhAI : public ScriptedAI
     }
 
 
-    uint32 NextStep(uint32 Step)
+    uint32 NextStep(uint32 step)
     {
         Unit* arca = ObjectAccessor::GetUnit((*me),ArcanagosGUID);
         Map *map = me->GetMap();
-        switch(Step)
+        switch(step)
         {
         case 1:
             me->Yell(SAY_DIALOG_MEDIVH_1,LANG_UNIVERSAL,nullptr);

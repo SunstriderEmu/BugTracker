@@ -46,7 +46,7 @@ struct mob_webbed_creatureAI : public ScriptedAI
 
     void JustDied(Unit* pKiller)
     override {
-        uint32 spawnCreatureID;
+		uint32 spawnCreatureID = {};
 
         switch(rand()%3)
         {
@@ -61,8 +61,7 @@ struct mob_webbed_creatureAI : public ScriptedAI
                 break;
         }
 
-        if(spawnCreatureID)
-            DoSpawnCreature(spawnCreatureID,0,0,0,me->GetOrientation(), TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+        DoSpawnCreature(spawnCreatureID,0,0,0,me->GetOrientation(), TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
     }
 };
 

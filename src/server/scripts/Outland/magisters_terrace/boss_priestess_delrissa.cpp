@@ -60,10 +60,10 @@ enum eDelrissa {
 #define POS_Z               -19.9215
 
 float LackeyLocations[4][2] = {
-    {123.77, 17.6007},
-    {131.731, 15.0827},
-    {121.563, 15.6213},
-    {129.988, 17.2355},
+    {123.770f, 17.6007f},
+    {131.731f, 15.0827f},
+    {121.563f, 15.6213f},
+    {129.988f, 17.2355f},
 };
 
 const uint32 AddEntry[8] = {
@@ -432,7 +432,7 @@ struct boss_priestess_guestAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     override {
-        if(((me->GetHealth()*100 / me->GetMaxHealth()) < 25) && !UsedPotion)
+        if(((me->GetHealthPct()) < 25) && !UsedPotion)
         {
             DoCast(me, SPELL_HEALING_POTION, true);
             UsedPotion = true;
@@ -806,7 +806,7 @@ struct boss_yazzaiAI : public boss_priestess_guestAI
             }
         }else Polymorph_Timer -= diff;
 
-        if(((me->GetHealth()*100 / me->GetMaxHealth()) < 35) && !HasIceBlocked)
+        if(((me->GetHealthPct()) < 35) && !HasIceBlocked)
         {
             DoCast(me, SPELL_ICE_BLOCK);
             HasIceBlocked = true;

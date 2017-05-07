@@ -203,7 +203,7 @@ struct boss_dathrohan_balnazzarAI : public ScriptedAI
             }else Dazed_Timer -= diff;
 
             //BalnazzarTransform
-            if (me->GetHealth()*100 / me->GetMaxHealth() < 40)
+            if (me->GetHealthPct() < 40)
             {
                 //Cast
                 DoCast(me,SPELL_BALNAZZARTRANSFORM); //restore hp, mana and stun

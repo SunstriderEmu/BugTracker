@@ -50,7 +50,7 @@ EndScriptData */
 #define MOB_VOID_PORTAL             19224
 #define SPELL_VOID_PORTAL_VISUAL    33569
 
-float VorpilPosition[3] = {-252.8820,-264.3030,17.1};
+float VorpilPosition[3] = {-252.8820f, -264.3030f, 17.1f};
 
 float VoidPortalCoords[5][3] =
 {

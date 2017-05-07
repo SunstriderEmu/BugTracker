@@ -1,18 +1,3 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*/
 
 /* ScriptData
 SDName: Generic_Creature
@@ -61,7 +46,7 @@ struct generic_creatureAI : public ScriptedAI
             if (BuffTimer < diff )
             {
                 //Find a spell that targets friendly and applies an aura (these are generally buffs)
-                SpellInfo const *info = SelectSpell(me, -1, -1, SELECT_TARGET_ANY_FRIEND, 0, 0, 0, 0, SELECT_EFFECT_AURA);
+                SpellInfo const *info = SelectSpell(me, 0xFFFFFFF, 0xFFFFFFF, SELECT_TARGET_ANY_FRIEND, 0, 0, 0, 0, SELECT_EFFECT_AURA);
 
                 if (info && !GlobalCooldown)
                 {
@@ -92,19 +77,23 @@ struct generic_creatureAI : public ScriptedAI
                 SpellInfo const *info = nullptr;
 
                 //Select a healing spell if less than 30% hp
-                if (me->GetHealth()*100 / me->GetMaxHealth() < 30)
-                    info = SelectSpell(me, -1, -1, SELECT_TARGET_ANY_FRIEND, 0, 0, 0, 0, SELECT_EFFECT_HEALING);
+				if (me->GetHealthPct() < 30)
+                    info = SelectSpell(me, 0xFFFFFFF, 0xFFFFFFF, SELECT_TARGET_ANY_FRIEND, 0, 0, 0, 0, SELECT_EFFECT_HEALING);
 
                 //No healing spell available, select a hostile spell
-                if (info) Healing = true;
-                else info = SelectSpell(me->GetVictim(), -1, -1, SELECT_TARGET_ANY_ENEMY, 0, 0, 0, 0, SELECT_EFFECT_DONTCARE);
+                if (info) 
+					Healing = true;
+                else 
+					info = SelectSpell(me->GetVictim(), 0xFFFFFFF, 0xFFFFFFF, SELECT_TARGET_ANY_ENEMY, 0, 0, 0, 0, SELECT_EFFECT_DONTCARE);
 
                 //50% chance if elite or higher, 20% chance if not, to replace our white hit with a spell
                 if (info && (rand() % (me->GetCreatureTemplate()->rank > 1 ? 2 : 5) == 0) && !GlobalCooldown)
                 {
                     //Cast the spell
-                    if (Healing)DoCastSpell(me, info);
-                    else DoCastSpell(me->GetVictim(), info);
+                    if (Healing)
+						DoCastSpell(me, info);
+                    else 
+						DoCastSpell(me->GetVictim(), info);
 
                     //Set our global cooldown
                     GlobalCooldown = GENERIC_CREATURE_COOLDOWN;
@@ -123,12 +112,14 @@ struct generic_creatureAI : public ScriptedAI
                 SpellInfo const *info = nullptr;
 
                 //Select a healing spell if less than 30% hp ONLY 33% of the time
-                if (me->GetHealth()*100 / me->GetMaxHealth() < 30 && rand() % 3 == 0)
-                    info = SelectSpell(me, -1, -1, SELECT_TARGET_ANY_FRIEND, 0, 0, 0, 0, SELECT_EFFECT_HEALING);
+                if (me->GetHealthPct() < 30 && rand() % 3 == 0)
+                    info = SelectSpell(me, 0xFFFFFFF, 0xFFFFFFF, SELECT_TARGET_ANY_FRIEND, 0, 0, 0, 0, SELECT_EFFECT_HEALING);
 
                 //No healing spell available, See if we can cast a ranged spell (Range must be greater than ATTACK_DISTANCE)
-                if (info) Healing = true;
-                else info = SelectSpell(me->GetVictim(), -1, -1, SELECT_TARGET_ANY_ENEMY, 0, 0, NOMINAL_MELEE_RANGE, 0, SELECT_EFFECT_DONTCARE);
+                if (info) 
+					Healing = true;
+
+                else info = SelectSpell(me->GetVictim(), 0xFFFFFFF, 0xFFFFFFF, SELECT_TARGET_ANY_ENEMY, 0, 0, NOMINAL_MELEE_RANGE, 0, SELECT_EFFECT_DONTCARE);
 
                 //Found a spell, check if we arn't on cooldown
                 if (info && !GlobalCooldown)
@@ -140,8 +131,10 @@ struct generic_creatureAI : public ScriptedAI
                     }
 
                     //Cast spell
-                    if (Healing) DoCastSpell(me,info);
-                    else DoCastSpell(me->GetVictim(),info);
+                    if (Healing) 
+						DoCastSpell(me,info);
+                    else 
+						DoCastSpell(me->GetVictim(),info);
 
                     //Set our global cooldown
                     GlobalCooldown = GENERIC_CREATURE_COOLDOWN;

@@ -203,7 +203,7 @@ struct boss_scarlet_commander_mograineAI : public ScriptedAI
             return;
 
         //If we are <50% hp cast Arcane Bubble and start casting SPECIAL Arcane Explosion
-        if (me->GetHealth()*100 / me->GetMaxHealth() <= 50 && !me->IsNonMeleeSpellCast(false))
+        if (me->GetHealthPct() <= 50 && !me->IsNonMeleeSpellCast(false))
         {
             //heal_Timer
             if (Heal_Timer < diff)
@@ -218,10 +218,10 @@ struct boss_scarlet_commander_mograineAI : public ScriptedAI
                         DoCast(me,SPELL_FLASHHEAL6);
                         break;
                 }
-                return;
 
                 //60 seconds until we should cast this agian
                 Heal_Timer = 60000;
+				return;
             }else Heal_Timer -= diff;
         }
 
@@ -344,19 +344,19 @@ struct boss_high_inquisitor_whitemaneAI : public ScriptedAI
         */
 
         //If we are <75% hp cast healing spells at self and Mograine
-        if (me->GetHealth()*100 / me->GetMaxHealth() <= 75 )
+        if (me->GetHealthPct() <= 75 )
         {
             if (Healing_Timer < diff)
             {
                 DoCast(me,SPELL_FLASHHEAL6);
-                return;
 
                 //22-32 seconds until we should cast this agian
-                Healing_Timer = 22000 + rand()%10000;
+				Healing_Timer = urand(22 * SECOND * IN_MILLISECONDS, 32 * SECOND * IN_MILLISECONDS);
+				return;
             }else Healing_Timer -= diff;
         }
 
-        if (me->GetHealth()*100 / me->GetMaxHealth() <= 30)
+        if (me->GetHealthPct() <= 30)
         {
             if (Renew_Timer < diff)
             {

@@ -131,7 +131,7 @@ struct boss_general_angerforgeAI : public ScriptedAI
         }else Cleave_Timer -= diff;
 
         //Adds_Timer
-        if ( me->GetHealth()*100 / me->GetMaxHealth() < 21 )
+		if (me->GetHealthPct() < 21 )
         {
             if (Adds_Timer < diff)
             {
@@ -145,7 +145,7 @@ struct boss_general_angerforgeAI : public ScriptedAI
         }
 
         //Summon Medics
-        if ( !Medics && me->GetHealth()*100 / me->GetMaxHealth() < 21 )
+		if (me->GetHealthPct() < 21 )
         {
             SummonMedics(me->GetVictim());
             SummonMedics(me->GetVictim());

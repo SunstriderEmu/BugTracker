@@ -111,7 +111,7 @@ class Boss_Baron_Geddon : public CreatureScript
                         break;
                 }
 
-                if (me->GetHealth()*100 / me->GetMaxHealth() <= 2.5f)
+                if (me->GetHealthPct() <= 2.5f)
                 {
                     events.RescheduleEvent(EV_ARMAGEDDOM, 200);
                 }

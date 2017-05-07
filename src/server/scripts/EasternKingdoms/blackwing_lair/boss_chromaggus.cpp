@@ -199,7 +199,7 @@ struct boss_chromaggusAI : public ScriptedAI
                 me->RemoveAurasDueToSpell(CurrentVurln_Spell);
 
             //Cast new random vurlnabilty on self
-            uint32 spell;
+			uint32 spell = {};
             switch (rand()%5)
             {
                 case 0: spell = SPELL_FIRE_VULNERABILITY; break;
@@ -280,7 +280,7 @@ struct boss_chromaggusAI : public ScriptedAI
         }else Frenzy_Timer -= diff;
 
         //Enrage if not already enraged and below 20%
-        if (!Enraged && (me->GetHealth()*100 / me->GetMaxHealth()) < 20)
+        if (!Enraged &&  me->GetHealthPct()  < 20)
         {
             DoCast(me,SPELL_ENRAGE);
             Enraged = true;

@@ -350,7 +350,7 @@ struct boss_nightbaneAI : public ScriptedAI
             }else CleaveTimer -= diff;
 
             uint32 Prozent;
-            Prozent = (me->GetHealth()*100) / me->GetMaxHealth();
+            Prozent = me->GetHealthPct();
 
             if (Prozent < 75 && FlyCount == 0) // first take off 75%
                 TakeOff();

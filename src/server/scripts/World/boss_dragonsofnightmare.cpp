@@ -219,9 +219,9 @@ struct DreamFogAI : public ScriptedAI
         return;
     }
     
-    void Instakill(Unit* Target)
+    void Instakill(Unit* target)
     {
-        Target->DealDamage(Target, Target->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+		target->DealDamage(target, target->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
     }
     
     void UpdateAI(const uint32 diff)

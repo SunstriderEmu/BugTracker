@@ -98,7 +98,7 @@ struct boss_jeklikAI : public ScriptedAI
 
         if( me->GetVictim() && me->IsAlive())
         {
-            if ((me->GetHealth()*100 / me->GetMaxHealth() > 50))
+            if ((me->GetHealthPct() > 50))
             {
                 if (Charge_Timer < diff)
                 {

@@ -1,18 +1,3 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*/
 
 /* ScriptData
 SDName: boss_cannon_master_willey
@@ -32,15 +17,15 @@ struct Location
 
 static Location SpawnLocations[] =
 {
-    { 3553.85, -2945.88, 125.001, 0.592 },
-    { 3559.20, -2952.92, 125.001, 0.592 },
-    { 3552.41, -2948.66, 125.001, 0.592 },
-    { 3555.65, -2953.51, 125.001, 0.592 },
-    { 3547.92, -2950.97, 125.001, 0.592 },
-    { 3553.09, -2952.12, 125.001, 0.592 },
-    { 3552.72, -2957.77, 125.001, 0.592 },
-    { 3547.15, -2953.16, 125.001, 0.592 },
-    { 3550.20, -2957.43, 125.001, 0.592 }
+	{ 3553.85f, -2945.88f, 125.001f, 0.592f },
+	{ 3559.20f, -2952.92f, 125.001f, 0.592f },
+	{ 3552.41f, -2948.66f, 125.001f, 0.592f },
+	{ 3555.65f, -2953.51f, 125.001f, 0.592f },
+	{ 3547.92f, -2950.97f, 125.001f, 0.592f },
+	{ 3553.09f, -2952.12f, 125.001f, 0.592f },
+	{ 3552.72f, -2957.77f, 125.001f, 0.592f },
+	{ 3547.15f, -2953.16f, 125.001f, 0.592f },
+	{ 3550.20f, -2957.43f, 125.001f, 0.592f }
 };
 
 enum eWilleySpells {

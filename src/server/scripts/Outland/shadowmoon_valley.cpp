@@ -736,18 +736,18 @@ struct npc_overlord_morghorAI : public ScriptedAI
         Event = true;
     }
 
-    uint32 NextStep(uint32 Step)
+    uint32 NextStep(uint32 step)
     {
         Player* plr = ObjectAccessor::GetPlayer(*me, PlayerGUID);
 
         Unit* Illi = ObjectAccessor::GetUnit((*me), IllidanGUID);
 
-        if (!plr || (!Illi && Step < 23)) {
+        if (!plr || (!Illi && step < 23)) {
             EnterEvadeMode();
             return 0;
         }
 
-        switch(Step)
+        switch(step)
         {
         case 0:
             return 0;

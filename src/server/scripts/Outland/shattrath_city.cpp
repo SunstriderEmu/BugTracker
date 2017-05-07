@@ -412,20 +412,24 @@ struct npc_dirty_larryAI : public ScriptedAI
         }
     }
 
-    uint32 NextStep(uint32 Step)
+    uint32 NextStep(uint32 step)
     {
         Player* player = ObjectAccessor::GetPlayer(*me, PlayerGUID);
 
-        switch(Step)
+        switch(step)
         {
-        case 0:{ me->SetInFront(player);
+        case 0:
+		{ 
+			me->SetInFront(player);
             Unit* Creepjack = FindCreature(NPC_CREEPJACK, 20, me);
             if(Creepjack)
                 Creepjack->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
             Unit* Malone = FindCreature(NPC_MALONE, 20, me);
             if(Malone)
                 Malone->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-            me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP); }return 2000;
+            me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+			return 2000;
+		}
         case 1: DoScriptText(SAY_1, me, player); return 3000;
         case 2: DoScriptText(SAY_2, me, player); return 5000;
         case 3: DoScriptText(SAY_3, me, player); return 2000;

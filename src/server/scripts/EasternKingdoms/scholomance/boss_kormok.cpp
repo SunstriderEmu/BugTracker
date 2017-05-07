@@ -131,7 +131,7 @@ struct boss_kormokAI : public ScriptedAI
         }else Minion_Timer -= diff;
 
         //Summon 2 Bone Mages
-        if ( !Mages && me->GetHealth()*100 / me->GetMaxHealth() < 26 )
+        if ( !Mages && me->GetHealthPct() < 26 )
         {
             //Cast
             SummonMages(me->GetVictim());

@@ -140,9 +140,9 @@ struct firework_controllerAI : public ScriptedAI
             if(GameObject* gob = me->SummonGameObject(event->spellorGobId,Position(x,y,z,event->ori), G3D::Quat(event->morphX,event->morphY,0,0),0))
             {
                 gob->SetFloatValue(OBJECT_FIELD_SCALE_X, event->size);
-                Map* map = sMapMgr->CreateMap(me->GetMapId(),me); 
-                map->Remove(gob,false); 
-                map->Add(gob);
+				Map* map = me->GetMap();
+                map->RemoveFromMap(gob,false); 
+                map->AddToMap(gob);
                 gob->Delete(); //this trigger explosion
             }
         }

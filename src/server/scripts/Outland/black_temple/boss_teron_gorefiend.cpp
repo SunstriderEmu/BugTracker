@@ -591,10 +591,10 @@ struct mob_shadowy_constructAI : public ScriptedAI
         else
             ResetCheckTimer -= diff;
             
-        if(AttackTimer < diff)
+        if(AttackTimer && AttackTimer <= diff)
         {
             SetAggro = true;
-            AttackTimer = -1;
+			AttackTimer = 0;
 
         }else AttackTimer -= diff;
 

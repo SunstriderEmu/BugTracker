@@ -97,7 +97,7 @@ struct boss_sapphironAI : public ScriptedAI
                     Blizzard_Timer = 20000;
                 }else Blizzard_Timer -= diff;
 
-                if (me->GetHealth()*100 / me->GetMaxHealth() > 10)
+                if (me->GetHealthPct() > 10)
                 {
                     if(Fly_Timer < diff)
                     {
@@ -150,7 +150,7 @@ struct boss_sapphironAI : public ScriptedAI
                     }else land_Timer -= diff;
                 }
 
-                if ((me->GetHealth()*100) / me->GetMaxHealth() <= 10)
+                if (me->GetHealthPct() <= 10)
                 {
                     if (Beserk_Timer < diff)
                     {

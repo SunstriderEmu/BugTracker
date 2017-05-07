@@ -412,7 +412,7 @@ public:
             //DoRespawnGameObject(GoChestGUID,DAY);
             Player* player = GetPlayer();
             if (player)
-                player->SummonGameObject(GO_CHEST_SEVEN, Position(1265.3, -286.888, -78.2192, 2.23695), G3D::Quat(), 86400);
+                player->SummonGameObject(GO_CHEST_SEVEN, Position(1265.3, -286.888, -78.2192, 2.23695), G3D::Quat(), 1 * DAY);
             HandleGameObject(GoTombExitGUID, true);//event done, open exit door
             HandleGameObject(GoTombEnterGUID, true);//event done, open entrance door
             TombEventStarterGUID = 0;

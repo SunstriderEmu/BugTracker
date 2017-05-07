@@ -66,7 +66,7 @@ struct boss_vectusAI : public ScriptedAI
         }else BlastWave_Timer -= diff;
 
         //Frenzy_Timer
-        if ( me->GetHealth()*100 / me->GetMaxHealth() < 25 )
+        if ( me->GetHealthPct() < 25 )
         {
             if (Frenzy_Timer < diff)
             {

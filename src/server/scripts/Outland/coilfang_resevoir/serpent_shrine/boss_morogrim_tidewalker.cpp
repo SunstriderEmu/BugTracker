@@ -245,7 +245,7 @@ struct boss_morogrim_tidewalkerAI : public ScriptedAI
             }else WateryGrave_Timer -= diff;
 
             //Start Phase2
-            if ((me->GetHealth()*100 / me->GetMaxHealth()) < 25)
+            if ((me->GetHealthPct()) < 25)
                 Phase2 = true;
         }
         else

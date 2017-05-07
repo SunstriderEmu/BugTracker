@@ -105,7 +105,7 @@ struct npc_aeranasAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if ((me->GetHealth()*100) / me->GetMaxHealth() < 30)
+        if (me->GetHealthPct() < 30)
         {
             me->SetFaction(FACTION_FRIENDLY);
             me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
@@ -747,9 +747,9 @@ struct npc_pathaleon_imageAI : public ScriptedAI
         }
     }
 
-    int32 NextStep(uint32 uiSteps)
+    int32 NextStep(uint32 step)
     {              
-        switch (uiSteps)
+        switch (step)
         {
             case 1:
                 return 10000;
@@ -872,6 +872,7 @@ struct npc_demoniac_scryerAI : public ScriptedAI
         float fAngle;
         switch (uiButtressCount)
         {
+			default:
             case 1: fAngle = 0.0f; break;
             case 2: fAngle = 4.6f; break;
             case 3: fAngle = 1.5f; break;
@@ -1208,13 +1209,13 @@ struct npc_vindicator_sedaiAI : public ScriptedAI
         }
     }
 
-    uint32 NextStep(uint32 uiSteps)
+    uint32 NextStep(uint32 step)
     {
         Creature* pEsc = me->FindNearestCreature(NPC_ESCORT, 20);
         Creature* pAmb = me->FindNearestCreature(NPC_AMBUSHER, 35);
         Creature* pKrun = me->FindNearestCreature(NPC_KRUN, 20);
 
-        switch(uiSteps)
+        switch(step)
         {
             case 1:
                 DoSpawnEscort();
@@ -1407,7 +1408,7 @@ struct npc_anchorite_baradaAI : public ScriptedAI
         }
     }
 
-    uint32 NextStep(uint32 uiSteps)
+    uint32 NextStep(uint32 step)
     {
         Creature* pColonel = me->FindNearestCreature(NPC_COLONEL_JULES, 15);
         if (!pColonel)
@@ -1415,7 +1416,7 @@ struct npc_anchorite_baradaAI : public ScriptedAI
 
         colonel = me->GetAngle(pColonel->GetPositionX(), pColonel->GetPositionY());
 
-        switch(uiSteps)
+        switch(step)
         {
             case 1:me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
                    pColonel->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);

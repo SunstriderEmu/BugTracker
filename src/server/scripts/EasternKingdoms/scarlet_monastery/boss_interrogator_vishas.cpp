@@ -60,31 +60,31 @@ struct boss_interrogator_vishasAI : public ScriptedAI
             return;
 
         //If we are low on hp Do sayings
-        if ( me->GetHealth()*100 / me->GetMaxHealth() <= 60 && !me->IsNonMeleeSpellCast(false))
+        if ( me->GetHealthPct() <= 60 && !me->IsNonMeleeSpellCast(false))
         {
             //Yell_Timer
             if (Yell_Timer < diff)
             {
                 me->Yell(SAY_HEALTH1,LANG_UNIVERSAL,nullptr);
                 DoPlaySoundToSet(me,SOUND_HEALTH1);
-                return;
 
                 //60 seconds until we should cast this agian
                 Yell_Timer = 60000;
+				return;
             }else Yell_Timer -= diff;
         }
 
-        if ( me->GetHealth()*100 / me->GetMaxHealth() <= 30 && !me->IsNonMeleeSpellCast(false))
+        if ( me->GetHealthPct() <= 30 && !me->IsNonMeleeSpellCast(false))
         {
             //Yell_Timer
             if (Yell_Timer < diff)
             {
                 me->Yell(SAY_HEALTH2,LANG_UNIVERSAL,nullptr);
                 DoPlaySoundToSet(me,SOUND_HEALTH2);
-                return;
 
                 //60 seconds until we should cast this agian
                 Yell_Timer = 6000000;
+				return;
             }else Yell_Timer -= diff;
         }
 

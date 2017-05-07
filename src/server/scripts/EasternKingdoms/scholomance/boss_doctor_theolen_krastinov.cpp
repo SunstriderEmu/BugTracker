@@ -79,7 +79,7 @@ struct boss_theolenkrastinovAI : public ScriptedAI
         }else Cleave_Timer -= diff;
 
         //Frenzy_Timer
-        if ( me->GetHealth()*100 / me->GetMaxHealth() < 26 )
+        if ( me->GetHealthPct() < 26 )
         {
             if (Frenzy_Timer < diff)
             {

@@ -70,7 +70,7 @@ struct boss_bloodmage_thalnosAI : public ScriptedAI
             return;
 
         //If we are <35% hp
-        if ( me->GetHealth()*100 / me->GetMaxHealth() <= 35)
+        if ( me->GetHealthPct() <= 35)
         {
             Yell_Timer -= diff;
 

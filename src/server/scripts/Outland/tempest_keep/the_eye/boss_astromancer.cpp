@@ -66,7 +66,7 @@ EndScriptData */
 #define MIN_RANGE_FOR_DOT_JUMP      20.0f
 
                              // x,          y,      z,         o
-static float SolarianPos[4] = {432.909, -373.424, 17.9608, 1.06421};
+static float SolarianPos[4] = {432.909f, -373.424f, 17.9608f, 1.06421f};
 
 struct boss_high_astromancer_solarianAI : public BossAI
 {
@@ -180,12 +180,12 @@ struct boss_high_astromancer_solarianAI : public BossAI
 
     float Portal_Y(float x, float radius)
     {
-        float z;
+		float z = 0.0f;
 
         switch(rand()%2)
         {
-            case 0: z = 1; break;
-            case 1: z = -1; break;
+            case 0: z = 1.0f; break;
+            case 1: z = -1.0f; break;
         }
         return (z*sqrt(radius*radius - (x - CENTER_X)*(x - CENTER_X)) + CENTER_Y);
     }
@@ -362,7 +362,7 @@ struct boss_high_astromancer_solarianAI : public BossAI
         }
 
         //When Solarian reaches 20% she will transform into a huge void walker.
-        if(Phase != 4 && ((me->GetHealth()*100 / me->GetMaxHealth())<20))
+        if(Phase != 4 && ((me->GetHealthPct())<20))
         {
             Phase = 4;
 

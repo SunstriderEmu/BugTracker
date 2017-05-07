@@ -71,8 +71,8 @@ struct boss_murmurAI : public ScriptedAI
     // Sonic Boom instant damage (needs core fix instead of this)
     void SpellHitTarget(Unit *target, const SpellInfo *spell)
     override {
-        if(target && target->IsAlive() && spell && spell->Id == SPELL_SONIC_BOOM_EFFECT)
-            me->DealDamage(target,(target->GetHealth()*90)/100,nullptr,SPELL_DIRECT_DAMAGE,SPELL_SCHOOL_MASK_NATURE,spell);
+        if(target && target->IsAlive() && spell && spell->Id == uint32(SPELL_SONIC_BOOM_EFFECT))
+            me->DealDamage(target, (target->GetHealth()*90)/100, nullptr, SPELL_DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NATURE, spell);
     }
 
     void UpdateAI(const uint32 diff)

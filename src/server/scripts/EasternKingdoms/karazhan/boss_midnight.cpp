@@ -301,7 +301,7 @@ struct boss_attumenAI : public ScriptedAI
         {
             if(ChargeTimer < diff)
             {
-                Unit *target;
+				Unit *target = nullptr;
                 std::list<HostileReference *> t_list = me->getThreatManager().getThreatList();
                 std::vector<Unit *> target_list;
                 for(auto & itr : t_list)
@@ -314,8 +314,11 @@ struct boss_attumenAI : public ScriptedAI
                 if(target_list.size())
                     target = *(target_list.begin()+rand()%target_list.size());
 
-                DoCast(target, SPELL_CHARGE);
-                ChargeTimer = 20000;
+				if (target)
+				{
+					DoCast(target, SPELL_CHARGE);
+					ChargeTimer = 20000;
+				}
             } else ChargeTimer -= diff;
 
             if(KnockDownTimer < diff)

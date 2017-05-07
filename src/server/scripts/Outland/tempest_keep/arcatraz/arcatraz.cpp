@@ -199,7 +199,7 @@ struct npc_millhouse_manastormAI : public ScriptedAI
         if( !UpdateVictim() )
             return;
 
-        if( !LowHp && ((me->GetHealth()*100 / me->GetMaxHealth()) < 20) )
+        if( !LowHp && ((me->GetHealthPct()) < 20) )
         {
             DoScriptText(SAY_LOWHP, me);
             LowHp = true;

@@ -122,7 +122,7 @@ struct boss_ouroAI : public ScriptedAI
             return;
         }
  
-        if ((me->GetHealth()*100 / me->GetMaxHealth()) <= 20.0 && !me->HasAuraEffect(SPELL_BERSERK, 0))
+        if ((me->GetHealthPct()) <= 20.0 && !me->HasAuraEffect(SPELL_BERSERK, 0))
         {
             EnterPhase(PHASE_BERSERK);
         }

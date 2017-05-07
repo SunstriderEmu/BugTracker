@@ -48,15 +48,15 @@ struct boss_azshir_the_sleeplessAI : public ScriptedAI
             return;
 
         //If we are <50% hp cast Soul Siphon rank 1
-        if ( me->GetHealth()*100 / me->GetMaxHealth() <= 50 && !me->IsNonMeleeSpellCast(false))
+        if ( me->GetHealthPct() <= 50 && !me->IsNonMeleeSpellCast(false))
         {
             //SoulSiphon_Timer
             if (SoulSiphon_Timer < diff)
             {
                 DoCast(me->GetVictim(),SPELL_SOULSIPHON);
-                return;
 
                 SoulSiphon_Timer = 20000;
+				return;
             }else SoulSiphon_Timer -= diff;
         }
 

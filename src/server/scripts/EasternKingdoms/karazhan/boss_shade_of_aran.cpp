@@ -449,7 +449,7 @@ struct boss_aranAI : public ScriptedAI
             SuperCastTimer = 35000 + (rand()%5000);
         }else SuperCastTimer -= diff;
 
-        if(!ElementalsSpawned && me->GetHealth()*100 / me->GetMaxHealth() < 40)
+        if(!ElementalsSpawned &&  me->GetHealthPct() < 40)
         {
             ElementalsSpawned = true;
 

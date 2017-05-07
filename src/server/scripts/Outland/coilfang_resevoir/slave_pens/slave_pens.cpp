@@ -141,7 +141,7 @@ struct npc_coilfang_slavehandlerAI : public ScriptedAI
     override { 
         if(id == MESSAGE_SEND_SLAVES)
         {
-            Unit* target = sObjectAccessor->GetObjectInWorld(data,(Unit*)nullptr);
+			Unit* target = ObjectAccessor::GetUnit(*me, ObjectGuid(data));
             if(!target)
                 return 0;
             std::list<Creature*> slavesList;

@@ -112,7 +112,7 @@ struct boss_vexallusAI : public ScriptedAI
         if (!UpdateVictim() )
             return;
 
-        if(me->GetHealth()*100 / me->GetMaxHealth() < 11)
+        if(me->GetHealthPct() < 11)
         {
             Enraged = true;
         }
@@ -120,7 +120,7 @@ struct boss_vexallusAI : public ScriptedAI
         if(!Enraged)
         {
             //used for check, when Vexallus cast adds 85%, 70%, 55%, 40%, 25%
-            if ((me->GetHealth()*100 / me->GetMaxHealth()) < (100-(SpawnAddInterval*(AlreadySpawnedAmount+1))))
+            if ((me->GetHealthPct()) < (100-(SpawnAddInterval*(AlreadySpawnedAmount+1))))
             {
                 DoScriptText(SAY_ENERGY, me);
                 DoScriptText(EMOTE_DISCHARGE_ENERGY, me);

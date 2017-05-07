@@ -80,7 +80,7 @@ struct boss_high_inquisitor_fairbanksAI : public ScriptedAI
             return;
 
         //If we are <45% hp cast Renew rank 6 or Flash heal rank 4
-        if ( me->GetHealth()*100 / me->GetMaxHealth() <= 45 && !me->IsNonMeleeSpellCast(false) && Healing_Timer < diff)
+        if ( me->GetHealthPct() <= 45 && !me->IsNonMeleeSpellCast(false) && Healing_Timer < diff)
         {
             DoCast(me, rand()%2 ? SPELL_RENEW6 : SPELL_FLASHHEAL4);
             Healing_Timer = 30000;

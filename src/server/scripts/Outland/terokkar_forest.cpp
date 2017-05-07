@@ -411,9 +411,9 @@ struct npc_isla_starmaneAI : public npc_escortAI
         case 29:DoScriptText(SAY_PROGRESS_4, me, player);
             if (player)
             {
-                if( player->GetTeam() == TEAM_ALLIANCE)
+                if( player->GetTeam() == ALLIANCE)
                     player->GroupEventHappens(QUEST_EFTW_A, me);
-                else if(player->GetTeam() == TEAM_HORDE)
+                else if(player->GetTeam() == HORDE)
                     player->GroupEventHappens(QUEST_EFTW_H, me);
             } Completed = true;
             me->SetInFront(player); break;
@@ -439,9 +439,9 @@ struct npc_isla_starmaneAI : public npc_escortAI
             Player* player = GetPlayerForEscort();
             if (player && !Completed)
             {
-                if(player->GetTeam() == TEAM_ALLIANCE)
+                if(player->GetTeam() == ALLIANCE)
                     player->FailQuest(QUEST_EFTW_A);
-                else if(player->GetTeam() == TEAM_HORDE)
+                else if(player->GetTeam() == HORDE)
                     player->FailQuest(QUEST_EFTW_H);
             }
         }

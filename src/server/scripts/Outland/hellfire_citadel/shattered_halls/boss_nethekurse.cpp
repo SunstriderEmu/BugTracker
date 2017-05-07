@@ -310,7 +310,7 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
                 DeathCoil_Timer = 15000+rand()%5000;
             }else DeathCoil_Timer -= diff;
 
-            if ((me->GetHealth()*100) / me->GetMaxHealth() <= 20)
+            if (me->GetHealthPct() <= 20)
                 Phase = true;
 
             DoMeleeAttackIfReady();

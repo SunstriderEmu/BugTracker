@@ -509,7 +509,7 @@ struct boss_sathrovarrAI : public ScriptedAI
 
         if(CheckTimer < diff)
         {
-            if (((me->GetHealth()*100 / me->GetMaxHealth()) < 10) && !isEnraged)
+            if (((me->GetHealthPct()) < 10) && !isEnraged)
             {
                 Unit* Kalecgos = ObjectAccessor::GetUnit(*me, KalecgosGUID);
                 if(Kalecgos)
@@ -523,7 +523,7 @@ struct boss_sathrovarrAI : public ScriptedAI
                 isEnraged = true;
             }
 
-            if(!isBanished && (me->GetHealth()*100)/me->GetMaxHealth() < 1)
+            if(!isBanished && me->GetHealthPct() < 1)
             {
                 if(Unit *Kalecgos = ObjectAccessor::GetUnit(*me, KalecgosGUID))
                 {
@@ -675,14 +675,14 @@ struct boss_kalecAI : public ScriptedAI
                 YellSequence++;
                 break;
             case 1:
-                if((me->GetHealth()*100)/me->GetMaxHealth() < 50)
+                if(me->GetHealthPct() < 50)
                 {
                     DoScriptText(SAY_GOOD_NEAR_DEATH, me);
                     YellSequence++;
                 }
                 break;
             case 2:
-                if((me->GetHealth()*100)/me->GetMaxHealth() < 10)
+                if(me->GetHealthPct() < 10)
                 {
                     DoScriptText(SAY_GOOD_NEAR_DEATH2, me);
                     YellSequence++;
@@ -761,7 +761,7 @@ void boss_kalecgosAI::UpdateAI(const uint32 diff)
 
         if(CheckTimer < diff)
          {
-             if (((me->GetHealth()*100 / me->GetMaxHealth()) < 10) && !isEnraged)
+             if (((me->GetHealthPct()) < 10) && !isEnraged)
              {
                  Unit* Sath = ObjectAccessor::GetUnit(*me, SathGUID);
                  if(Sath)
@@ -775,7 +775,7 @@ void boss_kalecgosAI::UpdateAI(const uint32 diff)
                  isEnraged = true;
              }
 
-             if(!isBanished && (me->GetHealth()*100)/me->GetMaxHealth() < 1)
+             if(!isBanished && me->GetHealthPct() < 1)
              {
                  if(Unit *Sath = ObjectAccessor::GetUnit(*me, SathGUID))
                  {

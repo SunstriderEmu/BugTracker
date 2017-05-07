@@ -248,7 +248,7 @@ struct boss_exarch_maladaarAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if (!Avatar_summoned && ((me->GetHealth()*100) / me->GetMaxHealth() < 25))
+        if (!Avatar_summoned && (me->GetHealthPct() < 25))
         {
             if (me->IsNonMeleeSpellCast(false))
                 me->InterruptNonMeleeSpells(true);

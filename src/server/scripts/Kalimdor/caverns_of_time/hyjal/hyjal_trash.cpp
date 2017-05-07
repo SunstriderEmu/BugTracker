@@ -23,35 +23,35 @@ float HordeWPs[8][3]=//basic waypoints from spawn to leader
 };
 float AllianceWPs[8][3]=//basic waypoints from spawn to leader
 {
-    {4896.08,    -1576.35,    1333.65},
-    {4898.68,    -1615.02,    1329.48},
-    {4907.12,    -1667.08,    1321.00},
-    {4963.18,    -1699.35,    1340.51},
-    {4989.16,    -1716.67,    1335.74},//first WP in the base, after the gate
-    {5026.27,    -1736.89,    1323.02},
-    {5037.77,    -1770.56,    1324.36},
-    {5067.23,    -1789.95,    1321.17}
+    {4896.08f,    -1576.35f,    1333.65f},
+    {4898.68f,    -1615.02f,    1329.48f},
+    {4907.12f,    -1667.08f,    1321.00f},
+    {4963.18f,    -1699.35f,    1340.51f},
+    {4989.16f,    -1716.67f,    1335.74f},//first WP in the base, after the gate
+    {5026.27f,    -1736.89f,    1323.02f},
+    {5037.77f,    -1770.56f,    1324.36f},
+    {5067.23f,    -1789.95f,    1321.17f}
 };
 
 float FrostWyrmWPs[3][3]=//waypoints for the frost wyrms in horde base
 {
-    {5580.82,    -2628.83,    1528.28},
-    {5550.90,    -2667.16,    1505.45},
-    {5459.64,    -2725.91,    1484.83}
+    {5580.82f,    -2628.83f,    1528.28f},
+    {5550.90f,    -2667.16f,    1505.45f},
+    {5459.64f,    -2725.91f,    1484.83f}
 };
 
 float GargoyleWPs[3][3]=//waypoints for the gargoyles in horde base
 {
-    {5533.66,    -2634.32,    1495.33},
-    {5517.88,    -2712.05,    1490.54},
-    {5459.64,    -2725.91,    1484.83}
+    {5533.66f,    -2634.32f,    1495.33f},
+    {5517.88f,    -2712.05f,    1490.54f},
+    {5459.64f,    -2725.91f,    1484.83f}
 };
 
 float FlyPathWPs[3][3]=//waypoints for the gargoyls and frost wyrms in horde base in wave 1/3
 {
-    {5531.96, -2772.83, 1516.68},
-    {5498.32, -2734.84, 1497.01},
-    {5456.67, -2725.48, 1493.08}
+    {5531.96f, -2772.83f, 1516.68f},
+    {5498.32f, -2734.84f, 1497.01f},
+    {5456.67f, -2725.48f, 1493.08f}
 };
 
 float AllianceOverrunWP[55][3]=//waypoints in the alliance base used in the end in the cleaning wave

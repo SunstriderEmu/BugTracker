@@ -270,10 +270,10 @@ struct boss_fathomlord_karathressAI : public ScriptedAI
         }else Enrage_Timer -= diff;
 
         //Blessing of Tides Trigger
-        if ((me->GetHealth()*100 / me->GetMaxHealth()) <= 75 && !BlessingOfTides)
+        if ((me->GetHealthPct()) <= 75 && !BlessingOfTides)
         {
             BlessingOfTides = true;
-            bool continueTriggering;
+			bool continueTriggering = false;
             Creature* Advisor;
             for(uint8 i = 0; i < 4; ++i)
                 if(Advisors[i])
@@ -418,7 +418,7 @@ struct boss_fathomguard_sharkkisAI : public ScriptedAI
         {
             pet = true;
             //uint32 spell_id;
-            uint32 pet_id;
+			uint32 pet_id = 0;
             switch( rand()%2 )
             {
             case 0:
@@ -689,7 +689,7 @@ struct boss_fathomguard_caribdisAI : public ScriptedAI
 
     Unit* selectAdvisorUnit()
     {
-        Unit* pUnit;
+		Unit* pUnit = nullptr;
         if(pInstance)
         {
             switch(rand()%4)
@@ -707,9 +707,10 @@ struct boss_fathomguard_caribdisAI : public ScriptedAI
                 pUnit = me;
                 break;
             }
-        }else pUnit = me;
+        } else 
+			pUnit = me;
 
-                return pUnit;
+			return pUnit;
         }
 };
 

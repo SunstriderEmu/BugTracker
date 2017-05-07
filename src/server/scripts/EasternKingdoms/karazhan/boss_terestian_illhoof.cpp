@@ -57,8 +57,8 @@ EndScriptData */
 
 float PortalLocations[2][2]=
 {
-    {-11249.6933, -1704.61023},
-    {-11242.1160, -1713.33325},
+    {-11249.6933f, -1704.61023f},
+    {-11242.1160f, -1713.33325f},
 };
 
 struct mob_kilrekAI : public ScriptedAI
@@ -70,14 +70,10 @@ struct mob_kilrekAI : public ScriptedAI
 
     InstanceScript* pInstance;
 
-    uint64 TerestianGUID;
-
     uint32 AmplifyTimer;
 
     void Reset()
     override {
-        TerestianGUID = 0;
-
         AmplifyTimer = 0;
     }
 
@@ -98,10 +94,10 @@ struct mob_kilrekAI : public ScriptedAI
     override {
         if(pInstance)
         {
-            uint64 TerestianGUID = pInstance->GetData64(DATA_TERESTIAN);
-            if(TerestianGUID)
+            uint64 terestianGUID = pInstance->GetData64(DATA_TERESTIAN);
+            if(terestianGUID)
             {
-                Unit* Terestian = ObjectAccessor::GetUnit((*me), TerestianGUID);
+                Unit* Terestian = ObjectAccessor::GetUnit((*me), terestianGUID);
                 if(Terestian && Terestian->IsAlive())
                     DoCast(Terestian, SPELL_BROKEN_PACT, true);
             }
@@ -119,7 +115,7 @@ struct mob_kilrekAI : public ScriptedAI
             me->InterruptNonMeleeSpells(false);
             DoCast(me->GetVictim(),SPELL_AMPLIFY_FLAMES);
 
-            AmplifyTimer = 20000;
+            AmplifyTimer = 20 * SECOND * IN_MILLISECONDS;
         }else AmplifyTimer -= diff;
 
         //Chain cast

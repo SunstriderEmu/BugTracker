@@ -54,7 +54,7 @@ struct boss_houndmaster_lokseyAI : public ScriptedAI
             return;
 
         //If we are <10% hp cast healing spells at self and Mograine
-        if ( me->GetHealth()*100 / me->GetMaxHealth() <= 10 && !me->IsNonMeleeSpellCast(false) && Enrage_Timer < diff)
+        if ( me->GetHealthPct() <= 10 && !me->IsNonMeleeSpellCast(false) && Enrage_Timer < diff)
         {
             DoCast(me,SPELL_ENRAGE);
             Enrage_Timer = 900000;

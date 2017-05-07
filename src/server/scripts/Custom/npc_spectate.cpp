@@ -428,7 +428,7 @@ bool GossipSelectWithCode_npc_spectate( Player *player, Creature *_Creature, uin
                     return true;
                 }
 
-                Player* target = sObjectAccessor->FindConnectedPlayerByName(name.c_str());
+                Player* target = ObjectAccessor::FindConnectedPlayerByName(name.c_str());
                 if (!target)
                 {
                     _Creature->Whisper("Could not find player.", LANG_UNIVERSAL, player);

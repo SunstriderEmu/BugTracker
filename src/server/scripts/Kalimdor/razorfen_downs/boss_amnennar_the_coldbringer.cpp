@@ -104,7 +104,7 @@ struct boss_amnennar_the_coldbringerAI : public ScriptedAI
             FrostBolt_Timer = 8000;
         } else FrostBolt_Timer -= diff;
 
-        if ( !Spectrals && me->GetHealth()*100 / me->GetMaxHealth() < 50 )
+        if ( !Spectrals && me->GetHealthPct() < 50 )
         {
             me->Yell(SAY_1, LANG_UNIVERSAL, nullptr);
             DoPlaySoundToSet(me, SOUND_SUMMON);

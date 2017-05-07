@@ -92,12 +92,12 @@ uint32 RingBoss[]=
 
 float RingLocations[6][3]=
 {
-    {604.802673, -191.081985, -54.058590},                  // ring
-    {604.072998, -222.106918, -52.743759},                  // first gate
-    {621.400391, -214.499054, -52.814453},                  // hiding in corner
-    {601.300781, -198.556992, -53.950256},                  // ring
-    {631.818359, -180.548126, -52.654770},                  // second gate
-    {627.390381, -201.075974, -52.692917}                   // hiding in corner
+    {604.802673f, -191.081985f, -54.058590f},                  // ring
+    {604.072998f, -222.106918f, -52.743759f},                  // first gate
+    {621.400391f, -214.499054f, -52.814453f},                  // hiding in corner
+    {601.300781f, -198.556992f, -53.950256f},                  // ring
+    {631.818359f, -180.548126f, -52.654770f},                  // second gate
+    {627.390381f, -201.075974f, -52.692917f}                   // hiding in corner
 };
 
 class ATRingOfLaw : AreaTriggerScript
@@ -412,7 +412,7 @@ struct mob_phalanxAI : public ScriptedAI
         }else ThunderClap_Timer -= diff;
 
         //FireballVolley_Timer
-        if( me->GetHealth()*100 / me->GetMaxHealth() < 51 )
+		if( me->GetHealthPct() < 51)
         {
             if (FireballVolley_Timer < diff)
             {
@@ -469,7 +469,7 @@ bool GossipHello_npc_kharan_mighthammer(Player *player, Creature *_Creature)
     if( player->GetQuestStatus(4342) == QUEST_STATUS_INCOMPLETE )
         player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
 
-    if (player->GetTeam() == TEAM_HORDE)
+    if (player->GetTeam() == HORDE)
         player->SEND_GOSSIP_MENU_TEXTID(2473, _Creature->GetGUID());
     else
         player->SEND_GOSSIP_MENU_TEXTID(2474, _Creature->GetGUID());
@@ -516,7 +516,7 @@ bool GossipSelect_npc_kharan_mighthammer(Player *player, Creature *_Creature, ui
             break;
         case GOSSIP_ACTION_INFO_DEF+9:
             player->CLOSE_GOSSIP_MENU();
-            if (player->GetTeam() == TEAM_HORDE)
+            if (player->GetTeam() == HORDE)
                 player->AreaExploredOrEventHappens(QUEST_4001);
             else
                 player->AreaExploredOrEventHappens(QUEST_4342);
@@ -597,8 +597,8 @@ enum DughalQuests
 #define SAY_DUGHAL_FREE         "Thank you, $N! I'm free!!!"
 #define GOSSIP_DUGHAL           "You're free, Dughal! Get out of here!"
 
-InstanceScript *pInstance;
 /*
+InstanceScript *pInstance;
 struct npc_dughal_stormwingAI : public npc_escortAI
 {
     npc_dughal_stormwingAI(Creature *c) : npc_escortAI(c) {}

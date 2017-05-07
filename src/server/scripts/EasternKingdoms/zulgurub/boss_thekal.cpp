@@ -189,7 +189,7 @@ struct boss_thekalAI : public ScriptedAI
                 }else Resurrect_Timer -= diff;
             }
 
-            if ((me->GetHealth()*100 / me->GetMaxHealth() == 100) && WasDead)
+            if ((me->GetHealthPct() == 100) && WasDead)
             {
                 WasDead = false;
             }
@@ -226,7 +226,7 @@ struct boss_thekalAI : public ScriptedAI
                     SummonTigers_Timer = 10000 + rand()%4000;
                 }else SummonTigers_Timer -= diff;
 
-                if ((me->GetHealth()*100 / me->GetMaxHealth() < 11) && !Enraged)
+                if ((me->GetHealthPct() < 11) && !Enraged)
                 {
                     DoCast(me, SPELL_ENRAGE);
                     Enraged = true;

@@ -2223,7 +2223,7 @@ bool GossipSelect_guard_orgrimmar(Player *player, Creature *_Creature, uint32 se
 
 bool ReceiveEmote_guard_orgrimmar(Player *player, Creature *_Creature, uint32 emote)
 {
-    if( player->GetTeam() == TEAM_HORDE )
+    if( player->GetTeam() == HORDE )
         DoReplyToTextEmote(_Creature,emote);
     return true;
 }
@@ -3388,7 +3388,7 @@ bool GossipSelect_guard_stormwind(Player *player, Creature *_Creature, uint32 se
 
 bool ReceiveEmote_guard_stormwind(Player *player, Creature *_Creature, uint32 emote)
 {
-    if( player->GetTeam() == TEAM_ALLIANCE )
+    if( player->GetTeam() == ALLIANCE )
         DoReplyToTextEmote(_Creature,emote);
     return true;
 }

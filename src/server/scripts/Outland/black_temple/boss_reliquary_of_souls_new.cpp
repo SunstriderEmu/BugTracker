@@ -181,7 +181,7 @@ public:
             case DATA_SOUL_SPAWN:
                 {
                 soulCount++;
-                Creature* soul = me->GetMap()->GetCreature(MAKE_NEW_GUID(data, CREATURE_ENSLAVED_SOUL, HIGHGUID_UNIT));
+                Creature* soul = me->GetMap()->GetCreature(MAKE_NEW_GUID(data, CREATURE_ENSLAVED_SOUL, HighGuid::Unit));
                 if (soul)
                 {
                     Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0,200.0f,true);
@@ -216,15 +216,16 @@ public:
                 return;
             }
             
-            Creature* essence;
+			Creature* essence = nullptr;
             if (essenceGUID != 0) {
                 essence = ObjectAccessor::GetCreature(*me, essenceGUID);
-                if (!essence) {
-                    EnterEvadeMode();
-                    return;
-                }
             }
-            
+
+			if (!essence) {
+				EnterEvadeMode();
+				return;
+			}
+
             if (timer <= diff) {
                 switch (step) {
                 case 0:

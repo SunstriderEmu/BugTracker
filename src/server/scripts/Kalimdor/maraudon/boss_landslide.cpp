@@ -66,7 +66,7 @@ struct boss_landslideAI : public ScriptedAI
         }else Trample_Timer -= diff;
 
         //Landslide
-        if ( me->GetHealth()*100 / me->GetMaxHealth() < 50 )
+        if ( me->GetHealthPct() < 50 )
         {
             if (Landslide_Timer < diff)
             {

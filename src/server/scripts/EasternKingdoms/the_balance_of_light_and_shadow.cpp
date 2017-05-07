@@ -1,22 +1,3 @@
-/*
- * Copyright (C) 2008-2010 TrinityCore <http://www.trinitycore.org/>
- * Copyright (C) 2006-2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the
- * Free Software Foundation; either version 2 of the License, or (at your
- * option) any later version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
- * more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program. If not, see <http://www.gnu.org/licenses/>.
- */
-
-
 
 #define QUEST_BALANCEOFLIGHT   7622
 
@@ -34,9 +15,9 @@
 #define WAVE_COUNT             5
 
 //broadcast_text table
-#define PEASANT_ARRIVAL_SAY1  1  //The Scourge are upon us ! Run ! Run for your lives !
-#define PEASANT_ARRIVAL_SAY2  2  //Please help us ! The Prince has gone mad !
-#define PEASANT_ARRIVAL_SAY3  3  //Seek sanctuary in Hearthglen ! It is our only hope !
+#define PEASANT_ARRIVAL_SAY1   1  //The Scourge are upon us ! Run ! Run for your lives !
+#define PEASANT_ARRIVAL_SAY2   2  //Please help us ! The Prince has gone mad !
+#define PEASANT_ARRIVAL_SAY3   3  //Seek sanctuary in Hearthglen ! It is our only hope !
 #define ERIS_END_SAY1          4  //We are saved ! The peasants have escaped the Scourge ! / Nous sommes sauvés ! Les paysans ont échappés au Fléau !
 #define ERIS_END_SAY2          5  //I have failed once more...
 #define PEASANT_END_SAY1       6  //Thank you, kind stranger. May your heroism never be forgotten.
@@ -60,9 +41,9 @@ struct Locations
 };
 
 static Locations ArchersPositions[] ={
-    { 3347.6, -3071.3, 177.9, 1.6},
-    { 3357, -3063.8, 172.4, 1.8},
-    { 3371.9, -3069.4, 175.3, 2.1},
+    { 3347.6, -3071.3, 177.9,  1.6},
+    { 3357,   -3063.8, 172.4,  1.8},
+    { 3371.9, -3069.4, 175.3,  2.1},
     { 3334.6, -3053.3, 174.05, 0.9},
     { 3369.6, -3024.6, 171.77, 3.3}
 };
@@ -93,11 +74,11 @@ static Locations PeasantsPositions[] ={
 #define ARRIVAL_POSITION_COUNT 5
 
 static Locations PeasantsArrivalPositions[] = {
-    { 3329.598877, -2975.505127, 160.366943, 0},
-    { 3333.926025, -2973.781982, 160.776489, 0},
-    { 3324.293457, -2976.472900, 160.308640, 0},
-    { 3331.634766, -2974.401367, 160.427734, 0},
-    { 3326.627930, -2975.803223, 160.591400, 0}
+    { 3329.598877f, -2975.505127f, 160.366943f, 0},
+    { 3333.926025f, -2973.781982f, 160.776489f, 0},
+    { 3324.293457f, -2976.472900f, 160.308640f, 0},
+    { 3331.634766f, -2974.401367f, 160.427734f, 0},
+    { 3326.627930f, -2975.803223f, 160.591400f, 0}
 };
 
 struct  npc_eris_havenfireAI : public ScriptedAI
@@ -310,6 +291,7 @@ struct  npc_eris_havenfireAI : public ScriptedAI
 bool QuestAccept_npc_eris_havenfire(Player* pPlayer, Creature* pCreature, Quest const* quest)
 {
     if (((npc_eris_havenfireAI*) pCreature->AI())->EventStarted == false) {
+
         ((npc_eris_havenfireAI*) pCreature->AI())->Reset();
         ((npc_eris_havenfireAI*) pCreature->AI())->EventStarted = true;
         ((npc_eris_havenfireAI*) pCreature->AI())->MyLittlePriest = pPlayer;
@@ -355,7 +337,7 @@ struct  npc_escaping_peasantAI : public ScriptedAI
     }
 };
 
-struct  npc_scourge_archerAI : public ScriptedAI
+struct npc_scourge_archerAI : public ScriptedAI
 {
 
     npc_scourge_archerAI(Creature * c) : ScriptedAI(c)
@@ -380,16 +362,17 @@ struct  npc_scourge_archerAI : public ScriptedAI
     override {
         if (Arrow_Timer < diff) {
             Creature* target = ObjectAccessor::GetCreature(*me, targetGUID);
-            if (target && target->IsAlive() && me->GetDistance(target) < 60 && target->GetEntry() != CREATURE_ENRIS) {
+            if (target && target->IsAlive() && me->GetDistance(target) < 60.0f) {
                 AttackStart(target);
                 me->AttackStop(); //visual debug purpose
                 Arrow_Timer = 2700;
                 DoCast(target, SPELL_ARROW, false);
-                if (rand() % 10 == 0) target->CastSpell(target, SPELL_DEATHSDOOR, true);
+                if (rand() % 10 == 0) 
+					target->CastSpell(target, SPELL_DEATHSDOOR, true);
             }
             else {
-                target = (Creature*) SelectTarget(SELECT_TARGET_RANDOM, 0, 60, false);
-                if (target)
+                Unit* uTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 60.0f, false);
+                if (uTarget && uTarget->GetTypeId() == TYPEID_UNIT && target->GetEntry() != CREATURE_ENRIS)
                     targetGUID = target->GetGUID();
             }
         }

@@ -36,7 +36,7 @@ EndScriptData */
 #define SEARCH_RANGE            5
 #define DUST_COVERED_CHEST      185119
 
-#define BOTH 536 // TEAM_HORDE + TEAM_ALLIANCE
+#define BOTH 536 // HORDE + ALLIANCE
 
 float playerTeleportPosition[4] = { -11107.241211, -1842.897461, 229.625198, 5.385472 };
 
@@ -76,12 +76,12 @@ typedef enum chessOrientationType
     ORI_NE  = 3
 } ChessOrientationType;
 
-float orientations[4] = { 3.809080, 2.235102, 0.661124, 5.385472 };
+float orientations[4] = { 3.809080f, 2.235102f, 0.661124f, 5.385472f };
 
 /*
 x = case (0, 0) - y = case (7, 7)
     --------------------
-        TEAM_HORDE PIECES  y
+        HORDE PIECES  y
 
 X
 
@@ -299,14 +299,14 @@ struct npc_echo_of_medivhAI : public ScriptedAI
         case NPC_BISHOP_H:
         case NPC_ROOK_H:
         case NPC_KING_H:
-            return (pInstance->GetData(CHESS_EVENT_TEAM) == TEAM_ALLIANCE);
+            return (pInstance->GetData(CHESS_EVENT_TEAM) == ALLIANCE);
         case NPC_PAWN_A:
         case NPC_KNIGHT_A:
         case NPC_QUEEN_A:
         case NPC_BISHOP_A:
         case NPC_ROOK_A:
         case NPC_KING_A:
-            return (pInstance->GetData(CHESS_EVENT_TEAM) == TEAM_HORDE);
+            return (pInstance->GetData(CHESS_EVENT_TEAM) == HORDE);
         }
 
         return false;
@@ -419,7 +419,7 @@ struct npc_echo_of_medivhAI : public ScriptedAI
         if (!pInstance)
             return;
         
-        if (pInstance->GetData(CHESS_EVENT_TEAM) == TEAM_HORDE) {
+        if (pInstance->GetData(CHESS_EVENT_TEAM) == HORDE) {
             switch (piece->GetEntry()) {
             case NPC_ROOK_H:   DoScriptText(SCRIPTTEXT_LOSE_ROOK_P, me);     break;
             case NPC_ROOK_A:   DoScriptText(SCRIPTTEXT_LOSE_ROOK_M, me);     break;
@@ -459,7 +459,7 @@ struct npc_echo_of_medivhAI : public ScriptedAI
             default: break;
             }
         }
-        else if (pInstance->GetData(CHESS_EVENT_TEAM) == TEAM_ALLIANCE) {
+        else if (pInstance->GetData(CHESS_EVENT_TEAM) == ALLIANCE) {
             switch(piece->GetEntry()) {
             case NPC_ROOK_A:   DoScriptText(SCRIPTTEXT_LOSE_ROOK_P, me);     break;
             case NPC_ROOK_H:   DoScriptText(SCRIPTTEXT_LOSE_ROOK_M, me);     break;
@@ -552,7 +552,9 @@ struct npc_echo_of_medivhAI : public ScriptedAI
         bool res = false;
         bool foundOld = false;
         bool foundNew = false;
-        uint8 oldCol = 8, oldRow = 8, newCol, newRow;
+		uint8 oldCol = 8, oldRow = 8;
+		uint8 newCol = {};
+		uint8 newRow = {};
         for (uint8 row = 0; row < 8; row++) {
             for (uint8 col = 0; col < 8; col++) {
                 BoardCell* cell = board[row][col];
@@ -743,7 +745,7 @@ struct npc_echo_of_medivhAI : public ScriptedAI
         }
         case ORI_NW:
         {
-            int randomCol;
+			int randomCol = {};
             switch (rand()%3) {
             case 0:
                 randomCol = pieceCol-1;
@@ -768,7 +770,7 @@ struct npc_echo_of_medivhAI : public ScriptedAI
         }
         case ORI_NE:
         {
-            int randomRow;
+			int randomRow = {};
             switch (rand()%3) {
             case 0:
                 randomRow = pieceRow-1;
@@ -801,13 +803,13 @@ struct npc_echo_of_medivhAI : public ScriptedAI
         switch (rand()%3) {
         case 0: // Heal king
         {
-            if (pInstance->GetData(CHESS_EVENT_TEAM) == TEAM_ALLIANCE) {
+            if (pInstance->GetData(CHESS_EVENT_TEAM) == ALLIANCE) {
                 if (Creature* king = me->FindNearestCreature(NPC_KING_H, 80.0f, true)) {
                     if (king->IsAlive())
                         king->SetHealth(king->GetMaxHealth());
                 }
             }
-            else if (pInstance->GetData(CHESS_EVENT_TEAM) == TEAM_HORDE) {
+            else if (pInstance->GetData(CHESS_EVENT_TEAM) == HORDE) {
                 if (Creature* king = me->FindNearestCreature(NPC_KING_A, 80.0f, true)) {
                     if (king->IsAlive())
                         king->SetHealth(king->GetMaxHealth());
@@ -943,13 +945,13 @@ struct npc_chesspieceAI : public ScriptedAI
         
         if (npc_medivh) {
             switch (pInstance->GetData(CHESS_EVENT_TEAM)) {
-            case TEAM_ALLIANCE:
+            case ALLIANCE:
                 if (me->GetEntry() == NPC_KING_H)
                     DoScriptText(SCRIPTTEXT_MEDIVH_CHECK, npc_medivh);
                 else if (me->GetEntry() == NPC_KING_A)
                     DoScriptText(SCRIPTTEXT_PLAYER_CHECK, npc_medivh);
             break;
-            case TEAM_HORDE:
+            case HORDE:
                 if (me->GetEntry() == NPC_KING_A)
                     DoScriptText(SCRIPTTEXT_MEDIVH_CHECK, npc_medivh);
                 else if (me->GetEntry() == NPC_KING_H)
@@ -1008,9 +1010,9 @@ struct npc_chesspieceAI : public ScriptedAI
         else
             me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
-        if (pInstance->GetData(CHESS_EVENT_TEAM) == TEAM_ALLIANCE)
+        if (pInstance->GetData(CHESS_EVENT_TEAM) == ALLIANCE)
             me->SetFaction(A_FACTION);
-        else if (pInstance->GetData(CHESS_EVENT_TEAM) == TEAM_HORDE)
+        else if (pInstance->GetData(CHESS_EVENT_TEAM) == HORDE)
             me->SetFaction(H_FACTION);
         else
             me->SetFaction(me->GetCreatureTemplate()->faction);
@@ -1180,10 +1182,10 @@ bool GossipHello_npc_chesspiece(Player* player, Creature* creature)
         
     uint32 chessPhase = pInstance->GetData(DATA_CHESS_GAME_PHASE);
 
-    if (player->GetTeam() == TEAM_ALLIANCE && creature->GetFaction() != A_FACTION && chessPhase < PVE_FINISHED)
+    if (player->GetTeam() == ALLIANCE && creature->GetFaction() != A_FACTION && chessPhase < PVE_FINISHED)
         return true;
 
-    if (player->GetTeam() == TEAM_HORDE && creature->GetFaction() != H_FACTION && chessPhase < PVE_FINISHED)
+    if (player->GetTeam() == HORDE && creature->GetFaction() != H_FACTION && chessPhase < PVE_FINISHED)
         return true;
         
     bool ok = true;

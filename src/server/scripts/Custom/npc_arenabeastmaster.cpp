@@ -103,7 +103,7 @@ bool GossipSelect_arenabeastmaster( Player* player, Creature* me, uint32 /* send
     pet->InitPetCreateSpells();
     pet->SetHealth(pet->GetMaxHealth());
 
-    sMapMgr->CreateMap(pet->GetMapId(), pet)->Add(pet->ToCreature());
+	me->GetMap()->AddToMap(pet->ToCreature());
 
     // visual effect for levelup
     pet->SetUInt32Value(UNIT_FIELD_LEVEL,player->GetLevel());

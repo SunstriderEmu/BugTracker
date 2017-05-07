@@ -143,13 +143,11 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
     }
     void DeSummonBeams()
     {
-        for(uint64 beam : beams)
+        for(uint64 _beam : beams)
         {
-            Creature* mob = ObjectAccessor::GetCreature(*me,beam);
+            Creature* mob = ObjectAccessor::GetCreature(*me, _beam);
             if(mob)
-            {
                 mob->DespawnOrUnsummon();
-            }
         }
     }
     void EnterCombat(Unit *who)
@@ -232,7 +230,7 @@ struct boss_hydross_the_unstableAI : public ScriptedAI
             {
                 if (MarkOfCorruption_Count <= 5)
                 {
-                    uint32 mark_spell;
+					uint32 mark_spell = 0;
 
                     switch(MarkOfCorruption_Count)
                     {

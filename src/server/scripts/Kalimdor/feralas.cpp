@@ -92,13 +92,13 @@ struct npc_oox22feAI : public npc_escortAI
             // First Ambush(3 Yetis)
             case 11:
                 DoScriptText(SAY_OOX_AMBUSH, me);
-                for (uint8 i = 0; i < 3; ++i)
+                for (uint8 j = 0; j < 3; ++j)
                     me->SummonCreature(NPC_YETI, -4887.69, 1598.1, 67.45, 0.68, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
                 break;
             //Second Ambush(3 Gorillas)
             case 21:
                 DoScriptText(SAY_OOX_AMBUSH, me);
-                for (uint8 i = 0; i < 3; ++i)
+                for (uint8 j = 0; j < 3; ++j)
                     me->SummonCreature(NPC_GORILLA, -4599.37, 2010.59, 52.77, 3.84, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
                 break;
             //Third Ambush(4 Gnolls)

@@ -506,7 +506,7 @@ struct npc_thrall_old_hillsbradAI : public npc_escortAI
             return;
 
              //TODO: add his abilities'n-crap here
-            if( !LowHp && ((me->GetHealth()*100 / me->GetMaxHealth()) < 20) )
+            if( !LowHp && ((me->GetHealthPct()) < 20) )
             {
                 switch(rand()%2)
                 {

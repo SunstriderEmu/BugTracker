@@ -283,14 +283,14 @@ struct boss_halazziAI : public ScriptedAI
             {
                 if(CheckTimer < diff)
                 {
-                    if( ((me->GetHealth()*100) / me->GetMaxHealth() <= 20)/*me->GetHealth() * 10 < me->GetMaxHealth()*/)
+                    if( (me->GetHealthPct() <= 20)/*me->GetHealth() * 10 < me->GetMaxHealth()*/)
                     {
                         EnterPhase(PHASE_MERGE);
                     }
                     else /* WTF? */
                     {
                         Unit *Lynx = ObjectAccessor::GetUnit(*me, LynxGUID);
-                        if(Lynx && ((Lynx->GetHealth()*100) / Lynx->GetMaxHealth() <= 20)/*Lynx->GetHealth() * 10 < Lynx->GetMaxHealth()*/)
+                        if(Lynx && (Lynx->GetHealthPct() <= 20)/*Lynx->GetHealth() * 10 < Lynx->GetMaxHealth()*/)
                             EnterPhase(PHASE_MERGE);
                     }
                     CheckTimer = 1000;

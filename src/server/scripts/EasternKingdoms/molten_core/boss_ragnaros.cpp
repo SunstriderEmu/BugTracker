@@ -79,8 +79,8 @@ enum
 };
 
 struct Locations { float x, y, z, o; };
-static Locations DomoNewLocation   = { 851.106262, -814.688660, -229.283966, 4.641055 };
-static Locations DomoInvocLocation = { 829.947754, -814.614807, -228.950043, 5.6      };
+static Locations DomoNewLocation   = { 851.106262f, -814.688660f, -229.283966f, 4.641055f };
+static Locations DomoInvocLocation = { 829.947754f, -814.614807f, -228.950043f, 5.6f      };
 
 enum
 {

@@ -86,7 +86,7 @@ struct mob_yennikuAI : public ScriptedAI
                 if(me->GetVictim()->GetTypeId() == TYPEID_PLAYER)
                 {
                     Unit *victim = me->GetVictim();
-                    if((victim->ToPlayer())->GetTeam() == TEAM_HORDE)
+                    if((victim->ToPlayer())->GetTeam() == HORDE)
                     {
                         me->CombatStop();
                         me->DeleteThreatList();

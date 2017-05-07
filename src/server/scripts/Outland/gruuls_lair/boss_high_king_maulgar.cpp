@@ -262,7 +262,7 @@ struct boss_high_king_maulgarAI : public ScriptedAI
         }else MightyBlow_Timer -= diff;
 
         //Entering Phase 2
-        if(!Phase2 && (me->GetHealth()*100 / me->GetMaxHealth()) < 50)
+        if(!Phase2 && me->GetHealthPct() < 50)
         {
             Phase2 = true;
             DoScriptText(SAY_ENRAGE, me);
@@ -691,7 +691,7 @@ struct boss_krosh_firehandAI : public ScriptedAI
         //BlastWave_Timer
         if(BlastWave_Timer < diff)
         {
-                       Unit *target;
+			Unit *target = nullptr;
             std::list<HostileReference *> t_list = me->getThreatManager().getThreatList();
             std::vector<Unit *> target_list;
             for(auto & itr : t_list)
@@ -706,7 +706,7 @@ struct boss_krosh_firehandAI : public ScriptedAI
                 target = *(target_list.begin()+rand()%target_list.size());
 
             me->InterruptNonMeleeSpells(false);
-                       DoCast(target, SPELL_BLAST_WAVE);
+            DoCast(target, SPELL_BLAST_WAVE);
             BlastWave_Timer = 60000;
         }else BlastWave_Timer -= diff;
 

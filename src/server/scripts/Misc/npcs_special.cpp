@@ -105,7 +105,7 @@ bool ReceiveEmote_npc_chicken_cluck( Player *player, Creature *_Creature, uint32
 {
     if( emote == TEXTEMOTE_CHICKEN )
     {
-        if( player->GetTeam() == TEAM_ALLIANCE )
+        if( player->GetTeam() == ALLIANCE )
         {
             if( rand()%30 == 1 )
             {
@@ -119,7 +119,7 @@ bool ReceiveEmote_npc_chicken_cluck( Player *player, Creature *_Creature, uint32
         } else
         _Creature->TextEmote(EMOTE_H_HELLO);
     }
-    if( emote == TEXTEMOTE_CHEER && player->GetTeam() == TEAM_ALLIANCE )
+    if( emote == TEXTEMOTE_CHEER && player->GetTeam() == ALLIANCE )
         if( player->GetQuestStatus(QUEST_CLUCK) == QUEST_STATUS_COMPLETE )
     {
         _Creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
@@ -243,25 +243,25 @@ struct Location
 static Location AllianceCoords[]=
 {
     {                                                       // Top-far-right bunk as seen from entrance
-        -3757.38, -4533.05, 14.16, 3.62
+        -3757.38f, -4533.05f, 14.16f, 3.62f
     },
     {                                                       // Top-far-left bunk
-        -3754.36, -4539.13, 14.16, 5.13
+        -3754.36f, -4539.13f, 14.16f, 5.13f
     },
     {                                                       // Far-right bunk
-        -3749.54, -4540.25, 14.28, 3.34
+        -3749.54f, -4540.25f, 14.28f, 3.34f
     },
     {                                                       // Right bunk near entrance
-        -3742.10, -4536.85, 14.28, 3.64
+        -3742.10f, -4536.85f, 14.28f, 3.64f
     },
     {                                                       // Far-left bunk
-        -3755.89, -4529.07, 14.05, 0.57
+        -3755.89f, -4529.07f, 14.05f, 0.57f
     },
     {                                                       // Mid-left bunk
-        -3749.51, -4527.08, 14.07, 5.26
+        -3749.51f, -4527.08f, 14.07f, 5.26f
     },
     {                                                       // Left bunk near entrance
-        -3746.37, -4525.35, 14.16, 5.22
+        -3746.37f, -4525.35f, 14.16f, 5.22f
     },
 };
 
@@ -1265,7 +1265,7 @@ bool ReceiveEmote_npc_mojo(Player *pPlayer, Creature *pCreature, uint32 emote)
         pCreature->AddAura(SPELL_HEARTS, pCreature);
         if (!pPlayer->IsInCombat())
             pPlayer->CastSpell(pPlayer, SPELL_FEELING_FROGGY, true);
-        pCreature->old_Whisper(urand(INDECENT_WHISPER7,INDECENT_WHISPER1), pPlayer->GetGUID());
+        pCreature->old_Whisper(irand(INDECENT_WHISPER7, INDECENT_WHISPER1), pPlayer->GetGUID());
         pCreature->SetInFront(pPlayer);
         pCreature->GetMotionMaster()->MoveFollow(pPlayer, PET_FOLLOW_DIST/3.0f, M_PI/4);
     }
@@ -1597,17 +1597,17 @@ struct lunar_large_spotlightAI: public ScriptedAI
 
         if (me->GetZoneId() == 493) {
             Creature* reveler = nullptr;
-            if ((reveler = caster->FindNearestCreature(15694, 2.0f, true)) && caster->ToPlayer()->GetTeam() == TEAM_ALLIANCE)
+            if ((reveler = caster->FindNearestCreature(15694, 2.0f, true)) && caster->ToPlayer()->GetTeam() == ALLIANCE)
                 caster->ToPlayer()->TeleportTo(0, -8748.578125, 1074.502808, 90.559525, TELE_TO_NOT_UNSUMMON_PET, 0);
-            else if ((reveler = caster->FindNearestCreature(15719, 2.0f, true)) && caster->ToPlayer()->GetTeam() == TEAM_HORDE)
+            else if ((reveler = caster->FindNearestCreature(15719, 2.0f, true)) && caster->ToPlayer()->GetTeam() == HORDE)
                 caster->ToPlayer()->TeleportTo(1, -1031.914673, -230.591858, 160.152725, TELE_TO_NOT_UNSUMMON_PET, 0);
-            else if ((reveler = caster->FindNearestCreature(15905, 2.0f, true)) && caster->ToPlayer()->GetTeam() == TEAM_ALLIANCE)
+            else if ((reveler = caster->FindNearestCreature(15905, 2.0f, true)) && caster->ToPlayer()->GetTeam() == ALLIANCE)
                 caster->ToPlayer()->TeleportTo(1, 10150.287109, 2602.150879, 1330.827271, TELE_TO_NOT_UNSUMMON_PET, 0);
-            else if ((reveler = caster->FindNearestCreature(15906, 2.0f, true)) && caster->ToPlayer()->GetTeam() == TEAM_ALLIANCE)
+            else if ((reveler = caster->FindNearestCreature(15906, 2.0f, true)) && caster->ToPlayer()->GetTeam() == ALLIANCE)
                 caster->ToPlayer()->TeleportTo(0, -4663.084473, -956.074341, 500.376801, TELE_TO_NOT_UNSUMMON_PET, 0);
-            else if ((reveler = caster->FindNearestCreature(15907, 2.0f, true)) && caster->ToPlayer()->GetTeam() == TEAM_HORDE)
+            else if ((reveler = caster->FindNearestCreature(15907, 2.0f, true)) && caster->ToPlayer()->GetTeam() == HORDE)
                 caster->ToPlayer()->TeleportTo(0, 1642.087036, 239.751450, 62.591553, TELE_TO_NOT_UNSUMMON_PET, 0);
-            else if ((reveler = caster->FindNearestCreature(15908, 2.0f, true)) && caster->ToPlayer()->GetTeam() == TEAM_HORDE)
+            else if ((reveler = caster->FindNearestCreature(15908, 2.0f, true)) && caster->ToPlayer()->GetTeam() == HORDE)
                 caster->ToPlayer()->TeleportTo(1, 1983.555298, -4255.447266, 31.666471, TELE_TO_NOT_UNSUMMON_PET, 0);
         }
         else {

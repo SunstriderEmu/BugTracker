@@ -1,18 +1,3 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*/
 
 /* ScriptData
 SDName: boss_illidan_stormrage
@@ -1217,8 +1202,10 @@ struct npc_akama_illidanAI : public ScriptedAI
 
                 
         float x, y, z;
-        if(GETGO(Gate, GateGUID))
-            Gate->GetPosition(x, y, z);
+		if (GETGO(Gate, GateGUID))
+			Gate->GetPosition(x, y, z);
+		else
+			return;
 
         if(Creature* Channel = me->SummonCreature(ILLIDAN_DOOR_TRIGGER, x, y, z+5, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 360000))
         {
@@ -1367,7 +1354,9 @@ struct npc_akama_illidanAI : public ScriptedAI
 
     void HandleChannelSequence()
     {
-        Unit* Channel, *Spirit[2];
+		Unit* Channel = nullptr;
+		Unit* Spirit[2] = { nullptr };
+
         if(ChannelCount <= 10)
         {
             Channel = ObjectAccessor::GetUnit((*me), ChannelGUID);
@@ -1558,7 +1547,7 @@ struct npc_akama_illidanAI : public ScriptedAI
             return;
         }
 
-        if(me->GetHealth()*100 / me->GetMaxHealth() < 20)
+        if(me->GetHealthPct() < 20)
             DoCast(me, SPELL_HEALING_POTION);
 
         DoMeleeAttackIfReady();
@@ -1754,7 +1743,7 @@ struct boss_maievAI : public ScriptedAI
                 break;
             }
 
-            if(me->GetVisibility() == VISIBILITY_ON && (me->GetHealth()*100 / me->GetMaxHealth() < 50))
+            if(me->GetVisibility() == VISIBILITY_ON && (me->GetHealthPct() < 50))
             {
                 me->SetVisibility(VISIBILITY_OFF);
                 me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);

@@ -316,19 +316,19 @@ enum eEnums
 
 static float m_afFirstNagaCoord[3][3]=
 {
-    {3603.504150, 1122.631104, 1.635},                      // rider
-    {3589.293945, 1148.664063, 5.565},                      // sorceress
-    {3609.925537, 1168.759521, -1.168}                      // razortail
+    {3603.504150f, 1122.631104f,  1.635f },                      // rider
+    {3589.293945f, 1148.664063f,  5.565f },                      // sorceress
+    {3609.925537f, 1168.759521f, -1.168f },                      // razortail
 };
 
-static float m_afSecondNagaCoord[3][3]=
+static float m_afSecondNagaCoord[3][3] =
 {
-    {3609.925537, 1168.759521, -1.168},                     // witch
-    {3645.652100, 1139.425415, 1.322},                      // priest
-    {3583.602051, 1128.405762, 2.347}                       // myrmidon
+	{3609.925537f, 1168.759521f, -1.168f},                      // witch
+	{3645.652100f, 1139.425415f,  1.322f},                      // priest
+	{3583.602051f, 1128.405762f,  2.347f},                      // myrmidon
 };
 
-static float m_fVorshaCoord[]={3633.056885, 1172.924072, -5.388};
+static float m_fVorshaCoord[]={3633.056885f, 1172.924072f, -5.388f};
 
 
 struct npc_muglashAI : public npc_escortAI

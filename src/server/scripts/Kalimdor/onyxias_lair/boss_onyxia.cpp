@@ -48,18 +48,18 @@ EndScriptData */
 
 static float MovementLocations[4][3]=
 {
-    {-64.0523, -213.0619, -68.2985},
-    {12.4636, -220.01490, -68.0548},
-    {-38.8391, -182.3220, -68.9457},
-    {-37.0390, -244.8760, -68.1278}
+    {-64.0523f, -213.0619f, -68.2985f},
+    { 12.4636f, -220.0149f, -68.0548f},
+    {-38.8391f, -182.3220f, -68.9457f},
+    {-37.0390f, -244.8760f, -68.1278f},
 };
 
 static float SpawnLocations[4][3]=
 {
-    {-30.127, -254.463, -89.440},
-    {-30.817, -177.106, -89.258},
-    {14.480, -241.560, -85.6300},
-    {17.372, -190.840, -85.2810},
+    {-30.127f, -254.463f, -89.440f},
+    {-30.817f, -177.106f, -89.258f},
+    { 14.480f, -241.560f, -85.630f},
+    { 17.372f, -190.840f, -85.281f},
 };
 
 struct boss_onyxiaAI : public ScriptedAI
@@ -122,7 +122,7 @@ struct boss_onyxiaAI : public ScriptedAI
         if(!UpdateVictim())
             return;
 
-        if(((me->GetHealth()*100 / me->GetMaxHealth()) < 60) && (Phase == 1))
+        if(((me->GetHealthPct()) < 60) && (Phase == 1))
         {
             Phase = 2;
             me->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
@@ -133,7 +133,7 @@ struct boss_onyxiaAI : public ScriptedAI
             DoScriptText(SAY_PHASE_2_TRANS, me);
         }
 
-        if(((me->GetHealth()*100 / me->GetMaxHealth()) < 40) && (Phase == 2))
+        if(((me->GetHealthPct()) < 40) && (Phase == 2))
         {
             Phase = 3;
             me->SetDisableGravity(false);

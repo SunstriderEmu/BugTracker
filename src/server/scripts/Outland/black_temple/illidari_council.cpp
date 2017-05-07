@@ -504,7 +504,7 @@ struct boss_gathios_the_shattererAI : public boss_illidari_councilAI
         SealTimer = TIMER_SEAL_FIRST;
         AuraTimer = TIMER_AURA_FIRST;
         BlessingTimer = TIMER_BLESSING;
-        JudgeTimer = -1;
+		JudgeTimer = uint32(-1);
         lastAura = rand()%2;
         lastBlessing = rand()%2;
         lastSeal = rand()%2;
@@ -550,17 +550,21 @@ struct boss_gathios_the_shattererAI : public boss_illidari_councilAI
         else
             spellid = SPELL_CHROMATIC_AURA;
 
+		bool success = true;
+
         for(uint64 i : Council)
         {
-            bool success;
+			SpellCastResult result = SPELL_CAST_OK;
             Unit* pUnit = ObjectAccessor::GetUnit((*me), i);
-            if(pUnit)
-                success = pUnit->CastSpell(pUnit, spellid, true, nullptr, nullptr, me->GetGUID());
-            if(!success)
-                return false;
+			if (pUnit)
+				result = SpellCastResult(pUnit->CastSpell(pUnit, spellid, true, nullptr, nullptr, me->GetGUID()));
+
+			success = success && result == SPELL_CAST_OK;
         }
 
-        lastAura = !lastAura;
+		if(success)
+			lastAura = !lastAura;
+
         return true;
     }
 
@@ -588,7 +592,7 @@ struct boss_gathios_the_shattererAI : public boss_illidari_councilAI
         {
             if(DoCast(me->GetVictim(),SPELL_JUDGEMENT) == SPELL_CAST_OK)
             {
-                JudgeTimer = -1;
+				JudgeTimer = uint32(-1);
                 SealTimer = 2200; //just after finishing casting judgement (2s cast)
             }
         } else JudgeTimer -= diff;
@@ -623,7 +627,7 @@ struct boss_gathios_the_shattererAI : public boss_illidari_councilAI
             if(DoCast(me,spellid) == SPELL_CAST_OK)
             {
                 lastSeal = !lastSeal;
-                SealTimer = -1;
+				SealTimer = uint32(-1);
                 JudgeTimer = TIMER_JUDGEMENT;
             }
         } else SealTimer -= diff;
@@ -818,7 +822,7 @@ struct boss_veras_darkshadowAI : public boss_illidari_councilAI
         changeTargetTimer = 0;
         VanishTimer = TIMER_VANISH_FIRST;
         VanishTimeLeft = TIMER_VANISH_DURATION;
-        EnvenomTimer = -1;
+		EnvenomTimer = uint32(-1);
 
         HasVanished = false;
         me->SetVisibility(VISIBILITY_ON);
@@ -840,7 +844,7 @@ struct boss_veras_darkshadowAI : public boss_illidari_councilAI
     //try to exclude the mage tank
     Unit* GetPoisonTarget()
     {
-        ScriptedAI* zerevorAI;
+		ScriptedAI* zerevorAI = nullptr;
         Creature* zerevor = ObjectAccessor::GetCreature(*me, Council[1]);
         if(zerevor)
             zerevorAI = static_cast<ScriptedAI*>(zerevor->AI());

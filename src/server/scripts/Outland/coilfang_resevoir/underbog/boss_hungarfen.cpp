@@ -54,7 +54,7 @@ struct boss_hungarfenAI : public ScriptedAI
         if (!UpdateVictim())
             return;
 
-        if( (me->GetHealth()*100) / me->GetMaxHealth() <= 20 )
+        if( me->GetHealthPct() <= 20 )
         {
             if( !Root )
             {

@@ -24,7 +24,7 @@ bool GossipHello_npc_pack58_teleporter(Player *player, Creature *creature)
     if (creature->IsQuestGiver())
         player->PrepareQuestMenu(creature->GetGUID());
 
-    bool alliance = player->TeamForRace(player->GetRace()) == TEAM_ALLIANCE;
+    bool alliance = player->TeamForRace(player->GetRace()) == ALLIANCE;
 
     if(player->GetQuestStatus(alliance ? QUEST_TELEPORT_ALLIANCE : QUEST_TELEPORT_HORDE) == QUEST_STATUS_COMPLETE)
         player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_TELEPORT, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+(alliance ? 1 : 2));
@@ -138,7 +138,7 @@ bool GossipHello_npc_pack58_duelguy(Player *player, Creature *creature)
         player->PrepareQuestMenu(creature->GetGUID());
 
     uint32 questid;
-    if(player->TeamForRace(player->GetRace()) == TEAM_ALLIANCE)
+    if(player->TeamForRace(player->GetRace()) == ALLIANCE)
         questid = QUEST_DUEL_ALLIANCE;
     else
         questid = QUEST_DUEL_HORDE;

@@ -251,7 +251,7 @@ struct boss_frozen_coreAI : public ScriptedAI
         if (Creature* ahune = me->FindNearestCreature(NPC_AHUNE, 10.0f, true))
             me->Kill(ahune);
 
-        pKiller->SummonGameObject(GO_AHUNE_ICE_CHEST, Position(-96.525841, -200.255798, -1.262261, 4.748316), G3D::Quat(), 86400);
+        pKiller->SummonGameObject(GO_AHUNE_ICE_CHEST, Position(-96.525841, -200.255798, -1.262261, 4.748316), G3D::Quat(), 1 * DAY);
     }
     
     void UpdateAI(uint32 const diff)
@@ -366,7 +366,7 @@ struct npc_ice_spear_bunnyAI : public ScriptedAI
     void UpdateAI(uint32 const diff)
     override {
         if (spawnTimer <= diff) {
-            if (GameObject* go = me->SummonGameObject(GO_ICE_SPEAR, me->GetPosition(), G3D::Quat(), 86400))
+            if (GameObject* go = me->SummonGameObject(GO_ICE_SPEAR, me->GetPosition(), G3D::Quat(), 1 * DAY))
                 go->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND);
                 
             spawnTimer = 99999;
@@ -388,7 +388,7 @@ struct npc_ice_spear_bunnyAI : public ScriptedAI
         if (deathTimer <= diff) {
             if (GameObject* go = me->FindNearestGameObject(GO_ICE_SPEAR, 3.0f)) {
                 go->SetLootState(GO_JUST_DEACTIVATED);
-                go->SetRespawnTime(86400);     // One day
+                go->SetRespawnTime(1 * DAY);
                 me->DisappearAndDie();
             }
             

@@ -156,7 +156,7 @@ struct boss_talon_king_ikissAI : public ScriptedAI
         }else Sheep_Timer -= diff;
 
         //may not be correct time to cast
-        if (!ManaShield && ((me->GetHealth()*100) / me->GetMaxHealth() < 20))
+        if (!ManaShield && (me->GetHealthPct() < 20))
         {
             DoCast(me,SPELL_MANA_SHIELD);
             ManaShield = true;

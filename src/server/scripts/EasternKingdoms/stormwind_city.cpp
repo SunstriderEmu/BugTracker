@@ -178,7 +178,7 @@ CreatureAI* GetAI_npc_dashel_stonefist(Creature *_creature)
 
 bool ReceiveEmote_npc_general_marcus_jonathan(Player *player, Creature *_Creature, uint32 emote)
 {
-    if(player->GetTeam() == TEAM_ALLIANCE)
+    if(player->GetTeam() == ALLIANCE)
     {
         if (emote == TEXTEMOTE_SALUTE)
         {

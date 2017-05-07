@@ -461,7 +461,7 @@ MOB_SPARK       = 17243,
 GO_NAGA_FLAG    = 181694
 };
 
-static float SparkPos[3] = {-5030.95, -11291.99, 7.97};
+static float SparkPos[3] = {-5030.95f, -11291.99f, 7.97f};
 
 struct npc_geezleAI : public ScriptedAI
 {
@@ -498,11 +498,11 @@ struct npc_geezleAI : public ScriptedAI
         SayTimer = 23000;
     }
 
-    uint32 NextStep(uint32 Step)
+    uint32 NextStep(uint32 step)
     {
         Unit* Spark = ObjectAccessor::GetUnit((*me), SparkGUID);
 
-        switch(Step)
+        switch(step)
         {
         case 0: return 99999;
         case 1:

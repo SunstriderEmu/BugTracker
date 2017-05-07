@@ -190,12 +190,12 @@ struct boss_harbinger_skyrissAI : public ScriptedAI
         if( !UpdateVictim() )
             return;
 
-        if( !IsImage66 && ((me->GetHealth()*100) / me->GetMaxHealth() <= 66) )
+        if( !IsImage66 && (me->GetHealthPct() <= 66) )
         {
             DoSplit(66);
             IsImage66 = true;
         }
-        if( !IsImage33 && ((me->GetHealth()*100) / me->GetMaxHealth() <= 33) )
+        if( !IsImage33 && (me->GetHealthPct() <= 33) )
         {
             DoSplit(33);
             IsImage33 = true;

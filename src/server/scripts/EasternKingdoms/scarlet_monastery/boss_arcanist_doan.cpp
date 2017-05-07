@@ -80,7 +80,7 @@ struct boss_arcanist_doanAI : public ScriptedAI
             return;
 
         //If we are <50% hp cast Arcane Bubble and start casting SPECIAL FIRE AOE
-        if (me->GetHealth()*100 / me->GetMaxHealth() <= 50 && !me->IsNonMeleeSpellCast(false))
+        if (me->GetHealthPct() <= 50 && !me->IsNonMeleeSpellCast(false))
         {
             if (Polymorph_Timer < diff)
             {

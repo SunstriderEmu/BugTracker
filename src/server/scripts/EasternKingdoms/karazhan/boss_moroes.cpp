@@ -42,10 +42,10 @@ EndScriptData */
 
 float Locations[4][3]=
 {
-    {-10991.0, -1884.33, 0.614315},
-    {-10989.4, -1885.88, 0.904913},
-    {-10978.1, -1887.07, 2.035550},
-    {-10975.9, -1885.81, 2.253890},
+    {-10991.0f, -1884.33f, 0.614315f},
+    {-10989.4f, -1885.88f, 0.904913f},
+    {-10978.1f, -1887.07f, 2.035550f},
+    {-10975.9f, -1885.81f, 2.253890f},
 };
 
 const uint32 Adds[6]=
@@ -251,7 +251,7 @@ struct boss_moroesAI : public ScriptedAI
             return;
         }
 
-        if(!Enrage && me->GetHealth()*100 / me->GetMaxHealth() < 30)
+        if(!Enrage &&  me->GetHealthPct()  < 30)
         {
             DoCast(me, SPELL_FRENZY);
             Enrage = true;

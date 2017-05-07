@@ -285,7 +285,7 @@ public:
         {
             for (auto & pyramidSpawn : pyramidSpawns) {
                 if (pyramidSpawn[0] == (float)wave) {
-                    ZFPosition pos = { pyramidSpawn[2], pyramidSpawn[3], 8.87, 0 };
+                    ZFPosition pos = { pyramidSpawn[2], pyramidSpawn[3], 8.87f, 0 };
                     if (Player* plr = GetPlayer()) {
                         Creature* ts = plr->SummonCreature(pyramidSpawn[1], pos.x, pos.y, pos.z, pos.orientation, TEMPSUMMON_DEAD_DESPAWN, 600000);
                         ts->GetMotionMaster()->MoveRandom(10);
