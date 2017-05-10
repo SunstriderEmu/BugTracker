@@ -148,7 +148,7 @@ struct EredarTwin : public ScriptedAI
 
     void EnterEvadeMode(EvadeReason why)
     override {
-        me->SetVisibility(VISIBILITY_OFF);
+        me->SetVisible(false);
         RespawnTimer = 30000;
         me->SetReactState(REACT_PASSIVE);
         ScriptedAI::EnterEvadeMode(why);
@@ -231,7 +231,7 @@ struct EredarTwin : public ScriptedAI
         if (RespawnTimer) 
         {
             if (RespawnTimer <= diff) {
-                me->SetVisibility(VISIBILITY_ON);
+                me->SetVisible(true);
                 me->SetReactState(REACT_AGGRESSIVE);
                 RespawnTimer = 0;
             }

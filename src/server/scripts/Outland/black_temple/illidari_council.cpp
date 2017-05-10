@@ -825,7 +825,7 @@ struct boss_veras_darkshadowAI : public boss_illidari_councilAI
 		EnvenomTimer = uint32(-1);
 
         HasVanished = false;
-        me->SetVisibility(VISIBILITY_ON);
+        me->SetVisible(true);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
     
@@ -836,7 +836,7 @@ struct boss_veras_darkshadowAI : public boss_illidari_councilAI
 
     void JustDied(Unit *victim)
     override {
-        me->SetVisibility(VISIBILITY_ON);
+        me->SetVisible(true);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         DoScriptText(SAY_VERA_DEATH, me);
     }
@@ -870,7 +870,7 @@ struct boss_veras_darkshadowAI : public boss_illidari_councilAI
                     VanishTimeLeft = TIMER_VANISH_DURATION;
                     appliedPoisonTarget = 0;
                     HasVanished = true;
-                    me->SetVisibility(VISIBILITY_OFF);
+                    me->SetVisible(false);
                     me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                     DoCast(me,SPELL_VANISH,true); //just for combat log
                     DoResetThreat();
@@ -893,7 +893,7 @@ struct boss_veras_darkshadowAI : public boss_illidari_councilAI
             if(VanishTimeLeft < diff)
             {
                 HasVanished = false;
-                me->SetVisibility(VISIBILITY_ON);
+                me->SetVisible(true);
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 Unit* currentTarget = me->GetVictim();
                 DoResetThreat();

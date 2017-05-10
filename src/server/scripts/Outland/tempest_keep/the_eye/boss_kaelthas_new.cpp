@@ -279,8 +279,8 @@ class boss_kaelthas : public CreatureScript
 				if (summon->GetSpawnId() && phase == PHASE_ALL_ADVISORS)
 				{
 					for (SummonList::const_iterator i = summons.begin(); i != summons.end(); ++i)
-						if (Creature* summon = ObjectAccessor::GetCreature(*me, *i))
-							if (summon->GetSpawnId() && summon->IsAlive())
+						if (Creature* _summon = ObjectAccessor::GetCreature(*me, *i))
+							if (_summon->GetSpawnId() && _summon->IsAlive())
 								return;
 
 					events2.ScheduleEvent(EVENT_PREFIGHT_PHASE71, 2000);

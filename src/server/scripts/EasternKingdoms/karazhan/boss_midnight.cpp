@@ -70,7 +70,7 @@ struct boss_midnightAI : public ScriptedAI
         KnockDownTimer = 20000 + rand()%5000;
 
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        me->SetVisibility(VISIBILITY_ON);
+        me->SetVisible(true);
 
         if(pInstance)
             pInstance->SetData(DATA_ATTUMEN_EVENT, NOT_STARTED);
@@ -137,7 +137,7 @@ struct boss_midnightAI : public ScriptedAI
                 if(Mount_Timer <= diff)
                 {
                     Mount_Timer = 0;
-                    me->SetVisibility(VISIBILITY_OFF);
+                    me->SetVisible(false);
                     me->GetMotionMaster()->MoveIdle();
                     if (Unit *pAttumen = ObjectAccessor::GetUnit(*me, Attumen))
                     {
@@ -259,10 +259,10 @@ struct boss_attumenAI : public ScriptedAI
                 if(pMidnight)
                 {
                     pMidnight->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                    pMidnight->SetVisibility(VISIBILITY_ON);
+                    pMidnight->SetVisible(true);
                 }
                 Midnight = 0;
-                me->SetVisibility(VISIBILITY_OFF);
+                me->SetVisible(false);
                 me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
             }
         } else ResetTimer -= diff;

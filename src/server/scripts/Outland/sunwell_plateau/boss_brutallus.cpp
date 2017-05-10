@@ -112,7 +112,7 @@ struct boss_brutallusAI : public ScriptedAI
                 me->GetPosition(x,y,z);
                 plr->SummonCreature(FELMYST, x,y, z+30, me->GetOrientation(), TEMPSUMMON_MANUAL_DESPAWN, 0);
                 if (Creature *Madrigosa = ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_MADRIGOSA)))
-                    Madrigosa->SetVisibility(VISIBILITY_OFF);
+                    Madrigosa->SetVisible(false);
             }
         }
         
@@ -131,7 +131,7 @@ struct boss_brutallusAI : public ScriptedAI
             
         if (who->ToPlayer() && !Intro && !IsIntro) {
             if (Creature *Madrigosa = ObjectAccessor::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0))
-                Madrigosa->SetVisibility(VISIBILITY_OFF);
+                Madrigosa->SetVisible(false);
         }
     }
 
@@ -149,11 +149,11 @@ struct boss_brutallusAI : public ScriptedAI
     void JustDied(Unit* Killer)
     override {
         if (Creature *Madrigosa = ObjectAccessor::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0)) {
-            Madrigosa->SetVisibility(VISIBILITY_OFF);
+            Madrigosa->SetVisible(false);
             Madrigosa->Respawn();
             Madrigosa->Kill(Madrigosa);
             Madrigosa->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-            Madrigosa->SetVisibility(VISIBILITY_ON);
+            Madrigosa->SetVisible(true);
             Madrigosa->SummonCreature(25703, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation(), TEMPSUMMON_MANUAL_DESPAWN, 0);
         }
 
@@ -535,7 +535,7 @@ struct trigger_death_cloudAI : public ScriptedAI
         if (bornTimer <= diff) {
             if (Creature *Madrigosa = ObjectAccessor::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0)) {
                 Madrigosa->RemoveAurasDueToSpell(44885);
-                Madrigosa->SetVisibility(VISIBILITY_OFF);
+                Madrigosa->SetVisible(false);
                 float x, y, z;
                 Madrigosa->GetPosition(x, y, z);
                 me->SummonCreature(FELMYST, x, y, z, me->GetOrientation(), TEMPSUMMON_MANUAL_DESPAWN, 0);

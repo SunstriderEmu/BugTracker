@@ -592,13 +592,13 @@ public:
             if (!me->IsInCombat()) {
                 if (_checkTimer <= diff) {
                     // Visibility check
-                    if ((_instance->GetData(DATA_AZGALOREVENT) < DONE) && ((me->GetVisibility() != VISIBILITY_OFF) || (me->GetFaction() != 35))) {
-                        me->SetVisibility(VISIBILITY_OFF);
+                    if ((_instance->GetData(DATA_AZGALOREVENT) < DONE) && ((me->IsVisible()) || (me->GetFaction() != 35))) {
+                        me->SetVisible(false);
                         me->SetFaction(35);
                     }
-                    else if ((_instance->GetData(DATA_AZGALOREVENT) >= DONE) && ((me->GetVisibility() != VISIBILITY_ON) || (me->GetFaction() == 35))) {
+                    else if ((_instance->GetData(DATA_AZGALOREVENT) >= DONE) && (!me->IsVisible() || (me->GetFaction() == 35))) {
                         me->SetFaction(1720);
-                        me->SetVisibility(VISIBILITY_ON);
+                        me->SetVisible(true);
                     }
                     
                     // Refresh channeling visual

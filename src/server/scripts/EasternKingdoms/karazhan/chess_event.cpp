@@ -38,7 +38,7 @@ EndScriptData */
 
 #define BOTH 536 // HORDE + ALLIANCE
 
-float playerTeleportPosition[4] = { -11107.241211, -1842.897461, 229.625198, 5.385472 };
+float playerTeleportPosition[4] = { -11107.241211f, -1842.897461f, 229.625198f, 5.385472f };
 
 typedef struct boardCell
 {
@@ -514,7 +514,7 @@ struct npc_echo_of_medivhAI : public ScriptedAI
     
     int HandlePieceRotate(Creature* piece, uint64 trigger)
     {
-        uint8 pieceRow = 8, pieceCol = 8, targetRow, targetCol;
+        uint8 pieceRow = 8, pieceCol = 8, targetRow = 0, targetCol = 0;
         for (uint8 row = 0; row < 8; row++) {
             for (uint8 col = 0; col < 8; col++) {
                 BoardCell* cell = board[row][col];
@@ -695,7 +695,7 @@ struct npc_echo_of_medivhAI : public ScriptedAI
         switch (orientation) { // Here we shouldn't be facing the edges, check in the 4 first if statements
         case ORI_SE:
         {
-            int randomCol;
+			int randomCol = {};
             switch (rand()%3) {
             case 0:
                 randomCol = pieceCol-1;
@@ -720,7 +720,7 @@ struct npc_echo_of_medivhAI : public ScriptedAI
         }
         case ORI_SW:
         {
-            int randomRow;
+			int randomRow = {};
             switch (rand()%3) {
             case 0:
                 randomRow = pieceRow-1;

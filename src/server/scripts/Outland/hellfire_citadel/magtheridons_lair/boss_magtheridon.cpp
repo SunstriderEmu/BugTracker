@@ -110,7 +110,7 @@ struct mob_abyssalAI : public ScriptedAI
         if(trigger == 2 && spell->Id == SPELL_BLAZE_TARGET)
         {
             me->CastSpell(me, SPELL_BLAZE_TRAP, true);
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
             Despawn_Timer = 130000;
         }
     }
@@ -149,7 +149,7 @@ struct mob_abyssalAI : public ScriptedAI
 
         if(Despawn_Timer < diff)
         {
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
             me->SetDeathState(JUST_DIED);
         }else Despawn_Timer -= diff;
 

@@ -159,7 +159,7 @@ struct boss_kalecgosAI : public ScriptedAI
         me->SetFaction(14);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE + UNIT_FLAG_NOT_SELECTABLE);
         me->SetDisableGravity(false);
-        me->SetVisibility(VISIBILITY_ON);
+        me->SetVisible(true);
         me->SetStandState(PLAYER_STATE_SLEEP);
         me->SetReactState(REACT_AGGRESSIVE);
 
@@ -179,7 +179,7 @@ struct boss_kalecgosAI : public ScriptedAI
             
         if (pInstance && pInstance->GetData(DATA_KALECGOS_EVENT) == DONE) {
             me->SetFaction(35);
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             me->SetReactState(REACT_PASSIVE);
             
@@ -205,7 +205,7 @@ struct boss_kalecgosAI : public ScriptedAI
             isFriendly = false;
         }*/
         
-        if (me->IsInCombat() && me->GetVisibility() == VISIBILITY_ON) {
+        if (me->IsInCombat() && me->IsVisible()) {
             TalkSequence = 0;
             TalkTimer = 1;
             isFriendly = false;
@@ -265,7 +265,7 @@ struct boss_kalecgosAI : public ScriptedAI
         if (id != 1)
             return;
         
-        me->SetVisibility(VISIBILITY_OFF);
+        me->SetVisible(false);
         if(isFriendly)
             me->SetDeathState(JUST_DIED);
         else

@@ -532,7 +532,7 @@ struct npc_geezleAI : public ScriptedAI
             if(Spark)
                 Spark->DealDamage(Spark,Spark->GetHealth(),nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
             //DespawnNagaFlag(false);
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
         default: return 99999999;
         }
     }

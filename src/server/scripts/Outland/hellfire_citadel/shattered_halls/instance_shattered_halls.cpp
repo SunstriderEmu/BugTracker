@@ -30,9 +30,9 @@ uint32 HordePrisoners[3] = { 17296, 17295, 17297 };
 uint32 AlliancePrisoners[3] = { 17290, 17292, 17289 };
 float PrisonersCoord[3][4] = 
 {
-    { 147.752808, -79.643730, 1.917701, 5.537074 },
-    { 142.168777, -84.358223, 1.908038, 6.264657 },
-    { 145.993637, -89.312386, 1.915693, 0.714077 }
+    { 147.752808f, -79.643730f, 1.917701f, 5.537074f },
+    { 142.168777f, -84.358223f, 1.908038f, 6.264657f },
+    { 145.993637f, -89.312386f, 1.915693f, 0.714077f }
 };
 
 class instance_shattered_halls : public InstanceMapScript
@@ -119,7 +119,7 @@ public:
                 ExecutionerGUID = creature->GetGUID();
                 creature->SetKeepActive(true);
                 if (GetData(DATA_NETHEKURSE_EVENT) == NOT_STARTED)
-                    creature->SetVisibility(VISIBILITY_OFF);
+                    creature->SetVisible(false);
                 if (GetData(DATA_BLADEFIST_EVENT) == NOT_STARTED)
                     creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                 break;
@@ -369,7 +369,7 @@ public:
             if (pInstance->GetData(DATA_EXECUTIONER_EVENT) != IN_PROGRESS) {
                 pInstance->SetData(DATA_EXECUTIONER_EVENT, IN_PROGRESS);
                 if (Creature* Executioner = ObjectAccessor::GetCreature(*pPlayer, pInstance->GetData64(DATA_EXECUTIONER_GUID))) {
-                    Executioner->SetVisibility(VISIBILITY_ON);
+                    Executioner->SetVisible(true);
                     Executioner->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                     // TODO: Yell something ?
                 }

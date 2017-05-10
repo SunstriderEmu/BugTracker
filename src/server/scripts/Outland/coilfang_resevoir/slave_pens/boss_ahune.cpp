@@ -87,7 +87,7 @@ public:
         
             if (Creature* ghost = me->SummonCreature(NPC_AHUNE_GHOST, -89.566528, -253.344315, -1.089609, 1.683741, TEMPSUMMON_MANUAL_DESPAWN, 0)) {
                 ghost->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                ghost->SetVisibility(VISIBILITY_OFF);
+                ghost->SetVisible(false);
             }
         }
 
@@ -185,7 +185,7 @@ public:
                 
                     if (Creature* ghost = me->FindNearestCreature(NPC_AHUNE_GHOST, 10.0f, true)) {
                         ghost->RemoveAurasDueToSpell(SPELL_AHUNE_GHOST_DISGUISE);
-                        ghost->SetVisibility(VISIBILITY_OFF);
+                        ghost->SetVisible(false);
                     }
                 
                     me->SummonCreature(NPC_AHUNITE_HAILSTONE, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation(), TEMPSUMMON_DEAD_DESPAWN, 0);
@@ -212,7 +212,7 @@ public:
                     
                     if (Creature* ghost = me->FindNearestCreature(NPC_AHUNE_GHOST, 10.0f, true)) {
                         ghost->AddAura(SPELL_AHUNE_GHOST_DISGUISE, ghost);
-                        ghost->SetVisibility(VISIBILITY_ON);
+                        ghost->SetVisible(true);
                     }
                     
                     phaseChangeTimer = 30000;

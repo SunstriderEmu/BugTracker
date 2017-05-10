@@ -482,7 +482,7 @@ public:
                 me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
                 me->SetKeepActive(30 * MINUTE*IN_MILLISECONDS);
                 Searched = false;
-                me->SetVisibility(VISIBILITY_OFF);
+                me->SetVisible(false);
                 me->SetReactState(REACT_PASSIVE);
             }
 
@@ -763,7 +763,7 @@ public:
                     case POINT_TELEPORT_KALECGOS:
                         if (Creature* pKalec = pInstance->instance->GetCreature(pInstance->GetData64(DATA_KALECGOS_KJ)))
                         {
-                            pKalec->SetVisibility(VISIBILITY_ON);
+                            pKalec->SetVisible(true);
                             pKalec->CastSpell(pKalec, SPELL_KALEC_TELEPORT, true);
                             pKalec->SetDisableGravity(false);
                             pKalec->SendMovementFlagUpdate();
@@ -1433,7 +1433,7 @@ public:
                     if (Creature* kalec = pInstance->instance->GetCreature(pInstance->GetData64(DATA_KALECGOS_KJ)))
                     {
                         kalec->AI()->Talk(SAY_KALEC_JOIN);
-                        kalec->SetVisibility(VISIBILITY_ON);
+                        kalec->SetVisible(true);
                     }
                     break;
                 case EVENT_SOUL_FLAY:

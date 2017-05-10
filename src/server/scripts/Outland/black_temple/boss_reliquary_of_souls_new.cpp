@@ -296,7 +296,7 @@ public:
                         essence->AI()->Talk(TALK_DESI_SAY_AFTER);
                     }
                     
-                    essence->SetVisibility(VISIBILITY_OFF);
+                    essence->SetVisible(false);
                     essence->SetDeathState(DEAD);
                     me->SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
                     essenceGUID = 0;

@@ -161,7 +161,7 @@ class Boss_Lurker_Below : public CreatureScript
                         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                         me->SetFlag(UNIT_NPC_EMOTESTATE, EMOTE_STATE_SUBMERGED);
                         me->CastSpell(me, SPELL_SUBMERGE);
-                        me->SetVisibility(VISIBILITY_OFF);
+                        me->SetVisible(false);
                         me->SetFaction(35);
                         me->SetReactState(REACT_PASSIVE);
                         break;
@@ -219,7 +219,7 @@ class Boss_Lurker_Below : public CreatureScript
                                 case 0:
                                     if (_instance)
                                         _instance->SendScriptInTestNoLootMessageToAll();
-                                    me->SetVisibility(VISIBILITY_ON);
+                                    me->SetVisible(true);
                                     introState = 1;
                                     introPhaseTimer = 500;
                                     break;

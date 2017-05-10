@@ -794,19 +794,19 @@ void hyjalAI::UpdateAI(const uint32 diff)
             case JAINA:
                 if(pInstance && pInstance->GetData(DATA_ALLIANCE_RETREAT))
                 {
-                    me->SetVisibility(VISIBILITY_OFF);
+                    me->SetVisible(false);
                     HideNearPos(me->GetPositionX(), me->GetPositionY());
                     HideNearPos(5037.76, -1889.71);
                     for(auto & AllianceFirePo : AllianceFirePos)//summon fires
                         me->SummonGameObject(FLAMEOBJECT,Position(AllianceFirePo[0],AllianceFirePo[1],AllianceFirePo[2],AllianceFirePo[3]), G3D::Quat(AllianceFirePo[4],AllianceFirePo[5],AllianceFirePo[6],AllianceFirePo[7]),0);
 
                 }
-                else me->SetVisibility(VISIBILITY_ON);
+                else me->SetVisible(true);
                 break;
             case THRALL: //thrall
                 if(pInstance && pInstance->GetData(DATA_HORDE_RETREAT))
                 {
-                    me->SetVisibility(VISIBILITY_OFF);
+                    me->SetVisible(false);
                     HideNearPos(me->GetPositionX(), me->GetPositionY());
                     HideNearPos(5563, -2763.19);
                     HideNearPos(5542.2, -2629.36);
@@ -814,7 +814,7 @@ void hyjalAI::UpdateAI(const uint32 diff)
                         me->SummonGameObject(FLAMEOBJECT,Position(HordeFirePo[0],HordeFirePo[1],HordeFirePo[2],HordeFirePo[3]), G3D::Quat(HordeFirePo[4],HordeFirePo[5],HordeFirePo[6],HordeFirePo[7]),0);
 
                 }
-                else me->SetVisibility(VISIBILITY_ON);
+                else me->SetVisible(true);
                 break;
         }
     }
@@ -833,10 +833,10 @@ void hyjalAI::UpdateAI(const uint32 diff)
                 RespawnNearPos(5563, -2763.19);
                 RespawnNearPos(5542.2, -2629.36);
             }
-            me->SetVisibility(VISIBILITY_ON);
+            me->SetVisible(true);
         }else{
             RespawnTimer -= diff;
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
         }
         return;
     }
@@ -860,7 +860,7 @@ void hyjalAI::UpdateAI(const uint32 diff)
                     HideNearPos(5603.75, -2853.12);
                     break;
             }
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
         }else RetreatTimer -= diff;
     }
 
@@ -955,7 +955,7 @@ void hyjalAI::JustDied(Unit* killer)
 {
     if(IsDummy)return;
     me->Respawn();
-    me->SetVisibility(VISIBILITY_OFF);
+    me->SetVisible(false);
     RespawnTimer = 120000;
     Talk(DEATH);
     Summons.DespawnAll();//despawn all wave's summons
@@ -985,7 +985,7 @@ void hyjalAI::HideNearPos(float x, float y)
     {
         for(auto & creature : creatures)
         {
-            creature->SetVisibility(VISIBILITY_OFF);
+            creature->SetVisible(false);
             creature->SetFaction(35);//make them friendly so mobs won't attack them
         }
     }

@@ -620,7 +620,7 @@ struct boss_illidan_stormrageAI : public ScriptedAI
                 {
                     if(GETUNIT(Glaive, i))
                     {
-                        Glaive->SetVisibility(VISIBILITY_OFF);
+                        Glaive->SetVisible(false);
                         Glaive->SetDeathState(JUST_DIED); // Despawn the Glaive
                     }
                     i = 0;
@@ -1103,9 +1103,9 @@ struct npc_akama_illidanAI : public ScriptedAI
         me->SetSheath(SHEATH_STATE_UNARMED);
         me->SetKeepActive(false);
         if (pInstance->GetData(DATA_ILLIDARICOUNCILEVENT) != DONE)
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
         else
-            me->SetVisibility(VISIBILITY_ON);
+            me->SetVisible(true);
             
         me->SetReactState(REACT_PASSIVE);
     }
@@ -1121,7 +1121,7 @@ struct npc_akama_illidanAI : public ScriptedAI
 
     void EnterCombat(Unit *who)
     override {
-        if (me->GetVisibility() == VISIBILITY_OFF)
+		if (!me->IsVisible())
             me->CombatStop();
     }
 
@@ -1195,7 +1195,7 @@ struct npc_akama_illidanAI : public ScriptedAI
         for(uint8 i = 0; i < 2; ++i)
             if(Creature* Spirit = me->SummonCreature(i ? SPIRIT_OF_UDALO : SPIRIT_OF_OLUM, SpiritSpawns[i].x, SpiritSpawns[i].y, SpiritSpawns[i].z, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 360000))
             {
-                Spirit->SetVisibility(VISIBILITY_OFF);
+                Spirit->SetVisible(false);
                 Spirit->RemoveFlag(UNIT_NPC_FLAGS,UNIT_NPC_FLAG_GOSSIP);
                 SpiritGUID[i] = Spirit->GetGUID();
             }
@@ -1302,7 +1302,7 @@ struct npc_akama_illidanAI : public ScriptedAI
         case 0:
             me->SetSheath(SHEATH_STATE_UNARMED);
             me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-            me->SetVisibility(VISIBILITY_ON);
+            me->SetVisible(true);
             me->GetMotionMaster()->MovePoint(WalkCount, AkamaWPCouncil[1].x, AkamaWPCouncil[1].y, AkamaWPCouncil[1].z); //go trough door
             Timer = 0;
             break;
@@ -1387,12 +1387,12 @@ struct npc_akama_illidanAI : public ScriptedAI
             Timer = 2500;
             break;
         case 4: // spirit appear
-            Spirit[0]->SetVisibility(VISIBILITY_ON);
+            Spirit[0]->SetVisible(true);
             Timer = 1500;
             break;
         case 5:
             DoScriptText(SAY_UDALO_NOTALONE,Spirit[0]);
-            Spirit[1]->SetVisibility(VISIBILITY_ON);
+            Spirit[1]->SetVisible(true);
             Timer = 3000;
             break;
         case 6:
@@ -1416,8 +1416,8 @@ struct npc_akama_illidanAI : public ScriptedAI
         case 9:
             me->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE);
             DoScriptText(SAY_AKAMA_THANKS,me);
-            Spirit[0]->SetVisibility(VISIBILITY_OFF);
-            Spirit[1]->SetVisibility(VISIBILITY_OFF);
+            Spirit[0]->SetVisible(false);
+            Spirit[1]->SetVisible(false);
             Timer = 2000;
             break;
         case 10:
@@ -1469,13 +1469,13 @@ struct npc_akama_illidanAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     override {
-        if(me->GetVisibility() == VISIBILITY_OFF)
+        if(!me->IsVisible())
         {
             if (Check_Timer <= diff)
             {
                 if(pInstance && pInstance->GetData(DATA_ILLIDARICOUNCILEVENT) == DONE)
                 {
-                    me->SetVisibility(VISIBILITY_ON);
+                    me->SetVisible(true);
                     if(!councilEventDone)
                         EnterPhase(PHASE_COUNCIL_INTRO);
                 }
@@ -1630,7 +1630,7 @@ struct boss_maievAI : public ScriptedAI
             if(Timer[EVENT_MAIEV_STEALTH])
             {
                 me->SetHealth(me->GetMaxHealth());
-                me->SetVisibility(VISIBILITY_ON);
+                me->SetVisible(true);
                 Timer[EVENT_MAIEV_STEALTH] = 0;
             }
             me->InterruptNonMeleeSpells(false);
@@ -1708,7 +1708,7 @@ struct boss_maievAI : public ScriptedAI
             case EVENT_MAIEV_STEALTH:
                 {
                     me->SetHealth(me->GetMaxHealth());
-                    me->SetVisibility(VISIBILITY_ON);
+                    me->SetVisible(true);
                     me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     Timer[EVENT_MAIEV_STEALTH] = 0;
                     BlinkToPlayer();
@@ -1743,9 +1743,9 @@ struct boss_maievAI : public ScriptedAI
                 break;
             }
 
-            if(me->GetVisibility() == VISIBILITY_ON && (me->GetHealthPct() < 50))
+            if(me->IsVisible() && (me->GetHealthPct() < 50))
             {
-                me->SetVisibility(VISIBILITY_OFF);
+                me->SetVisible(false);
                 me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 if(GETCRE(Illidan, IllidanGUID))
                     ((boss_illidan_stormrageAI*)Illidan->AI())->DeleteFromThreatList(me->GetGUID());
@@ -1996,7 +1996,7 @@ struct mob_parasitic_shadowfiendAI : public ScriptedAI
                 AttackStart(target);
             else
             {
-                me->SetVisibility(VISIBILITY_OFF);
+                me->SetVisible(false);
                 me->SetDeathState(JUST_DIED);
                 return;
             }
@@ -2007,7 +2007,7 @@ struct mob_parasitic_shadowfiendAI : public ScriptedAI
             GETUNIT(Illidan, IllidanGUID);
             if(!Illidan || (Illidan->ToCreature())->IsInEvadeMode())
             {
-                me->SetVisibility(VISIBILITY_OFF);
+                me->SetVisible(false);
                 me->SetDeathState(JUST_DIED);
                 return;
             }else CheckTimer = 5000;
@@ -2086,7 +2086,7 @@ void boss_illidan_stormrageAI::JustSummoned(Creature* summon)
         {
             if(Phase == PHASE_TALK_SEQUENCE)
             {
-                summon->SetVisibility(VISIBILITY_OFF);
+                summon->SetVisible(false);
                 summon->SetDeathState(JUST_DIED);
                 return;
             }
@@ -2099,7 +2099,7 @@ void boss_illidan_stormrageAI::JustSummoned(Creature* summon)
         }break;
     case MAIEV_SHADOWSONG:
         {
-            summon->SetVisibility(VISIBILITY_OFF); // Leave her invisible until she has to talk
+            summon->SetVisible(false); // Leave her invisible until she has to talk
             summon->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             MaievGUID = summon->GetGUID();
             ((boss_maievAI*)summon->AI())->GetIllidanGUID(me->GetGUID());
@@ -2146,7 +2146,7 @@ void boss_illidan_stormrageAI::HandleTalkSequence()
     case 12:
         if(GETUNIT(Maiev, MaievGUID))
         {
-            Maiev->SetVisibility(VISIBILITY_ON); // Maiev is now visible
+            Maiev->SetVisible(true); // Maiev is now visible
             Maiev->CastSpell(Maiev, SPELL_TELEPORT_VISUAL, true); // onoz she looks like she teleported!
             Maiev->SetInFront(me); // Have her face us
             me->SetInFront(Maiev); // Face her, so it's not rude =P

@@ -172,7 +172,7 @@ class Boss_Ragnaros : public CreatureScript
                     case INTRO:
                         Intro_Timer = 0;
                         Intro_Phase = 0;
-                        me->SetVisibility(VISIBILITY_OFF);
+                        me->SetVisible(false);
                         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         me->SetFaction(FACTION_FRIENDLY);
                         me->AddAura(SPELL_SUBMERGE, me);
@@ -202,7 +202,7 @@ class Boss_Ragnaros : public CreatureScript
                     case EMERGING:
                         //submerge spell set this off, emerge set it back on but the animation is then skipped,
                         //so we have to set on back ourselves and wait a world update before continuing
-                        me->SetVisibility(VISIBILITY_ON);
+                        me->SetVisible(true);
                         Phase_Timer = EMERGING_TIME;
                         Emerging_Waited = false;
                         break;
@@ -326,7 +326,7 @@ class Boss_Ragnaros : public CreatureScript
                         Intro_Timer = 4000;
                         break;
                     case 3:
-                        me->SetVisibility(VISIBILITY_ON);
+                        me->SetVisible(true);
                         Intro_Timer = 0;
                         break;
                     case 4:

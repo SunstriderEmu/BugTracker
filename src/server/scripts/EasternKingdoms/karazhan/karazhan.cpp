@@ -241,7 +241,7 @@ struct npc_barnesAI : public npc_escortAI
                     if (Unit* Spotlight = ObjectAccessor::GetUnit((*me), SpotlightGUID))
                     {
                         Spotlight->RemoveAllAuras();
-                        Spotlight->SetVisibility(VISIBILITY_OFF);
+                        Spotlight->SetVisible(false);
                     }
 
                     me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_STAND);
@@ -500,8 +500,8 @@ bool GossipSelect_npc_calliard(Player* player, Creature* _Creature, uint32 sende
 #define SPELL_CONFLAGRATION_BLAST   30977
 #define SPELL_MANA_SHIELD           31635
 
-static float MedivPos[4] = {-11161.49,-1902.24,91.48,1.94};
-static float ArcanagosPos[4] = {-11169.75,-1881.48,95.39,4.83};
+static float MedivPos[4] = {-11161.49f,-1902.24f,91.48f,1.94f};
+static float ArcanagosPos[4] = {-11169.75f,-1881.48f,95.39f,4.83f};
 
 struct npc_image_of_medivhAI : public ScriptedAI
 {
@@ -620,7 +620,7 @@ struct npc_image_of_medivhAI : public ScriptedAI
             me->Yell(SAY_DIALOG_MEDIVH_9, LANG_UNIVERSAL, nullptr);
             return 10000;
         case 14:
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
             me->ClearInCombat();
 
             if(map->IsDungeon())
@@ -809,7 +809,7 @@ struct woefulhealerAI : public ScriptedAI
 
         healtarget = nullptr;
         tohealingroup = 0;
-        mostlowhp = -1;
+		mostlowhp = uint32(-1);
         
         //Selection de la/les cibles du heal
         Map *map = me->GetMap();

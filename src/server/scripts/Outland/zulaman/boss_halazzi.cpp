@@ -163,7 +163,7 @@ struct boss_halazziAI : public ScriptedAI
             }
             if(Unit *Lynx = ObjectAccessor::GetUnit(*me, LynxGUID))
             {
-                Lynx->SetVisibility(VISIBILITY_OFF);
+                Lynx->SetVisible(false);
                 Lynx->SetDeathState(JUST_DIED);
             }
             me->SetMaxHealth(600000);

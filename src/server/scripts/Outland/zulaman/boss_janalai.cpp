@@ -530,7 +530,7 @@ struct mob_amanishi_hatcherAI : public ScriptedAI
     override {
         if(!pInstance || !(pInstance->GetData(DATA_JANALAIEVENT) == IN_PROGRESS))
         {
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
             me->SetDeathState(JUST_DIED);
             return;
         }
@@ -564,7 +564,7 @@ struct mob_amanishi_hatcherAI : public ScriptedAI
                 }
                 else
                 {
-                    me->SetVisibility(VISIBILITY_OFF);
+                    me->SetVisible(false);
                     me->SetDeathState(JUST_DIED);
                 }
             }else WaitTimer -= diff;
@@ -604,7 +604,7 @@ struct mob_hatchlingAI : public ScriptedAI
     override {
         if(!pInstance || !(pInstance->GetData(DATA_JANALAIEVENT) == IN_PROGRESS))
         {
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
             me->SetDeathState(JUST_DIED);
             return;
         }

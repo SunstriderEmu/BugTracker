@@ -387,7 +387,7 @@ public:
                 }
                 summoned = false;
                 me->ClearUnitState(UNIT_STATE_ROOT);
-                me->SetVisibility(VISIBILITY_ON);
+                me->SetVisible(true);
             }
         }
 
@@ -401,7 +401,7 @@ public:
                     NazanGUID = Nazan->GetGUID();
 
                 summoned = true;
-                me->SetVisibility(VISIBILITY_OFF);
+                me->SetVisible(false);
                 me->AddUnitState(UNIT_STATE_ROOT);
             }
         }
@@ -438,7 +438,7 @@ public:
             {
                 case MESSAGE_SENTRY_DIED:
                 {
-                    bool aliveSentry = me->FindCreatureInGrid(NPC_HELLFIRE_SENTRY, 150.0f, true);
+                    bool aliveSentry = me->FindNearestCreature(NPC_HELLFIRE_SENTRY, 150.0f, true);
                     if (!aliveSentry)
                         if (Unit* killer = me->GetMap()->GetPlayer(data))
                             AttackStart(killer);

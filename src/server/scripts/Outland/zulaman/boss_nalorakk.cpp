@@ -166,7 +166,7 @@ struct boss_nalorakkAI : public ScriptedAI
 
             TypeContainerVisitor<Trinity::CreatureListSearcher<Trinity::AllFriendlyCreaturesInGrid>, GridTypeMapContainer> cSearcher(searcher);
 
-            cell.Visit(pair, cSearcher, *(me->GetMap()));
+            cell.Visit(pair, cSearcher, *(me->GetMap()), *me, me->GetGridActivationRange());
         }
 
         if(!templist.size())

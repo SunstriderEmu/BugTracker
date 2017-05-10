@@ -216,8 +216,6 @@ struct npc_thrall_old_hillsbradAI : public npc_escortAI
 
     InstanceScript *pInstance;
 
-    uint64 TarethaGUID;
-
     bool LowHp;
     bool HadMount;
 
@@ -334,9 +332,9 @@ struct npc_thrall_old_hillsbradAI : public npc_escortAI
                 break;
             case 94:
                 me->AddUnitMovementFlag(MOVEMENTFLAG_WALKING);
-                if (uint64 TarethaGUID = pInstance->GetData64(DATA_TARETHA))
+                if (uint64 tarethaGUID = pInstance->GetData64(DATA_TARETHA))
                 {
-                    if (Unit* Taretha = ObjectAccessor::GetUnit((*me), TarethaGUID))
+                    if (Unit* Taretha = ObjectAccessor::GetUnit((*me), tarethaGUID))
                         DoScriptText(SAY_TA_ESCAPED, Taretha, me);
                 }
                 break;
@@ -365,9 +363,9 @@ struct npc_thrall_old_hillsbradAI : public npc_escortAI
                         break;
 
                     //trigger taretha to run down outside
-                    if (uint64 TarethaGUID = pInstance->GetData64(DATA_TARETHA))
+                    if (uint64 tarethaGUID = pInstance->GetData64(DATA_TARETHA))
                     {
-                        if (Creature* Taretha = (ObjectAccessor::GetCreature(*me, TarethaGUID)))
+                        if (Creature* Taretha = (ObjectAccessor::GetCreature(*me, tarethaGUID)))
                             ((npc_escortAI*)(Taretha->AI()))->Start(false, false, true, PlayerGUID);
                     }
 
@@ -389,7 +387,7 @@ struct npc_thrall_old_hillsbradAI : public npc_escortAI
                 break;
             case 108:
                 //last waypoint, just set Thrall invisible, respawn is turned off
-                me->SetVisibility(VISIBILITY_OFF);
+                me->SetVisible(false);
                 break;
         }
     }

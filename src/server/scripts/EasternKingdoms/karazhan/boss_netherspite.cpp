@@ -151,13 +151,13 @@ struct  boss_netherspiteAI : public ScriptedAI
         {
             if(Creature *portal = ObjectAccessor::GetCreature(*me, PortalGUID[i]))
             {
-                portal->SetVisibility(VISIBILITY_OFF);
+                portal->SetVisible(false);
                 portal->DealDamage(portal, portal->GetMaxHealth());
                 portal->RemoveFromWorld();
             }
             if(Creature *portal = ObjectAccessor::GetCreature(*me, BeamerGUID[i]))
             {
-                portal->SetVisibility(VISIBILITY_OFF);
+                portal->SetVisible(false);
                 portal->DealDamage(portal, portal->GetMaxHealth());
                 portal->RemoveFromWorld();
             }
@@ -216,7 +216,7 @@ struct  boss_netherspiteAI : public ScriptedAI
                     if(Creature *beamer = ObjectAccessor::GetCreature(*portal, BeamerGUID[j]))
                     {
                         beamer->CastSpell(target, PortalBeam[j], false);
-                        beamer->SetVisibility(VISIBILITY_OFF);
+                        beamer->SetVisible(false);
                         beamer->DealDamage(beamer, beamer->GetMaxHealth());
                         beamer->RemoveFromWorld();
                         BeamerGUID[j] = 0;

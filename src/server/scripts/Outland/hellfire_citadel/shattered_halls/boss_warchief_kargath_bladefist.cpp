@@ -100,18 +100,18 @@ struct boss_warchief_kargath_bladefistAI : public ScriptedAI
             pInstance->SetData(DATA_BLADEFIST_EVENT, IN_PROGRESS);
     }
 
-    void JustSummoned(Creature *summoned)
+    void JustSummoned(Creature* _summoned)
     override {
-        switch(summoned->GetEntry())
+        switch(_summoned->GetEntry())
         {
             case MOB_HEARTHEN_GUARD:
             case MOB_SHARPSHOOTER_GUARD:
             case MOB_REAVER_GUARD:
-                summoned->AI()->AttackStart(SelectTarget(SELECT_TARGET_RANDOM,0));
-                adds.push_back(summoned->GetGUID());
+				_summoned->AI()->AttackStart(SelectTarget(SELECT_TARGET_RANDOM,0));
+                adds.push_back(_summoned->GetGUID());
                 break;
             case MOB_SHATTERED_ASSASSIN:
-                assassins.push_back(summoned->GetGUID());
+                assassins.push_back(_summoned->GetGUID());
                 break;
         }
     }

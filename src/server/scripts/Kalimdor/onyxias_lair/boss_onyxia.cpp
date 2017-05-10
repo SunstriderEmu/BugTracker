@@ -195,7 +195,7 @@ struct boss_onyxiaAI : public ScriptedAI
 
                 if(SummonWhelpsTimer < diff)
                 {
-                    SummonWhelps(Phase);
+                    SummonWhelps();
 
                     SummonWhelpsTimer = 45000;
                 }else SummonWhelpsTimer -= diff;
@@ -250,7 +250,7 @@ struct boss_onyxiaAI : public ScriptedAI
 
             if(SummonWhelpsTimer < diff)
             {
-                SummonWhelps(Phase);
+                SummonWhelps();
 
                 SummonWhelpsTimer = 45000;
             }
@@ -265,7 +265,7 @@ struct boss_onyxiaAI : public ScriptedAI
             me->GetMotionMaster()->MovePoint(0, MovementLocations[random][0], MovementLocations[random][1], MovementLocations[random][2]);}
     }
 
-    void SummonWhelps(uint32 Phase)
+    void SummonWhelps()
     {
         if(Phase == 2)
         {

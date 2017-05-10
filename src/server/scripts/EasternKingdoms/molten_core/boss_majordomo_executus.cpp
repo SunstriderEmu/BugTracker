@@ -166,14 +166,14 @@ class Boss_Majordomo : public CreatureScript
                 {
                     case NOT_VISIBLE:
                         me->SetFaction(35);
-                        me->SetVisibility(VISIBILITY_OFF);
+                        me->SetVisible(false);
                         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         break;
                     case VISIBLE:
                         DoScriptText(SAY_SPAWN, me);
                         summonGuards();
                         me->SetFaction(54);
-                        me->SetVisibility(VISIBILITY_ON);
+                        me->SetVisible(true);
                         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         break;
                     case DOWN:
@@ -202,7 +202,7 @@ class Boss_Majordomo : public CreatureScript
                     }
                     case RAGNAGNA:
                         me->SetFaction(35);
-                        me->SetVisibility(VISIBILITY_ON);
+                        me->SetVisible(true);
                         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);  
                         me->SetSpeedRate(MOVE_WALK, 0.9);
@@ -583,7 +583,7 @@ class Mob_Hot_Coal : public CreatureScript
             override {
                 events.RescheduleEvent(EV_COAL, 1000);
 
-                me->SetVisibility(VISIBILITY_OFF);
+                me->SetVisible(false);
             }
 
             void UpdateAI(uint32 const diff)

@@ -1031,7 +1031,7 @@ struct claw_tentacleAI : public ScriptedAI
                     p->DealDamage(p, me->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, nullptr, false);
 
                 //Dissapear and reappear at new position
-                me->SetVisibility(VISIBILITY_OFF);
+                me->SetVisible(false);
 
                 Unit* target = nullptr;
                 target = SelectTarget(SELECT_TARGET_RANDOM,0);
@@ -1054,7 +1054,7 @@ struct claw_tentacleAI : public ScriptedAI
                     AttackStart(target);
                 }
 
-                me->SetVisibility(VISIBILITY_ON);
+                me->SetVisible(true);
 
             }else EvadeTimer -= diff;
         }
@@ -1131,7 +1131,7 @@ struct giant_claw_tentacleAI : public ScriptedAI
                     p->DealDamage(p, me->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, nullptr, false);
 
                 //Disappear and reappear at new position
-                me->SetVisibility(VISIBILITY_OFF);
+                me->SetVisible(false);
 
                 Unit* target = nullptr;
                 target = SelectTarget(SELECT_TARGET_RANDOM, 0);
@@ -1155,7 +1155,7 @@ struct giant_claw_tentacleAI : public ScriptedAI
                     AttackStart(target);
                 }
 
-                me->SetVisibility(VISIBILITY_ON);
+                me->SetVisible(true);
 
             }else EvadeTimer -= diff;
         }

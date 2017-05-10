@@ -611,7 +611,7 @@ struct npc_kaliri_egg_triggerAI : public ScriptedAI
     void Reset()
     override {
         me->SetFaction(14);
-        me->SetVisibility(VISIBILITY_OFF);
+        me->SetVisible(false);
         GameObject* eggGO = nullptr;
 
         Trinity::NearestGameObjectEntryInObjectRangeCheck go_check(*me, 185549, 1);

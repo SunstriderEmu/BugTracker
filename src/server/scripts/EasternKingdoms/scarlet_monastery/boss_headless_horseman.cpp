@@ -177,9 +177,9 @@ struct mob_wisp_invisAI : public ScriptedAI
             DoCast(me, spell);
     }
 
-    void SpellHit(Unit* caster, const SpellInfo *spell)
+    void SpellHit(Unit* caster, const SpellInfo* spellInfo)
     override {
-        if (spell->Id == SPELL_WISP_FLIGHT_PORT && Creaturetype == 4)
+        if (spellInfo->Id == SPELL_WISP_FLIGHT_PORT && Creaturetype == 4)
             me->SetDisplayId(2027);
     }
 
@@ -415,7 +415,7 @@ struct boss_headless_horsemanAI : public ScriptedAI
         if (headGUID){
             Unit* Head = ObjectAccessor::GetUnit((*me), headGUID);
             if (Head) {
-                Head->SetVisibility(VISIBILITY_OFF);
+                Head->SetVisible(false);
                 Head->SetDeathState(JUST_DIED);
             }
 
@@ -430,7 +430,7 @@ struct boss_headless_horsemanAI : public ScriptedAI
 
     void FlyMode()
     {
-        me->SetVisibility(VISIBILITY_OFF);
+        me->SetVisible(false);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         me->SetDisableGravity(true);
         me->SetSpeedRate(MOVE_WALK, 5.0f, true);
@@ -453,7 +453,7 @@ struct boss_headless_horsemanAI : public ScriptedAI
 
         switch (id) {
         case 0:
-            me->SetVisibility(VISIBILITY_ON);
+            me->SetVisible(true);
             break;
         case 1:
         {
@@ -867,7 +867,7 @@ struct mob_pulsing_pumpkinAI : public ScriptedAI
 
         Unit* debuff = ObjectAccessor::GetUnit((*me), debuffGUID);
         if (debuff) {
-            debuff->SetVisibility(VISIBILITY_OFF);
+            debuff->SetVisible(false);
             debuffGUID = 0;
         }
     }

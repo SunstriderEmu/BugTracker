@@ -177,7 +177,7 @@ struct boss_shahrazAI : public ScriptedAI
                 if (Player* plr = ObjectAccessor::GetPlayer(*me, i)) 
                 {
                     float z = plr->GetPositionZ();
-                    if (z < 189)      // Player seems to be undermap (ugly hack, isn't it ?)
+                    if (z < 189.0f)      // Player seems to be undermap (ugly hack, isn't it ?)
                     {
                         DoTeleportPlayer(plr, 945.6173, 198.3479, 192.00, 4.674);
                         i = 0;
@@ -186,7 +186,7 @@ struct boss_shahrazAI : public ScriptedAI
                 }
             }
             
-            CheckPlayersUndermapTimer = -1;
+            CheckPlayersUndermapTimer = uint32(-1);
         }else CheckPlayersUndermapTimer -= diff;
     }
 

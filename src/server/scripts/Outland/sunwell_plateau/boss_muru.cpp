@@ -515,7 +515,7 @@ public:
             SentinelTimer = 31500;
 
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            me->SetVisibility(VISIBILITY_ON);
+            me->SetVisible(true);
 
             Summons.DespawnAll();
 
@@ -571,7 +571,7 @@ public:
 
         void EnterEvadeMode(EvadeReason why)
         override {
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
             RespawnTimer = 30000;
             me->SetReactState(REACT_PASSIVE);
             CreatureAI::EnterEvadeMode(why);
@@ -583,7 +583,7 @@ public:
             {
                 if (RespawnTimer <= diff)
                 {
-                    me->SetVisibility(VISIBILITY_ON);
+                    me->SetVisible(true);
                     me->SetReactState(REACT_AGGRESSIVE);
                     RespawnTimer = 0;
                 }
@@ -629,7 +629,7 @@ public:
                         PhaseTimer = 2000;
                         break;
                     case 4:
-                        me->SetVisibility(VISIBILITY_OFF);
+                        me->SetVisible(false);
                         Phase = 5;
                         PhaseTimer = 1000;
                         break;

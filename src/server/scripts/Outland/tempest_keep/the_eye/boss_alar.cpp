@@ -1,18 +1,3 @@
-/* Copyright(C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-*(at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
 
 /* ScriptData
 SDName: boss_alar
@@ -42,12 +27,12 @@ EndScriptData */
 
 static float waypoint[6][3] =
 {
-    {340.15, 58.65, 17.71},
-    {388.09, 31.54, 20.18},
-    {388.18, -32.85, 20.18},
-    {340.29, -60.19, 17.72},
-    {332, 0.01, 39}, // better not use the same xy coord
-    {331, 0.01, -2.39}
+    {340.15f,  58.65f, 17.71f},
+    {388.09f,  31.54f, 20.18f},
+    {388.18f, -32.85f, 20.18f},
+    {340.29f, -60.19f, 17.72f},
+    {332.00f,  00.01f, 39.00f}, // better not use the same xy coord
+    {331.00f,  00.01f, -2.39f}
 };
 
 enum WaitEventType
@@ -476,7 +461,7 @@ struct mob_ember_of_alarAI : public ScriptedAI
         if(toDie)
         {
             me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-            //me->SetVisibility(VISIBILITY_OFF);
+            //me->SetVisible(false);
         }
 
         DoMeleeAttackIfReady();

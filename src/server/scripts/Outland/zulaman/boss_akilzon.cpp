@@ -155,7 +155,7 @@ struct boss_akilzonAI : public ScriptedAI
             Unit* bird = ObjectAccessor::GetUnit(*me,BirdGUID);
             if(bird && bird->IsAlive())
             {
-                bird->SetVisibility(VISIBILITY_OFF);
+                bird->SetVisible(false);
                 bird->SetDeathState(JUST_DIED);
             }
         }

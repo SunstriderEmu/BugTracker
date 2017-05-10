@@ -413,7 +413,7 @@ struct boss_malchezaarAI : public ScriptedAI
             Unit *pInfernal = ObjectAccessor::GetUnit(*me, infernal);
             if(pInfernal && pInfernal->IsAlive())
             {
-                pInfernal->SetVisibility(VISIBILITY_OFF);
+                pInfernal->SetVisible(false);
                 pInfernal->SetDeathState(JUST_DIED);
             }
         }

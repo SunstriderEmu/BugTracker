@@ -254,7 +254,7 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
         if (pInstance) {
             pInstance->SetData(DATA_NETHEKURSE_EVENT, DONE);
             if (Creature* Executioner = ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_EXECUTIONER_GUID)))
-                Executioner->SetVisibility(VISIBILITY_ON);
+                Executioner->SetVisible(true);
         }
     }
 

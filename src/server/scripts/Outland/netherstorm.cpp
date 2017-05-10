@@ -595,7 +595,7 @@ struct npc_commander_dawnforgeAI : public ScriptedAI
         case 9:
             Turn_to_eachother();
             //hide pathaleon, unit will despawn shortly
-            pathaleon->SetVisibility(VISIBILITY_OFF);
+            pathaleon->SetVisible(false);
             PhaseSubphase = 0;
             ++Phase;
             Phase_Timer = 3000;

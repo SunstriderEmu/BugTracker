@@ -475,7 +475,7 @@ struct boss_kagani_nightstrikeAI : public boss_priestess_guestAI
         Eviscerate_Timer = 6000;
         Wait_Timer = 5000;
         InVanish = false;
-        me->SetVisibility(VISIBILITY_ON);
+        me->SetVisible(true);
 
         boss_priestess_guestAI::Reset();
     }
@@ -498,7 +498,7 @@ struct boss_kagani_nightstrikeAI : public boss_priestess_guestAI
 
         if(Vanish_Timer < diff)
         {
-            me->SetVisibility(VISIBILITY_OFF);      // ...? Hacklike
+            me->SetVisible(false);      // ...? Hacklike
             DoCast(me, SPELL_VANISH);
             InVanish = true;
             Vanish_Timer = 30000;
@@ -513,7 +513,7 @@ struct boss_kagani_nightstrikeAI : public boss_priestess_guestAI
             {
                 DoCast(me->GetVictim(), SPELL_BACKSTAB, true);
                 DoCast(me->GetVictim(), SPELL_KIDNEY_SHOT, true);
-                me->SetVisibility(VISIBILITY_ON);       // ...? Hacklike
+                me->SetVisible(true);       // ...? Hacklike
                 InVanish = false;
             }else Wait_Timer -= diff;
         }

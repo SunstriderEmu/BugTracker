@@ -72,7 +72,7 @@ struct firework_controllerAI : public ScriptedAI
     void Reset() override {
         me->GetPosition(gridStartX,gridStartY,gridZ);
         me->SetReactState(REACT_PASSIVE);
-        me->SetVisibility(VISIBILITY_OFF);
+		me->SetVisible(false);
         me->SetDisableGravity(true);
 
         eventStarted = false;

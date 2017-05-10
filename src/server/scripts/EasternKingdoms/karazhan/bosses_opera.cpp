@@ -686,7 +686,7 @@ bool GossipSelect_npc_grandmother(Player* player, Creature* _Creature, uint32 se
 {
     if(action == GOSSIP_ACTION_INFO_DEF)
     {
-        _Creature->SetVisibility(VISIBILITY_OFF);
+        _Creature->SetVisible(false);
         float x,y,z;
         _Creature->GetPosition(x,y,z);
         Creature* BigBadWolf = _Creature->SummonCreature(CREATURE_BIG_BAD_WOLF, x, y, z, 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 30000);
@@ -928,7 +928,7 @@ struct boss_julianneAI : public ScriptedAI
         {
             if(Unit* Romulo = ObjectAccessor::GetUnit(*me, RomuloGUID))
             {
-                Romulo->SetVisibility(VISIBILITY_OFF);
+                Romulo->SetVisible(false);
                 Romulo->DealDamage(Romulo, Romulo->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
             }
 

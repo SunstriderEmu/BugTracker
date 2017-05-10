@@ -15,7 +15,7 @@ struct npc_zonedesilenceAI : public ScriptedAI
 {
     npc_zonedesilenceAI(Creature *c) : ScriptedAI(c)
     {
-        me->SetVisibility(VISIBILITY_OFF);
+		me->SetVisible(false);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         SetCombatMovementAllowed(false);
     }
