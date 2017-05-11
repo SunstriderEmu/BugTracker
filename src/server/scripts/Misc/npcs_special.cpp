@@ -1077,7 +1077,7 @@ struct npc_snake_trap_serpentsAI : public ScriptedAI
             if (me->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
                 return;
 
-            float attackRadius = me->GetAttackDistance(who);
+            float attackRadius = me->GetAggroRange(who);
             if( me->IsWithinDistInMap(who, attackRadius) && me->IsWithinLOSInMap(who) )
             {
                 if (!(rand() % RAND) )

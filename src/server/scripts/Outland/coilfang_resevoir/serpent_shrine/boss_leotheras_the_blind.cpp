@@ -219,7 +219,7 @@ struct boss_leotheras_the_blindAI : public ScriptedAI
             if (me->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
                 return;
 
-            float attackRadius = me->GetAttackDistance(who);
+            float attackRadius = me->GetAggroRange(who);
             if(me->IsWithinDistInMap(who, attackRadius))
             {
                 // Check first that object is in an angle in front of this one before LoS check

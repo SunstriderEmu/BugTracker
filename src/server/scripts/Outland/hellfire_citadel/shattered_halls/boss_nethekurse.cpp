@@ -219,7 +219,7 @@ struct boss_grand_warlock_nethekurseAI : public ScriptedAI
             if (IsIntroEvent || !IsMainEvent)
                 return;
 
-            float attackRadius = me->GetAttackDistance(who);
+            float attackRadius = me->GetAggroRange(who);
             if (me->IsWithinDistInMap(who, attackRadius) && me->IsWithinLOSInMap(who) )
             {
                 //who->RemoveAurasByType(SPELL_AURA_MOD_STEALTH);

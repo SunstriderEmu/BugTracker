@@ -760,7 +760,7 @@ public:
         bool _canUseFingerOfDeath()
         {
             Unit* victim = me->GetVictim();
-            if (victim && me->IsWithinDistInMap(victim, me->GetAttackDistance(victim)))
+            if (victim && me->IsWithinDistInMap(victim, me->GetAggroRange(victim)))
                 return false;
                 
             if (victim && victim->IsAlive()) {
@@ -791,7 +791,7 @@ public:
             targets.sort(TargetDistanceOrder(me));
             Unit* target = targets.front();
             if (target) {
-                if (!me->IsWithinDistInMap(target, me->GetAttackDistance(target)) && std::fabs(me->GetPositionZ() - target->GetPositionZ()) < 5.0f)
+                if (!me->IsWithinDistInMap(target, me->GetAggroRange(target)) && std::fabs(me->GetPositionZ() - target->GetPositionZ()) < 5.0f)
                     return true; // Cast Finger of Death
                 else // This target is closest, he is our new tank
                     me->AddThreat(target, me->GetThreat(me->GetVictim()));

@@ -284,7 +284,7 @@ struct boss_lady_vashjAI : public ScriptedAI
 
         if (me->CanAttack(who) == CAN_ATTACK_RESULT_OK && who->isInAccessiblePlaceFor(me) && me->IsHostileTo(who))
         {
-            float attackRadius = me->GetAttackDistance(who);
+            float attackRadius = me->GetAggroRange(who);
             if (me->IsWithinDistInMap(who, attackRadius) && me->GetDistanceZ(who) <= CREATURE_Z_ATTACK_RANGE && me->IsWithinLOSInMap(who))
             {
                 //if(who->HasStealthAura())

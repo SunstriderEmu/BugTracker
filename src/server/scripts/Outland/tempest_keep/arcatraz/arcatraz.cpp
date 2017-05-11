@@ -313,7 +313,7 @@ struct npc_warden_mellicharAI : public ScriptedAI
             if (who->GetTypeId() != TYPEID_PLAYER)
                 return;
 
-            float attackRadius = me->GetAttackDistance(who)/5;
+            float attackRadius = me->GetAggroRange(who)/5;
             if( me->IsWithinDistInMap(who, attackRadius) && me->IsWithinLOSInMap(who) )
             {
                 EnterCombat(who);

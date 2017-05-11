@@ -484,7 +484,7 @@ struct boss_kaelthasAI : public ScriptedAI
             if (!me->CanFly() && me->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
                 return;
 
-            float attackRadius = me->GetAttackDistance(who);
+            float attackRadius = me->GetAggroRange(who);
             if (Phase >= 4 && me->IsWithinDistInMap(who, attackRadius) && me->IsWithinLOSInMap(who))
             {
                 AttackStart(who);
