@@ -789,7 +789,7 @@ struct npc_keeper_remulosAI : public ScriptedAI
         if (c)
         {
             c->DisappearAndDie();
-            ((TemporarySummon*)c)->UnSummon();
+            ((TempSummon*)c)->UnSummon();
         }
         c = ObjectAccessor::GetCreature(*me, RedeemedGUID);
         if (c)
@@ -1073,7 +1073,7 @@ struct npc_keeper_remulosAI : public ScriptedAI
             {
                 eranikus->GetPosition(x, y, z, o);
                 eranikus->DisappearAndDie();
-                ((TemporarySummon*)eranikus)->UnSummon();
+                ((TempSummon*)eranikus)->UnSummon();
 			}
 			else {
 				//else set to last position (dunno if this is correct, this is a quickfix

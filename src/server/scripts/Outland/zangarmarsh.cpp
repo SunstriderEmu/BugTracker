@@ -366,10 +366,11 @@ struct npc_hchuuAI : public ScriptedAI
     void MoveInLineOfSight(Unit* pWho)
     override {
         if (me->GetDistance(pWho) <= 5.0f && pWho->GetTypeId() == TYPEID_PLAYER) {
-            if (Pet* pet = pWho->ToPlayer()->GetMiniPet()) {
-                if (pWho->ToPlayer()->GetQuestStatus(10945) == QUEST_STATUS_INCOMPLETE && pet->GetEntry() == 22817)
-                    pWho->ToPlayer()->AreaExploredOrEventHappens(10945);
-            }
+			if (uint64 critter_guid = pWho->ToPlayer()->GetCritterGUID())
+				if (Creature* pet = pWho->GetMap()->GetCreature(critter_guid)) {
+					if (pWho->ToPlayer()->GetQuestStatus(10945) == QUEST_STATUS_INCOMPLETE && pet->GetEntry() == 22817)
+						pWho->ToPlayer()->AreaExploredOrEventHappens(10945);
+				}
         }
     }
 };

@@ -1105,7 +1105,7 @@ struct npc_simon_bunnyAI : public ScriptedAI
     override {
         me->GetMotionMaster()->MoveTargetedHome();
         
-        if (Unit *summoner = ((TemporarySummon*)me)->GetSummoner()) {
+        if (Unit *summoner = ((TempSummon*)me)->GetSummoner()) {
             summoner->ToPlayer()->DestroyItemCount(ITEM_APEXIS_SHARD, 1, true);
             playerGUID = summoner->GetGUID();
         }
@@ -1502,7 +1502,7 @@ struct npc_simon_bunny_largeAI : public ScriptedAI
     override {
         me->GetMotionMaster()->MoveTargetedHome();
         
-        if (Unit *summoner = ((TemporarySummon*)me)->GetSummoner()) {
+        if (Unit *summoner = ((TempSummon*)me)->GetSummoner()) {
             summoner->ToPlayer()->DestroyItemCount(ITEM_APEXIS_SHARD, 35, true);
             playerGUID = summoner->GetGUID();
         }
@@ -2097,7 +2097,7 @@ struct npc_wrangled_aether_rayAI : public ScriptedAI
     
     void Reset()
     override {
-        if (Unit *summoner = ((TemporarySummon*)me)->GetSummoner()) {
+        if (Unit *summoner = ((TempSummon*)me)->GetSummoner()) {
             me->GetMotionMaster()->MoveFollow(summoner, PET_FOLLOW_DIST*2, M_PI);
             DoCast(summoner, 40926, true);
         }
@@ -2108,7 +2108,7 @@ struct npc_wrangled_aether_rayAI : public ScriptedAI
     void MoveInLineOfSight(Unit *pWho)
     override {
         if (pWho->ToCreature() && pWho->ToCreature()->GetEntry() == 23335 && pWho->IsWithinDistInMap(me, 10.0f)) {
-            if (Unit *summoner = ((TemporarySummon*)me)->GetSummoner()) {
+            if (Unit *summoner = ((TempSummon*)me)->GetSummoner()) {
                 summoner->ToPlayer()->KilledMonsterCredit(me->GetEntry(), me->GetGUID());
                 me->DisappearAndDie();
             }

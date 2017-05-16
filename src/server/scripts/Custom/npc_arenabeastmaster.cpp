@@ -68,7 +68,7 @@ bool GossipHello_arenabeastmaster(Player *player, Creature *me)
 //code from ChatHandler::HandleCreatePetCommand(const char* args)
 bool GossipSelect_arenabeastmaster( Player* player, Creature* me, uint32 /* sender */, uint32 type)
 {
-    
+	//TODO... make this use copy paste code from core, we should call the right functions
     if(player->GetPet() || player->GetTemporaryUnsummonedPetNumber())
     {
         me->Whisper("Abandon your current pet first.", LANG_UNIVERSAL, player);
@@ -76,7 +76,7 @@ bool GossipSelect_arenabeastmaster( Player* player, Creature* me, uint32 /* send
         return true;
     }
 
-    auto  pet = new Pet(HUNTER_PET);
+    Pet* pet = new Pet(player, HUNTER_PET);
     if(!pet)
         return false;
 
@@ -108,7 +108,7 @@ bool GossipSelect_arenabeastmaster( Player* player, Creature* me, uint32 /* send
     // visual effect for levelup
     pet->SetUInt32Value(UNIT_FIELD_LEVEL,player->GetLevel());
 
-    player->SetPet(pet);
+    player->SetMinion(pet, true);
     pet->SavePetToDB(PET_SAVE_AS_CURRENT);
     player->PetSpellInitialize();
      
