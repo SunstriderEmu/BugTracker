@@ -1300,12 +1300,16 @@ struct npc_explosive_sheepAI : public ScriptedAI
     
     void UpdateAI(uint32 const diff)
     override {            
-        if (me->GetVictim()) {
-            if (me->IsWithinDistInMap(me->GetVictim(), 3.0f)) {
+        if (UpdateVictim()) 
+        {
+            if (me->IsWithinDistInMap(me->GetVictim(), 5.0f)) 
+            {
                 DoCast(me->GetVictim(), SPELL_EXPLODE);
-                //me->DisappearAndDie();
-				if(TempSummon* summon = me->ToTempSummon())
-					summon->UnSummon();
+                if (TempSummon* summon = me->ToTempSummon())
+                    summon->UnSummon();
+                else
+                    me->DisappearAndDie();
+
                 if (me->GetOwner() && me->GetOwner()->ToPlayer()) {
                     me->GetOwner()->ToPlayer()->SendCooldownEvent(sSpellMgr->GetSpellInfo(4074));
                 }

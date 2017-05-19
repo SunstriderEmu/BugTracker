@@ -60,7 +60,7 @@ struct npc_training_dummy : ScriptedAI
                 if (Player* attacker = ObjectAccessor::GetPlayer(*me, itr->first))
                 {
                     attacker->CombatStop(false);
-                    attacker->AttackStop();
+                    attacker->AttackStop(); //little bug here: this will interrupt spells... not nice, but no so much of a problem in a capital
                     attacker->CombatStopWithPets(true);
                     attacker->ClearInCombat();
                 }
