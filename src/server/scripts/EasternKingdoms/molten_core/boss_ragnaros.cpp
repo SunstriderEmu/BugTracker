@@ -45,8 +45,6 @@ enum
     SAY_KILL =                -1409017,
     SAY_MAGMA_BLAST =         -1409018,
  
-    FACTION_FRIENDLY =              35,
- 
     CREATURE_SON_OF_FLAME =      12143,
     CREATURE_FLAME_OF_RAGNAROS = 13148,
  

@@ -39,7 +39,6 @@ EndContentData */
 
 enum blyAndCrewFactions {
     FACTION_HOSTILE         = 14,
-    FACTION_FRIENDLY        = 35,       // While in cages (so the trolls won't attack them while they're caged)
     FACTION_FREED           = 250       // After release (so they'll be hostile towards trolls)
 };
 
