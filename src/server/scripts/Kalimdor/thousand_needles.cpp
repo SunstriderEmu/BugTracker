@@ -105,7 +105,7 @@ bool QuestAccept_npc_swiftmountain(Player* player, Creature* creature, Quest con
     {
         ((npc_escortAI*)(creature->AI()))->Start(true, true, false, player->GetGUID(), creature->GetEntry());
         DoScriptText(SAY_START, creature, player);
-        creature->SetFaction(113);
+        creature->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
     }
 
     return true;

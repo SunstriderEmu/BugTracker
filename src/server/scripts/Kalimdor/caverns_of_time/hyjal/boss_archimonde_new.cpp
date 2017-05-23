@@ -594,7 +594,7 @@ public:
                     // Visibility check
                     if ((_instance->GetData(DATA_AZGALOREVENT) < DONE) && ((me->IsVisible()) || (me->GetFaction() != 35))) {
                         me->SetVisible(false);
-                        me->SetFaction(35);
+                        me->SetFaction(FACTION_FRIENDLY);
                     }
                     else if ((_instance->GetData(DATA_AZGALOREVENT) >= DONE) && (!me->IsVisible() || (me->GetFaction() == 35))) {
                         me->SetFaction(1720);

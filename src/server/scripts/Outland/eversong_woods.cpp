@@ -97,12 +97,12 @@ struct npc_prospector_anvilwardAI : public npc_escortAI
 
     void Reset()
     override {
-        me->SetFaction(35);
+        me->SetFaction(FACTION_FRIENDLY);
     }
 
     void JustDied(Unit* pKiller)
     override {
-        me->SetFaction(35);
+        me->SetFaction(FACTION_FRIENDLY);
     }
 
     void UpdateAI(const uint32 diff)

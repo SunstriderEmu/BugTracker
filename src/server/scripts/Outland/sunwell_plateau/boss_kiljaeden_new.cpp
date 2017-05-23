@@ -1282,7 +1282,7 @@ public:
 
             if (Creature *controller = pInstance->instance->GetCreature(pInstance->GetData64(DATA_KILJAEDEN_CONTROLLER)))
             {
-                controller->SetFaction(35);
+                controller->SetFaction(FACTION_FRIENDLY);
                 controller->RemoveAllAuras();
                 controller->DeleteThreatList();
                 controller->CombatStop();

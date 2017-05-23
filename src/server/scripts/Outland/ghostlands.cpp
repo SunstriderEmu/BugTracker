@@ -250,7 +250,7 @@ bool QuestAccept_npc_ranger_lilatha(Player* player, Creature* creature, Quest co
 {
     if (quest->GetQuestId() == QUEST_ESCAPE_FROM_THE_CATACOMBS)
     {
-        creature->SetFaction(113);
+        creature->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
         ((npc_escortAI*)(creature->AI()))->Start(true, true, false, player->GetGUID(), creature->GetEntry());
     }
     return true;

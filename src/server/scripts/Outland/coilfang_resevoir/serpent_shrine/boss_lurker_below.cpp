@@ -162,7 +162,7 @@ class Boss_Lurker_Below : public CreatureScript
                         me->SetFlag(UNIT_NPC_EMOTESTATE, EMOTE_STATE_SUBMERGED);
                         me->CastSpell(me, SPELL_SUBMERGE);
                         me->SetVisible(false);
-                        me->SetFaction(35);
+                        me->SetFaction(FACTION_FRIENDLY);
                         me->SetReactState(REACT_PASSIVE);
                         break;
                     case EMERGED:

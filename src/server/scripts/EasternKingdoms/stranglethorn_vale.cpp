@@ -57,7 +57,7 @@ struct mob_yennikuAI : public ScriptedAI
                 me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_STUN);
                 me->CombatStop();                   //stop combat
                 me->DeleteThreatList();             //unsure of this
-                me->SetFaction(83);                 //horde generic
+                me->SetFaction(FACTION_HORDE_GENERIC);                 //horde generic
 
                 bReset = true;
                 Reset_Timer = 60000;

@@ -165,7 +165,7 @@ class Boss_Majordomo : public CreatureScript
                 switch (newPhase)
                 {
                     case NOT_VISIBLE:
-                        me->SetFaction(35);
+                        me->SetFaction(FACTION_FRIENDLY);
                         me->SetVisible(false);
                         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         break;
@@ -179,7 +179,7 @@ class Boss_Majordomo : public CreatureScript
                     case DOWN:
                     {
                         Summons.DespawnAll();
-                        me->SetFaction(35);
+                        me->SetFaction(FACTION_FRIENDLY);
                         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         me->SetReactState(REACT_PASSIVE);
                         me->GetMotionMaster()->MoveTargetedHome();
@@ -201,7 +201,7 @@ class Boss_Majordomo : public CreatureScript
                         break;
                     }
                     case RAGNAGNA:
-                        me->SetFaction(35);
+                        me->SetFaction(FACTION_FRIENDLY);
                         me->SetVisible(true);
                         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);  

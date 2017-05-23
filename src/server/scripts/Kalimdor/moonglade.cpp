@@ -1048,7 +1048,7 @@ struct npc_keeper_remulosAI : public ScriptedAI
                 uint32 health = eranikus->GetHealth();
                 eranikus->AI()->EnterEvadeMode();
                 eranikus->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                eranikus->SetFaction(35);
+                eranikus->SetFaction(FACTION_FRIENDLY);
                 eranikus->SetHealth(health);
             }
             break;

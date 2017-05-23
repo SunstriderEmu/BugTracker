@@ -402,7 +402,7 @@ struct npc_shade_of_horseman_bunnyAI : public ScriptedAI
     npc_shade_of_horseman_bunnyAI(Creature* c) : ScriptedAI(c)
     {
         stackCount = 0;
-        me->SetFaction(35);
+        me->SetFaction(FACTION_FRIENDLY);
         SetCombatMovementAllowed(false);
     }
     

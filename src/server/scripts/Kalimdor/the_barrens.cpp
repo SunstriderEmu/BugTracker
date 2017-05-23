@@ -409,7 +409,7 @@ struct npc_twiggy_flatheadAI : public ScriptedAI
                         Creature* pCreature = me->SummonCreature(NPC_AFFRAY_CHALLENGER, AffrayChallengerLoc[i][0], AffrayChallengerLoc[i][1], AffrayChallengerLoc[i][2], AffrayChallengerLoc[i][3], TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
                         if(!pCreature)
                             continue;
-                        pCreature->SetFaction(35);
+                        pCreature->SetFaction(FACTION_FRIENDLY);
                         pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                         pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         pCreature->HandleEmoteCommand(EMOTE_ONESHOT_ROAR);
@@ -450,7 +450,7 @@ struct npc_twiggy_flatheadAI : public ScriptedAI
                             pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                             pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                             pCreature->HandleEmoteCommand(EMOTE_ONESHOT_ROAR);
-                            pCreature->SetFaction(14);
+                            pCreature->SetFaction(FACTION_MONSTER);
                             ((CreatureAI*)pCreature->AI())->AttackStart(pWarrior);
                             ++Wave;
                             Wave_Timer = 20000;
@@ -649,7 +649,7 @@ bool QuestAccept_npc_wizzlecrank_shredder(Player* pPlayer, Creature* pCreature, 
         if (npc_escortAI* pEscortAI = CAST_AI(npc_wizzlecrank_shredderAI, (pCreature->AI())))
             pEscortAI->Start(true, true, false, pPlayer->GetGUID(), pCreature->GetEntry());
             
-        pCreature->SetFaction(113);
+        pCreature->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
     }
     return true;
 }

@@ -146,7 +146,7 @@ bool QuestAccept_npc_oox22fe(Player* pPlayer, Creature* pCreature, const Quest* 
 {
     if (pQuest->GetQuestId() == QUEST_RESCUE_OOX22FE)
     {
-        pCreature->SetFaction(113);
+        pCreature->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
         pCreature->SetHealth(pCreature->GetMaxHealth());
         pCreature->SetUInt32Value(UNIT_FIELD_BYTES_1,0);
         pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);

@@ -146,7 +146,7 @@ public:
 
         void SetFrozenState(Creature *creature)
         {
-            creature->SetFaction(35);
+            creature->SetFaction(FACTION_FRIENDLY);
             creature->RemoveAllAuras();
             //creature->RemoveFlag (UNIT_FIELD_FLAGS,UNIT_FLAG_ANIMATION_FROZEN);
             creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -179,7 +179,7 @@ public:
                 if (!target || !target->IsAlive() || target->GetFaction() == 14)
                     continue;
                 target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
-                target->SetFaction(14);
+                target->SetFaction(FACTION_MONSTER);
                 target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 return;        // only want the first one we find
             }

@@ -113,7 +113,7 @@ struct boss_gythAI : public ScriptedAI
                 bAggro = true;
                 // Visible now!
                 me->SetUInt32Value(UNIT_FIELD_DISPLAYID, 9723);
-                me->SetFaction(14);
+                me->SetFaction(FACTION_MONSTER);
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             } else Aggro_Timer -= diff;
         }

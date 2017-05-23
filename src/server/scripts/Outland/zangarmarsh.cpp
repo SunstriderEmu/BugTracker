@@ -288,7 +288,7 @@ struct npc_kayra_longmaneAI : public npc_escortAI
     void JustSummoned(Creature *summoned)
     override {
         summoned->AI()->AttackStart(me);
-        summoned->SetFaction(14);
+        summoned->SetFaction(FACTION_MONSTER);
     }
 
     void WaypointReached(uint32 i)
@@ -340,7 +340,7 @@ bool QuestAccept_npc_kayra_longmane(Player* player, Creature* creature, Quest co
     if (quest->GetQuestId() == QUEST_EFU)
     {
         ((npc_escortAI*)(creature->AI()))->Start(true, true, false, player->GetGUID(), creature->GetEntry());
-        creature->SetFaction(113);
+        creature->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
     }
     return true;
 }

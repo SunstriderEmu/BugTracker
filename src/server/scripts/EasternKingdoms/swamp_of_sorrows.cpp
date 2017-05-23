@@ -130,7 +130,7 @@ bool QuestAccept_npc_galen_goodward(Player* pPlayer, Creature* pCreature, Quest 
     if (quest->GetQuestId() == QUEST_GALENS_ESCAPE)
     {
         ((npc_escortAI*)(pCreature->AI()))->Start(false, false, false, pPlayer->GetGUID(), pCreature->GetEntry());
-        pCreature->SetFaction(250);
+        pCreature->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_ACTIVE);
         DoScriptText(SAY_QUEST_ACCEPTED, pCreature);
     }
     return true;

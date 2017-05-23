@@ -641,7 +641,7 @@ struct npc_ogronAI : public npc_escortAI
                     case 7:
                         if (Creature* caldspawn = me->SummonCreature(5046, -3376.830322, -3208.791260, 35.163025, 5.946863, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 60000)) {
                             caldspawn->GetMotionMaster()->MovePoint(0, -3371.119385, -3212.487061, 34.137459);
-                            caldspawn->SetFaction(35);
+                            caldspawn->SetFaction(FACTION_FRIENDLY);
                         }
                         reethe->Say("What was that? Did you hear something?", LANG_UNIVERSAL);
 //                        reethe->MonsterSay("Qu'est-ce que c'était ? Avez-vous entendu quelque chose ?", LANG_UNIVERSAL, 0);
@@ -650,11 +650,11 @@ struct npc_ogronAI : public npc_escortAI
                         break;
                     case 8:
                         if (Creature* add = me->SummonCreature(5044, -3373.989014, -3207.442871, 35.073441, 5.826434, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 60000))
-                            me->SetFaction(35);
+                            me->SetFaction(FACTION_FRIENDLY);
                         if (Creature* add = me->SummonCreature(5044, -3374.850342, -3209.195557, 34.980534, 5.826434, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 60000))
-                            me->SetFaction(35);
+                            me->SetFaction(FACTION_FRIENDLY);
                         if (Creature* add = me->SummonCreature(5045, -3375.389404, -3211.398682, 34.845543, 6.043204, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 60000))
-                            me->SetFaction(35);
+                            me->SetFaction(FACTION_FRIENDLY);
                         caldwell->Say("Paval Reethe! I found you at last. And you're dealing with ogres now? Do not worry, even traitors and desertors deserve mercy.", LANG_UNIVERSAL);
                         //caldwell->MonsterSay("Paval Reethe ! Enfin je vous trouve. Vous vous acoquinez avec des ogres maintenant ? N'ayez crainte, même les traîtres et les déserteurs méritent un peu de pitié.", LANG_UNIVERSAL, 0);
                         reethe->SetFlag(UNIT_FIELD_FLAGS, 0);
@@ -694,13 +694,13 @@ struct npc_ogronAI : public npc_escortAI
                         /*std::list<Creature*> skirms;
                         me->GetCreatureListWithEntryInGrid(skirms, 5044, 30.0f);
                         for (std::list<Creature*>::iterator it = skirms.begin(); it != skirms.end(); it++) {
-                            (*it)->SetFaction(14);
+                            (*it)->SetFaction(FACTION_MONSTER);
                             (*it)->AI()->AttackStart(reethe);
                         }
-                        caldwell->SetFaction(14);
+                        caldwell->SetFaction(FACTION_MONSTER);
                         caldwell->AI()->AttackStart(reethe);
                         if (Creature* hallan = me->FindNearestCreature(5045, 20.0f, true)) {
-                            hallan->SetFaction(14);
+                            hallan->SetFaction(FACTION_MONSTER);
                             hallan->AI()->AttackStart(reethe);
                         }*/
                         ++step;
@@ -766,7 +766,7 @@ struct npc_captured_totemAI : public ScriptedAI
     npc_captured_totemAI(Creature* creature) : ScriptedAI(creature)
     {
         me->SetReactState(REACT_PASSIVE);
-        me->SetFaction(35);
+        me->SetFaction(FACTION_FRIENDLY);
         SetCombatMovementAllowed(false);
     }
 

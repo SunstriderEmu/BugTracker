@@ -295,7 +295,7 @@ struct mob_water_globuleAI : public ScriptedAI
 
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->SetFaction(14);
+        me->SetFaction(FACTION_MONSTER);
     }
 
     void EnterCombat(Unit *who) override {}

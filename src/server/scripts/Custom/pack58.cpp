@@ -82,7 +82,7 @@ struct npc_pack58_duelguyAI : public ScriptedAI
         case MESSAGE_START_DUEL:
             PlayerGUID = data;
 
-            me->SetFaction(14);
+            me->SetFaction(FACTION_MONSTER);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             
             if(Player* player = ObjectAccessor::GetPlayer(*me, PlayerGUID))

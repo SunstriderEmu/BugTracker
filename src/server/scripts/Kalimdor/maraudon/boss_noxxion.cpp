@@ -79,7 +79,7 @@ struct boss_noxxionAI : public ScriptedAI
         if (Invisible && Invisible_Timer < diff)
         {
             //Become visible again
-            me->SetFaction(14);
+            me->SetFaction(FACTION_MONSTER);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             //Noxxion model
             me->SetUInt32Value(UNIT_FIELD_DISPLAYID,11172);
@@ -116,7 +116,7 @@ struct boss_noxxionAI : public ScriptedAI
             //Inturrupt any spell casting
             //me->m_canMove = true;
             me->InterruptNonMeleeSpells(false);
-            me->SetFaction(35);
+            me->SetFaction(FACTION_FRIENDLY);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             // Invisible Model
             me->SetUInt32Value(UNIT_FIELD_DISPLAYID,11686);

@@ -77,7 +77,7 @@ struct boss_archaedasAI : public ScriptedAI
         vaultWalkersAwake = false;
 
         if (pInstance) pInstance->SetData (DATA_MINIONS, NOT_STARTED);    // respawn any dead minions
-        me->SetFaction(35);
+        me->SetFaction(FACTION_FRIENDLY);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
 
@@ -231,7 +231,7 @@ struct mob_archaedas_minionsAI : public ScriptedAI
         wakingUp = false;
         amIAwake = false;
 
-        me->SetFaction(35);
+        me->SetFaction(FACTION_FRIENDLY);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
         me->RemoveAllAuras();
@@ -375,7 +375,7 @@ struct mob_stonekeepersAI : public ScriptedAI
     void Reset() override
     {
         InCombat = false;
-        me->SetFaction(35);
+        me->SetFaction(FACTION_FRIENDLY);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
         me->RemoveAllAuras();

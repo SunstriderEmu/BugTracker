@@ -718,7 +718,7 @@ struct npc_overlord_morghorAI : public ScriptedAI
             IllidanGUID = Illidan->GetGUID();
             Illidan->SetVisible(false);
             Illidan->ToCreature()->SetReactState(REACT_PASSIVE);
-            Illidan->SetFaction(14);
+            Illidan->SetFaction(FACTION_MONSTER);
             Illidan->SetMaxHealth(4200000);
             Illidan->SetHealth(Illidan->GetMaxHealth());
             Illidan->SetMaxPower(POWER_MANA, 1400000);
@@ -1078,7 +1078,7 @@ bool QuestAccept_npc_earthmender_wilda(Player* player, Creature* creature, Quest
 {
     if (quest->GetQuestId() == QUEST_ESCAPE_FROM_COILSKAR_CISTERN)
     {
-        creature->SetFaction(113);
+        creature->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
         ((npc_escortAI*)(creature->AI()))->Start(true, true, false, player->GetGUID(), creature->GetEntry());
     }
     return true;

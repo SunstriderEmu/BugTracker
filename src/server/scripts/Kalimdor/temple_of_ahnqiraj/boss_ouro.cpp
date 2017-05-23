@@ -69,7 +69,7 @@ struct boss_ouroAI : public ScriptedAI
     void Reset()
     override {
         me->SetDisplayId(DISPLAYID_MOUND);
-        me->SetFaction(14);
+        me->SetFaction(FACTION_MONSTER);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         DoCast(me,SPELL_SUBMERGE,true);
         ResetAllTimers();
@@ -264,7 +264,7 @@ struct boss_ouroAI : public ScriptedAI
         {
         case PHASE_EMERGED:
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            me->SetFaction(14);
+            me->SetFaction(FACTION_MONSTER);
             break;
         case PHASE_SUBMERGED:
             Morphed = false;
@@ -273,7 +273,7 @@ struct boss_ouroAI : public ScriptedAI
             Submerged_Timer = SUBMERGED_TIMER;
             SummonMounds(4);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            me->SetFaction(35);
+            me->SetFaction(FACTION_FRIENDLY);
             NewTarget_Timer = 0;    
             break;
         case PHASE_ANIM_EMERGING:
@@ -290,7 +290,7 @@ struct boss_ouroAI : public ScriptedAI
             break;
         case PHASE_BERSERK:
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            me->SetFaction(14);
+            me->SetFaction(FACTION_MONSTER);
             IWantATank_Timer = IWANTATANK_TIMER2;
             DoCast(me, SPELL_BERSERK);
             //hack +100% melee damage.

@@ -156,7 +156,7 @@ struct boss_kalecgosAI : public ScriptedAI
         if (Wall2)
             Wall2->UseDoorOrButton();
 
-        me->SetFaction(14);
+        me->SetFaction(FACTION_MONSTER);
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE + UNIT_FLAG_NOT_SELECTABLE);
         me->SetDisableGravity(false);
         me->SetVisible(true);
@@ -178,7 +178,7 @@ struct boss_kalecgosAI : public ScriptedAI
         isBanished = false;
             
         if (pInstance && pInstance->GetData(DATA_KALECGOS_EVENT) == DONE) {
-            me->SetFaction(35);
+            me->SetFaction(FACTION_FRIENDLY);
             me->SetVisible(false);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             me->SetReactState(REACT_PASSIVE);
@@ -280,7 +280,7 @@ struct boss_kalecgosAI : public ScriptedAI
         switch(TalkSequence)
         {
         case 1:
-            me->SetFaction(35);
+            me->SetFaction(FACTION_FRIENDLY);
             if (pInstance)
                 pInstance->SetData(DATA_KALECGOS_EVENT, DONE);
             TalkTimer = 1000;

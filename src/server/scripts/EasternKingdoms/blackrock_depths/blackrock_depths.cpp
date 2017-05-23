@@ -1270,7 +1270,7 @@ struct npc_rocknotAI : public npc_escortAI
                 //spell by trap has effect61, this indicate the bar go hostile
 
                 if (Unit *tmp = ObjectAccessor::GetUnit(*me,pInstance->GetData64(DATA_PHALANX)))
-                    tmp->SetFaction(14);
+                    tmp->SetFaction(FACTION_MONSTER);
 
                 //for later, this event(s) has alot more to it.
                 //optionally, DONE can trigger bar to go hostile.
@@ -1518,12 +1518,12 @@ public:
         {
             if (Creature* jaz = player->FindNearestCreature(9681, 50.0f, true)) {
                 DoScriptText(WINDSOR_SAY_LEAVE_MARK, windsor, nullptr);
-                jaz->SetFaction(14);
+                jaz->SetFaction(FACTION_MONSTER);
                 jaz->AI()->AttackStart(windsor);
                 windsor->AI()->AttackStart(jaz);
             }
             if (Creature* ograbisi = player->FindNearestCreature(9677, 50.0f, true)) {
-                ograbisi->SetFaction(14);
+                ograbisi->SetFaction(FACTION_MONSTER);
                 ograbisi->AI()->AttackStart(windsor);
             }
 
@@ -1534,7 +1534,7 @@ public:
         {
             if (Creature* dinger = player->FindNearestCreature(9678, 50.0f, true)) {
                 DoScriptText(WINDSOR_SAY_DINGER, dinger, nullptr);
-                dinger->SetFaction(14);
+                dinger->SetFaction(FACTION_MONSTER);
                 dinger->AI()->AttackStart(windsor);
                 windsor->AI()->AttackStart(dinger);
                 DoScriptText(WINDSOR_SAY_ATTACK_DINGER, windsor, nullptr);
@@ -1547,7 +1547,7 @@ public:
         {
             if (Creature* crestKiller = player->FindNearestCreature(9680, 50.0f, true)) {
                 DoScriptText(WINDSOR_SAY_CREST, crestKiller, nullptr);
-                crestKiller->SetFaction(14);
+                crestKiller->SetFaction(FACTION_MONSTER);
                 crestKiller->AI()->AttackStart(windsor);
                 windsor->AI()->AttackStart(crestKiller);
                 DoScriptText(WINDSOR_ATTACK_CREST, windsor, nullptr);

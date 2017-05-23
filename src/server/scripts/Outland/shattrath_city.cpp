@@ -487,7 +487,7 @@ struct npc_dirty_larryAI : public ScriptedAI
         if (Attack)
         {
             Player* player = ObjectAccessor::GetPlayer(*me, PlayerGUID);
-            me->SetFaction(14);
+            me->SetFaction(FACTION_MONSTER);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             if(player)
             {
@@ -495,7 +495,7 @@ struct npc_dirty_larryAI : public ScriptedAI
             if(Creepjack)
             {
                 Creepjack->Attack(player, true);
-                Creepjack->SetFaction(14);
+                Creepjack->SetFaction(FACTION_MONSTER);
                 Creepjack->GetMotionMaster()->MoveChase(player);
                 Creepjack->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             }
@@ -503,7 +503,7 @@ struct npc_dirty_larryAI : public ScriptedAI
             if(Malone)
             {
                 Malone->Attack(player, true);
-                Malone->SetFaction(14);
+                Malone->SetFaction(FACTION_MONSTER);
                 Malone->GetMotionMaster()->MoveChase(player);
                 Malone->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             }

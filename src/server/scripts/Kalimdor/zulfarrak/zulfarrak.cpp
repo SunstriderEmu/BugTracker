@@ -391,7 +391,7 @@ public:
     bool OnTrigger(Player *pPlayer, AreaTriggerEntry const *at) override
     {
         if (Creature *pZumrah = pPlayer->FindNearestCreature(7271, 15.0f, true)) {
-            pZumrah->SetFaction(14);
+            pZumrah->SetFaction(FACTION_MONSTER);
             pZumrah->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
             pZumrah->AI()->AttackStart(pPlayer);
         }

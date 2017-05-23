@@ -39,7 +39,7 @@ struct npc_wastewalker_workerAI : public ScriptedAI
         {
         case MESSAGE_START_EVADE:
             EnterEvadeMode();
-            me->SetFaction(35);
+            me->SetFaction(FACTION_FRIENDLY);
             sCreatureTextMgr->SendChat(me, SAY_GROUP_EVASION, nullptr);
             me->LoadPath(WAYPOINT_EVASION);
             me->SetDefaultMovementType(WAYPOINT_MOTION_TYPE);

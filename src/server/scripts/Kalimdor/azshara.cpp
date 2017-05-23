@@ -354,7 +354,7 @@ struct mob_rizzle_sprysprocketAI : public ScriptedAI
             {
                 DoScriptText(SAY_RIZZLE_FINAL, me);
                 me->SetUInt32Value(UNIT_NPC_FLAGS, 1);
-                me->SetFaction(35);
+                me->SetFaction(FACTION_FRIENDLY);
                 me->GetMotionMaster()->MoveIdle();
                 me->RemoveAurasDueToSpell(SPELL_PERIODIC_DEPTH_CHARGE);
                 Reached = true;

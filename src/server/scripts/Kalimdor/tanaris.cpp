@@ -63,7 +63,7 @@ struct mob_aquementasAI : public ScriptedAI
     override {
         SendItem_Timer = 0;
         SwitchFaction_Timer = 10000;
-        me->SetFaction(35);
+        me->SetFaction(FACTION_FRIENDLY);
         isFriendly = true;
 
         AquaJet_Timer = 5000;

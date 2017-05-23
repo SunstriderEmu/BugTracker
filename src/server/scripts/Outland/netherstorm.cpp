@@ -951,7 +951,7 @@ struct npc_bessyAI : public npc_escortAI
     void Reset()
     override {
         Completed = false;
-        me->SetFaction(35);
+        me->SetFaction(FACTION_FRIENDLY);
     }
 
     void UpdateAI(const uint32 diff)
@@ -965,7 +965,7 @@ bool QuestAccept_npc_bessy(Player* player, Creature* creature, Quest const* ques
 {
     if (quest->GetQuestId() == Q_ALMABTRIEB)
     {
-        creature->SetFaction(113);
+        creature->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
         creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         ((npc_escortAI*)(creature->AI()))->Start(true, true, false, player->GetGUID(), creature->GetEntry());
     }
@@ -1064,7 +1064,7 @@ CreatureAI* GetAI_npc_max_a_million_escort(Creature* pCreature)
 bool QuestAccept_npc_max_a_million_escort(Player* pPlayer, Creature* pCreature, const Quest* pQuest)
 {
     if (pQuest->GetQuestId() == QUEST_MARK_V_IS_ALIVE) {
-        pCreature->SetFaction(113);
+        pCreature->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
         ((npc_escortAI*)(pCreature->AI()))->Start(true, true, false, pPlayer->GetGUID(), pCreature->GetEntry());
     }
     return true;
@@ -1491,7 +1491,7 @@ bool QuestAccept_npc_drijya(Player* pPlayer, Creature* pCreature, const Quest* p
     {
         if (npc_drijyaAI* pEscortAI = dynamic_cast<npc_drijyaAI*>(pCreature->AI()))
         {
-            pCreature->SetFaction(113);
+            pCreature->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
             pEscortAI->Start(true, true, false, pPlayer->GetGUID(), pCreature->GetEntry());
         }
     }

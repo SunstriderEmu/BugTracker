@@ -138,7 +138,7 @@ bool QuestAccept_npc_willix(Player* player, Creature* creature, Quest const* que
     {
         ((npc_escortAI*)(creature->AI()))->Start(true, true, false, player->GetGUID(), creature->GetEntry());
         DoScriptText(SAY_READY, creature, player);
-        creature->SetFaction(113);
+        creature->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
     }
 
     return true;

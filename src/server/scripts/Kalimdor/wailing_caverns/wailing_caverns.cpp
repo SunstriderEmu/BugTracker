@@ -379,7 +379,7 @@ bool GossipSelect_npc_disciple_of_naralex(Player* pPlayer, Creature* pCreature, 
 
         DoScriptText(SAY_MAKE_PREPARATIONS, pCreature);
 
-        pCreature->SetFaction(250);
+        pCreature->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_ACTIVE);
         pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
         pCreature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 

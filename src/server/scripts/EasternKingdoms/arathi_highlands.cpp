@@ -91,7 +91,7 @@ struct npc_professor_phizzlethorpeAI : public npc_escortAI
     void Reset() override
     {
         Completed = true;
-        me->SetFaction(35);
+        me->SetFaction(FACTION_FRIENDLY);
     }
 
     void EnterCombat(Unit* who) override
@@ -123,7 +123,7 @@ bool QuestAccept_npc_professor_phizzlethorpe(Player* pPlayer, Creature* pCreatur
         if (npc_escortAI* pEscortAI = CAST_AI(npc_professor_phizzlethorpeAI, (pCreature->AI())))
             pEscortAI->Start(false, false, false, pPlayer->GetGUID(), pCreature->GetEntry());
             
-        pCreature->SetFaction(113);
+        pCreature->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
     }
     return true;
 }

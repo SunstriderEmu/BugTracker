@@ -121,7 +121,7 @@ struct boss_thekalAI : public ScriptedAI
                         if(pLorKhan)
                         {
                             pLorKhan->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-                            pLorKhan->SetFaction(14);
+                            pLorKhan->SetFaction(FACTION_MONSTER);
                             pLorKhan->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                             pLorKhan->SetHealth(int(pLorKhan->GetMaxHealth()*1.0));
                         }
@@ -134,7 +134,7 @@ struct boss_thekalAI : public ScriptedAI
                         if(pZath)
                         {
                             pZath->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-                            pZath->SetFaction(14);
+                            pZath->SetFaction(FACTION_MONSTER);
                             pZath->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                             pZath->SetHealth(int(pZath->GetMaxHealth()*1.0));
                         }
@@ -343,7 +343,7 @@ struct mob_zealot_lorkhanAI : public ScriptedAI
                     {
                         pThekal->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
                         pThekal->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                        pThekal->SetFaction(14);
+                        pThekal->SetFaction(FACTION_MONSTER);
                         pThekal->SetHealth(int(pThekal->GetMaxHealth()*1.0));
                     }
                 }
@@ -356,7 +356,7 @@ struct mob_zealot_lorkhanAI : public ScriptedAI
                     {
                         pZath->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
                         pZath->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                        pZath->SetFaction(14);
+                        pZath->SetFaction(FACTION_MONSTER);
                         pZath->SetHealth(int(pZath->GetMaxHealth()*1.0));
                     }
                 }
@@ -369,7 +369,7 @@ struct mob_zealot_lorkhanAI : public ScriptedAI
         {
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->SetUInt32Value(UNIT_FIELD_BYTES_1, 3);
-            me->SetFaction(35);
+            me->SetFaction(FACTION_FRIENDLY);
             me->AttackStop();
 
             if(pInstance)
@@ -480,7 +480,7 @@ struct mob_zealot_zathAI : public ScriptedAI
                     {
                         pLorKhan->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
                         pLorKhan->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                        pLorKhan->SetFaction(14);
+                        pLorKhan->SetFaction(FACTION_MONSTER);
                         pLorKhan->SetHealth(int(pLorKhan->GetMaxHealth()*1.0));
                     }
                 }
@@ -493,7 +493,7 @@ struct mob_zealot_zathAI : public ScriptedAI
                     {
                         pThekal->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
                         pThekal->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                        pThekal->SetFaction(14);
+                        pThekal->SetFaction(FACTION_MONSTER);
                         pThekal->SetHealth(int(pThekal->GetMaxHealth()*1.0));
                     }
                 }
@@ -506,7 +506,7 @@ struct mob_zealot_zathAI : public ScriptedAI
         {
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->SetUInt32Value(UNIT_FIELD_BYTES_1, 3);
-            me->SetFaction(35);
+            me->SetFaction(FACTION_FRIENDLY);
             me->AttackStop();
 
             if(pInstance)

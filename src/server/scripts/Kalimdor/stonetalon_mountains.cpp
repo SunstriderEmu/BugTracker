@@ -146,7 +146,7 @@ bool QuestAccept_npc_kaya_flathoof(Player* player, Creature* creature, Quest con
     {
         ((npc_escortAI*)(creature->AI()))->Start(true, true, false, player->GetGUID(), creature->GetEntry());
         DoScriptText(SAY_START, creature);
-        creature->SetFaction(113);
+        creature->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
         creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
     }
     return true;

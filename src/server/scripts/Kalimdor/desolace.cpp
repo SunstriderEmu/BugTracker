@@ -228,7 +228,7 @@ bool QuestAccept_npc_dalinda(Player* player, Creature* creature, Quest const* qu
         if (npc_escortAI* pEscortAI = CAST_AI(npc_dalindaAI, creature->AI()))
         {
             pEscortAI->Start(true, true, false, player->GetGUID(), creature->GetEntry());
-            creature->SetFaction(113);
+            creature->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
             creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
     }
@@ -298,7 +298,7 @@ bool QuestAccept_npc_melizza(Player* player, Creature* creature, Quest const* qu
         if (npc_escortAI* pEscortAI = CAST_AI(npc_melizzaAI, creature->AI()))
         {
             pEscortAI->Start(true, true, false, player->GetGUID(), creature->GetEntry());
-            creature->SetFaction(113);
+            creature->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
             creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
     }

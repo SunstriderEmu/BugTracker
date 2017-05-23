@@ -1011,7 +1011,7 @@ struct npc_akama_illidanAI : public ScriptedAI
         JustCreated = true;
         introDone = false;
         baseFaction = me->GetFaction();
-        me->SetFaction(35); //temporary set to be sure to avoid the akama wandering all over the instance bug
+        me->SetFaction(FACTION_FRIENDLY); //temporary set to be sure to avoid the akama wandering all over the instance bug
 
         if(pInstance && pInstance->GetData(DATA_ILLIDARICOUNCILEVENT) != DONE)
         {

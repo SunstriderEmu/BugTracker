@@ -177,7 +177,7 @@ bool QuestAccept_npc_torek(Player* pPlayer, Creature* pCreature, Quest const* pQ
         }
             
         DoScriptText(SAY_READY, pCreature, pPlayer);
-        pCreature->SetFaction(113);
+        pCreature->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
     }
 
     return true;
@@ -499,7 +499,7 @@ bool QuestAccept_npc_muglash(Player* pPlayer, Creature* pCreature, const Quest* 
         if (npc_muglashAI* pEscortAI = CAST_AI(npc_muglashAI, pCreature->AI()))
         {
             DoScriptText(SAY_MUG_START1, pCreature);
-            pCreature->SetFaction(113);
+            pCreature->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
 
             pEscortAI->Start(true, true, true, pPlayer->GetGUID(), pCreature->GetEntry());
             pEscortAI->SetDespawnAtEnd(false);

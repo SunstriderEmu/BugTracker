@@ -769,7 +769,7 @@ struct mob_toxic_sporebatAI : public ScriptedAI
     void Reset()
     override {
         me->SetDisableGravity(true);
-        me->SetFaction(14);
+        me->SetFaction(FACTION_MONSTER);
         movement_timer = 0;
         ToxicSpore_Timer = 5000;
         bolt_timer = 5500;
@@ -819,7 +819,7 @@ struct mob_toxic_sporebatAI : public ScriptedAI
                 Creature* trig = me->SummonCreature(TOXIC_SPORES_TRIGGER,target->GetPositionX(),target->GetPositionY(),target->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN,30000);
                 if(trig)
                 {
-                    trig->SetFaction(14);
+                    trig->SetFaction(FACTION_MONSTER);
                     trig->CastSpell(trig, SPELL_TOXIC_SPORES,true);
                 }
             }
@@ -839,7 +839,7 @@ struct mob_toxic_sporebatAI : public ScriptedAI
                 {
                     //remove
                     me->DespawnOrUnsummon();
-                    me->SetFaction(35);
+                    me->SetFaction(FACTION_FRIENDLY);
                 }
             }
 

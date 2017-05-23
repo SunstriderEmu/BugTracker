@@ -113,6 +113,8 @@ public:
             ChessPieces.resize(0);
             MedivhCheatFires.resize(0);
             ChessGamePhase = NOTSTARTED;
+			
+			"TODO: SetVisibilityDistance plus petit parce que karazhan c tro de mobs omg"+;
         }
 
         bool IsEncounterInProgress() const override

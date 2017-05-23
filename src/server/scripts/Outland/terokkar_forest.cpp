@@ -458,7 +458,7 @@ bool QuestAccept_npc_isla_starmane(Player* player, Creature* creature, Quest con
     if (quest->GetQuestId() == QUEST_EFTW_H || quest->GetQuestId() == QUEST_EFTW_A)
     {
         ((npc_escortAI*)(creature->AI()))->Start(true, true, false, player->GetGUID(), creature->GetEntry());
-        creature->SetFaction(113);
+        creature->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
         creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     }
     return true;
@@ -610,7 +610,7 @@ struct npc_kaliri_egg_triggerAI : public ScriptedAI
 
     void Reset()
     override {
-        me->SetFaction(14);
+        me->SetFaction(FACTION_MONSTER);
         me->SetVisible(false);
         GameObject* eggGO = nullptr;
 

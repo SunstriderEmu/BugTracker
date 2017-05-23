@@ -274,7 +274,7 @@ bool GossipSelect_npc_engineer_spark_overgrind(Player *pPlayer, Creature *pCreat
     if( action == GOSSIP_ACTION_INFO_DEF )
     {
         pPlayer->CLOSE_GOSSIP_MENU();
-        pCreature->SetFaction(14);
+        pCreature->SetFaction(FACTION_MONSTER);
         DoScriptText(ATTACK_YELL, pCreature, pPlayer);
         ((npc_engineer_spark_overgrindAI*)pCreature->AI())->AttackStart(pPlayer);
     }
@@ -395,7 +395,7 @@ bool QuestAccept_npc_magwin(Player* pPlayer, Creature* pCreature, Quest const* p
 {
     if (pQuest->GetQuestId() == QUEST_A_CRY_FOR_HELP)
     {
-        pCreature->SetFaction(113);
+        pCreature->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
         if (npc_escortAI* pEscortAI = CAST_AI(npc_magwinAI, (pCreature->AI())))
             pEscortAI->Start(true, true, false, pPlayer->GetGUID(), pCreature->GetEntry());
     }

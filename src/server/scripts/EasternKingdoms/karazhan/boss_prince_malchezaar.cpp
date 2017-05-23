@@ -217,7 +217,7 @@ struct netherspite_infernalAI : public ScriptedAI
         {
             if(HellfireTimer <= diff)
             {
-                me->SetFaction(14);
+                me->SetFaction(FACTION_MONSTER);
                 DoCast(me, SPELL_HELLFIRE);
                 HellfireTimer = 0;
             }

@@ -229,7 +229,7 @@ struct boss_akilzonAI : public ScriptedAI
                 //if(Unit *trigger = me->SummonTrigger(x, y, z, 0, 2000))
                 if (Unit *trigger = me->SummonCreature(WORLD_TRIGGER, x, y, z, 0, TEMPSUMMON_TIMED_DESPAWN, 2000))
                 {
-                    trigger->SetFaction(35);
+                    trigger->SetFaction(FACTION_FRIENDLY);
                     trigger->SetMaxHealth(100000);
                     trigger->SetHealth(100000);
                     trigger->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -345,7 +345,7 @@ struct boss_akilzonAI : public ScriptedAI
                 Cloud->SetUnitMovementFlags(MOVEMENTFLAG_DISABLE_GRAVITY);
                 Cloud->StopMoving();
                 Cloud->SetFloatValue(OBJECT_FIELD_SCALE_X, 1.0f);
-                Cloud->SetFaction(35);
+                Cloud->SetFaction(FACTION_FRIENDLY);
                 Cloud->SetMaxHealth(9999999);
                 Cloud->SetHealth(9999999);
                 Cloud->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);

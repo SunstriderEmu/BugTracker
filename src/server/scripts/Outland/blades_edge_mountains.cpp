@@ -939,7 +939,7 @@ struct npc_sundered_ghostAI : public ScriptedAI
     
     void Reset()
     override {
-        me->SetFaction(14);
+        me->SetFaction(FACTION_MONSTER);
         DoCast(me, SPELL_TRANSFORM_GHOST);
         
         crippleTimer = 4000;
@@ -2589,7 +2589,7 @@ struct npc_rally_zapnabberAI : public ScriptedAI
             
         if (Creature* trigger = me->SummonCreature(WORLD_TRIGGER, 1925.056152, 5574.165527, 269.162231, 0, TEMPSUMMON_MANUAL_DESPAWN, 0)) {
             triggerGUID = trigger->GetGUID();
-            trigger->SetFaction(14);
+            trigger->SetFaction(FACTION_MONSTER);
         }
             
         blueRayTimer = 2000;
