@@ -61,7 +61,6 @@ SAY_SUMMON                      = -1000138,
 SAY_FREE                        = -1000139,
 
 FACTION_HOSTILE                 = 16,
-FACTION_FRIENDLY                = 35,
 
 SPELL_ENVELOPING_WINDS          = 15535,
 SPELL_SHOCK                     = 12553,

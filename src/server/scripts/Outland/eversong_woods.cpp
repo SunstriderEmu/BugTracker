@@ -97,12 +97,12 @@ struct npc_prospector_anvilwardAI : public npc_escortAI
 
     void Reset()
     override {
-        me->SetFaction(FACTION_FRIENDLY);
+        me->SetFaction(FACTION_CREATURE);
     }
 
     void JustDied(Unit* pKiller)
     override {
-        me->SetFaction(FACTION_FRIENDLY);
+        me->SetFaction(FACTION_CREATURE);
     }
 
     void UpdateAI(const uint32 diff)
@@ -174,7 +174,6 @@ TIMER_SEAL_OF_COMMAND           = 20000,
 OFFSET_NEXT_ATTACK              = 750,
 
 FACTION_HOSTILE                 = 45,
-FACTION_FRIENDLY                = 7,
 
 TEXT_SECOND_TRIAL_1             = -1645006,
 TEXT_SECOND_TRIAL_2             = -1645007,
@@ -227,7 +226,7 @@ struct npc_secondTrialAI : public ScriptedAI
       summonerGuid = 0;
 
       me->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_KNEEL);
-      me->SetFaction(FACTION_FRIENDLY);
+      me->SetFaction(FACTION_CREATURE);
 
       spellFlashLight = false;
       spellJustice    = false;
