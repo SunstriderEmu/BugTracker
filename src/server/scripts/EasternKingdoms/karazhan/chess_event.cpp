@@ -837,7 +837,7 @@ struct npc_echo_of_medivhAI : public ScriptedAI
                 }
             }
             
-            Trinity::Containers::RandomResizeList(targetList, ((targetList.size() >= 3) ? 3 : targetList.size()));
+            Trinity::Containers::RandomResize(targetList, ((targetList.size() >= 3) ? 3 : targetList.size()));
             for (auto & itr : targetList)
                 DoCast(itr, 39345, true);
                 
@@ -862,7 +862,7 @@ struct npc_echo_of_medivhAI : public ScriptedAI
                 }
             }
             
-            Trinity::Containers::RandomResizeList(targetList, 1);
+            Trinity::Containers::RandomResize(targetList, 1);
             for (auto & itr : targetList)
                 DoCast(itr, 39339, true);
                 

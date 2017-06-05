@@ -227,7 +227,7 @@ public:
                     if (targetList.empty())
                         return;
 
-                    Trinity::Containers::RandomResizeList(targetList, 25);
+                    Trinity::Containers::RandomResize(targetList, 25);
                     std::list<Player*>::const_iterator i = targetList.begin();
 
                     if (i != targetList.end())

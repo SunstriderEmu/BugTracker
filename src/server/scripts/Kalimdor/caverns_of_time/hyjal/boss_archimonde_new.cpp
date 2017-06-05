@@ -721,7 +721,7 @@ public:
                         break;
                     }
                         
-                    Trinity::Containers::RandomResizeList(unleashSpells, 1);
+                    Trinity::Containers::RandomResize(unleashSpells, 1);
                     me->CastSpell(me->GetVictim(), unleashSpells.front(), true);
                     
                     events.RescheduleEvent(EV_UNLEASH_SOULCHARGE, urand(2000, 10000));
