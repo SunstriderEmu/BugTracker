@@ -319,9 +319,6 @@ struct mob_broggok_poisoncloudAI : public ScriptedAI
     {
         DoCast(me, HeroicMode ? SPELL_POISON_H : SPELL_POISON);
     }
-
-    void AttackedBy(Unit* who) override {}
-    void AttackStart(Unit *who) override {}
 };
 
 CreatureAI* GetAI_mob_broggok_poisoncloud(Creature* pCreature)

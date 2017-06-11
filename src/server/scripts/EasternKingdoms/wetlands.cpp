@@ -90,17 +90,6 @@ struct npc_tapoke_slim_jahnAI : public npc_escortAI
             pSummoned->AI()->AttackStart(pPlayer);
     }
 
-    void AttackedBy(Unit* pAttacker)
-    override {
-        if (me->GetVictim())
-            return;
-
-        if (me->IsFriendlyTo(pAttacker))
-            return;
-
-        AttackStart(pAttacker);
-    }
-
     void DamageTaken(Unit* pDoneBy, uint32& uiDamage)
     override {
         if (me->GetHealth()*100 < me->GetMaxHealth()*20)

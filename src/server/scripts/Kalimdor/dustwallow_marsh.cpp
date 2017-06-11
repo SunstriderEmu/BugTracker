@@ -331,17 +331,6 @@ struct npc_private_hendelAI : public ScriptedAI
         me->RestoreFaction();
     }
 
-    void AttackedBy(Unit* pAttacker)
-    override {
-        if (me->GetVictim())
-            return;
-
-        if (me->IsFriendlyTo(pAttacker))
-            return;
-
-        AttackStart(pAttacker);
-    }
-    
     void EnterCombat(Unit* pWho) override {}
 
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)

@@ -557,10 +557,6 @@ struct npc_living_flareAI : public ScriptedAI
         Count = 0;
     }
 
-    void AttackedBy(Unit* pWho) override {}
-    void AttackStart(Unit* pWho) override {}
-    void EnterCombat(Unit* who) override {}
-
     void UpdateAI(const uint32 uiDiff)
     override {
         if (uiCheckTimer <= uiDiff)
@@ -856,14 +852,6 @@ struct npc_demoniac_scryerAI : public ScriptedAI
     uint32 uiSpawnButtressTimer;
     uint32 uiEndTimer;
     uint32 uiButtressCount;
-
-    void Reset() override {}
-
-    void AttackedBy(Unit* pEnemy) override {}
-
-    void AttackStart(Unit* pEnemy) override {}
-
-    void EnterCombat(Unit* who) override {}
 
     void DoSpawnButtress()
     {
@@ -1382,12 +1370,6 @@ struct npc_anchorite_baradaAI : public ScriptedAI
         uiPlayerGUID = 0;
     }
     
-    void EnterCombat(Unit* who) override {}
-
-    void AttackedBy(Unit* pWho) override {}
-
-    void AttackStart(Unit* pWho) override {}
-
     void DoSpawnDarkness()
     {
         me->SummonCreature(NPC_DARKNESS_RELEASED, -710.924, 2754.683, 105.0, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 20000);
@@ -1591,12 +1573,6 @@ struct npc_darkness_releasedAI : public ScriptedAI
         }
     }
     
-    void EnterCombat(Unit* who) override {}
-
-    void AttackedBy(Unit* pWho) override {}
-
-    void AttackStart(Unit* pWho) override {}
-
     void JustDied(Unit* pWho)
     override {
         me->RemoveCorpse();

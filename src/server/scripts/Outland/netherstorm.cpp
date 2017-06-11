@@ -1197,12 +1197,6 @@ struct npc_boom_botAI : public ScriptedAI
         me->SetUnitMovementFlags(MOVEMENTFLAG_WALKING);
     }
     
-    void EnterCombat(Unit* who) override {}
-
-    void AttackedBy(Unit* pWho) override {}
-
-    void AttackStart(Unit* pWho) override {}
-
     void MovementInform(uint32 type, uint32 id)
     override {
         if (type != POINT_MOTION_TYPE)
@@ -1299,10 +1293,6 @@ struct npc_drijyaAI : public npc_escortAI
         DestroyingTimer = 60000;
     }
 
-    void AttackedBy(Unit* pWho) override {}
-
-    void AttackStart(Unit* pWho) override {}
-    
     void EnterCombat(Unit* who) override {}
 
     void SpawnImp()
