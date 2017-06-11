@@ -276,7 +276,7 @@ public:
                 uint32 rnd = urand(0, 100);
                 if (30 <= rnd)
                 {
-                    if (LurkerSubEvent == LURKER_NOT_STARTED)
+                    if (LurkerSubEvent == LURKER_NOT_STARTED && go->FindNearestGameObject(184956, 20.0f)) //184956 = "Strange Pool"
                     {
                         FishingTimer = 10000 + rand() % 15000;//random time before lurker emerges
                         LurkerSubEvent = LURKER_FISHING;
