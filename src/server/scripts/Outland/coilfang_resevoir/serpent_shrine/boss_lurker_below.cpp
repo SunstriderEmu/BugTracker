@@ -255,13 +255,16 @@ class Boss_Lurker_Below : public CreatureScript
                     return;
                 }
 
-                if (!UpdateVictim())
+                if (!me->GetVictim())
+                {
+                    EnterEvadeMode();
                     return;
+                }
 
                 switch (phase)
                 {
                     case EMERGED:
-                        if (!UpdateVictim())
+                        if (!UpdateVictim(false)) //false to avoid boss reseting when all targets are out of range
                             return;
 
                         if (spoutTimer < diff)
