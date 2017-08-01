@@ -5,6 +5,10 @@
 #ifndef DEF_THE_EYE_H
 #define DEF_THE_EYE_H
 
+#include "CreatureAIImpl.h"
+
+#define TheEyeScriptName "instance_the_eye"
+
 enum EyeData
 {
     DATA_ALAR_EVENT = 0,
@@ -36,6 +40,13 @@ enum EyeGOs
     GO_KAEL_STATUE_RIGHT = 184596,
     GO_KAEL_STATUE_LEFT = 184597
 };
+
+template <class AI, class T>
+inline AI* GetTheEyeAI(T* obj)
+{
+    //return GetInstanceAI<AI>(obj, TheEyeScriptName); //compil fails...
+    return new AI(obj);
+}
 
 #endif
 
