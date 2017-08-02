@@ -97,7 +97,7 @@ GameObject* SearchMausoleumGo(Unit *source, uint32 entry, float range)
     Trinity::NearestGameObjectEntryInObjectRangeCheck go_check(*source, entry, range);
     Trinity::GameObjectLastSearcher<Trinity::NearestGameObjectEntryInObjectRangeCheck> searcher(source, pGo, go_check);
 
-    source->VisitNearbyGridObject(range, searcher);
+    Cell::VisitGridObjects(source, searcher, range);
 
     return pGo;
 }

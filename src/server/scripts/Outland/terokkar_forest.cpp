@@ -616,7 +616,7 @@ struct npc_kaliri_egg_triggerAI : public ScriptedAI
 
         Trinity::NearestGameObjectEntryInObjectRangeCheck go_check(*me, 185549, 1);
         Trinity::GameObjectLastSearcher<Trinity::NearestGameObjectEntryInObjectRangeCheck> searcher(me, eggGO, go_check);
-        me->VisitNearbyGridObject(MAX_SEARCHER_DISTANCE, searcher);
+        Cell::VisitGridObjects(me, searcher, MAX_SEARCHER_DISTANCE);
 
         if(eggGO)
             eggGO->ResetDoorOrButton();
@@ -633,7 +633,7 @@ struct npc_kaliri_egg_triggerAI : public ScriptedAI
 
             Trinity::NearestGameObjectEntryInObjectRangeCheck go_check(*me, 185549, 1);
             Trinity::GameObjectLastSearcher<Trinity::NearestGameObjectEntryInObjectRangeCheck> searcher(me, eggGO, go_check);
-            me->VisitNearbyGridObject(MAX_SEARCHER_DISTANCE, searcher);
+            Cell::VisitGridObjects(me, searcher, MAX_SEARCHER_DISTANCE);
 
             if(eggGO)
                 eggGO->UseDoorOrButton();
@@ -650,7 +650,7 @@ bool EffectDummyCreature_npc_kaliri_egg_trigger(Unit* caster, uint32 spellId, ui
 
         Trinity::NearestGameObjectEntryInObjectRangeCheck go_check(*target, 185549, 1);
         Trinity::GameObjectLastSearcher<Trinity::NearestGameObjectEntryInObjectRangeCheck> searcher(target, eggGO, go_check);
-        caster->VisitNearbyGridObject(MAX_SEARCHER_DISTANCE, searcher);
+        Cell::VisitGridObjects(caster, searcher, MAX_SEARCHER_DISTANCE);
 
         if (eggGO)
             eggGO->UseDoorOrButton();
@@ -882,7 +882,7 @@ struct npc_chief_letollAI : public npc_escortAI
 
         AnyResearcherCheck u_check(me, 30.0f);
         Trinity::CreatureListSearcher<AnyResearcherCheck> searcher(me, unitList, u_check);
-        me->VisitNearbyGridObject(MAX_SEARCHER_DISTANCE, searcher);
+        Cell::VisitGridObjects(me, searcher, MAX_SEARCHER_DISTANCE);
 
         for(auto c : unitList)
         {

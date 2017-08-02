@@ -374,9 +374,9 @@ void hyjal_trashAI::UpdateAI(const uint32 diff)
 
             Trinity::CannibalizeObjectCheck u_check(me, 30.0f);
             Trinity::PlayerSearcher<Trinity::CannibalizeObjectCheck > searcher(me, result, u_check);
-            me->VisitNearbyGridObject(30.0f, searcher);
+            Cell::VisitGridObjects(me, searcher, 30.0f);
             if(!result)
-                me->VisitNearbyWorldObject(30.0f, searcher);
+                Cell::VisitWorldObjects(me, searcher, 30.0f);
 
             if(result)
             {

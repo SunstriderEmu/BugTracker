@@ -609,7 +609,7 @@ struct trigger_vimgol_circle_bunnyAI : public ScriptedAI
             Player* plr = nullptr;
             Trinity::AnyPlayerInObjectRangeCheck p_check(me, 0.5f);
             Trinity::PlayerSearcher<Trinity::AnyPlayerInObjectRangeCheck>  checker(me, plr, p_check);
-            me->VisitNearbyWorldObject(5.0f, checker);
+            Cell::VisitWorldObjects(me, checker, 5.0f);
             
             if (plr) {
                 if (int32(me->GetPositionX()) == 3304)
@@ -646,7 +646,7 @@ struct trigger_vimgol_circle_bunnyAI : public ScriptedAI
 
                     Trinity::AllCreaturesOfEntryInRange check(me, 23081, 50.0f);
                     Trinity::CreatureListSearcher<Trinity::AllCreaturesOfEntryInRange> searcher(me, visualBunnies, check);
-                    me->VisitNearbyGridObject(50.0f, searcher);
+                    Cell::VisitGridObjects(me, searcher, 50.0f);
 
                     for (auto & visualBunnie : visualBunnies)
                         visualBunnie->CastSpell(visualBunnie, 39921, false);
@@ -691,7 +691,7 @@ struct npc_vimgolAI : public ScriptedAI
 
         Trinity::AllCreaturesOfEntryInRange check(me, 23040, 50.0f);
         Trinity::CreatureListSearcher<Trinity::AllCreaturesOfEntryInRange> searcher(me, triggers, check);
-        me->VisitNearbyGridObject(50.0f, searcher);
+        Cell::VisitGridObjects(me, searcher, 50.0f);
 
         for (auto & trigger : triggers)
             trigger->Kill(trigger);
@@ -776,7 +776,7 @@ struct npc_skullocAI : public ScriptedAI
 
             Trinity::AllCreaturesOfEntryInRange check(me, 23037, MAX_SEARCHER_DISTANCE);
             Trinity::CreatureListSearcher<Trinity::AllCreaturesOfEntryInRange> searcher(me, triggers, check);
-            me->VisitNearbyGridObject(MAX_SEARCHER_DISTANCE, searcher);
+            Cell::VisitGridObjects(me, searcher, MAX_SEARCHER_DISTANCE);
 
             for (auto & trigger : triggers)
                 trigger->Kill(trigger);
@@ -886,7 +886,7 @@ struct npc_soulgrinderAI : public ScriptedAI
 
         Trinity::AllCreaturesOfEntryInRange check(me, 23037, MAX_SEARCHER_DISTANCE);
         Trinity::CreatureListSearcher<Trinity::AllCreaturesOfEntryInRange> searcher(me, triggers, check);
-        me->VisitNearbyGridObject(MAX_SEARCHER_DISTANCE, searcher);
+        Cell::VisitGridObjects(me, searcher, MAX_SEARCHER_DISTANCE);
 
         for (auto & trigger : triggers) {
             trigger->GetMotionMaster()->MoveTargetedHome();

@@ -1883,7 +1883,7 @@ public:
         Trinity::NearestCreatureEntryWithLiveStateInObjectRangeCheck check(*plr, 23304, true, 10.0f);
         Trinity::CreatureLastSearcher<Trinity::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(trigger, check);
 
-        plr->VisitNearbyGridObject(20.0f, searcher);
+        Cell::VisitGridObjects(plr, searcher, 20.0f);
 
         if (trigger)
         {

@@ -66,9 +66,9 @@ struct mylittlebomblingAI : public ScriptedAI
         DoSpawnCreature(CREATURE_BADABOUM, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 5000); //just for the effect
 
         std::list<Player*> playerlist;
-        Trinity::AnyPlayerInObjectRangeCheck check(me, CREATURE_BADABOUM);
+        Trinity::AnyPlayerInObjectRangeCheck check(me, BADABOUM_RANGE);
         Trinity::PlayerListSearcher<Trinity::AnyPlayerInObjectRangeCheck> searcher(me, playerlist, check);
-        me->VisitNearbyGridObject(CREATURE_BADABOUM, searcher);
+        Cell::VisitGridObjects(me, searcher, BADABOUM_RANGE);
         if(!playerlist.size())
             return;
 

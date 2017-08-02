@@ -227,7 +227,7 @@ struct boss_janalaiAI : public ScriptedAI
         {
             Trinity::AllCreaturesOfEntryInRange check(me, MOB_EGG, 100);
             Trinity::CreatureListSearcher<Trinity::AllCreaturesOfEntryInRange> searcher(me, templist, check);
-            me->VisitNearbyGridObject(MAX_SEARCHER_DISTANCE, searcher);
+            Cell::VisitGridObjects(me, searcher, MAX_SEARCHER_DISTANCE);
         }
 
         //error_log("Eggs %d at middle", templist.size());
@@ -253,7 +253,7 @@ struct boss_janalaiAI : public ScriptedAI
         {
             Trinity::AllCreaturesOfEntryInRange check(me, MOB_FIRE_BOMB, 100);
             Trinity::CreatureListSearcher<Trinity::AllCreaturesOfEntryInRange> searcher(me, templist, check);
-            me->VisitNearbyGridObject(MAX_SEARCHER_DISTANCE, searcher);
+            Cell::VisitGridObjects(me, searcher, MAX_SEARCHER_DISTANCE);
         }
         for(auto & i : templist)
         {
@@ -491,7 +491,7 @@ struct mob_amanishi_hatcherAI : public ScriptedAI
         {
             Trinity::AllCreaturesOfEntryInRange check(me, 23817, 50);
             Trinity::CreatureListSearcher<Trinity::AllCreaturesOfEntryInRange> searcher(me, templist, check);
-            me->VisitNearbyObject(MAX_SEARCHER_DISTANCE, searcher);
+            Cell::VisitAllObjects(me, searcher, MAX_SEARCHER_DISTANCE);
         }
 
         //error_log("Eggs %d at %d", templist.size(), side);

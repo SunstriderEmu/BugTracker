@@ -496,7 +496,7 @@ struct boss_teron_gorefiendAI : public ScriptedAI
 
         Trinity::AllCreaturesOfEntryInRange check(me, CREATURE_SHADOWY_CONSTRUCT, MAX_SEARCHER_DISTANCE);
         Trinity::CreatureListSearcher<Trinity::AllCreaturesOfEntryInRange> searcher(me, ConstructList, check);
-        me->VisitNearbyGridObject(MAX_SEARCHER_DISTANCE, searcher);
+        Cell::VisitGridObjects(me, searcher, MAX_SEARCHER_DISTANCE);
 
         if(!ConstructList.empty())
             for(auto & itr : ConstructList)

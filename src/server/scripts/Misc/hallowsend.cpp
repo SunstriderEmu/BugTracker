@@ -293,8 +293,8 @@ struct boss_shade_of_horsemanAI : public ScriptedAI
         float dist = 100.0f;
         Trinity::AllWorldObjectsInRange u_check(me, dist);
         Trinity::WorldObjectListSearcher<Trinity::AllWorldObjectsInRange> searcher(me, targets, u_check);
-        me->VisitNearbyObject(dist, searcher);
-        
+        Cell::VisitAllObjects(me, searcher, dist);
+
         for (std::list<WorldObject*>::const_iterator itr = targets.begin(); itr != targets.end(); itr++) {
             if ((*itr)->ToPlayer()) {
                 (*itr)->ToPlayer()->AreaExploredOrEventHappens(11219);

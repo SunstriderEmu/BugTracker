@@ -331,7 +331,7 @@ struct boss_twinemperorsAI : public ScriptedAI
 
         AnyBugCheck u_check(me, MAX_SEARCHER_DISTANCE);
         Trinity::CreatureListSearcher<AnyBugCheck> searcher(me, unitList, u_check);
-        me->VisitNearbyGridObject(MAX_SEARCHER_DISTANCE, searcher);
+        Cell::VisitGridObjects(me, searcher, MAX_SEARCHER_DISTANCE);
 
         Creature *nearb = nullptr;
 

@@ -979,7 +979,7 @@ void hyjalAI::HideNearPos(float x, float y)
     std::list<Creature*> creatures;
     Trinity::AllFriendlyCreaturesInGrid creature_check(me);
     Trinity::CreatureListSearcher<Trinity::AllFriendlyCreaturesInGrid> creature_searcher(me, creatures, creature_check);
-    me->VisitNearbyGridObject(250.0f, creature_searcher);
+    Cell::VisitGridObjects(me, creature_searcher, 250.0f);
 
     if(!creatures.empty())
     {
@@ -994,7 +994,7 @@ void hyjalAI::RespawnNearPos(float x, float y)
 {
     Trinity::RespawnDo u_do;
     Trinity::WorldObjectWorker<Trinity::RespawnDo> worker(me, u_do);
-    me->VisitNearbyGridObject(250.0f, worker);
+    Cell::VisitGridObjects(me, worker, 250.0f);
 }
 void hyjalAI::WaypointReached(uint32 i)
 {
@@ -1028,7 +1028,7 @@ void hyjalAI::WaypointReached(uint32 i)
         std::list<Creature*> creatures;
         Trinity::AllFriendlyCreaturesInGrid creature_check(me);
         Trinity::CreatureListSearcher<Trinity::AllFriendlyCreaturesInGrid> creature_searcher(me, creatures, creature_check);
-        me->VisitNearbyGridObject(MAX_SEARCHER_DISTANCE, creature_searcher);
+        Cell::VisitGridObjects(me, creature_searcher, MAX_SEARCHER_DISTANCE);
 
         if(!creatures.empty())
         {
@@ -1060,7 +1060,7 @@ void hyjalAI::DoOverrun(uint32 faction, const uint32 diff)
             std::list<Creature*> creatures;
             Trinity::AllFriendlyCreaturesInGrid creature_check(me);
             Trinity::CreatureListSearcher<Trinity::AllFriendlyCreaturesInGrid> creature_searcher(me, creatures, creature_check);
-            me->VisitNearbyGridObject(MAX_SEARCHER_DISTANCE, creature_searcher);
+            Cell::VisitGridObjects(me, creature_searcher, MAX_SEARCHER_DISTANCE);
 
             if(!creatures.empty())
             {

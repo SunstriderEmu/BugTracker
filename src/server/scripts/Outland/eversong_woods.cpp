@@ -533,7 +533,7 @@ public:
         Creature* event_controller = nullptr;
         Trinity::NearestCreatureEntryWithLiveStateInObjectRangeCheck u_check(*pGo, MASTER_KELERUN_BLOODMOURN, true, 30);
         Trinity::CreatureLastSearcher<Trinity::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(event_controller, u_check);
-        pPlayer->VisitNearbyGridObject(MAX_SEARCHER_DISTANCE, searcher);
+        Cell::VisitGridObjects(pPlayer, searcher, MAX_SEARCHER_DISTANCE);
 
         if (event_controller)
             CAST_AI(master_kelerun_bloodmournAI, (event_controller->AI()))->StartEvent();

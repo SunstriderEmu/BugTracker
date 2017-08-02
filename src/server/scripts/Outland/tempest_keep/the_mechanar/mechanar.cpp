@@ -85,7 +85,7 @@ struct npc_bridge_eventAI : public ScriptedAI
 
         Trinity::AnyFriendlyUnitInObjectRangeCheck check(me,me,radius);
         Trinity::CreatureListSearcher<Trinity::AnyFriendlyUnitInObjectRangeCheck> searcher(me, creatureList, check);
-        me->VisitNearbyGridObject(radius, searcher);
+        Cell::VisitGridObjects(me, searcher, radius);
 
         for(auto itr : creatureList)
         {

@@ -106,7 +106,7 @@ public:
 
             Trinity::AllCreaturesOfEntryInRange check(me, CREATURE_RIFT_MARKER, 75.0f);
             Trinity::CreatureListSearcher<Trinity::AllCreaturesOfEntryInRange> searcher(me, RiftList, check);
-            me->VisitNearbyGridObject(75.0f, searcher);
+            Cell::VisitGridObjects(me, searcher, 75.0f);
 
             for(auto itr : RiftList)
                 riftMarkers.push_back(itr->GetGUID());

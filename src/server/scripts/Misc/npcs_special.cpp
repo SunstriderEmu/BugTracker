@@ -1470,7 +1470,7 @@ struct npc_halaa_bomb_targetAI : public ScriptedAI
         float dist = 10.0f;
         Trinity::AllWorldObjectsInRange u_check(me, dist);
         Trinity::WorldObjectListSearcher<Trinity::AllWorldObjectsInRange> searcher(me, targets, u_check);
-        me->VisitNearbyObject(dist, searcher);
+        Cell::VisitAllObjects(me, searcher, dist);
 
         for (std::list<WorldObject*>::const_iterator itr = targets.begin(); itr != targets.end(); itr++) {
             if ((*itr)->ToPlayer())
@@ -1992,7 +1992,7 @@ struct npc_willyAI : public PetAI
 
         Trinity::AnyUnfriendlyUnitInObjectRangeCheck unit_check(me, me, 15.0f);
         Trinity::UnitListSearcher<Trinity::AnyUnfriendlyUnitInObjectRangeCheck> searcher(me, list, unit_check);
-        me->VisitNearbyGridObject(20.0f, searcher);
+        Cell::VisitGridObjects(me, searcher, 20.0f);
 
         //return first critter if any
         for (auto & it : list)

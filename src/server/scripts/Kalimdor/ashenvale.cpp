@@ -104,7 +104,7 @@ struct npc_torekAI : public npc_escortAI
             Trinity::AllFriendlyCreaturesInGrid check(me);
             Trinity::CreatureListSearcher<Trinity::AllFriendlyCreaturesInGrid> searcher(me, templist, check);
 
-            me->VisitNearbyGridObject(MAX_SEARCHER_DISTANCE, searcher);
+            Cell::VisitGridObjects(me, searcher, MAX_SEARCHER_DISTANCE);
         }
 
         if(!templist.size())

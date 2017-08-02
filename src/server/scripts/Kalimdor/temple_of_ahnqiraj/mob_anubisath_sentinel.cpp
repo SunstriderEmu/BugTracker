@@ -174,7 +174,7 @@ struct aqsentinelAI : public ScriptedAI
 
         NearbyAQSentinel u_check(nears);
         Trinity::CreatureListSearcher<NearbyAQSentinel> searcher(me, assistList, u_check);
-        me->VisitNearbyGridObject(MAX_SEARCHER_DISTANCE, searcher);
+        Cell::VisitGridObjects(me, searcher, MAX_SEARCHER_DISTANCE);
 
         for(auto & iter : assistList)
             AddBuddyToList(iter);

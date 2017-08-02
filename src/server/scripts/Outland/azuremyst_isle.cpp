@@ -541,7 +541,7 @@ struct npc_geezleAI : public ScriptedAI
     {
         Trinity::AllGameObjectsWithEntryInGrid go_check(GO_NAGA_FLAG);
         Trinity::GameObjectListSearcher<Trinity::AllGameObjectsWithEntryInGrid> go_search(me, FlagList, go_check);
-        me->VisitNearbyGridObject(MAX_SEARCHER_DISTANCE, go_search);
+        Cell::VisitGridObjects(me, go_search, MAX_SEARCHER_DISTANCE);
 
         if (!FlagList.empty())
         {

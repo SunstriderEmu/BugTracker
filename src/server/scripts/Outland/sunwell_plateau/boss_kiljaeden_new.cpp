@@ -491,7 +491,7 @@ public:
                 std::list<GameObject*> orbList;
                 AllOrbsInGrid check;
                 Trinity::GameObjectListSearcher<AllOrbsInGrid> searcher(me, orbList, check);
-                me->VisitNearbyGridObject(MAX_SEARCHER_DISTANCE, searcher);
+                Cell::VisitGridObjects(me, searcher, MAX_SEARCHER_DISTANCE);
 
                 if (orbList.empty())
                     return;
