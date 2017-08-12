@@ -237,17 +237,27 @@ public:
         ENRAGED_PANTHER = 10992
     };
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGo) override
+    struct PantherCageAI : public GameObjectAI
     {
-        if (pPlayer->GetQuestStatus(5151) == QUEST_STATUS_INCOMPLETE) {
-            if (Creature* panther = pGo->FindNearestCreature(ENRAGED_PANTHER, 5.0f, true)) {
-                panther->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
-                panther->SetReactState(REACT_AGGRESSIVE);
-                panther->AI()->AttackStart(pPlayer);
-            }
-        }
+        PantherCageAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        return true;
+        bool GossipHello(Player* pPlayer) override
+        {
+            if (pPlayer->GetQuestStatus(5151) == QUEST_STATUS_INCOMPLETE) {
+                if (Creature* panther = me->FindNearestCreature(ENRAGED_PANTHER, 5.0f, true)) {
+                    panther->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
+                    panther->SetReactState(REACT_AGGRESSIVE);
+                    panther->AI()->AttackStart(pPlayer);
+                }
+            }
+
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new PantherCageAI(go);
     }
 };
 

@@ -311,43 +311,53 @@ public:
     AltarOfArcheadas() : GameObjectScript("go_altar_of_archaedas")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* go) override
+    struct AltarOfArcheadasAI : public GameObjectAI
     {
-        bool alreadyUsed;
-        go->AddUse();
+        AltarOfArcheadasAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        alreadyUsed = false;
-        for (uint64 loop : altarOfArchaedasCount) {
-            if (loop == player->GetGUID()) alreadyUsed = true;
+        bool GossipHello(Player* player) override
+        {
+            bool alreadyUsed;
+            me->AddUse();
+
+            alreadyUsed = false;
+            for (uint64 loop : altarOfArchaedasCount) {
+                if (loop == player->GetGUID()) alreadyUsed = true;
+            }
+            if (!alreadyUsed)
+                altarOfArchaedasCount[altarOfArchaedasCounter++] = player->GetGUID();
+
+            player->CastSpell(player, SPELL_BOSS_OBJECT_VISUAL, false);
+
+            if (altarOfArchaedasCounter < NUMBER_NEEDED_TO_ACTIVATE) {
+                return false;        // not enough people yet
+            }
+
+            // Check to make sure at least three people are still casting
+            uint32 count = 0;
+            Unit *pTarget;
+            for (uint32 x = 0; x <= 5; x++) {
+                pTarget = ObjectAccessor::GetUnit(*player, altarOfArchaedasCount[x]);
+                if (!pTarget) continue;
+                if (pTarget->IsNonMeleeSpellCast(true)) count++;
+                if (count >= NUMBER_NEEDED_TO_ACTIVATE) break;
+            }
+
+            if (count < NUMBER_NEEDED_TO_ACTIVATE) {
+                return false;            // not enough people
+            }
+
+            InstanceScript* pInstance = ((InstanceScript*)player->GetInstanceScript());
+            if (!pInstance) return false;
+                pInstance->SetData64(0, player->GetGUID());     // activate archaedas
+
+            return false;
         }
-        if (!alreadyUsed)
-            altarOfArchaedasCount[altarOfArchaedasCounter++] = player->GetGUID();
+    };
 
-        player->CastSpell(player, SPELL_BOSS_OBJECT_VISUAL, false);
-
-        if (altarOfArchaedasCounter < NUMBER_NEEDED_TO_ACTIVATE) {
-            return false;        // not enough people yet
-        }
-
-        // Check to make sure at least three people are still casting
-        uint32 count = 0;
-        Unit *pTarget;
-        for (uint32 x = 0; x <= 5; x++) {
-            pTarget = ObjectAccessor::GetUnit(*player, altarOfArchaedasCount[x]);
-            if (!pTarget) continue;
-            if (pTarget->IsNonMeleeSpellCast(true)) count++;
-            if (count >= NUMBER_NEEDED_TO_ACTIVATE) break;
-        }
-
-        if (count < NUMBER_NEEDED_TO_ACTIVATE) {
-            return false;            // not enough people
-        }
-
-        InstanceScript* pInstance = ((InstanceScript*)player->GetInstanceScript());
-        if (!pInstance) return false;
-        pInstance->SetData64(0, player->GetGUID());     // activate archaedas
-
-        return false;
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new AltarOfArcheadasAI(go);
     }
 };
 
@@ -433,52 +443,64 @@ public:
     AltarOfTheKeepers() : GameObjectScript("go_altar_of_the_keepers")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* go) override
+    struct AltarOfTheKeepersAI : public GameObjectAI
     {
-        InstanceScript* pInstance = ((InstanceScript*)player->GetInstanceScript());
-        if (!pInstance) return true;
+        AltarOfTheKeepersAI(GameObject* obj) : GameObjectAI(obj), pInstance(obj->GetInstanceScript()) { }
 
-        bool alreadyUsed;
+        InstanceScript* pInstance;
 
-        go->AddUse();
-
-        alreadyUsed = false;
-        for (uint64 loop : altarOfTheKeeperCount)
+        bool GossipHello(Player* player) override
         {
-            if (loop == player->GetGUID())
-                alreadyUsed = true;
-        }
-        if (!alreadyUsed && altarOfTheKeeperCounter < 5)
-            altarOfTheKeeperCount[altarOfTheKeeperCounter++] = player->GetGUID();
-        player->CastSpell(player, SPELL_BOSS_OBJECT_VISUAL, false);
+            if (!pInstance) 
+                return true;
 
-        if (altarOfTheKeeperCounter < NUMBER_NEEDED_TO_ACTIVATE)
-        {
-            //error_log ("not enough people yet, altarOfTheKeeperCounter = %d", altarOfTheKeeperCounter);
-            return false;        // not enough people yet
-        }
+            bool alreadyUsed;
 
-        // Check to make sure at least three people are still casting
-        uint32 count = 0;
-        Unit *pTarget;
-        for (uint64 x : altarOfTheKeeperCount)
-        {
-            pTarget = ObjectAccessor::GetUnit(*player, x);
-            //error_log ("number of people currently activating it: %d", x+1);
-            if (!pTarget) continue;
-            if (pTarget->IsNonMeleeSpellCast(true)) count++;
-            if (count >= NUMBER_NEEDED_TO_ACTIVATE) break;
-        }
+            me->AddUse();
 
-        if (count < NUMBER_NEEDED_TO_ACTIVATE)
-        {
-            // error_log ("still not enough people");
-            return true;            // not enough people
-        }
+            alreadyUsed = false;
+            for (uint64 loop : altarOfTheKeeperCount)
+            {
+                if (loop == player->GetGUID())
+                    alreadyUsed = true;
+            }
+            if (!alreadyUsed && altarOfTheKeeperCounter < 5)
+                altarOfTheKeeperCount[altarOfTheKeeperCounter++] = player->GetGUID();
+            player->CastSpell(player, SPELL_BOSS_OBJECT_VISUAL, false);
 
-        //error_log ("activating stone keepers");
-        pInstance->SetData(DATA_STONE_KEEPERS, IN_PROGRESS);        // activate the Stone Keepers
-        return true;
+            if (altarOfTheKeeperCounter < NUMBER_NEEDED_TO_ACTIVATE)
+            {
+                //error_log ("not enough people yet, altarOfTheKeeperCounter = %d", altarOfTheKeeperCounter);
+                return false;        // not enough people yet
+            }
+
+            // Check to make sure at least three people are still casting
+            uint32 count = 0;
+            Unit *pTarget;
+            for (uint64 x : altarOfTheKeeperCount)
+            {
+                pTarget = ObjectAccessor::GetUnit(*player, x);
+                //error_log ("number of people currently activating it: %d", x+1);
+                if (!pTarget) continue;
+                if (pTarget->IsNonMeleeSpellCast(true)) count++;
+                if (count >= NUMBER_NEEDED_TO_ACTIVATE) break;
+            }
+
+            if (count < NUMBER_NEEDED_TO_ACTIVATE)
+            {
+                // error_log ("still not enough people");
+                return true;            // not enough people
+            }
+
+            //error_log ("activating stone keepers");
+            pInstance->SetData(DATA_STONE_KEEPERS, IN_PROGRESS);        // activate the Stone Keepers
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new AltarOfTheKeepersAI(go);
     }
 };
 

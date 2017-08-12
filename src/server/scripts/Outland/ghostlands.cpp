@@ -124,16 +124,26 @@ public:
     GildedBrazier() : GameObjectScript("go_gilded_brazier")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* _GO) override
+    struct GildedBrazierAI : public GameObjectAI
     {
-        if (pPlayer->GetQuestStatus(9678) == QUEST_STATUS_INCOMPLETE)
-        {
-            Creature *Stillblade = pPlayer->SummonCreature(17716, 8106.11, -7542.06, 151.775, 3.02598, TEMPSUMMON_DEAD_DESPAWN, 60000);
-            if (Stillblade)
-                CAST_AI(CreatureAI, (Stillblade->AI()))->AttackStart(pPlayer);
-        }
+        GildedBrazierAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        return true;
+        bool GossipHello(Player* pPlayer) override
+        {
+            if (pPlayer->GetQuestStatus(9678) == QUEST_STATUS_INCOMPLETE)
+            {
+                Creature *Stillblade = pPlayer->SummonCreature(17716, 8106.11, -7542.06, 151.775, 3.02598, TEMPSUMMON_DEAD_DESPAWN, 60000);
+                if (Stillblade)
+                    CAST_AI(CreatureAI, (Stillblade->AI()))->AttackStart(pPlayer);
+            }
+
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new GildedBrazierAI(go);
     }
 };
 
@@ -174,7 +184,7 @@ struct npc_ranger_lilathaAI : public npc_escortAI
         case 0:
             {
             me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-            GameObject* Cage = FindGameObject(GO_CAGE, 20, me);
+            GameObject* Cage = me->FindNearestGameObject(GO_CAGE, 20);
             if(Cage)
                 Cage->UseDoorOrButton();
             DoScriptText(SAY_START, me, player);
@@ -211,7 +221,7 @@ struct npc_ranger_lilathaAI : public npc_escortAI
         case 33:
             me->SetOrientation(5.858011);
             DoScriptText(SAY_END2, me, player);
-            Unit* CaptainHelios = FindCreature(NPC_CAPTAIN_HELIOS, 50, me);
+            Unit* CaptainHelios = me->FindNearestCreature(NPC_CAPTAIN_HELIOS, 50);
             if(CaptainHelios)
             DoScriptText(SAY_CAPTAIN_ANSWER, CaptainHelios, player);
             break;
@@ -225,7 +235,7 @@ struct npc_ranger_lilathaAI : public npc_escortAI
         if (!HasEscortState(STATE_ESCORT_ESCORTING))
             me->SetFaction(1602);
 
-        GameObject* Cage = FindGameObject(GO_CAGE, 20, me);
+        GameObject* Cage = me->FindNearestGameObject(GO_CAGE, 20);
         if (Cage)
             Cage->ResetDoorOrButton();
     }

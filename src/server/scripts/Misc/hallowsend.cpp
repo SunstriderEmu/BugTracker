@@ -113,11 +113,19 @@ public:
     WickermanEmber() : GameObjectScript("go_wickerman_ember")
     {}
 
+    struct ManticronCubeAI : public GameObjectAI
+    {
+        ManticronCubeAI(GameObject* obj) : GameObjectAI(obj), pInstance(obj->GetInstanceScript()) { }
+
     bool OnGossipHello(Player* player, GameObject* _GO) override
     {
         player->CastSpell(player, 24705, true);
 
         return true;
+    }
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new NorthernCrystalPylonAI(go);
     }
 };
 

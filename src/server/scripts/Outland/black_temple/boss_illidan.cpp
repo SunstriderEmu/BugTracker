@@ -1872,27 +1872,39 @@ public:
     CageTrap() : GameObjectScript("gameobject_cage_trap")
     {}
 
-    bool OnGossipHello(Player* plr, GameObject* go) override
+    struct CageTrapAI : public GameObjectAI
     {
-        float x, y, z;
-        plr->GetPosition(x, y, z);
+        CageTrapAI(GameObject* obj) : GameObjectAI(obj), pInstance(obj->GetInstanceScript()) { }
 
-        Creature* trigger = nullptr;
-
-        // Grid search for nearest live creature of entry 23304 within 10 yards
-        Trinity::NearestCreatureEntryWithLiveStateInObjectRangeCheck check(*plr, 23304, true, 10.0f);
-        Trinity::CreatureLastSearcher<Trinity::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(trigger, check);
-
-        Cell::VisitGridObjects(plr, searcher, 20.0f);
-
-        if (trigger)
+        InstanceScript* pInstance;
+        
+        bool GossipHello(Player* plr) override
         {
-            ((cage_trap_triggerAI*)trigger->AI())->Active = true;
-            ((cage_trap_triggerAI*)trigger->AI())->CageTrapGUID = go->GetGUID();
+            float x, y, z;
+            plr->GetPosition(x, y, z);
+
+            Creature* trigger = nullptr;
+
+            // Grid search for nearest live creature of entry 23304 within 10 yards
+            Trinity::NearestCreatureEntryWithLiveStateInObjectRangeCheck check(*plr, 23304, true, 10.0f);
+            Trinity::CreatureLastSearcher<Trinity::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(trigger, check);
+
+            Cell::VisitGridObjects(plr, searcher, 20.0f);
+
+            if (trigger)
+            {
+                ((cage_trap_triggerAI*)trigger->AI())->Active = true;
+                ((cage_trap_triggerAI*)trigger->AI())->CageTrapGUID = me->GetGUID();
+            }
+            me->UseDoorOrButton();
+            me->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_IN_USE);
+            return true;
         }
-        go->UseDoorOrButton();
-        go->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_IN_USE);
-        return true;
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new CageTrapAI(go);
     }
 };
 

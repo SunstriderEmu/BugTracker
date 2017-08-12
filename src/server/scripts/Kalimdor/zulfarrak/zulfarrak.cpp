@@ -220,9 +220,17 @@ public:
     TrollCage() : GameObjectScript("go_troll_cage")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGo) override
+    struct TrollCageAI : public GameObjectAI
     {
-        if (InstanceScript* pInstance = ((InstanceScript*)pGo->GetInstanceScript())) {
+        TrollCageAI(GameObject* obj) : GameObjectAI(obj), pInstance(obj->GetInstanceScript()) { }
+
+        InstanceScript* pInstance;
+
+        bool GossipHello(Player* pPlayer) override
+        {
+            if (!pInstance)
+                return false;
+
             pInstance->SetData(EVENT_PYRAMID, PYRAMID_CAGES_OPEN);
             //set bly & co to aggressive & start moving to top of stairs
             initBlyCrewMember(pPlayer, ENTRY_BLY, 1884.99, 1263, 41.52);
@@ -230,8 +238,13 @@ public:
             initBlyCrewMember(pPlayer, ENTRY_ORO, 1886.47, 1270.68, 41.68);
             initBlyCrewMember(pPlayer, ENTRY_WEEGLI, 1890, 1263, 41.52);
             initBlyCrewMember(pPlayer, ENTRY_MURTA, 1891.19, 1272.03, 41.60);
+            return false;
         }
-        return false;
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new TrollCageAI(go);
     }
 };
 
@@ -426,17 +439,27 @@ public:
         DEAD_HERO_CHANCE = 10
     };
 
-    bool OnGossipHello(Player* player, GameObject* pGo) override
+    struct ShallowGraveAI : public GameObjectAI
     {
-        if (pGo->GetUseCount() == 0) {
-            uint32 randomchance = urand(0, 100);
-            if (randomchance < ZOMBIE_CHANCE)
-                pGo->SummonCreature(ZOMBIE, pGo->GetPositionX(), pGo->GetPositionY(), pGo->GetPositionZ(), 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
-            else if ((randomchance - ZOMBIE_CHANCE) < DEAD_HERO_CHANCE)
-                pGo->SummonCreature(DEAD_HERO, pGo->GetPositionX(), pGo->GetPositionY(), pGo->GetPositionZ(), 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
+        ShallowGraveAI(GameObject* obj) : GameObjectAI(obj) { }
+
+        bool GossipHello(Player* player) override
+        {
+            if (me->GetUseCount() == 0) {
+                uint32 randomchance = urand(0, 100);
+                if (randomchance < ZOMBIE_CHANCE)
+                    me->SummonCreature(ZOMBIE, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
+                else if ((randomchance - ZOMBIE_CHANCE) < DEAD_HERO_CHANCE)
+                    me->SummonCreature(DEAD_HERO, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
+            }
+            me->AddUse();
+            return false;
         }
-        pGo->AddUse();
-        return false;
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new ShallowGraveAI(go);
     }
 };
 

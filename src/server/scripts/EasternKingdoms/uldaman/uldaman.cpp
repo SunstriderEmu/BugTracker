@@ -183,17 +183,27 @@ public:
     KeystoneChamber() : GameObjectScript("go_keystone_chamber")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* go) override
+    struct KeystoneChamberAI : public GameObjectAI
     {
-        InstanceScript* pInstance = (InstanceScript*)go->GetInstanceScript();
+        KeystoneChamberAI(GameObject* obj) : GameObjectAI(obj), pInstance(obj->GetInstanceScript()) { }
 
-        if (!pInstance)
+        InstanceScript* pInstance;
+
+        bool GossipHello(Player* player) override
+        {
+            if (!pInstance)
+                return false;
+
+            if (pInstance)
+                pInstance->SetData(DATA_IRONAYA_SEAL, IN_PROGRESS); //door animation and save state.
+
             return false;
+        }
+    };
 
-        if (pInstance)
-            pInstance->SetData(DATA_IRONAYA_SEAL, IN_PROGRESS); //door animation and save state.
-
-        return false;
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new KeystoneChamberAI(go);
     }
 };
 

@@ -1,18 +1,3 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /* ScriptData
 SDName: Moonglade
@@ -1390,7 +1375,7 @@ struct npc_nightmare_phantasmAI : public ScriptedAI
 
     void JustDied(Unit*)
     override {
-        Creature* c = FindCreature(REMULOS, 500, me)->ToCreature();
+        Creature* c = me->FindNearestCreature(REMULOS, 500);
         if (c)
             CAST_AI(npc_keeper_remulosAI, (c->AI()))->NightKilled();
     }
@@ -1398,7 +1383,7 @@ struct npc_nightmare_phantasmAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     override {
         if (!me->IsInCombat()) {
-            Creature* c = FindCreature(REMULOS, 500, me)->ToCreature();
+            Creature* c = me->FindNearestCreature(REMULOS, 500);
             if (c)
                 AttackStart(c);
             else
@@ -1472,7 +1457,7 @@ struct npc_eranikus_tyrant_of_the_dreamAI : public ScriptedAI
 
     void JustDied(Unit*)
     override {
-        Creature* c = FindCreature(REMULOS, 500, me)->ToCreature();
+        Creature* c = me->FindNearestCreature(REMULOS, 500);
         if (c)
             CAST_AI(npc_keeper_remulosAI, (c->AI()))->EventFailed();
     }
@@ -1531,7 +1516,7 @@ struct npc_eranikus_tyrant_of_the_dreamAI : public ScriptedAI
 
         if (!me->IsInCombat())
         {
-            Creature* c = FindCreature(REMULOS, 500, me)->ToCreature();
+            Creature* c = me->FindNearestCreature(REMULOS, 500);
             if (c)
                 AttackStart(c);
             else
@@ -1595,7 +1580,7 @@ struct npc_tyrandeAI : public ScriptedAI
 
     void JustDied(Unit*)
     override {
-        Creature* c = FindCreature(REMULOS, 500, me)->ToCreature();
+        Creature* c = me->FindNearestCreature(REMULOS, 500);
         if (c)
             CAST_AI(npc_keeper_remulosAI, (c->AI()))->EventFailed();
     }
@@ -1632,14 +1617,14 @@ struct npc_tyrandeAI : public ScriptedAI
         {
             newWP = true;
             WPId = 17;
-            Creature* remulos = FindCreature(REMULOS, 500, me)->ToCreature();
+            Creature* remulos = me->FindNearestCreature(REMULOS, 500);
             if (remulos)
                 CAST_AI(npc_keeper_remulosAI, (remulos->AI()))->TyrandeComes(false);
             break;
         }
         case 18:
         {
-            Creature* remulos = FindCreature(REMULOS, 500, me)->ToCreature();
+            Creature* remulos = me->FindNearestCreature(REMULOS, 500);
             if (remulos)
                 CAST_AI(npc_keeper_remulosAI, (remulos->AI()))->TyrandeComes(true);
             break;
@@ -1660,7 +1645,7 @@ struct npc_tyrandeAI : public ScriptedAI
         if (!me->IsStandState())
             return;
 
-        Creature* remulos = FindCreature(REMULOS, 500, me)->ToCreature();
+        Creature* remulos = me->FindNearestCreature(REMULOS, 500);
         if (remulos && CAST_AI(npc_keeper_remulosAI, (remulos->AI()))->GetPhase() != PHASE_COMBAT2)
             return;
 

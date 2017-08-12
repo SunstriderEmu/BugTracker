@@ -425,21 +425,31 @@ public:
     OrbOfTheBlueFlight() : GameObjectScript("go_orb_of_the_blue_flight")
     {}
 
-    bool OnGossipHello(Player* plr, GameObject* go) override
+    struct OrbOfTheBlueFlightAI : public GameObjectAI
     {
-        if (go->GetUInt32Value(GAMEOBJECT_FACTION) == 35)
+        OrbOfTheBlueFlightAI(GameObject* obj) : GameObjectAI(obj), pInstance(obj->GetInstanceScript()) { }
+
+        bool GossipHello(Player* plr) override
         {
-            //remove blue ring, a bit hacky but simple
-            if (Creature* dummy = plr->FindNearestCreature(CREATURE_INVISIBLE_DUMMY, 20.0f, true))
-                if (DynamicObject* Dyn = dummy->GetDynObject(SPELL_RING_OF_BLUE_FLAMES))
-                    Dyn->RemoveFromWorld();
+            if (me->GetUInt32Value(GAMEOBJECT_FACTION) == 35)
+            {
+                //remove blue ring, a bit hacky but simple
+                if (Creature* dummy = plr->FindNearestCreature(CREATURE_INVISIBLE_DUMMY, 20.0f, true))
+                    if (DynamicObject* Dyn = dummy->GetDynObject(SPELL_RING_OF_BLUE_FLAMES))
+                        Dyn->RemoveFromWorld();
 
-            plr->CastSpell(plr, SPELL_POWER_OF_THE_BLUE_FLIGHT, true);
-            go->SetUInt32Value(GAMEOBJECT_FACTION, 0); //not usable anymore
-            go->Refresh();
+                plr->CastSpell(plr, SPELL_POWER_OF_THE_BLUE_FLIGHT, true);
+                me->SetUInt32Value(GAMEOBJECT_FACTION, 0); //not usable anymore
+                me->Refresh();
+            }
+
+            return true;
         }
+    };
 
-        return true;
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new OrbOfTheBlueFlightAI(go);
     }
 };
 

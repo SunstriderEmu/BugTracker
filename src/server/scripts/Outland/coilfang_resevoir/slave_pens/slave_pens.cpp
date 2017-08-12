@@ -161,8 +161,8 @@ struct npc_coilfang_slavehandlerAI : public ScriptedAI
 
     void GetSlaves(std::list<Creature*>& list, float distance)
     {
-        FindCreatures(list,CREATURE_WORKER,distance,me);
-        FindCreatures(list,CREATURE_SLAVE,distance,me);
+        me->GetCreatureListWithEntryInGrid(list, CREATURE_WORKER, distance);
+        me->GetCreatureListWithEntryInGrid(list, CREATURE_SLAVE, distance);
     }
 
     void JustDied(Unit* killer)

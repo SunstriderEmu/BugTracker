@@ -223,18 +223,32 @@ public:
     NajentusSpine() : GameObjectScript("go_najentus_spine")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct NajentusSpineAI : public GameObjectAI
     {
-        if (InstanceScript* pInstance = (InstanceScript*)_GO->GetInstanceScript())
-            if (Creature* Najentus = ObjectAccessor::GetCreature(*_GO, pInstance->GetData64(DATA_HIGHWARLORDNAJENTUS)))
+        NajentusSpineAI(GameObject* obj) : GameObjectAI(obj), pInstance(obj->GetInstanceScript()) { }
+
+        InstanceScript* pInstance;
+
+        bool GossipHello(Player* player) override
+        {
+            if (!pInstance)
+                return true;
+
+            if (Creature* Najentus = ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_HIGHWARLORDNAJENTUS)))
                 if (((boss_najentusAI*)Najentus->AI())->RemoveImpalingSpine())
                 {
                     player->CastSpell(player, SPELL_CREATE_NAJENTUS_SPINE, true);
-                    _GO->SetLootState(GO_NOT_READY);
-                    _GO->SetRespawnTime(604800); //one week respawn
-                    _GO->RemoveFromWorld();
+                    me->SetLootState(GO_NOT_READY);
+                    me->SetRespawnTime(604800); //one week respawn
+                    me->RemoveFromWorld();
                 }
-        return true;
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new NajentusSpineAI(go);
     }
 };
 

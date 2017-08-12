@@ -1,18 +1,3 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /* ScriptData
 SDName: Blades_Edge_Mountains
@@ -420,43 +405,52 @@ public:
     LegionObelisk() : GameObjectScript("go_legion_obelisk")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGo) override
+    struct LegionObeliskAI : public GameObjectAI
     {
+        LegionObeliskAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        if (pPlayer->GetQuestStatus(10821) == QUEST_STATUS_INCOMPLETE)
+        bool GossipHello(Player* pPlayer) override
         {
-            switch (pGo->GetEntry())
+            if (pPlayer->GetQuestStatus(10821) == QUEST_STATUS_INCOMPLETE)
             {
-            case LEGION_OBELISK_ONE:
-                bObeliskOne = true;
-                break;
-            case LEGION_OBELISK_TWO:
-                bObeliskTwo = true;
-                break;
-            case LEGION_OBELISK_THREE:
-                bObeliskThree = true;
-                break;
-            case LEGION_OBELISK_FOUR:
-                bObeliskFour = true;
-                break;
-            case LEGION_OBELISK_FIVE:
-                bObeliskFive = true;
-                break;
+                switch (me->GetEntry())
+                {
+                case LEGION_OBELISK_ONE:
+                    bObeliskOne = true;
+                    break;
+                case LEGION_OBELISK_TWO:
+                    bObeliskTwo = true;
+                    break;
+                case LEGION_OBELISK_THREE:
+                    bObeliskThree = true;
+                    break;
+                case LEGION_OBELISK_FOUR:
+                    bObeliskFour = true;
+                    break;
+                case LEGION_OBELISK_FIVE:
+                    bObeliskFive = true;
+                    break;
+                }
+
+                if (bObeliskOne && bObeliskTwo && bObeliskThree && bObeliskFour && bObeliskFive)
+                {
+                    me->SummonCreature(19963, 2943.40f, 4778.20f, 284.49f, 0.94f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 120000);
+                    //reset global var
+                    bObeliskOne = false;
+                    bObeliskTwo = false;
+                    bObeliskThree = false;
+                    bObeliskFour = false;
+                    bObeliskFive = false;
+                }
             }
 
-            if (bObeliskOne && bObeliskTwo && bObeliskThree && bObeliskFour && bObeliskFive)
-            {
-                pGo->SummonCreature(19963, 2943.40f, 4778.20f, 284.49f, 0.94f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 120000);
-                //reset global var
-                bObeliskOne = false;
-                bObeliskTwo = false;
-                bObeliskThree = false;
-                bObeliskFour = false;
-                bObeliskFive = false;
-            }
+            return true;
         }
+    };
 
-        return true;
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new LegionObeliskAI(go);
     }
 };
 
@@ -530,12 +524,22 @@ public:
     EthereumChamber() : GameObjectScript("go_ethereum_chamber")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGo) override
+    struct EthereumChamberAI : public GameObjectAI
     {
-        if (Creature *pCreature = pPlayer->SummonCreature(ethereumPrisoners[rand() % 5], pGo->GetPositionX(), pGo->GetPositionY(), pGo->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000))
-            pCreature->AI()->AttackStart(pPlayer);
+        EthereumChamberAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        return true;
+        bool GossipHello(Player* pPlayer) override
+        {
+            if (Creature *pCreature = pPlayer->SummonCreature(ethereumPrisoners[rand() % 5], me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000))
+                pCreature->AI()->AttackStart(pPlayer);
+
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new EthereumChamberAI(go);
     }
 };
 
@@ -1001,32 +1005,42 @@ public:
     ApexisRelix() : GameObjectScript("go_apexis_relic")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGo) override
+    struct ApexisRelixAI : public GameObjectAI
     {
-        if (Creature *bunny = pGo->FindNearestCreature(NPC_SIMON_BUNNY, 5.0f, true))        // Event is running, don't launch it twice
-            return false;
+        ApexisRelixAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        if (pPlayer->HasItemCount(ITEM_APEXIS_SHARD, 1, false)) {
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_START_GAME, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
-            pPlayer->SEND_GOSSIP_MENU_TEXTID(31000, pGo->GetGUID());
+        bool GossipHello(Player* pPlayer) override
+        {
+            if (Creature *bunny = me->FindNearestCreature(NPC_SIMON_BUNNY, 5.0f, true))        // Event is running, don't launch it twice
+                return false;
+
+            if (pPlayer->HasItemCount(ITEM_APEXIS_SHARD, 1, false)) {
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_START_GAME, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+                pPlayer->SEND_GOSSIP_MENU_TEXTID(31000, me->GetGUID());
+
+                return true;
+            }
+
+            return false;
+        }
+
+        bool GossipSelect(Player* pPlayer, uint32 uiSender, uint32 uiAction) override
+        {
+            if (uiAction == GOSSIP_ACTION_INFO_DEF) {
+                // Summon trigger that will handle the event
+                if (GameObject *gDecharger = pPlayer->FindNearestGameObject(GO_RELIC_DECHARGER, 5.0f))
+                    pPlayer->SummonCreature(NPC_SIMON_BUNNY, gDecharger->GetPositionX(), gDecharger->GetPositionY(), gDecharger->GetPositionZ() + 5, pPlayer->GetOrientation(), TEMPSUMMON_MANUAL_DESPAWN, 0);
+            }
+
+            pPlayer->CLOSE_GOSSIP_MENU();
 
             return true;
         }
+    };
 
-        return false;
-    }
-
-    bool OnGossipSelect(Player* pPlayer, GameObject* pGO, uint32 uiSender, uint32 uiAction) override
+    GameObjectAI* GetAI(GameObject* go) const override
     {
-        if (uiAction == GOSSIP_ACTION_INFO_DEF) {
-            // Summon trigger that will handle the event
-            if (GameObject *gDecharger = pPlayer->FindNearestGameObject(GO_RELIC_DECHARGER, 5.0f))
-                pPlayer->SummonCreature(NPC_SIMON_BUNNY, gDecharger->GetPositionX(), gDecharger->GetPositionY(), gDecharger->GetPositionZ() + 5, pPlayer->GetOrientation(), TEMPSUMMON_MANUAL_DESPAWN, 0);
-        }
-
-        pPlayer->CLOSE_GOSSIP_MENU();
-
-        return true;
+        return new ApexisRelixAI(go);
     }
 };
 
@@ -1309,16 +1323,26 @@ public:
     BlueCluster() : GameObjectScript("go_blue_cluster")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGo) override
+    struct BlueClusterAI : public GameObjectAI
     {
-        Creature *bunny = pGo->FindNearestCreature(NPC_SIMON_BUNNY, 5.0f, true);
-        if (!bunny)
-            return false;
+        BlueClusterAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, true);
-        ((npc_simon_bunnyAI*)bunny->AI())->PlayerProposal(BEAM_BLUE);
+        bool GossipHello(Player* pPlayer) override
+        {
+            Creature *bunny = me->FindNearestCreature(NPC_SIMON_BUNNY, 5.0f, true);
+            if (!bunny)
+                return false;
 
-        return true;
+            pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, true);
+            ((npc_simon_bunnyAI*)bunny->AI())->PlayerProposal(BEAM_BLUE);
+
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new BlueClusterAI(go);
     }
 };
 
@@ -1328,16 +1352,26 @@ public:
     RedCluster() : GameObjectScript("go_red_cluster")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGo) override
+    struct RedClusterAI : public GameObjectAI
     {
-        Creature *bunny = pGo->FindNearestCreature(NPC_SIMON_BUNNY, 5.0f, true);
-        if (!bunny)
-            return false;
+        RedClusterAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, true);
-        ((npc_simon_bunnyAI*)bunny->AI())->PlayerProposal(BEAM_RED);
+        bool GossipHello(Player* pPlayer) override
+        {
+            Creature *bunny = me->FindNearestCreature(NPC_SIMON_BUNNY, 5.0f, true);
+            if (!bunny)
+                return false;
 
-        return true;
+            pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, true);
+            ((npc_simon_bunnyAI*)bunny->AI())->PlayerProposal(BEAM_RED);
+
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new RedClusterAI(go);
     }
 };
 
@@ -1347,16 +1381,26 @@ public:
     GreenCluster() : GameObjectScript("go_green_cluster")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGo) override
+    struct GreenClusterAI : public GameObjectAI
     {
-        Creature *bunny = pGo->FindNearestCreature(NPC_SIMON_BUNNY, 5.0f, true);
-        if (!bunny)
-            return false;
+        GreenClusterAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, true);
-        ((npc_simon_bunnyAI*)bunny->AI())->PlayerProposal(BEAM_GREEN);
+        bool GossipHello(Player* pPlayer) override
+        {
+            Creature *bunny = me->FindNearestCreature(NPC_SIMON_BUNNY, 5.0f, true);
+            if (!bunny)
+                return false;
 
-        return true;
+            pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, true);
+            ((npc_simon_bunnyAI*)bunny->AI())->PlayerProposal(BEAM_GREEN);
+
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new GreenClusterAI(go);
     }
 };
 
@@ -1366,16 +1410,26 @@ public:
     YellowCluster() : GameObjectScript("go_yellow_cluster")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGo) override
+    struct YellowClusterAI : public GameObjectAI
     {
-        Creature *bunny = pGo->FindNearestCreature(NPC_SIMON_BUNNY, 5.0f, true);
-        if (!bunny)
-            return false;
+        YellowClusterAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, true);
-        ((npc_simon_bunnyAI*)bunny->AI())->PlayerProposal(BEAM_YELLOW);
+        bool GossipHello(Player* pPlayer) override
+        {
+            Creature *bunny = me->FindNearestCreature(NPC_SIMON_BUNNY, 5.0f, true);
+            if (!bunny)
+                return false;
 
-        return true;
+            pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, true);
+            ((npc_simon_bunnyAI*)bunny->AI())->PlayerProposal(BEAM_YELLOW);
+
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new YellowClusterAI(go);
     }
 };
 
@@ -1394,37 +1448,46 @@ public:
     ApexisMonument() : GameObjectScript("go_apexis_monument")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGo) override
+    struct ApexisMonumentAI : public GameObjectAI
     {
-        //if (pPlayer->GetQuestStatus(11059) != QUEST_STATUS_INCOMPLETE)                      // Only with quest
-        //return false;
+        ApexisMonumentAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        if (Creature *bunny = pGo->FindNearestCreature(NPC_SIMON_BUNNY_LARGE, 5.0f, true))        // Event is running, don't launch it twice
+        bool GossipHello(Player* pPlayer) override
+        {
+            //if (pPlayer->GetQuestStatus(11059) != QUEST_STATUS_INCOMPLETE)                      // Only with quest
+            //return false;
+
+            if (Creature *bunny = me->FindNearestCreature(NPC_SIMON_BUNNY_LARGE, 5.0f, true))        // Event is running, don't launch it twice
+                return false;
+
+            if (pPlayer->HasItemCount(ITEM_APEXIS_SHARD, 35, false)) {
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_START_GAME, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+                pPlayer->SEND_GOSSIP_MENU_TEXTID(31000, me->GetGUID());
+
+                return true;
+            }
+
             return false;
+        }
 
-        if (pPlayer->HasItemCount(ITEM_APEXIS_SHARD, 35, false)) {
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_START_GAME, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
-            pPlayer->SEND_GOSSIP_MENU_TEXTID(31000, pGo->GetGUID());
+        bool GossipSelect(Player* pPlayer, uint32 uiSender, uint32 uiAction) override
+        {
+            if (uiAction == GOSSIP_ACTION_INFO_DEF) {
+                // Summon trigger that will handle the event
+                if (GameObject *gDecharger = pPlayer->FindNearestGameObject(GO_APEXIS_DECHARGER, 5.0f))
+                    pPlayer->SummonCreature(NPC_SIMON_BUNNY_LARGE, gDecharger->GetPositionX(), gDecharger->GetPositionY(), gDecharger->GetPositionZ() + 8, pPlayer->GetOrientation(), TEMPSUMMON_MANUAL_DESPAWN, 0);
+            }
+
+            pPlayer->CLOSE_GOSSIP_MENU();
 
             return true;
         }
+    };
 
-        return false;
-    }
-
-    bool OnGossipSelect(Player* pPlayer, GameObject* pGO, uint32 uiSender, uint32 uiAction) override
+    GameObjectAI* GetAI(GameObject* go) const override
     {
-        if (uiAction == GOSSIP_ACTION_INFO_DEF) {
-            // Summon trigger that will handle the event
-            if (GameObject *gDecharger = pPlayer->FindNearestGameObject(GO_APEXIS_DECHARGER, 5.0f))
-                pPlayer->SummonCreature(NPC_SIMON_BUNNY_LARGE, gDecharger->GetPositionX(), gDecharger->GetPositionY(), gDecharger->GetPositionZ() + 8, pPlayer->GetOrientation(), TEMPSUMMON_MANUAL_DESPAWN, 0);
-        }
-
-        pPlayer->CLOSE_GOSSIP_MENU();
-
-        return true;
+        return new ApexisMonumentAI(go);
     }
-
 };
 
 /*######
@@ -1695,18 +1758,27 @@ public:
     BlueClusterLarge() : GameObjectScript("go_blue_cluster_large")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGo) override
+    struct BlueClusterLargeAI : public GameObjectAI
     {
-        Creature *bunny = pGo->FindNearestCreature(NPC_SIMON_BUNNY_LARGE, 20.0f, true);
-        if (!bunny)
-            return false;
+        BlueClusterLargeAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, true);
-        ((npc_simon_bunny_largeAI*)bunny->AI())->PlayerProposal(BEAM_BLUE);
+        bool GossipHello(Player* pPlayer) override
+        {
+            Creature *bunny = me->FindNearestCreature(NPC_SIMON_BUNNY_LARGE, 20.0f, true);
+            if (!bunny)
+                return false;
 
-        return true;
+            pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, true);
+            ((npc_simon_bunny_largeAI*)bunny->AI())->PlayerProposal(BEAM_BLUE);
+
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new BlueClusterLargeAI(go);
     }
-
 };
 
 class GreenClusterLarge : public GameObjectScript
@@ -1715,18 +1787,27 @@ public:
     GreenClusterLarge() : GameObjectScript("go_green_cluster_large")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGo) override
+    struct GreenClusterLargeAI : public GameObjectAI
     {
-        Creature *bunny = pGo->FindNearestCreature(NPC_SIMON_BUNNY_LARGE, 20.0f, true);
-        if (!bunny)
-            return false;
+        GreenClusterLargeAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, true);
-        ((npc_simon_bunny_largeAI*)bunny->AI())->PlayerProposal(BEAM_GREEN);
+        bool GossipHello(Player* pPlayer) override
+        {
+            Creature *bunny = me->FindNearestCreature(NPC_SIMON_BUNNY_LARGE, 20.0f, true);
+            if (!bunny)
+                return false;
 
-        return true;
+            pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, true);
+            ((npc_simon_bunny_largeAI*)bunny->AI())->PlayerProposal(BEAM_GREEN);
+
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new GreenClusterLargeAI(go);
     }
-
 };
 
 class RedClusterLarge : public GameObjectScript
@@ -1735,18 +1816,27 @@ public:
     RedClusterLarge() : GameObjectScript("go_red_cluster_large")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGo) override
+    struct RedClusterLargeAI : public GameObjectAI
     {
-        Creature *bunny = pGo->FindNearestCreature(NPC_SIMON_BUNNY_LARGE, 20.0f, true);
-        if (!bunny)
-            return false;
+        RedClusterLargeAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, true);
-        ((npc_simon_bunny_largeAI*)bunny->AI())->PlayerProposal(BEAM_RED);
+        bool GossipHello(Player* pPlayer) override
+        {
+            Creature *bunny = me->FindNearestCreature(NPC_SIMON_BUNNY_LARGE, 20.0f, true);
+            if (!bunny)
+                return false;
 
-        return true;
+            pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, true);
+            ((npc_simon_bunny_largeAI*)bunny->AI())->PlayerProposal(BEAM_RED);
+
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new RedClusterLargeAI(go);
     }
-
 };
 
 class YellowClusterLarge : public GameObjectScript
@@ -1755,18 +1845,27 @@ public:
     YellowClusterLarge() : GameObjectScript("go_yellow_cluster_large")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGo) override
+    struct YellowClusterLargeAI : public GameObjectAI
     {
-        Creature *bunny = pGo->FindNearestCreature(NPC_SIMON_BUNNY_LARGE, 20.0f, true);
-        if (!bunny)
-            return false;
+        YellowClusterLargeAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, true);
-        ((npc_simon_bunny_largeAI*)bunny->AI())->PlayerProposal(BEAM_YELLOW);
+        bool GossipHello(Player* pPlayer) override
+        {
+            Creature *bunny = me->FindNearestCreature(NPC_SIMON_BUNNY_LARGE, 20.0f, true);
+            if (!bunny)
+                return false;
 
-        return true;
+            pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, true);
+            ((npc_simon_bunny_largeAI*)bunny->AI())->PlayerProposal(BEAM_YELLOW);
+
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new YellowClusterLargeAI(go);
     }
-
 };
 
 class FelCrystalPrism : public GameObjectScript
@@ -1775,31 +1874,40 @@ public:
     FelCrystalPrism() : GameObjectScript("go_fel_crystal_prism")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGo) override
+    struct FelCrystalPrismAI : public GameObjectAI
     {
-        if (!pPlayer->HasItemCount(ITEM_APEXIS_SHARD, 35, false))
-            return false;
+        FelCrystalPrismAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        pPlayer->DestroyItemCount(ITEM_APEXIS_SHARD, 35, true);
+        bool GossipHello(Player* pPlayer) override
+        {
+            if (!pPlayer->HasItemCount(ITEM_APEXIS_SHARD, 35, false))
+                return false;
 
-        switch (rand() % 4) {
-        case 0:
-            pGo->SummonCreature(23353, pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), pPlayer->GetOrientation(), TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
-            break;
-        case 1:
-            pGo->SummonCreature(23354, pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), pPlayer->GetOrientation(), TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
-            break;
-        case 2:
-            pGo->SummonCreature(22281, pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), pPlayer->GetOrientation(), TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
-            break;
-        case 3:
-            pGo->SummonCreature(23355, pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), pPlayer->GetOrientation(), TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
-            break;
+            pPlayer->DestroyItemCount(ITEM_APEXIS_SHARD, 35, true);
+
+            switch (rand() % 4) {
+            case 0:
+                me->SummonCreature(23353, pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), pPlayer->GetOrientation(), TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
+                break;
+            case 1:
+                me->SummonCreature(23354, pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), pPlayer->GetOrientation(), TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
+                break;
+            case 2:
+                me->SummonCreature(22281, pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), pPlayer->GetOrientation(), TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
+                break;
+            case 3:
+                me->SummonCreature(23355, pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), pPlayer->GetOrientation(), TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
+                break;
+            }
+
+            return true;
         }
+    };
 
-        return true;
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new FelCrystalPrismAI(go);
     }
-
 };
 
 /*######
@@ -2127,41 +2235,50 @@ public:
     DrakeEgg() : GameObjectScript("go_drake_egg")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGo) override
+    struct DrakeEggAI : public GameObjectAI
     {
-        //if (pPlayer->GetQuestStatus(11078) != QUEST_STATUS_INCOMPLETE)
-        //return false;
+        DrakeEggAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        if (!pPlayer->HasItemCount(ITEM_APEXIS_SHARD, 35, false))
-            return false;
+        bool GossipHello(Player* pPlayer) override
+        {
+            //if (pPlayer->GetQuestStatus(11078) != QUEST_STATUS_INCOMPLETE)
+            //return false;
 
-        pPlayer->DestroyItemCount(ITEM_APEXIS_SHARD, 35, true);
+            if (!pPlayer->HasItemCount(ITEM_APEXIS_SHARD, 35, false))
+                return false;
 
-        uint32 bossEntry;
-        switch (pGo->GetEntry()) {
-        case 185936:        // Rivendark
-            bossEntry = 23061;
-            break;
-        case 185932:        // Obsidia
-            bossEntry = 23282;
-            break;
-        case 185938:        // Insidion
-            bossEntry = 23281;
-            break;
-        case 185937:        // Furywing
-            bossEntry = 23261;
-            break;
-        default:
-            bossEntry = 0;
-            break;
+            pPlayer->DestroyItemCount(ITEM_APEXIS_SHARD, 35, true);
+
+            uint32 bossEntry;
+            switch (me->GetEntry()) {
+            case 185936:        // Rivendark
+                bossEntry = 23061;
+                break;
+            case 185932:        // Obsidia
+                bossEntry = 23282;
+                break;
+            case 185938:        // Insidion
+                bossEntry = 23281;
+                break;
+            case 185937:        // Furywing
+                bossEntry = 23261;
+                break;
+            default:
+                bossEntry = 0;
+                break;
+            }
+
+            if (Creature *boss = pPlayer->FindNearestCreature(bossEntry, 150.0f, true))
+                boss->AI()->AttackStart(pPlayer);
+
+            return true;
         }
+    };
 
-        if (Creature *boss = pPlayer->FindNearestCreature(bossEntry, 150.0f, true))
-            boss->AI()->AttackStart(pPlayer);
-
-        return true;
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new DrakeEggAI(go);
     }
-
 };
 
 /*######

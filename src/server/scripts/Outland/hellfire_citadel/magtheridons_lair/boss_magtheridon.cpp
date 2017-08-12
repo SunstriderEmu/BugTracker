@@ -493,23 +493,36 @@ public:
     ManticronCube() : GameObjectScript("go_manticron_cube")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct ManticronCubeAI : public GameObjectAI
     {
-        InstanceScript* pInstance = (InstanceScript*)_GO->GetInstanceScript();
-        if (!pInstance) return true;
-        if (pInstance->GetData(DATA_MAGTHERIDON_EVENT) != IN_PROGRESS) return true;
-        Creature *Magtheridon = ObjectAccessor::GetCreature(*_GO, pInstance->GetData64(DATA_MAGTHERIDON));
-        if (!Magtheridon || !Magtheridon->IsAlive()) return true;
+        ManticronCubeAI(GameObject* obj) : GameObjectAI(obj), pInstance(obj->GetInstanceScript()) { }
 
-        // if exhausted or already channeling return
-        if (player->HasAuraEffect(SPELL_MIND_EXHAUSTION, 0) || player->HasAuraEffect(SPELL_SHADOW_GRASP, 1))
+        InstanceScript* pInstance;
+
+        bool GossipHello(Player* player) override
+        {
+            if (!pInstance) 
+                return true;
+            if (pInstance->GetData(DATA_MAGTHERIDON_EVENT) != IN_PROGRESS) return true;
+            Creature *Magtheridon = ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_MAGTHERIDON));
+            if (!Magtheridon || !Magtheridon->IsAlive()) return true;
+
+            // if exhausted or already channeling return
+            if (player->HasAuraEffect(SPELL_MIND_EXHAUSTION, 0) || player->HasAuraEffect(SPELL_SHADOW_GRASP, 1))
+                return true;
+
+            player->InterruptNonMeleeSpells(false);
+            player->CastSpell(player, SPELL_SHADOW_GRASP, true);
+            player->CastSpell(player, SPELL_SHADOW_GRASP_VISUAL, false);
+            ((boss_magtheridonAI*)Magtheridon->AI())->SetClicker(me->GetGUID(), player->GetGUID());
             return true;
+        }
 
-        player->InterruptNonMeleeSpells(false);
-        player->CastSpell(player, SPELL_SHADOW_GRASP, true);
-        player->CastSpell(player, SPELL_SHADOW_GRASP_VISUAL, false);
-        ((boss_magtheridonAI*)Magtheridon->AI())->SetClicker(_GO->GetGUID(), player->GetGUID());
-        return true;
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new ManticronCubeAI(go);
     }
 };
 

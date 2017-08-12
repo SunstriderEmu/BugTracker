@@ -176,22 +176,41 @@ CreatureAI* GetAI_npc_dashel_stonefist(Creature *_creature)
 ## npc_general_marcus_jonathan
 ######*/
 
-bool ReceiveEmote_npc_general_marcus_jonathan(Player *player, Creature *_Creature, uint32 emote)
+class npc_general_marcus_jonathan : public CreatureScript
 {
-    if(player->GetTeam() == ALLIANCE)
+public:
+    npc_general_marcus_jonathan() : CreatureScript("npc_general_marcus_jonathan") {}
+
+    class npc_general_marcus_jonathanAI : public CreatureAI
     {
-        if (emote == TEXTEMOTE_SALUTE)
+    public:
+        npc_general_marcus_jonathanAI(Creature* creature) : CreatureAI(creature)
         {
-            _Creature->SetOrientation(_Creature->GetAngle(player));
-            _Creature->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE);
         }
-        if (emote == TEXTEMOTE_WAVE)
+
+        void ReceiveEmote(Player* player, uint32 emote) override
         {
-            _Creature->Say("Greetings citizen.", LANG_COMMON, nullptr);
+            if (player->GetTeam() == ALLIANCE)
+            {
+                if (emote == TEXTEMOTE_SALUTE)
+                {
+                    me->SetOrientation(me->GetAngle(player));
+                    me->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE);
+                }
+                if (emote == TEXTEMOTE_WAVE)
+                {
+                    //TODO: move to db to get translations
+                    me->Say("Greetings citizen.", LANG_COMMON, nullptr);
+                }
+            }
         }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const
+        override {
+        return new npc_general_marcus_jonathanAI(creature);
     }
-    return true;
-}
+};
 
 /*######
 ## npc_lady_katrana_prestor
@@ -244,18 +263,35 @@ bool GossipSelect_npc_lady_katrana_prestor(Player *player, Creature *_Creature, 
 ## npc_innkeeper_allison
 ######*/
 
-#define QUEST_FLEXING_NOUGAT    8356
-
-bool ReceiveEmote_npc_innkeeper_allison(Player *player, Creature *_Creature, uint32 emote)
+class npc_innkeeper_allison : public CreatureScript
 {
-    if (emote == TEXTEMOTE_FLEX)
+public:
+    npc_innkeeper_allison() : CreatureScript("npc_innkeeper_allison") {}
+
+    class npc_innkeeper_allisonAI : public CreatureAI
     {
-        if (player->GetQuestStatus(QUEST_FLEXING_NOUGAT) == QUEST_STATUS_INCOMPLETE)
-            player->AreaExploredOrEventHappens(QUEST_FLEXING_NOUGAT);
+    public:
+        const uint32 QUEST_FLEXING_NOUGAT = 8356;
+
+        npc_innkeeper_allisonAI(Creature* creature) : CreatureAI(creature)
+        {
+        }
+
+        void ReceiveEmote(Player* player, uint32 emote) override
+        {
+            if (emote == TEXTEMOTE_FLEX)
+            {
+                if (player->GetQuestStatus(QUEST_FLEXING_NOUGAT) == QUEST_STATUS_INCOMPLETE)
+                    player->AreaExploredOrEventHappens(QUEST_FLEXING_NOUGAT);
+            }
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const
+        override {
+        return new npc_innkeeper_allisonAI(creature);
     }
-    
-    return true;
-}
+};
 
 /*######
 ## npc_monty
@@ -302,10 +338,7 @@ void AddSC_stormwind_city()
     newscript->OnQuestAccept = &QuestAccept_npc_dashel_stonefist;
     sScriptMgr->RegisterOLDScript(newscript);
 
-    newscript = new OLDScript;
-    newscript->Name = "npc_general_marcus_jonathan";
-    newscript->OnReceiveEmote = &ReceiveEmote_npc_general_marcus_jonathan;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_general_marcus_jonathan();
 
     newscript = new OLDScript;
     newscript->Name="npc_lady_katrana_prestor";
@@ -313,10 +346,7 @@ void AddSC_stormwind_city()
     newscript->OnGossipSelect = &GossipSelect_npc_lady_katrana_prestor;
     sScriptMgr->RegisterOLDScript(newscript);
     
-    newscript = new OLDScript;
-    newscript->Name="npc_innkeeper_allison";
-    newscript->OnReceiveEmote = &ReceiveEmote_npc_innkeeper_allison;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_innkeeper_allison();
     
     newscript = new OLDScript;
     newscript->Name = "npc_monty";

@@ -52,13 +52,24 @@ public:
     AtalaiStatue() : GameObjectScript("go_atalai_statue")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGo) override
+    struct AtalaiStatueAI : public GameObjectAI
     {
-        InstanceScript* pInstance = ((InstanceScript*)pPlayer->GetInstanceScript());
-        if (!pInstance)
+        AtalaiStatueAI(GameObject* obj) : GameObjectAI(obj), pInstance(obj->GetInstanceScript()) { }
+
+        InstanceScript* pInstance;
+
+        bool GossipHello(Player* pPlayer) override
+        {
+            if (!pInstance)
+                return false;
+            pInstance->SetData(EVENT_STATE, me->GetEntry());
             return false;
-        pInstance->SetData(EVENT_STATE, pGo->GetEntry());
-        return false;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new AtalaiStatueAI(go);
     }
 };
 

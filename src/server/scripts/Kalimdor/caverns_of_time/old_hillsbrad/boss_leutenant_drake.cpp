@@ -31,25 +31,35 @@ public:
     BarrelOldHillsbrad() : GameObjectScript("go_barrel_old_hillsbrad")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct BarrelOldHillsbradAI : public GameObjectAI
     {
-        InstanceScript* pInstance = (InstanceScript*)_GO->GetInstanceScript();
+        BarrelOldHillsbradAI(GameObject* obj) : GameObjectAI(obj), pInstance(obj->GetInstanceScript()) { }
 
-        if (!pInstance)
-            return false;
+        InstanceScript* pInstance;
 
-        if (pInstance->GetData(TYPE_BARREL_DIVERSION) == DONE)
-            return false;
+        bool GossipHello(Player* player) override
+        {
+            if (!pInstance)
+                return false;
 
-        if (_GO->GetDistance(player) >= 5.0f) {
-            TC_LOG_ERROR("scripts", "OLD HILLSBRAD: BUG EXPLOIT ATTEMPT: Player %s (GUID: %u) attempted to activate barrel at a distance of %f yards.", player->GetName().c_str(), player->GetGUIDLow(), _GO->GetDistance(player));
-            return false;
+            if (pInstance->GetData(TYPE_BARREL_DIVERSION) == DONE)
+                return false;
+
+            if (me->GetDistance(player) >= 5.0f) {
+                TC_LOG_ERROR("scripts", "OLD HILLSBRAD: BUG EXPLOIT ATTEMPT: Player %s (GUID: %u) attempted to activate barrel at a distance of %f yards.", player->GetName().c_str(), player->GetGUIDLow(), me->GetDistance(player));
+                return false;
+            }
+
+            pInstance->SetData(TYPE_BARREL_DIVERSION, IN_PROGRESS);
+            me->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NOT_SELECTABLE);
+
+            return true;
         }
+    };
 
-        pInstance->SetData(TYPE_BARREL_DIVERSION, IN_PROGRESS);
-        _GO->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NOT_SELECTABLE);
-
-        return true;
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new BarrelOldHillsbradAI(go);
     }
 };
 

@@ -223,7 +223,7 @@ struct mob_enslaved_netherwing_drakeAI : public ScriptedAI
             me->SetFaction(FACTION_FRIENDLY);
             DoCast(caster, SPELL_FORCE_OF_NELTHARAKU, true);
 
-            Unit* Dragonmaw = FindCreature(CREATURE_DRAGONMAW_SUBJUGATOR, 50, me);
+            Unit* Dragonmaw = me->FindNearestCreature(CREATURE_DRAGONMAW_SUBJUGATOR, 50);
 
             if(Dragonmaw)
             {
@@ -276,7 +276,7 @@ struct mob_enslaved_netherwing_drakeAI : public ScriptedAI
 
                             float dx, dy, dz;
 
-                            Unit* EscapeDummy = FindCreature(CREATURE_ESCAPE_DUMMY, 30, me);
+                            Unit* EscapeDummy = me->FindNearestCreature(CREATURE_ESCAPE_DUMMY, 30);
                             if(EscapeDummy)
                                 EscapeDummy->GetPosition(dx, dy, dz);
                             else
@@ -846,7 +846,7 @@ struct npc_overlord_morghorAI : public ScriptedAI
             return 6000;
         case 27:
         {
-            Unit* Yarzill = FindCreature(C_YARZILL, 50, me);
+            Unit* Yarzill = me->FindNearestCreature(C_YARZILL, 50);
             if (Yarzill)
                 Yarzill->SetUInt64Value(UNIT_FIELD_TARGET, PlayerGUID);
 
@@ -859,7 +859,7 @@ struct npc_overlord_morghorAI : public ScriptedAI
             return 1000;
         case 29:
         {
-            Unit* Yarzill = FindCreature(C_YARZILL, 50, me);
+            Unit* Yarzill = me->FindNearestCreature(C_YARZILL, 50);
             if(Yarzill)
                 DoScriptText(YARZILL_THE_MERC_SAY, Yarzill, plr);
     
@@ -867,7 +867,7 @@ struct npc_overlord_morghorAI : public ScriptedAI
         }
         case 30:
         {
-            Unit* Yarzill = FindCreature(C_YARZILL, 50, me);
+            Unit* Yarzill = me->FindNearestCreature(C_YARZILL, 50);
             if (Yarzill)
                 Yarzill->SetUInt64Value(UNIT_FIELD_TARGET, 0);
 
@@ -1660,7 +1660,7 @@ public:
     {
         if (quest->GetQuestId() == QUEST_BATTLE_OF_THE_CRIMSON_WATCH)
         {
-            Unit* Illidan = FindCreature(22083, 50, plr);
+            Unit* Illidan = plr->FindNearestCreature(22083, 50);
 
             if (Illidan && !(((npc_lord_illidan_stormrageAI*)(Illidan->ToCreature())->AI())->EventStarted))
             {
@@ -1781,7 +1781,7 @@ struct npc_enraged_spiritAI : public ScriptedAI
         // FIND TOTEM, PROCESS QUEST
         if (Summoned)
         {
-             totemOspirits = FindCreature(ENTRY_TOTEM_OF_SPIRITS, RADIUS_TOTEM_OF_SPIRITS, me);
+             totemOspirits = me->FindNearestCreature(ENTRY_TOTEM_OF_SPIRITS, RADIUS_TOTEM_OF_SPIRITS);
              if (totemOspirits)
              {
                  Summoned->SetFaction(ENRAGED_SOUL_FRIENDLY);
@@ -1945,16 +1945,26 @@ public:
     ArcanoControlUnit() : GameObjectScript("go_arcano_control_unit")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* _GO) override
+    struct ArcanoControlUnitAI : public GameObjectAI
     {
-        if (Creature *pCreature = pPlayer->FindNearestCreature(21909, 25.0f)) {
-            pPlayer->CastSpell(pCreature, 37868, true);
-            pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        ArcanoControlUnitAI(GameObject* obj) : GameObjectAI(obj) { }
 
-            return true;
+        bool GossipHello(Player* pPlayer) override
+        {
+            if (Creature *pCreature = pPlayer->FindNearestCreature(21909, 25.0f)) {
+                pPlayer->CastSpell(pCreature, 37868, true);
+                pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+
+                return true;
+            }
+
+            return false;
         }
+    };
 
-        return false;
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new ArcanoControlUnitAI(go);
     }
 };
 

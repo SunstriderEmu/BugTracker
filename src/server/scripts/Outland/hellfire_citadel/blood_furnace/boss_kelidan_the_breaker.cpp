@@ -1,18 +1,3 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /* ScriptData
 SDName: Boss_Kelidan_The_Breaker
@@ -334,7 +319,7 @@ struct mob_shadowmoon_channelerAI : public ScriptedAI
 
     void EnterCombat(Unit* who)
     override {
-        if(Creature *Kelidan = FindCreature(ENTRY_KELIDAN, 100, me)->ToCreature())
+        if(Creature *Kelidan = me->FindNearestCreature(ENTRY_KELIDAN, 100))
             ((boss_kelidan_the_breakerAI*)Kelidan->AI())->ChannelerEngaged(who);
 
         if (me->IsNonMeleeSpellCast(false))
@@ -347,7 +332,7 @@ struct mob_shadowmoon_channelerAI : public ScriptedAI
 
     void JustDied(Unit* Killer)
     override {
-       if(Creature *Kelidan = FindCreature(ENTRY_KELIDAN, 100, me)->ToCreature())
+       if(Creature *Kelidan = me->FindNearestCreature(ENTRY_KELIDAN, 100))
            ((boss_kelidan_the_breakerAI*)Kelidan->AI())->ChannelerDied(Killer);
     }
 
@@ -358,7 +343,7 @@ struct mob_shadowmoon_channelerAI : public ScriptedAI
             if(check_Timer < diff)
             {
                 if (!me->IsNonMeleeSpellCast(false))
-                    if(Creature *Kelidan = FindCreature(ENTRY_KELIDAN, 100, me)->ToCreature())
+                    if(Creature *Kelidan = me->FindNearestCreature(ENTRY_KELIDAN, 100))
                     {
                         uint64 channeler = ((boss_kelidan_the_breakerAI*)Kelidan->AI())->GetChanneled(me);
                         if(Unit *channeled = ObjectAccessor::GetUnit(*me, channeler))

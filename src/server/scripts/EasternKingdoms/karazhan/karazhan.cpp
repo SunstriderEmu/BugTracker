@@ -745,12 +745,22 @@ public:
     SealedTome() : GameObjectScript("go_sealed_tome")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct SealedTomeAI : public GameObjectAI
     {
-        if (rand() % 3 == 1)
-            player->CastSpell(player, RAND(30762, 30763, 30764, 30765, 30766), true);
+        SealedTomeAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        return false;
+        bool GossipHello(Player* player) override
+        {
+            if (rand() % 3 == 1)
+                player->CastSpell(player, RAND(30762, 30763, 30764, 30765, 30766), true);
+
+            return false;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new SealedTomeAI(go);
     }
 };
 

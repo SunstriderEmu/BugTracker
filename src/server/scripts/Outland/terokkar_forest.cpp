@@ -401,7 +401,7 @@ struct npc_isla_starmaneAI : public npc_escortAI
         {
         case 0:
             {
-            GameObject* Cage = FindGameObject(GO_CAGE, 10, me);
+            GameObject* Cage = me->FindNearestGameObject(GO_CAGE, 10);
             if(Cage)
                 Cage->UseDoorOrButton();
             }break;
@@ -483,48 +483,59 @@ public:
     SkullPile() : GameObjectScript("go_skull_pile")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct SkullPileAI : public GameObjectAI
     {
-        if ((player->GetQuestStatus(11885) == QUEST_STATUS_INCOMPLETE) || player->GetQuestRewardStatus(11885))
+        SkullPileAI(GameObject* obj) : GameObjectAI(obj) { }
+
+        bool GossipHello(Player* player) override
         {
-            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_S_DARKSCREECHER_AKKARAI, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_S_KARROG, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_S_GEZZARAK_THE_HUNTRESS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
-            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_S_VAKKIZ_THE_WINDRAGER, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
+            if ((player->GetQuestStatus(11885) == QUEST_STATUS_INCOMPLETE) || player->GetQuestRewardStatus(11885))
+            {
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_S_DARKSCREECHER_AKKARAI, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_S_KARROG, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_S_GEZZARAK_THE_HUNTRESS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_S_VAKKIZ_THE_WINDRAGER, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
+            }
+
+            player->SEND_GOSSIP_MENU_TEXTID(me->GetGOInfo()->questgiver.gossipID, me->GetGUID());
+            return true;
         }
 
-        player->SEND_GOSSIP_MENU_TEXTID(_GO->GetGOInfo()->questgiver.gossipID, _GO->GetGUID());
-        return true;
-    }
-
-    bool OnGossipSelect(Player *player, GameObject* _GO, uint32 sender, uint32 action) override
-    {
-        switch (sender)
+        bool GossipSelect(Player *player, uint32 sender, uint32 action) override
         {
-        case GOSSIP_SENDER_MAIN:    SendActionMenu_go_skull_pile(player, _GO, action); break;
+            switch (sender)
+            {
+            case GOSSIP_SENDER_MAIN:    SendActionMenu_go_skull_pile(player, me, action); break;
+            }
+            return true;
         }
-        return true;
-    }
 
-    void SendActionMenu_go_skull_pile(Player *player, GameObject* _GO, uint32 action)
-    {
-        switch (action)
+        void SendActionMenu_go_skull_pile(Player *player, GameObject* _GO, uint32 action)
         {
-        case GOSSIP_ACTION_INFO_DEF + 1:
-            player->CastSpell(player, 40642, false);
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 2:
-            player->CastSpell(player, 40640, false);
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 3:
-            player->CastSpell(player, 40632, false);
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 4:
-            player->CastSpell(player, 40644, false);
-            break;
+            switch (action)
+            {
+            case GOSSIP_ACTION_INFO_DEF + 1:
+                player->CastSpell(player, 40642, false);
+                break;
+            case GOSSIP_ACTION_INFO_DEF + 2:
+                player->CastSpell(player, 40640, false);
+                break;
+            case GOSSIP_ACTION_INFO_DEF + 3:
+                player->CastSpell(player, 40632, false);
+                break;
+            case GOSSIP_ACTION_INFO_DEF + 4:
+                player->CastSpell(player, 40644, false);
+                break;
+            }
         }
-    }
 
+    };
+
+   
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new SkullPileAI(go);
+    }
 };
 
 /*######
@@ -544,15 +555,25 @@ public:
     AncientSkullPile() : GameObjectScript("go_ancient_skull_pile")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* _GO) override
+    struct AncientSkullPileAI : public GameObjectAI
     {
-        if (pPlayer->GetQuestStatus(QUEST_TEROKK_DOWNFALL) == QUEST_STATUS_INCOMPLETE)
-            pPlayer->SummonCreature(ENTRY_TEROKK, -3793.01, 3503.55, 287.01, 0.9485, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 30000);
-        else if (pPlayer->HasItemCount(32720, 1, false)) {
-            pPlayer->SummonCreature(ENTRY_TEROKK, -3793.01, 3503.55, 287.01, 0.9485, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 30000);
-            pPlayer->DestroyItemCount(32720, 1, true);
+        AncientSkullPileAI(GameObject* obj) : GameObjectAI(obj) { }
+
+        bool GossipHello(Player* pPlayer) override
+        {
+            if (pPlayer->GetQuestStatus(QUEST_TEROKK_DOWNFALL) == QUEST_STATUS_INCOMPLETE)
+                pPlayer->SummonCreature(ENTRY_TEROKK, -3793.01, 3503.55, 287.01, 0.9485, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 30000);
+            else if (pPlayer->HasItemCount(32720, 1, false)) {
+                pPlayer->SummonCreature(ENTRY_TEROKK, -3793.01, 3503.55, 287.01, 0.9485, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 30000);
+                pPlayer->DestroyItemCount(32720, 1, true);
+            }
+            return true;
         }
-        return true;
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new AncientSkullPileAI(go);
     }
 };
 

@@ -189,7 +189,7 @@ struct npc_greengill_slaveAI : public ScriptedAI
                     plr->KilledMonsterCredit(25086, me->GetGUID());
             }
             DoCast(me, ENRAGE);
-            Unit* Myrmidon = FindCreature(DM, 70, me);
+            Unit* Myrmidon = me->FindNearestCreature(DM, 70);
             if(Myrmidon)
             {
                 me->AddThreat(Myrmidon, 100000.0f);

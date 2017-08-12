@@ -93,51 +93,62 @@ public:
     Gong() : GameObjectScript("go_gong")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* go) override
+    struct GongAI : public GameObjectAI
     {
-        InstanceScript* pInstance = ((InstanceScript*)player->GetInstanceScript());
-        if (!pInstance)
-            return true;
+        GongAI(GameObject* obj) : GameObjectAI(obj), pInstance(obj->GetInstanceScript()) { }
 
-        if (pInstance->GetData(DATA_WAVE_EVENT) >= 3)
-            return true;
+        InstanceScript* pInstance;
 
-        if (pInstance->GetData(DATA_CREATURE_CREDIT) != 0)
-            return true;
-
-        pInstance->SetData(DATA_WAVE_EVENT, 0);
-
-        go->AddUse();
-
-        switch (pInstance->GetData(DATA_WAVE_EVENT))
+        bool GossipHello(Player* player) override
         {
-        case 1:
-            for (uint8 i = 0; i < 4; ++i)
-                if (Creature* add = go->SummonCreature(NPC_TOMB_FIEND, 2546.67f, 891.78f, 47.8f, 0.0f, TEMPSUMMON_MANUAL_DESPAWN, 0))
-                    add->AI()->AttackStart(player);
+            if (!pInstance)
+                return true;
 
-            for (uint8 i = 0; i < 4; ++i)
-                if (Creature* add = go->SummonCreature(NPC_TOMB_FIEND, 2490.06f, 832.66f, 44.5f, 0.0f, TEMPSUMMON_MANUAL_DESPAWN, 0))
-                    add->AI()->AttackStart(player);
-            pInstance->SetData(DATA_CREATURE_CREDIT, 8);
-            break;
-        case 2:
-            for (uint8 i = 0; i < 4; ++i)
-                if (Creature* add = go->SummonCreature(NPC_TOMB_REAVER, 2546.67f, 891.78f, 47.8f, 0.0f, TEMPSUMMON_MANUAL_DESPAWN, 0))
-                    add->AI()->AttackStart(player);
+            if (pInstance->GetData(DATA_WAVE_EVENT) >= 3)
+                return true;
 
-            for (uint8 i = 0; i < 4; ++i)
-                if (Creature* add = go->SummonCreature(NPC_TOMB_REAVER, 2490.06f, 832.66f, 44.5f, 0.0f, TEMPSUMMON_MANUAL_DESPAWN, 0))
-                    add->AI()->AttackStart(player);
-            pInstance->SetData(DATA_CREATURE_CREDIT, 8);
-            break;
-        case 3:
-            if (Creature* boss = go->SummonCreature(BOSS_TUTEN_KASH, 2490.06f, 832.66f, 44.5f, 0.0f, TEMPSUMMON_MANUAL_DESPAWN, 0))
-                boss->AI()->AttackStart(player);
-            pInstance->SetData(DATA_CREATURE_CREDIT, 0);
-            break;
+            if (pInstance->GetData(DATA_CREATURE_CREDIT) != 0)
+                return true;
+
+            pInstance->SetData(DATA_WAVE_EVENT, 0);
+
+            me->AddUse();
+
+            switch (pInstance->GetData(DATA_WAVE_EVENT))
+            {
+            case 1:
+                for (uint8 i = 0; i < 4; ++i)
+                    if (Creature* add = me->SummonCreature(NPC_TOMB_FIEND, 2546.67f, 891.78f, 47.8f, 0.0f, TEMPSUMMON_MANUAL_DESPAWN, 0))
+                        add->AI()->AttackStart(player);
+
+                for (uint8 i = 0; i < 4; ++i)
+                    if (Creature* add = me->SummonCreature(NPC_TOMB_FIEND, 2490.06f, 832.66f, 44.5f, 0.0f, TEMPSUMMON_MANUAL_DESPAWN, 0))
+                        add->AI()->AttackStart(player);
+                pInstance->SetData(DATA_CREATURE_CREDIT, 8);
+                break;
+            case 2:
+                for (uint8 i = 0; i < 4; ++i)
+                    if (Creature* add = me->SummonCreature(NPC_TOMB_REAVER, 2546.67f, 891.78f, 47.8f, 0.0f, TEMPSUMMON_MANUAL_DESPAWN, 0))
+                        add->AI()->AttackStart(player);
+
+                for (uint8 i = 0; i < 4; ++i)
+                    if (Creature* add = me->SummonCreature(NPC_TOMB_REAVER, 2490.06f, 832.66f, 44.5f, 0.0f, TEMPSUMMON_MANUAL_DESPAWN, 0))
+                        add->AI()->AttackStart(player);
+                pInstance->SetData(DATA_CREATURE_CREDIT, 8);
+                break;
+            case 3:
+                if (Creature* boss = me->SummonCreature(BOSS_TUTEN_KASH, 2490.06f, 832.66f, 44.5f, 0.0f, TEMPSUMMON_MANUAL_DESPAWN, 0))
+                    boss->AI()->AttackStart(player);
+                pInstance->SetData(DATA_CREATURE_CREDIT, 0);
+                break;
+            }
+            return true;
         }
-        return true;
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new GongAI(go);
     }
 };
 

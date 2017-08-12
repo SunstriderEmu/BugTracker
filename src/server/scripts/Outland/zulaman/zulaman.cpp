@@ -331,24 +331,34 @@ public:
     ZulAmanGong() : GameObjectScript("go_za_gong")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGo) override
+    struct ZulAmanGongAI : public GameObjectAI
     {
-        if (pGo->HasFlag(GAMEOBJECT_FLAGS, GO_FLAG_LOCKED))
-            return false;
-        else {
-            if (Creature* harrisonJones = pGo->FindNearestCreature(HARRISON_ENTRY, 15.0f, true)) {
-                if (CAST_AI(npc_harrison_jonesAI, (harrisonJones->AI()))->IncreaseClick(pPlayer->GetGUID()))
-                {
-                    pPlayer->InterruptNonMeleeSpells(true);
-                    pPlayer->CastSpell(pPlayer, 45226, true);
-                    //pPlayer->CastSpell(pPlayer, 44762, true);
-                    /*if (!pPlayer->HasAuraEffect(45225))
-                        pPlayer->AddAura(45225, pPlayer);*/
-                }
-            }
+        ZulAmanGongAI(GameObject* obj) : GameObjectAI(obj) { }
 
-            return true;
+        bool GossipHello(Player* pPlayer) override
+        {
+            if (me->HasFlag(GAMEOBJECT_FLAGS, GO_FLAG_LOCKED))
+                return false;
+            else {
+                if (Creature* harrisonJones = me->FindNearestCreature(HARRISON_ENTRY, 15.0f, true)) {
+                    if (CAST_AI(npc_harrison_jonesAI, (harrisonJones->AI()))->IncreaseClick(pPlayer->GetGUID()))
+                    {
+                        pPlayer->InterruptNonMeleeSpells(true);
+                        pPlayer->CastSpell(pPlayer, 45226, true);
+                        //pPlayer->CastSpell(pPlayer, 44762, true);
+                        /*if (!pPlayer->HasAuraEffect(45225))
+                            pPlayer->AddAura(45225, pPlayer);*/
+                    }
+                }
+
+                return true;
+            }
         }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new ZulAmanGongAI(go);
     }
 };
 

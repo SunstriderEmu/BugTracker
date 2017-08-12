@@ -214,7 +214,7 @@ struct npc_ruul_snowhoofAI : public npc_escortAI
         {
         case 0:    {
                 me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-                GameObject* Cage = FindGameObject(GO_CAGE, 20, me);
+                GameObject* Cage = me->FindNearestGameObject(GO_CAGE, 20);
                 if(Cage)
                     Cage->SetGoState(GO_STATE_ACTIVE);
                 break;}
@@ -241,7 +241,7 @@ struct npc_ruul_snowhoofAI : public npc_escortAI
         if (!HasEscortState(STATE_ESCORT_ESCORTING))
             me->SetFaction(1602);
 
-        GameObject* Cage = FindGameObject(GO_CAGE, 20, me);
+        GameObject* Cage = me->FindNearestGameObject(GO_CAGE, 20);
         if(Cage)
             Cage->ResetDoorOrButton();
             
@@ -513,20 +513,30 @@ class NagaBrazier : public GameObjectScript
 public:
     NagaBrazier() : GameObjectScript("go_naga_brazier")
     {}
-    
-    bool OnGossipHello(Player* p, GameObject* go) override
-    {
-        if (Creature* pCreature = p->FindNearestCreature(NPC_MUGLASH, INTERACTION_DISTANCE * 2, true))
-        {
-            if (npc_muglashAI* pEscortAI = CAST_AI(npc_muglashAI, pCreature->AI()))
-            {
-                DoScriptText(SAY_MUG_BRAZIER_WAIT, pCreature);
 
-                pEscortAI->m_bIsBrazierExtinguished = true;
-                return false;
+    struct NagaBrazierAI : public GameObjectAI
+    {
+        NagaBrazierAI(GameObject* obj) : GameObjectAI(obj) { }
+
+        bool GossipHello(Player* p) override
+        {
+            if (Creature* pCreature = p->FindNearestCreature(NPC_MUGLASH, INTERACTION_DISTANCE * 2, true))
+            {
+                if (npc_muglashAI* pEscortAI = CAST_AI(npc_muglashAI, pCreature->AI()))
+                {
+                    DoScriptText(SAY_MUG_BRAZIER_WAIT, pCreature);
+
+                    pEscortAI->m_bIsBrazierExtinguished = true;
+                    return false;
+                }
             }
+            return true;
         }
-        return true;
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new NagaBrazierAI(go);
     }
 };
 

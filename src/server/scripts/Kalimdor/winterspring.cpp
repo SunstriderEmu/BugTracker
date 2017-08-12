@@ -642,14 +642,24 @@ public:
     AltarOfElune() : GameObjectScript("go_altar_of_elune")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct AltarOfEluneAI : public GameObjectAI
     {
-        //if (player->GetQuestStatus(QUEST_GUARDIANS_ALTAR) == QUEST_STATUS_INCOMPLETE) {
-        if (Creature* ranshalla = player->FindNearestCreature(10300, 30.0f, true))
-            ((npc_ranshallaAI*)ranshalla->AI())->AltarClicked();
-        //}
+        AltarOfEluneAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        return true;
+        bool GossipHello(Player* player) override
+        {
+            //if (player->GetQuestStatus(QUEST_GUARDIANS_ALTAR) == QUEST_STATUS_INCOMPLETE) {
+            if (Creature* ranshalla = player->FindNearestCreature(10300, 30.0f, true))
+                ((npc_ranshallaAI*)ranshalla->AI())->AltarClicked();
+            //}
+
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new AltarOfEluneAI(go);
     }
 };
 

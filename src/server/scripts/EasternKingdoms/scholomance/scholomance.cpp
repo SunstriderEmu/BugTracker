@@ -14,15 +14,25 @@ public:
     ScholomanceTorch() : GameObjectScript("go_scholo_torch")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* _GO) override
+    struct ScholomanceTorchAI : public GameObjectAI
     {
-        if (GameObject *door = pPlayer->FindNearestGameObject(174626, 10.0f)) {
-            door->UseDoorOrButton();
+        ScholomanceTorchAI(GameObject* obj) : GameObjectAI(obj) { }
 
-            return true;
+        bool GossipHello(Player* pPlayer) override
+        {
+            if (GameObject *door = pPlayer->FindNearestGameObject(174626, 10.0f)) {
+                door->UseDoorOrButton();
+
+                return true;
+            }
+
+            return false;
         }
+    };
 
-        return false;
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new ScholomanceTorchAI(go);
     }
 };
 

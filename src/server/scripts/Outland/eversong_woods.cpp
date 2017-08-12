@@ -527,18 +527,28 @@ public:
     SecondTrialGO() : GameObjectScript("go_second_trial")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGo) override
+    struct SecondTrialGOAI : public GameObjectAI
     {
-        // find spawn :: master_kelerun_bloodmourn
-        Creature* event_controller = nullptr;
-        Trinity::NearestCreatureEntryWithLiveStateInObjectRangeCheck u_check(*pGo, MASTER_KELERUN_BLOODMOURN, true, 30);
-        Trinity::CreatureLastSearcher<Trinity::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(event_controller, u_check);
-        Cell::VisitGridObjects(pPlayer, searcher, MAX_SEARCHER_DISTANCE);
+        SecondTrialGOAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        if (event_controller)
-            CAST_AI(master_kelerun_bloodmournAI, (event_controller->AI()))->StartEvent();
+        bool GossipHello(Player* pPlayer) override
+        {
+            // find spawn :: master_kelerun_bloodmourn
+            Creature* event_controller = nullptr;
+            Trinity::NearestCreatureEntryWithLiveStateInObjectRangeCheck u_check(*me, MASTER_KELERUN_BLOODMOURN, true, 30);
+            Trinity::CreatureLastSearcher<Trinity::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(event_controller, u_check);
+            Cell::VisitGridObjects(pPlayer, searcher, MAX_SEARCHER_DISTANCE);
 
-        return true;
+            if (event_controller)
+                CAST_AI(master_kelerun_bloodmournAI, (event_controller->AI()))->StartEvent();
+
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new SecondTrialGOAI(go);
     }
 };
 

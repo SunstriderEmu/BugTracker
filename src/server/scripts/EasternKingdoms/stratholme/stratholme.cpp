@@ -44,37 +44,47 @@ public:
     GauntletGate() : GameObjectScript("go_gauntlet_gate")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct GauntletGateAI : public GameObjectAI
     {
-        InstanceScript* pInstance = (InstanceScript*)_GO->GetInstanceScript();
+        GauntletGateAI(GameObject* obj) : GameObjectAI(obj), pInstance(obj->GetInstanceScript()) { }
 
-        if (!pInstance)
-            return false;
+        InstanceScript* pInstance;
 
-        if (pInstance->GetData(TYPE_BARON_RUN) != NOT_STARTED)
-            return false;
-
-        if (Group *pGroup = player->GetGroup())
+        bool GossipHello(Player* player) override
         {
-            for (GroupReference *itr = pGroup->GetFirstMember(); itr != nullptr; itr = itr->next())
+            if (!pInstance)
+                return false;
+
+            if (pInstance->GetData(TYPE_BARON_RUN) != NOT_STARTED)
+                return false;
+
+            if (Group *pGroup = player->GetGroup())
             {
-                Player* pGroupie = itr->GetSource();
-                if (!pGroupie)
-                    continue;
+                for (GroupReference *itr = pGroup->GetFirstMember(); itr != nullptr; itr = itr->next())
+                {
+                    Player* pGroupie = itr->GetSource();
+                    if (!pGroupie)
+                        continue;
 
-                if (pGroupie->GetQuestStatus(QUEST_DEAD_MAN_PLEA) == QUEST_STATUS_INCOMPLETE &&
-                    !pGroupie->HasAuraEffect(SPELL_BARON_ULTIMATUM, 0) &&
-                    pGroupie->GetMap() == _GO->GetMap())
-                    pGroupie->CastSpell(pGroupie, SPELL_BARON_ULTIMATUM, true);
+                    if (pGroupie->GetQuestStatus(QUEST_DEAD_MAN_PLEA) == QUEST_STATUS_INCOMPLETE &&
+                        !pGroupie->HasAuraEffect(SPELL_BARON_ULTIMATUM, 0) &&
+                        pGroupie->GetMap() == me->GetMap())
+                        pGroupie->CastSpell(pGroupie, SPELL_BARON_ULTIMATUM, true);
+                }
             }
-        }
-        else if (player->GetQuestStatus(QUEST_DEAD_MAN_PLEA) == QUEST_STATUS_INCOMPLETE &&
-            !player->HasAuraEffect(SPELL_BARON_ULTIMATUM, 0) &&
-            player->GetMap() == _GO->GetMap())
-            player->CastSpell(player, SPELL_BARON_ULTIMATUM, true);
+            else if (player->GetQuestStatus(QUEST_DEAD_MAN_PLEA) == QUEST_STATUS_INCOMPLETE &&
+                !player->HasAuraEffect(SPELL_BARON_ULTIMATUM, 0) &&
+                player->GetMap() == me->GetMap())
+                player->CastSpell(player, SPELL_BARON_ULTIMATUM, true);
 
-        pInstance->SetData(TYPE_BARON_RUN, IN_PROGRESS);
-        return false;
+            pInstance->SetData(TYPE_BARON_RUN, IN_PROGRESS);
+            return false;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new GauntletGateAI(go);
     }
 };
 
@@ -241,39 +251,37 @@ struct mobs_spectral_ghostly_citizenAI : public ScriptedAI
 
         DoMeleeAttackIfReady();
     }
+
+    void ReceiveEmote(Player* player, uint32 emote) override
+    {
+        switch (emote)
+        {
+        case TEXTEMOTE_DANCE:
+            EnterEvadeMode();
+            break;
+        case TEXTEMOTE_RUDE:
+            //Should instead cast spell, kicking player back. Spell not found.
+            if (me->IsWithinDistInMap(player, 5))
+                me->HandleEmoteCommand(EMOTE_ONESHOT_RUDE);
+            else
+                me->HandleEmoteCommand(EMOTE_ONESHOT_RUDE);
+            break;
+        case TEXTEMOTE_WAVE:
+            me->HandleEmoteCommand(EMOTE_ONESHOT_WAVE);
+            break;
+        case TEXTEMOTE_BOW:
+            me->HandleEmoteCommand(EMOTE_ONESHOT_BOW);
+            break;
+        case TEXTEMOTE_KISS:
+            me->HandleEmoteCommand(EMOTE_ONESHOT_FLEX);
+            break;
+        }
+    }
 };
 
 CreatureAI* GetAI_mobs_spectral_ghostly_citizen(Creature *_Creature)
 {
     return new mobs_spectral_ghostly_citizenAI (_Creature);
-}
-
-bool ReciveEmote_mobs_spectral_ghostly_citizen(Player *player, Creature *_Creature, uint32 emote)
-{
-    switch(emote)
-    {
-        case TEXTEMOTE_DANCE:
-            ((mobs_spectral_ghostly_citizenAI*)_Creature->AI())->EnterEvadeMode();
-            break;
-        case TEXTEMOTE_RUDE:
-            //Should instead cast spell, kicking player back. Spell not found.
-            if (_Creature->IsWithinDistInMap(player, 5))
-                _Creature->HandleEmoteCommand(EMOTE_ONESHOT_RUDE);
-            else
-                _Creature->HandleEmoteCommand(EMOTE_ONESHOT_RUDE);
-            break;
-        case TEXTEMOTE_WAVE:
-            _Creature->HandleEmoteCommand(EMOTE_ONESHOT_WAVE);
-            break;
-        case TEXTEMOTE_BOW:
-            _Creature->HandleEmoteCommand(EMOTE_ONESHOT_BOW);
-            break;
-        case TEXTEMOTE_KISS:
-            _Creature->HandleEmoteCommand(EMOTE_ONESHOT_FLEX);
-            break;
-    }
-
-    return true;
 }
 
 class ATTimmyTheCruel : AreaTriggerScript
@@ -311,22 +319,32 @@ public:
     CannonballStack() : GameObjectScript("go_cannonball_stack")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGo) override
+    struct CannonballStackAI : public GameObjectAI
     {
-        //pPlayer->SendLoot(pGo->GetGUID(), LOOT_CORPSE);
-        ItemPosCountVec dest;
-        uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 12973, 1);
-        if (msg == EQUIP_ERR_OK)
+        CannonballStackAI(GameObject* obj) : GameObjectAI(obj) { }
+
+        bool GossipHello(Player* pPlayer) override
         {
-            Item* item = pPlayer->StoreNewItem(dest, 12973, true);
-            pPlayer->SendNewItem(item, 1, true, false);
-            pGo->SetLootState(GO_READY); // Should despawn GO, can be respawned if boss resets
+            //pPlayer->SendLoot(pGo->GetGUID(), LOOT_CORPSE);
+            ItemPosCountVec dest;
+            uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 12973, 1);
+            if (msg == EQUIP_ERR_OK)
+            {
+                Item* item = pPlayer->StoreNewItem(dest, 12973, true);
+                pPlayer->SendNewItem(item, 1, true, false);
+                me->SetLootState(GO_READY); // Should despawn GO, can be respawned if boss resets
 
-            return false;
+                return false;
+            }
+            me->SetLootState(GO_ACTIVATED);
+
+            return true;
         }
-        pGo->SetLootState(GO_ACTIVATED);
+    };
 
-        return true;
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new CannonballStackAI(go);
     }
 };
 
@@ -380,41 +398,51 @@ public:
     SupplyCrate() : GameObjectScript("go_stratholme_supply_crate")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* go) override
+    struct SupplyCrateAI : public GameObjectAI
     {
-        switch (rand() % 5) {
-        case 0:
-        case 1:
+        SupplyCrateAI(GameObject* obj) : GameObjectAI(obj) { }
+
+        bool GossipHello(Player* player) override
         {
-            uint8 amount = rand() % 3 + 1;
-            ItemPosCountVec dest;
-            uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 13180, amount);
-            if (msg == EQUIP_ERR_OK) {
-                Item* item = player->StoreNewItem(dest, 13180, true);
-                player->SendNewItem(item, amount, true, false);
+            switch (rand() % 5) {
+            case 0:
+            case 1:
+            {
+                uint8 amount = rand() % 3 + 1;
+                ItemPosCountVec dest;
+                uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 13180, amount);
+                if (msg == EQUIP_ERR_OK) {
+                    Item* item = player->StoreNewItem(dest, 13180, true);
+                    player->SendNewItem(item, amount, true, false);
+                }
+                break;
             }
-            break;
-        }
-        case 2:
-            for (uint8 i = 0; i < 5; i++)
-                if (Creature* summon = player->SummonCreature(10441, player->GetPositionX(), player->GetPositionY(), player->GetPositionZ(), player->GetOrientation(), TEMPSUMMON_DEAD_DESPAWN, 0))
-                    summon->AI()->AttackStart(player);
-            break;
-        case 3:
-            for (uint8 i = 0; i < 5; i++)
-                if (Creature* summon = player->SummonCreature(10461, player->GetPositionX(), player->GetPositionY(), player->GetPositionZ(), player->GetOrientation(), TEMPSUMMON_DEAD_DESPAWN, 0))
-                    summon->AI()->AttackStart(player);
-            break;
-        case 4:
-            for (uint8 i = 0; i < 8; i++)
-                if (Creature* summon = player->SummonCreature(10536, player->GetPositionX(), player->GetPositionY(), player->GetPositionZ(), player->GetOrientation(), TEMPSUMMON_DEAD_DESPAWN, 0))
-                    summon->AI()->AttackStart(player);
-            break;
-        }
+            case 2:
+                for (uint8 i = 0; i < 5; i++)
+                    if (Creature* summon = player->SummonCreature(10441, player->GetPositionX(), player->GetPositionY(), player->GetPositionZ(), player->GetOrientation(), TEMPSUMMON_DEAD_DESPAWN, 0))
+                        summon->AI()->AttackStart(player);
+                break;
+            case 3:
+                for (uint8 i = 0; i < 5; i++)
+                    if (Creature* summon = player->SummonCreature(10461, player->GetPositionX(), player->GetPositionY(), player->GetPositionZ(), player->GetOrientation(), TEMPSUMMON_DEAD_DESPAWN, 0))
+                        summon->AI()->AttackStart(player);
+                break;
+            case 4:
+                for (uint8 i = 0; i < 8; i++)
+                    if (Creature* summon = player->SummonCreature(10536, player->GetPositionX(), player->GetPositionY(), player->GetPositionZ(), player->GetOrientation(), TEMPSUMMON_DEAD_DESPAWN, 0))
+                        summon->AI()->AttackStart(player);
+                break;
+            }
 
-        go->SetLootState(GO_JUST_DEACTIVATED);
+            me->SetLootState(GO_JUST_DEACTIVATED);
 
-        return false;
+            return false;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new SupplyCrateAI(go);
     }
 };
 
@@ -441,7 +469,6 @@ void AddSC_stratholme()
     newscript = new OLDScript;
     newscript->Name = "mobs_spectral_ghostly_citizen";
     newscript->GetAI = &GetAI_mobs_spectral_ghostly_citizen;
-    newscript->OnReceiveEmote = &ReciveEmote_mobs_spectral_ghostly_citizen;
     sScriptMgr->RegisterOLDScript(newscript);
     
     new ATTimmyTheCruel();

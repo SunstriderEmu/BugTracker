@@ -51,17 +51,27 @@ public:
     BridgeConsole() : GameObjectScript("go_bridge_console")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* go) override
+    struct BridgeConsoleAI : public GameObjectAI
     {
-        InstanceScript* pInstance = (InstanceScript*)go->GetInstanceScript();
+        BridgeConsoleAI(GameObject* obj) : GameObjectAI(obj), pInstance(obj->GetInstanceScript()) { }
 
-        if (!pInstance)
-            return false;
+        InstanceScript* pInstance;
 
-        if (pInstance)
-            pInstance->SetData(DATA_CONTROL_CONSOLE, DONE);
+        bool GossipHello(Player* player) override
+        {
+            if (!pInstance)
+                return false;
 
-        return true;
+            if (pInstance)
+                pInstance->SetData(DATA_CONTROL_CONSOLE, DONE);
+
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new BridgeConsoleAI(go);
     }
 };
 

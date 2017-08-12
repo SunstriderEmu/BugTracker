@@ -295,49 +295,59 @@ public:
     ManaforgeControlConsole() : GameObjectScript("go_manaforge_control_console")
     {}
 
-    //TODO: clean up this workaround when Trinity adds support to do it properly (with gossip selections instead of instant summon)
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct ManaforgeControlConsoleAI : public GameObjectAI
     {
-        if (_GO->GetGoType() == GAMEOBJECT_TYPE_QUESTGIVER)
-        {
-            player->PrepareQuestMenu(_GO->GetGUID());
-            player->SendPreparedQuest(_GO->GetGUID());
-        }
+        ManaforgeControlConsoleAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        Creature* manaforge;
-        manaforge = nullptr;
-
-        switch (_GO->GetAreaId())
+        //TODO: clean up this workaround when Trinity adds support to do it properly (with gossip selections instead of instant summon)
+        bool GossipHello(Player* player) override
         {
-        case 3726:                                          //b'naar
-            if ((player->GetQuestStatus(10299) == QUEST_STATUS_INCOMPLETE || player->GetQuestStatus(10329) == QUEST_STATUS_INCOMPLETE) &&
-                player->HasItemCount(29366, 1))
-                manaforge = player->SummonCreature(ENTRY_BNAAR_C_CONSOLE, 2918.95, 4189.98, 161.88, 0.34, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 125000);
-            break;
-        case 3730:                                          //coruu
-            if ((player->GetQuestStatus(10321) == QUEST_STATUS_INCOMPLETE || player->GetQuestStatus(10330) == QUEST_STATUS_INCOMPLETE) &&
-                player->HasItemCount(29396, 1))
-                manaforge = player->SummonCreature(ENTRY_CORUU_C_CONSOLE, 2426.77, 2750.38, 133.24, 2.14, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 125000);
-            break;
-        case 3734:                                          //duro
-            if ((player->GetQuestStatus(10322) == QUEST_STATUS_INCOMPLETE || player->GetQuestStatus(10338) == QUEST_STATUS_INCOMPLETE) &&
-                player->HasItemCount(29397, 1))
-                manaforge = player->SummonCreature(ENTRY_DURO_C_CONSOLE, 2976.48, 2183.29, 163.20, 1.85, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 125000);
-            break;
-        case 3722:                                          //ara
-            if ((player->GetQuestStatus(10323) == QUEST_STATUS_INCOMPLETE || player->GetQuestStatus(10365) == QUEST_STATUS_INCOMPLETE) &&
-                player->HasItemCount(29411, 1))
-                manaforge = player->SummonCreature(ENTRY_ARA_C_CONSOLE, 4013.71, 4028.76, 192.10, 1.25, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 125000);
-            break;
-        }
+            if (me->GetGoType() == GAMEOBJECT_TYPE_QUESTGIVER)
+            {
+                player->PrepareQuestMenu(me->GetGUID());
+                player->SendPreparedQuest(me->GetGUID());
+            }
 
-        if (manaforge)
-        {
-            ((npc_manaforge_control_consoleAI*)manaforge->AI())->someplayer = player->GetGUID();
-            ((npc_manaforge_control_consoleAI*)manaforge->AI())->goConsole = _GO->GetGUID();
-            _GO->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_IN_USE);
+            Creature* manaforge;
+            manaforge = nullptr;
+
+            switch (me->GetAreaId())
+            {
+            case 3726:                                          //b'naar
+                if ((player->GetQuestStatus(10299) == QUEST_STATUS_INCOMPLETE || player->GetQuestStatus(10329) == QUEST_STATUS_INCOMPLETE) &&
+                    player->HasItemCount(29366, 1))
+                    manaforge = player->SummonCreature(ENTRY_BNAAR_C_CONSOLE, 2918.95, 4189.98, 161.88, 0.34, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 125000);
+                break;
+            case 3730:                                          //coruu
+                if ((player->GetQuestStatus(10321) == QUEST_STATUS_INCOMPLETE || player->GetQuestStatus(10330) == QUEST_STATUS_INCOMPLETE) &&
+                    player->HasItemCount(29396, 1))
+                    manaforge = player->SummonCreature(ENTRY_CORUU_C_CONSOLE, 2426.77, 2750.38, 133.24, 2.14, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 125000);
+                break;
+            case 3734:                                          //duro
+                if ((player->GetQuestStatus(10322) == QUEST_STATUS_INCOMPLETE || player->GetQuestStatus(10338) == QUEST_STATUS_INCOMPLETE) &&
+                    player->HasItemCount(29397, 1))
+                    manaforge = player->SummonCreature(ENTRY_DURO_C_CONSOLE, 2976.48, 2183.29, 163.20, 1.85, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 125000);
+                break;
+            case 3722:                                          //ara
+                if ((player->GetQuestStatus(10323) == QUEST_STATUS_INCOMPLETE || player->GetQuestStatus(10365) == QUEST_STATUS_INCOMPLETE) &&
+                    player->HasItemCount(29411, 1))
+                    manaforge = player->SummonCreature(ENTRY_ARA_C_CONSOLE, 4013.71, 4028.76, 192.10, 1.25, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 125000);
+                break;
+            }
+
+            if (manaforge)
+            {
+                ((npc_manaforge_control_consoleAI*)manaforge->AI())->someplayer = player->GetGUID();
+                ((npc_manaforge_control_consoleAI*)manaforge->AI())->goConsole = me->GetGUID();
+                me->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_IN_USE);
+            }
+            return true;
         }
-        return true;
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new ManaforgeControlConsoleAI(go);
     }
 };
 
@@ -890,7 +900,6 @@ CreatureAI* GetAI_mob_phase_hunter(Creature *_Creature)
 
 struct npc_bessyAI : public npc_escortAI
 {
-
     npc_bessyAI(Creature *c) : npc_escortAI(c) {}
 
     bool Completed;
@@ -930,11 +939,11 @@ struct npc_bessyAI : public npc_escortAI
                     player->GroupEventHappens(Q_ALMABTRIEB, me);
                     Completed = true;
                 }
-                {Unit* Thadell = FindCreature(N_THADELL, 30, me);
+                {Unit* Thadell = me->FindNearestCreature(N_THADELL, 30);
                 if(Thadell)
                     DoScriptText(SAY_THADELL_1, me);}break;
             case 13:
-                {Unit* Thadell = FindCreature(N_THADELL, 30, me);
+                {Unit* Thadell = me->FindNearestCreature(N_THADELL, 30);
                 if(Thadell)
                     DoScriptText(SAY_THADELL_2, me, player);}break;
         }
@@ -1082,17 +1091,26 @@ public:
     EtherealTeleportPad() : GameObjectScript("go_ethereal_teleport")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* go) override
+    struct EtherealTeleportPadAI : public GameObjectAI
     {
-        if (player->GetQuestStatus(QUEST_A_NOT_SO_MODEST_PROPOSAL) == QUEST_STATUS_COMPLETE)
-        {
-            Creature *npc = go->FindNearestCreature(NPC_IMAGE_OF_WIND_TRADER_MARID, 1.0f); // prevents double spawn
-            if (npc)
-                npc->DisappearAndDie();
-            go->SummonCreature(NPC_IMAGE_OF_WIND_TRADER_MARID, 4007.11f, 1517.15f, -115.535f, 4.97726f, TEMPSUMMON_TIMED_DESPAWN, 60000);
+        EtherealTeleportPadAI(GameObject* obj) : GameObjectAI(obj) { }
 
+        bool GossipHello(Player* player) override
+        {
+            if (player->GetQuestStatus(QUEST_A_NOT_SO_MODEST_PROPOSAL) == QUEST_STATUS_COMPLETE)
+            {
+                Creature *npc = me->FindNearestCreature(NPC_IMAGE_OF_WIND_TRADER_MARID, 1.0f); // prevents double spawn
+                if (npc)
+                    npc->DisappearAndDie();
+                me->SummonCreature(NPC_IMAGE_OF_WIND_TRADER_MARID, 4007.11f, 1517.15f, -115.535f, 4.97726f, TEMPSUMMON_TIMED_DESPAWN, 60000);
+            }
+            return true;
         }
-        return true;
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new EtherealTeleportPadAI(go);
     }
 };
 

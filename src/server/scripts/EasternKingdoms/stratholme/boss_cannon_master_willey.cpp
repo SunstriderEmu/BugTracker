@@ -201,16 +201,26 @@ public:
     ScarletCannon() : GameObjectScript("go_scarlet_cannon")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGo) override
+    struct ScarletCannonAI : public GameObjectAI
     {
-        if (Creature* willey = pGo->FindNearestCreature(10997, 10.0f, true)) {
-            CAST_AI(boss_cannon_master_willeyAI, (willey->AI()))->CannonFired();
-            pGo->Respawn();
+        ScarletCannonAI(GameObject* obj) : GameObjectAI(obj) { }
 
-            return false;
+        bool GossipHello(Player* pPlayer) override
+        {
+            if (Creature* willey = pGo->FindNearestCreature(10997, 10.0f, true)) {
+                CAST_AI(boss_cannon_master_willeyAI, (willey->AI()))->CannonFired();
+                pGo->Respawn();
+
+                return false;
+            }
+
+            return true;
         }
+    };
 
-        return true;
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new ScarletCannonAI(go);
     }
 };
 

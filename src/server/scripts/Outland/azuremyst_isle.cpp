@@ -658,18 +658,28 @@ public:
     RavagerCage() : GameObjectScript("go_ravager_cage")
     {}
 
-    bool OnGossipHello(Player* p, GameObject* go) override
+    struct RavagerCageAI : public GameObjectAI
     {
-        if (p->GetQuestStatus(QUEST_STRENGTH_ONE) == QUEST_STATUS_INCOMPLETE)
+        RavagerCageAI(GameObject* obj) : GameObjectAI(obj), pInstance(obj->GetInstanceScript()) { }
+
+        bool GossipHello(Player* p) override
         {
-            if (Creature* ravager = go->FindNearestCreature(NPC_DEATH_RAVAGER, 5.0f, true))
+            if (p->GetQuestStatus(QUEST_STRENGTH_ONE) == QUEST_STATUS_INCOMPLETE)
             {
-                ravager->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                ravager->SetReactState(REACT_AGGRESSIVE);
-                ravager->AI()->AttackStart(p);
+                if (Creature* ravager = me->FindNearestCreature(NPC_DEATH_RAVAGER, 5.0f, true))
+                {
+                    ravager->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                    ravager->SetReactState(REACT_AGGRESSIVE);
+                    ravager->AI()->AttackStart(p);
+                }
             }
+            return true;
         }
-        return true;
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new RavagerCageAI(go);
     }
 };
 
@@ -773,21 +783,31 @@ public:
     BristelimbCage() : GameObjectScript("go_bristlelimb_cage")
     {}
 
-    bool OnGossipHello(Player* p, GameObject* go) override
+    struct BristelimbCageAI : public GameObjectAI
     {
-        if (p->GetQuestStatus(QUEST_THE_PROPHECY_OF_AKIDA) == QUEST_STATUS_INCOMPLETE)
+        BristelimbCageAI(GameObject* obj) : GameObjectAI(obj) { }
+
+        bool GossipHello(Player* p) override
         {
-            Creature* pCreature = go->FindNearestCreature(NPC_STILLPINE_CAPITIVE, 5.0f, true);
-            if (pCreature)
+            if (p->GetQuestStatus(QUEST_THE_PROPHECY_OF_AKIDA) == QUEST_STATUS_INCOMPLETE)
             {
-				pCreature->AI()->Talk(0, p);
-                pCreature->GetMotionMaster()->MoveFleeing(p);
-                p->KilledMonsterCredit(pCreature->GetEntry(), pCreature->GetGUID());
-                CAST_AI(npc_stillpine_capitiveAI, pCreature->AI())->FleeTimer = 3500;
-                return false;
+                Creature* pCreature = me->FindNearestCreature(NPC_STILLPINE_CAPITIVE, 5.0f, true);
+                if (pCreature)
+                {
+                    pCreature->AI()->Talk(0, p);
+                    pCreature->GetMotionMaster()->MoveFleeing(p);
+                    p->KilledMonsterCredit(pCreature->GetEntry(), pCreature->GetGUID());
+                    CAST_AI(npc_stillpine_capitiveAI, pCreature->AI())->FleeTimer = 3500;
+                    return false;
+                }
             }
+            return true;
         }
-        return true;
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new BristelimbCageAI(go);
     }
 };
 

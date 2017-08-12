@@ -375,12 +375,12 @@ public:
             {
                 Creature *Nazan = me->GetMap()->GetCreature(NazanGUID);
                 Creature *Vazruden = me->GetMap()->GetCreature(VazrudenGUID);
-                if (Nazan || (Nazan = FindCreature(NPC_NAZAN, 500.0f, me))) 
+                if (Nazan || (Nazan = me->FindNearestCreature(NPC_NAZAN, 500.0f)) )
                 {
                     Nazan->DisappearAndDie();
                     NazanGUID = 0;
                 }
-                if (Vazruden || (Vazruden = FindCreature(NPC_VAZRUDEN, 500.0f, me))) 
+                if (Vazruden || (Vazruden = me->FindNearestCreature(NPC_VAZRUDEN, 500.0f)) )
                 {
                     Vazruden->DisappearAndDie();
                     VazrudenGUID = 0;

@@ -682,16 +682,27 @@ public:
     KaelOrb() : GameObjectScript("go_kael_orb")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct KaelOrbAI : public GameObjectAI
     {
-        InstanceScript* pInst = (InstanceScript*)_GO->GetInstanceScript();
-        if (pInst && player)
+        KaelOrbAI(GameObject* obj) : GameObjectAI(obj), pInst(obj->GetInstanceScript()) { }
+
+        InstanceScript* pInst;
+
+        bool GossipHello(Player* player) override
         {
-            Unit *kael = ObjectAccessor::GetUnit((*_GO), pInst->GetData64(DATA_KAEL));
-            if (kael && kael->IsDead())
-                player->TeleportTo(530, 12888, -6876, 9, 0.3);
+            if (pInst && player)
+            {
+                Unit *kael = ObjectAccessor::GetUnit((*me), pInst->GetData64(DATA_KAEL));
+                if (kael && kael->IsDead())
+                    player->TeleportTo(530, 12888, -6876, 9, 0.3);
+            }
+            return true;
         }
-        return true;
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new KaelOrbAI(go);
     }
 };
 
@@ -702,20 +713,30 @@ public:
     MovieOrb() : GameObjectScript("go_movie_orb")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct MovieOrbAI : public GameObjectAI
     {
-        if (player)
-        {
-            player->SendCinematicStart(164);
+        MovieOrbAI(GameObject* obj) : GameObjectAI(obj) { }
 
-            if (player->GetQuestStatus(11490) == QUEST_STATUS_INCOMPLETE)
+        bool GossipHello(Player* player) override
+        {
+            if (player)
             {
-                Unit *qUnit = player->SummonCreature(25042, player->GetPositionX(), player->GetPositionY(), player->GetPositionZ() - 10, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
-                if (qUnit)
-                    player->DealDamage(qUnit, qUnit->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                player->SendCinematicStart(164);
+
+                if (player->GetQuestStatus(11490) == QUEST_STATUS_INCOMPLETE)
+                {
+                    Unit *qUnit = player->SummonCreature(25042, player->GetPositionX(), player->GetPositionY(), player->GetPositionZ() - 10, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
+                    if (qUnit)
+                        player->DealDamage(qUnit, qUnit->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                }
             }
+            return true;
         }
-        return true;
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new MovieOrbAI(go);
     }
 };
 

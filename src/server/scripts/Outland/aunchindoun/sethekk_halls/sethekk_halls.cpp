@@ -66,24 +66,36 @@ public:
     RavensClaw() : GameObjectScript("go_ravens_claw")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGo) override
+    struct RavensClawAI : public GameObjectAI
     {
-        if (InstanceScript* pInstance = ((InstanceScript*)pGo->GetInstanceScript())) {
-            if (pInstance->GetData64(ANZU_SUMMONER) != 0 && pPlayer->GetGUID() != pInstance->GetData64(ANZU_SUMMONER)) {      // Hehe, two different players summoning Anzu ? We aren't going to be friends...
-                pPlayer->DealDamage(pPlayer, pPlayer->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+        RavensClawAI(GameObject* obj) : GameObjectAI(obj), pInstance(obj->GetInstanceScript()) { }
 
-                if (Creature* secondAnzu = pGo->FindNearestCreature(23035, 30.0f, true)) {
-                    if (!hasDespawned) {
-                        secondAnzu->DisappearAndDie();
-                        hasDespawned = true;
+        InstanceScript* pInstance;
+
+        bool GossipHello(Player* pPlayer) override
+        {
+            if (pInstance) {
+                if (pInstance->GetData64(ANZU_SUMMONER) != 0 && pPlayer->GetGUID() != pInstance->GetData64(ANZU_SUMMONER)) {      // Hehe, two different players summoning Anzu ? We aren't going to be friends...
+                    pPlayer->DealDamage(pPlayer, pPlayer->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+
+                    if (Creature* secondAnzu = me->FindNearestCreature(23035, 30.0f, true)) {
+                        if (!hasDespawned) {
+                            secondAnzu->DisappearAndDie();
+                            hasDespawned = true;
+                        }
                     }
                 }
+                else
+                    pInstance->SetData64(ANZU_SUMMONER, pPlayer->GetGUID());
+                return false;
             }
-            else
-                pInstance->SetData64(ANZU_SUMMONER, pPlayer->GetGUID());
-            return false;
+            return true;
         }
-        return true;
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new RavensClawAI(go);
     }
 };
 

@@ -42,20 +42,32 @@ public:
     MainChambersAccessPanel() : GameObjectScript("go_main_chambers_access_panel")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct MainChambersAccessPanelAI : public GameObjectAI
     {
-        InstanceScript* pInstance = (InstanceScript*)_GO->GetInstanceScript();
+        MainChambersAccessPanelAI(GameObject* obj) : GameObjectAI(obj), pInstance(obj->GetInstanceScript()) { }
 
-        if (!pInstance)
-            return false;
+        InstanceScript* pInstance;
 
-        if (_GO->GetEntry() == ACCESS_PANEL_HYDRO && (pInstance->GetData(TYPE_HYDROMANCER_THESPIA) == DONE || pInstance->GetData(TYPE_HYDROMANCER_THESPIA) == SPECIAL))
-            pInstance->SetData(TYPE_HYDROMANCER_THESPIA, SPECIAL);
+        bool GossipHello(Player* player) override
+        {
+            InstanceScript* pInstance = (InstanceScript*)me->GetInstanceScript();
 
-        if (_GO->GetEntry() == ACCESS_PANEL_MEK && (pInstance->GetData(TYPE_MEKGINEER_STEAMRIGGER) == DONE || pInstance->GetData(TYPE_MEKGINEER_STEAMRIGGER) == SPECIAL))
-            pInstance->SetData(TYPE_MEKGINEER_STEAMRIGGER, SPECIAL);
+            if (!pInstance)
+                return false;
 
-        return true;
+            if (me->GetEntry() == ACCESS_PANEL_HYDRO && (pInstance->GetData(TYPE_HYDROMANCER_THESPIA) == DONE || pInstance->GetData(TYPE_HYDROMANCER_THESPIA) == SPECIAL))
+                pInstance->SetData(TYPE_HYDROMANCER_THESPIA, SPECIAL);
+
+            if (me->GetEntry() == ACCESS_PANEL_MEK && (pInstance->GetData(TYPE_MEKGINEER_STEAMRIGGER) == DONE || pInstance->GetData(TYPE_MEKGINEER_STEAMRIGGER) == SPECIAL))
+                pInstance->SetData(TYPE_MEKGINEER_STEAMRIGGER, SPECIAL);
+
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new MainChambersAccessPanelAI(go);
     }
 };
 

@@ -108,19 +108,29 @@ public:
     MausoleumDoor() : GameObjectScript("go_mausoleum_door")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct MausoleumDoorAI : public GameObjectAI
     {
-        if (player->GetQuestStatus(QUEST_ULAG) != QUEST_STATUS_INCOMPLETE)
-            return false;
+        MausoleumDoorAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        if (GameObject *trigger = SearchMausoleumGo(player, GO_TRIGGER, 30))
+        bool GossipHello(Player* player) override
         {
-            trigger->ResetDoorOrButton();
-            player->SummonCreature(C_ULAG, 2390.26, 336.47, 40.01, 2.26, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 300000);
+            if (player->GetQuestStatus(QUEST_ULAG) != QUEST_STATUS_INCOMPLETE)
+                return false;
+
+            if (GameObject *trigger = SearchMausoleumGo(player, GO_TRIGGER, 30))
+            {
+                trigger->ResetDoorOrButton();
+                player->SummonCreature(C_ULAG, 2390.26, 336.47, 40.01, 2.26, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 300000);
+                return false;
+            }
+
             return false;
         }
+    };
 
-        return false;
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new MausoleumDoorAI(go);
     }
 };
 
@@ -130,18 +140,28 @@ public:
     MausoleumTrigger() : GameObjectScript("go_mausoleum_trigger")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct MausoleumTriggerAI : public GameObjectAI
     {
-        if (player->GetQuestStatus(QUEST_ULAG) != QUEST_STATUS_INCOMPLETE)
-            return false;
+        MausoleumTriggerAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        if (GameObject *door = SearchMausoleumGo(player, GO_DOOR, 30))
+        bool GossipHello(Player* player) override
         {
-            _GO->UseDoorOrButton();
-            door->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND);
+            if (player->GetQuestStatus(QUEST_ULAG) != QUEST_STATUS_INCOMPLETE)
+                return false;
+
+            if (GameObject *door = SearchMausoleumGo(player, GO_DOOR, 30))
+            {
+                me->UseDoorOrButton();
+                door->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND);
+                return true;
+            }
             return true;
         }
-        return true;
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new MausoleumTriggerAI(go);
     }
 };
 

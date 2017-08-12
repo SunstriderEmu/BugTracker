@@ -859,23 +859,33 @@ public:
     KalecgosTeleporter() : GameObjectScript("kalecgos_teleporter")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct KalecgosTeleporterAI : public GameObjectAI
     {
-        if (player->HasAuraEffect(AURA_SPECTRAL_EXHAUSTION))
-            player->GetSession()->SendNotification(GO_FAILED);
-        else {
-            player->CastSpell(player, SPELL_TELEPORT_SPECTRAL, true);
-            if (player->GetPet()) {
-                player->GetPet()->CastSpell(player->GetPet(), SPELL_TELEPORT_SPECTRAL, true);
-                player->AddAura(AURA_SPECTRAL_REALM, player->GetPet());
+        KalecgosTeleporterAI(GameObject* obj) : GameObjectAI(obj) { }
+
+        bool GossipHello(Player* player) override
+        {
+            if (player->HasAuraEffect(AURA_SPECTRAL_EXHAUSTION))
+                player->GetSession()->SendNotification(GO_FAILED);
+            else {
+                player->CastSpell(player, SPELL_TELEPORT_SPECTRAL, true);
+                if (player->GetPet()) {
+                    player->GetPet()->CastSpell(player->GetPet(), SPELL_TELEPORT_SPECTRAL, true);
+                    player->AddAura(AURA_SPECTRAL_REALM, player->GetPet());
+                }
+                player->RemoveAurasDueToSpell(SPELL_ARCANE_BUFFET);
+                if (player->HasAuraEffect(AURA_SPECTRAL_EXHAUSTION)) {
+                    player->RemoveAurasDueToSpell(AURA_SPECTRAL_EXHAUSTION);    // FIXME: If this happens, this is a bug.
+                    TC_LOG_ERROR("scripts", "Sunwell Plateau/Kalecgos: Spectral Blast target (guid %u) had Spectral exhaustion when teleported VIA PORTAL!", player->GetGUIDLow());
+                }
             }
-            player->RemoveAurasDueToSpell(SPELL_ARCANE_BUFFET);
-            if (player->HasAuraEffect(AURA_SPECTRAL_EXHAUSTION)) {
-                player->RemoveAurasDueToSpell(AURA_SPECTRAL_EXHAUSTION);    // FIXME: If this happens, this is a bug.
-                TC_LOG_ERROR("scripts", "Sunwell Plateau/Kalecgos: Spectral Blast target (guid %u) had Spectral exhaustion when teleported VIA PORTAL!", player->GetGUIDLow());
-            }
+            return true;
         }
-        return true;
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new KalecgosTeleporterAI(go);
     }
 };
 

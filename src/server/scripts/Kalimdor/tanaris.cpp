@@ -385,7 +385,7 @@ struct npc_OOX17AI : public npc_escortAI
                 me->SummonCreature(SPAWN_SECOND_2, -7515.07, -4797.50, 9.35, 6.22, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
                 me->SummonCreature(SPAWN_SECOND_2, -7518.07, -4792.50, 9.35, 6.22, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);
                 DoScriptText(SAY_CHICKEN_AMB, me);
-                {Unit* scoff = FindCreature(SPAWN_SECOND_2, 30, me);
+                {Unit* scoff = me->FindNearestCreature(SPAWN_SECOND_2, 30);
                 if(scoff)
                     DoScriptText(SAY_SCOFF, scoff);}break;
                 break;
@@ -472,34 +472,44 @@ public:
     LandmarkTreasure() : GameObjectScript("go_landmark_treasure")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct LandmarkTreasureAI : public GameObjectAI
     {
-        if (player->GetQuestStatus(QUEST_CUERGOS_GOLD) != QUEST_STATUS_INCOMPLETE)
-            return false;
+        LandmarkTreasureAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        Creature * spawn = nullptr;
+        bool GossipHello(Player* player) override
+        {
+            if (player->GetQuestStatus(QUEST_CUERGOS_GOLD) != QUEST_STATUS_INCOMPLETE)
+                return false;
 
-        spawn = player->SummonCreature(NPC_PIRATE, -10029.78, -4032.54, 19.41, 3.40, TEMPSUMMON_TIMED_DESPAWN, 340000);
-        if (spawn)
-            spawn->GetMotionMaster()->MovePath(PATH_ENTRY_1);
-        spawn = player->SummonCreature(NPC_PIRATE, -10031.64, -4032.14, 19.11, 3.40, TEMPSUMMON_TIMED_DESPAWN, 340000);
-        if (spawn)
-            spawn->GetMotionMaster()->MovePath(PATH_ENTRY_3);
+            Creature * spawn = nullptr;
 
-        spawn = player->SummonCreature(NPC_SWASHBUCKLER, -10029.86, -4030.51, 20.02, 3.40, TEMPSUMMON_TIMED_DESPAWN, 340000);
-        if (spawn)
-            spawn->GetMotionMaster()->MovePath(PATH_ENTRY_4);
-        spawn = player->SummonCreature(NPC_SWASHBUCKLER, -10031.83, -4030.70, 19.52, 3.40, TEMPSUMMON_TIMED_DESPAWN, 340000);
-        if (spawn)
-            spawn->GetMotionMaster()->MovePath(PATH_ENTRY_5);
+            spawn = player->SummonCreature(NPC_PIRATE, -10029.78, -4032.54, 19.41, 3.40, TEMPSUMMON_TIMED_DESPAWN, 340000);
+            if (spawn)
+                spawn->GetMotionMaster()->MovePath(PATH_ENTRY_1);
+            spawn = player->SummonCreature(NPC_PIRATE, -10031.64, -4032.14, 19.11, 3.40, TEMPSUMMON_TIMED_DESPAWN, 340000);
+            if (spawn)
+                spawn->GetMotionMaster()->MovePath(PATH_ENTRY_3);
 
-        spawn = player->SummonCreature(NPC_BUCCANEER, -10028.90, -4029.65, 20.53, 3.40, TEMPSUMMON_TIMED_DESPAWN, 340000);
-        if (spawn)
-            spawn->GetMotionMaster()->MovePath(PATH_ENTRY_2);
+            spawn = player->SummonCreature(NPC_SWASHBUCKLER, -10029.86, -4030.51, 20.02, 3.40, TEMPSUMMON_TIMED_DESPAWN, 340000);
+            if (spawn)
+                spawn->GetMotionMaster()->MovePath(PATH_ENTRY_4);
+            spawn = player->SummonCreature(NPC_SWASHBUCKLER, -10031.83, -4030.70, 19.52, 3.40, TEMPSUMMON_TIMED_DESPAWN, 340000);
+            if (spawn)
+                spawn->GetMotionMaster()->MovePath(PATH_ENTRY_5);
 
-        player->SummonGameObject(GO_TREASURE, Position(-10119.70, -4050.45, 5.33, 0), G3D::Quat(), 240);
+            spawn = player->SummonCreature(NPC_BUCCANEER, -10028.90, -4029.65, 20.53, 3.40, TEMPSUMMON_TIMED_DESPAWN, 340000);
+            if (spawn)
+                spawn->GetMotionMaster()->MovePath(PATH_ENTRY_2);
 
-        return true;
+            player->SummonGameObject(GO_TREASURE, Position(-10119.70, -4050.45, 5.33, 0), G3D::Quat(), 240);
+
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new LandmarkTreasureAI(go);
     }
 };
 

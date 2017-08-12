@@ -1330,13 +1330,23 @@ public:
     DarkKeeperPortrait() : GameObjectScript("go_dark_keeper_portrait")
     {}
 
-    bool OnGossipHello(Player* p, GameObject* go) override
+    struct DarkKeeperPortraitAI : public GameObjectAI
     {
-        uint32 keepers[6] = { 9437, 9438, 9439, 9441, 9442, 9443 };
-        if (Creature* keeper = p->SummonCreature(keepers[rand() % 6], p->GetPositionX(), p->GetPositionY(), p->GetPositionZ(), p->GetOrientation(), TEMPSUMMON_CORPSE_TIMED_DESPAWN, 40000))
-            keeper->AI()->AttackStart(p);
+        DarkKeeperPortraitAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        return true;
+        bool GossipHello(Player* p) override
+        {
+            uint32 keepers[6] = { 9437, 9438, 9439, 9441, 9442, 9443 };
+            if (Creature* keeper = p->SummonCreature(keepers[rand() % 6], p->GetPositionX(), p->GetPositionY(), p->GetPositionZ(), p->GetOrientation(), TEMPSUMMON_CORPSE_TIMED_DESPAWN, 40000))
+                keeper->AI()->AttackStart(p);
+
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new DarkKeeperPortraitAI(go);
     }
 };
 
@@ -1493,84 +1503,94 @@ public:
     WindsorJailbreakDoor() : GameObjectScript("windsor_jailbreak_door")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* go) override
+    struct WindsorJailbreakDoorAI : public GameObjectAI
     {
-        Creature* windsor = player->FindNearestCreature(9023, 30.0f, true);
-        if (!windsor)
-            windsor = player->FindNearestCreature(9682, 30.0f, true);
-        if (!windsor)
+        WindsorJailbreakDoorAI(GameObject* obj) : GameObjectAI(obj) { }
+
+        bool GossipHello(Player* player) override
+        {
+            Creature* windsor = player->FindNearestCreature(9023, 30.0f, true);
+            if (!windsor)
+                windsor = player->FindNearestCreature(9682, 30.0f, true);
+            if (!windsor)
+                return false;
+
+            switch (go->GetEntry()) {
+            case 170562:
+            {
+                if (Creature* dughal = player->FindNearestCreature(9022, 50.0f, true)) {
+                    DoScriptText(WINDSOR_SAY_DUGHAL, dughal, player);
+                    DoScriptText(WINDSOR_SAY_FREEPRISONER, windsor, nullptr);
+                    dughal->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
+                    dughal->GetMotionMaster()->MovePoint(0, 324.853241, -197.296951, -77.042488);
+                }
+
+                ((npc_escortAI*)windsor->AI())->SetEscortPaused(false);
+                break;
+            }
+            case 170568:
+            {
+                if (Creature* jaz = player->FindNearestCreature(9681, 50.0f, true)) {
+                    DoScriptText(WINDSOR_SAY_LEAVE_MARK, windsor, nullptr);
+                    jaz->SetFaction(FACTION_MONSTER);
+                    jaz->AI()->AttackStart(windsor);
+                    windsor->AI()->AttackStart(jaz);
+                }
+                if (Creature* ograbisi = player->FindNearestCreature(9677, 50.0f, true)) {
+                    ograbisi->SetFaction(FACTION_MONSTER);
+                    ograbisi->AI()->AttackStart(windsor);
+                }
+
+                ((npc_escortAI*)windsor->AI())->SetEscortPaused(false);
+                break;
+            }
+            case 170569:
+            {
+                if (Creature* dinger = player->FindNearestCreature(9678, 50.0f, true)) {
+                    DoScriptText(WINDSOR_SAY_DINGER, dinger, nullptr);
+                    dinger->SetFaction(FACTION_MONSTER);
+                    dinger->AI()->AttackStart(windsor);
+                    windsor->AI()->AttackStart(dinger);
+                    DoScriptText(WINDSOR_SAY_ATTACK_DINGER, windsor, nullptr);
+                }
+
+                ((npc_escortAI*)windsor->AI())->SetEscortPaused(false);
+                break;
+            }
+            case 170567:
+            {
+                if (Creature* crestKiller = player->FindNearestCreature(9680, 50.0f, true)) {
+                    DoScriptText(WINDSOR_SAY_CREST, crestKiller, nullptr);
+                    crestKiller->SetFaction(FACTION_MONSTER);
+                    crestKiller->AI()->AttackStart(windsor);
+                    windsor->AI()->AttackStart(crestKiller);
+                    DoScriptText(WINDSOR_ATTACK_CREST, windsor, nullptr);
+                }
+
+                ((npc_escortAI*)windsor->AI())->SetEscortPaused(false);
+                break;
+            }
+            case 170566:
+            {
+                if (Creature* tobias = player->FindNearestCreature(9679, 50.0f, true)) {
+                    DoScriptText(WINDSOR_SAY_TOBIAS_FREE, tobias, nullptr);
+                    tobias->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
+                    tobias->GetMotionMaster()->MovePoint(0, 625.452820, -241.325729, -82.321175);
+                    DoScriptText(WINDSOR_SAY_CONGRATS, windsor, player);
+                }
+
+                ((npc_escortAI*)windsor->AI())->SetEscortPaused(false);
+                break;
+            }
+            }
+
             return false;
-
-        switch (go->GetEntry()) {
-        case 170562:
-        {
-            if (Creature* dughal = player->FindNearestCreature(9022, 50.0f, true)) {
-                DoScriptText(WINDSOR_SAY_DUGHAL, dughal, player);
-                DoScriptText(WINDSOR_SAY_FREEPRISONER, windsor, nullptr);
-                dughal->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
-                dughal->GetMotionMaster()->MovePoint(0, 324.853241, -197.296951, -77.042488);
-            }
-
-            ((npc_escortAI*)windsor->AI())->SetEscortPaused(false);
-            break;
         }
-        case 170568:
-        {
-            if (Creature* jaz = player->FindNearestCreature(9681, 50.0f, true)) {
-                DoScriptText(WINDSOR_SAY_LEAVE_MARK, windsor, nullptr);
-                jaz->SetFaction(FACTION_MONSTER);
-                jaz->AI()->AttackStart(windsor);
-                windsor->AI()->AttackStart(jaz);
-            }
-            if (Creature* ograbisi = player->FindNearestCreature(9677, 50.0f, true)) {
-                ograbisi->SetFaction(FACTION_MONSTER);
-                ograbisi->AI()->AttackStart(windsor);
-            }
+    };
 
-            ((npc_escortAI*)windsor->AI())->SetEscortPaused(false);
-            break;
-        }
-        case 170569:
-        {
-            if (Creature* dinger = player->FindNearestCreature(9678, 50.0f, true)) {
-                DoScriptText(WINDSOR_SAY_DINGER, dinger, nullptr);
-                dinger->SetFaction(FACTION_MONSTER);
-                dinger->AI()->AttackStart(windsor);
-                windsor->AI()->AttackStart(dinger);
-                DoScriptText(WINDSOR_SAY_ATTACK_DINGER, windsor, nullptr);
-            }
-
-            ((npc_escortAI*)windsor->AI())->SetEscortPaused(false);
-            break;
-        }
-        case 170567:
-        {
-            if (Creature* crestKiller = player->FindNearestCreature(9680, 50.0f, true)) {
-                DoScriptText(WINDSOR_SAY_CREST, crestKiller, nullptr);
-                crestKiller->SetFaction(FACTION_MONSTER);
-                crestKiller->AI()->AttackStart(windsor);
-                windsor->AI()->AttackStart(crestKiller);
-                DoScriptText(WINDSOR_ATTACK_CREST, windsor, nullptr);
-            }
-
-            ((npc_escortAI*)windsor->AI())->SetEscortPaused(false);
-            break;
-        }
-        case 170566:
-        {
-            if (Creature* tobias = player->FindNearestCreature(9679, 50.0f, true)) {
-                DoScriptText(WINDSOR_SAY_TOBIAS_FREE, tobias, nullptr);
-                tobias->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
-                tobias->GetMotionMaster()->MovePoint(0, 625.452820, -241.325729, -82.321175);
-                DoScriptText(WINDSOR_SAY_CONGRATS, windsor, player);
-            }
-
-            ((npc_escortAI*)windsor->AI())->SetEscortPaused(false);
-            break;
-        }
-        }
-
-        return false;
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new WindsorJailbreakDoorAI(go);
     }
 };
 

@@ -142,10 +142,20 @@ public:
     HaaleshiAltar() : GameObjectScript("go_haaleshi_altar")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* pGo) override
+    struct HaaleshiAltarAI : public GameObjectAI
     {
-        pGo->SummonCreature(C_AERANAS, -1321.79, 4043.80, 116.24, 1.25, TEMPSUMMON_TIMED_DESPAWN, 180000);
-        return false;
+        HaaleshiAltarAI(GameObject* obj) : GameObjectAI(obj) { }
+
+        bool GossipHello(Player* player) override
+        {
+            me->SummonCreature(C_AERANAS, -1321.79, 4043.80, 116.24, 1.25, TEMPSUMMON_TIMED_DESPAWN, 180000);
+            return false;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new HaaleshiAltarAI(go);
     }
 };
 
@@ -2207,7 +2217,7 @@ public:
 		void CastInfernalMissiles()
 		{
 			std::list<Creature*> relaysList;
-			FindCreatures(relaysList, NPC_INFERNAL_RELAY, 100.0f, GetCaster());
+            GetCaster()->GetCreatureListWithEntryInGrid(relaysList, NPC_INFERNAL_RELAY, 100.0f);
 			
 			std::vector<Creature*> relaysVector { std::begin(relaysList), std::end(relaysList) };
 
