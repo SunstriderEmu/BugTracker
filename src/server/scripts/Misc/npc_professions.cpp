@@ -1245,11 +1245,5 @@ void AddSC_npc_professions()
     newscript->OnGossipHello =  &GossipHello_npc_prof_tailor;
     newscript->OnGossipSelect = &GossipSelect_npc_prof_tailor;
     sScriptMgr->RegisterOLDScript(newscript);
-
-    /*newscript = new OLDScript;
-    newscript->Name="go_soothsaying_for_dummies";
-    newscript->OnGossipHello =  &OnGossipHello_go_soothsaying_for_dummies;
-    //newscript->OnGossipSelect = &GossipSelect_go_soothsaying_for_dummies;
-    sScriptMgr->RegisterOLDScript(newscript);*/
 }
 

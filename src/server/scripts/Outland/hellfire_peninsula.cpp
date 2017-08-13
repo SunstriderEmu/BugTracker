@@ -2325,12 +2325,6 @@ void AddSC_hellfire_peninsula()
     sScriptMgr->RegisterOLDScript(newscript);
     
     newscript = new OLDScript;
-    newscript->Name="npc_demoniac_scryer";
-    newscript->GetAI = &GetAI_npc_demoniac_scryer;
-    newscript->OnGossipHello = &GossipHello_npc_demoniac_scryer;
-    sScriptMgr->RegisterOLDScript(newscript);
-    
-    newscript = new OLDScript;
     newscript->Name="npc_fel_guard_hound";
     newscript->GetAI = &GetAI_npc_fel_guard_hound;
     sScriptMgr->RegisterOLDScript(newscript);
