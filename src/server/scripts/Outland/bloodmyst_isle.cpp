@@ -36,39 +36,49 @@ EndContentData */
 //possible creatures to be spawned
 const uint32 possibleSpawns[32] = {17322, 17661, 17496, 17522, 17340, 17352, 17333, 17524, 17654, 17348, 17339, 17345, 17359, 17353, 17336, 17550, 17330, 17701, 17321, 17680, 17325, 17320, 17683, 17342, 17715, 17334, 17341, 17338, 17337, 17346, 17344, 17327};
 
-struct mob_webbed_creatureAI : public ScriptedAI
+
+class mob_webbed_creature : public CreatureScript
 {
-    mob_webbed_creatureAI(Creature *c) : ScriptedAI(c) {}
+public:
+    mob_webbed_creature() : CreatureScript("mob_webbed_creature")
+    { }
 
-    void Reset()
-    override {
-    }
-
-    void JustDied(Unit* pKiller)
-    override {
-		uint32 spawnCreatureID = {};
-
-        switch(rand()%3)
-        {
-            case 0:
-                spawnCreatureID = 17681;
-                if (pKiller->GetTypeId() == TYPEID_PLAYER)
-                    (pKiller)->ToPlayer()->KilledMonsterCredit(spawnCreatureID, me->GetGUID());
-                break;
-            case 1:
-            case 2:
-                spawnCreatureID = possibleSpawns[rand()%31];
-                break;
+    class mob_webbed_creatureAI : public ScriptedAI
+    {
+        public:
+        mob_webbed_creatureAI(Creature *c) : ScriptedAI(c) {}
+    
+        void Reset()
+        override {
         }
+    
+        void JustDied(Unit* pKiller)
+        override {
+    		uint32 spawnCreatureID = {};
+    
+            switch(rand()%3)
+            {
+                case 0:
+                    spawnCreatureID = 17681;
+                    if (pKiller->GetTypeId() == TYPEID_PLAYER)
+                        (pKiller)->ToPlayer()->KilledMonsterCredit(spawnCreatureID, me->GetGUID());
+                    break;
+                case 1:
+                case 2:
+                    spawnCreatureID = possibleSpawns[rand()%31];
+                    break;
+            }
+    
+            DoSpawnCreature(spawnCreatureID,0,0,0,me->GetOrientation(), TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+        }
+    };
 
-        DoSpawnCreature(spawnCreatureID,0,0,0,me->GetOrientation(), TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 60000);
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new mob_webbed_creatureAI(creature);
     }
 };
 
-CreatureAI* GetAI_mob_webbed_creature(Creature* pCreature)
-{
-    return new mob_webbed_creatureAI (pCreature);
-}
 
 /*######
 ## npc_captured_sunhawk_agent
@@ -76,142 +86,184 @@ CreatureAI* GetAI_mob_webbed_creature(Creature* pCreature)
 
 #define C_SUNHAWK_TRIGGER 17974
 
-bool GossipHello_npc_captured_sunhawk_agent(Player* pPlayer, Creature* pCreature)
+class npc_captured_sunhawk_agent : public CreatureScript
 {
-    if (pPlayer->HasAuraEffect(31609,1) && pPlayer->GetQuestStatus(9756) == QUEST_STATUS_INCOMPLETE)
-    {
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "[PH] ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-        pPlayer->SEND_GOSSIP_MENU_TEXTID(9136, pCreature->GetGUID());
-    }
-    else
-        pPlayer->SEND_GOSSIP_MENU_TEXTID(9134, pCreature->GetGUID());
+public:
+    npc_captured_sunhawk_agent() : CreatureScript("npc_captured_sunhawk_agent")
+    { }
 
-    return true;
-}
+   class npc_captured_sunhawk_agentAI : public ScriptedAI
+   {
+   public:
+        npc_captured_sunhawk_agentAI(Creature* creature) : ScriptedAI(creature)
+        {}
 
-bool GossipSelect_npc_captured_sunhawk_agent(Player* pPlayer, Creature* pCreature, uint32 sender, uint32 action)
-{
-    switch (action)
+
+        virtual bool GossipHello(Player* pPlayer) override
+        {
+            if (pPlayer->HasAuraEffect(31609,1) && pPlayer->GetQuestStatus(9756) == QUEST_STATUS_INCOMPLETE)
+            {
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "[PH] ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+                pPlayer->SEND_GOSSIP_MENU_TEXTID(9136, me->GetGUID());
+            }
+            else
+                pPlayer->SEND_GOSSIP_MENU_TEXTID(9134, me->GetGUID());
+
+            return true;
+
+        }
+
+
+        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        {
+            switch (action)
+            {
+                case GOSSIP_ACTION_INFO_DEF+1:
+                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "[PH] ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+                    pPlayer->SEND_GOSSIP_MENU_TEXTID(9137, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF+2:
+                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "[PH] ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
+                    pPlayer->SEND_GOSSIP_MENU_TEXTID(9138, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF+3:
+                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "[PH] ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
+                    pPlayer->SEND_GOSSIP_MENU_TEXTID(9139, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF+4:
+                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "[PH] ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
+                    pPlayer->SEND_GOSSIP_MENU_TEXTID(9140, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF+5:
+                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "[PH] ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+6);
+                    pPlayer->SEND_GOSSIP_MENU_TEXTID(9141, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF+6:
+                    pPlayer->CLOSE_GOSSIP_MENU();
+                    pPlayer->TalkedToCreature(C_SUNHAWK_TRIGGER, me->GetGUID());
+                    break;
+            }
+            return true;
+
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
     {
-        case GOSSIP_ACTION_INFO_DEF+1:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "[PH] ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-            pPlayer->SEND_GOSSIP_MENU_TEXTID(9137, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+2:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "[PH] ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
-            pPlayer->SEND_GOSSIP_MENU_TEXTID(9138, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+3:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "[PH] ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
-            pPlayer->SEND_GOSSIP_MENU_TEXTID(9139, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+4:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "[PH] ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
-            pPlayer->SEND_GOSSIP_MENU_TEXTID(9140, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+5:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "[PH] ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+6);
-            pPlayer->SEND_GOSSIP_MENU_TEXTID(9141, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+6:
-            pPlayer->CLOSE_GOSSIP_MENU();
-            pPlayer->TalkedToCreature(C_SUNHAWK_TRIGGER, pCreature->GetGUID());
-            break;
+        return new npc_captured_sunhawk_agentAI(creature);
     }
-    return true;
-}
+};
+
+
 
 /*######
 ## npc_exarch_admetius
 ######*/
 
-bool QuestAccept_npc_exarch_admetius(Player* pPlayer, Creature* pCreature, Quest const *quest)
+class npc_exarch_admetius : public CreatureScript
 {
-    if (quest->GetQuestId() == 9756)
-        pPlayer->AddAura(31609, pPlayer);
-        
-    return true;
-}
+public:
+    npc_exarch_admetius() : CreatureScript("npc_exarch_admetius")
+    { }
+
+   class npc_exarch_admetiusAI : public ScriptedAI
+   {
+   public:
+        npc_exarch_admetiusAI(Creature* creature) : ScriptedAI(creature)
+        {}
+
+
+        virtual void QuestAccept(Player* pPlayer, Quest const* quest) override
+        {
+            if (quest->GetQuestId() == 9756)
+                pPlayer->AddAura(31609, pPlayer);
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_exarch_admetiusAI(creature);
+    }
+};
+
 
 /*######
 ## npc_razormaw
 ######*/
 
-struct npc_razormawAI : public ScriptedAI
+
+class npc_razormaw : public CreatureScript
 {
-    npc_razormawAI(Creature* c) : ScriptedAI(c)
+public:
+    npc_razormaw() : CreatureScript("npc_razormaw")
+    { }
+
+    class npc_razormawAI : public ScriptedAI
     {
-        me->SetDisableGravity(true);
-        me->GetMotionMaster()->MovePoint(1, -1204.845581, -12465.271484, 94.779945, false);
-        me->SetKeepActive(true);
-        landed = false;
-    }
-    
-    bool landed;
-    
-    void Reset() override
-    {
-    }
-    
-    void MovementInform(uint32 type, uint32 id)
-    override {
-        if (id == 1) {
-            me->SetKeepActive(false);
-            me->SetDisableGravity(false);
-            landed = true;
-            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
-            me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
+        public:
+        npc_razormawAI(Creature* c) : ScriptedAI(c)
+        {
+            me->SetDisableGravity(true);
+            me->GetMotionMaster()->MovePoint(1, -1204.845581, -12465.271484, 94.779945, false);
+            me->SetKeepActive(true);
+            landed = false;
         }
-    }
-    
-    void EnterCombat(Unit* who) override
+        
+        bool landed;
+        
+        void Reset() override
+        {
+        }
+        
+        void MovementInform(uint32 type, uint32 id)
+        override {
+            if (id == 1) {
+                me->SetKeepActive(false);
+                me->SetDisableGravity(false);
+                landed = true;
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
+                me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
+            }
+        }
+        
+        void EnterCombat(Unit* who) override
+        {
+            me->SetDisableGravity(false);
+            me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
+            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
+            landed = true;
+        }
+        
+        void UpdateAI(uint32 const diff)
+        override {
+            if (!landed)
+                return;
+                
+            if (!UpdateVictim(false))
+                return;
+                
+            DoMeleeAttackIfReady();
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
     {
-        me->SetDisableGravity(false);
-        me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
-        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
-        landed = true;
-    }
-    
-    void UpdateAI(uint32 const diff)
-    override {
-        if (!landed)
-            return;
-            
-        if (!UpdateVictim(false))
-            return;
-            
-        DoMeleeAttackIfReady();
+        return new npc_razormawAI(creature);
     }
 };
 
-CreatureAI* GetAI_npc_razormaw(Creature* creature)
-{
-    return new npc_razormawAI(creature);
-}
 
 void AddSC_bloodmyst_isle()
 {
-    OLDScript* newscript;
 
-    newscript = new OLDScript;
-    newscript->Name="mob_webbed_creature";
-    newscript->GetAI = &GetAI_mob_webbed_creature;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new mob_webbed_creature();
 
-    newscript = new OLDScript;
-    newscript->Name="npc_captured_sunhawk_agent";
-    newscript->OnGossipHello =  &GossipHello_npc_captured_sunhawk_agent;
-    newscript->OnGossipSelect = &GossipSelect_npc_captured_sunhawk_agent;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_captured_sunhawk_agent();
     
-    newscript = new OLDScript;
-    newscript->Name = "npc_exarch_admetius";
-    newscript->OnQuestAccept = &QuestAccept_npc_exarch_admetius;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_exarch_admetius();
     
-    newscript = new OLDScript;
-    newscript->Name = "npc_razormaw";
-    newscript->GetAI = &GetAI_npc_razormaw;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_razormaw();
 }
 
