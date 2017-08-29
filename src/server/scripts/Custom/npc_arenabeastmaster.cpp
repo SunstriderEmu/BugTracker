@@ -44,90 +44,111 @@ uint32 getPetTypeEntry(uint32 type)
     }
 }
 
-bool GossipHello_arenabeastmaster(Player *player, Creature *me)
-{    
-    if(player->GetClass() != CLASS_HUNTER)
+class npc_arenabeastmaster : public CreatureScript
+{
+public:
+    npc_arenabeastmaster() : CreatureScript("npc_arenabeastmaster")
+    { }
+
+    class npc_arenabeastmasterAI : public ScriptedAI
     {
-        me->Whisper("My services are reserved to hunters!", LANG_UNIVERSAL, player);
-        return true;
+    public:
+        npc_arenabeastmasterAI(Creature* creature) : ScriptedAI(creature)
+        {}
+
+
+        virtual bool GossipHello(Player* player) override
+        {
+            
+            if(player->GetClass() != CLASS_HUNTER)
+            {
+                me->Whisper("My services are reserved to hunters!", LANG_UNIVERSAL, player);
+                return true;
+            }
+
+            player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, getPetTypeName(WINDSERPENT), GOSSIP_SENDER_MAIN, WINDSERPENT);
+            player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, getPetTypeName(SCORPID),     GOSSIP_SENDER_MAIN, SCORPID);
+            player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, getPetTypeName(SPIDER),      GOSSIP_SENDER_MAIN, SPIDER);
+            player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, getPetTypeName(RAVAGER),     GOSSIP_SENDER_MAIN, RAVAGER);
+            player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, getPetTypeName(BOAR),        GOSSIP_SENDER_MAIN, BOAR);
+            player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, getPetTypeName(RAPTOR),      GOSSIP_SENDER_MAIN, RAPTOR);
+            player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, getPetTypeName(DRAGONHAWK),  GOSSIP_SENDER_MAIN, DRAGONHAWK);
+                
+            player->SEND_GOSSIP_MENU_TEXTID(1,me->GetGUID());
+
+            return true;
+
+        }
+
+        virtual bool GossipSelect(Player* player, uint32 , uint32 type) override
+        {
+            	//TODO... make this use copy paste code from core, we should call the right functions
+                if(player->GetPet() || player->GetTemporaryUnsummonedPetNumber())
+                {
+                    me->Whisper("Abandon your current pet first.", LANG_UNIVERSAL, player);
+                    player->PlayerTalkClass->SendCloseGossip();
+                    return true;
+                }
+            
+                Pet* pet = new Pet(player, HUNTER_PET);
+                if(!pet)
+                    return false;
+            
+                if(!pet->CreateBaseAtCreatureEntry(getPetTypeEntry(type), me))
+                {
+                    delete pet;
+                    return false;
+                }
+            
+                pet->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, player->GetFaction());
+                pet->SetUInt64Value(UNIT_FIELD_SUMMONEDBY, player->GetGUID());
+                pet->SetUInt64Value(UNIT_FIELD_CREATEDBY, player->GetGUID());
+            
+                if(!pet->InitStatsForLevel(player->GetLevel()))
+                {
+                    delete pet;
+                    return false;
+                }
+            
+                pet->SetUInt32Value(UNIT_FIELD_LEVEL,player->GetLevel()-1);
+                pet->GetCharmInfo()->SetPetNumber(sObjectMgr->GeneratePetNumber(), true);
+                pet->AIM_Initialize();
+            
+                pet->InitPetCreateSpells();
+                pet->SetHealth(pet->GetMaxHealth());
+            
+            	me->GetMap()->AddToMap(pet->ToCreature());
+            
+                // visual effect for levelup
+                pet->SetUInt32Value(UNIT_FIELD_LEVEL,player->GetLevel());
+            
+                player->SetMinion(pet, true);
+                pet->SavePetToDB(PET_SAVE_AS_CURRENT);
+                player->PetSpellInitialize();
+                 
+                player->PlayerTalkClass->SendCloseGossip();
+                    
+                pet->SetLoyaltyLevel(BEST_FRIEND);
+                pet->SetPower(POWER_HAPPINESS,1050000); //maxed
+                pet->SetTP(player->GetLevel()*(pet->GetLoyaltyLevel()-1) - pet->GetDispTP()); //350 when best friend at lvl 70
+            
+                return true;
+            
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_arenabeastmasterAI(creature);
     }
+};
 
-    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, getPetTypeName(WINDSERPENT), GOSSIP_SENDER_MAIN, WINDSERPENT);
-    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, getPetTypeName(SCORPID),     GOSSIP_SENDER_MAIN, SCORPID);
-    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, getPetTypeName(SPIDER),      GOSSIP_SENDER_MAIN, SPIDER);
-    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, getPetTypeName(RAVAGER),     GOSSIP_SENDER_MAIN, RAVAGER);
-    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, getPetTypeName(BOAR),        GOSSIP_SENDER_MAIN, BOAR);
-    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, getPetTypeName(RAPTOR),      GOSSIP_SENDER_MAIN, RAPTOR);
-    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, getPetTypeName(DRAGONHAWK),  GOSSIP_SENDER_MAIN, DRAGONHAWK);
-        
-    player->SEND_GOSSIP_MENU_TEXTID(1,me->GetGUID());
-
-    return true;
-}
 
 //code from ChatHandler::HandleCreatePetCommand(const char* args)
-bool GossipSelect_arenabeastmaster( Player* player, Creature* me, uint32 /* sender */, uint32 type)
-{
-	//TODO... make this use copy paste code from core, we should call the right functions
-    if(player->GetPet() || player->GetTemporaryUnsummonedPetNumber())
-    {
-        me->Whisper("Abandon your current pet first.", LANG_UNIVERSAL, player);
-        player->PlayerTalkClass->SendCloseGossip();
-        return true;
-    }
-
-    Pet* pet = new Pet(player, HUNTER_PET);
-    if(!pet)
-        return false;
-
-    if(!pet->CreateBaseAtCreatureEntry(getPetTypeEntry(type), me))
-    {
-        delete pet;
-        return false;
-    }
-
-    pet->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, player->GetFaction());
-    pet->SetUInt64Value(UNIT_FIELD_SUMMONEDBY, player->GetGUID());
-    pet->SetUInt64Value(UNIT_FIELD_CREATEDBY, player->GetGUID());
-
-    if(!pet->InitStatsForLevel(player->GetLevel()))
-    {
-        delete pet;
-        return false;
-    }
-
-    pet->SetUInt32Value(UNIT_FIELD_LEVEL,player->GetLevel()-1);
-    pet->GetCharmInfo()->SetPetNumber(sObjectMgr->GeneratePetNumber(), true);
-    pet->AIM_Initialize();
-
-    pet->InitPetCreateSpells();
-    pet->SetHealth(pet->GetMaxHealth());
-
-	me->GetMap()->AddToMap(pet->ToCreature());
-
-    // visual effect for levelup
-    pet->SetUInt32Value(UNIT_FIELD_LEVEL,player->GetLevel());
-
-    player->SetMinion(pet, true);
-    pet->SavePetToDB(PET_SAVE_AS_CURRENT);
-    player->PetSpellInitialize();
-     
-    player->PlayerTalkClass->SendCloseGossip();
-        
-    pet->SetLoyaltyLevel(BEST_FRIEND);
-    pet->SetPower(POWER_HAPPINESS,1050000); //maxed
-    pet->SetTP(player->GetLevel()*(pet->GetLoyaltyLevel()-1) - pet->GetDispTP()); //350 when best friend at lvl 70
-
-    return true;
-}
 
 void AddSC_arenabeastmaster()
 {
-    OLDScript *newscript;
 
-    newscript = new OLDScript;
-    newscript->Name="npc_arenabeastmaster";
-    newscript->OnGossipHello = &GossipHello_arenabeastmaster;
-    newscript->OnGossipSelect = &GossipSelect_arenabeastmaster;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_arenabeastmaster();
 }

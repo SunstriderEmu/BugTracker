@@ -362,100 +362,123 @@ void RefreshPage(Player* player, Creature* creature, uint8 type)
     }
 }
 
-bool GossipHello_npc_spectate(Player* pPlayer, Creature* pCreature)
+class npc_spectate : public CreatureScript
 {
-    if(sWorld->getConfig(CONFIG_ARENA_SPECTATOR_ENABLE))
-    {
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Arenas 2V2", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_2);
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Arenas 3V3", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_3);
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Arenas 5V5", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_5);
-        pPlayer->ADD_GOSSIP_ITEM_EXTENDED(GOSSIP_ICON_CHAT, "Watch player...", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2, "", 0, true);
-    }
-    else
-    {
-        pCreature->Whisper("Arena spectator is disabled", LANG_UNIVERSAL, pPlayer);
-        return true;
-    }
+public:
+    npc_spectate() : CreatureScript("npc_spectate")
+    { }
 
-    pPlayer->SEND_GOSSIP_MENU_TEXTID(DEFAULT_GOSSIP_MESSAGE, pCreature->GetGUID());
-    return true;
-}
+    class npc_spectateAI : public ScriptedAI
+    {
+    public:
+        npc_spectateAI(Creature* creature) : ScriptedAI(creature)
+        {}
 
-bool GossipSelect_npc_spectate(Player* player, Creature* creature, uint32 /*sender*/, uint32 action)
-{
-    if (action == GOSSIP_ACTION_INFO_DEF + 1)
-        ShowDefaultPage(player, creature);
-    else if (action >= (GOSSIP_ACTION_INFO_DEF + 3) && action < NPC_SPECTATOR_ACTION_2)
-        RefreshPage(player, creature, action - (GOSSIP_ACTION_INFO_DEF + 3));
-    else if (action >= NPC_SPECTATOR_ACTION_2 && action < NPC_SPECTATOR_ACTION_3)
-    {
-        ShowPage(player, action - NPC_SPECTATOR_ACTION_2, ARENA_TYPE_2v2);
-        player->SEND_GOSSIP_MENU_TEXTID(DEFAULT_GOSSIP_MESSAGE, creature->GetGUID());
-    }
-    else if (action >= NPC_SPECTATOR_ACTION_3 && action < NPC_SPECTATOR_ACTION_5)
-    {
-        ShowPage(player, action - NPC_SPECTATOR_ACTION_3, ARENA_TYPE_3v3);
-        player->SEND_GOSSIP_MENU_TEXTID(DEFAULT_GOSSIP_MESSAGE, creature->GetGUID());
-    }
-    else if (action >= NPC_SPECTATOR_ACTION_5 && action < NPC_SPECTATOR_ACTION_SELECTED_PLAYER)
-    {
-        ShowPage(player, action - NPC_SPECTATOR_ACTION_5, ARENA_TYPE_5v5);
-        player->SEND_GOSSIP_MENU_TEXTID(DEFAULT_GOSSIP_MESSAGE, creature->GetGUID());
-    }
-    else if (action >= NPC_SPECTATOR_ACTION_SELECTED_PLAYER)
-    {
-        player->CLOSE_GOSSIP_MENU();
-        uint64 targetGuid = action - NPC_SPECTATOR_ACTION_SELECTED_PLAYER;
-        spectate(player, targetGuid, creature);
-    }
 
-    return true;
-}
-
-bool GossipSelectWithCode_npc_spectate( Player *player, Creature *_Creature, uint32 sender, uint32 action, const char* sCode )
-{
-    if(sender == GOSSIP_SENDER_MAIN)
-    {
-        if(action == GOSSIP_ACTION_INFO_DEF + 2)
+        virtual bool GossipHello(Player* pPlayer) override
         {
-            std::string name = sCode;
-            if(!name.empty())
+            if(sWorld->getConfig(CONFIG_ARENA_SPECTATOR_ENABLE))
             {
-                if(!normalizePlayerName(name))
-                {
-                    _Creature->Whisper("Invalid name.", LANG_UNIVERSAL, player);
-                    player->CLOSE_GOSSIP_MENU();
-                    return true;
-                }
-
-                Player* target = ObjectAccessor::FindConnectedPlayerByName(name.c_str());
-                if (!target)
-                {
-                    _Creature->Whisper("Could not find player.", LANG_UNIVERSAL, player);
-                    player->CLOSE_GOSSIP_MENU();
-                    return true;
-                }
-
-                spectate(player, target->GetGUID(), _Creature);
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Arenas 2V2", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_2);
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Arenas 3V3", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_3);
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Arenas 5V5", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_5);
+                pPlayer->ADD_GOSSIP_ITEM_EXTENDED(GOSSIP_ICON_CHAT, "Watch player...", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2, "", 0, true);
             }
             else
-                _Creature->Whisper("Empty field.", LANG_UNIVERSAL, player);
+            {
+                me->Whisper("Arena spectator is disabled", LANG_UNIVERSAL, pPlayer);
+                return true;
+            }
 
-            player->CLOSE_GOSSIP_MENU();
+            pPlayer->SEND_GOSSIP_MENU_TEXTID(DEFAULT_GOSSIP_MESSAGE, me->GetGUID());
             return true;
+
         }
+
+
+        virtual bool GossipSelect(Player* player, uint32 , uint32 action) override
+        {
+            if (action == GOSSIP_ACTION_INFO_DEF + 1)
+                ShowDefaultPage(player, me);
+            else if (action >= (GOSSIP_ACTION_INFO_DEF + 3) && action < NPC_SPECTATOR_ACTION_2)
+                RefreshPage(player, me, action - (GOSSIP_ACTION_INFO_DEF + 3));
+            else if (action >= NPC_SPECTATOR_ACTION_2 && action < NPC_SPECTATOR_ACTION_3)
+            {
+                ShowPage(player, action - NPC_SPECTATOR_ACTION_2, ARENA_TYPE_2v2);
+                player->SEND_GOSSIP_MENU_TEXTID(DEFAULT_GOSSIP_MESSAGE, me->GetGUID());
+            }
+            else if (action >= NPC_SPECTATOR_ACTION_3 && action < NPC_SPECTATOR_ACTION_5)
+            {
+                ShowPage(player, action - NPC_SPECTATOR_ACTION_3, ARENA_TYPE_3v3);
+                player->SEND_GOSSIP_MENU_TEXTID(DEFAULT_GOSSIP_MESSAGE, me->GetGUID());
+            }
+            else if (action >= NPC_SPECTATOR_ACTION_5 && action < NPC_SPECTATOR_ACTION_SELECTED_PLAYER)
+            {
+                ShowPage(player, action - NPC_SPECTATOR_ACTION_5, ARENA_TYPE_5v5);
+                player->SEND_GOSSIP_MENU_TEXTID(DEFAULT_GOSSIP_MESSAGE, me->GetGUID());
+            }
+            else if (action >= NPC_SPECTATOR_ACTION_SELECTED_PLAYER)
+            {
+                player->CLOSE_GOSSIP_MENU();
+                uint64 targetGuid = action - NPC_SPECTATOR_ACTION_SELECTED_PLAYER;
+                spectate(player, targetGuid, me);
+            }
+
+            return true;
+
+        }
+
+
+        virtual bool GossipSelectCode(Player* player, uint32 sender, uint32 action, const char* sCode) override
+        {
+            if(sender == GOSSIP_SENDER_MAIN)
+            {
+                if(action == GOSSIP_ACTION_INFO_DEF + 2)
+                {
+                    std::string name = sCode;
+                    if(!name.empty())
+                    {
+                        if(!normalizePlayerName(name))
+                        {
+                            me->Whisper("Invalid name.", LANG_UNIVERSAL, player);
+                            player->CLOSE_GOSSIP_MENU();
+                            return true;
+                        }
+
+                        Player* target = ObjectAccessor::FindConnectedPlayerByName(name.c_str());
+                        if (!target)
+                        {
+                            me->Whisper("Could not find player.", LANG_UNIVERSAL, player);
+                            player->CLOSE_GOSSIP_MENU();
+                            return true;
+                        }
+
+                        spectate(player, target->GetGUID(), me);
+                    }
+                    else
+                        me->Whisper("Empty field.", LANG_UNIVERSAL, player);
+
+                    player->CLOSE_GOSSIP_MENU();
+                    return true;
+                }
+            }
+            return false;
+
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_spectateAI(creature);
     }
-    return false;
-}
+};
+
+
+
 
 void AddSC_arena_spectator_script()
 {
-    OLDScript* newscript;
 
-    newscript = new OLDScript;
-    newscript->Name = "npc_spectate";
-    newscript->OnGossipHello = &GossipHello_npc_spectate;
-    newscript->OnGossipSelect = &GossipSelect_npc_spectate;
-    newscript->OnGossipSelectCode = &GossipSelectWithCode_npc_spectate;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_spectate();
 }
