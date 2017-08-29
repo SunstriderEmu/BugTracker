@@ -132,671 +132,836 @@ static Summon Text[] =
     {"Voici l'heure de ta fin !"}
 };
 
-struct mob_wisp_invisAI : public ScriptedAI
-{
-    mob_wisp_invisAI(Creature* c) : ScriptedAI(c)
-    {
-        Creaturetype = delay = spell = spell2 = 0;
-    }
 
-    uint32 Creaturetype;
-    uint32 delay;
-    uint32 spell;
-    uint32 spell2;
-    
-    void Reset() override {}
-    
-    void EnterCombat(Unit* who) override {}
-    
-    void SetType(uint32 _type)
+class mob_head : public CreatureScript
+{
+public:
+    mob_head() : CreatureScript("mob_head")
+    { }
+
+    class mob_headAI : public ScriptedAI
     {
-        Creaturetype = _type;
-        switch(Creaturetype)
+        public:
+        mob_headAI(Creature* c) : ScriptedAI(c) {}
+    
+        uint64 bodyGUID;
+    
+        uint32 Phase;
+        uint32 laugh;
+        uint32 wait;
+    
+        bool withbody;
+        bool die;
+    
+        void Reset()
+        override {
+            Phase = 0;
+            bodyGUID = 0;
+            die = false;
+            withbody = true;
+            wait = 1000;
+            laugh = 15000 + rand()%16 * 1000;
+        }
+    
+        void EnterCombat(Unit* who) override {}
+    
+        void SaySound(int32 textEntry, Unit* target = nullptr)
         {
-        case 1:
-            spell = SPELL_PUMPKIN_AURA_GREEN;
-            break;
-        case 2:
-            delay = 15000;
-            spell = SPELL_BODY_FLAME;
-            spell2 = SPELL_DEATH;
-            break;
-        case 3:
-            delay = 15000; 
-            spell = SPELL_SMOKE;
-            break;
-        case 4:
-            delay = 7000;
-            spell2 = SPELL_WISP_BLUE;
-            break;
-        default:
-            break;
+            DoScriptText(textEntry, me, target);
+            //DoCast(me, SPELL_HEAD_SPEAKS, true);
+            Creature *speaker = DoSpawnCreature(HELPER, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 1000);
+            if (speaker)
+                speaker->CastSpell(speaker, SPELL_HEAD_SPEAKS, false);
+    
+            laugh += 3000;
         }
         
-        if (spell)
-            DoCast(me, spell);
-    }
-
-    void SpellHit(Unit* caster, const SpellInfo* spellInfo)
-    override {
-        if (spellInfo->Id == SPELL_WISP_FLIGHT_PORT && Creaturetype == 4)
-            me->SetDisplayId(2027);
-    }
-
-    void MoveInLineOfSight(Unit *who)
-    override {
-        if (!who || Creaturetype != 1 || me->CanAttack(who) != CAN_ATTACK_RESULT_OK)
-            return;
-
-        if (me->GetDistance2d(who) < 0.1 && !who->HasAuraEffect(SPELL_SQUASH_SOUL,0))
-            DoCast(who, SPELL_SQUASH_SOUL);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if(delay) {
-            if (delay <= diff) {
-                me->RemoveAurasDueToSpell(SPELL_SMOKE);
-                if (spell2)
-                    DoCast(me,spell2);
-
-                delay = 0;
-            }
-            else
-                delay -= diff;
-        }
-    }
-};
-
-struct mob_headAI : public ScriptedAI
-{
-    mob_headAI(Creature* c) : ScriptedAI(c) {}
-
-    uint64 bodyGUID;
-
-    uint32 Phase;
-    uint32 laugh;
-    uint32 wait;
-
-    bool withbody;
-    bool die;
-
-    void Reset()
-    override {
-        Phase = 0;
-        bodyGUID = 0;
-        die = false;
-        withbody = true;
-        wait = 1000;
-        laugh = 15000 + rand()%16 * 1000;
-    }
-
-    void EnterCombat(Unit* who) override {}
-
-    void SaySound(int32 textEntry, Unit* target = nullptr)
-    {
-        DoScriptText(textEntry, me, target);
-        //DoCast(me, SPELL_HEAD_SPEAKS, true);
-        Creature *speaker = DoSpawnCreature(HELPER, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 1000);
-        if (speaker)
-            speaker->CastSpell(speaker, SPELL_HEAD_SPEAKS, false);
-
-        laugh += 3000;
-    }
-    
-    /*void EnterEvadeMode(EvadeReason why )
-    {
-        if (bodyGUID) {
-            if (Creature* body = ObjectAccessor::GetCreature((*me), bodyGUID))
-                body->AI()->EnterEvadeMode();
-        }
-        ScriptedAI::EnterEvadeMode(why);
-    }*/
-
-    void DamageTaken(Unit* doneBy, uint32& damage)
-    override {
-        if (withbody)
-            return;
-
-        switch(Phase)
+        /*void EnterEvadeMode(EvadeReason why )
         {
-        case 1:
-            if (((me->GetHealth() - damage)*100)/me->GetMaxHealth() < 67)
-                Disappear();
-                
-            break;
-        case 2:
-            if (((me->GetHealth() - damage)*100)/me->GetMaxHealth() < 34)
-                Disappear();
-            
-            break;
-        case 3:
-            if (damage >= me->GetHealth()) {
-                die = true;
-                withbody = true;
-                wait = 300;
-                damage = me->GetHealth() - me->GetMaxHealth()/100;
-                me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                me->StopMoving();
-                //me->GetMotionMaster()->MoveIdle();
-                DoCast(me, SPELL_HEAD_IS_DEAD);
+            if (bodyGUID) {
+                if (Creature* body = ObjectAccessor::GetCreature((*me), bodyGUID))
+                    body->AI()->EnterEvadeMode();
             }
-            break;
-        default:
-            break;
-        }
-        
-        /*if (bodyGUID) { // Handled in body script
-            Creature *body = ObjectAccessor::GetCreature((*me), bodyGUID);
-            if (body && body->GetHealth() == body->GetMaxHealth())
-                Disappear();
+            ScriptedAI::EnterEvadeMode(why);
         }*/
-    }
-
-    void SpellHit(Unit* caster, const SpellInfo* spell)
-    override {
-        if (!withbody)
-            return;
-
-        if (spell->Id == SPELL_FLYING_HEAD)
-        {
-            if (Phase < 3)
-                ++Phase;
-            else
-                Phase = 3;
-
-            withbody = false;
-            if(!bodyGUID)
-                bodyGUID = caster->GetGUID();
-
-            me->RemoveAllAuras();
-            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            DoCast(me, SPELL_HEAD_LANDS, true);
-            DoCast(me, SPELL_HEAD, false);
-            SaySound(SAY_LOST_HEAD);
-            me->GetMotionMaster()->Clear(false);
-            me->GetMotionMaster()->MoveChase(caster->GetVictim());
-        }
-    }
     
-    void Disappear(); // We must set returned = true(this will prevent from "body calls head" while head flying to body), see function below
+        void DamageTaken(Unit* doneBy, uint32& damage)
+        override {
+            if (withbody)
+                return;
     
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!withbody) {
-            if (wait <= diff) {
-                wait = 1000;
-                if (!me->GetVictim())
-                    return;
-                me->GetMotionMaster()->Clear(false);
-                me->GetMotionMaster()->MoveFleeing(me->GetVictim());
+            switch(Phase)
+            {
+            case 1:
+                if (((me->GetHealth() - damage)*100)/me->GetMaxHealth() < 67)
+                    Disappear();
+                    
+                break;
+            case 2:
+                if (((me->GetHealth() - damage)*100)/me->GetMaxHealth() < 34)
+                    Disappear();
+                
+                break;
+            case 3:
+                if (damage >= me->GetHealth()) {
+                    die = true;
+                    withbody = true;
+                    wait = 300;
+                    damage = me->GetHealth() - me->GetMaxHealth()/100;
+                    me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                    me->StopMoving();
+                    //me->GetMotionMaster()->MoveIdle();
+                    DoCast(me, SPELL_HEAD_IS_DEAD);
+                }
+                break;
+            default:
+                break;
             }
-            else
-                wait -= diff;
-
-            if (laugh <= diff){
-                laugh = 15000 + (rand()%16)*IN_MILLISECONDS;
-                DoPlaySoundToSet(me, RandomLaugh[rand()%3]);
-                //DoCast(me,SPELL_HEAD_SPEAKS,true); //this spell remove buff "head"
-                Creature *speaker = DoSpawnCreature(HELPER, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 1000);
-                if (speaker)
-                    speaker->CastSpell(speaker, SPELL_HEAD_SPEAKS, false);
-
-                me->TextEmote("rit.",nullptr);
-            } else laugh -= diff;
-
+            
+            /*if (bodyGUID) { // Handled in body script
+                Creature *body = ObjectAccessor::GetCreature((*me), bodyGUID);
+                if (body && body->GetHealth() == body->GetMaxHealth())
+                    Disappear();
+            }*/
         }
-        else {
-            if (die) {
+    
+        void SpellHit(Unit* caster, const SpellInfo* spell)
+        override {
+            if (!withbody)
+                return;
+    
+            if (spell->Id == SPELL_FLYING_HEAD)
+            {
+                if (Phase < 3)
+                    ++Phase;
+                else
+                    Phase = 3;
+    
+                withbody = false;
+                if(!bodyGUID)
+                    bodyGUID = caster->GetGUID();
+    
+                me->RemoveAllAuras();
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                DoCast(me, SPELL_HEAD_LANDS, true);
+                DoCast(me, SPELL_HEAD, false);
+                SaySound(SAY_LOST_HEAD);
+                me->GetMotionMaster()->Clear(false);
+                me->GetMotionMaster()->MoveChase(caster->GetVictim());
+            }
+        }
+        
+        void Disappear(); // We must set returned = true(this will prevent from "body calls head" while head flying to body), see function below
+        
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!withbody) {
                 if (wait <= diff) {
-                    die = false;
-                    Unit *body = ObjectAccessor::GetUnit((*me),bodyGUID);
-                    if (body)
-                        body->DealDamage(body, body->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-
-                    me->SetDeathState(JUST_DIED);
+                    wait = 1000;
+                    if (!me->GetVictim())
+                        return;
+                    me->GetMotionMaster()->Clear(false);
+                    me->GetMotionMaster()->MoveFleeing(me->GetVictim());
                 }
                 else
                     wait -= diff;
+    
+                if (laugh <= diff){
+                    laugh = 15000 + (rand()%16)*IN_MILLISECONDS;
+                    DoPlaySoundToSet(me, RandomLaugh[rand()%3]);
+                    //DoCast(me,SPELL_HEAD_SPEAKS,true); //this spell remove buff "head"
+                    Creature *speaker = DoSpawnCreature(HELPER, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 1000);
+                    if (speaker)
+                        speaker->CastSpell(speaker, SPELL_HEAD_SPEAKS, false);
+    
+                    me->TextEmote("rit.",nullptr);
+                } else laugh -= diff;
+    
+            }
+            else {
+                if (die) {
+                    if (wait <= diff) {
+                        die = false;
+                        Unit *body = ObjectAccessor::GetUnit((*me),bodyGUID);
+                        if (body)
+                            body->DealDamage(body, body->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+    
+                        me->SetDeathState(JUST_DIED);
+                    }
+                    else
+                        wait -= diff;
+                }
             }
         }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new mob_headAI(creature);
     }
 };
 
-struct boss_headless_horsemanAI : public ScriptedAI
+
+class mob_wisp_invis : public CreatureScript
 {
-    boss_headless_horsemanAI(Creature *c) : ScriptedAI(c)
+public:
+    mob_wisp_invis() : CreatureScript("mob_wisp_invis")
+    { }
+
+    class mob_wisp_invisAI : public ScriptedAI
     {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-    }
+    public:
+        mob_wisp_invisAI(Creature* c) : ScriptedAI(c)
+        {
+            Creaturetype = delay = spell = spell2 = 0;
+        }
 
-    InstanceScript *pInstance;
+        uint32 Creaturetype;
+        uint32 delay;
+        uint32 spell;
+        uint32 spell2;
 
-    uint64 headGUID;
-    uint64 playerGUID;
+        void Reset() override {}
 
-    uint32 Phase;
-    uint32 id;
-    uint32 count;
-    uint32 say_timer;
+        void EnterCombat(Unit* who) override {}
 
-    uint32 conflagrate;
-    uint32 summonadds;
-    uint32 cleave;
-    uint32 regen;
-    uint32 whirlwind;
-    uint32 laugh;
-    uint32 burn;
-
-    bool withhead;
-    bool returned;
-    bool IsFlying;
-    bool wp_reached;
-    bool burned;
-
-    void Reset()
-    override {
-        Phase = 1;
-        conflagrate = 15000;
-        summonadds = 15000;
-        laugh = 16000 + rand()%5 * 1000;
-        cleave = 2000;
-        regen = 1000;
-        burn = 6000;
-        count = 0;
-        say_timer = 3000;
-
-        withhead = true;
-        returned = true;
-        burned = false;
-        IsFlying = false;
-        DoCast(me, SPELL_HEAD);
-
-        if (headGUID){
-            Unit* Head = ObjectAccessor::GetUnit((*me), headGUID);
-            if (Head) {
-                Head->SetVisible(false);
-                Head->SetDeathState(JUST_DIED);
+        void SetType(uint32 _type)
+        {
+            Creaturetype = _type;
+            switch (Creaturetype)
+            {
+            case 1:
+                spell = SPELL_PUMPKIN_AURA_GREEN;
+                break;
+            case 2:
+                delay = 15000;
+                spell = SPELL_BODY_FLAME;
+                spell2 = SPELL_DEATH;
+                break;
+            case 3:
+                delay = 15000;
+                spell = SPELL_SMOKE;
+                break;
+            case 4:
+                delay = 7000;
+                spell2 = SPELL_WISP_BLUE;
+                break;
+            default:
+                break;
             }
 
-            headGUID = 0;
+            if (spell)
+                DoCast(me, spell);
         }
 
-        if (pInstance)
-            pInstance->SetData(DATA_HORSEMAN_EVENT, NOT_STARTED);
-            
-        me->SetName("Cavalier sans tête");
-    }
+        void SpellHit(Unit* caster, const SpellInfo* spellInfo)
+            override {
+            if (spellInfo->Id == SPELL_WISP_FLIGHT_PORT && Creaturetype == 4)
+                me->SetDisplayId(2027);
+        }
 
-    void FlyMode()
+        void MoveInLineOfSight(Unit *who)
+            override {
+            if (!who || Creaturetype != 1 || me->CanAttack(who) != CAN_ATTACK_RESULT_OK)
+                return;
+
+            if (me->GetDistance2d(who) < 0.1 && !who->HasAuraEffect(SPELL_SQUASH_SOUL, 0))
+                DoCast(who, SPELL_SQUASH_SOUL);
+        }
+
+        void UpdateAI(const uint32 diff)
+            override {
+            if (delay) {
+                if (delay <= diff) {
+                    me->RemoveAurasDueToSpell(SPELL_SMOKE);
+                    if (spell2)
+                        DoCast(me, spell2);
+
+                    delay = 0;
+                }
+                else
+                    delay -= diff;
+            }
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
     {
-        me->SetVisible(false);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        me->SetDisableGravity(true);
-        me->SetSpeedRate(MOVE_WALK, 5.0f, true);
-        wp_reached = false;
-        count = 0;
-        say_timer = 3000;
-        id = 0;
-        Phase = 0;
+        return new mob_wisp_invisAI(creature);
     }
+};
 
-    void MovementInform(uint32 type, uint32 i)
-    override {
-        if (type != POINT_MOTION_TYPE || !IsFlying)
-            return;
 
-        if (i != id)
-            return;
+class boss_headless_horseman : public CreatureScript
+{
+public:
+    boss_headless_horseman() : CreatureScript("boss_headless_horseman")
+    { }
 
-        wp_reached = true;
-
-        switch (id) {
-        case 0:
-            me->SetVisible(true);
-            break;
-        case 1:
+    class boss_headless_horsemanAI : public ScriptedAI
+    {
+        public:
+        boss_headless_horsemanAI(Creature *c) : ScriptedAI(c)
         {
-            Creature *smoke = me->SummonCreature(HELPER, Spawn[1].x, Spawn[1].y, Spawn[1].z, 0, TEMPSUMMON_TIMED_DESPAWN, 20000);
-            if (smoke)
-                ((mob_wisp_invisAI*)smoke->AI())->SetType(3);
-
-            DoCast(me, SPELL_RHYME_BIG);
-            break;
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
         }
-        case 6:
-            if (pInstance)
-                pInstance->SetData(GAMEOBJECT_PUMPKIN_SHRINE, 0);   //hide gameobject
-
-            break;
-        case 19:
-            me->SetDisableGravity(false);
-            break;
-        case 20:
-        {
+    
+        InstanceScript *pInstance;
+    
+        uint64 headGUID;
+        uint64 playerGUID;
+    
+        uint32 Phase;
+        uint32 id;
+        uint32 count;
+        uint32 say_timer;
+    
+        uint32 conflagrate;
+        uint32 summonadds;
+        uint32 cleave;
+        uint32 regen;
+        uint32 whirlwind;
+        uint32 laugh;
+        uint32 burn;
+    
+        bool withhead;
+        bool returned;
+        bool IsFlying;
+        bool wp_reached;
+        bool burned;
+    
+        void Reset()
+        override {
             Phase = 1;
+            conflagrate = 15000;
+            summonadds = 15000;
+            laugh = 16000 + rand()%5 * 1000;
+            cleave = 2000;
+            regen = 1000;
+            burn = 6000;
+            count = 0;
+            say_timer = 3000;
+    
+            withhead = true;
+            returned = true;
+            burned = false;
             IsFlying = false;
-            wp_reached = false;
-            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-            SaySound(SAY_ENTRANCE);
-            Unit *plr = ObjectAccessor::GetUnit((*me),playerGUID);
-            if (plr)
-                AttackStart(plr);
-
-            me->SetHomePosition(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation());
-
-            break;
-        }
-        }
-        ++id;
-    }
-
-    void EnterCombat(Unit* who)
-    override {
-        if(pInstance)
-            pInstance->SetData(DATA_HORSEMAN_EVENT, IN_PROGRESS);
-
-        DoZoneInCombat();
-    }
+            DoCast(me, SPELL_HEAD);
     
-
-    void MoveInLineOfSight(Unit* who)
-    override {
-        if (withhead && Phase != 0)
-            ScriptedAI::MoveInLineOfSight(who);
-    }
+            if (headGUID){
+                Unit* Head = ObjectAccessor::GetUnit((*me), headGUID);
+                if (Head) {
+                    Head->SetVisible(false);
+                    Head->SetDeathState(JUST_DIED);
+                }
     
-    void KilledUnit(Unit* victim)
-    override {
-        if (victim->GetTypeId() == TYPEID_PLAYER) {
-            if (withhead)
-                SaySound(SAY_PLAYER_DEATH);
-            else {          // may be possible when player dies from conflagration
-                Creature *Head = ObjectAccessor::GetCreature((*me), headGUID);
-                if (Head)
-                    ((mob_headAI*)Head->AI())->SaySound(SAY_PLAYER_DEATH);
+                headGUID = 0;
             }
+    
+            if (pInstance)
+                pInstance->SetData(DATA_HORSEMAN_EVENT, NOT_STARTED);
+                
+            me->SetName("Cavalier sans tête");
         }
-    }
-
-    void SaySound(int32 textEntry, Unit *target = nullptr)
-    {
-        DoScriptText(textEntry, me, target);
-        laugh += 4000;
-    }
-
-    Player* SelectRandomPlayer(float range = 0.0f, bool checkLoS = true)
-    {
-        Map *map = me->GetMap();
-        if (!map->IsDungeon())
-            return nullptr;
-
-        Map::PlayerList const& playerList = map->GetPlayers();
-        Map::PlayerList::const_iterator i;
-        if (playerList.isEmpty())
-            return nullptr;
-
-        std::list<Player*> temp;
-        std::list<Player*>::iterator j;
-
-        for (const auto & i : playerList)
-            if ((me->IsWithinLOSInMap(i.GetSource()) || !checkLoS) && me->GetVictim() != i.GetSource() &&
-                me->IsWithinDistInMap(i.GetSource(), range) && i.GetSource()->IsAlive() && i.GetSource()->IsAttackableByAOE())
-                temp.push_back(i.GetSource());
-
-        if (temp.size()) {
-            j = temp.begin();
-            advance(j, rand()%temp.size());
-            return (*j);
+    
+        void FlyMode()
+        {
+            me->SetVisible(false);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            me->SetDisableGravity(true);
+            me->SetSpeedRate(MOVE_WALK, 5.0f, true);
+            wp_reached = false;
+            count = 0;
+            say_timer = 3000;
+            id = 0;
+            Phase = 0;
         }
-
-        return nullptr;
-    }
-
-    void SpellHitTarget(Unit* unit, const SpellInfo* spell)
-    override {
-        if (spell->Id == SPELL_CONFLAGRATION) {
-            if (unit->HasAuraEffect(SPELL_CONFLAGRATION))
-                SaySound(SAY_CONFLAGRATION,unit);
+    
+        void MovementInform(uint32 type, uint32 i)
+        override {
+            if (type != POINT_MOTION_TYPE || !IsFlying)
+                return;
+    
+            if (i != id)
+                return;
+    
+            wp_reached = true;
+    
+            switch (id) {
+            case 0:
+                me->SetVisible(true);
+                break;
+            case 1:
+            {
+                Creature *smoke = me->SummonCreature(HELPER, Spawn[1].x, Spawn[1].y, Spawn[1].z, 0, TEMPSUMMON_TIMED_DESPAWN, 20000);
+                if (smoke)
+                    ((mob_wisp_invis::mob_wisp_invisAI*)smoke->AI())->SetType(3);
+    
+                DoCast(me, SPELL_RHYME_BIG);
+                break;
+            }
+            case 6:
+                if (pInstance)
+                    pInstance->SetData(GAMEOBJECT_PUMPKIN_SHRINE, 0);   //hide gameobject
+    
+                break;
+            case 19:
+                me->SetDisableGravity(false);
+                break;
+            case 20:
+            {
+                Phase = 1;
+                IsFlying = false;
+                wp_reached = false;
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                SaySound(SAY_ENTRANCE);
+                Unit *plr = ObjectAccessor::GetUnit((*me),playerGUID);
+                if (plr)
+                    AttackStart(plr);
+    
+                me->SetHomePosition(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation());
+    
+                break;
+            }
+            }
+            ++id;
         }
-    }
-
-    void JustDied(Unit* killer)
-    override {
-        me->StopMoving();
-        //me->GetMotionMaster()->MoveIdle();    test
-        SaySound(SAY_DEATH);
-
-        Creature* flame = DoSpawnCreature(HELPER, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 60000);
-        if (flame)
-            flame->CastSpell(flame, SPELL_BODY_FLAME, false);
-
-        Creature* wisp = DoSpawnCreature(WISP_INVIS, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 60000);
-        if (wisp)
-            ((mob_wisp_invisAI*)wisp->AI())->SetType(4);
-
-        if (pInstance)
-            pInstance->SetData(DATA_HORSEMAN_EVENT, DONE);
-            
-        Unit* Head = ObjectAccessor::GetUnit((*me), headGUID);
-        if (Head && Head->IsAlive())
-            Head->ToCreature()->DisappearAndDie();
-            
-        Map *map = me->GetMap();
-        if (!map->IsDungeon())
-            return;
-            
-        Map::PlayerList const& playerList = map->GetPlayers();
-        Map::PlayerList::const_iterator i;
-        if (playerList.isEmpty())
-            return;
-            
-        for (const auto & i : playerList) {
-            if (Player* plr = i.GetSource())
-                plr->CombatStop();
+    
+        void EnterCombat(Unit* who)
+        override {
+            if(pInstance)
+                pInstance->SetData(DATA_HORSEMAN_EVENT, IN_PROGRESS);
+    
+            DoZoneInCombat();
         }
         
-        me->SummonCreature(23904, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation(), TEMPSUMMON_TIMED_DESPAWN, 600000);
-    }
-
-    void SpellHit(Unit *caster, const SpellInfo* spell)
-    override {
-        if (withhead)
-            return;
-
-        if (spell->Id == SPELL_FLYING_HEAD) {
-            if (Phase < 3)
-                Phase++;
-            else
-                Phase = 3;
-
-            withhead = true;
-            me->RemoveAllAuras();
-            me->SetName("Cavalier sans tête");
-            me->SetHealth(me->GetMaxHealth());
-            SaySound(SAY_REJOINED);
-            DoCast(me,SPELL_HEAD);
-            caster->GetMotionMaster()->Clear(false);
-            caster->GetMotionMaster()->MoveFollow(me, 6, rand()%6);
-            //DoResetThreat();//not sure if need
-            std::list<HostileReference*>::iterator itr;
-            for (itr = caster->getThreatManager().getThreatList().begin(); itr != caster->getThreatManager().getThreatList().end(); ++itr) {
-                Unit* pUnit = ObjectAccessor::GetUnit((*me), (*itr)->getUnitGuid());
-                if (pUnit && pUnit->IsAlive() && pUnit != caster)
-                    me->AddThreat(pUnit, caster->getThreatManager().getThreat(pUnit));
+    
+        void MoveInLineOfSight(Unit* who)
+        override {
+            if (withhead && Phase != 0)
+                ScriptedAI::MoveInLineOfSight(who);
+        }
+        
+        void KilledUnit(Unit* victim)
+        override {
+            if (victim->GetTypeId() == TYPEID_PLAYER) {
+                if (withhead)
+                    SaySound(SAY_PLAYER_DEATH);
+                else {          // may be possible when player dies from conflagration
+                    Creature *Head = ObjectAccessor::GetCreature((*me), headGUID);
+                    if (Head)
+                        ((mob_head::mob_headAI*)Head->AI())->SaySound(SAY_PLAYER_DEATH);
+                }
             }
         }
-    }
-
-    void DamageTaken(Unit* doneBy, uint32& damage)
-    override {
-        if (damage >= me->GetHealth() && withhead) {
-            withhead = false;
-            returned = false;
-            if (Phase < 3)
-                damage = 0;
-            me->RemoveAllAuras();
-            //me->SetName("Cavalier sans tête, à pied");
-
-            if (!headGUID)
-                headGUID = DoSpawnCreature(HEAD, rand()%6, rand()%6, 0, 0, TEMPSUMMON_DEAD_DESPAWN, 0)->GetGUID();
-
+    
+        void SaySound(int32 textEntry, Unit *target = nullptr)
+        {
+            DoScriptText(textEntry, me, target);
+            laugh += 4000;
+        }
+    
+        Player* SelectRandomPlayer(float range = 0.0f, bool checkLoS = true)
+        {
+            Map *map = me->GetMap();
+            if (!map->IsDungeon())
+                return nullptr;
+    
+            Map::PlayerList const& playerList = map->GetPlayers();
+            Map::PlayerList::const_iterator i;
+            if (playerList.isEmpty())
+                return nullptr;
+    
+            std::list<Player*> temp;
+            std::list<Player*>::iterator j;
+    
+            for (const auto & i : playerList)
+                if ((me->IsWithinLOSInMap(i.GetSource()) || !checkLoS) && me->GetVictim() != i.GetSource() &&
+                    me->IsWithinDistInMap(i.GetSource(), range) && i.GetSource()->IsAlive() && i.GetSource()->IsAttackableByAOE())
+                    temp.push_back(i.GetSource());
+    
+            if (temp.size()) {
+                j = temp.begin();
+                advance(j, rand()%temp.size());
+                return (*j);
+            }
+    
+            return nullptr;
+        }
+    
+        void SpellHitTarget(Unit* unit, const SpellInfo* spell)
+        override {
+            if (spell->Id == SPELL_CONFLAGRATION) {
+                if (unit->HasAuraEffect(SPELL_CONFLAGRATION))
+                    SaySound(SAY_CONFLAGRATION,unit);
+            }
+        }
+    
+        void JustDied(Unit* killer)
+        override {
+            me->StopMoving();
+            //me->GetMotionMaster()->MoveIdle();    test
+            SaySound(SAY_DEATH);
+    
+            Creature* flame = DoSpawnCreature(HELPER, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 60000);
+            if (flame)
+                flame->CastSpell(flame, SPELL_BODY_FLAME, false);
+    
+            Creature* wisp = DoSpawnCreature(WISP_INVIS, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 60000);
+            if (wisp)
+                ((mob_wisp_invis::mob_wisp_invisAI*)wisp->AI())->SetType(4);
+    
+            if (pInstance)
+                pInstance->SetData(DATA_HORSEMAN_EVENT, DONE);
+                
             Unit* Head = ObjectAccessor::GetUnit((*me), headGUID);
-            if (Head && Head->IsAlive()) {
-                Head->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                //Head->CastSpell(Head,SPELL_HEAD_INVIS,false);
-                me->InterruptNonMeleeSpells(false);
-                DoCast(me, SPELL_IMMUNE, true);
-                DoCast(me, SPELL_BODY_REGEN, true);
-                me->CastSpell(Head, SPELL_FLYING_HEAD, true);
-                DoCast(me, SPELL_CONFUSE, false);                     //test
-                doneBy->ProcDamageAndSpell(me, PROC_FLAG_KILL_AND_GET_XP, PROC_FLAG_KILLED, PROC_EX_NONE, 0);
-                whirlwind = 4000 + (rand()%5)*IN_MILLISECONDS;
-                regen = 0;
+            if (Head && Head->IsAlive())
+                Head->ToCreature()->DisappearAndDie();
+                
+            Map *map = me->GetMap();
+            if (!map->IsDungeon())
+                return;
+                
+            Map::PlayerList const& playerList = map->GetPlayers();
+            Map::PlayerList::const_iterator i;
+            if (playerList.isEmpty())
+                return;
+                
+            for (const auto & i : playerList) {
+                if (Player* plr = i.GetSource())
+                    plr->CombatStop();
             }
             
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            me->SummonCreature(23904, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation(), TEMPSUMMON_TIMED_DESPAWN, 600000);
         }
-        else if (!withhead)
-            damage = 0;
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        me->AddUnitState(UNIT_STATE_IGNORE_PATHFINDING);
-
-        if (withhead) {
-            if (Phase == 0) {
-                if (!IsFlying) {
-                    if (say_timer <= diff) {
-                        say_timer = 3000;
-                        Player* plr = SelectRandomPlayer(100.0f, false);
-                        if (count < 3) {
-                            if(plr)
-                                plr->Say(Text[count].text,LANG_UNIVERSAL);
-                        }
-                        else {
-                            DoCast(me, SPELL_RHYME_BIG);
-                            if (plr) {
-                                plr->Say(Text[count].text,LANG_UNIVERSAL);
-                                plr->HandleEmoteCommand(ANIM_EMOTE_SHOUT);
-                            }
-
-                            wp_reached = true;
-                            IsFlying = true;
-                            count = 0;
-                            return;
-                        }
-                        ++count;
-                    }
-                    else
-                        say_timer -= diff;
-                }
-                else {
-                    if (wp_reached) {
-                        wp_reached = false;
-                        me->GetMotionMaster()->Clear(false);
-                        me->GetMotionMaster()->MovePoint(id, FlightPoint[id].x, FlightPoint[id].y, FlightPoint[id].z);
-                    }
-                }
-
+    
+        void SpellHit(Unit *caster, const SpellInfo* spell)
+        override {
+            if (withhead)
                 return;
-            }
-            else if (Phase == 1 || Phase == 2 || Phase == 3) {
-                if (!burned) {
-                    if (burn <= diff) {
-                        if (Creature* flame = me->SummonCreature(HELPER, Spawn[0].x, Spawn[0].y, Spawn[0].z, 0, TEMPSUMMON_TIMED_DESPAWN, 17000))
-                            ((mob_wisp_invisAI*)flame->AI())->SetType(2);
-
-                        burned = true;
-                    }
-                    else
-                        burn -= diff;
-                }
-            }
-            if (Phase == 2 || Phase == 3) {
-                if (conflagrate < diff)
-                {
-                    Unit *plr = (Unit*)SelectRandomPlayer(30.0f);
-                    if (plr)
-                        me->CastSpell(plr,SPELL_CONFLAGRATION,false);
-                    conflagrate = 10000 + rand()%7 * 1000;
-                }
+    
+            if (spell->Id == SPELL_FLYING_HEAD) {
+                if (Phase < 3)
+                    Phase++;
                 else
-                    conflagrate -= diff;
-            }
-            if (Phase == 3) {
-                if (summonadds <= diff) {
-                    me->InterruptNonMeleeSpells(false);
-                    DoCast(me, SPELL_SUMMON_PUMPKIN);
-                    SaySound(SAY_SPROUTING_PUMPKINS);
-                    summonadds = 25000 + rand()%11 * 1000;
+                    Phase = 3;
+    
+                withhead = true;
+                me->RemoveAllAuras();
+                me->SetName("Cavalier sans tête");
+                me->SetHealth(me->GetMaxHealth());
+                SaySound(SAY_REJOINED);
+                DoCast(me,SPELL_HEAD);
+                caster->GetMotionMaster()->Clear(false);
+                caster->GetMotionMaster()->MoveFollow(me, 6, rand()%6);
+                //DoResetThreat();//not sure if need
+                std::list<HostileReference*>::iterator itr;
+                for (itr = caster->getThreatManager().getThreatList().begin(); itr != caster->getThreatManager().getThreatList().end(); ++itr) {
+                    Unit* pUnit = ObjectAccessor::GetUnit((*me), (*itr)->getUnitGuid());
+                    if (pUnit && pUnit->IsAlive() && pUnit != caster)
+                        me->AddThreat(pUnit, caster->getThreatManager().getThreat(pUnit));
                 }
-                else
-                    summonadds -= diff;
             }
-
-            if (laugh <= diff) {
-                laugh = 11000 + rand()%12 * 1000;
-                me->TextEmote("rit.", nullptr);
-                DoPlaySoundToSet(me, RandomLaugh[rand()%3]);
-            }
-            else
-                laugh -= diff;
-
-            if (UpdateVictim()) {
-                DoMeleeAttackIfReady();
-                if (cleave <= diff) {
-                    DoCast(me->GetVictim(),SPELL_CLEAVE);
-                    cleave = 2000 * (1 + rand()%3);       //1 cleave per 2.0-6.0sec
-                }
-                else
-                    cleave -= diff;
-            }
-
         }
-        else {
-            if (regen <= diff) {
-                regen = 1000;                   //"body calls head"
-                if (me->GetHealth()/me->GetMaxHealth() == 1 && !returned)
-                {
-                    if (Phase > 1)
-                        --Phase;
-                    else
-                        Phase = 1;
-
-                    Creature* Head = ObjectAccessor::GetCreature((*me), headGUID);
-                    if (Head && Head->IsAlive())
-                    {
-                        ((mob_headAI*)Head->AI())->Phase = Phase;
-                        ((mob_headAI*)Head->AI())->Disappear();
+    
+        void DamageTaken(Unit* doneBy, uint32& damage)
+        override {
+            if (damage >= me->GetHealth() && withhead) {
+                withhead = false;
+                returned = false;
+                if (Phase < 3)
+                    damage = 0;
+                me->RemoveAllAuras();
+                //me->SetName("Cavalier sans tête, à pied");
+    
+                if (!headGUID)
+                    headGUID = DoSpawnCreature(HEAD, rand()%6, rand()%6, 0, 0, TEMPSUMMON_DEAD_DESPAWN, 0)->GetGUID();
+    
+                Unit* Head = ObjectAccessor::GetUnit((*me), headGUID);
+                if (Head && Head->IsAlive()) {
+                    Head->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                    //Head->CastSpell(Head,SPELL_HEAD_INVIS,false);
+                    me->InterruptNonMeleeSpells(false);
+                    DoCast(me, SPELL_IMMUNE, true);
+                    DoCast(me, SPELL_BODY_REGEN, true);
+                    me->CastSpell(Head, SPELL_FLYING_HEAD, true);
+                    DoCast(me, SPELL_CONFUSE, false);                     //test
+                    doneBy->ProcDamageAndSpell(me, PROC_FLAG_KILL_AND_GET_XP, PROC_FLAG_KILLED, PROC_EX_NONE, 0);
+                    whirlwind = 4000 + (rand()%5)*IN_MILLISECONDS;
+                    regen = 0;
+                }
+                
+                me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            }
+            else if (!withhead)
+                damage = 0;
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            me->AddUnitState(UNIT_STATE_IGNORE_PATHFINDING);
+    
+            if (withhead) {
+                if (Phase == 0) {
+                    if (!IsFlying) {
+                        if (say_timer <= diff) {
+                            say_timer = 3000;
+                            Player* plr = SelectRandomPlayer(100.0f, false);
+                            if (count < 3) {
+                                if(plr)
+                                    plr->Say(Text[count].text,LANG_UNIVERSAL);
+                            }
+                            else {
+                                DoCast(me, SPELL_RHYME_BIG);
+                                if (plr) {
+                                    plr->Say(Text[count].text,LANG_UNIVERSAL);
+                                    plr->HandleEmoteCommand(ANIM_EMOTE_SHOUT);
+                                }
+    
+                                wp_reached = true;
+                                IsFlying = true;
+                                count = 0;
+                                return;
+                            }
+                            ++count;
+                        }
+                        else
+                            say_timer -= diff;
                     }
+                    else {
+                        if (wp_reached) {
+                            wp_reached = false;
+                            me->GetMotionMaster()->Clear(false);
+                            me->GetMotionMaster()->MovePoint(id, FlightPoint[id].x, FlightPoint[id].y, FlightPoint[id].z);
+                        }
+                    }
+    
                     return;
                 }
-            }
-            else
-                regen -= diff;
-
-            if (whirlwind <= diff) {
-                whirlwind = 4000 + rand()%5 * 1000;
-                if (rand()%2) {
-                    me->RemoveAurasDueToSpell(SPELL_CONFUSE);
-                    DoCast(me, SPELL_WHIRLWIND, true);
-                    DoCast(me, SPELL_CONFUSE);
+                else if (Phase == 1 || Phase == 2 || Phase == 3) {
+                    if (!burned) {
+                        if (burn <= diff) {
+                            if (Creature* flame = me->SummonCreature(HELPER, Spawn[0].x, Spawn[0].y, Spawn[0].z, 0, TEMPSUMMON_TIMED_DESPAWN, 17000))
+                                ((mob_wisp_invis::mob_wisp_invisAI*)flame->AI())->SetType(2);
+    
+                            burned = true;
+                        }
+                        else
+                            burn -= diff;
+                    }
+                }
+                if (Phase == 2 || Phase == 3) {
+                    if (conflagrate < diff)
+                    {
+                        Unit *plr = (Unit*)SelectRandomPlayer(30.0f);
+                        if (plr)
+                            me->CastSpell(plr,SPELL_CONFLAGRATION,false);
+                        conflagrate = 10000 + rand()%7 * 1000;
+                    }
+                    else
+                        conflagrate -= diff;
+                }
+                if (Phase == 3) {
+                    if (summonadds <= diff) {
+                        me->InterruptNonMeleeSpells(false);
+                        DoCast(me, SPELL_SUMMON_PUMPKIN);
+                        SaySound(SAY_SPROUTING_PUMPKINS);
+                        summonadds = 25000 + rand()%11 * 1000;
+                    }
+                    else
+                        summonadds -= diff;
+                }
+    
+                if (laugh <= diff) {
+                    laugh = 11000 + rand()%12 * 1000;
+                    me->TextEmote("rit.", nullptr);
+                    DoPlaySoundToSet(me, RandomLaugh[rand()%3]);
                 }
                 else
-                    me->RemoveAurasDueToSpell(SPELL_WHIRLWIND);
+                    laugh -= diff;
+    
+                if (UpdateVictim()) {
+                    DoMeleeAttackIfReady();
+                    if (cleave <= diff) {
+                        DoCast(me->GetVictim(),SPELL_CLEAVE);
+                        cleave = 2000 * (1 + rand()%3);       //1 cleave per 2.0-6.0sec
+                    }
+                    else
+                        cleave -= diff;
+                }
+    
             }
-            else
-                whirlwind -= diff;
-                
-            if (!UpdateVictim())
-                return;
+            else {
+                if (regen <= diff) {
+                    regen = 1000;                   //"body calls head"
+                    if (me->GetHealth()/me->GetMaxHealth() == 1 && !returned)
+                    {
+                        if (Phase > 1)
+                            --Phase;
+                        else
+                            Phase = 1;
+    
+                        Creature* Head = ObjectAccessor::GetCreature((*me), headGUID);
+                        if (Head && Head->IsAlive())
+                        {
+                            ((mob_head::mob_headAI*)Head->AI())->Phase = Phase;
+                            ((mob_head::mob_headAI*)Head->AI())->Disappear();
+                        }
+                        return;
+                    }
+                }
+                else
+                    regen -= diff;
+    
+                if (whirlwind <= diff) {
+                    whirlwind = 4000 + rand()%5 * 1000;
+                    if (rand()%2) {
+                        me->RemoveAurasDueToSpell(SPELL_CONFUSE);
+                        DoCast(me, SPELL_WHIRLWIND, true);
+                        DoCast(me, SPELL_CONFUSE);
+                    }
+                    else
+                        me->RemoveAurasDueToSpell(SPELL_WHIRLWIND);
+                }
+                else
+                    whirlwind -= diff;
+                    
+                if (!UpdateVictim())
+                    return;
+            }
         }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_headless_horsemanAI(creature);
     }
 };
 
-void mob_headAI::Disappear()
+
+class mob_pulsing_pumpkin : public CreatureScript
+{
+public:
+    mob_pulsing_pumpkin() : CreatureScript("mob_pulsing_pumpkin")
+    { }
+
+    class mob_pulsing_pumpkinAI : public ScriptedAI
+    {
+        public:
+        mob_pulsing_pumpkinAI(Creature* c) : ScriptedAI(c) {}
+    
+        bool sprouted;
+        uint64 debuffGUID;
+    
+        void Reset()
+        override {
+            float x, y, z;
+            me->GetPosition(x, y, z);   //this visual aura some under ground
+            me->Relocate(x, y, z + 0.35f);
+            Despawn();
+            
+            Creature* debuff = DoSpawnCreature(HELPER, 0, 0, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 14500);
+            if (debuff) {
+                debuff->SetDisplayId(me->GetDisplayId());
+                debuff->CastSpell(debuff, SPELL_PUMPKIN_AURA_GREEN, false);
+                ((mob_wisp_invis::mob_wisp_invisAI*)debuff->AI())->SetType(1);
+                debuffGUID = debuff->GetGUID();
+            }
+    
+            sprouted = false;
+            DoCast(me, SPELL_PUMPKIN_AURA, true);
+            DoCast(me, SPELL_SPROUTING);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
+        }
+    
+        void EnterCombat(Unit* who)override {}
+    
+        void SpellHit(Unit* caster, const SpellInfo* spell)
+        override {
+            if (spell->Id == SPELL_SPROUTING) {
+                sprouted = true;
+                me->RemoveAllAuras();
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
+                DoCast(me, SPELL_SPROUT_BODY, true);
+                me->UpdateEntry(PUMPKIN_FIEND);
+                AttackStart(me->GetVictim());
+            }
+        }
+    
+        void Despawn()
+        {
+            if (!debuffGUID)
+                return;
+    
+            Unit* debuff = ObjectAccessor::GetUnit((*me), debuffGUID);
+            if (debuff) {
+                debuff->SetVisible(false);
+                debuffGUID = 0;
+            }
+        }
+    
+        void JustDied(Unit* killer)
+        override {
+            if (!sprouted)
+                Despawn();
+        }
+    
+        void MoveInLineOfSight(Unit* who)
+        override {
+            if (!who || me->CanAttack(who) != CAN_ATTACK_RESULT_OK || !me->IsHostileTo(who) || me->GetVictim())
+                return;
+    
+            me->AddThreat(who, 0.0f);
+            if(sprouted)
+                AttackStart(who);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (sprouted) {
+                if (UpdateVictim())
+                    DoMeleeAttackIfReady();
+            }
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new mob_pulsing_pumpkinAI(creature);
+    }
+};
+
+class LooselyTurnedSoil : public GameObjectScript
+{
+public:
+    LooselyTurnedSoil() : GameObjectScript("go_loosely_turned_soil")
+    {}
+
+    
+
+    struct LooselyTurnedSoilAI : public GameObjectAI
+    {
+        LooselyTurnedSoilAI(GameObject* obj) : GameObjectAI(obj) { }
+
+        void QuestReward(Player* player, Quest const* quest, uint32 opt) override
+        {
+            if (quest->GetQuestId() == 11405) {
+                if (Creature *horseman = me->SummonCreature(HH_MOUNTED, FlightPoint[20].x, FlightPoint[20].y, FlightPoint[20].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 0)) {
+                    ((boss_headless_horseman::boss_headless_horsemanAI*)horseman->AI())->playerGUID = player->GetGUID();
+                    ((boss_headless_horseman::boss_headless_horsemanAI*)horseman->AI())->FlyMode();
+                }
+            }
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new LooselyTurnedSoilAI(go);
+    }
+};
+
+
+void mob_head::mob_headAI::Disappear()
 {
     if (withbody)
         return;
@@ -813,153 +978,21 @@ void mob_headAI::Disappear()
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->GetMotionMaster()->MoveIdle();
-            ((boss_headless_horsemanAI*)body->AI())->returned = true;
+            ((boss_headless_horseman::boss_headless_horsemanAI*)body->AI())->returned = true;
         }
     }
-}
-
-struct mob_pulsing_pumpkinAI : public ScriptedAI
-{
-    mob_pulsing_pumpkinAI(Creature* c) : ScriptedAI(c) {}
-
-    bool sprouted;
-    uint64 debuffGUID;
-
-    void Reset()
-    override {
-        float x, y, z;
-        me->GetPosition(x, y, z);   //this visual aura some under ground
-        me->Relocate(x, y, z + 0.35f);
-        Despawn();
-        
-        Creature* debuff = DoSpawnCreature(HELPER, 0, 0, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 14500);
-        if (debuff) {
-            debuff->SetDisplayId(me->GetDisplayId());
-            debuff->CastSpell(debuff, SPELL_PUMPKIN_AURA_GREEN, false);
-            ((mob_wisp_invisAI*)debuff->AI())->SetType(1);
-            debuffGUID = debuff->GetGUID();
-        }
-
-        sprouted = false;
-        DoCast(me, SPELL_PUMPKIN_AURA, true);
-        DoCast(me, SPELL_SPROUTING);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
-    }
-
-    void EnterCombat(Unit* who)override {}
-
-    void SpellHit(Unit* caster, const SpellInfo* spell)
-    override {
-        if (spell->Id == SPELL_SPROUTING) {
-            sprouted = true;
-            me->RemoveAllAuras();
-            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
-            DoCast(me, SPELL_SPROUT_BODY, true);
-            me->UpdateEntry(PUMPKIN_FIEND);
-            AttackStart(me->GetVictim());
-        }
-    }
-
-    void Despawn()
-    {
-        if (!debuffGUID)
-            return;
-
-        Unit* debuff = ObjectAccessor::GetUnit((*me), debuffGUID);
-        if (debuff) {
-            debuff->SetVisible(false);
-            debuffGUID = 0;
-        }
-    }
-
-    void JustDied(Unit* killer)
-    override {
-        if (!sprouted)
-            Despawn();
-    }
-
-    void MoveInLineOfSight(Unit* who)
-    override {
-        if (!who || me->CanAttack(who) != CAN_ATTACK_RESULT_OK || !me->IsHostileTo(who) || me->GetVictim())
-            return;
-
-        me->AddThreat(who, 0.0f);
-        if(sprouted)
-            AttackStart(who);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (sprouted) {
-            if (UpdateVictim())
-                DoMeleeAttackIfReady();
-        }
-    }
-};
-
-class LooselyTurnedSoil : public GameObjectScript
-{
-public:
-    LooselyTurnedSoil() : GameObjectScript("go_loosely_turned_soil")
-    {}
-
-    bool OnQuestReward(Player* player, GameObject* go, Quest const* quest, uint32 opt) override
-    {
-        if (quest->GetQuestId() == 11405) {
-            if (Creature *horseman = go->SummonCreature(HH_MOUNTED, FlightPoint[20].x, FlightPoint[20].y, FlightPoint[20].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 0)) {
-                ((boss_headless_horsemanAI*)horseman->AI())->playerGUID = player->GetGUID();
-                ((boss_headless_horsemanAI*)horseman->AI())->FlyMode();
-            }
-        }
-
-        return true;
-    }
-};
-
-
-CreatureAI* GetAI_mob_head(Creature* creature)
-{
-    return new mob_headAI(creature);
-}
-
-CreatureAI* GetAI_boss_headless_horseman(Creature* creature)
-{
-    return new boss_headless_horsemanAI (creature);
-}
-
-CreatureAI* GetAI_mob_pulsing_pumpkin(Creature* creature)
-{
-    return new mob_pulsing_pumpkinAI (creature);
-}
-
-CreatureAI* GetAI_mob_wisp_invis(Creature* creature)
-{
-    return new mob_wisp_invisAI (creature);
 }
 
 void AddSC_boss_headless_horseman()
 {
-    OLDScript *newscript;
 
-    newscript = new OLDScript;
-    newscript->Name="boss_headless_horseman";
-    newscript->GetAI = &GetAI_boss_headless_horseman;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_headless_horseman();
 
-    newscript = new OLDScript;
-    newscript->Name="mob_head";
-    newscript->GetAI = &GetAI_mob_head;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new mob_head();
 
-    newscript = new OLDScript;
-    newscript->Name="mob_pulsing_pumpkin";
-    newscript->GetAI = &GetAI_mob_pulsing_pumpkin;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new mob_pulsing_pumpkin();
 
-    newscript = new OLDScript;
-    newscript->Name="mob_wisp_invis";
-    newscript->GetAI = &GetAI_mob_wisp_invis;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new mob_wisp_invis();
 
     new LooselyTurnedSoil();
 }

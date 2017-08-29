@@ -41,126 +41,132 @@ EndScriptData */
 #define SPELL_HOLY_LIGHT    25263
 #define SPELL_DIVINE_SHIELD 13874
 
-struct boss_silver_hand_bossesAI : public ScriptedAI
+class boss_silver_hand_bosses : public CreatureScript
 {
-    boss_silver_hand_bossesAI(Creature* c) : ScriptedAI(c)
+public:
+    boss_silver_hand_bosses() : CreatureScript("boss_silver_hand_bosses")
+    { }
+
+    class boss_silver_hand_bossesAI : public ScriptedAI
     {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-    }
-
-    InstanceScript *pInstance;
-
-    uint32 HolyLight_Timer;
-    uint32 DivineShield_Timer;
-
-    void Reset()
-    override {
-        HolyLight_Timer = 20000;
-        DivineShield_Timer = 20000;
-
-        if(pInstance)
+        public:
+        boss_silver_hand_bossesAI(Creature* c) : ScriptedAI(c)
         {
-            switch(me->GetEntry())
-            {
-                case SH_AELMAR:
-                    pInstance->SetData(TYPE_SH_AELMAR, 0);
-                    break;
-                case SH_CATHELA:
-                    pInstance->SetData(TYPE_SH_CATHELA, 0);
-                    break;
-                case SH_GREGOR:
-                    pInstance->SetData(TYPE_SH_GREGOR, 0);
-                    break;
-                case SH_NEMAS:
-                    pInstance->SetData(TYPE_SH_NEMAS, 0);
-                    break;
-                case SH_VICAR:
-                    pInstance->SetData(TYPE_SH_VICAR, 0);
-                    break;
-            }
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
         }
-    }
-
-    void EnterCombat(Unit* who)
-    override {
-    }
-
-    void JustDied(Unit* Killer)
-    override {
-        if(pInstance)
-        {
-            switch(me->GetEntry())
+    
+        InstanceScript *pInstance;
+    
+        uint32 HolyLight_Timer;
+        uint32 DivineShield_Timer;
+    
+        void Reset()
+        override {
+            HolyLight_Timer = 20000;
+            DivineShield_Timer = 20000;
+    
+            if(pInstance)
             {
-                case SH_AELMAR:
-                    pInstance->SetData(TYPE_SH_AELMAR, 2);
-                    break;
-                case SH_CATHELA:
-                    pInstance->SetData(TYPE_SH_CATHELA, 2);
-                    break;
-                case SH_GREGOR:
-                    pInstance->SetData(TYPE_SH_GREGOR, 2);
-                    break;
-                case SH_NEMAS:
-                    pInstance->SetData(TYPE_SH_NEMAS, 2);
-                    break;
-                case SH_VICAR:
-                    pInstance->SetData(TYPE_SH_VICAR, 2);
-                    break;
-            }
-            if(pInstance->GetData(TYPE_SH_QUEST) && Killer->GetTypeId() == TYPEID_PLAYER) {
-                if (Group *pGroup = (Killer->ToPlayer())->GetGroup()) {
-                    for(GroupReference *itr = pGroup->GetFirstMember(); itr != nullptr; itr = itr->next()) {
-                        Player* pGroupie = itr->GetSource();
-                        if (pGroupie)
-                            pGroupie->KilledMonsterCredit(SH_QUEST_CREDIT,me->GetGUID());
-                    }
+                switch(me->GetEntry())
+                {
+                    case SH_AELMAR:
+                        pInstance->SetData(TYPE_SH_AELMAR, 0);
+                        break;
+                    case SH_CATHELA:
+                        pInstance->SetData(TYPE_SH_CATHELA, 0);
+                        break;
+                    case SH_GREGOR:
+                        pInstance->SetData(TYPE_SH_GREGOR, 0);
+                        break;
+                    case SH_NEMAS:
+                        pInstance->SetData(TYPE_SH_NEMAS, 0);
+                        break;
+                    case SH_VICAR:
+                        pInstance->SetData(TYPE_SH_VICAR, 0);
+                        break;
                 }
-                else if (Killer->ToPlayer()) // Solo
-                    Killer->ToPlayer()->KilledMonsterCredit(SH_QUEST_CREDIT,me->GetGUID());
             }
         }
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        //Return since we have no target
-        if (!UpdateVictim() )
-            return;
-
-        if (HolyLight_Timer < diff)
-        {
-            if (me->GetHealth()*5 < me->GetMaxHealth())
+    
+        void EnterCombat(Unit* who)
+        override {
+        }
+    
+        void JustDied(Unit* Killer)
+        override {
+            if(pInstance)
             {
-                DoCast(me, SPELL_HOLY_LIGHT);
-                HolyLight_Timer = 20000;
+                switch(me->GetEntry())
+                {
+                    case SH_AELMAR:
+                        pInstance->SetData(TYPE_SH_AELMAR, 2);
+                        break;
+                    case SH_CATHELA:
+                        pInstance->SetData(TYPE_SH_CATHELA, 2);
+                        break;
+                    case SH_GREGOR:
+                        pInstance->SetData(TYPE_SH_GREGOR, 2);
+                        break;
+                    case SH_NEMAS:
+                        pInstance->SetData(TYPE_SH_NEMAS, 2);
+                        break;
+                    case SH_VICAR:
+                        pInstance->SetData(TYPE_SH_VICAR, 2);
+                        break;
+                }
+                if(pInstance->GetData(TYPE_SH_QUEST) && Killer->GetTypeId() == TYPEID_PLAYER) {
+                    if (Group *pGroup = (Killer->ToPlayer())->GetGroup()) {
+                        for(GroupReference *itr = pGroup->GetFirstMember(); itr != nullptr; itr = itr->next()) {
+                            Player* pGroupie = itr->GetSource();
+                            if (pGroupie)
+                                pGroupie->KilledMonsterCredit(SH_QUEST_CREDIT,me->GetGUID());
+                        }
+                    }
+                    else if (Killer->ToPlayer()) // Solo
+                        Killer->ToPlayer()->KilledMonsterCredit(SH_QUEST_CREDIT,me->GetGUID());
+                }
             }
-        }else HolyLight_Timer -= diff;
-
-        if (DivineShield_Timer < diff)
-        {
-            if (me->GetHealth()*20 < me->GetMaxHealth())
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            //Return since we have no target
+            if (!UpdateVictim() )
+                return;
+    
+            if (HolyLight_Timer < diff)
             {
-                DoCast(me, SPELL_DIVINE_SHIELD);
-                DivineShield_Timer = 40000;
-            }
-        }else DivineShield_Timer -= diff;
+                if (me->GetHealth()*5 < me->GetMaxHealth())
+                {
+                    DoCast(me, SPELL_HOLY_LIGHT);
+                    HolyLight_Timer = 20000;
+                }
+            }else HolyLight_Timer -= diff;
+    
+            if (DivineShield_Timer < diff)
+            {
+                if (me->GetHealth()*20 < me->GetMaxHealth())
+                {
+                    DoCast(me, SPELL_DIVINE_SHIELD);
+                    DivineShield_Timer = 40000;
+                }
+            }else DivineShield_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_silver_hand_bossesAI(creature);
     }
-
 };
-CreatureAI* GetAI_boss_silver_hand_bossesAI(Creature *_Creature)
-{
-    return new boss_silver_hand_bossesAI (_Creature);
-}
+
 
 void AddSC_boss_order_of_silver_hand()
 {
-    OLDScript *newscript;
 
-    newscript = new OLDScript;
-    newscript->Name="boss_silver_hand_bosses";
-    newscript->GetAI = &GetAI_boss_silver_hand_bossesAI;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_silver_hand_bosses();
 }
 

@@ -98,28 +98,38 @@ public:
 #define SAY_ZAPPED2 "Who you gonna call?"
 #define SAY_ZAPPED3 "Don't cross those beams!"
 
-struct mob_freed_soulAI : public ScriptedAI
+
+class mob_freed_soul : public CreatureScript
 {
-    mob_freed_soulAI(Creature *c) : ScriptedAI(c) {}
+public:
+    mob_freed_soul() : CreatureScript("mob_freed_soul")
+    { }
 
-    void Reset()
-    override {
-        switch (rand()%4)
-        {
-            case 0: me->Say(SAY_ZAPPED0,LANG_UNIVERSAL,nullptr); break;
-            case 1: me->Say(SAY_ZAPPED1,LANG_UNIVERSAL,nullptr); break;
-            case 2: me->Say(SAY_ZAPPED2,LANG_UNIVERSAL,nullptr); break;
-            case 3: me->Say(SAY_ZAPPED3,LANG_UNIVERSAL,nullptr); break;
+    class mob_freed_soulAI : public ScriptedAI
+    {
+        public:
+        mob_freed_soulAI(Creature *c) : ScriptedAI(c) {}
+    
+        void Reset()
+        override {
+            switch (rand()%4)
+            {
+                case 0: me->Say(SAY_ZAPPED0,LANG_UNIVERSAL,nullptr); break;
+                case 1: me->Say(SAY_ZAPPED1,LANG_UNIVERSAL,nullptr); break;
+                case 2: me->Say(SAY_ZAPPED2,LANG_UNIVERSAL,nullptr); break;
+                case 3: me->Say(SAY_ZAPPED3,LANG_UNIVERSAL,nullptr); break;
+            }
         }
-    }
+    
+        void EnterCombat(Unit* who) override { }
+    };
 
-    void EnterCombat(Unit* who) override { }
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new mob_freed_soulAI(creature);
+    }
 };
 
-CreatureAI* GetAI_mob_freed_soul(Creature *_Creature)
-{
-    return new mob_freed_soulAI (_Creature);
-}
 
 /*######
 ## mob_restless_soul
@@ -131,66 +141,76 @@ CreatureAI* GetAI_mob_freed_soul(Creature *_Creature)
 #define ENTRY_RESTLESS      11122
 #define ENTRY_FREED         11136
 
-struct mob_restless_soulAI : public ScriptedAI
+
+class mob_restless_soul : public CreatureScript
 {
-    mob_restless_soulAI(Creature *c) : ScriptedAI(c) {}
+public:
+    mob_restless_soul() : CreatureScript("mob_restless_soul")
+    { }
 
-    uint64 Tagger;
-    uint32 Die_Timer;
-    bool Tagged;
-
-    void Reset()
-    override {
-        Tagger = 0;
-        Die_Timer = 5000;
-        Tagged = false;
-    }
-
-    void EnterCombat(Unit* who) override { }
-
-    void SpellHit(Unit *caster, const SpellInfo *spell)
-    override {
-        if (caster->GetTypeId() == TYPEID_PLAYER)
-        {
-            if (!Tagged && spell->Id == SPELL_EGAN_BLASTER && (caster->ToPlayer())->GetQuestStatus(QUEST_RESTLESS_SOUL) == QUEST_STATUS_INCOMPLETE)
+    class mob_restless_soulAI : public ScriptedAI
+    {
+        public:
+        mob_restless_soulAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint64 Tagger;
+        uint32 Die_Timer;
+        bool Tagged;
+    
+        void Reset()
+        override {
+            Tagger = 0;
+            Die_Timer = 5000;
+            Tagged = false;
+        }
+    
+        void EnterCombat(Unit* who) override { }
+    
+        void SpellHit(Unit *caster, const SpellInfo *spell)
+        override {
+            if (caster->GetTypeId() == TYPEID_PLAYER)
             {
-                Tagged = true;
-                Tagger = caster->GetGUID();
+                if (!Tagged && spell->Id == SPELL_EGAN_BLASTER && (caster->ToPlayer())->GetQuestStatus(QUEST_RESTLESS_SOUL) == QUEST_STATUS_INCOMPLETE)
+                {
+                    Tagged = true;
+                    Tagger = caster->GetGUID();
+                }
             }
         }
-    }
-
-    void JustSummoned(Creature *summoned)
-    override {
-        summoned->CastSpell(summoned,SPELL_SOUL_FREED,false);
-    }
-
-    void JustDied(Unit* Killer)
-    override {
-        if (Tagged)
-            me->SummonCreature(ENTRY_FREED, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation(), TEMPSUMMON_TIMED_DESPAWN, 300000);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (Tagged)
-        {
-            if (Die_Timer < diff)
-            {
-                if (Unit* pTemp = ObjectAccessor::GetUnit(*me,Tagger))
-                {
-                    (pTemp)->ToPlayer()->KilledMonsterCredit(ENTRY_RESTLESS, me->GetGUID());
-                    me->Kill(me);
-                }
-            }else Die_Timer -= diff;
+    
+        void JustSummoned(Creature *summoned)
+        override {
+            summoned->CastSpell(summoned,SPELL_SOUL_FREED,false);
         }
+    
+        void JustDied(Unit* Killer)
+        override {
+            if (Tagged)
+                me->SummonCreature(ENTRY_FREED, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation(), TEMPSUMMON_TIMED_DESPAWN, 300000);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (Tagged)
+            {
+                if (Die_Timer < diff)
+                {
+                    if (Unit* pTemp = ObjectAccessor::GetUnit(*me,Tagger))
+                    {
+                        (pTemp)->ToPlayer()->KilledMonsterCredit(ENTRY_RESTLESS, me->GetGUID());
+                        me->Kill(me);
+                    }
+                }else Die_Timer -= diff;
+            }
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new mob_restless_soulAI(creature);
     }
 };
 
-CreatureAI* GetAI_mob_restless_soul(Creature *_Creature)
-{
-    return new mob_restless_soulAI (_Creature);
-}
 
 /*######
 ## mobs_spectral_ghostly_citizen
@@ -198,91 +218,101 @@ CreatureAI* GetAI_mob_restless_soul(Creature *_Creature)
 
 #define SPELL_HAUNTING_PHANTOM  16336
 
-struct mobs_spectral_ghostly_citizenAI : public ScriptedAI
+
+class mobs_spectral_ghostly_citizen : public CreatureScript
 {
-    mobs_spectral_ghostly_citizenAI(Creature *c) : ScriptedAI(c) {}
+public:
+    mobs_spectral_ghostly_citizen() : CreatureScript("mobs_spectral_ghostly_citizen")
+    { }
 
-    uint32 Die_Timer;
-    bool Tagged;
-
-    void Reset()
-    override {
-        Die_Timer = 5000;
-        Tagged = false;
-    }
-
-    void EnterCombat(Unit* who) override { }
-
-    void SpellHit(Unit *caster, const SpellInfo *spell)
-    override {
-        if (!Tagged && spell->Id == SPELL_EGAN_BLASTER)
-            Tagged = true;
-    }
-
-    void JustDied(Unit* Killer)
-    override {
-        if (Tagged)
-        {
-            for(uint32 i = 1; i <= 4; i++)
+    class mobs_spectral_ghostly_citizenAI : public ScriptedAI
+    {
+        public:
+        mobs_spectral_ghostly_citizenAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 Die_Timer;
+        bool Tagged;
+    
+        void Reset()
+        override {
+            Die_Timer = 5000;
+            Tagged = false;
+        }
+    
+        void EnterCombat(Unit* who) override { }
+    
+        void SpellHit(Unit *caster, const SpellInfo *spell)
+        override {
+            if (!Tagged && spell->Id == SPELL_EGAN_BLASTER)
+                Tagged = true;
+        }
+    
+        void JustDied(Unit* Killer)
+        override {
+            if (Tagged)
             {
-                float x,y,z;
-                 me->GetRandomPoint(me,20.0f,x,y,z);
-
-                 //100%, 50%, 33%, 25% chance to spawn
-                 uint32 j = urand(1,i);
-                 if (j==1)
-                     me->SummonCreature(ENTRY_RESTLESS,x,y,z,0,TEMPSUMMON_CORPSE_DESPAWN,600000);
+                for(uint32 i = 1; i <= 4; i++)
+                {
+                    float x,y,z;
+                     me->GetRandomPoint(me,20.0f,x,y,z);
+    
+                     //100%, 50%, 33%, 25% chance to spawn
+                     uint32 j = urand(1,i);
+                     if (j==1)
+                         me->SummonCreature(ENTRY_RESTLESS,x,y,z,0,TEMPSUMMON_CORPSE_DESPAWN,600000);
+                }
             }
         }
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (Tagged)
-        {
-            if (Die_Timer < diff)
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (Tagged)
             {
-                me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-            }else Die_Timer -= diff;
+                if (Die_Timer < diff)
+                {
+                    me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                }else Die_Timer -= diff;
+            }
+    
+            if (!UpdateVictim())
+                return;
+    
+            DoMeleeAttackIfReady();
         }
-
-        if (!UpdateVictim())
-            return;
-
-        DoMeleeAttackIfReady();
-    }
-
-    void ReceiveEmote(Player* player, uint32 emote) override
-    {
-        switch (emote)
+    
+        void ReceiveEmote(Player* player, uint32 emote) override
         {
-        case TEXTEMOTE_DANCE:
-            EnterEvadeMode();
-            break;
-        case TEXTEMOTE_RUDE:
-            //Should instead cast spell, kicking player back. Spell not found.
-            if (me->IsWithinDistInMap(player, 5))
-                me->HandleEmoteCommand(EMOTE_ONESHOT_RUDE);
-            else
-                me->HandleEmoteCommand(EMOTE_ONESHOT_RUDE);
-            break;
-        case TEXTEMOTE_WAVE:
-            me->HandleEmoteCommand(EMOTE_ONESHOT_WAVE);
-            break;
-        case TEXTEMOTE_BOW:
-            me->HandleEmoteCommand(EMOTE_ONESHOT_BOW);
-            break;
-        case TEXTEMOTE_KISS:
-            me->HandleEmoteCommand(EMOTE_ONESHOT_FLEX);
-            break;
+            switch (emote)
+            {
+            case TEXTEMOTE_DANCE:
+                EnterEvadeMode();
+                break;
+            case TEXTEMOTE_RUDE:
+                //Should instead cast spell, kicking player back. Spell not found.
+                if (me->IsWithinDistInMap(player, 5))
+                    me->HandleEmoteCommand(EMOTE_ONESHOT_RUDE);
+                else
+                    me->HandleEmoteCommand(EMOTE_ONESHOT_RUDE);
+                break;
+            case TEXTEMOTE_WAVE:
+                me->HandleEmoteCommand(EMOTE_ONESHOT_WAVE);
+                break;
+            case TEXTEMOTE_BOW:
+                me->HandleEmoteCommand(EMOTE_ONESHOT_BOW);
+                break;
+            case TEXTEMOTE_KISS:
+                me->HandleEmoteCommand(EMOTE_ONESHOT_FLEX);
+                break;
+            }
         }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new mobs_spectral_ghostly_citizenAI(creature);
     }
 };
 
-CreatureAI* GetAI_mobs_spectral_ghostly_citizen(Creature *_Creature)
-{
-    return new mobs_spectral_ghostly_citizenAI (_Creature);
-}
 
 class ATTimmyTheCruel : AreaTriggerScript
 {
@@ -354,43 +384,53 @@ public:
 
 #define NPC_THUZADIN_ACOLYTE    10399
 
-struct npc_ashari_crystalAI : public ScriptedAI
+
+class npc_ashari_crystal : public CreatureScript
 {
-    npc_ashari_crystalAI(Creature *c) : ScriptedAI(c) {}
-    
-    void Reset()
-    override {
-        me->SetDisableGravity(true);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-    }
-    
-    void Aggro (Unit *pWho) {}
-    
-    void MoveInLineOfSight(Unit *pWho)
-    override {
-        if (pWho->GetTypeId() != TYPEID_PLAYER)
-            return;
-            
-        if (me->GetDistance2d(pWho) >= 10.0f)
-            return;
-            
-        if (Creature *acolyte = pWho->FindNearestCreature(NPC_THUZADIN_ACOLYTE, 15.0f, true))
-            return;
-            
-        me->Kill(me);
-    }
-    
-    void UpdateAI (uint32 const diff) 
-    override {
-        me->SetDisableGravity(true);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+public:
+    npc_ashari_crystal() : CreatureScript("npc_ashari_crystal")
+    { }
+
+    class npc_ashari_crystalAI : public ScriptedAI
+    {
+        public:
+        npc_ashari_crystalAI(Creature *c) : ScriptedAI(c) {}
+        
+        void Reset()
+        override {
+            me->SetDisableGravity(true);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        }
+        
+        void Aggro (Unit *pWho) {}
+        
+        void MoveInLineOfSight(Unit *pWho)
+        override {
+            if (pWho->GetTypeId() != TYPEID_PLAYER)
+                return;
+                
+            if (me->GetDistance2d(pWho) >= 10.0f)
+                return;
+                
+            if (Creature *acolyte = pWho->FindNearestCreature(NPC_THUZADIN_ACOLYTE, 15.0f, true))
+                return;
+                
+            me->Kill(me);
+        }
+        
+        void UpdateAI (uint32 const diff) 
+        override {
+            me->SetDisableGravity(true);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_ashari_crystalAI(creature);
     }
 };
 
-CreatureAI* GetAI_npc_ashari_crystal(Creature *pCreature)
-{
-    return new npc_ashari_crystalAI(pCreature);
-}
 
 class SupplyCrate : public GameObjectScript
 {
@@ -452,32 +492,19 @@ public:
 
 void AddSC_stratholme()
 {
-    OLDScript *newscript;
 
     new GauntletGate();
 
-    newscript = new OLDScript;
-    newscript->Name = "mob_freed_soul";
-    newscript->GetAI = &GetAI_mob_freed_soul;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new mob_freed_soul();
 
-    newscript = new OLDScript;
-    newscript->Name = "mob_restless_soul";
-    newscript->GetAI = &GetAI_mob_restless_soul;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new mob_restless_soul();
 
-    newscript = new OLDScript;
-    newscript->Name = "mobs_spectral_ghostly_citizen";
-    newscript->GetAI = &GetAI_mobs_spectral_ghostly_citizen;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new mobs_spectral_ghostly_citizen();
     
     new ATTimmyTheCruel();
     new CannonballStack();
     
-    newscript = new OLDScript;
-    newscript->Name = "npc_ashari_crystal";
-    newscript->GetAI = &GetAI_npc_ashari_crystal;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_ashari_crystal();
     
     new SupplyCrate();
 }

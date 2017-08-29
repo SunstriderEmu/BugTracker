@@ -31,104 +31,110 @@ EndScriptData */
 #define SPELL_PUMMEL            15615
 #define SPELL_THROWAXE          16075
 
-struct boss_warmastervooneAI : public ScriptedAI
+class boss_warmaster_voone : public CreatureScript
 {
-    boss_warmastervooneAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_warmaster_voone() : CreatureScript("boss_warmaster_voone")
+    { }
 
-    uint32 Snapkick_Timer;
-    uint32 Cleave_Timer;
-    uint32 Uppercut_Timer;
-    uint32 MortalStrike_Timer;
-    uint32 Pummel_Timer;
-    uint32 ThrowAxe_Timer;
-
-    bool isEventActive()
+    class boss_warmastervooneAI : public ScriptedAI
     {
-        const GameEventMgr::ActiveEvents& activeEvents = sGameEventMgr->GetActiveEventList();
-        bool active = activeEvents.find(57) != activeEvents.end(); //Winter Veil event
-
-        return active;
-    }
-
-    void Reset()
-    override {
-        Snapkick_Timer = 8000;
-        Cleave_Timer = 14000;
-        Uppercut_Timer = 20000;
-        MortalStrike_Timer = 12000;
-        Pummel_Timer = 32000;
-        ThrowAxe_Timer = 1000;
-        
-        if (isEventActive())
-            me->SetDisplayId(15737);
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        //Return since we have no target
-        if (!UpdateVictim() )
-            return;
-
-        //Snapkick_Timer
-        if (Snapkick_Timer < diff)
+        public:
+        boss_warmastervooneAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 Snapkick_Timer;
+        uint32 Cleave_Timer;
+        uint32 Uppercut_Timer;
+        uint32 MortalStrike_Timer;
+        uint32 Pummel_Timer;
+        uint32 ThrowAxe_Timer;
+    
+        bool isEventActive()
         {
-            DoCast(me->GetVictim(),SPELL_SNAPKICK);
-            Snapkick_Timer = 6000;
-        }else Snapkick_Timer -= diff;
+            const GameEventMgr::ActiveEvents& activeEvents = sGameEventMgr->GetActiveEventList();
+            bool active = activeEvents.find(57) != activeEvents.end(); //Winter Veil event
+    
+            return active;
+        }
+    
+        void Reset()
+        override {
+            Snapkick_Timer = 8000;
+            Cleave_Timer = 14000;
+            Uppercut_Timer = 20000;
+            MortalStrike_Timer = 12000;
+            Pummel_Timer = 32000;
+            ThrowAxe_Timer = 1000;
+            
+            if (isEventActive())
+                me->SetDisplayId(15737);
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            //Return since we have no target
+            if (!UpdateVictim() )
+                return;
+    
+            //Snapkick_Timer
+            if (Snapkick_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_SNAPKICK);
+                Snapkick_Timer = 6000;
+            }else Snapkick_Timer -= diff;
+    
+            //Cleave_Timer
+            if (Cleave_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_CLEAVE);
+                Cleave_Timer = 12000;
+            }else Cleave_Timer -= diff;
+    
+            //Uppercut_Timer
+            if (Uppercut_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_UPPERCUT);
+                Uppercut_Timer = 14000;
+            }else Uppercut_Timer -= diff;
+    
+            //MortalStrike_Timer
+            if (MortalStrike_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_MORTALSTRIKE);
+                MortalStrike_Timer = 10000;
+            }else MortalStrike_Timer -= diff;
+    
+            //Pummel_Timer
+            if (Pummel_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_PUMMEL);
+                Pummel_Timer = 16000;
+            }else Pummel_Timer -= diff;
+    
+            //ThrowAxe_Timer
+            if (ThrowAxe_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_THROWAXE);
+                ThrowAxe_Timer = 8000;
+            }else ThrowAxe_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        //Cleave_Timer
-        if (Cleave_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_CLEAVE);
-            Cleave_Timer = 12000;
-        }else Cleave_Timer -= diff;
-
-        //Uppercut_Timer
-        if (Uppercut_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_UPPERCUT);
-            Uppercut_Timer = 14000;
-        }else Uppercut_Timer -= diff;
-
-        //MortalStrike_Timer
-        if (MortalStrike_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_MORTALSTRIKE);
-            MortalStrike_Timer = 10000;
-        }else MortalStrike_Timer -= diff;
-
-        //Pummel_Timer
-        if (Pummel_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_PUMMEL);
-            Pummel_Timer = 16000;
-        }else Pummel_Timer -= diff;
-
-        //ThrowAxe_Timer
-        if (ThrowAxe_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_THROWAXE);
-            ThrowAxe_Timer = 8000;
-        }else ThrowAxe_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_warmastervooneAI(creature);
     }
 };
-CreatureAI* GetAI_boss_warmastervoone(Creature *_Creature)
-{
-    return new boss_warmastervooneAI (_Creature);
-}
+
 
 void AddSC_boss_warmastervoone()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_warmaster_voone";
-    newscript->GetAI = &GetAI_boss_warmastervoone;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_warmaster_voone();
 }
 

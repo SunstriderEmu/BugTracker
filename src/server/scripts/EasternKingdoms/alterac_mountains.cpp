@@ -31,32 +31,38 @@ EndContentData */
 ## npc_ravenholdt
 ######*/
 
-struct npc_ravenholdtAI : public ScriptedAI
+
+class npc_ravenholdt : public CreatureScript
 {
-    npc_ravenholdtAI(Creature *c) : ScriptedAI(c) {}
+public:
+    npc_ravenholdt() : CreatureScript("npc_ravenholdt")
+    { }
 
-    void Reset() override { }
-
-    void MoveInLineOfSight(Unit *who) override
+    class npc_ravenholdtAI : public ScriptedAI
     {
-        if( who->GetTypeId() == TYPEID_PLAYER )
-            if( (who)->ToPlayer()->GetQuestStatus(6681) == QUEST_STATUS_INCOMPLETE )
-                (who)->ToPlayer()->KilledMonsterCredit(me->GetEntry(),me->GetGUID() );
+        public:
+        npc_ravenholdtAI(Creature *c) : ScriptedAI(c) {}
+    
+        void Reset() override { }
+    
+        void MoveInLineOfSight(Unit *who) override
+        {
+            if( who->GetTypeId() == TYPEID_PLAYER )
+                if( (who)->ToPlayer()->GetQuestStatus(6681) == QUEST_STATUS_INCOMPLETE )
+                    (who)->ToPlayer()->KilledMonsterCredit(me->GetEntry(),me->GetGUID() );
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_ravenholdtAI(creature);
     }
 };
 
-CreatureAI* GetAI_npc_ravenholdt(Creature *pCreature)
-{
-    return new npc_ravenholdtAI (pCreature);
-}
 
 void AddSC_alterac_mountains()
 {
-    OLDScript *newscript;
 
-    newscript = new OLDScript;
-    newscript->Name="npc_ravenholdt";
-    newscript->GetAI = &GetAI_npc_ravenholdt;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_ravenholdt();
 }
 

@@ -348,42 +348,42 @@ class Boss_Majordomo : public CreatureScript
                 DoMeleeAttackIfReady();
             }
 
+            bool GossipHello(Player *player) override
+            {
+                if (_instance)
+                {
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_SUMMON_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+
+                    player->SEND_GOSSIP_MENU_TEXTID(TEXT_ID_SUMMON_1, me->GetGUID());
+                }
+
+                return true;
+            }
+
+            bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+            {
+                switch (action)
+                {
+                case GOSSIP_ACTION_INFO_DEF + 1:
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_SUMMON_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+                    player->SEND_GOSSIP_MENU_TEXTID(TEXT_ID_SUMMON_2, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF + 2:
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_SUMMON_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+                    player->SEND_GOSSIP_MENU_TEXTID(TEXT_ID_SUMMON_3, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF + 3:
+                    player->CLOSE_GOSSIP_MENU();
+                    me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+                    break;
+                }
+
+                return true;
+            }
+
         private:
             SummonList Summons;
     };
-
-    bool OnGossipHello(Player *player, Creature *_Creature) override
-    {
-        if (((Boss_Majordomo::Boss_MajordomoAI*)_Creature->AI())->_instance)
-        {
-            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_SUMMON_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-
-            player->SEND_GOSSIP_MENU_TEXTID(TEXT_ID_SUMMON_1, _Creature->GetGUID());
-        }
-
-        return true;
-    }
-
-    bool OnGossipSelect(Player* player, Creature* creature, uint32 sender, uint32 action) override
-    {
-        switch (action)
-        {
-        case GOSSIP_ACTION_INFO_DEF + 1:
-            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_SUMMON_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-            player->SEND_GOSSIP_MENU_TEXTID(TEXT_ID_SUMMON_2, creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 2:
-            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_SUMMON_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
-            player->SEND_GOSSIP_MENU_TEXTID(TEXT_ID_SUMMON_3, creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 3:
-            player->CLOSE_GOSSIP_MENU();
-            creature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-            break;
-        }
-
-        return true;
-    }
 
     CreatureAI* GetAI(Creature* creature) const
     override {

@@ -27,67 +27,73 @@ EndScriptData */
 #define SPELL_AVARTAR                24646                  //The Enrage Spell
 #define SPELL_GROUNDTREMOR            6524
 
-struct boss_grilekAI : public ScriptedAI
+class boss_grilek : public CreatureScript
 {
-    boss_grilekAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_grilek() : CreatureScript("boss_grilek")
+    { }
 
-    uint32 Avartar_Timer;
-    uint32 GroundTremor_Timer;
+    class boss_grilekAI : public ScriptedAI
+    {
+        public:
+        boss_grilekAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 Avartar_Timer;
+        uint32 GroundTremor_Timer;
+    
+        void Reset()
+        override {
+            Avartar_Timer = 15000 + rand()%10000;
+            GroundTremor_Timer = 8000 + rand()%8000;
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            //Return since we have no target
+            if (!UpdateVictim())
+                return;
+    
+            //Avartar_Timer
+            if (Avartar_Timer < diff)
+            {
+    
+                DoCast(me, SPELL_AVARTAR);
+                Unit* target = nullptr;
+    
+                target = SelectTarget(SELECT_TARGET_RANDOM,1);
+    
+                if(me->GetThreat(me->GetVictim()))
+                    DoModifyThreatPercent(me->GetVictim(),-50);
+                if (target)
+                    AttackStart(target);
+    
+                Avartar_Timer = 25000 + rand()%10000;
+            }else Avartar_Timer -= diff;
+    
+            //GroundTremor_Timer
+            if (GroundTremor_Timer < diff)
+            {
+                DoCast(me->GetVictim(), SPELL_GROUNDTREMOR);
+                GroundTremor_Timer = 12000 + rand()%4000;
+            }else GroundTremor_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-    void Reset()
-    override {
-        Avartar_Timer = 15000 + rand()%10000;
-        GroundTremor_Timer = 8000 + rand()%8000;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        //Return since we have no target
-        if (!UpdateVictim())
-            return;
-
-        //Avartar_Timer
-        if (Avartar_Timer < diff)
-        {
-
-            DoCast(me, SPELL_AVARTAR);
-            Unit* target = nullptr;
-
-            target = SelectTarget(SELECT_TARGET_RANDOM,1);
-
-            if(me->GetThreat(me->GetVictim()))
-                DoModifyThreatPercent(me->GetVictim(),-50);
-            if (target)
-                AttackStart(target);
-
-            Avartar_Timer = 25000 + rand()%10000;
-        }else Avartar_Timer -= diff;
-
-        //GroundTremor_Timer
-        if (GroundTremor_Timer < diff)
-        {
-            DoCast(me->GetVictim(), SPELL_GROUNDTREMOR);
-            GroundTremor_Timer = 12000 + rand()%4000;
-        }else GroundTremor_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_grilekAI(creature);
     }
 };
-CreatureAI* GetAI_boss_grilek(Creature *_Creature)
-{
-    return new boss_grilekAI (_Creature);
-}
+
 
 void AddSC_boss_grilek()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_grilek";
-    newscript->GetAI = &GetAI_boss_grilek;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_grilek();
 }
 

@@ -27,68 +27,74 @@ EndScriptData */
 #define SPELL_IMMOLATE              20294
 #define SPELL_TERRIFYINGROAR        14100
 
-struct boss_thebeastAI : public ScriptedAI
+class boss_the_beast : public CreatureScript
 {
-    boss_thebeastAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_the_beast() : CreatureScript("boss_the_beast")
+    { }
 
-    uint32 Flamebreak_Timer;
-    uint32 Immolate_Timer;
-    uint32 TerrifyingRoar_Timer;
+    class boss_thebeastAI : public ScriptedAI
+    {
+        public:
+        boss_thebeastAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 Flamebreak_Timer;
+        uint32 Immolate_Timer;
+        uint32 TerrifyingRoar_Timer;
+    
+        void Reset()
+        override {
+            Flamebreak_Timer = 12000;
+            Immolate_Timer = 3000;
+            TerrifyingRoar_Timer = 23000;
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            //Return since we have no target
+            if (!UpdateVictim() )
+                return;
+    
+            //Flamebreak_Timer
+            if (Flamebreak_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_FLAMEBREAK);
+                Flamebreak_Timer = 10000;
+            }else Flamebreak_Timer -= diff;
+    
+            //Immolate_Timer
+            if (Immolate_Timer < diff)
+            {
+                Unit* target = nullptr;
+                target = SelectTarget(SELECT_TARGET_RANDOM,0);
+                if (target) DoCast(target,SPELL_IMMOLATE);
+                Immolate_Timer = 8000;
+            }else Immolate_Timer -= diff;
+    
+            //TerrifyingRoar_Timer
+            if (TerrifyingRoar_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_TERRIFYINGROAR);
+                TerrifyingRoar_Timer = 20000;
+            }else TerrifyingRoar_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-    void Reset()
-    override {
-        Flamebreak_Timer = 12000;
-        Immolate_Timer = 3000;
-        TerrifyingRoar_Timer = 23000;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        //Return since we have no target
-        if (!UpdateVictim() )
-            return;
-
-        //Flamebreak_Timer
-        if (Flamebreak_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_FLAMEBREAK);
-            Flamebreak_Timer = 10000;
-        }else Flamebreak_Timer -= diff;
-
-        //Immolate_Timer
-        if (Immolate_Timer < diff)
-        {
-            Unit* target = nullptr;
-            target = SelectTarget(SELECT_TARGET_RANDOM,0);
-            if (target) DoCast(target,SPELL_IMMOLATE);
-            Immolate_Timer = 8000;
-        }else Immolate_Timer -= diff;
-
-        //TerrifyingRoar_Timer
-        if (TerrifyingRoar_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_TERRIFYINGROAR);
-            TerrifyingRoar_Timer = 20000;
-        }else TerrifyingRoar_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_thebeastAI(creature);
     }
 };
-CreatureAI* GetAI_boss_thebeast(Creature *_Creature)
-{
-    return new boss_thebeastAI (_Creature);
-}
+
 
 void AddSC_boss_thebeast()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_the_beast";
-    newscript->GetAI = &GetAI_boss_thebeast;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_the_beast();
 }
 

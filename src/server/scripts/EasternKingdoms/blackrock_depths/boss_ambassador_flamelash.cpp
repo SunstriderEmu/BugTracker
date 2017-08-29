@@ -28,83 +28,89 @@ enum Spells
     SPELL_FIREBLAST                                        = 15573
 };
 
-struct boss_ambassador_flamelashAI : public ScriptedAI
+class boss_ambassador_flamelash : public CreatureScript
 {
-    boss_ambassador_flamelashAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_ambassador_flamelash() : CreatureScript("boss_ambassador_flamelash")
+    { }
 
-    uint32 FireBlast_Timer;
-    uint32 Spirit_Timer;
-    int Rand;
-    int RandX;
-    int RandY;
-    Creature* Summoned;
-
-    void Reset()
-    override {
-        FireBlast_Timer = 2000;
-        Spirit_Timer = 24000;
-    }
-
-    void EnterCombat(Unit *who) override {}
-
-    void SummonSpirits(Unit* victim)
+    class boss_ambassador_flamelashAI : public ScriptedAI
     {
-        Rand = rand()%10;
-        switch (rand()%2)
-        {
-            case 0: RandX -= Rand; break;
-            case 1: RandX += Rand; break;
+        public:
+        boss_ambassador_flamelashAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 FireBlast_Timer;
+        uint32 Spirit_Timer;
+        int Rand;
+        int RandX;
+        int RandY;
+        Creature* Summoned;
+    
+        void Reset()
+        override {
+            FireBlast_Timer = 2000;
+            Spirit_Timer = 24000;
         }
-        Rand = 0;
-        Rand = rand()%10;
-        switch (rand()%2)
+    
+        void EnterCombat(Unit *who) override {}
+    
+        void SummonSpirits(Unit* victim)
         {
-            case 0: RandY -= Rand; break;
-            case 1: RandY += Rand; break;
+            Rand = rand()%10;
+            switch (rand()%2)
+            {
+                case 0: RandX -= Rand; break;
+                case 1: RandX += Rand; break;
+            }
+            Rand = 0;
+            Rand = rand()%10;
+            switch (rand()%2)
+            {
+                case 0: RandY -= Rand; break;
+                case 1: RandY += Rand; break;
+            }
+            Summoned = DoSpawnCreature(9178, RandX, RandY, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 60000);
+            if(Summoned)
+                ((CreatureAI*)Summoned->AI())->AttackStart(victim);
         }
-        Summoned = DoSpawnCreature(9178, RandX, RandY, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 60000);
-        if(Summoned)
-            ((CreatureAI*)Summoned->AI())->AttackStart(victim);
-    }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            //Return since we have no target
+            if (!UpdateVictim() )
+                return;
+    
+            //FireBlast_Timer
+            if (FireBlast_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_FIREBLAST);
+                FireBlast_Timer = 7000;
+            }else FireBlast_Timer -= diff;
+    
+            //Spirit_Timer
+            if (Spirit_Timer < diff)
+            {
+                SummonSpirits(me->GetVictim());
+                SummonSpirits(me->GetVictim());
+                SummonSpirits(me->GetVictim());
+                SummonSpirits(me->GetVictim());
+    
+                Spirit_Timer = 30000;
+            }else Spirit_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-    void UpdateAI(const uint32 diff)
-    override {
-        //Return since we have no target
-        if (!UpdateVictim() )
-            return;
-
-        //FireBlast_Timer
-        if (FireBlast_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_FIREBLAST);
-            FireBlast_Timer = 7000;
-        }else FireBlast_Timer -= diff;
-
-        //Spirit_Timer
-        if (Spirit_Timer < diff)
-        {
-            SummonSpirits(me->GetVictim());
-            SummonSpirits(me->GetVictim());
-            SummonSpirits(me->GetVictim());
-            SummonSpirits(me->GetVictim());
-
-            Spirit_Timer = 30000;
-        }else Spirit_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_ambassador_flamelashAI(creature);
     }
 };
-CreatureAI* GetAI_boss_ambassador_flamelash(Creature *pCreature)
-{
-    return new boss_ambassador_flamelashAI (pCreature);
-}
+
 
 void AddSC_boss_ambassador_flamelash()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_ambassador_flamelash";
-    newscript->GetAI = &GetAI_boss_ambassador_flamelash;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_ambassador_flamelash();
 }
 

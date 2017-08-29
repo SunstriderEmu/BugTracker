@@ -27,57 +27,63 @@ EndScriptData */
 
 #define SPELL_RAVENOUSCLAW    17470
 
-struct boss_timmy_the_cruelAI : public ScriptedAI
+class boss_timmy_the_cruel : public CreatureScript
 {
-    boss_timmy_the_cruelAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_timmy_the_cruel() : CreatureScript("boss_timmy_the_cruel")
+    { }
 
-    uint32 RavenousClaw_Timer;
-    bool HasYelled;
-
-    void Reset()
-    override {
-        RavenousClaw_Timer = 10000;
-        HasYelled = false;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-        if (!HasYelled)
-        {
-            me->Yell(SAY_SPAWN,LANG_UNIVERSAL,nullptr);
-            HasYelled = true;
+    class boss_timmy_the_cruelAI : public ScriptedAI
+    {
+        public:
+        boss_timmy_the_cruelAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 RavenousClaw_Timer;
+        bool HasYelled;
+    
+        void Reset()
+        override {
+            RavenousClaw_Timer = 10000;
+            HasYelled = false;
         }
-    }
+    
+        void EnterCombat(Unit *who)
+        override {
+            if (!HasYelled)
+            {
+                me->Yell(SAY_SPAWN,LANG_UNIVERSAL,nullptr);
+                HasYelled = true;
+            }
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            //Return since we have no target
+            if (!UpdateVictim())
+                return;
+    
+            //RavenousClaw
+            if (RavenousClaw_Timer < diff)
+            {
+                //Cast
+                DoCast(me->GetVictim(),SPELL_RAVENOUSCLAW);
+                //15 seconds until we should cast this again
+                RavenousClaw_Timer = 15000;
+            }else RavenousClaw_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-    void UpdateAI(const uint32 diff)
-    override {
-        //Return since we have no target
-        if (!UpdateVictim())
-            return;
-
-        //RavenousClaw
-        if (RavenousClaw_Timer < diff)
-        {
-            //Cast
-            DoCast(me->GetVictim(),SPELL_RAVENOUSCLAW);
-            //15 seconds until we should cast this again
-            RavenousClaw_Timer = 15000;
-        }else RavenousClaw_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_timmy_the_cruelAI(creature);
     }
 };
-CreatureAI* GetAI_boss_timmy_the_cruel(Creature *_Creature)
-{
-    return new boss_timmy_the_cruelAI (_Creature);
-}
+
 
 void AddSC_boss_timmy_the_cruel()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_timmy_the_cruel";
-    newscript->GetAI = &GetAI_boss_timmy_the_cruel;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_timmy_the_cruel();
 }
 

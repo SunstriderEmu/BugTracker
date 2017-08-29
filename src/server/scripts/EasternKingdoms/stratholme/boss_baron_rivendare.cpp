@@ -75,114 +75,120 @@ EndScriptData */
 #define SPELL_RAISE_DEAD5   17479
 #define SPELL_RAISE_DEAD6   17480
 
-struct boss_baron_rivendareAI : public ScriptedAI
+
+class boss_baron_rivendare : public CreatureScript
 {
-    boss_baron_rivendareAI(Creature *c) : ScriptedAI(c)
+public:
+    boss_baron_rivendare() : CreatureScript("boss_baron_rivendare")
+    { }
+
+    class boss_baron_rivendareAI : public ScriptedAI
     {
-        pInstance = (InstanceScript*)me->GetInstanceScript();
-    }
-
-    InstanceScript* pInstance;
-
-    uint32 ShadowBolt_Timer;
-    uint32 Cleave_Timer;
-    uint32 MortalStrike_Timer;
-    //    uint32 RaiseDead_Timer;
-    uint32 SummonSkeletons_Timer;
-    Creature *Summoned;
-
-    void Reset() override
-    {
-        ShadowBolt_Timer = 5000;
-        Cleave_Timer = 8000;
-        MortalStrike_Timer = 12000;
-        //        RaiseDead_Timer = 30000;
-        SummonSkeletons_Timer = 34000;
-    }
-
-    void EnterCombat(Unit *who) override
-    {
-        if (pInstance)
-            pInstance->SetData(TYPE_BARON,IN_PROGRESS);
-    }
-
-    void JustSummoned(Creature* summoned) override
-    {
-        if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0))
-             summoned->AI()->AttackStart(target);
-    }
-
-     void JustDied(Unit* Killer) override
-     {
-         if (pInstance)
-             pInstance->SetData(TYPE_BARON,DONE);
-     }
-
-    void UpdateAI(const uint32 diff) override
-    {
-        if (!UpdateVictim())
-            return;
-
-        //ShadowBolt
-        if (ShadowBolt_Timer < diff)
+        public:
+        boss_baron_rivendareAI(Creature *c) : ScriptedAI(c)
         {
-            if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
-                DoCast(me->GetVictim(),SPELL_SHADOWBOLT);
-
-            ShadowBolt_Timer = 10000;
-        }else ShadowBolt_Timer -= diff;
-
-        //Cleave
-        if (Cleave_Timer < diff)
+            pInstance = (InstanceScript*)me->GetInstanceScript();
+        }
+    
+        InstanceScript* pInstance;
+    
+        uint32 ShadowBolt_Timer;
+        uint32 Cleave_Timer;
+        uint32 MortalStrike_Timer;
+        //    uint32 RaiseDead_Timer;
+        uint32 SummonSkeletons_Timer;
+        Creature *Summoned;
+    
+        void Reset() override
         {
-            DoCast(me->GetVictim(),SPELL_CLEAVE);
-            //13 seconds until we should cast this again
-            Cleave_Timer = 7000 + (rand()%10000);
-        }else Cleave_Timer -= diff;
-
-        //MortalStrike
-        if (MortalStrike_Timer < diff)
+            ShadowBolt_Timer = 5000;
+            Cleave_Timer = 8000;
+            MortalStrike_Timer = 12000;
+            //        RaiseDead_Timer = 30000;
+            SummonSkeletons_Timer = 34000;
+        }
+    
+        void EnterCombat(Unit *who) override
         {
-            DoCast(me->GetVictim(),SPELL_MORTALSTRIKE);
-            MortalStrike_Timer = 10000 + (rand()%15000);
-        }else MortalStrike_Timer -= diff;
-
-        //RaiseDead
-        //            if (RaiseDead_Timer < diff)
-        //          {
-        //      DoCast(me,SPELL_RAISEDEAD);
-        //                RaiseDead_Timer = 45000;
-        //            }else RaiseDead_Timer -= diff;
-
-        //SummonSkeletons
-        if (SummonSkeletons_Timer < diff)
+            if (pInstance)
+                pInstance->SetData(TYPE_BARON,IN_PROGRESS);
+        }
+    
+        void JustSummoned(Creature* summoned) override
         {
-            me->SummonCreature(11197,ADD_1X,ADD_1Y,ADD_1Z,ADD_1O,TEMPSUMMON_TIMED_DESPAWN,29000);
-            me->SummonCreature(11197,ADD_2X,ADD_2Y,ADD_2Z,ADD_2O,TEMPSUMMON_TIMED_DESPAWN,29000);
-            me->SummonCreature(11197,ADD_3X,ADD_3Y,ADD_3Z,ADD_3O,TEMPSUMMON_TIMED_DESPAWN,29000);
-            me->SummonCreature(11197,ADD_4X,ADD_4Y,ADD_4Z,ADD_4O,TEMPSUMMON_TIMED_DESPAWN,29000);
-            me->SummonCreature(11197,ADD_5X,ADD_5Y,ADD_5Z,ADD_5O,TEMPSUMMON_TIMED_DESPAWN,29000);
-            me->SummonCreature(11197,ADD_6X,ADD_6Y,ADD_6Z,ADD_6O,TEMPSUMMON_TIMED_DESPAWN,29000);
+            if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0))
+                 summoned->AI()->AttackStart(target);
+        }
+    
+         void JustDied(Unit* Killer) override
+         {
+             if (pInstance)
+                 pInstance->SetData(TYPE_BARON,DONE);
+         }
+    
+        void UpdateAI(const uint32 diff) override
+        {
+            if (!UpdateVictim())
+                return;
+    
+            //ShadowBolt
+            if (ShadowBolt_Timer < diff)
+            {
+                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
+                    DoCast(me->GetVictim(),SPELL_SHADOWBOLT);
+    
+                ShadowBolt_Timer = 10000;
+            }else ShadowBolt_Timer -= diff;
+    
+            //Cleave
+            if (Cleave_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_CLEAVE);
+                //13 seconds until we should cast this again
+                Cleave_Timer = 7000 + (rand()%10000);
+            }else Cleave_Timer -= diff;
+    
+            //MortalStrike
+            if (MortalStrike_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_MORTALSTRIKE);
+                MortalStrike_Timer = 10000 + (rand()%15000);
+            }else MortalStrike_Timer -= diff;
+    
+            //RaiseDead
+            //            if (RaiseDead_Timer < diff)
+            //          {
+            //      DoCast(me,SPELL_RAISEDEAD);
+            //                RaiseDead_Timer = 45000;
+            //            }else RaiseDead_Timer -= diff;
+    
+            //SummonSkeletons
+            if (SummonSkeletons_Timer < diff)
+            {
+                me->SummonCreature(11197,ADD_1X,ADD_1Y,ADD_1Z,ADD_1O,TEMPSUMMON_TIMED_DESPAWN,29000);
+                me->SummonCreature(11197,ADD_2X,ADD_2Y,ADD_2Z,ADD_2O,TEMPSUMMON_TIMED_DESPAWN,29000);
+                me->SummonCreature(11197,ADD_3X,ADD_3Y,ADD_3Z,ADD_3O,TEMPSUMMON_TIMED_DESPAWN,29000);
+                me->SummonCreature(11197,ADD_4X,ADD_4Y,ADD_4Z,ADD_4O,TEMPSUMMON_TIMED_DESPAWN,29000);
+                me->SummonCreature(11197,ADD_5X,ADD_5Y,ADD_5Z,ADD_5O,TEMPSUMMON_TIMED_DESPAWN,29000);
+                me->SummonCreature(11197,ADD_6X,ADD_6Y,ADD_6Z,ADD_6O,TEMPSUMMON_TIMED_DESPAWN,29000);
+    
+                //34 seconds until we should cast this again
+                SummonSkeletons_Timer = 40000;
+            }else SummonSkeletons_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-            //34 seconds until we should cast this again
-            SummonSkeletons_Timer = 40000;
-        }else SummonSkeletons_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_baron_rivendareAI(creature);
     }
 };
 
-CreatureAI* GetAI_boss_baron_rivendare(Creature *_Creature)
-{
-    return new boss_baron_rivendareAI (_Creature);
-}
 
 void AddSC_boss_baron_rivendare()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_baron_rivendare";
-    newscript->GetAI = &GetAI_boss_baron_rivendare;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_baron_rivendare();
 }
 

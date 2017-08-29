@@ -27,59 +27,65 @@ EndScriptData */
 #define SPELL_LIGHTNINGCLOUD         25033
 #define SPELL_LIGHTNINGWAVE          24819
 
-struct boss_wushoolayAI : public ScriptedAI
+class boss_wushoolay : public CreatureScript
 {
-    boss_wushoolayAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_wushoolay() : CreatureScript("boss_wushoolay")
+    { }
 
-    uint32 LightningCloud_Timer;
-    uint32 LightningWave_Timer;
+    class boss_wushoolayAI : public ScriptedAI
+    {
+        public:
+        boss_wushoolayAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 LightningCloud_Timer;
+        uint32 LightningWave_Timer;
+    
+        void Reset()
+        override {
+            LightningCloud_Timer = 5000 + rand()%5000;
+            LightningWave_Timer = 8000 + rand()%8000;
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim())
+                return;
+    
+            //LightningCloud_Timer
+            if (LightningCloud_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_LIGHTNINGCLOUD);
+                LightningCloud_Timer = 15000 + rand()%5000;
+            }else LightningCloud_Timer -= diff;
+    
+            //LightningWave_Timer
+            if (LightningWave_Timer < diff)
+            {
+                Unit* target = nullptr;
+                target = SelectTarget(SELECT_TARGET_RANDOM,0);
+                if (target) DoCast(target,SPELL_LIGHTNINGWAVE);
+    
+                LightningWave_Timer = 12000 + rand()%4000;
+            }else LightningWave_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-    void Reset()
-    override {
-        LightningCloud_Timer = 5000 + rand()%5000;
-        LightningWave_Timer = 8000 + rand()%8000;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim())
-            return;
-
-        //LightningCloud_Timer
-        if (LightningCloud_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_LIGHTNINGCLOUD);
-            LightningCloud_Timer = 15000 + rand()%5000;
-        }else LightningCloud_Timer -= diff;
-
-        //LightningWave_Timer
-        if (LightningWave_Timer < diff)
-        {
-            Unit* target = nullptr;
-            target = SelectTarget(SELECT_TARGET_RANDOM,0);
-            if (target) DoCast(target,SPELL_LIGHTNINGWAVE);
-
-            LightningWave_Timer = 12000 + rand()%4000;
-        }else LightningWave_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_wushoolayAI(creature);
     }
 };
-CreatureAI* GetAI_boss_wushoolay(Creature *_Creature)
-{
-    return new boss_wushoolayAI (_Creature);
-}
+
 
 void AddSC_boss_wushoolay()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_wushoolay";
-    newscript->GetAI = &GetAI_boss_wushoolay;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_wushoolay();
 }
 

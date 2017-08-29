@@ -65,218 +65,238 @@ enum WickermanYells {
     YELL_WICKERMAN_6    = -1000721
 };
 
-struct npc_lady_sylvanas_windrunnerAI : public ScriptedAI
+class npc_lady_sylvanas_windrunner : public CreatureScript
 {
-    npc_lady_sylvanas_windrunnerAI(Creature *c) : ScriptedAI(c) {}
+public:
+    npc_lady_sylvanas_windrunner() : CreatureScript("npc_lady_sylvanas_windrunner")
+    { }
 
-    uint32 LamentEvent_Timer;
-    bool LamentEvent, WickermanEvent;
-    uint64 targetGUID;
+    class npc_lady_sylvanas_windrunnerAI : public ScriptedAI
+    {
+        public:
+        npc_lady_sylvanas_windrunnerAI(Creature *c) : ScriptedAI(c) {}
     
-    uint8 TalkPhase;
-    uint32 TalkTimer;
-
-    float myX;
-    float myY;
-    float myZ;
-
-    void Reset()
-    override {
-        myX = me->GetPositionX();
-        myY = me->GetPositionY();
-        myZ = me->GetPositionZ();
-
-        LamentEvent_Timer = 5000;
-        LamentEvent = false;
-        targetGUID = 0;
-        TalkPhase = 0;
+        uint32 LamentEvent_Timer;
+        bool LamentEvent, WickermanEvent;
+        uint64 targetGUID;
         
-        if (sGameEventMgr->IsActiveEvent(GAME_EVENT_WICKERMAN_FESTIVAL)) {
-            if (GameObject* wickerman = me->FindNearestGameObject(180433, 30.0f)) {
-                if (wickerman->GetGoState() == 0) // Already burning
-                    return;
-
-                WickermanEvent = true;
-                TalkTimer = 1000;
-                me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
-                me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-            }
-        }
-    }
-
-    void EnterCombat(Unit *who) override {}
-
-    void JustSummoned(Creature *summoned)
-    override {
-        if( summoned->GetEntry() == ENTRY_HIGHBORNE_BUNNY )
-        {
-            if( Unit* target = ObjectAccessor::GetUnit(*summoned,targetGUID) )
-            {
-                target->MonsterMoveWithSpeed(target->GetPositionX(), target->GetPositionY(), myZ+15.0,0);
-                target->Relocate(target->GetPositionX(), target->GetPositionY(), myZ+15.0);
-                summoned->CastSpell(target, SPELL_RIBBON_OF_SOULS, false);
-            }
-
-            summoned->SetDisableGravity(true);
-            targetGUID = summoned->GetGUID();
-        }
-    }
+        uint8 TalkPhase;
+        uint32 TalkTimer;
     
-    void DespawnDueToGameEventEnd(int32 eventId)
-    override {
-        if (eventId != 50)
-            return;
+        float myX;
+        float myY;
+        float myZ;
+    
+        void Reset()
+        override {
+            myX = me->GetPositionX();
+            myY = me->GetPositionY();
+            myZ = me->GetPositionZ();
+    
+            LamentEvent_Timer = 5000;
+            LamentEvent = false;
+            targetGUID = 0;
+            TalkPhase = 0;
             
-        if (GameObject* wickerman = me->FindNearestGameObject(180433, 30.0f))
-            wickerman->ResetDoorOrButton();
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if( LamentEvent )
-        {
-            if( LamentEvent_Timer < diff )
-            {
-                float raX = myX;
-                float raY = myY;
-                float raZ = myZ;
-
-                Position pos = {raX, raY, raZ, 0.0f};
-
-                me->GetRandomPoint(pos, 20.0, raX, raY, raZ);
-                me->SummonCreature(ENTRY_HIGHBORNE_BUNNY, raX, raY, myZ, 0, TEMPSUMMON_TIMED_DESPAWN, 3000);
-
-                LamentEvent_Timer = 2000;
-                if( !me->HasAuraEffect(SPELL_SYLVANAS_CAST, 0))
-                {
-                    DoScriptText(SAY_LAMENT_END, me);
-                    DoScriptText(EMOTE_LAMENT_END, me);
-                    LamentEvent = false;
+            if (sGameEventMgr->IsActiveEvent(GAME_EVENT_WICKERMAN_FESTIVAL)) {
+                if (GameObject* wickerman = me->FindNearestGameObject(180433, 30.0f)) {
+                    if (wickerman->GetGoState() == 0) // Already burning
+                        return;
+    
+                    WickermanEvent = true;
+                    TalkTimer = 1000;
+                    me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
+                    me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
                 }
-            }else LamentEvent_Timer -= diff;
+            }
         }
-        else if (WickermanEvent) {
-            if (TalkTimer) {
-                if (TalkTimer <= diff) {
-                    int32 talkId = 0;
-                    switch (TalkPhase) {
-                    case 0:
-                        talkId = YELL_WICKERMAN_1;
-                        TalkTimer = 8000;
-                        break;
-                    case 1:
-                        talkId = YELL_WICKERMAN_2;
-                        TalkTimer = 8000;
-                        break;
-                    case 2:
-                        talkId = YELL_WICKERMAN_3;
-                        TalkTimer = 8000;
-                        break;
-                    case 3:
-                        talkId = YELL_WICKERMAN_4;
-                        TalkTimer = 8000;
-                        break;
-                    case 4:
-                        talkId = YELL_WICKERMAN_5;
-                        TalkTimer = 8000;
-                        break;
-                    case 5:
-                        talkId = YELL_WICKERMAN_6;
-                        TalkTimer = 10000;
-                        break;
-                    case 6:
-                        if (GameObject* wickerman = me->FindNearestGameObject(180433, 30.0f))
-                            wickerman->UseDoorOrButton();
-                        talkId = 0;
-                        TalkTimer = 0;
-                    default:
-                        break;
-                    }
-                    
-                    if (talkId)
-                        DoScriptText(talkId, me, nullptr);
-                    TalkPhase++;
+    
+        void EnterCombat(Unit *who) override {}
+    
+        void JustSummoned(Creature *summoned)
+        override {
+            if( summoned->GetEntry() == ENTRY_HIGHBORNE_BUNNY )
+            {
+                if( Unit* target = ObjectAccessor::GetUnit(*summoned,targetGUID) )
+                {
+                    target->MonsterMoveWithSpeed(target->GetPositionX(), target->GetPositionY(), myZ+15.0,0);
+                    target->Relocate(target->GetPositionX(), target->GetPositionY(), myZ+15.0);
+                    summoned->CastSpell(target, SPELL_RIBBON_OF_SOULS, false);
                 }
-                else
-                    TalkTimer -= diff;
+    
+                summoned->SetDisableGravity(true);
+                targetGUID = summoned->GetGUID();
+            }
+        }
+        
+        void DespawnDueToGameEventEnd(int32 eventId)
+        override {
+            if (eventId != 50)
+                return;
+                
+            if (GameObject* wickerman = me->FindNearestGameObject(180433, 30.0f))
+                wickerman->ResetDoorOrButton();
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if( LamentEvent )
+            {
+                if( LamentEvent_Timer < diff )
+                {
+                    float raX = myX;
+                    float raY = myY;
+                    float raZ = myZ;
+    
+                    Position pos = {raX, raY, raZ, 0.0f};
+    
+                    me->GetRandomPoint(pos, 20.0, raX, raY, raZ);
+                    me->SummonCreature(ENTRY_HIGHBORNE_BUNNY, raX, raY, myZ, 0, TEMPSUMMON_TIMED_DESPAWN, 3000);
+    
+                    LamentEvent_Timer = 2000;
+                    if( !me->HasAuraEffect(SPELL_SYLVANAS_CAST, 0))
+                    {
+                        DoScriptText(SAY_LAMENT_END, me);
+                        DoScriptText(EMOTE_LAMENT_END, me);
+                        LamentEvent = false;
+                    }
+                }else LamentEvent_Timer -= diff;
+            }
+            else if (WickermanEvent) {
+                if (TalkTimer) {
+                    if (TalkTimer <= diff) {
+                        int32 talkId = 0;
+                        switch (TalkPhase) {
+                        case 0:
+                            talkId = YELL_WICKERMAN_1;
+                            TalkTimer = 8000;
+                            break;
+                        case 1:
+                            talkId = YELL_WICKERMAN_2;
+                            TalkTimer = 8000;
+                            break;
+                        case 2:
+                            talkId = YELL_WICKERMAN_3;
+                            TalkTimer = 8000;
+                            break;
+                        case 3:
+                            talkId = YELL_WICKERMAN_4;
+                            TalkTimer = 8000;
+                            break;
+                        case 4:
+                            talkId = YELL_WICKERMAN_5;
+                            TalkTimer = 8000;
+                            break;
+                        case 5:
+                            talkId = YELL_WICKERMAN_6;
+                            TalkTimer = 10000;
+                            break;
+                        case 6:
+                            if (GameObject* wickerman = me->FindNearestGameObject(180433, 30.0f))
+                                wickerman->UseDoorOrButton();
+                            talkId = 0;
+                            TalkTimer = 0;
+                        default:
+                            break;
+                        }
+                        
+                        if (talkId)
+                            DoScriptText(talkId, me, nullptr);
+                        TalkPhase++;
+                    }
+                    else
+                        TalkTimer -= diff;
+                }
+            }
+    
+            if (!UpdateVictim())
+                return;
+    
+            DoMeleeAttackIfReady();
+        }
+
+        virtual void QuestReward(Player* player, Quest const* _Quest, uint32 slot) override
+        {
+            if( _Quest->GetQuestId() == 9180 )
+            {
+                LamentEvent = true;
+                DoPlaySoundToSet(me,SOUND_CREDIT);
+                me->CastSpell(me,SPELL_SYLVANAS_CAST,false);
+
+                for(auto & i : HighborneLoc)
+                    me->SummonCreature(ENTRY_HIGHBORNE_LAMENTER, i[0], i[1], HIGHBORNE_LOC_Y, i[2], TEMPSUMMON_TIMED_DESPAWN, 160000);
             }
         }
 
-        if (!UpdateVictim())
-            return;
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_lady_sylvanas_windrunnerAI(creature);
     }
 };
-CreatureAI* GetAI_npc_lady_sylvanas_windrunner(Creature *_Creature)
-{
-    return new npc_lady_sylvanas_windrunnerAI (_Creature);
-}
 
-bool ChooseReward_npc_lady_sylvanas_windrunner(Player *player, Creature *_Creature, const Quest *_Quest, uint32 slot)
-{
-    if( _Quest->GetQuestId() == 9180 )
-    {
-        ((npc_lady_sylvanas_windrunnerAI*)_Creature->AI())->LamentEvent = true;
-        ((npc_lady_sylvanas_windrunnerAI*)_Creature->AI())->DoPlaySoundToSet(_Creature,SOUND_CREDIT);
-        _Creature->CastSpell(_Creature,SPELL_SYLVANAS_CAST,false);
 
-        for(auto & i : HighborneLoc)
-            _Creature->SummonCreature(ENTRY_HIGHBORNE_LAMENTER, i[0], i[1], HIGHBORNE_LOC_Y, i[2], TEMPSUMMON_TIMED_DESPAWN, 160000);
-    }
-
-    return true;
-}
 
 /*######
 ## npc_highborne_lamenter
 ######*/
 
-struct npc_highborne_lamenterAI : public ScriptedAI
+class npc_highborne_lamenter : public CreatureScript
 {
-    npc_highborne_lamenterAI(Creature *c) : ScriptedAI(c) {}
+public:
+    npc_highborne_lamenter() : CreatureScript("npc_highborne_lamenter")
+    { }
 
-    uint32 EventMove_Timer;
-    uint32 EventCast_Timer;
-    bool EventMove;
-    bool EventCast;
-
-    void Reset()
-    override {
-        EventMove_Timer = 10000;
-        EventCast_Timer = 17500;
-        EventMove = true;
-        EventCast = true;
-    }
-
-    void EnterCombat(Unit *who) override {}
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if( EventMove )
-        {
-            if( EventMove_Timer < diff )
-            {
-                me->SetDisableGravity(true);
-                me->MonsterMoveWithSpeed(me->GetPositionX(),me->GetPositionY(),HIGHBORNE_LOC_Y_NEW,5000);
-                me->GetMap()->CreatureRelocation(me,me->GetPositionX(),me->GetPositionY(),HIGHBORNE_LOC_Y_NEW,me->GetOrientation());
-                EventMove = false;
-            }else EventMove_Timer -= diff;
+    class npc_highborne_lamenterAI : public ScriptedAI
+    {
+        public:
+        npc_highborne_lamenterAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 EventMove_Timer;
+        uint32 EventCast_Timer;
+        bool EventMove;
+        bool EventCast;
+    
+        void Reset()
+        override {
+            EventMove_Timer = 10000;
+            EventCast_Timer = 17500;
+            EventMove = true;
+            EventCast = true;
         }
-        if( EventCast )
-        {
-            if( EventCast_Timer < diff )
+    
+        void EnterCombat(Unit *who) override {}
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if( EventMove )
             {
-                DoCast(me,SPELL_HIGHBORNE_AURA);
-                EventCast = false;
-            }else EventCast_Timer -= diff;
+                if( EventMove_Timer < diff )
+                {
+                    me->SetDisableGravity(true);
+                    me->MonsterMoveWithSpeed(me->GetPositionX(),me->GetPositionY(),HIGHBORNE_LOC_Y_NEW,5000);
+                    me->GetMap()->CreatureRelocation(me,me->GetPositionX(),me->GetPositionY(),HIGHBORNE_LOC_Y_NEW,me->GetOrientation());
+                    EventMove = false;
+                }else EventMove_Timer -= diff;
+            }
+            if( EventCast )
+            {
+                if( EventCast_Timer < diff )
+                {
+                    DoCast(me,SPELL_HIGHBORNE_AURA);
+                    EventCast = false;
+                }else EventCast_Timer -= diff;
+            }
         }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_highborne_lamenterAI(creature);
     }
 };
-CreatureAI* GetAI_npc_highborne_lamenter(Creature *_Creature)
-{
-    return new npc_highborne_lamenterAI (_Creature);
-}
+
 
 /*######
 ## npc_parqual_fintallas
@@ -288,38 +308,64 @@ CreatureAI* GetAI_npc_highborne_lamenter(Creature *_Creature)
 #define GOSSIP_HPF2 "Kel'Thuzad"
 #define GOSSIP_HPF3 "Ner'zhul"
 
-bool GossipHello_npc_parqual_fintallas(Player *player, Creature *_Creature)
+class npc_parqual_fintallas : public CreatureScript
 {
-    if (_Creature->IsQuestGiver())
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+public:
+    npc_parqual_fintallas() : CreatureScript("npc_parqual_fintallas")
+    { }
 
-    if (player->GetQuestStatus(6628) == QUEST_STATUS_INCOMPLETE && !player->HasAuraEffect(SPELL_MARK_OF_SHAME,0) )
+    class npc_parqual_fintallasAI : public ScriptedAI
     {
-        player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_HPF1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-        player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_HPF2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-        player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_HPF3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-        player->SEND_GOSSIP_MENU_TEXTID(5822, _Creature->GetGUID());
-    }
-    else
-        player->SEND_GOSSIP_MENU_TEXTID(5821, _Creature->GetGUID());
+    public:
+        npc_parqual_fintallasAI(Creature* creature) : ScriptedAI(creature)
+        {}
 
-    return true;
-}
 
-bool GossipSelect_npc_parqual_fintallas(Player *player, Creature *_Creature, uint32 sender, uint32 action)
-{
-    if (action == GOSSIP_ACTION_INFO_DEF+1)
+        virtual bool GossipHello(Player* player) override
+        {
+            if (me->IsQuestGiver())
+                player->PrepareQuestMenu( me->GetGUID() );
+
+            if (player->GetQuestStatus(6628) == QUEST_STATUS_INCOMPLETE && !player->HasAuraEffect(SPELL_MARK_OF_SHAME,0) )
+            {
+                player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_HPF1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+                player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_HPF2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+                player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_HPF3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+                player->SEND_GOSSIP_MENU_TEXTID(5822, me->GetGUID());
+            }
+            else
+                player->SEND_GOSSIP_MENU_TEXTID(5821, me->GetGUID());
+
+            return true;
+
+        }
+
+
+        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        {
+            if (action == GOSSIP_ACTION_INFO_DEF+1)
+            {
+                player->CLOSE_GOSSIP_MENU();
+                me->CastSpell(player,SPELL_MARK_OF_SHAME,false);
+            }
+            if (action == GOSSIP_ACTION_INFO_DEF+2)
+            {
+                player->CLOSE_GOSSIP_MENU();
+                player->AreaExploredOrEventHappens(6628);
+            }
+            return true;
+
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
     {
-        player->CLOSE_GOSSIP_MENU();
-        _Creature->CastSpell(player,SPELL_MARK_OF_SHAME,false);
+        return new npc_parqual_fintallasAI(creature);
     }
-    if (action == GOSSIP_ACTION_INFO_DEF+2)
-    {
-        player->CLOSE_GOSSIP_MENU();
-        player->AreaExploredOrEventHappens(6628);
-    }
-    return true;
-}
+};
+
+
 
 /*######
 ## AddSC
@@ -327,23 +373,11 @@ bool GossipSelect_npc_parqual_fintallas(Player *player, Creature *_Creature, uin
 
 void AddSC_undercity()
 {
-    OLDScript *newscript;
 
-    newscript = new OLDScript;
-    newscript->Name="npc_lady_sylvanas_windrunner";
-    newscript->GetAI = &GetAI_npc_lady_sylvanas_windrunner;
-    newscript->OnQuestReward = &ChooseReward_npc_lady_sylvanas_windrunner;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_lady_sylvanas_windrunner();
 
-    newscript = new OLDScript;
-    newscript->Name="npc_highborne_lamenter";
-    newscript->GetAI = &GetAI_npc_highborne_lamenter;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_highborne_lamenter();
 
-    newscript = new OLDScript;
-    newscript->Name="npc_parqual_fintallas";
-    newscript->OnGossipHello = &GossipHello_npc_parqual_fintallas;
-    newscript->OnGossipSelect = &GossipSelect_npc_parqual_fintallas;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_parqual_fintallas();
 }
 

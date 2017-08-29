@@ -31,99 +31,105 @@ EndScriptData */
 #define SPELL_MORTALSTRIKE      24573
 #define SPELL_KNOCKBACK         25778
 
-struct boss_broodlordAI : public ScriptedAI
+class boss_broodlord : public CreatureScript
 {
-    boss_broodlordAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_broodlord() : CreatureScript("boss_broodlord")
+    { }
 
-    uint32 Cleave_Timer;
-    uint32 BlastWave_Timer;
-    uint32 MortalStrike_Timer;
-    uint32 KnockBack_Timer;
-    uint32 LeashCheck_Timer;
-
-    void Reset() override
+    class boss_broodlordAI : public ScriptedAI
     {
-        Cleave_Timer = 8000;                                //These times are probably wrong
-        BlastWave_Timer = 12000;
-        MortalStrike_Timer = 20000;
-        KnockBack_Timer = 30000;
-        LeashCheck_Timer = 2000;
-
-        me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
-        me->ApplySpellImmune(1, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
-    }
-
-    void EnterCombat(Unit *who) override
-    {
-        DoScriptText(SAY_AGGRO, me);
-        DoZoneInCombat();
-    }
-
-    void UpdateAI(const uint32 diff) override
-    {
-        if (!UpdateVictim())
-            return;
-
-        //LeashCheck_Timer
-        if (LeashCheck_Timer < diff)
+        public:
+        boss_broodlordAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 Cleave_Timer;
+        uint32 BlastWave_Timer;
+        uint32 MortalStrike_Timer;
+        uint32 KnockBack_Timer;
+        uint32 LeashCheck_Timer;
+    
+        void Reset() override
         {
-            float rx,ry,rz;
-            me->GetRespawnPosition(rx, ry, rz);
-            float spawndist = me->GetDistance(rx,ry,rz);
-            if ( spawndist > 250 )
-            {
-                DoScriptText(SAY_LEASH, me);
-                EnterEvadeMode();
-                return;
-            }
+            Cleave_Timer = 8000;                                //These times are probably wrong
+            BlastWave_Timer = 12000;
+            MortalStrike_Timer = 20000;
+            KnockBack_Timer = 30000;
             LeashCheck_Timer = 2000;
-        }else LeashCheck_Timer -= diff;
-
-        //Cleave_Timer
-        if (Cleave_Timer < diff)
+    
+            me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
+            me->ApplySpellImmune(1, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
+        }
+    
+        void EnterCombat(Unit *who) override
         {
-            DoCast(me->GetVictim(),SPELL_CLEAVE);
-            Cleave_Timer = 7000;
-        }else Cleave_Timer -= diff;
-
-        // BlastWave
-        if (BlastWave_Timer < diff)
+            DoScriptText(SAY_AGGRO, me);
+            DoZoneInCombat();
+        }
+    
+        void UpdateAI(const uint32 diff) override
         {
-            DoCast(me->GetVictim(),SPELL_BLASTWAVE);
-            BlastWave_Timer = 8000 + rand()%8000;
-        }else BlastWave_Timer -= diff;
+            if (!UpdateVictim())
+                return;
+    
+            //LeashCheck_Timer
+            if (LeashCheck_Timer < diff)
+            {
+                float rx,ry,rz;
+                me->GetRespawnPosition(rx, ry, rz);
+                float spawndist = me->GetDistance(rx,ry,rz);
+                if ( spawndist > 250 )
+                {
+                    DoScriptText(SAY_LEASH, me);
+                    EnterEvadeMode();
+                    return;
+                }
+                LeashCheck_Timer = 2000;
+            }else LeashCheck_Timer -= diff;
+    
+            //Cleave_Timer
+            if (Cleave_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_CLEAVE);
+                Cleave_Timer = 7000;
+            }else Cleave_Timer -= diff;
+    
+            // BlastWave
+            if (BlastWave_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_BLASTWAVE);
+                BlastWave_Timer = 8000 + rand()%8000;
+            }else BlastWave_Timer -= diff;
+    
+            //MortalStrike_Timer
+            if (MortalStrike_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_MORTALSTRIKE);
+                MortalStrike_Timer = 25000 + rand()%10000;
+            }else MortalStrike_Timer -= diff;
+    
+            if (KnockBack_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_KNOCKBACK);
+                //Drop 50% aggro
+                if (me->GetThreat(me->GetVictim()))
+                    DoModifyThreatPercent(me->GetVictim(),-50);
+    
+                KnockBack_Timer = 15000 + rand()%15000;
+            }else KnockBack_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        //MortalStrike_Timer
-        if (MortalStrike_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_MORTALSTRIKE);
-            MortalStrike_Timer = 25000 + rand()%10000;
-        }else MortalStrike_Timer -= diff;
-
-        if (KnockBack_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_KNOCKBACK);
-            //Drop 50% aggro
-            if (me->GetThreat(me->GetVictim()))
-                DoModifyThreatPercent(me->GetVictim(),-50);
-
-            KnockBack_Timer = 15000 + rand()%15000;
-        }else KnockBack_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_broodlordAI(creature);
     }
 };
-CreatureAI* GetAI_boss_broodlord(Creature *_Creature)
-{
-    return new boss_broodlordAI (_Creature);
-}
+
 
 void AddSC_boss_broodlord()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_broodlord";
-    newscript->GetAI = &GetAI_boss_broodlord;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_broodlord();
 }
 

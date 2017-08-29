@@ -29,60 +29,66 @@ enum Spells
     SPELL_WARSTOMP                                         = 24375
 };
 
-struct boss_magmusAI : public ScriptedAI
+class boss_magmus : public CreatureScript
 {
-    boss_magmusAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_magmus() : CreatureScript("boss_magmus")
+    { }
 
-    uint32 FieryBurst_Timer;
-    uint32 WarStomp_Timer;
-
-    void Reset()
-    override {
-        FieryBurst_Timer = 5000;
-        WarStomp_Timer =0;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        //Return since we have no target
-        if (!UpdateVictim() )
-            return;
-
-        //FieryBurst_Timer
-        if (FieryBurst_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_FIERYBURST);
-            FieryBurst_Timer = 6000;
-        }else FieryBurst_Timer -= diff;
-
-        //WarStomp_Timer
-		if (me->GetHealthPct() < 51 )
-        {
-            if (WarStomp_Timer < diff)
-            {
-                DoCast(me->GetVictim(),SPELL_WARSTOMP);
-                WarStomp_Timer = 8000;
-            }else WarStomp_Timer -= diff;
+    class boss_magmusAI : public ScriptedAI
+    {
+        public:
+        boss_magmusAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 FieryBurst_Timer;
+        uint32 WarStomp_Timer;
+    
+        void Reset()
+        override {
+            FieryBurst_Timer = 5000;
+            WarStomp_Timer =0;
         }
+    
+        void EnterCombat(Unit *who)
+        override {
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            //Return since we have no target
+            if (!UpdateVictim() )
+                return;
+    
+            //FieryBurst_Timer
+            if (FieryBurst_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_FIERYBURST);
+                FieryBurst_Timer = 6000;
+            }else FieryBurst_Timer -= diff;
+    
+            //WarStomp_Timer
+    		if (me->GetHealthPct() < 51 )
+            {
+                if (WarStomp_Timer < diff)
+                {
+                    DoCast(me->GetVictim(),SPELL_WARSTOMP);
+                    WarStomp_Timer = 8000;
+                }else WarStomp_Timer -= diff;
+            }
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_magmusAI(creature);
     }
 };
-CreatureAI* GetAI_boss_magmus(Creature *pCreature)
-{
-    return new boss_magmusAI (pCreature);
-}
+
 
 void AddSC_boss_magmus()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_magmus";
-    newscript->GetAI = &GetAI_boss_magmus;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_magmus();
 }
 

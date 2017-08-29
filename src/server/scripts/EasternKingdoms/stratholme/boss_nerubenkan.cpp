@@ -29,111 +29,117 @@ EndScriptData */
 #define SPELL_CRYPT_SCARABS         31602
 #define SPELL_RAISEUNDEADSCARAB     17235
 
-struct boss_nerubenkanAI : public ScriptedAI
+class boss_nerubenkan : public CreatureScript
 {
-    boss_nerubenkanAI(Creature *c) : ScriptedAI(c)
+public:
+    boss_nerubenkan() : CreatureScript("boss_nerubenkan")
+    { }
+
+    class boss_nerubenkanAI : public ScriptedAI
     {
-        pInstance = (InstanceScript*)me->GetInstanceScript();
-    }
+        public:
+        boss_nerubenkanAI(Creature *c) : ScriptedAI(c)
+        {
+            pInstance = (InstanceScript*)me->GetInstanceScript();
+        }
+    
+        InstanceScript* pInstance;
+    
+        uint32 EncasingWebs_Timer;
+        uint32 PierceArmor_Timer;
+       uint32 CryptScarabs_Timer;
+        uint32 RaiseUndeadScarab_Timer;
+        int Rand;
+        int RandX;
+        int RandY;
+        Creature* Summoned;
+    
+        void Reset()
+        override {
+           CryptScarabs_Timer = 3000;
+            EncasingWebs_Timer = 7000;
+            PierceArmor_Timer = 19000;
+            RaiseUndeadScarab_Timer = 3000;
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+        }
+    
+        void JustDied(Unit* Killer)
+        override {
+            if (pInstance)
+                pInstance->SetData(TYPE_NERUB,IN_PROGRESS);
+        }
+    
+        void RaiseUndeadScarab(Unit* victim)
+        {
+            Rand = rand()%10;
+            switch (rand()%2)
+            {
+            case 0: RandX = 0 - Rand; break;
+            case 1: RandX = 0 + Rand; break;
+            }
+            Rand = 0;
+            Rand = rand()%10;
+            switch (rand()%2)
+            {
+            case 0: RandY = 0 - Rand; break;
+            case 1: RandY = 0 + Rand; break;
+            }
+            Rand = 0;
+            Summoned = DoSpawnCreature(10876, RandX, RandY, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 180000);
+            if(Summoned)
+                ((CreatureAI*)Summoned->AI())->AttackStart(victim);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim())
+                return;
+    
+            //EncasingWebs
+            if (EncasingWebs_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_ENCASINGWEBS);
+                EncasingWebs_Timer = 30000;
+            }else EncasingWebs_Timer -= diff;
+    
+            //PierceArmor
+            if (PierceArmor_Timer < diff)
+            {
+                if (rand()%100 < 75)
+                    DoCast(me->GetVictim(),SPELL_PIERCEARMOR);
+                PierceArmor_Timer = 35000;
+            }else PierceArmor_Timer -= diff;
+    
+            //CryptScarabs_Timer
+            if (CryptScarabs_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_CRYPT_SCARABS);
+                CryptScarabs_Timer = 20000;
+            }else CryptScarabs_Timer -= diff;
+    
+            //RaiseUndeadScarab
+            if (RaiseUndeadScarab_Timer < diff)
+            {
+                RaiseUndeadScarab(me->GetVictim());
+                RaiseUndeadScarab_Timer = 16000;
+            }else RaiseUndeadScarab_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-    InstanceScript* pInstance;
-
-    uint32 EncasingWebs_Timer;
-    uint32 PierceArmor_Timer;
-   uint32 CryptScarabs_Timer;
-    uint32 RaiseUndeadScarab_Timer;
-    int Rand;
-    int RandX;
-    int RandY;
-    Creature* Summoned;
-
-    void Reset()
-    override {
-       CryptScarabs_Timer = 3000;
-        EncasingWebs_Timer = 7000;
-        PierceArmor_Timer = 19000;
-        RaiseUndeadScarab_Timer = 3000;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-    }
-
-    void JustDied(Unit* Killer)
-    override {
-        if (pInstance)
-            pInstance->SetData(TYPE_NERUB,IN_PROGRESS);
-    }
-
-    void RaiseUndeadScarab(Unit* victim)
+    CreatureAI* GetAI(Creature* creature) const override
     {
-        Rand = rand()%10;
-        switch (rand()%2)
-        {
-        case 0: RandX = 0 - Rand; break;
-        case 1: RandX = 0 + Rand; break;
-        }
-        Rand = 0;
-        Rand = rand()%10;
-        switch (rand()%2)
-        {
-        case 0: RandY = 0 - Rand; break;
-        case 1: RandY = 0 + Rand; break;
-        }
-        Rand = 0;
-        Summoned = DoSpawnCreature(10876, RandX, RandY, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 180000);
-        if(Summoned)
-            ((CreatureAI*)Summoned->AI())->AttackStart(victim);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim())
-            return;
-
-        //EncasingWebs
-        if (EncasingWebs_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_ENCASINGWEBS);
-            EncasingWebs_Timer = 30000;
-        }else EncasingWebs_Timer -= diff;
-
-        //PierceArmor
-        if (PierceArmor_Timer < diff)
-        {
-            if (rand()%100 < 75)
-                DoCast(me->GetVictim(),SPELL_PIERCEARMOR);
-            PierceArmor_Timer = 35000;
-        }else PierceArmor_Timer -= diff;
-
-        //CryptScarabs_Timer
-        if (CryptScarabs_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_CRYPT_SCARABS);
-            CryptScarabs_Timer = 20000;
-        }else CryptScarabs_Timer -= diff;
-
-        //RaiseUndeadScarab
-        if (RaiseUndeadScarab_Timer < diff)
-        {
-            RaiseUndeadScarab(me->GetVictim());
-            RaiseUndeadScarab_Timer = 16000;
-        }else RaiseUndeadScarab_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+        return new boss_nerubenkanAI(creature);
     }
 };
-CreatureAI* GetAI_boss_nerubenkan(Creature *_Creature)
-{
-    return new boss_nerubenkanAI (_Creature);
-}
+
 
 void AddSC_boss_nerubenkan()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_nerubenkan";
-    newscript->GetAI = &GetAI_boss_nerubenkan;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_nerubenkan();
 }
 

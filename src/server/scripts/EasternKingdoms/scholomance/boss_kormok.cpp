@@ -26,133 +26,139 @@ EndScriptData */
 #define SPELL_SHADOWBOLTVOLLEY      20741
 #define SPELL_BONESHIELD            27688
 
-struct boss_kormokAI : public ScriptedAI
+class boss_kormok : public CreatureScript
 {
-    boss_kormokAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_kormok() : CreatureScript("boss_kormok")
+    { }
 
-    uint32 ShadowVolley_Timer;
-    uint32 BoneShield_Timer;
-    uint32 Minion_Timer;
-    uint32 Mage_Timer;
-    bool Mages;
-    int Rand1;
-    int Rand1X;
-    int Rand1Y;
-    int Rand2;
-    int Rand2X;
-    int Rand2Y;
-    Creature* SummonedMinions;
-    Creature* SummonedMages;
-
-    void Reset()
-    override {
-        ShadowVolley_Timer = 10000;
-        BoneShield_Timer = 2000;
-        Minion_Timer = 15000;
-        Mage_Timer = 0;
-        Mages = false;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-    }
-
-    void SummonMinion(Unit* victim)
+    class boss_kormokAI : public ScriptedAI
     {
-        Rand1 = rand()%8;
-        switch (rand()%2)
-        {
-            case 0: Rand1X = 0 - Rand1; break;
-            case 1: Rand1X = 0 + Rand1; break;
+        public:
+        boss_kormokAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 ShadowVolley_Timer;
+        uint32 BoneShield_Timer;
+        uint32 Minion_Timer;
+        uint32 Mage_Timer;
+        bool Mages;
+        int Rand1;
+        int Rand1X;
+        int Rand1Y;
+        int Rand2;
+        int Rand2X;
+        int Rand2Y;
+        Creature* SummonedMinions;
+        Creature* SummonedMages;
+    
+        void Reset()
+        override {
+            ShadowVolley_Timer = 10000;
+            BoneShield_Timer = 2000;
+            Minion_Timer = 15000;
+            Mage_Timer = 0;
+            Mages = false;
         }
-        Rand1 = 0;
-        Rand1 = rand()%8;
-        switch (rand()%2)
-        {
-            case 0: Rand1Y = 0 - Rand1; break;
-            case 1: Rand1Y = 0 + Rand1; break;
+    
+        void EnterCombat(Unit *who)
+        override {
         }
-        Rand1 = 0;
-        SummonedMinions = DoSpawnCreature(16119, Rand1X, Rand1Y, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 120000);
-        if(SummonedMinions)
-            ((CreatureAI*)SummonedMinions->AI())->AttackStart(victim);
-    }
+    
+        void SummonMinion(Unit* victim)
+        {
+            Rand1 = rand()%8;
+            switch (rand()%2)
+            {
+                case 0: Rand1X = 0 - Rand1; break;
+                case 1: Rand1X = 0 + Rand1; break;
+            }
+            Rand1 = 0;
+            Rand1 = rand()%8;
+            switch (rand()%2)
+            {
+                case 0: Rand1Y = 0 - Rand1; break;
+                case 1: Rand1Y = 0 + Rand1; break;
+            }
+            Rand1 = 0;
+            SummonedMinions = DoSpawnCreature(16119, Rand1X, Rand1Y, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 120000);
+            if(SummonedMinions)
+                ((CreatureAI*)SummonedMinions->AI())->AttackStart(victim);
+        }
+    
+        void SummonMages(Unit* victim)
+        {
+            Rand2 = rand()%10;
+            switch (rand()%2)
+            {
+                case 0: Rand2X = 0 - Rand2; break;
+                case 1: Rand2X = 0 + Rand2; break;
+            }
+            Rand2 = 0;
+            Rand2 = rand()%10;
+            switch (rand()%2)
+            {
+                case 0: Rand2Y = 0 - Rand2; break;
+                case 1: Rand2Y = 0 + Rand2; break;
+            }
+            Rand2 = 0;
+            SummonedMages = DoSpawnCreature(16120, Rand2X, Rand2Y, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 120000);
+            if(SummonedMages)
+                ((CreatureAI*)SummonedMages->AI())->AttackStart(victim);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim())
+                return;
+    
+            //ShadowVolley_Timer
+            if (ShadowVolley_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_SHADOWBOLTVOLLEY);
+                ShadowVolley_Timer = 15000;
+            }else ShadowVolley_Timer -= diff;
+    
+            //BoneShield_Timer
+            if (BoneShield_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_BONESHIELD);
+                BoneShield_Timer = 45000;
+            }else BoneShield_Timer -= diff;
+    
+            //Minion_Timer
+            if (Minion_Timer < diff)
+            {
+                //Cast
+                SummonMinion(me->GetVictim());
+                SummonMinion(me->GetVictim());
+                SummonMinion(me->GetVictim());
+                SummonMinion(me->GetVictim());
+    
+                Minion_Timer = 12000;
+            }else Minion_Timer -= diff;
+    
+            //Summon 2 Bone Mages
+            if ( !Mages && me->GetHealthPct() < 26 )
+            {
+                //Cast
+                SummonMages(me->GetVictim());
+                SummonMages(me->GetVictim());
+                Mages = true;
+            }
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-    void SummonMages(Unit* victim)
+    CreatureAI* GetAI(Creature* creature) const override
     {
-        Rand2 = rand()%10;
-        switch (rand()%2)
-        {
-            case 0: Rand2X = 0 - Rand2; break;
-            case 1: Rand2X = 0 + Rand2; break;
-        }
-        Rand2 = 0;
-        Rand2 = rand()%10;
-        switch (rand()%2)
-        {
-            case 0: Rand2Y = 0 - Rand2; break;
-            case 1: Rand2Y = 0 + Rand2; break;
-        }
-        Rand2 = 0;
-        SummonedMages = DoSpawnCreature(16120, Rand2X, Rand2Y, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 120000);
-        if(SummonedMages)
-            ((CreatureAI*)SummonedMages->AI())->AttackStart(victim);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim())
-            return;
-
-        //ShadowVolley_Timer
-        if (ShadowVolley_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_SHADOWBOLTVOLLEY);
-            ShadowVolley_Timer = 15000;
-        }else ShadowVolley_Timer -= diff;
-
-        //BoneShield_Timer
-        if (BoneShield_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_BONESHIELD);
-            BoneShield_Timer = 45000;
-        }else BoneShield_Timer -= diff;
-
-        //Minion_Timer
-        if (Minion_Timer < diff)
-        {
-            //Cast
-            SummonMinion(me->GetVictim());
-            SummonMinion(me->GetVictim());
-            SummonMinion(me->GetVictim());
-            SummonMinion(me->GetVictim());
-
-            Minion_Timer = 12000;
-        }else Minion_Timer -= diff;
-
-        //Summon 2 Bone Mages
-        if ( !Mages && me->GetHealthPct() < 26 )
-        {
-            //Cast
-            SummonMages(me->GetVictim());
-            SummonMages(me->GetVictim());
-            Mages = true;
-        }
-
-        DoMeleeAttackIfReady();
+        return new boss_kormokAI(creature);
     }
 };
-CreatureAI* GetAI_boss_kormok(Creature *_Creature)
-{
-    return new boss_kormokAI (_Creature);
-}
+
 
 void AddSC_boss_kormok()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_kormok";
-    newscript->GetAI = &GetAI_boss_kormok;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_kormok();
 }
 

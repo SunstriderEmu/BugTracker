@@ -43,96 +43,6 @@ EndScriptData */
 
 #define MAX_HOME_DISTANCE       40.0f
 
-struct  boss_drektharAI : public ScriptedAI
-{
-    boss_drektharAI(Creature *c) : ScriptedAI(c) {}
-
-    uint32 WhirlwindTimer;
-    uint32 Whirlwind2Timer;
-    uint32 KnockdownTimer;
-    uint32 FrenzyTimer;
-    uint32 YellTimer;
-    uint32 DistanceCheckTimer;
-
-    void Reset() override {
-        WhirlwindTimer        = (rand()%20)*IN_MILLISECONDS;
-        Whirlwind2Timer        = (rand()%25)*IN_MILLISECONDS;
-        KnockdownTimer        = 12000;
-        FrenzyTimer            = 6000;
-        DistanceCheckTimer  = 5000;
-        YellTimer           = (20+rand()%10)*IN_MILLISECONDS; //20 to 30 seconds
-        
-        me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_HASTE_SPELLS, true);
-    }
-
-    void EnterCombat(Unit *who) override {
-        DoScriptText(YELL_AGGRO, me);
-    }
-
-    void JustRespawned() override {
-        Reset();
-        DoScriptText(YELL_RESPAWN, me);
-    }
-
-    void KilledUnit(Unit* victim)override {}
-
-    void JustDied(Unit* Killer)override {}
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if(!UpdateVictim())
-            return;
-
-        if (WhirlwindTimer <= diff) {
-            DoCast(me->GetVictim(), SPELL_WHIRLWIND);
-            WhirlwindTimer =  (8+rand()%10)*IN_MILLISECONDS;
-        } else WhirlwindTimer -= diff;
-
-        if (Whirlwind2Timer <= diff) {
-            DoCast(me->GetVictim(), SPELL_WHIRLWIND2);
-            Whirlwind2Timer = (7+rand()%18)*IN_MILLISECONDS;
-        } else Whirlwind2Timer -= diff;
-
-        if (KnockdownTimer <= diff) {
-            DoCast(me->GetVictim(), SPELL_KNOCKDOWN);
-            KnockdownTimer = (10+rand()%5)*IN_MILLISECONDS;
-        } else KnockdownTimer -= diff;
-
-        if (FrenzyTimer <= diff) {
-            DoCast(me->GetVictim(), SPELL_FRENZY);
-            FrenzyTimer = (20+rand()%5)*IN_MILLISECONDS;
-        } else FrenzyTimer -= diff;
-
-        if (YellTimer <= diff) {
-            switch(rand()%4)
-            {
-            case 0: DoScriptText(YELL_RANDOM1, me); break;
-            case 1: DoScriptText(YELL_RANDOM2, me); break;
-            case 2: DoScriptText(YELL_RANDOM3, me); break;
-            case 3: DoScriptText(YELL_RANDOM4, me); break;
-            case 4: DoScriptText(YELL_RANDOM5, me); break;
-            }
-            YellTimer = (20+rand()%10)*IN_MILLISECONDS; //20 to 30 seconds
-        } else YellTimer -= diff;
-
-        // check if creature is not outside of building
-        if(DistanceCheckTimer < diff)
-        {
-            if(me->GetDistanceFromHome() > MAX_HOME_DISTANCE)
-            {
-                //evade all creatures from pool
-                EnterEvadeMode();
-                DoScriptText(YELL_EVADE, me);
-                std::list<Creature*> poolCreatures = me->GetMap()->GetAllCreaturesFromPool(me->GetCreaturePoolId());
-                for(auto itr : poolCreatures)
-                    if(itr->AI()) itr->AI()->EnterEvadeMode();
-            }
-            DistanceCheckTimer = 2000;
-        }else DistanceCheckTimer -= diff;
-
-        DoMeleeAttackIfReady();
-    }
-};
 
 /*
 Même ordre pour les points
@@ -148,16 +58,112 @@ Encore pareil
 3/ x: -1358.27 y: -273.7 z: 96
 */
 
-CreatureAI* GetAI_boss_drekthar(Creature *_Creature)
+class boss_drekthar : public CreatureScript
 {
-    return new boss_drektharAI (_Creature);
-}
+public:
+    boss_drekthar() : CreatureScript("boss_drekthar")
+    { }
+
+    class  boss_drektharAI : public ScriptedAI
+    {
+        public:
+        boss_drektharAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 WhirlwindTimer;
+        uint32 Whirlwind2Timer;
+        uint32 KnockdownTimer;
+        uint32 FrenzyTimer;
+        uint32 YellTimer;
+        uint32 DistanceCheckTimer;
+    
+        void Reset() override {
+            WhirlwindTimer        = (rand()%20)*IN_MILLISECONDS;
+            Whirlwind2Timer        = (rand()%25)*IN_MILLISECONDS;
+            KnockdownTimer        = 12000;
+            FrenzyTimer            = 6000;
+            DistanceCheckTimer  = 5000;
+            YellTimer           = (20+rand()%10)*IN_MILLISECONDS; //20 to 30 seconds
+            
+            me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_HASTE_SPELLS, true);
+        }
+    
+        void EnterCombat(Unit *who) override {
+            DoScriptText(YELL_AGGRO, me);
+        }
+    
+        void JustRespawned() override {
+            Reset();
+            DoScriptText(YELL_RESPAWN, me);
+        }
+    
+        void KilledUnit(Unit* victim)override {}
+    
+        void JustDied(Unit* Killer)override {}
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if(!UpdateVictim())
+                return;
+    
+            if (WhirlwindTimer <= diff) {
+                DoCast(me->GetVictim(), SPELL_WHIRLWIND);
+                WhirlwindTimer =  (8+rand()%10)*IN_MILLISECONDS;
+            } else WhirlwindTimer -= diff;
+    
+            if (Whirlwind2Timer <= diff) {
+                DoCast(me->GetVictim(), SPELL_WHIRLWIND2);
+                Whirlwind2Timer = (7+rand()%18)*IN_MILLISECONDS;
+            } else Whirlwind2Timer -= diff;
+    
+            if (KnockdownTimer <= diff) {
+                DoCast(me->GetVictim(), SPELL_KNOCKDOWN);
+                KnockdownTimer = (10+rand()%5)*IN_MILLISECONDS;
+            } else KnockdownTimer -= diff;
+    
+            if (FrenzyTimer <= diff) {
+                DoCast(me->GetVictim(), SPELL_FRENZY);
+                FrenzyTimer = (20+rand()%5)*IN_MILLISECONDS;
+            } else FrenzyTimer -= diff;
+    
+            if (YellTimer <= diff) {
+                switch(rand()%4)
+                {
+                case 0: DoScriptText(YELL_RANDOM1, me); break;
+                case 1: DoScriptText(YELL_RANDOM2, me); break;
+                case 2: DoScriptText(YELL_RANDOM3, me); break;
+                case 3: DoScriptText(YELL_RANDOM4, me); break;
+                case 4: DoScriptText(YELL_RANDOM5, me); break;
+                }
+                YellTimer = (20+rand()%10)*IN_MILLISECONDS; //20 to 30 seconds
+            } else YellTimer -= diff;
+    
+            // check if creature is not outside of building
+            if(DistanceCheckTimer < diff)
+            {
+                if(me->GetDistanceFromHome() > MAX_HOME_DISTANCE)
+                {
+                    //evade all creatures from pool
+                    EnterEvadeMode();
+                    DoScriptText(YELL_EVADE, me);
+                    std::list<Creature*> poolCreatures = me->GetMap()->GetAllCreaturesFromPool(me->GetCreaturePoolId());
+                    for(auto itr : poolCreatures)
+                        if(itr->AI()) itr->AI()->EnterEvadeMode();
+                }
+                DistanceCheckTimer = 2000;
+            }else DistanceCheckTimer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_drektharAI(creature);
+    }
+};
+
 
 void AddSC_boss_drekthar()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name = "boss_drekthar";
-    newscript->GetAI = &GetAI_boss_drekthar;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_drekthar();
 }

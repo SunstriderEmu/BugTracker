@@ -28,74 +28,80 @@ EndScriptData */
 #define SPELL_MINDFLAY                  17313
 #define SPELL_FROSTNOVA                 15531
 
-struct boss_scornAI : public ScriptedAI
+class boss_scorn : public CreatureScript
 {
-    boss_scornAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_scorn() : CreatureScript("boss_scorn")
+    { }
 
-    uint32 LichSlap_Timer;
-    uint32 FrostboltVolley_Timer;
-    uint32 MindFlay_Timer;
-    uint32 FrostNova_Timer;
-
-    void Reset()
-    override {
-        LichSlap_Timer = 45000;
-        FrostboltVolley_Timer = 30000;
-        MindFlay_Timer = 30000;
-        FrostNova_Timer = 30000;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim())
-            return;
-
-        //LichSlap_Timer
-        if (LichSlap_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_LICHSLAP);
+    class boss_scornAI : public ScriptedAI
+    {
+        public:
+        boss_scornAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 LichSlap_Timer;
+        uint32 FrostboltVolley_Timer;
+        uint32 MindFlay_Timer;
+        uint32 FrostNova_Timer;
+    
+        void Reset()
+        override {
             LichSlap_Timer = 45000;
-        }else LichSlap_Timer -= diff;
+            FrostboltVolley_Timer = 30000;
+            MindFlay_Timer = 30000;
+            FrostNova_Timer = 30000;
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim())
+                return;
+    
+            //LichSlap_Timer
+            if (LichSlap_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_LICHSLAP);
+                LichSlap_Timer = 45000;
+            }else LichSlap_Timer -= diff;
+    
+            //FrostboltVolley_Timer
+            if (FrostboltVolley_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_FROSTBOLTVOLLEY);
+                FrostboltVolley_Timer = 20000;
+            }else FrostboltVolley_Timer -= diff;
+    
+            //MindFlay_Timer
+            if (MindFlay_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_MINDFLAY);
+                MindFlay_Timer = 20000;
+            }else MindFlay_Timer -= diff;
+    
+            //FrostNova_Timer
+            if (FrostNova_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_FROSTNOVA);
+                FrostNova_Timer = 15000;
+            }else FrostNova_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        //FrostboltVolley_Timer
-        if (FrostboltVolley_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_FROSTBOLTVOLLEY);
-            FrostboltVolley_Timer = 20000;
-        }else FrostboltVolley_Timer -= diff;
-
-        //MindFlay_Timer
-        if (MindFlay_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_MINDFLAY);
-            MindFlay_Timer = 20000;
-        }else MindFlay_Timer -= diff;
-
-        //FrostNova_Timer
-        if (FrostNova_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_FROSTNOVA);
-            FrostNova_Timer = 15000;
-        }else FrostNova_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_scornAI(creature);
     }
 };
-CreatureAI* GetAI_boss_scorn(Creature *_Creature)
-{
-    return new boss_scornAI (_Creature);
-}
+
 
 void AddSC_boss_scorn()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_scorn";
-    newscript->GetAI = &GetAI_boss_scorn;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_scorn();
 }
 

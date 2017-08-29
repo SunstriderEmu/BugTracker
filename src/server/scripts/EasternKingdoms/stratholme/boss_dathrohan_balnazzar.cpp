@@ -82,238 +82,244 @@ EndScriptData */
 #define ADD_8Z 135.002319
 #define ADD_8O 3.784981
 
-struct boss_dathrohan_balnazzarAI : public ScriptedAI
+class boss_dathrohan_balnazzar : public CreatureScript
 {
-    boss_dathrohan_balnazzarAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_dathrohan_balnazzar() : CreatureScript("boss_dathrohan_balnazzar")
+    { }
 
-    uint32 CrusadersHammer_Timer;
-    uint32 CrusaderStrike_Timer;
-    uint32 MindBlast_Timer;
-    uint32 HolyStrike_Timer;
-    uint32 Dazed_Timer;
-    uint32 ShadowShock_Timer;
-    uint32 PsychicScream_Timer;
-    uint32 DeepSleep_Timer;
-    uint32 ShadowBoltVolley_Timer;
-    //    uint32 MindControl_Timer;
-    bool Transformed;
-
-    void Reset()
-    override {
-        CrusadersHammer_Timer = 8000;
-        CrusaderStrike_Timer = 14000;
-        MindBlast_Timer = 17000;
-        HolyStrike_Timer = 18000;
-        Dazed_Timer = 23000;
-        ShadowShock_Timer = 4000;
-        PsychicScream_Timer = 16000;
-        DeepSleep_Timer = 20000;
-        ShadowBoltVolley_Timer = 9000;
-        //        MindControl_Timer = 10000;
-        Transformed = false;
-
-        me->SetUInt32Value(UNIT_FIELD_DISPLAYID,10545);
-        me->SetFloatValue(OBJECT_FIELD_SCALE_X, 1.00f);
-
-    }
-
-    void JustDied(Unit* Victim)
-    override {
-        me->SummonCreature(10698,ADD_1X,ADD_1Y,ADD_1Z,ADD_1O,TEMPSUMMON_TIMED_DESPAWN,240000);
-        me->SummonCreature(10698,ADD_2X,ADD_2Y,ADD_2Z,ADD_2O,TEMPSUMMON_TIMED_DESPAWN,240000);
-        me->SummonCreature(10698,ADD_3X,ADD_3Y,ADD_3Z,ADD_3O,TEMPSUMMON_TIMED_DESPAWN,240000);
-        me->SummonCreature(10698,ADD_4X,ADD_4Y,ADD_4Z,ADD_4O,TEMPSUMMON_TIMED_DESPAWN,240000);
-        me->SummonCreature(10698,ADD_5X,ADD_5Y,ADD_5Z,ADD_5O,TEMPSUMMON_TIMED_DESPAWN,240000);
-        me->SummonCreature(10698,ADD_6X,ADD_6Y,ADD_6Z,ADD_6O,TEMPSUMMON_TIMED_DESPAWN,240000);
-        me->SummonCreature(10698,ADD_7X,ADD_7Y,ADD_7Z,ADD_7O,TEMPSUMMON_TIMED_DESPAWN,240000);
-        me->SummonCreature(10698,ADD_8X,ADD_8Y,ADD_8Z,ADD_8O,TEMPSUMMON_TIMED_DESPAWN,240000);
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        //Return since we have no target
-        if (!UpdateVictim())
-            return;
-
-        //START NOT TRANSFORMED
-        if (!Transformed)
-        {
-            //CrusadersHammer
-            if (CrusadersHammer_Timer < diff && !me->IsNonMeleeSpellCast(false))
+    class boss_dathrohan_balnazzarAI : public ScriptedAI
+    {
+        public:
+        boss_dathrohan_balnazzarAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 CrusadersHammer_Timer;
+        uint32 CrusaderStrike_Timer;
+        uint32 MindBlast_Timer;
+        uint32 HolyStrike_Timer;
+        uint32 Dazed_Timer;
+        uint32 ShadowShock_Timer;
+        uint32 PsychicScream_Timer;
+        uint32 DeepSleep_Timer;
+        uint32 ShadowBoltVolley_Timer;
+        //    uint32 MindControl_Timer;
+        bool Transformed;
+    
+        void Reset()
+        override {
+            CrusadersHammer_Timer = 8000;
+            CrusaderStrike_Timer = 14000;
+            MindBlast_Timer = 17000;
+            HolyStrike_Timer = 18000;
+            Dazed_Timer = 23000;
+            ShadowShock_Timer = 4000;
+            PsychicScream_Timer = 16000;
+            DeepSleep_Timer = 20000;
+            ShadowBoltVolley_Timer = 9000;
+            //        MindControl_Timer = 10000;
+            Transformed = false;
+    
+            me->SetUInt32Value(UNIT_FIELD_DISPLAYID,10545);
+            me->SetFloatValue(OBJECT_FIELD_SCALE_X, 1.00f);
+    
+        }
+    
+        void JustDied(Unit* Victim)
+        override {
+            me->SummonCreature(10698,ADD_1X,ADD_1Y,ADD_1Z,ADD_1O,TEMPSUMMON_TIMED_DESPAWN,240000);
+            me->SummonCreature(10698,ADD_2X,ADD_2Y,ADD_2Z,ADD_2O,TEMPSUMMON_TIMED_DESPAWN,240000);
+            me->SummonCreature(10698,ADD_3X,ADD_3Y,ADD_3Z,ADD_3O,TEMPSUMMON_TIMED_DESPAWN,240000);
+            me->SummonCreature(10698,ADD_4X,ADD_4Y,ADD_4Z,ADD_4O,TEMPSUMMON_TIMED_DESPAWN,240000);
+            me->SummonCreature(10698,ADD_5X,ADD_5Y,ADD_5Z,ADD_5O,TEMPSUMMON_TIMED_DESPAWN,240000);
+            me->SummonCreature(10698,ADD_6X,ADD_6Y,ADD_6Z,ADD_6O,TEMPSUMMON_TIMED_DESPAWN,240000);
+            me->SummonCreature(10698,ADD_7X,ADD_7Y,ADD_7Z,ADD_7O,TEMPSUMMON_TIMED_DESPAWN,240000);
+            me->SummonCreature(10698,ADD_8X,ADD_8Y,ADD_8Z,ADD_8O,TEMPSUMMON_TIMED_DESPAWN,240000);
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            //Return since we have no target
+            if (!UpdateVictim())
+                return;
+    
+            //START NOT TRANSFORMED
+            if (!Transformed)
             {
-                //Cast
-                if (rand()%100 < 75) //50% chance to cast
-                {
-                    DoCast(me->GetVictim(),SPELL_CRUSADERSHAMMER);
-                }
-                //15 seconds until we should cast this again
-                CrusadersHammer_Timer = 12000;
-            }else CrusadersHammer_Timer -= diff;
-
-            //CrusaderStrike
-            if (CrusaderStrike_Timer < diff && !me->IsNonMeleeSpellCast(false))
-            {
-                //Cast
-                if (rand()%100 < 60) //50% chance to cast
-                {
-                    DoCast(me->GetVictim(),SPELL_CRUSADERSTRIKE);
-                }
-                //15 seconds until we should cast this again
-                CrusaderStrike_Timer = 15000;
-            }else CrusaderStrike_Timer -= diff;
-
-            //MindBlast
-            if (MindBlast_Timer < diff && !me->IsNonMeleeSpellCast(false))
-            {
-                //Cast
-                if (rand()%100 < 70) //70% chance to cast
-                {
-                    DoCast(me->GetVictim(),SPELL_MINDBLAST);
-                }
-                //15 seconds until we should cast this again
-                MindBlast_Timer = 10000;
-            }else MindBlast_Timer -= diff;
-
-            //HolyStrike
-            if (HolyStrike_Timer < diff && !me->IsNonMeleeSpellCast(false))
-            {
-                //Cast
-                if (rand()%100 < 50) //50% chance to cast
-                {
-                    DoCast(me->GetVictim(),SPELL_HOLYSTRIKE);
-                }
-                //15 seconds until we should cast this again
-                HolyStrike_Timer = 15000;
-            }else HolyStrike_Timer -= diff;
-
-            //Dazed
-            if (Dazed_Timer < diff && !me->IsNonMeleeSpellCast(false))
-            {
-                //Cast
-                if (rand()%100 < 50) //50% chance to cast
-                {
-                    DoCast(me->GetVictim(),SPELL_DAZED);
-                }
-                //15 seconds until we should cast this again
-                Dazed_Timer = 15000;
-            }else Dazed_Timer -= diff;
-
-            //BalnazzarTransform
-            if (me->GetHealthPct() < 40)
-            {
-                //Cast
-                DoCast(me,SPELL_BALNAZZARTRANSFORM); //restore hp, mana and stun
-                me->SetUInt32Value(UNIT_FIELD_DISPLAYID,10691); //then change disaply id
-                me->SetFloatValue(OBJECT_FIELD_SCALE_X, 3.00f); //then, change size
-                me->SetHealth(me->GetMaxHealth());
-                me->UpdateEntry(10813);
-                Transformed = true;
-            }
-
-            //START ELSE TRANSFORMED
-        } else {
-
-
-            //MindBlast
-            if (MindBlast_Timer < diff && !me->IsNonMeleeSpellCast(false))
-            {
-                //Cast
-                if (rand()%100 < 60) //70% chance to cast
-                {
-                    DoCast(me->GetVictim(),SPELL_MINDBLAST);
-                }
-                //15 seconds until we should cast this again
-                MindBlast_Timer = 10000;
-            }else MindBlast_Timer -= diff;
-
-            //ShadowShock
-            if (ShadowShock_Timer < diff)
-            {
-                //Cast
-                if (rand()%100 < 80) //80% chance to cast
-                {
-                    DoCast(me->GetVictim(),SPELL_SHADOWSHOCK);
-                }
-                //15 seconds until we should cast this again
-                ShadowShock_Timer = 11000;
-            }else ShadowShock_Timer -= diff;
-
-            //PsychicScream
-            if (PsychicScream_Timer < diff)
-            {
-                //Cast
-                if (rand()%100 < 60) //60% chance to cast
-                {
-                    DoCast(me->GetVictim(),SPELL_PSYCHICSCREAM);
-                    if(me->GetThreat(me->GetVictim()))
-                        DoModifyThreatPercent(me->GetVictim(),-50);
-                }
-                //15 seconds until we should cast this again
-                PsychicScream_Timer = 20000;
-            }else PsychicScream_Timer -= diff;
-
-            //DeepSleep
-            if (DeepSleep_Timer < diff)
-            {
-                //Cast
-                if (rand()%100 < 55) //55% chance to cast
+                //CrusadersHammer
+                if (CrusadersHammer_Timer < diff && !me->IsNonMeleeSpellCast(false))
                 {
                     //Cast
-                    Unit* target = nullptr;
-
-                    target = SelectTarget(SELECT_TARGET_RANDOM,0);
-                    if (target)
-                    DoCast(target,SPELL_DEEPSLEEP);
-                }
-                //15 seconds until we should cast this again
-                DeepSleep_Timer = 15000;
-            }else DeepSleep_Timer -= diff;
-
-            //ShadowBoltVolley
-            if (ShadowBoltVolley_Timer < diff)
-            {
-                //Cast
-                if (rand()%100 < 75) //75% chance to cast
+                    if (rand()%100 < 75) //50% chance to cast
+                    {
+                        DoCast(me->GetVictim(),SPELL_CRUSADERSHAMMER);
+                    }
+                    //15 seconds until we should cast this again
+                    CrusadersHammer_Timer = 12000;
+                }else CrusadersHammer_Timer -= diff;
+    
+                //CrusaderStrike
+                if (CrusaderStrike_Timer < diff && !me->IsNonMeleeSpellCast(false))
                 {
-                    DoCast(me->GetVictim(),SPELL_SHADOWBOLTVOLLEY);
+                    //Cast
+                    if (rand()%100 < 60) //50% chance to cast
+                    {
+                        DoCast(me->GetVictim(),SPELL_CRUSADERSTRIKE);
+                    }
+                    //15 seconds until we should cast this again
+                    CrusaderStrike_Timer = 15000;
+                }else CrusaderStrike_Timer -= diff;
+    
+                //MindBlast
+                if (MindBlast_Timer < diff && !me->IsNonMeleeSpellCast(false))
+                {
+                    //Cast
+                    if (rand()%100 < 70) //70% chance to cast
+                    {
+                        DoCast(me->GetVictim(),SPELL_MINDBLAST);
+                    }
+                    //15 seconds until we should cast this again
+                    MindBlast_Timer = 10000;
+                }else MindBlast_Timer -= diff;
+    
+                //HolyStrike
+                if (HolyStrike_Timer < diff && !me->IsNonMeleeSpellCast(false))
+                {
+                    //Cast
+                    if (rand()%100 < 50) //50% chance to cast
+                    {
+                        DoCast(me->GetVictim(),SPELL_HOLYSTRIKE);
+                    }
+                    //15 seconds until we should cast this again
+                    HolyStrike_Timer = 15000;
+                }else HolyStrike_Timer -= diff;
+    
+                //Dazed
+                if (Dazed_Timer < diff && !me->IsNonMeleeSpellCast(false))
+                {
+                    //Cast
+                    if (rand()%100 < 50) //50% chance to cast
+                    {
+                        DoCast(me->GetVictim(),SPELL_DAZED);
+                    }
+                    //15 seconds until we should cast this again
+                    Dazed_Timer = 15000;
+                }else Dazed_Timer -= diff;
+    
+                //BalnazzarTransform
+                if (me->GetHealthPct() < 40)
+                {
+                    //Cast
+                    DoCast(me,SPELL_BALNAZZARTRANSFORM); //restore hp, mana and stun
+                    me->SetUInt32Value(UNIT_FIELD_DISPLAYID,10691); //then change disaply id
+                    me->SetFloatValue(OBJECT_FIELD_SCALE_X, 3.00f); //then, change size
+                    me->SetHealth(me->GetMaxHealth());
+                    me->UpdateEntry(10813);
+                    Transformed = true;
                 }
+    
+                //START ELSE TRANSFORMED
+            } else {
+    
+    
+                //MindBlast
+                if (MindBlast_Timer < diff && !me->IsNonMeleeSpellCast(false))
+                {
+                    //Cast
+                    if (rand()%100 < 60) //70% chance to cast
+                    {
+                        DoCast(me->GetVictim(),SPELL_MINDBLAST);
+                    }
+                    //15 seconds until we should cast this again
+                    MindBlast_Timer = 10000;
+                }else MindBlast_Timer -= diff;
+    
+                //ShadowShock
+                if (ShadowShock_Timer < diff)
+                {
+                    //Cast
+                    if (rand()%100 < 80) //80% chance to cast
+                    {
+                        DoCast(me->GetVictim(),SPELL_SHADOWSHOCK);
+                    }
+                    //15 seconds until we should cast this again
+                    ShadowShock_Timer = 11000;
+                }else ShadowShock_Timer -= diff;
+    
+                //PsychicScream
+                if (PsychicScream_Timer < diff)
+                {
+                    //Cast
+                    if (rand()%100 < 60) //60% chance to cast
+                    {
+                        DoCast(me->GetVictim(),SPELL_PSYCHICSCREAM);
+                        if(me->GetThreat(me->GetVictim()))
+                            DoModifyThreatPercent(me->GetVictim(),-50);
+                    }
+                    //15 seconds until we should cast this again
+                    PsychicScream_Timer = 20000;
+                }else PsychicScream_Timer -= diff;
+    
+                //DeepSleep
+                if (DeepSleep_Timer < diff)
+                {
+                    //Cast
+                    if (rand()%100 < 55) //55% chance to cast
+                    {
+                        //Cast
+                        Unit* target = nullptr;
+    
+                        target = SelectTarget(SELECT_TARGET_RANDOM,0);
+                        if (target)
+                        DoCast(target,SPELL_DEEPSLEEP);
+                    }
+                    //15 seconds until we should cast this again
+                    DeepSleep_Timer = 15000;
+                }else DeepSleep_Timer -= diff;
+    
+                //ShadowBoltVolley
+                if (ShadowBoltVolley_Timer < diff)
+                {
+                    //Cast
+                    if (rand()%100 < 75) //75% chance to cast
+                    {
+                        DoCast(me->GetVictim(),SPELL_SHADOWBOLTVOLLEY);
+                    }
+                    //15 seconds until we should cast this again
+                    ShadowBoltVolley_Timer = 13000;
+                }else ShadowBoltVolley_Timer -= diff;
+    
+                //MindControl
+                //            if (MindControl_Timer < diff)
+                //            {
+                //Cast
+                //                if (rand()%100 < 50) //50% chance to cast
+                //                {
+                //                DoCast(me->GetVictim(),SPELL_MINDCONTROL);
+                //                }
                 //15 seconds until we should cast this again
-                ShadowBoltVolley_Timer = 13000;
-            }else ShadowBoltVolley_Timer -= diff;
-
-            //MindControl
-            //            if (MindControl_Timer < diff)
-            //            {
-            //Cast
-            //                if (rand()%100 < 50) //50% chance to cast
-            //                {
-            //                DoCast(me->GetVictim(),SPELL_MINDCONTROL);
-            //                }
-            //15 seconds until we should cast this again
-            //                MindControl_Timer = 15000;
-            //            }else MindControl_Timer -= diff;
-
-            //END ELSE TRANSFORMED
+                //                MindControl_Timer = 15000;
+                //            }else MindControl_Timer -= diff;
+    
+                //END ELSE TRANSFORMED
+            }
+    
+            DoMeleeAttackIfReady();
         }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_dathrohan_balnazzarAI(creature);
     }
 };
-CreatureAI* GetAI_boss_dathrohan_balnazzar(Creature *_Creature)
-{
-    return new boss_dathrohan_balnazzarAI (_Creature);
-}
+
 
 void AddSC_boss_dathrohan_balnazzar()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_dathrohan_balnazzar";
-    newscript->GetAI = &GetAI_boss_dathrohan_balnazzar;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_dathrohan_balnazzar();
 }
 

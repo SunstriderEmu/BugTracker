@@ -32,120 +32,126 @@ EndScriptData */
 #define MODEL_NORMAL            10433
 #define MODEL_HUMAN             3637
 
-struct boss_magistrate_barthilasAI : public ScriptedAI
+class boss_magistrate_barthilas : public CreatureScript
 {
-    boss_magistrate_barthilasAI(Creature *c) : ScriptedAI(c)
+public:
+    boss_magistrate_barthilas() : CreatureScript("boss_magistrate_barthilas")
+    { }
+
+    class boss_magistrate_barthilasAI : public ScriptedAI
     {
-        pInstance = (InstanceScript*)me->GetInstanceScript();
-    }
-
-    InstanceScript* pInstance;
-
-    uint32 DrainingBlow_Timer;
-    uint32 CrowdPummel_Timer;
-    uint32 MightyBlow_Timer;
-    uint32 FuriousAnger_Timer;
-    uint32 AngerCount;
-    uint32 escapeTimer;
-
-    void Reset()
-    override {
-        DrainingBlow_Timer = 20000;
-        CrowdPummel_Timer = 15000;
-        MightyBlow_Timer = 10000;
-        FuriousAnger_Timer = 5000;
-        AngerCount = 0;
-        escapeTimer = 0;
-
-        if (me->IsAlive())
-            me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_NORMAL);
-        else
-            me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_HUMAN);
-    }
-
-    void MoveInLineOfSight(Unit *who)
-    override {
-        /*if (InstanceScript *pInstance = ((InstanceScript*)me->GetInstanceScript())) {
-            if (!pInstance->GetData(TYPE_ESCAPE_BARTH)) {
-                escapeTimer = 5000;
-                me->SetSpeedRate(MOVE_WALK, 5.0f);
-                me->GetMotionMaster()->MovePoint(0, 3718.13, -3597.87, 142.05);
-                pInstance->SetData(TYPE_ESCAPE_BARTH, IN_PROGRESS);
-            }
-        }*/
-
-        ScriptedAI::MoveInLineOfSight(who);
-    }
-
-    void JustDied(Unit* Killer)
-    override {
-        me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_HUMAN);
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (escapeTimer) {
-            if (escapeTimer <= diff) {
-                me->SummonCreature(10435, 4070.16, -3537.12, 123.10, M_PI, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 6000000);
-                me->DisappearAndDie();
-                escapeTimer = 0;
-            }
-            else escapeTimer -= diff;
+        public:
+        boss_magistrate_barthilasAI(Creature *c) : ScriptedAI(c)
+        {
+            pInstance = (InstanceScript*)me->GetInstanceScript();
         }
-        
-        //Return since we have no target
-        if (!UpdateVictim())
-            return;
-
-        if (FuriousAnger_Timer < diff)
-        {
-            FuriousAnger_Timer = 4000;
-            if (AngerCount > 25)
-                return;
-
-            ++AngerCount;
-            me->CastSpell(me,SPELL_FURIOUS_ANGER,false);
-        }else FuriousAnger_Timer -= diff;
-
-        //DrainingBlow
-        if (DrainingBlow_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_DRAININGBLOW);
-            DrainingBlow_Timer = 15000;
-        }else DrainingBlow_Timer -= diff;
-
-        //CrowdPummel
-        if (CrowdPummel_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_CROWDPUMMEL);
+    
+        InstanceScript* pInstance;
+    
+        uint32 DrainingBlow_Timer;
+        uint32 CrowdPummel_Timer;
+        uint32 MightyBlow_Timer;
+        uint32 FuriousAnger_Timer;
+        uint32 AngerCount;
+        uint32 escapeTimer;
+    
+        void Reset()
+        override {
+            DrainingBlow_Timer = 20000;
             CrowdPummel_Timer = 15000;
-        }else CrowdPummel_Timer -= diff;
+            MightyBlow_Timer = 10000;
+            FuriousAnger_Timer = 5000;
+            AngerCount = 0;
+            escapeTimer = 0;
+    
+            if (me->IsAlive())
+                me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_NORMAL);
+            else
+                me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_HUMAN);
+        }
+    
+        void MoveInLineOfSight(Unit *who)
+        override {
+            /*if (InstanceScript *pInstance = ((InstanceScript*)me->GetInstanceScript())) {
+                if (!pInstance->GetData(TYPE_ESCAPE_BARTH)) {
+                    escapeTimer = 5000;
+                    me->SetSpeedRate(MOVE_WALK, 5.0f);
+                    me->GetMotionMaster()->MovePoint(0, 3718.13, -3597.87, 142.05);
+                    pInstance->SetData(TYPE_ESCAPE_BARTH, IN_PROGRESS);
+                }
+            }*/
+    
+            ScriptedAI::MoveInLineOfSight(who);
+        }
+    
+        void JustDied(Unit* Killer)
+        override {
+            me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_HUMAN);
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (escapeTimer) {
+                if (escapeTimer <= diff) {
+                    me->SummonCreature(10435, 4070.16, -3537.12, 123.10, M_PI, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 6000000);
+                    me->DisappearAndDie();
+                    escapeTimer = 0;
+                }
+                else escapeTimer -= diff;
+            }
+            
+            //Return since we have no target
+            if (!UpdateVictim())
+                return;
+    
+            if (FuriousAnger_Timer < diff)
+            {
+                FuriousAnger_Timer = 4000;
+                if (AngerCount > 25)
+                    return;
+    
+                ++AngerCount;
+                me->CastSpell(me,SPELL_FURIOUS_ANGER,false);
+            }else FuriousAnger_Timer -= diff;
+    
+            //DrainingBlow
+            if (DrainingBlow_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_DRAININGBLOW);
+                DrainingBlow_Timer = 15000;
+            }else DrainingBlow_Timer -= diff;
+    
+            //CrowdPummel
+            if (CrowdPummel_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_CROWDPUMMEL);
+                CrowdPummel_Timer = 15000;
+            }else CrowdPummel_Timer -= diff;
+    
+            //MightyBlow
+            if (MightyBlow_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_MIGHTYBLOW);
+                MightyBlow_Timer = 20000;
+            }else MightyBlow_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        //MightyBlow
-        if (MightyBlow_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_MIGHTYBLOW);
-            MightyBlow_Timer = 20000;
-        }else MightyBlow_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_magistrate_barthilasAI(creature);
     }
 };
-CreatureAI* GetAI_boss_magistrate_barthilas(Creature *_Creature)
-{
-    return new boss_magistrate_barthilasAI (_Creature);
-}
+
 
 void AddSC_boss_magistrate_barthilas()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_magistrate_barthilas";
-    newscript->GetAI = &GetAI_boss_magistrate_barthilas;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_magistrate_barthilas();
 }
 

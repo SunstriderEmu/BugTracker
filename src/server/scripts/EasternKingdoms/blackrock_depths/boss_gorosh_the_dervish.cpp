@@ -29,57 +29,63 @@ enum Spells
     SPELL_MORTALSTRIKE                                     = 24573
 };
 
-struct boss_gorosh_the_dervishAI : public ScriptedAI
+class boss_gorosh_the_dervish : public CreatureScript
 {
-    boss_gorosh_the_dervishAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_gorosh_the_dervish() : CreatureScript("boss_gorosh_the_dervish")
+    { }
 
-    uint32 WhirlWind_Timer;
-    uint32 MortalStrike_Timer;
+    class boss_gorosh_the_dervishAI : public ScriptedAI
+    {
+        public:
+        boss_gorosh_the_dervishAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 WhirlWind_Timer;
+        uint32 MortalStrike_Timer;
+    
+        void Reset()
+        override {
+            WhirlWind_Timer = 12000;
+            MortalStrike_Timer = 22000;
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            //Return since we have no target
+            if (!UpdateVictim() )
+                return;
+    
+            //WhirlWind_Timer
+            if (WhirlWind_Timer < diff)
+            {
+                DoCast(me,SPELL_WHIRLWIND);
+                WhirlWind_Timer = 15000;
+            }else WhirlWind_Timer -= diff;
+    
+            //MortalStrike_Timer
+            if (MortalStrike_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_MORTALSTRIKE);
+                MortalStrike_Timer = 15000;
+            }else MortalStrike_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-    void Reset()
-    override {
-        WhirlWind_Timer = 12000;
-        MortalStrike_Timer = 22000;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        //Return since we have no target
-        if (!UpdateVictim() )
-            return;
-
-        //WhirlWind_Timer
-        if (WhirlWind_Timer < diff)
-        {
-            DoCast(me,SPELL_WHIRLWIND);
-            WhirlWind_Timer = 15000;
-        }else WhirlWind_Timer -= diff;
-
-        //MortalStrike_Timer
-        if (MortalStrike_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_MORTALSTRIKE);
-            MortalStrike_Timer = 15000;
-        }else MortalStrike_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_gorosh_the_dervishAI(creature);
     }
 };
-CreatureAI* GetAI_boss_gorosh_the_dervish(Creature *pCreature)
-{
-    return new boss_gorosh_the_dervishAI (pCreature);
-}
+
 
 void AddSC_boss_gorosh_the_dervish()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_gorosh_the_dervish";
-    newscript->GetAI = &GetAI_boss_gorosh_the_dervish;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_gorosh_the_dervish();
 }
 

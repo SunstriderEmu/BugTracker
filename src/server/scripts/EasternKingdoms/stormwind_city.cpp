@@ -40,137 +40,185 @@ EndContentData */
 //TODO translate
 #define GOSSIP_ITEM_MALIN "Pouvez-vous m'envoyer à Theramore ? J'ai un message urgent pour Jaina, de la part de Bolvar."
 
-bool GossipHello_npc_archmage_malin(Player *player, Creature *_Creature)
+class npc_archmage_malin : public CreatureScript
 {
-    if(_Creature->IsQuestGiver())
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+public:
+    npc_archmage_malin() : CreatureScript("npc_archmage_malin")
+    { }
 
-    if(player->GetQuestStatus(11223) == QUEST_STATUS_COMPLETE && !player->GetQuestRewardStatus(11223))
-        player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_MALIN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
-
-    SEND_PREPARED_GOSSIP_MENU(player, _Creature);
-
-    return true;
-}
-
-bool GossipSelect_npc_archmage_malin(Player *player, Creature *_Creature, uint32 sender, uint32 action)
-{
-    if(action == GOSSIP_ACTION_INFO_DEF)
+    class npc_archmage_malinAI : public ScriptedAI
     {
-        player->CLOSE_GOSSIP_MENU();
-        _Creature->CastSpell(player, 42711, true);
-    }
+    public:
+        npc_archmage_malinAI(Creature* creature) : ScriptedAI(creature)
+        {}
 
-    return true;
-}
+
+        virtual bool GossipHello(Player* player) override
+        {
+            if(me->IsQuestGiver())
+                player->PrepareQuestMenu( me->GetGUID() );
+
+            if(player->GetQuestStatus(11223) == QUEST_STATUS_COMPLETE && !player->GetQuestRewardStatus(11223))
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_MALIN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+
+            SEND_PREPARED_GOSSIP_MENU(player, me);
+
+            return true;
+
+        }
+
+
+        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        {
+            if(action == GOSSIP_ACTION_INFO_DEF)
+            {
+                player->CLOSE_GOSSIP_MENU();
+                me->CastSpell(player, 42711, true);
+            }
+
+            return true;
+
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_archmage_malinAI(creature);
+    }
+};
+
+
 
 /*######
 ## npc_bartleby
 ######*/
 
-struct npc_bartlebyAI : public ScriptedAI
+
+class npc_bartleby : public CreatureScript
 {
-    npc_bartlebyAI(Creature *c) : ScriptedAI(c) {}
+public:
+    npc_bartleby() : CreatureScript("npc_bartleby")
+    { }
 
-    uint64 PlayerGUID;
-
-    void Reset()
-    override {
-        me->SetFaction(11);
-        me->SetEmoteState(EMOTE_ONESHOT_EAT);
-
-        PlayerGUID = 0;
-    }
-
-    void JustDied(Unit *who)
-    override {
-        me->SetFaction(11);
-    }
-
-    void DamageTaken(Unit *done_by, uint32 & damage)
-    override {
-        if(damage > me->GetHealth() || ((me->GetHealth() - damage)*100 / me->GetMaxHealth() < 15))
-        {
-            //Take 0 damage
-            damage = 0;
-
-            if (done_by->GetTypeId() == TYPEID_PLAYER && done_by->GetGUID() == PlayerGUID)
-            {
-                (done_by->ToPlayer())->AttackStop();
-                (done_by->ToPlayer())->AreaExploredOrEventHappens(1640);
-            }
-            me->CombatStop();
-            EnterEvadeMode();
+    class npc_bartlebyAI : public ScriptedAI
+    {
+        public:
+        npc_bartlebyAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint64 PlayerGUID;
+    
+        void Reset()
+        override {
+            me->SetFaction(11);
+            me->SetEmoteState(EMOTE_ONESHOT_EAT);
+    
+            PlayerGUID = 0;
         }
-    }
+    
+        void JustDied(Unit *who)
+        override {
+            me->SetFaction(11);
+        }
+    
+        void DamageTaken(Unit *done_by, uint32 & damage)
+        override {
+            if(damage > me->GetHealth() || ((me->GetHealth() - damage)*100 / me->GetMaxHealth() < 15))
+            {
+                //Take 0 damage
+                damage = 0;
+    
+                if (done_by->GetTypeId() == TYPEID_PLAYER && done_by->GetGUID() == PlayerGUID)
+                {
+                    (done_by->ToPlayer())->AttackStop();
+                    (done_by->ToPlayer())->AreaExploredOrEventHappens(1640);
+                }
+                me->CombatStop();
+                EnterEvadeMode();
+            }
+        }
+    
+        void EnterCombat(Unit *who) override {}
 
-    void EnterCombat(Unit *who) override {}
+        virtual void QuestAccept(Player* player, Quest const* _Quest) override
+        {
+            if(_Quest->GetQuestId() == 1640)
+            {
+                me->SetFaction(168);
+                ((npc_bartleby::npc_bartlebyAI*)me->AI())->PlayerGUID = player->GetGUID();
+                ((npc_bartleby::npc_bartlebyAI*)me->AI())->AttackStart(player);
+            }
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_bartlebyAI(creature);
+    }
 };
 
-bool QuestAccept_npc_bartleby(Player *player, Creature *_Creature, Quest const *_Quest)
-{
-    if(_Quest->GetQuestId() == 1640)
-    {
-        _Creature->SetFaction(168);
-        ((npc_bartlebyAI*)_Creature->AI())->PlayerGUID = player->GetGUID();
-        ((npc_bartlebyAI*)_Creature->AI())->AttackStart(player);
-    }
-    return true;
-}
 
-CreatureAI* GetAI_npc_bartleby(Creature *_creature)
-{
-    return new npc_bartlebyAI(_creature);
-}
 
 /*######
 ## npc_dashel_stonefist
 ######*/
 
-struct npc_dashel_stonefistAI : public ScriptedAI
+
+class npc_dashel_stonefist : public CreatureScript
 {
-    npc_dashel_stonefistAI(Creature *c) : ScriptedAI(c) {}
+public:
+    npc_dashel_stonefist() : CreatureScript("npc_dashel_stonefist")
+    { }
 
-    void Reset()
-    override {
-        me->SetFaction(11);
-        me->SetEmoteState(EMOTE_ONESHOT_EAT);
-    }
-
-    void DamageTaken(Unit *done_by, uint32 & damage)
-    override {
-        if((damage > me->GetHealth()) || (me->GetHealth() - damage)*100 / me->GetMaxHealth() < 15)
-        {
-            //Take 0 damage
-            damage = 0;
-
-            if (done_by->GetTypeId() == TYPEID_PLAYER)
-            {
-                (done_by->ToPlayer())->AttackStop();
-                (done_by->ToPlayer())->AreaExploredOrEventHappens(1447);
-            }
-            //me->CombatStop();
-            EnterEvadeMode();
+    class npc_dashel_stonefistAI : public ScriptedAI
+    {
+        public:
+        npc_dashel_stonefistAI(Creature *c) : ScriptedAI(c) {}
+    
+        void Reset()
+        override {
+            me->SetFaction(11);
+            me->SetEmoteState(EMOTE_ONESHOT_EAT);
         }
-    }
+    
+        void DamageTaken(Unit *done_by, uint32 & damage)
+        override {
+            if((damage > me->GetHealth()) || (me->GetHealth() - damage)*100 / me->GetMaxHealth() < 15)
+            {
+                //Take 0 damage
+                damage = 0;
+    
+                if (done_by->GetTypeId() == TYPEID_PLAYER)
+                {
+                    (done_by->ToPlayer())->AttackStop();
+                    (done_by->ToPlayer())->AreaExploredOrEventHappens(1447);
+                }
+                //me->CombatStop();
+                EnterEvadeMode();
+            }
+        }
+    
+        void EnterCombat(Unit *who) override {}
 
-    void EnterCombat(Unit *who) override {}
+        virtual void QuestAccept(Player* player, Quest const* _Quest) override
+        {
+            if(_Quest->GetQuestId() == 1447)
+            {
+                me->SetFaction(168);
+                ((npc_dashel_stonefist::npc_dashel_stonefistAI*)me->AI())->AttackStart(player);
+            }
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_dashel_stonefistAI(creature);
+    }
 };
 
-bool QuestAccept_npc_dashel_stonefist(Player *player, Creature *_Creature, Quest const *_Quest)
-{
-    if(_Quest->GetQuestId() == 1447)
-    {
-        _Creature->SetFaction(168);
-        ((npc_dashel_stonefistAI*)_Creature->AI())->AttackStart(player);
-    }
-    return true;
-}
 
-CreatureAI* GetAI_npc_dashel_stonefist(Creature *_creature)
-{
-    return new npc_dashel_stonefistAI(_creature);
-}
 
 /*######
 ## npc_general_marcus_jonathan
@@ -222,42 +270,68 @@ public:
 #define GOSSIP_ITEM_KAT_3 "Je vous demande pardon, Dame Prestor. Ce n'était pas mon intention."
 #define GOSSIP_ITEM_KAT_4 "Merci pour votre temps, Dame Prestor."
 
-bool GossipHello_npc_lady_katrana_prestor(Player *player, Creature *_Creature)
+class npc_lady_katrana_prestor : public CreatureScript
 {
-    if (_Creature->IsQuestGiver())
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+public:
+    npc_lady_katrana_prestor() : CreatureScript("npc_lady_katrana_prestor")
+    { }
 
-    if (player->GetQuestStatus(4185) == QUEST_STATUS_INCOMPLETE)
-        player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM_KAT_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
-
-    player->SEND_GOSSIP_MENU_TEXTID(2693, _Creature->GetGUID());
-
-    return true;
-}
-
-bool GossipSelect_npc_lady_katrana_prestor(Player *player, Creature *_Creature, uint32 sender, uint32 action)
-{
-    switch (action)
+    class npc_lady_katrana_prestorAI : public ScriptedAI
     {
-        case GOSSIP_ACTION_INFO_DEF:
-            player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM_KAT_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-            player->SEND_GOSSIP_MENU_TEXTID(2694, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+1:
-            player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM_KAT_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-            player->SEND_GOSSIP_MENU_TEXTID(2695, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+2:
-            player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM_KAT_4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
-            player->SEND_GOSSIP_MENU_TEXTID(2696, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+3:
-            player->CLOSE_GOSSIP_MENU();
-            player->AreaExploredOrEventHappens(4185);
-            break;
+    public:
+        npc_lady_katrana_prestorAI(Creature* creature) : ScriptedAI(creature)
+        {}
+
+
+        virtual bool GossipHello(Player* player) override
+        {
+            if (me->IsQuestGiver())
+                player->PrepareQuestMenu( me->GetGUID() );
+
+            if (player->GetQuestStatus(4185) == QUEST_STATUS_INCOMPLETE)
+                player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM_KAT_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+
+            player->SEND_GOSSIP_MENU_TEXTID(2693, me->GetGUID());
+
+            return true;
+
+        }
+
+
+        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        {
+            switch (action)
+            {
+                case GOSSIP_ACTION_INFO_DEF:
+                    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM_KAT_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+                    player->SEND_GOSSIP_MENU_TEXTID(2694, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF+1:
+                    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM_KAT_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+                    player->SEND_GOSSIP_MENU_TEXTID(2695, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF+2:
+                    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM_KAT_4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+                    player->SEND_GOSSIP_MENU_TEXTID(2696, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF+3:
+                    player->CLOSE_GOSSIP_MENU();
+                    player->AreaExploredOrEventHappens(4185);
+                    break;
+            }
+            return true;
+
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_lady_katrana_prestorAI(creature);
     }
-    return true;
-}
+};
+
+
 
 /*######
 ## npc_innkeeper_allison
@@ -297,20 +371,40 @@ public:
 ## npc_monty
 ######*/
 
-bool ChooseReward_npc_monty(Player* player, Creature* creature, const Quest* quest, uint32 option)
+class npc_monty : public CreatureScript
 {
-    if (quest->GetQuestId() == 6661) {
-        DoScriptText(-1000765, creature, nullptr);
-        Creature* rat = creature->FindNearestCreature(13017, 15.0f, true);
-        while (rat) {
-            rat->DisappearAndDie();
-            rat->Respawn();
-            rat = creature->FindNearestCreature(13017, 15.0f, true);
+public:
+    npc_monty() : CreatureScript("npc_monty")
+    { }
+
+    class npc_montyAI : public ScriptedAI
+    {
+    public:
+        npc_montyAI(Creature* creature) : ScriptedAI(creature)
+        {}
+
+
+        virtual void QuestReward(Player* player, Quest const* quest, uint32 option) override
+        {
+            if (quest->GetQuestId() == 6661) {
+                DoScriptText(-1000765, me, nullptr);
+                Creature* rat = me->FindNearestCreature(13017, 15.0f, true);
+                while (rat) {
+                    rat->DisappearAndDie();
+                    rat->Respawn();
+                    rat = me->FindNearestCreature(13017, 15.0f, true);
+                }
+            }
         }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_montyAI(creature);
     }
-    
-    return true;
-}
+};
+
 
 /*######
 ## AddSC
@@ -318,39 +412,19 @@ bool ChooseReward_npc_monty(Player* player, Creature* creature, const Quest* que
 
 void AddSC_stormwind_city()
 {
-    OLDScript *newscript;
 
-    newscript = new OLDScript;
-    newscript->Name="npc_archmage_malin";
-    newscript->OnGossipHello = &GossipHello_npc_archmage_malin;
-    newscript->OnGossipSelect = &GossipSelect_npc_archmage_malin;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_archmage_malin();
 
-    newscript = new OLDScript;
-    newscript->Name = "npc_bartleby";
-    newscript->GetAI = &GetAI_npc_bartleby;
-    newscript->OnQuestAccept = &QuestAccept_npc_bartleby;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_bartleby();
 
-    newscript = new OLDScript;
-    newscript->Name = "npc_dashel_stonefist";
-    newscript->GetAI = &GetAI_npc_dashel_stonefist;
-    newscript->OnQuestAccept = &QuestAccept_npc_dashel_stonefist;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_dashel_stonefist();
 
     new npc_general_marcus_jonathan();
 
-    newscript = new OLDScript;
-    newscript->Name="npc_lady_katrana_prestor";
-    newscript->OnGossipHello = &GossipHello_npc_lady_katrana_prestor;
-    newscript->OnGossipSelect = &GossipSelect_npc_lady_katrana_prestor;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_lady_katrana_prestor();
     
     new npc_innkeeper_allison();
     
-    newscript = new OLDScript;
-    newscript->Name = "npc_monty";
-    newscript->OnQuestReward = &ChooseReward_npc_monty;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_monty();
 }
 

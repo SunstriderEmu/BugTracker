@@ -48,154 +48,164 @@ EndScriptData */
 #define SPELL_AWAKEN_VAULT_WALKER     10258
 #define SPELL_AWAKEN_EARTHEN_GUARDIAN 10252
 
-struct boss_archaedasAI : public ScriptedAI
+
+class boss_archaedas : public CreatureScript
 {
-    boss_archaedasAI(Creature *c) : ScriptedAI(c)
+public:
+    boss_archaedas() : CreatureScript("boss_archaedas")
+    { }
+
+    class boss_archaedasAI : public ScriptedAI
     {
-        pInstance = ((InstanceScript*)me->GetInstanceScript());
-    }
-
-    uint32 Tremor_Timer;
-    int32  Awaken_Timer;
-    uint32 WallMinionTimer;
-    bool wakingUp;
-
-    bool InCombat;
-    bool guardiansAwake;
-    bool vaultWalkersAwake;
-    InstanceScript* pInstance;
-
-    void Reset()
-    override {
-        Tremor_Timer = 60000;
-        Awaken_Timer = 0;
-        WallMinionTimer = 10000;
-
-        InCombat = false;
-        wakingUp = false;
-        guardiansAwake = false;
-        vaultWalkersAwake = false;
-
-        if (pInstance) pInstance->SetData (DATA_MINIONS, NOT_STARTED);    // respawn any dead minions
-        me->SetFaction(FACTION_FRIENDLY);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
-
-    }
-
-    void ActivateMinion (uint64 guid, bool flag)
-    {
-        Unit *minion = ObjectAccessor::GetUnit(*me, guid);
-
-        if (minion && minion->IsAlive())
+        public:
+        boss_archaedasAI(Creature *c) : ScriptedAI(c)
         {
-            DoCast (minion, SPELL_AWAKEN_VAULT_WALKER, flag);
-            minion->CastSpell(minion, SPELL_ARCHAEDAS_AWAKEN,true);
+            pInstance = ((InstanceScript*)me->GetInstanceScript());
         }
-    }
-
-
-    void EnterCombat(Unit *who) override
-    {
-        me->SetFaction (14);
-        me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->RemoveFlag (UNIT_FIELD_FLAGS,UNIT_FLAG_REMOVE_CLIENT_CONTROL);
-    }
-
-    void SpellHit (Unit* caster, const SpellInfo *spell) override
-    {
-        // Being woken up from the altar, start the awaken sequence
-        if (spell == sSpellMgr->GetSpellInfo(SPELL_ARCHAEDAS_AWAKEN)) {
-            me->Yell(SAY_AGGRO,LANG_UNIVERSAL,nullptr);
-            DoPlaySoundToSet(me,SOUND_AGGRO);
-            Awaken_Timer = 4000;
-            wakingUp = true;
-        }
-    }
-
-    void KilledUnit(Unit *victim) override
-    {
-        me->Yell(SAY_KILL,LANG_UNIVERSAL, nullptr);
-        DoPlaySoundToSet(me, SOUND_KILL);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if(!pInstance)
-            return;
-        // we're still doing awaken animation
-        if (wakingUp && Awaken_Timer >= 0) {
-            Awaken_Timer -= diff;
-            return;        // dont do anything until we are done
-        } else if (wakingUp && Awaken_Timer <= 0) {
-            wakingUp = false;
-            AttackStart(ObjectAccessor::GetUnit(*me, pInstance->GetData64(0)));
-            return;     // dont want to continue until we finish the AttackStart method
-        }
-
-        //Return since we have no target
-        if (!UpdateVictim())
-            return;
-
-
-        // wake a wall minion
-        if (WallMinionTimer < diff) {
-            pInstance->SetData (DATA_MINIONS, IN_PROGRESS);
-
+    
+        uint32 Tremor_Timer;
+        int32  Awaken_Timer;
+        uint32 WallMinionTimer;
+        bool wakingUp;
+    
+        bool InCombat;
+        bool guardiansAwake;
+        bool vaultWalkersAwake;
+        InstanceScript* pInstance;
+    
+        void Reset()
+        override {
+            Tremor_Timer = 60000;
+            Awaken_Timer = 0;
             WallMinionTimer = 10000;
-        } else WallMinionTimer -= diff;
-
-        //If we are <66 summon the guardians
-        if ( !guardiansAwake && me->GetHealthPct() <= 66) {
-            ActivateMinion(pInstance->GetData64(5),true);   // EarthenGuardian1
-            ActivateMinion(pInstance->GetData64(6),true);   // EarthenGuardian2
-            ActivateMinion(pInstance->GetData64(7),true);   // EarthenGuardian3
-            ActivateMinion(pInstance->GetData64(8),true);   // EarthenGuardian4
-            ActivateMinion(pInstance->GetData64(9),true);   // EarthenGuardian5
-            ActivateMinion(pInstance->GetData64(10),false); // EarthenGuardian6
-            me->Yell(SAY_SUMMON,LANG_UNIVERSAL, nullptr);
-            DoPlaySoundToSet(me, SOUND_SUMMON);
-            guardiansAwake = true;
+    
+            InCombat = false;
+            wakingUp = false;
+            guardiansAwake = false;
+            vaultWalkersAwake = false;
+    
+            if (pInstance) pInstance->SetData (DATA_MINIONS, NOT_STARTED);    // respawn any dead minions
+            me->SetFaction(FACTION_FRIENDLY);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
+    
         }
-
-        //If we are <33 summon the vault walkers
-        if ( !vaultWalkersAwake && me->GetHealthPct() <= 33) {
-            ActivateMinion(pInstance->GetData64(1),true);    // VaultWalker1
-            ActivateMinion(pInstance->GetData64(2),true);    // VaultWalker2
-            ActivateMinion(pInstance->GetData64(3),true);    // VaultWalker3
-            ActivateMinion(pInstance->GetData64(4),false);    // VaultWalker4
-            me->Yell(SAY_SUMMON2, LANG_UNIVERSAL, nullptr);
-            DoPlaySoundToSet(me, SOUND_SUMMON2);
-            vaultWalkersAwake = true;
-        }
-
-
-        if (Tremor_Timer < diff)
+    
+        void ActivateMinion (uint64 guid, bool flag)
         {
-            //Cast
-            DoCast(me->GetVictim(),SPELL_GROUND_TREMOR);
-
-            //45 seconds until we should cast this agian
-            Tremor_Timer  = 45000;
-        }else Tremor_Timer  -= diff;
-
-        DoMeleeAttackIfReady();
-    }
-
-    void JustDied (Unit *killer) override {
-        if(pInstance)
-        {
-            pInstance->SetData(DATA_ANCIENT_DOOR, DONE);        // open the vault door
-            pInstance->SetData(DATA_MINIONS, SPECIAL);        // deactivate his minions
+            Unit *minion = ObjectAccessor::GetUnit(*me, guid);
+    
+            if (minion && minion->IsAlive())
+            {
+                DoCast (minion, SPELL_AWAKEN_VAULT_WALKER, flag);
+                minion->CastSpell(minion, SPELL_ARCHAEDAS_AWAKEN,true);
+            }
         }
-    }
+    
+    
+        void EnterCombat(Unit *who) override
+        {
+            me->SetFaction (14);
+            me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->RemoveFlag (UNIT_FIELD_FLAGS,UNIT_FLAG_REMOVE_CLIENT_CONTROL);
+        }
+    
+        void SpellHit (Unit* caster, const SpellInfo *spell) override
+        {
+            // Being woken up from the altar, start the awaken sequence
+            if (spell == sSpellMgr->GetSpellInfo(SPELL_ARCHAEDAS_AWAKEN)) {
+                me->Yell(SAY_AGGRO,LANG_UNIVERSAL,nullptr);
+                DoPlaySoundToSet(me,SOUND_AGGRO);
+                Awaken_Timer = 4000;
+                wakingUp = true;
+            }
+        }
+    
+        void KilledUnit(Unit *victim) override
+        {
+            me->Yell(SAY_KILL,LANG_UNIVERSAL, nullptr);
+            DoPlaySoundToSet(me, SOUND_KILL);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if(!pInstance)
+                return;
+            // we're still doing awaken animation
+            if (wakingUp && Awaken_Timer >= 0) {
+                Awaken_Timer -= diff;
+                return;        // dont do anything until we are done
+            } else if (wakingUp && Awaken_Timer <= 0) {
+                wakingUp = false;
+                AttackStart(ObjectAccessor::GetUnit(*me, pInstance->GetData64(0)));
+                return;     // dont want to continue until we finish the AttackStart method
+            }
+    
+            //Return since we have no target
+            if (!UpdateVictim())
+                return;
+    
+    
+            // wake a wall minion
+            if (WallMinionTimer < diff) {
+                pInstance->SetData (DATA_MINIONS, IN_PROGRESS);
+    
+                WallMinionTimer = 10000;
+            } else WallMinionTimer -= diff;
+    
+            //If we are <66 summon the guardians
+            if ( !guardiansAwake && me->GetHealthPct() <= 66) {
+                ActivateMinion(pInstance->GetData64(5),true);   // EarthenGuardian1
+                ActivateMinion(pInstance->GetData64(6),true);   // EarthenGuardian2
+                ActivateMinion(pInstance->GetData64(7),true);   // EarthenGuardian3
+                ActivateMinion(pInstance->GetData64(8),true);   // EarthenGuardian4
+                ActivateMinion(pInstance->GetData64(9),true);   // EarthenGuardian5
+                ActivateMinion(pInstance->GetData64(10),false); // EarthenGuardian6
+                me->Yell(SAY_SUMMON,LANG_UNIVERSAL, nullptr);
+                DoPlaySoundToSet(me, SOUND_SUMMON);
+                guardiansAwake = true;
+            }
+    
+            //If we are <33 summon the vault walkers
+            if ( !vaultWalkersAwake && me->GetHealthPct() <= 33) {
+                ActivateMinion(pInstance->GetData64(1),true);    // VaultWalker1
+                ActivateMinion(pInstance->GetData64(2),true);    // VaultWalker2
+                ActivateMinion(pInstance->GetData64(3),true);    // VaultWalker3
+                ActivateMinion(pInstance->GetData64(4),false);    // VaultWalker4
+                me->Yell(SAY_SUMMON2, LANG_UNIVERSAL, nullptr);
+                DoPlaySoundToSet(me, SOUND_SUMMON2);
+                vaultWalkersAwake = true;
+            }
+    
+    
+            if (Tremor_Timer < diff)
+            {
+                //Cast
+                DoCast(me->GetVictim(),SPELL_GROUND_TREMOR);
+    
+                //45 seconds until we should cast this agian
+                Tremor_Timer  = 45000;
+            }else Tremor_Timer  -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    
+        void JustDied (Unit *killer) override {
+            if(pInstance)
+            {
+                pInstance->SetData(DATA_ANCIENT_DOOR, DONE);        // open the vault door
+                pInstance->SetData(DATA_MINIONS, SPECIAL);        // deactivate his minions
+            }
+        }
+    
+    };
 
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_archaedasAI(creature);
+    }
 };
 
-CreatureAI* GetAI_boss_archaedas(Creature *_Creature)
-{
-    return new boss_archaedasAI (_Creature);
-}
 
 /* ScriptData
 SDName: mob_archaedas_minions
@@ -207,86 +217,96 @@ EndScriptData */
 
 #define SPELL_ARCHAEDAS_AWAKEN        10347
 
-struct mob_archaedas_minionsAI : public ScriptedAI
+
+class mob_archaedas_minions : public CreatureScript
 {
-    mob_archaedas_minionsAI(Creature *c) : ScriptedAI(c)
+public:
+    mob_archaedas_minions() : CreatureScript("mob_archaedas_minions")
+    { }
+
+    class mob_archaedas_minionsAI : public ScriptedAI
     {
-        pInstance = ((InstanceScript*)me->GetInstanceScript());
-    }
-
-    uint32 Arcing_Timer;
-    int32 Awaken_Timer;
-    bool wakingUp;
-
-    bool InCombat;
-    bool amIAwake;
-    InstanceScript* pInstance;
-
-    void Reset() override
-    {
-        Arcing_Timer = 3000;
-        Awaken_Timer = 0;
-
-        InCombat = false;
-        wakingUp = false;
-        amIAwake = false;
-
-        me->SetFaction(FACTION_FRIENDLY);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
-        me->RemoveAllAuras();
-    }
-
-    void EnterCombat(Unit *who) override
-    {
-        me->SetFaction (14);
-        me->RemoveAllAuras();
-        me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
-        amIAwake = true;
-    }
-
-    void SpellHit (Unit* caster, const SpellInfo *spell) override
-    {
-        // time to wake up, start animation
-        if (spell == sSpellMgr->GetSpellInfo(SPELL_ARCHAEDAS_AWAKEN)){
-            Awaken_Timer = 5000;
-            wakingUp = true;
+        public:
+        mob_archaedas_minionsAI(Creature *c) : ScriptedAI(c)
+        {
+            pInstance = ((InstanceScript*)me->GetInstanceScript());
         }
-    }
-
-    void MoveInLineOfSight(Unit *who) override
-    {
-        if(amIAwake)
-            ScriptedAI::MoveInLineOfSight(who);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        // we're still in the awaken animation
-        if (wakingUp && Awaken_Timer >= 0) {
-            Awaken_Timer -= diff;
-            return;        // dont do anything until we are done
-        } else if (wakingUp && Awaken_Timer <= 0) {
+    
+        uint32 Arcing_Timer;
+        int32 Awaken_Timer;
+        bool wakingUp;
+    
+        bool InCombat;
+        bool amIAwake;
+        InstanceScript* pInstance;
+    
+        void Reset() override
+        {
+            Arcing_Timer = 3000;
+            Awaken_Timer = 0;
+    
+            InCombat = false;
             wakingUp = false;
-            amIAwake = true;
-            AttackStart(ObjectAccessor::GetUnit(*me, pInstance->GetData64(0))); // whoWokeArchaedasGUID
-            return;     // dont want to continue until we finish the AttackStart method
+            amIAwake = false;
+    
+            me->SetFaction(FACTION_FRIENDLY);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
+            me->RemoveAllAuras();
         }
+    
+        void EnterCombat(Unit *who) override
+        {
+            me->SetFaction (14);
+            me->RemoveAllAuras();
+            me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
+            amIAwake = true;
+        }
+    
+        void SpellHit (Unit* caster, const SpellInfo *spell) override
+        {
+            // time to wake up, start animation
+            if (spell == sSpellMgr->GetSpellInfo(SPELL_ARCHAEDAS_AWAKEN)){
+                Awaken_Timer = 5000;
+                wakingUp = true;
+            }
+        }
+    
+        void MoveInLineOfSight(Unit *who) override
+        {
+            if(amIAwake)
+                ScriptedAI::MoveInLineOfSight(who);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            // we're still in the awaken animation
+            if (wakingUp && Awaken_Timer >= 0) {
+                Awaken_Timer -= diff;
+                return;        // dont do anything until we are done
+            } else if (wakingUp && Awaken_Timer <= 0) {
+                wakingUp = false;
+                amIAwake = true;
+                AttackStart(ObjectAccessor::GetUnit(*me, pInstance->GetData64(0))); // whoWokeArchaedasGUID
+                return;     // dont want to continue until we finish the AttackStart method
+            }
+    
+            //Return since we have no target
+            if (!UpdateVictim())
+                return;
+    
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        //Return since we have no target
-        if (!UpdateVictim())
-            return;
-
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new mob_archaedas_minionsAI(creature);
     }
 };
 
-CreatureAI* GetAI_mob_archaedas_minions(Creature *_Creature)
-{
-    return new mob_archaedas_minionsAI (_Creature);
-}
 
 /* ScriptData
 SDName: go_altar_archaedas
@@ -372,55 +392,65 @@ EndScriptData */
 
 #define SPELL_SELF_DESTRUCT           9874
 
-struct mob_stonekeepersAI : public ScriptedAI
+
+class mob_stonekeepers : public CreatureScript
 {
-    mob_stonekeepersAI(Creature *c) : ScriptedAI(c)
+public:
+    mob_stonekeepers() : CreatureScript("mob_stonekeepers")
+    { }
+
+    class mob_stonekeepersAI : public ScriptedAI
     {
-        pInstance = ((InstanceScript*)me->GetInstanceScript());
+        public:
+        mob_stonekeepersAI(Creature *c) : ScriptedAI(c)
+        {
+            pInstance = ((InstanceScript*)me->GetInstanceScript());
+        }
+    
+        bool InCombat;
+        InstanceScript* pInstance;
+    
+        void Reset() override
+        {
+            InCombat = false;
+            me->SetFaction(FACTION_FRIENDLY);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
+            me->RemoveAllAuras();
+        }
+    
+        void EnterCombat(Unit *who) override
+        {
+            me->SetFaction (14);
+            me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
+        }
+    
+        void UpdateAI(const uint32 diff) override
+        {
+    
+            //Return since we have no target
+            if (!UpdateVictim())
+                return;
+    
+            DoMeleeAttackIfReady();
+        }
+    
+        void JustDied (Unit *killer) override
+        {
+            DoCast (me, SPELL_SELF_DESTRUCT,true);
+            if(pInstance)
+                pInstance->SetData(DATA_STONE_KEEPERS, IN_PROGRESS);    // activate next stonekeeper
+        }    
+    
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new mob_stonekeepersAI(creature);
     }
-
-    bool InCombat;
-    InstanceScript* pInstance;
-
-    void Reset() override
-    {
-        InCombat = false;
-        me->SetFaction(FACTION_FRIENDLY);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
-        me->RemoveAllAuras();
-    }
-
-    void EnterCombat(Unit *who) override
-    {
-        me->SetFaction (14);
-        me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
-    }
-
-    void UpdateAI(const uint32 diff) override
-    {
-
-        //Return since we have no target
-        if (!UpdateVictim())
-            return;
-
-        DoMeleeAttackIfReady();
-    }
-
-    void JustDied (Unit *killer) override
-    {
-        DoCast (me, SPELL_SELF_DESTRUCT,true);
-        if(pInstance)
-            pInstance->SetData(DATA_STONE_KEEPERS, IN_PROGRESS);    // activate next stonekeeper
-    }    
-
 };
 
-CreatureAI* GetAI_mob_stonekeepers(Creature *_Creature)
-{
-    return new mob_stonekeepersAI (_Creature);
-}
 
 /* ScriptData
 SDName: go_altar_of_the_keepers
@@ -506,24 +536,14 @@ public:
 
 void AddSC_boss_archaedas()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_archaedas";
-    newscript->GetAI = &GetAI_boss_archaedas;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_archaedas();
 
     new AltarOfArcheadas();
 
-    newscript = new OLDScript;
-    newscript->Name="mob_archaedas_minions";
-    newscript->GetAI = &GetAI_mob_archaedas_minions;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new mob_archaedas_minions();
 
     new AltarOfTheKeepers();
 
-    newscript = new OLDScript;
-    newscript->Name="mob_stonekeepers";
-    newscript->GetAI = &GetAI_mob_stonekeepers;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new mob_stonekeepers();
 }
 

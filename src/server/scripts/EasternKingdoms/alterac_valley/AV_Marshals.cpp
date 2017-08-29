@@ -30,106 +30,112 @@ EndScriptData */
 #define SPELL_WHIRLWIND1           15589
 #define SPELL_WHIRLWIND2           13736
 
-struct  AV_MarshalsAI : public ScriptedAI
+
+class AV_Marshals : public CreatureScript
 {
-     AV_MarshalsAI(Creature *c) : ScriptedAI(c) {Reset();}
-     
-     uint32 ChargeTimer;
-     uint32 CleaveTimer;
-     uint32 DemoralizingShoutTimer;
-     uint32 Whirlwind1Timer;
-     uint32 Whirlwind2Timer;
-     uint32 EnrageTimer;
-     uint32 ResetTimer;
-     
-     void Reset()
-     override {
-        ChargeTimer             = (2+rand()%10)*IN_MILLISECONDS;
-        CleaveTimer                = (1+rand()%10)*IN_MILLISECONDS;
-        DemoralizingShoutTimer  = (2+rand()%18)*IN_MILLISECONDS;
-        Whirlwind1Timer            = (1+rand()%12)*IN_MILLISECONDS;
-        Whirlwind2Timer            = (5+rand()%15)*IN_MILLISECONDS;
-        EnrageTimer                = (5+rand()%20)*IN_MILLISECONDS;
-        ResetTimer                = 5000;
-     }
-     
-     void JustRespawned()
-     override {
-         Reset();
-     }
-     
-     void KilledUnit(Unit* victim)override {}
-     
-     void JustDied(Unit* Killer)override {}
-     
-     void UpdateAI(const uint32 diff)
-     override {
-        if (!UpdateVictim())
-            return;
+public:
+    AV_Marshals() : CreatureScript("AV_Marshals")
+    { }
 
-        if (ChargeTimer <diff)
-        {
-            if(DoCast(me->GetVictim(), SPELL_CHARGE) == SPELL_CAST_OK)
-                ChargeTimer = (10+rand()%15)*IN_MILLISECONDS;
-        }else ChargeTimer -= diff;            
-        
-        if (CleaveTimer < diff)
-        {
-            if(DoCast(me->GetVictim(), SPELL_CLEAVE) == SPELL_CAST_OK)
-                CleaveTimer =  (10+rand()%6)*IN_MILLISECONDS;
-        }else CleaveTimer -= diff;
-
-        if (DemoralizingShoutTimer < diff)
-        {
-            if(DoCast(me->GetVictim(), SPELL_DEMORALIZING_SHOUT) == SPELL_CAST_OK)
-                DemoralizingShoutTimer = (10+rand()%5)*IN_MILLISECONDS;
-        }else DemoralizingShoutTimer -= diff;
-
-        if (Whirlwind1Timer < diff)
-        {
-            if(DoCast(me->GetVictim(), SPELL_WHIRLWIND1) == SPELL_CAST_OK)
-                Whirlwind1Timer = (6+rand()%14)*IN_MILLISECONDS;
-        }else Whirlwind1Timer -= diff;
-
-        if (Whirlwind2Timer < diff)
-        {
-            if(DoCast(me->GetVictim(), SPELL_WHIRLWIND2) == SPELL_CAST_OK)
-                Whirlwind2Timer = (10+rand()%15)*IN_MILLISECONDS;
-        }else Whirlwind2Timer -= diff;
-
-        if (EnrageTimer < diff)
-        {
-            if(DoCast(me->GetVictim(), SPELL_ENRAGE) == SPELL_CAST_OK)
-                EnrageTimer = (10+rand()%20)*IN_MILLISECONDS;
-        }else EnrageTimer -= diff;    
-            
-
-        // check if creature is not outside of building
-        /*if(ResetTimer < diff)
-        {
-            float x, y, z;
-            me->GetPosition(x, y, z);
-            if(x < 700)
+    class  AV_MarshalsAI : public ScriptedAI
+    {
+        public:
+         AV_MarshalsAI(Creature *c) : ScriptedAI(c) {Reset();}
+         
+         uint32 ChargeTimer;
+         uint32 CleaveTimer;
+         uint32 DemoralizingShoutTimer;
+         uint32 Whirlwind1Timer;
+         uint32 Whirlwind2Timer;
+         uint32 EnrageTimer;
+         uint32 ResetTimer;
+         
+         void Reset()
+         override {
+            ChargeTimer             = (2+rand()%10)*IN_MILLISECONDS;
+            CleaveTimer                = (1+rand()%10)*IN_MILLISECONDS;
+            DemoralizingShoutTimer  = (2+rand()%18)*IN_MILLISECONDS;
+            Whirlwind1Timer            = (1+rand()%12)*IN_MILLISECONDS;
+            Whirlwind2Timer            = (5+rand()%15)*IN_MILLISECONDS;
+            EnrageTimer                = (5+rand()%20)*IN_MILLISECONDS;
+            ResetTimer                = 5000;
+         }
+         
+         void JustRespawned()
+         override {
+             Reset();
+         }
+         
+         void KilledUnit(Unit* victim)override {}
+         
+         void JustDied(Unit* Killer)override {}
+         
+         void UpdateAI(const uint32 diff)
+         override {
+            if (!UpdateVictim())
+                return;
+    
+            if (ChargeTimer <diff)
             {
-                EnterEvadeMode();
-            }
-            ResetTimer = 2000;
-        }else ResetTimer -= diff;*/
+                if(DoCast(me->GetVictim(), SPELL_CHARGE) == SPELL_CAST_OK)
+                    ChargeTimer = (10+rand()%15)*IN_MILLISECONDS;
+            }else ChargeTimer -= diff;            
+            
+            if (CleaveTimer < diff)
+            {
+                if(DoCast(me->GetVictim(), SPELL_CLEAVE) == SPELL_CAST_OK)
+                    CleaveTimer =  (10+rand()%6)*IN_MILLISECONDS;
+            }else CleaveTimer -= diff;
+    
+            if (DemoralizingShoutTimer < diff)
+            {
+                if(DoCast(me->GetVictim(), SPELL_DEMORALIZING_SHOUT) == SPELL_CAST_OK)
+                    DemoralizingShoutTimer = (10+rand()%5)*IN_MILLISECONDS;
+            }else DemoralizingShoutTimer -= diff;
+    
+            if (Whirlwind1Timer < diff)
+            {
+                if(DoCast(me->GetVictim(), SPELL_WHIRLWIND1) == SPELL_CAST_OK)
+                    Whirlwind1Timer = (6+rand()%14)*IN_MILLISECONDS;
+            }else Whirlwind1Timer -= diff;
+    
+            if (Whirlwind2Timer < diff)
+            {
+                if(DoCast(me->GetVictim(), SPELL_WHIRLWIND2) == SPELL_CAST_OK)
+                    Whirlwind2Timer = (10+rand()%15)*IN_MILLISECONDS;
+            }else Whirlwind2Timer -= diff;
+    
+            if (EnrageTimer < diff)
+            {
+                if(DoCast(me->GetVictim(), SPELL_ENRAGE) == SPELL_CAST_OK)
+                    EnrageTimer = (10+rand()%20)*IN_MILLISECONDS;
+            }else EnrageTimer -= diff;    
+                
+    
+            // check if creature is not outside of building
+            /*if(ResetTimer < diff)
+            {
+                float x, y, z;
+                me->GetPosition(x, y, z);
+                if(x < 700)
+                {
+                    EnterEvadeMode();
+                }
+                ResetTimer = 2000;
+            }else ResetTimer -= diff;*/
+    
+            DoMeleeAttackIfReady();
+         }
+    };
 
-        DoMeleeAttackIfReady();
-     }
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new AV_MarshalsAI(creature);
+    }
 };
 
-CreatureAI* GetAI_AV_Marshals(Creature *_Creature)
-{
-    return new AV_MarshalsAI (_Creature);
-}
 
 void AddSC_AV_Marshals()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name = "AV_Marshals";
-    newscript->GetAI = &GetAI_AV_Marshals;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new AV_Marshals();
 }

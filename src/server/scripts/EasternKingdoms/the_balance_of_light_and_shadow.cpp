@@ -81,337 +81,356 @@ static Locations PeasantsArrivalPositions[] = {
     { 3326.627930f, -2975.803223f, 160.591400f, 0}
 };
 
-struct  npc_eris_havenfireAI : public ScriptedAI
+
+class npc_eris_havenfire : public CreatureScript
 {
+public:
+    npc_eris_havenfire() : CreatureScript("npc_eris_havenfire")
+    { }
 
-    npc_eris_havenfireAI(Creature * c) : ScriptedAI(c), Summons(me)
+    class  npc_eris_havenfireAI : public ScriptedAI
     {
-        me->SetReactState(REACT_PASSIVE);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        SetCombatMovementAllowed(false);
-    }
-
-    bool EventStarted;
-    bool EventDone;
-    uint32 Wave_Timer;
-    uint16 DiedCount;
-    uint16 CurrentWave;
-    uint16 EndPhase;
-    SummonList Summons; //for the bad guys only
-    Player* MyLittlePriest;
-    uint32 FootSoldiers_Timer;
-    uint32 Peasants_Timer;
-    uint32 End_Timer;
-    bool SoldiersFirstSpawn;
-    bool Peasants_Spawned;
-    Creature* EndPeasant;
-
-    void Reset()
-    override {
-        Summons.DespawnAll();
-        EventDone = false;
-        EventStarted = false;
-        DiedCount = 0;
-        CurrentWave = 1;
-        EndPhase = 1;
-        Wave_Timer = WAVE_TIMER;
-        MyLittlePriest = nullptr;
-        FootSoldiers_Timer = 12000;
-        Peasants_Timer = 7000;
-        End_Timer = 12000;
-        SoldiersFirstSpawn = true;
-        Peasants_Spawned = false;
-        EndPeasant = nullptr;
-    }
+        public:
     
-    void EnterCombat(Unit* who) override {}
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (EventStarted && MyLittlePriest) {
-            if (!EventDone) {
-                if (CurrentWave <= WAVE_COUNT) {
-                    if (CurrentWave >= 2 && FootSoldiers_Timer < diff) {
-                        PlayEvent(EVENT_FOOTSOLDIERS);
-                    }
-                    else FootSoldiers_Timer -= diff;
-
-                    if (!Peasants_Spawned && Peasants_Timer < diff) {
-                        PlayEvent(EVENT_PEASANT);
-                    }
-                    else Peasants_Timer -= diff;
-
-                    if (Wave_Timer < diff)
-                    {
-                        PlayEvent(EVENT_NEWWAVE);
-                    }
-                    else Wave_Timer -= diff;
-                }
-
-                if (DiedCount >= 15) {
-                    PlayEvent(EVENT_FAILURE);
-                }
-            }
-            else {
-                if (End_Timer < diff)
-                    PlayEvent(EVENT_END);
-                else End_Timer -= diff;
-            }
+        npc_eris_havenfireAI(Creature * c) : ScriptedAI(c), Summons(me)
+        {
+            me->SetReactState(REACT_PASSIVE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            SetCombatMovementAllowed(false);
         }
-    }
-
-    void PlayEvent(int event)
-    {
-        switch (event) {
-        case EVENT_START:
-            for (auto & ArchersPosition : ArchersPositions) {
-                Creature* Archer = me->SummonCreature(CREATURE_ARCHER, ArchersPosition.x, ArchersPosition.y, ArchersPosition.z, ArchersPosition.o, TEMPSUMMON_TIMED_DESPAWN, 300000);
-                if (Archer)
-                    Summons.Summon(Archer);
-            }
-            break;
-        case EVENT_NEWWAVE:
-            CurrentWave++;
-            if (CurrentWave > WAVE_COUNT)
-                EventDone = true;
-            else {
-                SoldiersFirstSpawn = true;
-                FootSoldiers_Timer = 10000;
-                Peasants_Timer = 5000;
-                Peasants_Spawned = false;
-                Wave_Timer = WAVE_TIMER;
-            }
-            break;
-        case EVENT_PEASANT:
-            Creature* Peasant;
-            for (int i = 0; i < 13; i++) {
-                uint32 summon = rand() % 8 ? CREATURE_PEASANTT2 : CREATURE_PEASANTT1;
-                Peasant = me->SummonCreature(summon, PeasantsPositions[i].x, PeasantsPositions[i].y, PeasantsPositions[i].z, 0, TEMPSUMMON_TIMED_DESPAWN, 67000);
-                if (Peasant) {
-                    Peasant->SetOwnerGUID(me->GetGUID());
-                    if (summon == CREATURE_PEASANTT1) 
-                        Peasant->CastSpell(Peasant, SPELL_SEETHINGPLAGUE, true);
-
-                    for (uint64 & Summon : Summons) {
-                        if (Creature* BadGuy = ObjectAccessor::GetCreature((*me), Summon))
-                            BadGuy->AddThreat(Peasant, 0);
-                    }
-                }
-            }
-            if (Peasant) {
-                switch (CurrentWave) {
-                case 1:
-                    Peasant->Say(PEASANT_ARRIVAL_SAY1);
-                    break;
-                case 2:
-                    Peasant->Say(PEASANT_ARRIVAL_SAY2);
-                    break;
-                case 3:
-                    Peasant->Say(PEASANT_ARRIVAL_SAY3);
-                    break;
-                }
-            }
-            Peasants_Spawned = true;
-            break;
-        case EVENT_FOOTSOLDIERS:
-            uint8 HowMuch;
-            if (!SoldiersFirstSpawn) {
-                HowMuch = rand() % 3 + 1;
-            }
-            else {
-                HowMuch = 3;
-                SoldiersFirstSpawn = false;
-            }
-
-            for (int i = 0; i < HowMuch; i++) {
-                Creature* BadGuy = me->SummonCreature(CREATURE_FOOTSOLDIER, FootSoldiersPositions[i].x, FootSoldiersPositions[i].y, FootSoldiersPositions[i].z, 0, TEMPSUMMON_TIMED_DESPAWN, 60000);
-                if (BadGuy) {
-                    Summons.Summon(BadGuy);
-                    BadGuy->AddThreat(MyLittlePriest, 0);
-                    BadGuy->AI()->AttackStart(MyLittlePriest);
-                }
-            }
-            FootSoldiers_Timer = HowMuch * 5000;
-            break;
-        case EVENT_END:
-            if (EndPeasant) {
-                switch (EndPhase) {
-                case 1:
-                    PlayEvent(EVENT_SUCCESS);
-                    break;
-                case 2:
-                    EndPeasant->SetInFront(MyLittlePriest);
-                    EndPeasant->StopMoving();
-                    EndPeasant->Say(PEASANT_END_SAY1);
-                    EndPeasant->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
-                    break;
-                case 3:
-                    EndPeasant->SetInFront(MyLittlePriest);
-                    EndPeasant->StopMoving();
-                    EndPeasant->Say(PEASANT_END_SAY2);
-                    EndPeasant->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
-                    break;
-                case 4:
-                    EndPeasant->SetInFront(MyLittlePriest);
-                    EndPeasant->StopMoving();
-                    EndPeasant->Say(PEASANT_END_SAY3);
-                    EndPeasant->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
-                    break;
-                case 5:
-                    EndPeasant->DisappearAndDie();
-                    Reset();
-                    break;
-                }
-
-                EndPhase++;
-                End_Timer = 6000;
-            }
-            else {
-                EndPeasant = me->SummonCreature(CREATURE_PEASANTT2, PeasantsPositions[13].x, PeasantsPositions[13].y, PeasantsPositions[13].z, PeasantsPositions[13].o, TEMPSUMMON_DEAD_DESPAWN, 0);
-                if (EndPeasant)
-                    EndPeasant->GetMotionMaster()->Clear();
-            }
-            break;
-        case EVENT_SUCCESS:
-            MyLittlePriest->AreaExploredOrEventHappens(QUEST_BALANCEOFLIGHT); //quest complete
-            me->Say(ERIS_END_SAY1);
+    
+        bool EventStarted;
+        bool EventDone;
+        uint32 Wave_Timer;
+        uint16 DiedCount;
+        uint16 CurrentWave;
+        uint16 EndPhase;
+        SummonList Summons; //for the bad guys only
+        Player* MyLittlePriest;
+        uint32 FootSoldiers_Timer;
+        uint32 Peasants_Timer;
+        uint32 End_Timer;
+        bool SoldiersFirstSpawn;
+        bool Peasants_Spawned;
+        Creature* EndPeasant;
+    
+        void Reset()
+        override {
             Summons.DespawnAll();
-            EventDone = true;
-            break;
-        case EVENT_FAILURE:
-            MyLittlePriest->FailQuest(QUEST_BALANCEOFLIGHT);
-            me->Say(ERIS_END_SAY2);
-            Reset();
-            me->DisappearAndDie();
-            break;
+            EventDone = false;
+            EventStarted = false;
+            DiedCount = 0;
+            CurrentWave = 1;
+            EndPhase = 1;
+            Wave_Timer = WAVE_TIMER;
+            MyLittlePriest = nullptr;
+            FootSoldiers_Timer = 12000;
+            Peasants_Timer = 7000;
+            End_Timer = 12000;
+            SoldiersFirstSpawn = true;
+            Peasants_Spawned = false;
+            EndPeasant = nullptr;
         }
-    }
-};
-
-bool QuestAccept_npc_eris_havenfire(Player* pPlayer, Creature* pCreature, Quest const* quest)
-{
-    if (((npc_eris_havenfireAI*) pCreature->AI())->EventStarted == false) {
-
-        ((npc_eris_havenfireAI*) pCreature->AI())->Reset();
-        ((npc_eris_havenfireAI*) pCreature->AI())->EventStarted = true;
-        ((npc_eris_havenfireAI*) pCreature->AI())->MyLittlePriest = pPlayer;
-        ((npc_eris_havenfireAI*) pCreature->AI())->PlayEvent(EVENT_START);
-    }
-
-    return true;
-}
-
-struct  npc_escaping_peasantAI : public ScriptedAI
-{
-    npc_escaping_peasantAI(Creature * c) : ScriptedAI(c), updateTimer(0)
-    {
-        me->SetReactState(REACT_PASSIVE);
-        me->SetWalk(true);
-        uint8 pos = rand() % ARRIVAL_POSITION_COUNT;
-        me->GetMotionMaster()->MovePoint(0, PeasantsArrivalPositions[pos].x, PeasantsArrivalPositions[pos].y, PeasantsArrivalPositions[pos].z);
-        SetCombatMovementAllowed(false);
-    }
-    uint64 updateTimer;
-
-    void JustDied(Unit* /* who */)
-    override {
-        if(Unit* Owner = me->GetOwner())
-            if (Creature* Eris = Owner->ToCreature())
-                ((npc_eris_havenfireAI*) Eris->AI())->DiedCount++;
-    }
+        
+        void EnterCombat(Unit* who) override {}
     
-    void EnterCombat(Unit* who) override {}
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (updateTimer >= diff) {
-           updateTimer -= diff;
-           return;
-        }
-        updateTimer = 3000;
-
-        if(Unit* Owner = me->GetOwner())
-            if (Creature* Eris = Owner->ToCreature())
-                if (!((npc_eris_havenfireAI*) Eris->AI())->EventStarted) //disappear at failure
-                    me->DisappearAndDie();
-    }
-};
-
-struct npc_scourge_archerAI : public ScriptedAI
-{
-
-    npc_scourge_archerAI(Creature * c) : ScriptedAI(c)
-    {
-        me->SetReactState(REACT_PASSIVE);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE|UNIT_FLAG_NON_ATTACKABLE);
-        me->SetByteValue(UNIT_FIELD_BYTES_2, 0, SHEATH_STATE_RANGED);
-        SetCombatMovementAllowed(false);
-    }
-    int Arrow_Timer;
-    uint64 targetGUID;
-
-    void Reset()
-    override {
-        Arrow_Timer = 2700;
-        targetGUID = 0;
-    }
-
-    void EnterCombat(Unit* who) override {}
+        void UpdateAI(const uint32 diff)
+        override {
+            if (EventStarted && MyLittlePriest) {
+                if (!EventDone) {
+                    if (CurrentWave <= WAVE_COUNT) {
+                        if (CurrentWave >= 2 && FootSoldiers_Timer < diff) {
+                            PlayEvent(EVENT_FOOTSOLDIERS);
+                        }
+                        else FootSoldiers_Timer -= diff;
     
-    void UpdateAI(const uint32 diff)
-    override {
-        if (Arrow_Timer < diff) {
-            Creature* target = ObjectAccessor::GetCreature(*me, targetGUID);
-            if (target && target->IsAlive() && me->GetDistance(target) < 60.0f) {
-                AttackStart(target);
-                me->AttackStop(); //visual debug purpose
-                Arrow_Timer = 2700;
-                DoCast(target, SPELL_ARROW, false);
-                if (rand() % 10 == 0) 
-					target->CastSpell(target, SPELL_DEATHSDOOR, true);
-            }
-            else {
-                Unit* uTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 60.0f, false);
-                if (uTarget && uTarget->GetTypeId() == TYPEID_UNIT && target->GetEntry() != CREATURE_ENRIS)
-                    targetGUID = target->GetGUID();
+                        if (!Peasants_Spawned && Peasants_Timer < diff) {
+                            PlayEvent(EVENT_PEASANT);
+                        }
+                        else Peasants_Timer -= diff;
+    
+                        if (Wave_Timer < diff)
+                        {
+                            PlayEvent(EVENT_NEWWAVE);
+                        }
+                        else Wave_Timer -= diff;
+                    }
+    
+                    if (DiedCount >= 15) {
+                        PlayEvent(EVENT_FAILURE);
+                    }
+                }
+                else {
+                    if (End_Timer < diff)
+                        PlayEvent(EVENT_END);
+                    else End_Timer -= diff;
+                }
             }
         }
-        else Arrow_Timer -= diff;
+    
+        void PlayEvent(int event)
+        {
+            switch (event) {
+            case EVENT_START:
+                for (auto & ArchersPosition : ArchersPositions) {
+                    Creature* Archer = me->SummonCreature(CREATURE_ARCHER, ArchersPosition.x, ArchersPosition.y, ArchersPosition.z, ArchersPosition.o, TEMPSUMMON_TIMED_DESPAWN, 300000);
+                    if (Archer)
+                        Summons.Summon(Archer);
+                }
+                break;
+            case EVENT_NEWWAVE:
+                CurrentWave++;
+                if (CurrentWave > WAVE_COUNT)
+                    EventDone = true;
+                else {
+                    SoldiersFirstSpawn = true;
+                    FootSoldiers_Timer = 10000;
+                    Peasants_Timer = 5000;
+                    Peasants_Spawned = false;
+                    Wave_Timer = WAVE_TIMER;
+                }
+                break;
+            case EVENT_PEASANT:
+                Creature* Peasant;
+                for (int i = 0; i < 13; i++) {
+                    uint32 summon = rand() % 8 ? CREATURE_PEASANTT2 : CREATURE_PEASANTT1;
+                    Peasant = me->SummonCreature(summon, PeasantsPositions[i].x, PeasantsPositions[i].y, PeasantsPositions[i].z, 0, TEMPSUMMON_TIMED_DESPAWN, 67000);
+                    if (Peasant) {
+                        Peasant->SetOwnerGUID(me->GetGUID());
+                        if (summon == CREATURE_PEASANTT1) 
+                            Peasant->CastSpell(Peasant, SPELL_SEETHINGPLAGUE, true);
+    
+                        for (uint64 & Summon : Summons) {
+                            if (Creature* BadGuy = ObjectAccessor::GetCreature((*me), Summon))
+                                BadGuy->AddThreat(Peasant, 0);
+                        }
+                    }
+                }
+                if (Peasant) {
+                    switch (CurrentWave) {
+                    case 1:
+                        Peasant->Say(PEASANT_ARRIVAL_SAY1);
+                        break;
+                    case 2:
+                        Peasant->Say(PEASANT_ARRIVAL_SAY2);
+                        break;
+                    case 3:
+                        Peasant->Say(PEASANT_ARRIVAL_SAY3);
+                        break;
+                    }
+                }
+                Peasants_Spawned = true;
+                break;
+            case EVENT_FOOTSOLDIERS:
+                uint8 HowMuch;
+                if (!SoldiersFirstSpawn) {
+                    HowMuch = rand() % 3 + 1;
+                }
+                else {
+                    HowMuch = 3;
+                    SoldiersFirstSpawn = false;
+                }
+    
+                for (int i = 0; i < HowMuch; i++) {
+                    Creature* BadGuy = me->SummonCreature(CREATURE_FOOTSOLDIER, FootSoldiersPositions[i].x, FootSoldiersPositions[i].y, FootSoldiersPositions[i].z, 0, TEMPSUMMON_TIMED_DESPAWN, 60000);
+                    if (BadGuy) {
+                        Summons.Summon(BadGuy);
+                        BadGuy->AddThreat(MyLittlePriest, 0);
+                        BadGuy->AI()->AttackStart(MyLittlePriest);
+                    }
+                }
+                FootSoldiers_Timer = HowMuch * 5000;
+                break;
+            case EVENT_END:
+                if (EndPeasant) {
+                    switch (EndPhase) {
+                    case 1:
+                        PlayEvent(EVENT_SUCCESS);
+                        break;
+                    case 2:
+                        EndPeasant->SetInFront(MyLittlePriest);
+                        EndPeasant->StopMoving();
+                        EndPeasant->Say(PEASANT_END_SAY1);
+                        EndPeasant->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
+                        break;
+                    case 3:
+                        EndPeasant->SetInFront(MyLittlePriest);
+                        EndPeasant->StopMoving();
+                        EndPeasant->Say(PEASANT_END_SAY2);
+                        EndPeasant->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
+                        break;
+                    case 4:
+                        EndPeasant->SetInFront(MyLittlePriest);
+                        EndPeasant->StopMoving();
+                        EndPeasant->Say(PEASANT_END_SAY3);
+                        EndPeasant->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
+                        break;
+                    case 5:
+                        EndPeasant->DisappearAndDie();
+                        Reset();
+                        break;
+                    }
+    
+                    EndPhase++;
+                    End_Timer = 6000;
+                }
+                else {
+                    EndPeasant = me->SummonCreature(CREATURE_PEASANTT2, PeasantsPositions[13].x, PeasantsPositions[13].y, PeasantsPositions[13].z, PeasantsPositions[13].o, TEMPSUMMON_DEAD_DESPAWN, 0);
+                    if (EndPeasant)
+                        EndPeasant->GetMotionMaster()->Clear();
+                }
+                break;
+            case EVENT_SUCCESS:
+                MyLittlePriest->AreaExploredOrEventHappens(QUEST_BALANCEOFLIGHT); //quest complete
+                me->Say(ERIS_END_SAY1);
+                Summons.DespawnAll();
+                EventDone = true;
+                break;
+            case EVENT_FAILURE:
+                MyLittlePriest->FailQuest(QUEST_BALANCEOFLIGHT);
+                me->Say(ERIS_END_SAY2);
+                Reset();
+                me->DisappearAndDie();
+                break;
+            }
+        }
+
+        virtual void QuestAccept(Player* pPlayer, Quest const* quest) override
+        {
+            if (((npc_eris_havenfire::npc_eris_havenfireAI*) me->AI())->EventStarted == false) {
+
+                ((npc_eris_havenfire::npc_eris_havenfireAI*) me->AI())->Reset();
+                ((npc_eris_havenfire::npc_eris_havenfireAI*) me->AI())->EventStarted = true;
+                ((npc_eris_havenfire::npc_eris_havenfireAI*) me->AI())->MyLittlePriest = pPlayer;
+                ((npc_eris_havenfire::npc_eris_havenfireAI*) me->AI())->PlayEvent(EVENT_START);
+            }
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_eris_havenfireAI(creature);
     }
 };
 
-CreatureAI* GetAI_npc_eris_havenfire(Creature *_Creature)
-{
-    return new npc_eris_havenfireAI(_Creature);
-}
 
-CreatureAI* GetAI_npc_escaping_peasant(Creature *_Creature)
-{
-    return new npc_escaping_peasantAI(_Creature);
-}
 
-CreatureAI* GetAI_npc_scourge_archer(Creature *_Creature)
+
+
+class npc_escaping_peasant : public CreatureScript
 {
-    return new npc_scourge_archerAI(_Creature);
-}
+public:
+    npc_escaping_peasant() : CreatureScript("npc_escaping_peasant")
+    { }
+
+    class  npc_escaping_peasantAI : public ScriptedAI
+    {
+        public:
+        npc_escaping_peasantAI(Creature * c) : ScriptedAI(c), updateTimer(0)
+        {
+            me->SetReactState(REACT_PASSIVE);
+            me->SetWalk(true);
+            uint8 pos = rand() % ARRIVAL_POSITION_COUNT;
+            me->GetMotionMaster()->MovePoint(0, PeasantsArrivalPositions[pos].x, PeasantsArrivalPositions[pos].y, PeasantsArrivalPositions[pos].z);
+            SetCombatMovementAllowed(false);
+        }
+        uint64 updateTimer;
+    
+        void JustDied(Unit* /* who */)
+        override {
+            if(Unit* Owner = me->GetOwner())
+                if (Creature* Eris = Owner->ToCreature())
+                    ((npc_eris_havenfire::npc_eris_havenfireAI*) Eris->AI())->DiedCount++;
+        }
+        
+        void EnterCombat(Unit* who) override {}
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (updateTimer >= diff) {
+               updateTimer -= diff;
+               return;
+            }
+            updateTimer = 3000;
+    
+            if(Unit* Owner = me->GetOwner())
+                if (Creature* Eris = Owner->ToCreature())
+                    if (!((npc_eris_havenfire::npc_eris_havenfireAI*) Eris->AI())->EventStarted) //disappear at failure
+                        me->DisappearAndDie();
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_escaping_peasantAI(creature);
+    }
+};
+
+
+class npc_scourge_archer : public CreatureScript
+{
+public:
+    npc_scourge_archer() : CreatureScript("npc_scourge_archer")
+    { }
+
+    class npc_scourge_archerAI : public ScriptedAI
+    {
+        public:
+    
+        npc_scourge_archerAI(Creature * c) : ScriptedAI(c)
+        {
+            me->SetReactState(REACT_PASSIVE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE|UNIT_FLAG_NON_ATTACKABLE);
+            me->SetByteValue(UNIT_FIELD_BYTES_2, 0, SHEATH_STATE_RANGED);
+            SetCombatMovementAllowed(false);
+        }
+        int Arrow_Timer;
+        uint64 targetGUID;
+    
+        void Reset()
+        override {
+            Arrow_Timer = 2700;
+            targetGUID = 0;
+        }
+    
+        void EnterCombat(Unit* who) override {}
+        
+        void UpdateAI(const uint32 diff)
+        override {
+            if (Arrow_Timer < diff) {
+                Creature* target = ObjectAccessor::GetCreature(*me, targetGUID);
+                if (target && target->IsAlive() && me->GetDistance(target) < 60.0f) {
+                    AttackStart(target);
+                    me->AttackStop(); //visual debug purpose
+                    Arrow_Timer = 2700;
+                    DoCast(target, SPELL_ARROW, false);
+                    if (rand() % 10 == 0) 
+    					target->CastSpell(target, SPELL_DEATHSDOOR, true);
+                }
+                else {
+                    Unit* uTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 60.0f, false);
+                    if (uTarget && uTarget->GetTypeId() == TYPEID_UNIT && target->GetEntry() != CREATURE_ENRIS)
+                        targetGUID = target->GetGUID();
+                }
+            }
+            else Arrow_Timer -= diff;
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_scourge_archerAI(creature);
+    }
+};
+
 
 void AddSC_the_balance_of_light_and_shadow()
 {
-    OLDScript *newscript;
 
-    newscript = new OLDScript;
-    newscript->Name = "npc_eris_havenfire";
-    newscript->GetAI = &GetAI_npc_eris_havenfire;
-    newscript->OnQuestAccept = &QuestAccept_npc_eris_havenfire;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_eris_havenfire();
 
-    newscript = new OLDScript;
-    newscript->Name = "npc_escaping_peasant";
-    newscript->GetAI = &GetAI_npc_escaping_peasant;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_escaping_peasant();
 
-    newscript = new OLDScript;
-    newscript->Name = "npc_scourge_archer";
-    newscript->GetAI = &GetAI_npc_scourge_archer;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_scourge_archer();
 }

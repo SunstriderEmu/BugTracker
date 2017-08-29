@@ -79,7 +79,6 @@ public:
 
 void AddSC_custom_gossip_codebox()
 {
-
     new custom_gossip_codebox();
 }
 

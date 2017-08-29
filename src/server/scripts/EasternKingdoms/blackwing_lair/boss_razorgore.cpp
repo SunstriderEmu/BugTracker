@@ -35,98 +35,104 @@ EndScriptData */
 #define SPELL_FIREBALLVOLLEY    22425
 #define SPELL_CONFLAGRATION     23023
 
-struct boss_razorgoreAI : public ScriptedAI
+
+class boss_razorgore : public CreatureScript
 {
-    boss_razorgoreAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_razorgore() : CreatureScript("boss_razorgore")
+    { }
 
-    uint32 Cleave_Timer;
-    uint32 WarStomp_Timer;
-    uint32 FireballVolley_Timer;
-    uint32 Conflagration_Timer;
-
-    void Reset()
-    override {
-        Cleave_Timer = 15000;                               //These times are probably wrong
-        WarStomp_Timer = 35000;
-        FireballVolley_Timer = 7000;
-        Conflagration_Timer = 12000;
-
-        me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
-        me->ApplySpellImmune(1, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-        DoZoneInCombat();
-    }
-
-    void JustDied(Unit* Killer)
-    override {
-        DoScriptText(SAY_DEATH, me);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim() )
-            return;
-
-        //Cleave_Timer
-        if (Cleave_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_CLEAVE);
-            Cleave_Timer = 7000 + rand()%3000;
-        }else Cleave_Timer -= diff;
-
-        //WarStomp_Timer
-        if (WarStomp_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_WARSTOMP);
-            WarStomp_Timer = 15000 + rand()%10000;
-        }else WarStomp_Timer -= diff;
-
-        //FireballVolley_Timer
-        if (FireballVolley_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_FIREBALLVOLLEY);
-            FireballVolley_Timer = 12000 + rand()%3000;
-        }else FireballVolley_Timer -= diff;
-
-        //Conflagration_Timer
-        if (Conflagration_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_CONFLAGRATION);
-            //We will remove this threat reduction and add an aura check.
-
-            //if(me->GetThreat(me->GetVictim()))
-            //DoModifyThreatPercent(me->GetVictim(),-50);
-
+    class boss_razorgoreAI : public ScriptedAI
+    {
+        public:
+        boss_razorgoreAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 Cleave_Timer;
+        uint32 WarStomp_Timer;
+        uint32 FireballVolley_Timer;
+        uint32 Conflagration_Timer;
+    
+        void Reset()
+        override {
+            Cleave_Timer = 15000;                               //These times are probably wrong
+            WarStomp_Timer = 35000;
+            FireballVolley_Timer = 7000;
             Conflagration_Timer = 12000;
-        }else Conflagration_Timer -= diff;
-
-        // Aura Check. If the gamer is affected by confliguration we attack a random gamer.
-        if (me->GetVictim()->HasAuraEffect(SPELL_CONFLAGRATION,0))
-        {
-            Unit* target = nullptr;
-            target = SelectTarget(SELECT_TARGET_RANDOM,1);
-            if (target)
-                me->TauntApply(target);
+    
+            me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
+            me->ApplySpellImmune(1, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
         }
+    
+        void EnterCombat(Unit *who)
+        override {
+            DoZoneInCombat();
+        }
+    
+        void JustDied(Unit* Killer)
+        override {
+            DoScriptText(SAY_DEATH, me);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim() )
+                return;
+    
+            //Cleave_Timer
+            if (Cleave_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_CLEAVE);
+                Cleave_Timer = 7000 + rand()%3000;
+            }else Cleave_Timer -= diff;
+    
+            //WarStomp_Timer
+            if (WarStomp_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_WARSTOMP);
+                WarStomp_Timer = 15000 + rand()%10000;
+            }else WarStomp_Timer -= diff;
+    
+            //FireballVolley_Timer
+            if (FireballVolley_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_FIREBALLVOLLEY);
+                FireballVolley_Timer = 12000 + rand()%3000;
+            }else FireballVolley_Timer -= diff;
+    
+            //Conflagration_Timer
+            if (Conflagration_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_CONFLAGRATION);
+                //We will remove this threat reduction and add an aura check.
+    
+                //if(me->GetThreat(me->GetVictim()))
+                //DoModifyThreatPercent(me->GetVictim(),-50);
+    
+                Conflagration_Timer = 12000;
+            }else Conflagration_Timer -= diff;
+    
+            // Aura Check. If the gamer is affected by confliguration we attack a random gamer.
+            if (me->GetVictim()->HasAuraEffect(SPELL_CONFLAGRATION,0))
+            {
+                Unit* target = nullptr;
+                target = SelectTarget(SELECT_TARGET_RANDOM,1);
+                if (target)
+                    me->TauntApply(target);
+            }
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_razorgoreAI(creature);
     }
 };
 
-CreatureAI* GetAI_boss_razorgore(Creature *_Creature)
-{
-    return new boss_razorgoreAI (_Creature);
-}
 
 void AddSC_boss_razorgore()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_razorgore";
-    newscript->GetAI = &GetAI_boss_razorgore;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_razorgore();
 }
 

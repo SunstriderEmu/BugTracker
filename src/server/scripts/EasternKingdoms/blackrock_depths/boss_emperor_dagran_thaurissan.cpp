@@ -33,89 +33,95 @@ enum Spells
 #define SAY_AGGRO                       "Come to aid the Throne!"
 #define SAY_SLAY                        "Hail to the king, baby!"
 
-struct boss_draganthaurissanAI : public ScriptedAI
+class boss_emperor_dagran_thaurissan : public CreatureScript
 {
-    boss_draganthaurissanAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_emperor_dagran_thaurissan() : CreatureScript("boss_emperor_dagran_thaurissan")
+    { }
 
-    uint32 HandOfThaurissan_Timer;
-    uint32 AvatarOfFlame_Timer;
-    //uint32 Counter;
-
-    bool isEventActive()
+    class boss_draganthaurissanAI : public ScriptedAI
     {
-        const GameEventMgr::ActiveEvents& activeEvents = sGameEventMgr->GetActiveEventList();
-        bool active = activeEvents.find(57) != activeEvents.end();
-
-        return active;
-    }
-
-    void Reset()
-    override {
-        HandOfThaurissan_Timer = 4000;
-        AvatarOfFlame_Timer = 25000;
-        //Counter= 0;
-        
-        if (isEventActive())
-            me->SetDisplayId(15735);
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-        me->Yell(SAY_AGGRO,LANG_UNIVERSAL,nullptr);
-        //me->CallForHelp(VISIBLE_RANGE); //Not present in TC1 atm
-    }
-
-    void KilledUnit(Unit* victim)
-    override {
-        me->Yell(SAY_SLAY, LANG_UNIVERSAL, nullptr);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        //Return since we have no target
-        if (!UpdateVictim() )
-            return;
-
-        if (HandOfThaurissan_Timer < diff)
+        public:
+        boss_draganthaurissanAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 HandOfThaurissan_Timer;
+        uint32 AvatarOfFlame_Timer;
+        //uint32 Counter;
+    
+        bool isEventActive()
         {
-            Unit* target = nullptr;
-            target = SelectTarget(SELECT_TARGET_RANDOM,0);
-            if (target) DoCast(target,SPELL_HANDOFTHAURISSAN);
+            const GameEventMgr::ActiveEvents& activeEvents = sGameEventMgr->GetActiveEventList();
+            bool active = activeEvents.find(57) != activeEvents.end();
+    
+            return active;
+        }
+    
+        void Reset()
+        override {
+            HandOfThaurissan_Timer = 4000;
+            AvatarOfFlame_Timer = 25000;
+            //Counter= 0;
+            
+            if (isEventActive())
+                me->SetDisplayId(15735);
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+            me->Yell(SAY_AGGRO,LANG_UNIVERSAL,nullptr);
+            //me->CallForHelp(VISIBLE_RANGE); //Not present in TC1 atm
+        }
+    
+        void KilledUnit(Unit* victim)
+        override {
+            me->Yell(SAY_SLAY, LANG_UNIVERSAL, nullptr);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            //Return since we have no target
+            if (!UpdateVictim() )
+                return;
+    
+            if (HandOfThaurissan_Timer < diff)
+            {
+                Unit* target = nullptr;
+                target = SelectTarget(SELECT_TARGET_RANDOM,0);
+                if (target) DoCast(target,SPELL_HANDOFTHAURISSAN);
+    
+                //3 Hands of Thaurissan will be casted
+                //if (Counter < 3)
+                //{
+                //    HandOfThaurissan_Timer = 1000;
+                //    Counter++;
+                //}
+                //else
+                //{
+                    HandOfThaurissan_Timer = 5000;
+                    //Counter=0;
+                //}
+            }else HandOfThaurissan_Timer -= diff;
+    
+            //AvatarOfFlame_Timer
+            if (AvatarOfFlame_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_AVATAROFFLAME);
+                AvatarOfFlame_Timer = 18000;
+            }else AvatarOfFlame_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-            //3 Hands of Thaurissan will be casted
-            //if (Counter < 3)
-            //{
-            //    HandOfThaurissan_Timer = 1000;
-            //    Counter++;
-            //}
-            //else
-            //{
-                HandOfThaurissan_Timer = 5000;
-                //Counter=0;
-            //}
-        }else HandOfThaurissan_Timer -= diff;
-
-        //AvatarOfFlame_Timer
-        if (AvatarOfFlame_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_AVATAROFFLAME);
-            AvatarOfFlame_Timer = 18000;
-        }else AvatarOfFlame_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_draganthaurissanAI(creature);
     }
 };
-CreatureAI* GetAI_boss_draganthaurissan(Creature *pCreature)
-{
-    return new boss_draganthaurissanAI (pCreature);
-}
+
 
 void AddSC_boss_draganthaurissan()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_emperor_dagran_thaurissan";
-    newscript->GetAI = &GetAI_boss_draganthaurissan;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_emperor_dagran_thaurissan();
 }
 
