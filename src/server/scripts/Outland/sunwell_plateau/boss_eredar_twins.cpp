@@ -334,241 +334,261 @@ struct EredarTwin : public ScriptedAI
     }
 };
 
-struct boss_sacrolashAI : public EredarTwin
+
+class boss_sacrolash : public CreatureScript
 {
-    boss_sacrolashAI(Creature *c) : EredarTwin(c), summons(c)
+public:
+    boss_sacrolash() : CreatureScript("boss_sacrolash")
+    { }
+
+    class boss_sacrolashAI : public EredarTwin
     {
-        isSacrolash = true;
-    }
-
-    uint32 ShadowbladesTimer;
-    uint32 ConfoundingblowTimer;
-    uint32 ShadowimageTimer;
+        public:
+        boss_sacrolashAI(Creature *c) : EredarTwin(c), summons(c)
+        {
+            isSacrolash = true;
+        }
     
-    SummonList summons;
-
-    void Reset()
-    override {
-        EredarTwin::Reset();
-
-        ShadowbladesTimer = 10000;
-        ConfoundingblowTimer = 25000;
-        ShadowimageTimer = 5000 + rand()%5000;
-        ConflagOrShadowNovaTimer = 30000;
-		
-        // Alythess spells
-        me->ApplySpellImmune(0, IMMUNITY_ID, 45230, true);
-        me->ApplySpellImmune(0, IMMUNITY_ID, 45348, true);
-        me->ApplySpellImmune(0, IMMUNITY_ID, 45342, true);
-        me->ApplySpellImmune(0, IMMUNITY_ID, 45235, true);
-        me->ApplySpellImmune(0, IMMUNITY_ID, 46771, true);
-        me->ApplySpellImmune(0, IMMUNITY_ID, 45236, true);
-        me->ApplySpellImmune(0, IMMUNITY_ID, 45246, true);
+        uint32 ShadowbladesTimer;
+        uint32 ConfoundingblowTimer;
+        uint32 ShadowimageTimer;
         
-        summons.DespawnAll();
-    }
+        SummonList summons;
     
-    void JustSummoned(Creature* pSummon)
-    override {
-        summons.Summon(pSummon);
-    }
+        void Reset()
+        override {
+            EredarTwin::Reset();
     
-    void SummonedCreatureDespawn(Creature* pSummon)
-    override {
-        summons.Despawn(pSummon);
-    }
-
-    void KilledUnit(Unit *victim)
-    override {
-        if (rand()%4 == 0)
-            DoScriptText(RAND(YELL_SAC_KILL_1,YELL_SAC_KILL_2), me);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        EredarTwin::UpdateAI(diff);
-
-        if (!UpdateVictim())
-            return;
-
-        if(ConfoundingblowTimer < diff)
-        {
-            if(Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
-                if(DoCast(target, SPELL_CONFOUNDING_BLOW) == SPELL_CAST_OK)
-                    ConfoundingblowTimer = 20000 + (rand()%2000);
-
-        }else ConfoundingblowTimer -=diff;
-
-        if(ShadowimageTimer < diff)
-        {
-            Unit* target = nullptr;
-            Creature* summon = nullptr;
-            uint32 lifeTime = 10000+rand()%2000;
-            for(int i = 0; i < 3; i++)
+            ShadowbladesTimer = 10000;
+            ConfoundingblowTimer = 25000;
+            ShadowimageTimer = 5000 + rand()%5000;
+            ConflagOrShadowNovaTimer = 30000;
+    		
+            // Alythess spells
+            me->ApplySpellImmune(0, IMMUNITY_ID, 45230, true);
+            me->ApplySpellImmune(0, IMMUNITY_ID, 45348, true);
+            me->ApplySpellImmune(0, IMMUNITY_ID, 45342, true);
+            me->ApplySpellImmune(0, IMMUNITY_ID, 45235, true);
+            me->ApplySpellImmune(0, IMMUNITY_ID, 46771, true);
+            me->ApplySpellImmune(0, IMMUNITY_ID, 45236, true);
+            me->ApplySpellImmune(0, IMMUNITY_ID, 45246, true);
+            
+            summons.DespawnAll();
+        }
+        
+        void JustSummoned(Creature* pSummon)
+        override {
+            summons.Summon(pSummon);
+        }
+        
+        void SummonedCreatureDespawn(Creature* pSummon)
+        override {
+            summons.Despawn(pSummon);
+        }
+    
+        void KilledUnit(Unit *victim)
+        override {
+            if (rand()%4 == 0)
+                DoScriptText(RAND(YELL_SAC_KILL_1,YELL_SAC_KILL_2), me);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            EredarTwin::UpdateAI(diff);
+    
+            if (!UpdateVictim())
+                return;
+    
+            if(ConfoundingblowTimer < diff)
             {
-                target = SelectTarget(SELECT_TARGET_RANDOM, 1, 10.0f, 50.0f, true);
-                if (!target)
-                    target = SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0, true);
-                summon = DoSpawnCreature(MOB_SHADOW_IMAGE, 0, 0, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, lifeTime);
-                if(summon && target) {
-                    summon->AI()->AttackStart(target);
-                    summon->AddThreat(target, 50000.0f);
-                }
-            }
-            ShadowimageTimer = lifeTime;
-        }else ShadowimageTimer -=diff;
-
-        if(ShadowbladesTimer < diff)
-        {
-            if(DoCast(me, SPELL_SHADOW_BLADES) == SPELL_CAST_OK)
-                ShadowbladesTimer = 10000;
-        }else ShadowbladesTimer -=diff;
-
-        DoMeleeAttackIfReady();
-    }
-};
-
-CreatureAI* GetAI_boss_sacrolash(Creature *_Creature)
-{
-    return new boss_sacrolashAI (_Creature);
-};
-
-struct boss_alythessAI : public EredarTwin
-{
-    boss_alythessAI(Creature *c) : EredarTwin(c)
-    {
-        isSacrolash = false;
-        IntroStepCounter = 0; //intro not active
-    }
-
-    uint32 IntroStepCounter;
-    uint32 IntroYellTimer;
-
-    uint32 ConflagrationTimer;
-    uint32 BlazeTimer;
-    uint32 PyrogenicsTimer;
-    uint32 FlamesearTimer;
-    uint32 EnrageTimer;
-    uint32 RespawnTimer;
-    uint32 CheckFBTimer;
-
-    void Reset()
-    override {
-        EredarTwin::Reset();
-
-        me->AI()->SetCombatMovementAllowed(false);
-
-        BlazeTimer = 100;
-        PyrogenicsTimer = 15000;
-        FlamesearTimer = 15000;
-        ConflagOrShadowNovaTimer = 15000;
-        IntroYellTimer = 0;
-		
-        // Sacrolash spells
-        me->ApplySpellImmune(0, IMMUNITY_ID, 45347, true);
-        me->ApplySpellImmune(0, IMMUNITY_ID, 45248, true);
-        me->ApplySpellImmune(0, IMMUNITY_ID, 45271, true);
-        me->ApplySpellImmune(0, IMMUNITY_ID, 45329, true);
-        me->ApplySpellImmune(0, IMMUNITY_ID, 45256, true);
-        me->ApplySpellImmune(0, IMMUNITY_ID, 45348, true);
-    }
-
-    void MoveInLineOfSight(Unit *who)
-    override {
-        if (!who || me->GetVictim())
-            return;
-
-        if (me->CanAttack(who) == CAN_ATTACK_RESULT_OK && who->isInAccessiblePlaceFor(me) && me->IsHostileTo(who)) {
-
-            //float attackRadius = me->GetAggroRange(who);
-            if (me->IsWithinDistInMap(who, 45.0f) && me->GetDistanceZ(who) <= CREATURE_Z_ATTACK_RANGE && me->IsWithinLOSInMap(who))
+                if(Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
+                    if(DoCast(target, SPELL_CONFOUNDING_BLOW) == SPELL_CAST_OK)
+                        ConfoundingblowTimer = 20000 + (rand()%2000);
+    
+            }else ConfoundingblowTimer -=diff;
+    
+            if(ShadowimageTimer < diff)
             {
-                if (!me->IsInCombat())
+                Unit* target = nullptr;
+                Creature* summon = nullptr;
+                uint32 lifeTime = 10000+rand()%2000;
+                for(int i = 0; i < 3; i++)
                 {
-                    DoStartNoMovement(who);
-                    EnterCombat(who);
+                    target = SelectTarget(SELECT_TARGET_RANDOM, 1, 10.0f, 50.0f, true);
+                    if (!target)
+                        target = SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0, true);
+                    summon = DoSpawnCreature(MOB_SHADOW_IMAGE, 0, 0, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, lifeTime);
+                    if(summon && target) {
+                        summon->AI()->AttackStart(target);
+                        summon->AddThreat(target, 50000.0f);
+                    }
+                }
+                ShadowimageTimer = lifeTime;
+            }else ShadowimageTimer -=diff;
+    
+            if(ShadowbladesTimer < diff)
+            {
+                if(DoCast(me, SPELL_SHADOW_BLADES) == SPELL_CAST_OK)
+                    ShadowbladesTimer = 10000;
+            }else ShadowbladesTimer -=diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_sacrolashAI(creature);
+    }
+};
+
+
+
+class boss_alythess : public CreatureScript
+{
+public:
+    boss_alythess() : CreatureScript("boss_alythess")
+    { }
+
+    class boss_alythessAI : public EredarTwin
+    {
+        public:
+        boss_alythessAI(Creature *c) : EredarTwin(c)
+        {
+            isSacrolash = false;
+            IntroStepCounter = 0; //intro not active
+        }
+    
+        uint32 IntroStepCounter;
+        uint32 IntroYellTimer;
+    
+        uint32 ConflagrationTimer;
+        uint32 BlazeTimer;
+        uint32 PyrogenicsTimer;
+        uint32 FlamesearTimer;
+        uint32 EnrageTimer;
+        uint32 RespawnTimer;
+        uint32 CheckFBTimer;
+    
+        void Reset()
+        override {
+            EredarTwin::Reset();
+    
+            me->AI()->SetCombatMovementAllowed(false);
+    
+            BlazeTimer = 100;
+            PyrogenicsTimer = 15000;
+            FlamesearTimer = 15000;
+            ConflagOrShadowNovaTimer = 15000;
+            IntroYellTimer = 0;
+    		
+            // Sacrolash spells
+            me->ApplySpellImmune(0, IMMUNITY_ID, 45347, true);
+            me->ApplySpellImmune(0, IMMUNITY_ID, 45248, true);
+            me->ApplySpellImmune(0, IMMUNITY_ID, 45271, true);
+            me->ApplySpellImmune(0, IMMUNITY_ID, 45329, true);
+            me->ApplySpellImmune(0, IMMUNITY_ID, 45256, true);
+            me->ApplySpellImmune(0, IMMUNITY_ID, 45348, true);
+        }
+    
+        void MoveInLineOfSight(Unit *who)
+        override {
+            if (!who || me->GetVictim())
+                return;
+    
+            if (me->CanAttack(who) == CAN_ATTACK_RESULT_OK && who->isInAccessiblePlaceFor(me) && me->IsHostileTo(who)) {
+    
+                //float attackRadius = me->GetAggroRange(who);
+                if (me->IsWithinDistInMap(who, 45.0f) && me->GetDistanceZ(who) <= CREATURE_Z_ATTACK_RANGE && me->IsWithinLOSInMap(who))
+                {
+                    if (!me->IsInCombat())
+                    {
+                        DoStartNoMovement(who);
+                        EnterCombat(who);
+                    }
                 }
             }
+            else if (IntroStepCounter == 0 && me->IsWithinLOSInMap(who) && me->IsWithinDistInMap(who, 30))
+                IntroStepCounter = 1; //start intro
         }
-        else if (IntroStepCounter == 0 && me->IsWithinLOSInMap(who) && me->IsWithinDistInMap(who, 30))
-            IntroStepCounter = 1; //start intro
-    }
-
-    void KilledUnit(Unit *victim)
-    override {
-        if (rand()%4 == 0)
-            DoScriptText(RAND(YELL_ALY_KILL_1,YELL_ALY_KILL_2), me);
-    }
-
-    uint32 IntroStep(uint32 step)
-    {
-        if(!pInstance) return -1;
-        Creature* Sacrolash = ObjectAccessor::GetCreature(*me,pInstance->GetData64(DATA_SACROLASH));
-        if(!Sacrolash) return -1;
-        switch (step)
-        {
-        case 0  : return 0;
-        case 1  : DoScriptText(YELL_INTRO_SAC_1, Sacrolash);  return 1000;
-        case 2  : DoScriptText(YELL_INTRO_ALY_2, me); return 1000;
-        case 3  : DoScriptText(YELL_INTRO_SAC_3, Sacrolash);  return 2000;
-        case 4  : DoScriptText(YELL_INTRO_ALY_4, me); return 1000;
-        case 5  : DoScriptText(YELL_INTRO_SAC_5, Sacrolash);  return 2000;
-        case 6  : DoScriptText(YELL_INTRO_ALY_6, me); return 1000;
-        case 7  : DoScriptText(YELL_INTRO_SAC_7, Sacrolash);  return 3000;
-        case 8  : DoScriptText(YELL_INTRO_ALY_8, me); return 900000;
-        default : return 10000;
+    
+        void KilledUnit(Unit *victim)
+        override {
+            if (rand()%4 == 0)
+                DoScriptText(RAND(YELL_ALY_KILL_1,YELL_ALY_KILL_2), me);
         }
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if(IntroStepCounter < 9) //10 = intro already done
+    
+        uint32 IntroStep(uint32 step)
         {
-            if(IntroStepCounter == 0 && IntroYellTimer == 0)
-                if(me->SelectNearestPlayer(60.0f))
-                    IntroYellTimer = 1; //start intro
-
-            if(IntroYellTimer)
+            if(!pInstance) return -1;
+            Creature* Sacrolash = ObjectAccessor::GetCreature(*me,pInstance->GetData64(DATA_SACROLASH));
+            if(!Sacrolash) return -1;
+            switch (step)
             {
-                if(IntroYellTimer <= diff)
-                    IntroYellTimer = IntroStep(IntroStepCounter++);
-                else IntroYellTimer -= diff;
+            case 0  : return 0;
+            case 1  : DoScriptText(YELL_INTRO_SAC_1, Sacrolash);  return 1000;
+            case 2  : DoScriptText(YELL_INTRO_ALY_2, me); return 1000;
+            case 3  : DoScriptText(YELL_INTRO_SAC_3, Sacrolash);  return 2000;
+            case 4  : DoScriptText(YELL_INTRO_ALY_4, me); return 1000;
+            case 5  : DoScriptText(YELL_INTRO_SAC_5, Sacrolash);  return 2000;
+            case 6  : DoScriptText(YELL_INTRO_ALY_6, me); return 1000;
+            case 7  : DoScriptText(YELL_INTRO_SAC_7, Sacrolash);  return 3000;
+            case 8  : DoScriptText(YELL_INTRO_ALY_8, me); return 900000;
+            default : return 10000;
             }
         }
-        
-        EredarTwin::UpdateAI(diff);
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if(IntroStepCounter < 9) //10 = intro already done
+            {
+                if(IntroStepCounter == 0 && IntroYellTimer == 0)
+                    if(me->SelectNearestPlayer(60.0f))
+                        IntroYellTimer = 1; //start intro
+    
+                if(IntroYellTimer)
+                {
+                    if(IntroYellTimer <= diff)
+                        IntroYellTimer = IntroStep(IntroStepCounter++);
+                    else IntroYellTimer -= diff;
+                }
+            }
+            
+            EredarTwin::UpdateAI(diff);
+    
+            if (!UpdateVictim())
+                return;
+    
+            if (FlamesearTimer < diff)
+            {
+                if(DoCast(me, SPELL_FLAME_SEAR) == SPELL_CAST_OK)
+                    FlamesearTimer = 10000 + rand()%3000;
+            } else FlamesearTimer -=diff;
+    
+            if (PyrogenicsTimer < diff)
+            {
+                DoCast(me, SPELL_PYROGENICS,true);
+                PyrogenicsTimer = 15000;
+            } else PyrogenicsTimer -= diff;
+    
+            if (BlazeTimer < diff)
+            {
+                if(DoCast(me->GetVictim(), SPELL_BLAZE) == SPELL_CAST_OK)
+                    BlazeTimer = 3800;
+    
+            } else BlazeTimer -= diff;
+    
+            //Alythess still hits in melee
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        if (!UpdateVictim())
-            return;
-
-        if (FlamesearTimer < diff)
-        {
-            if(DoCast(me, SPELL_FLAME_SEAR) == SPELL_CAST_OK)
-                FlamesearTimer = 10000 + rand()%3000;
-        } else FlamesearTimer -=diff;
-
-        if (PyrogenicsTimer < diff)
-        {
-            DoCast(me, SPELL_PYROGENICS,true);
-            PyrogenicsTimer = 15000;
-        } else PyrogenicsTimer -= diff;
-
-        if (BlazeTimer < diff)
-        {
-            if(DoCast(me->GetVictim(), SPELL_BLAZE) == SPELL_CAST_OK)
-                BlazeTimer = 3800;
-
-        } else BlazeTimer -= diff;
-
-        //Alythess still hits in melee
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_alythessAI(creature);
     }
 };
 
-CreatureAI* GetAI_boss_alythess(Creature *_Creature)
-{
-    return new boss_alythessAI (_Creature);
-};
 
 enum ShadowImageType
 {
@@ -576,114 +596,114 @@ enum ShadowImageType
     SHADOW_IMAGE_DARKSTRIKE = 1
 };
 
-struct mob_shadow_imageAI : public ScriptedAI
+
+class mob_shadow_image : public CreatureScript
 {
-    mob_shadow_imageAI(Creature *c) : ScriptedAI(c) {}
+public:
+    mob_shadow_image() : CreatureScript("mob_shadow_image")
+    { }
 
-    bool castedShadowFury;
-    uint32 DarkstrikeTimer;
-    uint32 ChangeTargetTimer;
-    ShadowImageType type;
-
-    void Reset()
-    override {
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        castedShadowFury = false;
-        DarkstrikeTimer = 3000;
-        ChangeTargetTimer = 0;
-        type = (rand() % 2) ? SHADOW_IMAGE_SHADOWFURY : SHADOW_IMAGE_DARKSTRIKE;
-    }
-
-    void SpellHitTarget(Unit* target,const SpellInfo* spell)
-    override {        
-        if (target->GetTypeId() == TYPEID_UNIT && target->ToCreature()->IsPet())
-            return;
-
-        switch(spell->Id)
-        {
-
-        case SPELL_SHADOW_FURY:
-        case SPELL_DARK_STRIKE:
-            if(!target->HasAuraEffect(SPELL_DARK_FLAME, 0))
-            {
-                if(target->HasAuraEffect(SPELL_FLAME_TOUCHED, 0))
-                {
-                    target->RemoveAurasDueToSpell(SPELL_FLAME_TOUCHED);
-                    target->CastSpell(target, SPELL_DARK_FLAME, true);
-                }else target->CastSpell(target,SPELL_DARK_TOUCHED,true);
-            }
-            break;
+    class mob_shadow_imageAI : public ScriptedAI
+    {
+        public:
+        mob_shadow_imageAI(Creature *c) : ScriptedAI(c) {}
+    
+        bool castedShadowFury;
+        uint32 DarkstrikeTimer;
+        uint32 ChangeTargetTimer;
+        ShadowImageType type;
+    
+        void Reset()
+        override {
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            castedShadowFury = false;
+            DarkstrikeTimer = 3000;
+            ChangeTargetTimer = 0;
+            type = (rand() % 2) ? SHADOW_IMAGE_SHADOWFURY : SHADOW_IMAGE_DARKSTRIKE;
         }
-    }
-
-    void OnSpellFinish(Unit *caster, uint32 spellId, Unit *target, bool ok) 
-    override {
-        if(spellId == SPELL_SHADOW_FURY)
-            me->DealDamage(me, me->GetHealth());
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if(!me->HasAuraEffect(SPELL_IMAGE_VISUAL))
-            DoCast(me, SPELL_IMAGE_VISUAL);
-
-        switch(type)
-        {
-        case SHADOW_IMAGE_SHADOWFURY:
-            if(!castedShadowFury && me->IsWithinMeleeRange(me->GetVictim())) 
+    
+        void SpellHitTarget(Unit* target,const SpellInfo* spell)
+        override {        
+            if (target->GetTypeId() == TYPEID_UNIT && target->ToCreature()->IsPet())
+                return;
+    
+            switch(spell->Id)
             {
-                DoCast(me, SPELL_SHADOW_FURY);
-                castedShadowFury = true;
-            }
-
-            break;
-        case SHADOW_IMAGE_DARKSTRIKE:
-            if (ChangeTargetTimer <= diff) {
-                if (Creature* sacrolash = me->FindNearestCreature(MOB_LADY_SACROLASH, 100.0f, true))
+    
+            case SPELL_SHADOW_FURY:
+            case SPELL_DARK_STRIKE:
+                if(!target->HasAuraEffect(SPELL_DARK_FLAME, 0))
                 {
-                    DoResetThreat();
-                    Unit* target = ((ScriptedAI*)sacrolash->AI())->SelectTarget(SELECT_TARGET_RANDOM, 0, 60.0f, true);
-                    if (target) {
-                        AttackStart(target);
-                        me->AddThreat(target, 500000.0f);
-                    }
+                    if(target->HasAuraEffect(SPELL_FLAME_TOUCHED, 0))
+                    {
+                        target->RemoveAurasDueToSpell(SPELL_FLAME_TOUCHED);
+                        target->CastSpell(target, SPELL_DARK_FLAME, true);
+                    }else target->CastSpell(target,SPELL_DARK_TOUCHED,true);
                 }
-                
-                ChangeTargetTimer = 1000 + rand()%9000; // 1-10 sec
-            } else ChangeTargetTimer -= diff;
-
-            //try to cast dark strike every 800ms
-            if(DarkstrikeTimer <= diff)
-            {
-                DoCast(me->GetVictim(), SPELL_DARK_STRIKE);
-                DarkstrikeTimer = 800;
-            } else DarkstrikeTimer -= diff;
-            break;
+                break;
+            }
         }
+    
+        void OnSpellFinish(Unit *caster, uint32 spellId, Unit *target, bool ok) 
+        override {
+            if(spellId == SPELL_SHADOW_FURY)
+                me->DealDamage(me, me->GetHealth());
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if(!me->HasAuraEffect(SPELL_IMAGE_VISUAL))
+                DoCast(me, SPELL_IMAGE_VISUAL);
+    
+            switch(type)
+            {
+            case SHADOW_IMAGE_SHADOWFURY:
+                if(!castedShadowFury && me->IsWithinMeleeRange(me->GetVictim())) 
+                {
+                    DoCast(me, SPELL_SHADOW_FURY);
+                    castedShadowFury = true;
+                }
+    
+                break;
+            case SHADOW_IMAGE_DARKSTRIKE:
+                if (ChangeTargetTimer <= diff) {
+                    if (Creature* sacrolash = me->FindNearestCreature(MOB_LADY_SACROLASH, 100.0f, true))
+                    {
+                        DoResetThreat();
+                        Unit* target = ((ScriptedAI*)sacrolash->AI())->SelectTarget(SELECT_TARGET_RANDOM, 0, 60.0f, true);
+                        if (target) {
+                            AttackStart(target);
+                            me->AddThreat(target, 500000.0f);
+                        }
+                    }
+                    
+                    ChangeTargetTimer = 1000 + rand()%9000; // 1-10 sec
+                } else ChangeTargetTimer -= diff;
+    
+                //try to cast dark strike every 800ms
+                if(DarkstrikeTimer <= diff)
+                {
+                    DoCast(me->GetVictim(), SPELL_DARK_STRIKE);
+                    DarkstrikeTimer = 800;
+                } else DarkstrikeTimer -= diff;
+                break;
+            }
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new mob_shadow_imageAI(creature);
     }
 };
 
-CreatureAI* GetAI_mob_shadow_image(Creature *_Creature)
-{
-    return new mob_shadow_imageAI (_Creature);
-};
 
 void AddSC_boss_eredar_twins()
 {
-    OLDScript *newscript;
 
-    newscript = new OLDScript;
-    newscript->Name="boss_sacrolash";
-    newscript->GetAI = &GetAI_boss_sacrolash;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_sacrolash();
 
-    newscript = new OLDScript;
-    newscript->Name="boss_alythess";
-    newscript->GetAI = &GetAI_boss_alythess;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_alythess();
 
-    newscript = new OLDScript;
-    newscript->Name="mob_shadow_image";
-    newscript->GetAI = &GetAI_mob_shadow_image;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new mob_shadow_image();
 }

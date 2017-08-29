@@ -75,6 +75,99 @@ typedef std::map<uint64, uint64> CubeMap;
 
 
 
+class mob_abyssal : public CreatureScript
+{
+public:
+    mob_abyssal() : CreatureScript("mob_abyssal")
+    { }
+
+    class mob_abyssalAI : public ScriptedAI
+    {
+    public:
+        mob_abyssalAI(Creature *c) : ScriptedAI(c)
+        {
+            trigger = 0;
+            Despawn_Timer = 60000;
+        }
+
+        uint32 FireBlast_Timer;
+        uint32 Despawn_Timer;
+        uint32 trigger;
+
+        void Reset()
+            override {
+            FireBlast_Timer = 6000;
+        }
+
+        void SpellHit(Unit*, const SpellInfo *spell)
+            override {
+            if (trigger == 2 && spell->Id == SPELL_BLAZE_TARGET)
+            {
+                me->CastSpell(me, SPELL_BLAZE_TRAP, true);
+                me->SetVisible(false);
+                Despawn_Timer = 130000;
+            }
+        }
+
+        void SetTrigger(uint32 _trigger)
+        {
+            trigger = _trigger;
+            me->SetDisplayId(11686);
+            if (trigger == 1) //debris
+            {
+                me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                me->CastSpell(me, SPELL_DEBRIS_VISUAL, true);
+                FireBlast_Timer = 5000;
+                Despawn_Timer = 10000;
+            }
+        }
+
+        void EnterCombat(Unit*) override { DoZoneInCombat(); }
+        void AttackStart(Unit *who) override { if (!trigger) ScriptedAI::AttackStart(who); }
+        void MoveInLineOfSight(Unit *who) override { if (!trigger) ScriptedAI::MoveInLineOfSight(who); }
+
+        void UpdateAI(const uint32 diff)
+            override {
+            if (trigger)
+            {
+                if (trigger == 1)
+                {
+                    if (FireBlast_Timer < diff)
+                    {
+                        me->CastSpell(me, SPELL_DEBRIS_DAMAGE, true);
+                        trigger = 3;
+                    }
+                    else FireBlast_Timer -= diff;
+                }
+                return;
+            }
+
+            if (Despawn_Timer < diff)
+            {
+                me->SetVisible(false);
+                me->SetDeathState(JUST_DIED);
+            }
+            else Despawn_Timer -= diff;
+
+            if (!UpdateVictim())
+                return;
+
+            if (FireBlast_Timer < diff)
+            {
+                DoCast(me->GetVictim(), SPELL_FIRE_BLAST);
+                FireBlast_Timer = 5000 + rand() % 10000;
+            }
+            else FireBlast_Timer -= diff;
+
+            DoMeleeAttackIfReady();
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new mob_abyssalAI(creature);
+    }
+};
 
 
 class boss_magtheridon : public CreatureScript
@@ -460,98 +553,6 @@ public:
     CreatureAI* GetAI(Creature* creature) const override
     {
         return new mob_hellfire_channelerAI(creature);
-    }
-};
-
-
-class mob_abyssal : public CreatureScript
-{
-public:
-    mob_abyssal() : CreatureScript("mob_abyssal")
-    { }
-
-    class mob_abyssalAI : public ScriptedAI
-    {
-        public:
-        mob_abyssalAI(Creature *c) : ScriptedAI(c)
-        {
-            trigger = 0;
-            Despawn_Timer = 60000;
-        }
-    
-        uint32 FireBlast_Timer;
-        uint32 Despawn_Timer;
-        uint32 trigger;
-    
-        void Reset()
-        override {
-            FireBlast_Timer = 6000;
-        }
-    
-        void SpellHit(Unit*, const SpellInfo *spell)
-        override {
-            if(trigger == 2 && spell->Id == SPELL_BLAZE_TARGET)
-            {
-                me->CastSpell(me, SPELL_BLAZE_TRAP, true);
-                me->SetVisible(false);
-                Despawn_Timer = 130000;
-            }
-        }
-    
-        void SetTrigger(uint32 _trigger)
-        {
-            trigger = _trigger;
-            me->SetDisplayId(11686);
-            if(trigger == 1) //debris
-            {
-                me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                me->CastSpell(me, SPELL_DEBRIS_VISUAL, true);
-                FireBlast_Timer = 5000;
-                Despawn_Timer = 10000;
-            }
-        }
-    
-        void EnterCombat(Unit*) override {DoZoneInCombat();}
-        void AttackStart(Unit *who) override {if(!trigger) ScriptedAI::AttackStart(who);}
-        void MoveInLineOfSight(Unit *who) override {if(!trigger) ScriptedAI::MoveInLineOfSight(who);}
-    
-        void UpdateAI(const uint32 diff)
-        override {
-            if(trigger)
-            {
-                if(trigger == 1)
-                {
-                    if(FireBlast_Timer < diff)
-                    {
-                        me->CastSpell(me, SPELL_DEBRIS_DAMAGE, true);
-                        trigger = 3;
-                    }else FireBlast_Timer -= diff;
-                }
-                return;
-            }
-    
-            if(Despawn_Timer < diff)
-            {
-                me->SetVisible(false);
-                me->SetDeathState(JUST_DIED);
-            }else Despawn_Timer -= diff;
-    
-            if(!UpdateVictim())
-                return;
-    
-            if(FireBlast_Timer < diff)
-            {
-                DoCast(me->GetVictim(), SPELL_FIRE_BLAST);
-                FireBlast_Timer = 5000+rand()%10000;
-            }else FireBlast_Timer -= diff;
-    
-            DoMeleeAttackIfReady();
-        }
-    };
-
-    CreatureAI* GetAI(Creature* creature) const override
-    {
-        return new mob_abyssalAI(creature);
     }
 };
 

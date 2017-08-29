@@ -53,261 +53,274 @@ EndContentData */
 #define SPELL_66_ILLUSION       36931                       //entry 21466
 #define SPELL_33_ILLUSION       36932                       //entry 21467
 
-struct boss_harbinger_skyrissAI : public ScriptedAI
+
+class boss_harbinger_skyriss : public CreatureScript
 {
-    boss_harbinger_skyrissAI(Creature *c) : ScriptedAI(c)
+public:
+    boss_harbinger_skyriss() : CreatureScript("boss_harbinger_skyriss")
+    { }
+
+    class boss_harbinger_skyrissAI : public ScriptedAI
     {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-        HeroicMode = me->GetMap()->IsHeroic();
-        Intro = false;
-    }
-
-    InstanceScript *pInstance;
-    bool HeroicMode;
-
-    bool Intro;
-    bool IsImage33;
-    bool IsImage66;
-
-    uint32 Intro_Phase;
-    uint32 Intro_Timer;
-    uint32 MindRend_Timer;
-    uint32 Fear_Timer;
-    uint32 Domination_Timer;
-    uint32 ManaBurn_Timer;
-
-    void Reset()
-    override {
-        if(!Intro)
-            me->SetFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_IMMUNE_TO_PC);
-
-        IsImage33 = false;
-        IsImage66 = false;
-
-        Intro_Phase = 1;
-        Intro_Timer = 5000;
-        MindRend_Timer = 3000;
-        Fear_Timer = 15000;
-        Domination_Timer = 30000;
-        ManaBurn_Timer = 25000;
-    }
-
-    void MoveInLineOfSight(Unit *who)
-    override {
-        if(!Intro)
+        public:
+        boss_harbinger_skyrissAI(Creature *c) : ScriptedAI(c)
         {
-            return;
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
+            HeroicMode = me->GetMap()->IsHeroic();
+            Intro = false;
         }
-        ScriptedAI::MoveInLineOfSight(who);
-    }
-
-    void EnterCombat(Unit *who) override {}
-
-    void JustDied(Unit* Killer)
-    override {
-        DoScriptText(SAY_DEATH, me);
-        if( pInstance )
-            pInstance->SetData(TYPE_HARBINGERSKYRISS,DONE);
-    }
-
-    void JustSummoned(Creature *summon)
-    override {
-        if(!summon)
-            return;
-        if(IsImage66)
-            summon->SetHealth((summon->GetMaxHealth()*33)/100);
-        else
-            summon->SetHealth((summon->GetMaxHealth()*66)/100);
-        if(me->GetVictim())
-            if(Unit *target = SelectTarget(SELECT_TARGET_RANDOM, 0))
-                summon->AI()->AttackStart(target);
-     }
-
-    void KilledUnit(Unit* victim)
-    override {
-        //won't yell killing pet/other unit
-        if( victim->GetEntry() == 21436 )
-            return;
-
-        switch(rand()%2)
-        {
-        case 0: DoScriptText(SAY_KILL_1, me); break;
-        case 1: DoScriptText(SAY_KILL_2, me); break;
+    
+        InstanceScript *pInstance;
+        bool HeroicMode;
+    
+        bool Intro;
+        bool IsImage33;
+        bool IsImage66;
+    
+        uint32 Intro_Phase;
+        uint32 Intro_Timer;
+        uint32 MindRend_Timer;
+        uint32 Fear_Timer;
+        uint32 Domination_Timer;
+        uint32 ManaBurn_Timer;
+    
+        void Reset()
+        override {
+            if(!Intro)
+                me->SetFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_IMMUNE_TO_PC);
+    
+            IsImage33 = false;
+            IsImage66 = false;
+    
+            Intro_Phase = 1;
+            Intro_Timer = 5000;
+            MindRend_Timer = 3000;
+            Fear_Timer = 15000;
+            Domination_Timer = 30000;
+            ManaBurn_Timer = 25000;
         }
-    }
-
-    void DoSplit(uint32 val)
-    {
-        if( me->IsNonMeleeSpellCast(false) )
-            me->InterruptNonMeleeSpells(false);
-
-        DoScriptText(SAY_IMAGE, me);
-
-        if( val == 66 )
-            DoCast(me, SPELL_66_ILLUSION);
-        else
-            DoCast(me, SPELL_33_ILLUSION);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if(!Intro)
-        {
-            if( !pInstance )
-                return;
-
-            if( Intro_Timer < diff )
+    
+        void MoveInLineOfSight(Unit *who)
+        override {
+            if(!Intro)
             {
-                switch( Intro_Phase )
+                return;
+            }
+            ScriptedAI::MoveInLineOfSight(who);
+        }
+    
+        void EnterCombat(Unit *who) override {}
+    
+        void JustDied(Unit* Killer)
+        override {
+            DoScriptText(SAY_DEATH, me);
+            if( pInstance )
+                pInstance->SetData(TYPE_HARBINGERSKYRISS,DONE);
+        }
+    
+        void JustSummoned(Creature *summon)
+        override {
+            if(!summon)
+                return;
+            if(IsImage66)
+                summon->SetHealth((summon->GetMaxHealth()*33)/100);
+            else
+                summon->SetHealth((summon->GetMaxHealth()*66)/100);
+            if(me->GetVictim())
+                if(Unit *target = SelectTarget(SELECT_TARGET_RANDOM, 0))
+                    summon->AI()->AttackStart(target);
+         }
+    
+        void KilledUnit(Unit* victim)
+        override {
+            //won't yell killing pet/other unit
+            if( victim->GetEntry() == 21436 )
+                return;
+    
+            switch(rand()%2)
+            {
+            case 0: DoScriptText(SAY_KILL_1, me); break;
+            case 1: DoScriptText(SAY_KILL_2, me); break;
+            }
+        }
+    
+        void DoSplit(uint32 val)
+        {
+            if( me->IsNonMeleeSpellCast(false) )
+                me->InterruptNonMeleeSpells(false);
+    
+            DoScriptText(SAY_IMAGE, me);
+    
+            if( val == 66 )
+                DoCast(me, SPELL_66_ILLUSION);
+            else
+                DoCast(me, SPELL_33_ILLUSION);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if(!Intro)
+            {
+                if( !pInstance )
+                    return;
+    
+                if( Intro_Timer < diff )
                 {
-                    case 1:
-                         DoScriptText(SAY_INTRO, me);
-                         if (GameObject* Sphere = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_SPHERE_SHIELD)))
-                             Sphere->UseDoorOrButton();
-                        ++Intro_Phase;
-                        Intro_Timer = 25000;
-                        break;
-                    case 2:
-                        DoScriptText(SAY_AGGRO, me);
-                        if( Unit *mellic = ObjectAccessor::GetUnit(*me,pInstance->GetData64(DATA_MELLICHAR)) )
-                        {
-                            //should have a better way to do this. possibly spell exist.
-                            mellic->SetDeathState(JUST_DIED);
-                            mellic->SetHealth(0);
-                            pInstance->SetData(TYPE_SHIELD_OPEN,IN_PROGRESS);
-                        }
-                        ++Intro_Phase;
-                        Intro_Timer = 3000;
-                        break;
-                    case 3:
-                        me->RemoveFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_IMMUNE_TO_PC);
-                        Intro = true;
-                        break;
-                }
-            }else Intro_Timer -=diff;
-        }
-
-        if( !UpdateVictim() )
-            return;
-
-        if( !IsImage66 && (me->GetHealthPct() <= 66) )
-        {
-            DoSplit(66);
-            IsImage66 = true;
-        }
-        if( !IsImage33 && (me->GetHealthPct() <= 33) )
-        {
-            DoSplit(33);
-            IsImage33 = true;
-        }
-
-        if( MindRend_Timer < diff )
-        {
-            if( Unit* target = SelectTarget(SELECT_TARGET_RANDOM,1) )
-                DoCast(target,HeroicMode ? H_SPELL_MIND_REND : SPELL_MIND_REND);
-            else
-                DoCast(me->GetVictim(),HeroicMode ? H_SPELL_MIND_REND : SPELL_MIND_REND);
-
-            MindRend_Timer = 8000;
-        }else MindRend_Timer -=diff;
-
-        if( Fear_Timer < diff )
-        {
-            if( me->IsNonMeleeSpellCast(false) )
-                return;
-
-            switch(rand()%2)
-            {
-            case 0: DoScriptText(SAY_FEAR_1, me); break;
-            case 1: DoScriptText(SAY_FEAR_2, me); break;
+                    switch( Intro_Phase )
+                    {
+                        case 1:
+                             DoScriptText(SAY_INTRO, me);
+                             if (GameObject* Sphere = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_SPHERE_SHIELD)))
+                                 Sphere->UseDoorOrButton();
+                            ++Intro_Phase;
+                            Intro_Timer = 25000;
+                            break;
+                        case 2:
+                            DoScriptText(SAY_AGGRO, me);
+                            if( Unit *mellic = ObjectAccessor::GetUnit(*me,pInstance->GetData64(DATA_MELLICHAR)) )
+                            {
+                                //should have a better way to do this. possibly spell exist.
+                                mellic->SetDeathState(JUST_DIED);
+                                mellic->SetHealth(0);
+                                pInstance->SetData(TYPE_SHIELD_OPEN,IN_PROGRESS);
+                            }
+                            ++Intro_Phase;
+                            Intro_Timer = 3000;
+                            break;
+                        case 3:
+                            me->RemoveFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_IMMUNE_TO_PC);
+                            Intro = true;
+                            break;
+                    }
+                }else Intro_Timer -=diff;
             }
-
-            if( Unit* target = SelectTarget(SELECT_TARGET_RANDOM,1) )
-                DoCast(target,SPELL_FEAR);
-            else
-                DoCast(me->GetVictim(),SPELL_FEAR);
-
-            Fear_Timer = 25000;
-        }else Fear_Timer -=diff;
-
-        if( Domination_Timer < diff )
-        {
-            if( me->IsNonMeleeSpellCast(false) )
+    
+            if( !UpdateVictim() )
                 return;
-
-            switch(rand()%2)
+    
+            if( !IsImage66 && (me->GetHealthPct() <= 66) )
             {
-            case 0: DoScriptText(SAY_MIND_1, me); break;
-            case 1: DoScriptText(SAY_MIND_2, me); break;
+                DoSplit(66);
+                IsImage66 = true;
             }
-
-            if( Unit* target = SelectTarget(SELECT_TARGET_RANDOM,1) )
-                DoCast(target,HeroicMode ? H_SPELL_DOMINATION : SPELL_DOMINATION);
-            else
-                DoCast(me->GetVictim(),HeroicMode ? H_SPELL_DOMINATION : SPELL_DOMINATION);
-
-            Domination_Timer = 16000+rand()%16000;
-        }else Domination_Timer -=diff;
-
-        if( HeroicMode )
-        {
-            if( ManaBurn_Timer < diff )
+            if( !IsImage33 && (me->GetHealthPct() <= 33) )
+            {
+                DoSplit(33);
+                IsImage33 = true;
+            }
+    
+            if( MindRend_Timer < diff )
+            {
+                if( Unit* target = SelectTarget(SELECT_TARGET_RANDOM,1) )
+                    DoCast(target,HeroicMode ? H_SPELL_MIND_REND : SPELL_MIND_REND);
+                else
+                    DoCast(me->GetVictim(),HeroicMode ? H_SPELL_MIND_REND : SPELL_MIND_REND);
+    
+                MindRend_Timer = 8000;
+            }else MindRend_Timer -=diff;
+    
+            if( Fear_Timer < diff )
             {
                 if( me->IsNonMeleeSpellCast(false) )
                     return;
-
+    
+                switch(rand()%2)
+                {
+                case 0: DoScriptText(SAY_FEAR_1, me); break;
+                case 1: DoScriptText(SAY_FEAR_2, me); break;
+                }
+    
                 if( Unit* target = SelectTarget(SELECT_TARGET_RANDOM,1) )
-                    DoCast(target,H_SPELL_MANA_BURN);
-
-                ManaBurn_Timer = 16000+rand()%16000;
-            }else ManaBurn_Timer -=diff;
+                    DoCast(target,SPELL_FEAR);
+                else
+                    DoCast(me->GetVictim(),SPELL_FEAR);
+    
+                Fear_Timer = 25000;
+            }else Fear_Timer -=diff;
+    
+            if( Domination_Timer < diff )
+            {
+                if( me->IsNonMeleeSpellCast(false) )
+                    return;
+    
+                switch(rand()%2)
+                {
+                case 0: DoScriptText(SAY_MIND_1, me); break;
+                case 1: DoScriptText(SAY_MIND_2, me); break;
+                }
+    
+                if( Unit* target = SelectTarget(SELECT_TARGET_RANDOM,1) )
+                    DoCast(target,HeroicMode ? H_SPELL_DOMINATION : SPELL_DOMINATION);
+                else
+                    DoCast(me->GetVictim(),HeroicMode ? H_SPELL_DOMINATION : SPELL_DOMINATION);
+    
+                Domination_Timer = 16000+rand()%16000;
+            }else Domination_Timer -=diff;
+    
+            if( HeroicMode )
+            {
+                if( ManaBurn_Timer < diff )
+                {
+                    if( me->IsNonMeleeSpellCast(false) )
+                        return;
+    
+                    if( Unit* target = SelectTarget(SELECT_TARGET_RANDOM,1) )
+                        DoCast(target,H_SPELL_MANA_BURN);
+    
+                    ManaBurn_Timer = 16000+rand()%16000;
+                }else ManaBurn_Timer -=diff;
+            }
+    
+            DoMeleeAttackIfReady();
         }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_harbinger_skyrissAI(creature);
     }
 };
 
-CreatureAI* GetAI_boss_harbinger_skyriss(Creature *_Creature)
-{
-    return new boss_harbinger_skyrissAI (_Creature);
-}
 
 #define SPELL_MIND_REND_IMAGE   36929
 #define H_SPELL_MIND_REND_IMAGE 39021
 
-struct boss_harbinger_skyriss_illusionAI : public ScriptedAI
+
+class boss_harbinger_skyriss_illusion : public CreatureScript
 {
-    boss_harbinger_skyriss_illusionAI(Creature *c) : ScriptedAI(c)
+public:
+    boss_harbinger_skyriss_illusion() : CreatureScript("boss_harbinger_skyriss_illusion")
+    { }
+
+    class boss_harbinger_skyriss_illusionAI : public ScriptedAI
     {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-        HeroicMode = me->GetMap()->IsHeroic();
+        public:
+        boss_harbinger_skyriss_illusionAI(Creature *c) : ScriptedAI(c)
+        {
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
+            HeroicMode = me->GetMap()->IsHeroic();
+        }
+    
+        InstanceScript *pInstance;
+        bool HeroicMode;
+    
+        void Reset() override { }
+    
+        void EnterCombat(Unit *who) override { }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_harbinger_skyriss_illusionAI(creature);
     }
-
-    InstanceScript *pInstance;
-    bool HeroicMode;
-
-    void Reset() override { }
-
-    void EnterCombat(Unit *who) override { }
 };
 
-CreatureAI* GetAI_boss_harbinger_skyriss_illusion(Creature *_Creature)
-{
-    return new boss_harbinger_skyriss_illusionAI (_Creature);
-}
 
 void AddSC_boss_harbinger_skyriss()
 {
-    OLDScript *newscript;
 
-    newscript = new OLDScript;
-    newscript->Name="boss_harbinger_skyriss";
-    newscript->GetAI = &GetAI_boss_harbinger_skyriss;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_harbinger_skyriss();
 
-    newscript = new OLDScript;
-    newscript->Name="boss_harbinger_skyriss_illusion";
-    newscript->GetAI = &GetAI_boss_harbinger_skyriss_illusion;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_harbinger_skyriss_illusion();
 }
 

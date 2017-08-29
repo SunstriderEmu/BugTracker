@@ -63,138 +63,144 @@ enum Phases
     PHASE_WAITING_FOR_WAVE_DEATH,
 };
 
-struct npc_bridge_eventAI : public ScriptedAI
+
+class npc_bridge_event : public CreatureScript
 {
-    npc_bridge_eventAI(Creature *c) : ScriptedAI(c)
+public:
+    npc_bridge_event() : CreatureScript("npc_bridge_event")
+    { }
+
+    class npc_bridge_eventAI : public ScriptedAI
     {
-        me->SetReactState(REACT_PASSIVE);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        me->SetVisible(false);
-    }
-
-    std::list<uint64> currentGroup;
-    uint8 phase;
-    uint8 wave; //from 1 to MAX_WAVE
-    Unit* target; //wave target
-    uint32 checkTimer; //cd for PHASE_WAITING_FOR_WAVE_DEATH checks
-
-    void FillGroup(float radius)
-    {
-        currentGroup.clear();
-        std::list<Creature*> creatureList;
-
-        Trinity::AnyFriendlyUnitInObjectRangeCheck check(me,me,radius);
-        Trinity::CreatureListSearcher<Trinity::AnyFriendlyUnitInObjectRangeCheck> searcher(me, creatureList, check);
-        Cell::VisitGridObjects(me, searcher, radius);
-
-        for(auto itr : creatureList)
+        public:
+        npc_bridge_eventAI(Creature *c) : ScriptedAI(c)
         {
-            if(itr == me || itr->GetPositionZ() < 24.0f) continue; //Z check to be sure not taking any creatures under the bridge
-            currentGroup.push_back(itr->GetGUID());
+            me->SetReactState(REACT_PASSIVE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            me->SetVisible(false);
         }
-    }
-
-    void Reset()
-    override {
-        target = nullptr;
-        checkTimer = 0;
-        wave = 0;
-        phase = PHASE_WAITING_FOR_PULL;
-    }
-
-    bool IsGroupAlive()
-    {
-        for(auto itr : currentGroup)
-            if(Creature* c = ObjectAccessor::GetCreature(*me,itr))
-                if(c->IsAlive())
-                    return true;
-
-        return false;
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        switch(phase)
+    
+        std::list<uint64> currentGroup;
+        uint8 phase;
+        uint8 wave; //from 1 to MAX_WAVE
+        Unit* target; //wave target
+        uint32 checkTimer; //cd for PHASE_WAITING_FOR_WAVE_DEATH checks
+    
+        void FillGroup(float radius)
         {
-        case PHASE_WAITING_FOR_PULL:
-            //Send attackers then step++, see MoveInLineOfSight
-            break;
-        case PHASE_WAITING_FOR_WAVE_DEATH:
-            if(checkTimer > diff)
+            currentGroup.clear();
+            std::list<Creature*> creatureList;
+    
+            Trinity::AnyFriendlyUnitInObjectRangeCheck check(me,me,radius);
+            Trinity::CreatureListSearcher<Trinity::AnyFriendlyUnitInObjectRangeCheck> searcher(me, creatureList, check);
+            Cell::VisitGridObjects(me, searcher, radius);
+    
+            for(auto itr : creatureList)
             {
-                checkTimer -= diff;
-                return;
+                if(itr == me || itr->GetPositionZ() < 24.0f) continue; //Z check to be sure not taking any creatures under the bridge
+                currentGroup.push_back(itr->GetGUID());
             }
-
-            if(!IsGroupAlive())
+        }
+    
+        void Reset()
+        override {
+            target = nullptr;
+            checkTimer = 0;
+            wave = 0;
+            phase = PHASE_WAITING_FOR_PULL;
+        }
+    
+        bool IsGroupAlive()
+        {
+            for(auto itr : currentGroup)
+                if(Creature* c = ObjectAccessor::GetCreature(*me,itr))
+                    if(c->IsAlive())
+                        return true;
+    
+            return false;
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            switch(phase)
             {
-                
-                if(wave == 3) //must prepare next wave only
+            case PHASE_WAITING_FOR_PULL:
+                //Send attackers then step++, see MoveInLineOfSight
+                break;
+            case PHASE_WAITING_FOR_WAVE_DEATH:
+                if(checkTimer > diff)
                 {
-                    target = nullptr;
-                    phase = PHASE_WAITING_FOR_PULL;
-                    me->Relocate(WavePositions[wave].x,WavePositions[wave].y);
-                } else { // must send next wave
-                    SendNextWave(target);
+                    checkTimer -= diff;
+                    return;
+                }
+    
+                if(!IsGroupAlive())
+                {
+                    
+                    if(wave == 3) //must prepare next wave only
+                    {
+                        target = nullptr;
+                        phase = PHASE_WAITING_FOR_PULL;
+                        me->Relocate(WavePositions[wave].x,WavePositions[wave].y);
+                    } else { // must send next wave
+                        SendNextWave(target);
+                    }
+                }
+                checkTimer = 1500;
+            }
+        }
+    
+        //fill currentGroup with nearby creatures and send those on target
+        void SendNextWave(Unit* who)
+        {
+            me->Relocate(WavePositions[wave].x,WavePositions[wave].y); //needed for MoveInLineOfSight2 checks
+            wave++;
+            FillGroup(10.0f);
+            for(auto itr : currentGroup)
+            {
+                if(Creature* c = ObjectAccessor::GetCreature(*me,itr))
+                {
+                    if(c->AI())
+                        c->AI()->AttackStart(who);
+                  /*  Much bugs with this
+                  c->RemoveAurasDueToSpell(INVISIBLE_AURA);
+                    c->CastSpell(c,TELEPORT_IN_VISUAL,true); */
                 }
             }
-            checkTimer = 1500;
+    
+            //Last wave was sent, destroy npc
+            if(wave == MAX_WAVE) 
+                 me->DisappearAndDie();
         }
-    }
+    
+        void MoveInLineOfSight2(Unit *who)
+        override {
+            if(!who->IsHostileTo(me)
+               || me->CanAttack(who) != CAN_ATTACK_RESULT_OK)
+                return;
+    
+            if(phase == PHASE_WAITING_FOR_PULL)
+            {
+                if(who->GetDistance(me) < AGGRO_RANGE)
+                {
+                    target = who;
+                    SendNextWave(target);
+                    phase = PHASE_WAITING_FOR_WAVE_DEATH;
+                }
+            }
+        }
+    };
 
-    //fill currentGroup with nearby creatures and send those on target
-    void SendNextWave(Unit* who)
+    CreatureAI* GetAI(Creature* creature) const override
     {
-        me->Relocate(WavePositions[wave].x,WavePositions[wave].y); //needed for MoveInLineOfSight2 checks
-        wave++;
-        FillGroup(10.0f);
-        for(auto itr : currentGroup)
-        {
-            if(Creature* c = ObjectAccessor::GetCreature(*me,itr))
-            {
-                if(c->AI())
-                    c->AI()->AttackStart(who);
-              /*  Much bugs with this
-              c->RemoveAurasDueToSpell(INVISIBLE_AURA);
-                c->CastSpell(c,TELEPORT_IN_VISUAL,true); */
-            }
-        }
-
-        //Last wave was sent, destroy npc
-        if(wave == MAX_WAVE) 
-             me->DisappearAndDie();
-    }
-
-    void MoveInLineOfSight2(Unit *who)
-    override {
-        if(!who->IsHostileTo(me)
-           || me->CanAttack(who) != CAN_ATTACK_RESULT_OK)
-            return;
-
-        if(phase == PHASE_WAITING_FOR_PULL)
-        {
-            if(who->GetDistance(me) < AGGRO_RANGE)
-            {
-                target = who;
-                SendNextWave(target);
-                phase = PHASE_WAITING_FOR_WAVE_DEATH;
-            }
-        }
+        return new npc_bridge_eventAI(creature);
     }
 };
 
-CreatureAI* GetAI_npc_bridge_event(Creature *_Creature)
-{
-    return new npc_bridge_eventAI (_Creature);
-}
 
 void AddSC_mechanar()
 {
-    OLDScript *newscript;
 
-    newscript = new OLDScript;
-    newscript->Name="npc_bridge_event";
-    newscript->GetAI = &GetAI_npc_bridge_event;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_bridge_event();
 }
 

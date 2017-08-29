@@ -46,192 +46,205 @@ EndScriptData */
 //Creatures
 #define CREATURE_PURE_ENERGY        24745
 
-struct boss_vexallusAI : public ScriptedAI
+
+class boss_vexallus : public CreatureScript
 {
-    boss_vexallusAI(Creature *c) : ScriptedAI(c)
+public:
+    boss_vexallus() : CreatureScript("boss_vexallus")
+    { }
+
+    class boss_vexallusAI : public ScriptedAI
     {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());         Heroic = c->GetMap()->IsHeroic();
-    }
-
-    InstanceScript* pInstance;
-
-    uint32 ChainLightningTimer;
-    uint32 ArcaneShockTimer;
-    uint32 OverloadTimer;
-    uint32 SpawnAddInterval;
-    uint32 AlreadySpawnedAmount;
-    bool Enraged;
-    bool Heroic;
-
-    void Reset()
-    override {
-        ChainLightningTimer = 10000;
-        ArcaneShockTimer = 8000;
-        OverloadTimer = 2200;
-        SpawnAddInterval = 15;
-        AlreadySpawnedAmount = 0;
-
-        Enraged = false;
-
-        if(pInstance)
+        public:
+        boss_vexallusAI(Creature *c) : ScriptedAI(c)
         {
-            if (me->IsDead())
-                pInstance->SetData(DATA_VEXALLUS_EVENT, DONE);
-            else pInstance->SetData(DATA_VEXALLUS_EVENT, NOT_STARTED);
+            pInstance = ((InstanceScript*)c->GetInstanceScript());         Heroic = c->GetMap()->IsHeroic();
         }
-    }
-
-    void KilledUnit(Unit *victim)
-    override {
-        DoScriptText(SAY_KILL, me);
-    }
-
-    void JustDied(Unit *victim)
-    override {
-        me->Yell(SAY_DEATH, LANG_UNIVERSAL, nullptr);
-        if (pInstance)
-        {
-            pInstance->SetData(DATA_VEXALLUS_EVENT, DONE);
-
-            GameObject* Door = nullptr;
-            Door = GameObject::GetGameObject((*me), pInstance->GetData64(DATA_VEXALLUS_DOOR));
-            if (Door)
-                Door->UseDoorOrButton();
-        }
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-        DoScriptText(SAY_AGGRO, me);
-        if (pInstance)
-            pInstance->SetData(DATA_VEXALLUS_EVENT, IN_PROGRESS);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim() )
-            return;
-
-        if(me->GetHealthPct() < 11)
-        {
-            Enraged = true;
-        }
-
-        if(!Enraged)
-        {
-            //used for check, when Vexallus cast adds 85%, 70%, 55%, 40%, 25%
-            if ((me->GetHealthPct()) < (100-(SpawnAddInterval*(AlreadySpawnedAmount+1))))
+    
+        InstanceScript* pInstance;
+    
+        uint32 ChainLightningTimer;
+        uint32 ArcaneShockTimer;
+        uint32 OverloadTimer;
+        uint32 SpawnAddInterval;
+        uint32 AlreadySpawnedAmount;
+        bool Enraged;
+        bool Heroic;
+    
+        void Reset()
+        override {
+            ChainLightningTimer = 10000;
+            ArcaneShockTimer = 8000;
+            OverloadTimer = 2200;
+            SpawnAddInterval = 15;
+            AlreadySpawnedAmount = 0;
+    
+            Enraged = false;
+    
+            if(pInstance)
             {
-                DoScriptText(SAY_ENERGY, me);
-                DoScriptText(EMOTE_DISCHARGE_ENERGY, me);
-                Creature* PureEnergyCreature = nullptr;
-                PureEnergyCreature = DoSpawnCreature(CREATURE_PURE_ENERGY, 10, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
-                Unit* target = nullptr;
-                target = SelectTarget(SELECT_TARGET_RANDOM, 0);
-                if (PureEnergyCreature && target)
-                    PureEnergyCreature->AI()->AttackStart(target);
-
-                if(Heroic)                                  // *Heroic mode only - he summons two instead of one.
+                if (me->IsDead())
+                    pInstance->SetData(DATA_VEXALLUS_EVENT, DONE);
+                else pInstance->SetData(DATA_VEXALLUS_EVENT, NOT_STARTED);
+            }
+        }
+    
+        void KilledUnit(Unit *victim)
+        override {
+            DoScriptText(SAY_KILL, me);
+        }
+    
+        void JustDied(Unit *victim)
+        override {
+            me->Yell(SAY_DEATH, LANG_UNIVERSAL, nullptr);
+            if (pInstance)
+            {
+                pInstance->SetData(DATA_VEXALLUS_EVENT, DONE);
+    
+                GameObject* Door = nullptr;
+                Door = GameObject::GetGameObject((*me), pInstance->GetData64(DATA_VEXALLUS_DOOR));
+                if (Door)
+                    Door->UseDoorOrButton();
+            }
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+            DoScriptText(SAY_AGGRO, me);
+            if (pInstance)
+                pInstance->SetData(DATA_VEXALLUS_EVENT, IN_PROGRESS);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim() )
+                return;
+    
+            if(me->GetHealthPct() < 11)
+            {
+                Enraged = true;
+            }
+    
+            if(!Enraged)
+            {
+                //used for check, when Vexallus cast adds 85%, 70%, 55%, 40%, 25%
+                if ((me->GetHealthPct()) < (100-(SpawnAddInterval*(AlreadySpawnedAmount+1))))
                 {
-                    PureEnergyCreature = DoSpawnCreature(CREATURE_PURE_ENERGY, -10, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
+                    DoScriptText(SAY_ENERGY, me);
+                    DoScriptText(EMOTE_DISCHARGE_ENERGY, me);
+                    Creature* PureEnergyCreature = nullptr;
+                    PureEnergyCreature = DoSpawnCreature(CREATURE_PURE_ENERGY, 10, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
+                    Unit* target = nullptr;
                     target = SelectTarget(SELECT_TARGET_RANDOM, 0);
                     if (PureEnergyCreature && target)
                         PureEnergyCreature->AI()->AttackStart(target);
-                }
-
-                ++AlreadySpawnedAmount;
-            };
-
-            if(ChainLightningTimer < diff)
+    
+                    if(Heroic)                                  // *Heroic mode only - he summons two instead of one.
+                    {
+                        PureEnergyCreature = DoSpawnCreature(CREATURE_PURE_ENERGY, -10, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
+                        target = SelectTarget(SELECT_TARGET_RANDOM, 0);
+                        if (PureEnergyCreature && target)
+                            PureEnergyCreature->AI()->AttackStart(target);
+                    }
+    
+                    ++AlreadySpawnedAmount;
+                };
+    
+                if(ChainLightningTimer < diff)
+                {
+                    if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
+                        DoCast(target, SPELL_CHAIN_LIGHTNING);
+                    ChainLightningTimer = 10000;
+                }else ChainLightningTimer -= diff;
+    
+                if(ArcaneShockTimer < diff)
+                {
+                    Unit* target = nullptr;
+                    target = SelectTarget(SELECT_TARGET_RANDOM, 0);
+                    if(target)
+                        DoCast(target, SPELL_ARCANE_SHOCK);
+                    ArcaneShockTimer = 8000;
+                }else ArcaneShockTimer -= diff;
+            }else
             {
-                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
-                    DoCast(target, SPELL_CHAIN_LIGHTNING);
-                ChainLightningTimer = 10000;
-            }else ChainLightningTimer -= diff;
-
-            if(ArcaneShockTimer < diff)
-            {
-                Unit* target = nullptr;
-                target = SelectTarget(SELECT_TARGET_RANDOM, 0);
-                if(target)
-                    DoCast(target, SPELL_ARCANE_SHOCK);
-                ArcaneShockTimer = 8000;
-            }else ArcaneShockTimer -= diff;
-        }else
-        {
-            if(OverloadTimer < diff)
-            {
-                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
-                    DoCast(target, SPELL_OVERLOAD);
-                OverloadTimer = 2200;
-            }else OverloadTimer -= diff;
+                if(OverloadTimer < diff)
+                {
+                    if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
+                        DoCast(target, SPELL_OVERLOAD);
+                    OverloadTimer = 2200;
+                }else OverloadTimer -= diff;
+            }
+            DoMeleeAttackIfReady();
         }
-        DoMeleeAttackIfReady();
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_vexallusAI(creature);
     }
 };
 
-CreatureAI* GetAI_boss_vexallus(Creature *_Creature)
+
+
+class mob_pure_energy : public CreatureScript
 {
-    return new boss_vexallusAI (_Creature);
-};
+public:
+    mob_pure_energy() : CreatureScript("mob_pure_energy")
+    { }
 
-struct mob_pure_energyAI : public ScriptedAI
-{
-    mob_pure_energyAI(Creature *c) : ScriptedAI(c) {}
-
-    uint32 EnergyBoltTimer;
-    uint32 VisualTimer;
-
-    void Reset()
-    override {
-        EnergyBoltTimer = 1700;
-        VisualTimer = 1000;
-        me->SetSpeedRate(MOVE_RUN, 0.5f);
-        me->SetSpeedRate(MOVE_WALK, 0.5f);
-    }
-
-    void JustDied(Unit* slayer)
-    override {
-        slayer->CastSpell(slayer, SPELL_ENERGY_FEEDBACK, true, nullptr, nullptr, me->GetGUID());
-    }
-
-    void EnterCombat(Unit *who)override {}
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if(!UpdateVictim())
-            return;
-
-        if(EnergyBoltTimer < diff)
-        {
-            DoCast(me->GetVictim(), SPELL_ENERGY_BOLT);
+    class mob_pure_energyAI : public ScriptedAI
+    {
+        public:
+        mob_pure_energyAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 EnergyBoltTimer;
+        uint32 VisualTimer;
+    
+        void Reset()
+        override {
             EnergyBoltTimer = 1700;
-        }else   EnergyBoltTimer -= diff;
-        if(VisualTimer < diff)
-        {
-            DoCast(me->GetVictim(), ASTRAL_FLARE_VISUAL, true);
             VisualTimer = 1000;
-        }else   VisualTimer -= diff;
+            me->SetSpeedRate(MOVE_RUN, 0.5f);
+            me->SetSpeedRate(MOVE_WALK, 0.5f);
+        }
+    
+        void JustDied(Unit* slayer)
+        override {
+            slayer->CastSpell(slayer, SPELL_ENERGY_FEEDBACK, true, nullptr, nullptr, me->GetGUID());
+        }
+    
+        void EnterCombat(Unit *who)override {}
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if(!UpdateVictim())
+                return;
+    
+            if(EnergyBoltTimer < diff)
+            {
+                DoCast(me->GetVictim(), SPELL_ENERGY_BOLT);
+                EnergyBoltTimer = 1700;
+            }else   EnergyBoltTimer -= diff;
+            if(VisualTimer < diff)
+            {
+                DoCast(me->GetVictim(), ASTRAL_FLARE_VISUAL, true);
+                VisualTimer = 1000;
+            }else   VisualTimer -= diff;
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new mob_pure_energyAI(creature);
     }
 };
 
-CreatureAI* GetAI_mob_pure_energy(Creature *_Creature)
-{
-    return new mob_pure_energyAI (_Creature);
-};
 
 void AddSC_boss_vexallus()
 {
-    OLDScript *newscript;
 
-    newscript = new OLDScript;
-    newscript->Name="boss_vexallus";
-    newscript->GetAI = &GetAI_boss_vexallus;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_vexallus();
 
-    newscript = new OLDScript;
-    newscript->Name="mob_pure_energy";
-    newscript->GetAI = &GetAI_mob_pure_energy;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new mob_pure_energy();
 }
 

@@ -231,7 +231,6 @@ public:
         npc_shattrathflaskvendorsAI(Creature* creature) : ScriptedAI(creature)
         {}
 
-
         virtual bool GossipHello(Player* player) override
         {
             if(me->GetEntry() == 23484)
@@ -263,7 +262,6 @@ public:
             }
 
             return true;
-
         }
 
 
@@ -273,7 +271,6 @@ public:
                 player->SEND_VENDORLIST( me->GetGUID() );
 
             return true;
-
         }
 
     };
@@ -305,7 +302,6 @@ public:
         npc_zephyrAI(Creature* creature) : ScriptedAI(creature)
         {}
 
-
         virtual bool GossipHello(Player* player) override
         {
             if( player->GetReputationRank(989) >= REP_REVERED )
@@ -313,9 +309,7 @@ public:
 
             SEND_DEFAULT_GOSSIP_MENU(player, me);
             return true;
-
         }
-
 
         virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
         {
@@ -323,9 +317,7 @@ public:
                 player->CastSpell(player,37778,false);
 
             return true;
-
         }
-
     };
 
     CreatureAI* GetAI(Creature* creature) const override
@@ -634,7 +626,6 @@ public:
                 player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_BOOK, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
             SEND_PREPARED_GOSSIP_MENU(player, me);    return true;
-
         }
 
 
@@ -661,8 +652,6 @@ public:
 };
 
 
-
-
 /*######
 # npc_ishanah
 ######*/
@@ -682,7 +671,6 @@ public:
         npc_ishanahAI(Creature* creature) : ScriptedAI(creature)
         {}
 
-
         virtual bool GossipHello(Player* player) override
         {
             if (me->IsQuestGiver())
@@ -693,7 +681,6 @@ public:
 
             SEND_PREPARED_GOSSIP_MENU(player, me);
             return true;
-
         }
 
 
@@ -705,7 +692,6 @@ public:
                 player->SEND_GOSSIP_MENU_TEXTID(9459, me->GetGUID());
 
             return true;
-
         }
 
     };
@@ -750,7 +736,6 @@ public:
         npc_khadgarAI(Creature* creature) : ScriptedAI(creature)
         {}
 
-
         virtual bool GossipHello(Player* player) override
         {
             player->PrepareQuestMenu(me->GetGUID());
@@ -758,45 +743,43 @@ public:
 
             player->SEND_GOSSIP_MENU_TEXTID(TEXT_HELLO,me->GetGUID());
             return true;
-
         }
-
 
         virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
         {
-            	switch (action)
-                {
-                    case GOSSIP_ACTION_INFO_DEF+1:
-                        player->ADD_GOSSIP_ITEM_DB(0, GOSSIP_ITEM_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-                        player->SEND_GOSSIP_MENU_TEXTID(TEXT_MENU1,me->GetGUID());
-                        break;
-            		case GOSSIP_ACTION_INFO_DEF+2:
-                        player->ADD_GOSSIP_ITEM_DB(0, GOSSIP_ITEM_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
-                        player->SEND_GOSSIP_MENU_TEXTID(TEXT_MENU2,me->GetGUID());
-                        break;
-            		case GOSSIP_ACTION_INFO_DEF+3:
-                        player->ADD_GOSSIP_ITEM_DB(0, GOSSIP_ITEM_4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
-                        player->SEND_GOSSIP_MENU_TEXTID(TEXT_MENU3,me->GetGUID());
-                        break;
-            		case GOSSIP_ACTION_INFO_DEF+4:
-                        player->ADD_GOSSIP_ITEM_DB(0, GOSSIP_ITEM_5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
-                        player->SEND_GOSSIP_MENU_TEXTID(TEXT_MENU4,me->GetGUID());
-                        break;
-            		case GOSSIP_ACTION_INFO_DEF+5:
-                        player->ADD_GOSSIP_ITEM_DB(0, GOSSIP_ITEM_6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+6);
-                        player->SEND_GOSSIP_MENU_TEXTID(TEXT_MENU5,me->GetGUID());
-                        break;
-            		case GOSSIP_ACTION_INFO_DEF+6:
-                        player->ADD_GOSSIP_ITEM_DB(0, GOSSIP_ITEM_7, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+7);
-                        player->SEND_GOSSIP_MENU_TEXTID(TEXT_MENU6,me->GetGUID());
-                        break;
-            		case GOSSIP_ACTION_INFO_DEF+7:
-                }
+            switch (action)
+            {
+                case GOSSIP_ACTION_INFO_DEF+1:
+                    player->ADD_GOSSIP_ITEM_DB(0, GOSSIP_ITEM_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+                    player->SEND_GOSSIP_MENU_TEXTID(TEXT_MENU1,me->GetGUID());
+                    break;
+            	case GOSSIP_ACTION_INFO_DEF+2:
+                    player->ADD_GOSSIP_ITEM_DB(0, GOSSIP_ITEM_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
+                    player->SEND_GOSSIP_MENU_TEXTID(TEXT_MENU2,me->GetGUID());
+                    break;
+            	case GOSSIP_ACTION_INFO_DEF+3:
+                    player->ADD_GOSSIP_ITEM_DB(0, GOSSIP_ITEM_4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
+                    player->SEND_GOSSIP_MENU_TEXTID(TEXT_MENU3,me->GetGUID());
+                    break;
+            	case GOSSIP_ACTION_INFO_DEF+4:
+                    player->ADD_GOSSIP_ITEM_DB(0, GOSSIP_ITEM_5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
+                    player->SEND_GOSSIP_MENU_TEXTID(TEXT_MENU4,me->GetGUID());
+                    break;
+            	case GOSSIP_ACTION_INFO_DEF+5:
+                    player->ADD_GOSSIP_ITEM_DB(0, GOSSIP_ITEM_6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+6);
+                    player->SEND_GOSSIP_MENU_TEXTID(TEXT_MENU5,me->GetGUID());
+                    break;
+            	case GOSSIP_ACTION_INFO_DEF+6:
+                    player->ADD_GOSSIP_ITEM_DB(0, GOSSIP_ITEM_7, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+7);
+                    player->SEND_GOSSIP_MENU_TEXTID(TEXT_MENU6,me->GetGUID());
+                    break;
+            	case GOSSIP_ACTION_INFO_DEF+7:
+                    GossipHello(player);
+                    break;
+            }
             
-                return true;
-            
+            return true;
         }
-
     };
 
     CreatureAI* GetAI(Creature* creature) const override
@@ -817,21 +800,13 @@ bool GossipHello_npc_khadgar(Player* player, Creature* _Creature)
 
 void AddSC_shattrath_city()
 {
-
     new npc_raliq_the_drunk();
-
     new npc_salsalabim();
-
     new npc_shattrathflaskvendors();
-
     new npc_zephyr();
-
     new npc_kservant();
-
     new npc_dirty_larry();
-
     new npc_ishanah();
-
     new npc_khadgar();
 }
 

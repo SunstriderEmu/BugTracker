@@ -1361,44 +1361,11 @@ static SpawnSpells SpawnCast[]=
     {25000, 28000, 33961}   // Torloth the Magnificent Cast - Spell Reflection
 };
 
-/*######
-# mob_illidari_spawn
-######*/
-
-
-/*######
-# mob_torloth_the_magnificent
-#####*/
-
 
 /*#####
 # npc_lord_illidan_stormrage
 #####*/
 
-class CrystalPrison : public GameObjectScript
-{
-public:
-    CrystalPrison() : GameObjectScript("go_crystal_prison")
-    {}
-
-    struct CrystalPrisonAI : public GameObjectAI
-    {
-        void QuestAccept(Player* plr, Quest const* quest) override
-        {
-            if (quest->GetQuestId() == QUEST_BATTLE_OF_THE_CRIMSON_WATCH)
-            {
-                Unit* Illidan = plr->FindNearestCreature(22083, 50);
-
-                if (Illidan && !(((npc_lord_illidan_stormrage::npc_lord_illidan_stormrageAI*)(Illidan->ToCreature())->AI())->EventStarted))
-                {
-                    ((npc_lord_illidan_stormrage::npc_lord_illidan_stormrageAI*)(Illidan->ToCreature())->AI())->PlayerGUID = plr->GetGUID();
-                    ((npc_lord_illidan_stormrage::npc_lord_illidan_stormrageAI*)(Illidan->ToCreature())->AI())->LiveCount = 0;
-                    ((npc_lord_illidan_stormrage::npc_lord_illidan_stormrageAI*)(Illidan->ToCreature())->AI())->EventStarted = true;
-                }
-            }
-        }
-    };
-};
 
 class npc_lord_illidan_stormrage : public CreatureScript
 {
@@ -1442,75 +1409,8 @@ public:
         void EnterCombat(Unit* who) override {}
         void MoveInLineOfSight(Unit* who) override {}
         void AttackStart(Unit* who) override {}
-    
-        void SummonNextWave()
-        {
-            uint8 count = WavesInfo[WaveCount].SpawnCount;
-            uint8 locIndex = WavesInfo[WaveCount].UsedSpawnPoint;
-            srand(time(nullptr));//initializing random seed
-            uint8 FelguardCount = 0;
-            uint8 DreadlordCount = 0;
-    
-            for(uint8 i = 0; i < count; ++i)
-            {
-                Creature* Spawn = nullptr;
-                float X = SpawnLocation[locIndex + i].x;
-                float Y = SpawnLocation[locIndex + i].y;
-                float Z = SpawnLocation[locIndex + i].z;
-                float O = SpawnLocation[locIndex + i].o;
-                Spawn = me->SummonCreature(WavesInfo[WaveCount].CreatureId, X, Y, Z, O, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 60000);
-                ++LiveCount;
-    
-                if(Spawn)
-                {
-                    Spawn->InitCreatureAddon(true);
-    
-                    if(WaveCount == 0)//1 Wave
-                    {
-                        if(rand()%3 == 1 && FelguardCount<2)
-                        {
-                            Spawn->SetUInt32Value(UNIT_FIELD_DISPLAYID,18654);
-                            ++FelguardCount;
-                        }
-                        else if(DreadlordCount < 3)
-                        {
-                            Spawn->SetUInt32Value(UNIT_FIELD_DISPLAYID,19991);
-                            ++DreadlordCount;
-                        }
-                        else if(FelguardCount<2)
-                        {
-                            Spawn->SetUInt32Value(UNIT_FIELD_DISPLAYID,18654);
-                            ++FelguardCount;
-                        }
-                    }
-    
-                    if(WaveCount < 3)//1-3 Wave
-                    {
-                        if(PlayerGUID)
-                        {
-                            if(Player* pTarget = ObjectAccessor::GetPlayer(*me, PlayerGUID))
-                            {
-                                float x, y, z;
-                                pTarget->GetPosition(x,y,z);
-                                Spawn->GetMotionMaster()->MovePoint(0,x, y, z);
-                            }
-                        }
-                        ((mob_illidari_spawn::mob_illidari_spawnAI*)Spawn->AI())->LordIllidanGUID = me->GetGUID();
-                    }
-    
-                    if(WavesInfo[WaveCount].CreatureId == 22076) // Torloth
-                    {
-                        ((mob_torloth_the_magnificent::mob_torloth_the_magnificentAI*)Spawn->AI())->LordIllidanGUID = me->GetGUID();
-                        if(PlayerGUID)
-                            ((mob_torloth_the_magnificent::mob_torloth_the_magnificentAI*)Spawn->AI())->AggroTargetGUID = PlayerGUID;
-                    }
-                }
-            }
-            ++WaveCount;
-            WaveTimer = WavesInfo[WaveCount].SpawnTimer;
-            AnnounceTimer = WavesInfo[WaveCount].YellTimer;
-        }
-        
+        void SummonNextWave();
+   
         void SummonedCreatureDespawn(Creature* creature)
         override {
             LiveCounter();
@@ -1622,6 +1522,34 @@ public:
     }
 };
 
+class CrystalPrison : public GameObjectScript
+{
+public:
+    CrystalPrison() : GameObjectScript("go_crystal_prison")
+    {}
+
+    struct CrystalPrisonAI : public GameObjectAI
+    {
+        void QuestAccept(Player* plr, Quest const* quest) override
+        {
+            if (quest->GetQuestId() == QUEST_BATTLE_OF_THE_CRIMSON_WATCH)
+            {
+                Unit* Illidan = plr->FindNearestCreature(22083, 50);
+
+                if (Illidan && !(((npc_lord_illidan_stormrage::npc_lord_illidan_stormrageAI*)(Illidan->ToCreature())->AI())->EventStarted))
+                {
+                    ((npc_lord_illidan_stormrage::npc_lord_illidan_stormrageAI*)(Illidan->ToCreature())->AI())->PlayerGUID = plr->GetGUID();
+                    ((npc_lord_illidan_stormrage::npc_lord_illidan_stormrageAI*)(Illidan->ToCreature())->AI())->LiveCount = 0;
+                    ((npc_lord_illidan_stormrage::npc_lord_illidan_stormrageAI*)(Illidan->ToCreature())->AI())->EventStarted = true;
+                }
+            }
+        }
+    };
+};
+
+/*######
+# mob_illidari_spawn
+######*/
 
 class mob_illidari_spawn : public CreatureScript
 {
@@ -1739,6 +1667,10 @@ public:
     }
 };
 
+
+/*######
+# mob_torloth_the_magnificent
+#####*/
 
 class mob_torloth_the_magnificent : public CreatureScript
 {
@@ -2285,7 +2217,73 @@ public:
     }
 };
 
+void npc_lord_illidan_stormrage::npc_lord_illidan_stormrageAI::SummonNextWave()
+{
+    uint8 count = WavesInfo[WaveCount].SpawnCount;
+    uint8 locIndex = WavesInfo[WaveCount].UsedSpawnPoint;
+    srand(time(nullptr));//initializing random seed
+    uint8 FelguardCount = 0;
+    uint8 DreadlordCount = 0;
 
+    for (uint8 i = 0; i < count; ++i)
+    {
+        Creature* Spawn = nullptr;
+        float X = SpawnLocation[locIndex + i].x;
+        float Y = SpawnLocation[locIndex + i].y;
+        float Z = SpawnLocation[locIndex + i].z;
+        float O = SpawnLocation[locIndex + i].o;
+        Spawn = me->SummonCreature(WavesInfo[WaveCount].CreatureId, X, Y, Z, O, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 60000);
+        ++LiveCount;
+
+        if (Spawn)
+        {
+            Spawn->InitCreatureAddon(true);
+
+            if (WaveCount == 0)//1 Wave
+            {
+                if (rand() % 3 == 1 && FelguardCount<2)
+                {
+                    Spawn->SetUInt32Value(UNIT_FIELD_DISPLAYID, 18654);
+                    ++FelguardCount;
+                }
+                else if (DreadlordCount < 3)
+                {
+                    Spawn->SetUInt32Value(UNIT_FIELD_DISPLAYID, 19991);
+                    ++DreadlordCount;
+                }
+                else if (FelguardCount<2)
+                {
+                    Spawn->SetUInt32Value(UNIT_FIELD_DISPLAYID, 18654);
+                    ++FelguardCount;
+                }
+            }
+
+            if (WaveCount < 3)//1-3 Wave
+            {
+                if (PlayerGUID)
+                {
+                    if (Player* pTarget = ObjectAccessor::GetPlayer(*me, PlayerGUID))
+                    {
+                        float x, y, z;
+                        pTarget->GetPosition(x, y, z);
+                        Spawn->GetMotionMaster()->MovePoint(0, x, y, z);
+                    }
+                }
+                ((mob_illidari_spawn::mob_illidari_spawnAI*)Spawn->AI())->LordIllidanGUID = me->GetGUID();
+            }
+
+            if (WavesInfo[WaveCount].CreatureId == 22076) // Torloth
+            {
+                ((mob_torloth_the_magnificent::mob_torloth_the_magnificentAI*)Spawn->AI())->LordIllidanGUID = me->GetGUID();
+                if (PlayerGUID)
+                    ((mob_torloth_the_magnificent::mob_torloth_the_magnificentAI*)Spawn->AI())->AggroTargetGUID = PlayerGUID;
+            }
+        }
+    }
+    ++WaveCount;
+    WaveTimer = WavesInfo[WaveCount].SpawnTimer;
+    AnnounceTimer = WavesInfo[WaveCount].YellTimer;
+}
 
 /*######
 ## npc_akama_prelude

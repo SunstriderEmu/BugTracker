@@ -427,7 +427,7 @@ public:
 
     struct OrbOfTheBlueFlightAI : public GameObjectAI
     {
-        OrbOfTheBlueFlightAI(GameObject* obj) : GameObjectAI(obj), pInstance(obj->GetInstanceScript()) { }
+        OrbOfTheBlueFlightAI(GameObject* obj) : GameObjectAI(obj) { }
 
         bool GossipHello(Player* plr) override
         {
@@ -471,134 +471,136 @@ public:
             for (uint64 & OrbDummie : OrbDummies)
                 OrbDummie = 0;
         }
-            void Reset()
-            override {
-                for (uint64 & i : Orb)
-                {
-                    i = 0;
-                    for (uint64 & OrbDummie : OrbDummies)
-                        if(OrbDummie != 0)
-                        {
-                            //despawn already spawned dummies
-                            if(Creature* dummy = pInstance->instance->GetCreature(OrbDummie))
-                                dummy->DisappearAndDie();
-                            OrbDummie = 0;
-                        }
-                }
 
-                EmpowerCount = 0;
-                me->SetDisableGravity(true);
-                me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-                me->SetKeepActive(30 * MINUTE*IN_MILLISECONDS);
-                Searched = false;
-                me->SetVisible(false);
-                me->SetReactState(REACT_PASSIVE);
-            }
-
-            void FindOrbs()
+        void Reset()
+        override {
+            for (uint64 & i : Orb)
             {
-                std::list<GameObject*> orbList;
-                AllOrbsInGrid check;
-                Trinity::GameObjectListSearcher<AllOrbsInGrid> searcher(me, orbList, check);
-                Cell::VisitGridObjects(me, searcher, MAX_SEARCHER_DISTANCE);
-
-                if (orbList.empty())
-                    return;
-
-                uint8 i = 0;
-                for (auto itr = orbList.begin(); itr != orbList.end(); ++itr, ++i)
-                {
-                    Orb[i] = (*itr)->GetGUID();
-                    if (Unit* dummy = (*itr)->SummonCreature(CREATURE_INVISIBLE_DUMMY,(*itr)->GetPositionX(),(*itr)->GetPositionY(),(*itr)->GetPositionZ(),0,TEMPSUMMON_MANUAL_DESPAWN,0))
-                        OrbDummies[i] = dummy->GetGUID();
-                }
+                i = 0;
+                for (uint64 & OrbDummie : OrbDummies)
+                    if(OrbDummie != 0)
+                    {
+                        //despawn already spawned dummies
+                        if(Creature* dummy = pInstance->instance->GetCreature(OrbDummie))
+                            dummy->DisappearAndDie();
+                        OrbDummie = 0;
+                    }
             }
 
-            void ResetOrbs()
+            EmpowerCount = 0;
+            me->SetDisableGravity(true);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+            me->SetKeepActive(30 * MINUTE*IN_MILLISECONDS);
+            Searched = false;
+            me->SetVisible(false);
+            me->SetReactState(REACT_PASSIVE);
+        }
+
+        void FindOrbs()
+        {
+            std::list<GameObject*> orbList;
+            AllOrbsInGrid check;
+            Trinity::GameObjectListSearcher<AllOrbsInGrid> searcher(me, orbList, check);
+            Cell::VisitGridObjects(me, searcher, MAX_SEARCHER_DISTANCE);
+
+            if (orbList.empty())
+                return;
+
+            uint8 i = 0;
+            for (auto itr = orbList.begin(); itr != orbList.end(); ++itr, ++i)
+            {
+                Orb[i] = (*itr)->GetGUID();
+                if (Unit* dummy = (*itr)->SummonCreature(CREATURE_INVISIBLE_DUMMY,(*itr)->GetPositionX(),(*itr)->GetPositionY(),(*itr)->GetPositionZ(),0,TEMPSUMMON_MANUAL_DESPAWN,0))
+                    OrbDummies[i] = dummy->GetGUID();
+            }
+        }
+
+        void ResetOrbs()
+        {
+            for (uint8 i = 0; i < 4; ++i)
+            {
+                if(Unit* dummy = pInstance->instance->GetCreature(OrbDummies[i]))
+                    dummy->RemoveDynObject(SPELL_RING_OF_BLUE_FLAMES);
+
+                if(GameObject *orb = pInstance->instance->GetGameObject(Orb[i]))
+                    orb->SetUInt32Value(GAMEOBJECT_FACTION, 0);
+            }
+        }
+
+        void EmpowerOrb(uint8 i)
+        {
+            GameObject *orb = pInstance->instance->GetGameObject(Orb[i]);
+            if (!orb)
+                return;
+            if(Unit* dummy = pInstance->instance->GetCreature(OrbDummies[i]))
+            {
+                dummy->CastSpell(dummy,SPELL_VISUAL_MOONFIRE,true);
+                dummy->CastSpell(dummy, SPELL_RING_OF_BLUE_FLAMES,true);
+            }
+            orb->SetUInt32Value(GAMEOBJECT_FACTION, 35);
+            orb->SetKeepActive(true);
+            orb->Refresh();
+        }
+
+        void EmpowerOrb(bool all)
+        {
+            if (all)
             {
                 for (uint8 i = 0; i < 4; ++i)
-                {
-                    if(Unit* dummy = pInstance->instance->GetCreature(OrbDummies[i]))
-                        dummy->RemoveDynObject(SPELL_RING_OF_BLUE_FLAMES);
-
-                    if(GameObject *orb = pInstance->instance->GetGameObject(Orb[i]))
-                        orb->SetUInt32Value(GAMEOBJECT_FACTION, 0);
-                }
+                    EmpowerOrb(i);
             }
-
-            void EmpowerOrb(uint8 i)
+            else
             {
-                GameObject *orb = pInstance->instance->GetGameObject(Orb[i]);
-                if (!orb)
-                    return;
-                if(Unit* dummy = pInstance->instance->GetCreature(OrbDummies[i]))
-                {
-                    dummy->CastSpell(dummy,SPELL_VISUAL_MOONFIRE,true);
-                    dummy->CastSpell(dummy, SPELL_RING_OF_BLUE_FLAMES,true);
-                }
-                orb->SetUInt32Value(GAMEOBJECT_FACTION, 35);
-                orb->SetKeepActive(true);
-                orb->Refresh();
+                uint8 random = rand()%3;
+                EmpowerOrb(random);
             }
-
-            void EmpowerOrb(bool all)
-            {
-                if (all)
-                {
-                    for (uint8 i = 0; i < 4; ++i)
-                        EmpowerOrb(i);
-                }
-                else
-                {
-                    uint8 random = rand()%3;
-                    EmpowerOrb(random);
-                }
         
-                ++EmpowerCount;
+            ++EmpowerCount;
 
-                switch (EmpowerCount)
-                {
-                    case 1:
-                        Talk(SAY_KALEC_ORB_READY1);
-                        break;
-                    case 2:
-                        Talk(SAY_KALEC_ORB_READY2);
-                        break;
-                    case 3:
-                        Talk(SAY_KALEC_ORB_READY3);
-                        break;
-                    case 4:
-                        Talk(SAY_KALEC_ORB_READY4);
-                        break;
-                }
+            switch (EmpowerCount)
+            {
+                case 1:
+                    Talk(SAY_KALEC_ORB_READY1);
+                    break;
+                case 2:
+                    Talk(SAY_KALEC_ORB_READY2);
+                    break;
+                case 3:
+                    Talk(SAY_KALEC_ORB_READY3);
+                    break;
+                case 4:
+                    Talk(SAY_KALEC_ORB_READY4);
+                    break;
             }
+        }
 
-            void UpdateAI(uint32 const diff)
-            override {
-                if (!Searched)
-                {
-                    FindOrbs();
-                    Searched = true;
-                }
+        void UpdateAI(uint32 const diff)
+        override {
+            if (!Searched)
+            {
+                FindOrbs();
+                Searched = true;
             }
+        }
+
+        bool GossipHello(Player *player) override
+        {
+            player->SEND_GOSSIP_MENU_TEXTID(GOSSIP_KALEC_END, me->GetGUID());
+
+            return true;
+        }
             
-            InstanceScript* pInstance;
-        private:
-            uint64 Orb[4]; //orb gobjects
-            uint64 OrbDummies[4]; //Used for some visual effects only
+        InstanceScript* pInstance;
+    private:
+        uint64 Orb[4]; //orb gobjects
+        uint64 OrbDummies[4]; //Used for some visual effects only
    
-            uint8 EmpowerCount;
+        uint8 EmpowerCount;
 
-            bool Searched;
+        bool Searched;
     };
 
-    bool OnGossipHello(Player *player, Creature *_Creature) override
-    {
-        player->SEND_GOSSIP_MENU_TEXTID(GOSSIP_KALEC_END, _Creature->GetGUID());
-
-        return true;
-    }
 
     CreatureAI* GetAI(Creature* creature) const
     override {

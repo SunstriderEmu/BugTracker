@@ -58,6 +58,67 @@ float treant_pos[6][3] =
     {106.780159, 355.582581, -27.593357}
 };
 
+
+class mob_warp_splinter_treant : public CreatureScript
+{
+public:
+    mob_warp_splinter_treant() : CreatureScript("mob_warp_splinter_treant")
+    { }
+
+    class mob_treantAI : public ScriptedAI
+    {
+    public:
+        mob_treantAI(Creature *c) : ScriptedAI(c)
+        {
+            WarpGuid = 0;
+        }
+
+        uint64 WarpGuid;
+        uint32 check_Timer;
+
+        void Reset()
+            override {
+            check_Timer = 0;
+        }
+
+        void EnterCombat(Unit *who) override {}
+
+        void MoveInLineOfSight(Unit*) override {}
+
+        void UpdateAI(const uint32 diff)
+            override {
+            if (!UpdateVictim())
+            {
+                if (WarpGuid && check_Timer < diff)
+                {
+                    if (Unit *Warp = (Unit*)ObjectAccessor::GetUnit(*me, WarpGuid))
+                    {
+                        if (me->IsWithinMeleeRange(Warp, 2.5f))
+                        {
+                            int32 CurrentHP_Treant = (int32)me->GetHealth();
+                            Warp->CastCustomSpell(Warp, SPELL_HEAL_FATHER, &CurrentHP_Treant, nullptr, nullptr, true, nullptr, nullptr, me->GetGUID());
+                            me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                            return;
+                        }
+                        me->GetMotionMaster()->MoveFollow(Warp, 0, 0);
+                    }
+                    check_Timer = 1000;
+                }
+                else check_Timer -= diff;
+                return;
+            }
+
+            if (me->GetVictim()->GetGUID() != WarpGuid)
+                DoMeleeAttackIfReady();
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new mob_treantAI(creature);
+    }
+};
+
 class boss_warp_splinter : public CreatureScript
 {
 public:
@@ -132,7 +193,7 @@ public:
                 float O = - me->GetAngle(X,Y);
     
                 if(Creature *pTreant = me->SummonCreature(CREATURE_TREANT,treant_pos[i][0],treant_pos[i][1],treant_pos[i][2],O,TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN,25000))
-                    ((mob_treant::mob_treantAI*)pTreant->AI())->WarpGuid = me->GetGUID();
+                    ((mob_warp_splinter_treant::mob_treantAI*)pTreant->AI())->WarpGuid = me->GetGUID();
             }
             switch(rand()%2)
             {
@@ -182,64 +243,6 @@ public:
     }
 };
 
-class mob_warp_splinter_treant : public CreatureScript
-{
-public:
-    mob_warp_splinter_treant() : CreatureScript("mob_warp_splinter_treant")
-    { }
-
-    class mob_treantAI  : public ScriptedAI
-    {
-        public:
-        mob_treantAI (Creature *c) : ScriptedAI(c)
-        {
-            WarpGuid = 0;
-        }
-    
-        uint64 WarpGuid;
-        uint32 check_Timer;
-    
-        void Reset()
-        override {
-            check_Timer = 0;
-        }
-    
-        void EnterCombat(Unit *who) override {}
-    
-        void MoveInLineOfSight(Unit*) override {}
-    
-        void UpdateAI(const uint32 diff)
-        override {
-            if (!UpdateVictim() )
-            {
-                if(WarpGuid && check_Timer < diff)
-                {
-                    if(Unit *Warp = (Unit*)ObjectAccessor::GetUnit(*me, WarpGuid))
-                    {
-                        if(me->IsWithinMeleeRange(Warp,2.5f))
-                        {
-                            int32 CurrentHP_Treant = (int32)me->GetHealth();
-                            Warp->CastCustomSpell(Warp,SPELL_HEAL_FATHER,&CurrentHP_Treant, nullptr, nullptr, true,nullptr ,nullptr, me->GetGUID());
-                            me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-                            return;
-                        }
-                        me->GetMotionMaster()->MoveFollow(Warp,0,0);
-                    }
-                    check_Timer = 1000;
-                }else check_Timer -= diff;
-                return;
-            }
-    
-            if (me->GetVictim()->GetGUID() !=  WarpGuid)
-                DoMeleeAttackIfReady();
-        }
-    };
-
-    CreatureAI* GetAI(Creature* creature) const override
-    {
-        return new mob_treantAI(creature);
-    }
-};
 
 void AddSC_boss_warp_splinter()
 {

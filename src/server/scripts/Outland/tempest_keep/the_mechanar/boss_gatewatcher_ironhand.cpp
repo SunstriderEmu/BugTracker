@@ -41,130 +41,136 @@ EndScriptData */
 #define SPELL_STREAM_OF_MACHINE_FLUID   35311
 
 // Gatewatcher Iron-Hand AI
-struct boss_gatewatcher_iron_handAI : public ScriptedAI
+class boss_gatewatcher_iron_hand : public CreatureScript
 {
-    boss_gatewatcher_iron_handAI(Creature *c) : ScriptedAI(c)
+public:
+    boss_gatewatcher_iron_hand() : CreatureScript("boss_gatewatcher_iron_hand")
+    { }
+
+    class boss_gatewatcher_iron_handAI : public ScriptedAI
     {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-        HeroicMode = me->GetMap()->IsHeroic();
-    }
-
-    InstanceScript* pInstance;
-
-    bool HeroicMode;
-
-    uint32 Shadow_Power_Timer;
-    uint32 Jackhammer_Timer;
-    uint32 Jackhammer_CastTime;
-    uint8 Jackhammer_Progression;
-    uint32 Stream_of_Machine_Fluid_Timer;
-
-    void Reset()
-    override {
-        Shadow_Power_Timer = 40000 + rand()%5000;
-        Jackhammer_Timer = 80000+rand()%10000;
-        Stream_of_Machine_Fluid_Timer = 55000;
-        Jackhammer_CastTime = 0;
-        Jackhammer_Progression = 0;
-    }
-    void EnterCombat(Unit *who)
-    override {
-        DoScriptText(SAY_AGGRO_1, me);
-    }
-
-    void KilledUnit(Unit* victim)
-    override {
-        if (rand()%2)
-            return;
-
-        DoScriptText(RAND(SAY_SLAY_1, SAY_SLAY_2), me);
-    }
-
-    void JustDied(Unit* Killer)
-    override {
-        DoScriptText(SAY_DEATH_1, me);
-
-        if (!pInstance)
-            return;
-
-        //SetData will open the Moarg Door 2
-        pInstance->SetData(DATA_GATEWATCHER_IRONHAND, DONE);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        //Return since we have no target
-        if (!UpdateVictim() )
-            return;
-
-        //Shadow Power
-        if(Shadow_Power_Timer < diff)
+        public:
+        boss_gatewatcher_iron_handAI(Creature *c) : ScriptedAI(c)
         {
-            DoCast(me,HeroicMode ? H_SPELL_SHADOW_POWER : SPELL_SHADOW_POWER);
-            Shadow_Power_Timer = 55000 + rand()%5000;
-        }else Shadow_Power_Timer -= diff;
-
-        //Jack Hammer
-        if(Jackhammer_Timer < diff)
-        {
-            switch(Jackhammer_Progression)
-            {
-            case 0: 
-                if(Jackhammer_CastTime == 0)
-                {
-                    DoCast(me->GetVictim(),HeroicMode ? H_SPELL_JACKHAMMER : SPELL_JACKHAMMER);
-                    DoScriptText(EMOTE_HAMMER, me);
-                    Jackhammer_Progression++;
-                }
-                break;
-            case 1: 
-                if(Jackhammer_CastTime > 2500)
-                {
-                    DoScriptText(SAY_HAMMER_1, me); 
-                    Jackhammer_Progression++;
-                }
-                break;
-            case 2: 
-                if(Jackhammer_CastTime > 5500)
-                {
-                    DoScriptText(SAY_HAMMER_2, me); 
-                    Jackhammer_Progression++;
-                }
-                break;
-            case 3:
-                if(Jackhammer_CastTime > 8000)
-                {
-                    Jackhammer_Timer = 30000+rand()%15000;
-                    Jackhammer_CastTime = 0;
-                    Jackhammer_Progression = 0;
-                }
-                break;
-            }
-            
-            Jackhammer_CastTime += diff;
-        }else Jackhammer_Timer -= diff;
-
-        //Stream of Machine Fluid
-        if(Stream_of_Machine_Fluid_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_STREAM_OF_MACHINE_FLUID);
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
+            HeroicMode = me->GetMap()->IsHeroic();
+        }
+    
+        InstanceScript* pInstance;
+    
+        bool HeroicMode;
+    
+        uint32 Shadow_Power_Timer;
+        uint32 Jackhammer_Timer;
+        uint32 Jackhammer_CastTime;
+        uint8 Jackhammer_Progression;
+        uint32 Stream_of_Machine_Fluid_Timer;
+    
+        void Reset()
+        override {
+            Shadow_Power_Timer = 40000 + rand()%5000;
+            Jackhammer_Timer = 80000+rand()%10000;
             Stream_of_Machine_Fluid_Timer = 55000;
-        }else Stream_of_Machine_Fluid_Timer -= diff;
+            Jackhammer_CastTime = 0;
+            Jackhammer_Progression = 0;
+        }
+        void EnterCombat(Unit *who)
+        override {
+            DoScriptText(SAY_AGGRO_1, me);
+        }
+    
+        void KilledUnit(Unit* victim)
+        override {
+            if (rand()%2)
+                return;
+    
+            DoScriptText(RAND(SAY_SLAY_1, SAY_SLAY_2), me);
+        }
+    
+        void JustDied(Unit* Killer)
+        override {
+            DoScriptText(SAY_DEATH_1, me);
+    
+            if (!pInstance)
+                return;
+    
+            //SetData will open the Moarg Door 2
+            pInstance->SetData(DATA_GATEWATCHER_IRONHAND, DONE);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            //Return since we have no target
+            if (!UpdateVictim() )
+                return;
+    
+            //Shadow Power
+            if(Shadow_Power_Timer < diff)
+            {
+                DoCast(me,HeroicMode ? H_SPELL_SHADOW_POWER : SPELL_SHADOW_POWER);
+                Shadow_Power_Timer = 55000 + rand()%5000;
+            }else Shadow_Power_Timer -= diff;
+    
+            //Jack Hammer
+            if(Jackhammer_Timer < diff)
+            {
+                switch(Jackhammer_Progression)
+                {
+                case 0: 
+                    if(Jackhammer_CastTime == 0)
+                    {
+                        DoCast(me->GetVictim(),HeroicMode ? H_SPELL_JACKHAMMER : SPELL_JACKHAMMER);
+                        DoScriptText(EMOTE_HAMMER, me);
+                        Jackhammer_Progression++;
+                    }
+                    break;
+                case 1: 
+                    if(Jackhammer_CastTime > 2500)
+                    {
+                        DoScriptText(SAY_HAMMER_1, me); 
+                        Jackhammer_Progression++;
+                    }
+                    break;
+                case 2: 
+                    if(Jackhammer_CastTime > 5500)
+                    {
+                        DoScriptText(SAY_HAMMER_2, me); 
+                        Jackhammer_Progression++;
+                    }
+                    break;
+                case 3:
+                    if(Jackhammer_CastTime > 8000)
+                    {
+                        Jackhammer_Timer = 30000+rand()%15000;
+                        Jackhammer_CastTime = 0;
+                        Jackhammer_Progression = 0;
+                    }
+                    break;
+                }
+                
+                Jackhammer_CastTime += diff;
+            }else Jackhammer_Timer -= diff;
+    
+            //Stream of Machine Fluid
+            if(Stream_of_Machine_Fluid_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_STREAM_OF_MACHINE_FLUID);
+                Stream_of_Machine_Fluid_Timer = 55000;
+            }else Stream_of_Machine_Fluid_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_gatewatcher_iron_handAI(creature);
     }
 };
-CreatureAI* GetAI_boss_gatewatcher_iron_hand(Creature *_Creature)
-{
-    return new boss_gatewatcher_iron_handAI (_Creature);
-}
+
 
 void AddSC_boss_gatewatcher_iron_hand()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_gatewatcher_iron_hand";
-    newscript->GetAI = &GetAI_boss_gatewatcher_iron_hand;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_gatewatcher_iron_hand();
 }
 

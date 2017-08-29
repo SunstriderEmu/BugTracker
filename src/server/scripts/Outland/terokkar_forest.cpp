@@ -1331,7 +1331,7 @@ public:
     npc_skyguard_prisoner() : CreatureScript("npc_skyguard_prisoner")
     { }
 
-    class npc_skyguard_prisonerAI : npc_escortAI
+    class npc_skyguard_prisonerAI : public npc_escortAI
     {
         public:
         npc_skyguard_prisonerAI(Creature* c) : npc_escortAI(c) {}
