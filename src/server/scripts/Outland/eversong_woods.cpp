@@ -219,75 +219,27 @@ public:
 
     class master_kelerun_bloodmournAI : public ScriptedAI
     {
-        public:
+    public:
         master_kelerun_bloodmournAI(Creature *c) : ScriptedAI(c) {}
-    
+
         uint8  questPhase;
         uint8  paladinPhase;
         uint32 timer;
-    
+
         uint64 paladinGuid[4];
-    
+
         void Reset() override {
-          questPhase = 0;
-          timer = 60 * SECOND * IN_MILLISECONDS;
-          paladinPhase = 0;
-    	  for (uint8 i = 0; i < 4; i++)
-    		  paladinGuid[i] = 0;
+            questPhase = 0;
+            timer = 60 * SECOND * IN_MILLISECONDS;
+            paladinPhase = 0;
+            for (uint8 i = 0; i < 4; i++)
+                paladinGuid[i] = 0;
         }
-    
+
         void EnterCombat(Unit* pWho) override {}
-    
-        void UpdateAI(const uint32 diff)
-        override {
-            // Quest accepted but object not activated, object despawned (if in sync 1 minute!)
-            if (questPhase == 1)
-            {
-                if (timer < diff)
-                    Reset();
-                else timer -= diff;
-            }
-            // fight the 4 paladin mobs phase
-            else if (questPhase == 2)
-            {
-                if (timer < diff)
-                {
-                    Creature* paladinSpawn;
-                    paladinSpawn = (ObjectAccessor::GetCreature((*me), paladinGuid[paladinPhase]));
-                    if (paladinSpawn)
-                    {
-                        CAST_AI(npc_second_trial_paladin::npc_secondTrialAI, (paladinSpawn->AI()))->Activate(me->GetGUID());
-    
-                        switch(paladinPhase)
-                        {
-                            case 0:
-                                DoScriptText(TEXT_SECOND_TRIAL_1,me);
-                            break;
-                            case 1:
-                                DoScriptText(TEXT_SECOND_TRIAL_2,me);
-                            break;
-                            case 2:
-                                DoScriptText(TEXT_SECOND_TRIAL_3,me);
-                            break;
-                            case 3:
-                                DoScriptText(TEXT_SECOND_TRIAL_4,me);
-                            break;
-                        }
-                    }
-                    else
-                    Reset();
-    
-                    questPhase=4;
-                    timer = OFFSET_NEXT_ATTACK;
-                } else timer -= diff;
-            }
-    
-            if (!UpdateVictim())
-                return;
-    
-            DoMeleeAttackIfReady();
-        }
-    
+
+        void UpdateAI(const uint32 diff) override; //defined later
+
         void StartEvent()
         {
             if (questPhase == 1)
@@ -296,29 +248,29 @@ public:
                 {
                     Creature* Summoned;
                     Summoned = DoSpawnCreature(PaladinEntry[i], SpawnPosition[i].x, SpawnPosition[i].y, SpawnPosition[i].z, SpawnPosition[i].o, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 180000);
-    
+
                     if (Summoned)
                         paladinGuid[i] = Summoned->GetGUID();
                 }
-    
+
                 timer = OFFSET_NEXT_ATTACK;
                 questPhase = 2;
             }
         }
-    
+
         void SecondTrialKill()
         {
             if (questPhase > 0)
             {
                 ++paladinPhase;
-    
+
                 if (paladinPhase < 4)
                     questPhase = 2;
                 else
                     Reset();  // Quest Complete, OnQuestComplete handler is in npc_secondTrialAI::JustDied
             }
         }
-    
+
         void SummonedCreatureDespawn(Creature* c) override {}
 
         virtual bool GossipHello(Player* pPlayer) override
@@ -328,7 +280,7 @@ public:
             // Escort quests or any other event-driven quests. If player in party, all players that can accept this quest will receive confirmation box to accept quest.
             // !not sure if this really works!
 
-            if (((npc_second_trial_controller::master_kelerun_bloodmournAI*)me->AI())->questPhase == 0) {
+            if (questPhase == 0) {
                 pPlayer->PrepareQuestMenu(me->GetGUID());
                 pPlayer->SendPreparedQuest(me->GetGUID());
             }
@@ -338,12 +290,11 @@ public:
 
         }
 
-
         virtual void QuestAccept(Player* pPlayer, Quest const* pQuest) override
         {
             // One Player exclusive quest, wait for user go activation
-            if (pQuest->GetQuestId() == QUEST_SECOND_TRIAL )
-                CAST_AI(npc_second_trial_controller::master_kelerun_bloodmournAI, (me->AI()))->questPhase = 1;
+            if (pQuest->GetQuestId() == QUEST_SECOND_TRIAL)
+                questPhase = 1;
 
         }
 
@@ -367,66 +318,66 @@ public:
 
     class npc_secondTrialAI : public ScriptedAI
     {
-        public:
+    public:
         npc_secondTrialAI(Creature *c) : ScriptedAI(c) {}
-    
+
         uint32 timer;
         uint8  questPhase;
         uint64 summonerGuid;
-    
+
         bool spellFlashLight;
         bool spellJustice;
         bool spellJudLight;
         bool spellCommand;
-    
+
         uint32 timerFlashLight;
         uint32 timerJustice;
         uint32 timerJudLight;
         uint32 timerCommand;
-    
-    
+
+
         void Reset() override {
-    
-          timer = 2000;
-          questPhase = 0;
-          summonerGuid = 0;
-    
-          me->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_KNEEL);
-          me->SetFaction(FACTION_CREATURE);
-    
-          spellFlashLight = false;
-          spellJustice    = false;
-          spellJudLight   = false;
-          spellCommand    = false;
-    
-            switch(me->GetEntry()) {
-                case CHAMPION_BLOODWRATH :
-                    spellFlashLight = true;
-                    timerFlashLight = TIMER_FLASH_OF_LIGHT;
+
+            timer = 2000;
+            questPhase = 0;
+            summonerGuid = 0;
+
+            me->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_KNEEL);
+            me->SetFaction(FACTION_CREATURE);
+
+            spellFlashLight = false;
+            spellJustice = false;
+            spellJudLight = false;
+            spellCommand = false;
+
+            switch (me->GetEntry()) {
+            case CHAMPION_BLOODWRATH:
+                spellFlashLight = true;
+                timerFlashLight = TIMER_FLASH_OF_LIGHT;
                 break;
-                case CHAMPION_LIGHTREND :
-                    spellJustice    = true;
-                    timerJustice    = 500;
+            case CHAMPION_LIGHTREND:
+                spellJustice = true;
+                timerJustice = 500;
                 break;
-                case CHAMPION_SWIFTBLADE :
-                    spellJudLight   = false;  // Misses Script Effect // http://www.wowhead.com/?spell=20271
-                    timerJudLight   = 500;
+            case CHAMPION_SWIFTBLADE:
+                spellJudLight = false;  // Misses Script Effect // http://www.wowhead.com/?spell=20271
+                timerJudLight = 500;
                 break;
-                case CHAMPION_SUNSTRIKER :
-                    spellFlashLight = true;
-                    spellJudLight   = false;  // Misses Script Effect // http://www.wowhead.com/?spell=20271
-                    spellCommand    = false;  // Misses Dummy // http://www.wowhead.com/?spell=20375
-                    timerFlashLight = TIMER_FLASH_OF_LIGHT;
-                    timerJudLight   = 500;
-                    timerCommand    = 1500;
+            case CHAMPION_SUNSTRIKER:
+                spellFlashLight = true;
+                spellJudLight = false;  // Misses Script Effect // http://www.wowhead.com/?spell=20271
+                spellCommand = false;  // Misses Dummy // http://www.wowhead.com/?spell=20375
+                timerFlashLight = TIMER_FLASH_OF_LIGHT;
+                timerJudLight = 500;
+                timerCommand = 1500;
                 break;
             }
         }
-    
+
         void EnterCombat(Unit* pWho) override { }
-    
+
         void UpdateAI(const uint32 diff)
-        override {
+            override {
             if (questPhase == 1)
             {
                 if (timer < diff)
@@ -434,19 +385,20 @@ public:
                     me->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_NONE);
                     me->SetFaction(FACTION_HOSTILE);
                     questPhase = 0;
-    
+
                     Unit *target = SelectTarget(SELECT_TARGET_RANDOM, 0);
-                    if(target && target->GetTypeId() == TYPEID_PLAYER) // only on players.
+                    if (target && target->GetTypeId() == TYPEID_PLAYER) // only on players.
                     {
                         me->AddThreat(target, 5000000.0f);
                         AttackStart(target);
                     }
-                } else timer -= diff;
+                }
+                else timer -= diff;
             }
-    
+
             if (!UpdateVictim())
                 return;
-    
+
             // healer
             if (spellFlashLight)
             {
@@ -455,50 +407,54 @@ public:
                     if (timerFlashLight < diff)
                     {
                         DoCast(me, SPELL_FLASH_OF_LIGHT);
-                        timerFlashLight = TIMER_FLASH_OF_LIGHT + rand()%(TIMER_FLASH_OF_LIGHT);
-                    } else timerFlashLight -= diff;
+                        timerFlashLight = TIMER_FLASH_OF_LIGHT + rand() % (TIMER_FLASH_OF_LIGHT);
+                    }
+                    else timerFlashLight -= diff;
                 }
             }
-    
+
             if (spellJustice)
             {
                 if (timerJustice < diff)
                 {
                     DoCast(me, SPELL_SEAL_OF_JUSTICE);
-                    timerJustice = TIMER_SEAL_OF_JUSTICE +  rand()%( TIMER_SEAL_OF_JUSTICE );
-                } else timerJustice -= diff;
+                    timerJustice = TIMER_SEAL_OF_JUSTICE + rand() % (TIMER_SEAL_OF_JUSTICE);
+                }
+                else timerJustice -= diff;
             }
-    
+
             if (spellJudLight)
             {
                 if (timerJudLight < diff) {
-                    DoCast(me,  SPELL_JUDGEMENT_OF_LIGHT);
-                    timerJudLight = TIMER_JUDGEMENT_OF_LIGHT +  rand()%( TIMER_JUDGEMENT_OF_LIGHT );
-                } else timerJudLight -= diff;
+                    DoCast(me, SPELL_JUDGEMENT_OF_LIGHT);
+                    timerJudLight = TIMER_JUDGEMENT_OF_LIGHT + rand() % (TIMER_JUDGEMENT_OF_LIGHT);
+                }
+                else timerJudLight -= diff;
             }
-    
+
             if (spellCommand)
             {
                 if (timerCommand < diff) {
-                    DoCast(me,  TIMER_SEAL_OF_COMMAND);
-                    timerCommand = TIMER_SEAL_OF_COMMAND +  rand()%( TIMER_SEAL_OF_COMMAND );
-                } else timerCommand -= diff;
+                    DoCast(me, TIMER_SEAL_OF_COMMAND);
+                    timerCommand = TIMER_SEAL_OF_COMMAND + rand() % (TIMER_SEAL_OF_COMMAND);
+                }
+                else timerCommand -= diff;
             }
-    
+
             DoMeleeAttackIfReady();
         }
-    
-    
+
+
         void JustDied(Unit* pKiller) override
         {
             if (pKiller->GetTypeId() == TYPEID_PLAYER)
             {
                 Creature* Summoner;
                 Summoner = (ObjectAccessor::GetCreature((*me), summonerGuid));
-    
+
                 if (Summoner)
                     CAST_AI(npc_second_trial_controller::master_kelerun_bloodmournAI, (Summoner->AI()))->SecondTrialKill();
-    
+
                 // last kill quest complete for group
                 if (me->GetEntry() == CHAMPION_SUNSTRIKER)
                 {
@@ -507,7 +463,7 @@ public:
                         for (GroupReference *itr = pGroup->GetFirstMember(); itr != nullptr; itr = itr->next())
                         {
                             Player* pGroupGuy = itr->GetSource();
-    
+
                             // for any leave or dead (with not released body) group member at appropriate distance
                             if (pGroupGuy && pGroupGuy->IsAtGroupRewardDistance(me) && !pGroupGuy->GetCorpse() && pGroupGuy->GetQuestStatus(QUEST_SECOND_TRIAL) == QUEST_STATUS_INCOMPLETE)
                                 pGroupGuy->CompleteQuest(QUEST_SECOND_TRIAL);
@@ -521,7 +477,7 @@ public:
                 }
             }
         }
-    
+
         void KilledUnit(Unit* pKilled) override
         {
             if (pKilled->GetTypeId() == TYPEID_PLAYER)
@@ -530,7 +486,7 @@ public:
                     (pKilled)->ToPlayer()->FailQuest(QUEST_SECOND_TRIAL);
             }
         }
-    
+
         void Activate(uint64 summonerguid)
         {
             questPhase = 1;
@@ -685,7 +641,55 @@ public:
     }
 };
 
+void npc_second_trial_controller::master_kelerun_bloodmournAI::UpdateAI(const uint32 diff) {
+    // Quest accepted but object not activated, object despawned (if in sync 1 minute!)
+    if (questPhase == 1)
+    {
+        if (timer < diff)
+            Reset();
+        else timer -= diff;
+    }
+    // fight the 4 paladin mobs phase
+    else if (questPhase == 2)
+    {
+        if (timer < diff)
+        {
+            Creature* paladinSpawn;
+            paladinSpawn = (ObjectAccessor::GetCreature((*me), paladinGuid[paladinPhase]));
+            if (paladinSpawn)
+            {
+                CAST_AI(npc_second_trial_paladin::npc_secondTrialAI, (paladinSpawn->AI()))->Activate(me->GetGUID());
 
+                switch (paladinPhase)
+                {
+                case 0:
+                    DoScriptText(TEXT_SECOND_TRIAL_1, me);
+                    break;
+                case 1:
+                    DoScriptText(TEXT_SECOND_TRIAL_2, me);
+                    break;
+                case 2:
+                    DoScriptText(TEXT_SECOND_TRIAL_3, me);
+                    break;
+                case 3:
+                    DoScriptText(TEXT_SECOND_TRIAL_4, me);
+                    break;
+                }
+            }
+            else
+                Reset();
+
+            questPhase = 4;
+            timer = OFFSET_NEXT_ATTACK;
+        }
+        else timer -= diff;
+    }
+
+    if (!UpdateVictim())
+        return;
+
+    DoMeleeAttackIfReady();
+}
 
 /*######
 ## npc_infused_crystal
