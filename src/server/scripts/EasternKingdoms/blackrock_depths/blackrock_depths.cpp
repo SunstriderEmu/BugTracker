@@ -1558,12 +1558,10 @@ public:
         virtual void QuestAccept(Player* player, Quest const* quest) override
         {
             if (quest->GetQuestId() == QUEST_JAILBREAK) {
-                if (npc_windsor_brdAI* escortAI = CAST_AI(npc_windsor_brd::npc_windsor_brdAI, me->AI())) {
-                    DoScriptText(WINDSOR_SAY_START, me, nullptr);
-                    me->SetFaction(11);
+                DoScriptText(WINDSOR_SAY_START, me, nullptr);
+                me->SetFaction(11);
 
-                    escortAI->Start(true, true, false, player->GetGUID(), me->GetEntry());
-                }
+                npc_escortAI::Start(true, true, false, player->GetGUID(), me->GetEntry());
             }
         }
 

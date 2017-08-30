@@ -771,7 +771,7 @@ public:
     {
         CrystallineTearAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        bool QuestAccept(Player* pPlayer, Quest const* quest) override
+        void QuestAccept(Player* pPlayer, Quest const* quest) override
         {
             if (quest->GetQuestId() == 8519)
             {
@@ -779,8 +779,6 @@ public:
                 data << uint32(2);
                 pPlayer->GetSession()->SendPacket(&data);
             }
-
-            return true;
         }
     };
 
