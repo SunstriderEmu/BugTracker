@@ -31,153 +31,159 @@ EndScriptData */
 #define SPELL_RAGE                  21340
 #define SPELL_CAPTURESOUL           21054
 
-struct boss_kruulAI : public ScriptedAI
+class boss_kruul : public CreatureScript
 {
-    boss_kruulAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_kruul() : CreatureScript("boss_kruul")
+    { }
 
-    uint32 ShadowVolley_Timer;
-    uint32 Cleave_Timer;
-    uint32 ThunderClap_Timer;
-    uint32 TwistedReflection_Timer;
-    uint32 VoidBolt_Timer;
-    uint32 Rage_Timer;
-    uint32 Hound_Timer;
-    int Rand;
-    int RandX;
-    int RandY;
-    Creature* Summoned;
-
-    void Reset() override
+    class boss_kruulAI : public ScriptedAI
     {
-        ShadowVolley_Timer = 10000;
-        Cleave_Timer = 14000;
-        ThunderClap_Timer = 20000;
-        TwistedReflection_Timer = 25000;
-        VoidBolt_Timer = 30000;
-        Rage_Timer = 60000;                                 //Cast rage after 1 minute
-        Hound_Timer = 8000;
-    }
-
-    void EnterCombat(Unit *who) override
-    {
-    }
-
-    void KilledUnit(Unit*) override
-    {
-        // When a player, pet or totem gets killed, Lord Kazzak casts this spell to instantly regenerate 70,000 health.
-        DoCast(me,SPELL_CAPTURESOUL);
-
-    }
-
-    void SummonHounds(Unit* victim)
-    {
-        Rand = rand()%10;
-        switch (rand()%2)
+        public:
+        boss_kruulAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 ShadowVolley_Timer;
+        uint32 Cleave_Timer;
+        uint32 ThunderClap_Timer;
+        uint32 TwistedReflection_Timer;
+        uint32 VoidBolt_Timer;
+        uint32 Rage_Timer;
+        uint32 Hound_Timer;
+        int Rand;
+        int RandX;
+        int RandY;
+        Creature* Summoned;
+    
+        void Reset() override
         {
-            case 0: RandX = 0 - Rand; break;
-            case 1: RandX = 0 + Rand; break;
+            ShadowVolley_Timer = 10000;
+            Cleave_Timer = 14000;
+            ThunderClap_Timer = 20000;
+            TwistedReflection_Timer = 25000;
+            VoidBolt_Timer = 30000;
+            Rage_Timer = 60000;                                 //Cast rage after 1 minute
+            Hound_Timer = 8000;
         }
-        Rand = 0;
-        Rand = rand()%10;
-        switch (rand()%2)
+    
+        void EnterCombat(Unit *who) override
         {
-            case 0: RandY = 0 - Rand; break;
-            case 1: RandY = 0 + Rand; break;
         }
-        Rand = 0;
-        Summoned = DoSpawnCreature(19207, RandX, RandY, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 300000);
-        if(Summoned)
-            ((CreatureAI*)Summoned->AI())->AttackStart(victim);
-    }
+    
+        void KilledUnit(Unit*) override
+        {
+            // When a player, pet or totem gets killed, Lord Kazzak casts this spell to instantly regenerate 70,000 health.
+            DoCast(me,SPELL_CAPTURESOUL);
+    
+        }
+    
+        void SummonHounds(Unit* victim)
+        {
+            Rand = rand()%10;
+            switch (rand()%2)
+            {
+                case 0: RandX = 0 - Rand; break;
+                case 1: RandX = 0 + Rand; break;
+            }
+            Rand = 0;
+            Rand = rand()%10;
+            switch (rand()%2)
+            {
+                case 0: RandY = 0 - Rand; break;
+                case 1: RandY = 0 + Rand; break;
+            }
+            Rand = 0;
+            Summoned = DoSpawnCreature(19207, RandX, RandY, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 300000);
+            if(Summoned)
+                ((CreatureAI*)Summoned->AI())->AttackStart(victim);
+        }
+    
+        void UpdateAI(const uint32 diff) override
+        {
+            //Return since we have no target
+            if (!UpdateVictim() )
+                return;
+    
+            //ShadowVolley_Timer
+            if (ShadowVolley_Timer < diff)
+            {
+                if (rand()%100 < 46)
+                {
+                    DoCast(me->GetVictim(),SPELL_SHADOWVOLLEY);
+                }
+    
+                ShadowVolley_Timer = 5000;
+            }else ShadowVolley_Timer -= diff;
+    
+            //Cleave_Timer
+            if (Cleave_Timer < diff)
+            {
+                if (rand()%100 < 50)
+                {
+                    DoCast(me->GetVictim(),SPELL_CLEAVE);
+                }
+    
+                Cleave_Timer = 10000;
+            }else Cleave_Timer -= diff;
+    
+            //ThunderClap_Timer
+            if (ThunderClap_Timer < diff)
+            {
+                if (rand()%100 < 20)
+                {
+                    DoCast(me->GetVictim(),SPELL_THUNDERCLAP);
+                }
+    
+                ThunderClap_Timer = 12000;
+            }else ThunderClap_Timer -= diff;
+    
+            //TwistedReflection_Timer
+            if (TwistedReflection_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_TWISTEDREFLECTION);
+                TwistedReflection_Timer = 30000;
+            }else TwistedReflection_Timer -= diff;
+    
+            //VoidBolt_Timer
+            if (VoidBolt_Timer < diff)
+            {
+                if (rand()%100 < 40)
+                {
+                    DoCast(me->GetVictim(),SPELL_VOIDBOLT);
+                }
+    
+                VoidBolt_Timer = 18000;
+            }else VoidBolt_Timer -= diff;
+    
+            //Rage_Timer
+            if (Rage_Timer < diff)
+            {
+                DoCast(me,SPELL_RAGE);
+                Rage_Timer = 70000;
+            }else Rage_Timer -= diff;
+    
+            //Hound_Timer
+            if (Hound_Timer < diff)
+            {
+                SummonHounds(me->GetVictim());
+                SummonHounds(me->GetVictim());
+                SummonHounds(me->GetVictim());
+    
+                Hound_Timer = 45000;
+            }else Hound_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-    void UpdateAI(const uint32 diff) override
+    CreatureAI* GetAI(Creature* creature) const override
     {
-        //Return since we have no target
-        if (!UpdateVictim() )
-            return;
-
-        //ShadowVolley_Timer
-        if (ShadowVolley_Timer < diff)
-        {
-            if (rand()%100 < 46)
-            {
-                DoCast(me->GetVictim(),SPELL_SHADOWVOLLEY);
-            }
-
-            ShadowVolley_Timer = 5000;
-        }else ShadowVolley_Timer -= diff;
-
-        //Cleave_Timer
-        if (Cleave_Timer < diff)
-        {
-            if (rand()%100 < 50)
-            {
-                DoCast(me->GetVictim(),SPELL_CLEAVE);
-            }
-
-            Cleave_Timer = 10000;
-        }else Cleave_Timer -= diff;
-
-        //ThunderClap_Timer
-        if (ThunderClap_Timer < diff)
-        {
-            if (rand()%100 < 20)
-            {
-                DoCast(me->GetVictim(),SPELL_THUNDERCLAP);
-            }
-
-            ThunderClap_Timer = 12000;
-        }else ThunderClap_Timer -= diff;
-
-        //TwistedReflection_Timer
-        if (TwistedReflection_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_TWISTEDREFLECTION);
-            TwistedReflection_Timer = 30000;
-        }else TwistedReflection_Timer -= diff;
-
-        //VoidBolt_Timer
-        if (VoidBolt_Timer < diff)
-        {
-            if (rand()%100 < 40)
-            {
-                DoCast(me->GetVictim(),SPELL_VOIDBOLT);
-            }
-
-            VoidBolt_Timer = 18000;
-        }else VoidBolt_Timer -= diff;
-
-        //Rage_Timer
-        if (Rage_Timer < diff)
-        {
-            DoCast(me,SPELL_RAGE);
-            Rage_Timer = 70000;
-        }else Rage_Timer -= diff;
-
-        //Hound_Timer
-        if (Hound_Timer < diff)
-        {
-            SummonHounds(me->GetVictim());
-            SummonHounds(me->GetVictim());
-            SummonHounds(me->GetVictim());
-
-            Hound_Timer = 45000;
-        }else Hound_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+        return new boss_kruulAI(creature);
     }
 };
-CreatureAI* GetAI_boss_kruul(Creature *_Creature)
-{
-    return new boss_kruulAI (_Creature);
-}
+
 
 void AddSC_boss_kruul()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_kruul";
-    newscript->GetAI = &GetAI_boss_kruul;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_kruul();
 }
 

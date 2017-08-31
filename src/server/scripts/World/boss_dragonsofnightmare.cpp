@@ -173,105 +173,115 @@ struct DragonOfNightmareAI_template : public ScriptedAI
     
 };
 
-struct DreamFogAI : public ScriptedAI
+
+class npc_dreamfog : public CreatureScript
 {
-    SimpleCooldown* SCDTimerUpdateMovement;
-    SimpleCooldown* SCDSecondBeforeUpdateVictim;
-    Unit* Target;
-    bool StarUpdateVictimTimer;
-    Creature* Dragon;
-    
-    DreamFogAI(Creature *c) : ScriptedAI(c)
+public:
+    npc_dreamfog() : CreatureScript("npc_dreamfog")
+    { }
+
+    class DreamFogAI : public ScriptedAI
     {
-        SCDTimerUpdateMovement = new SimpleCooldown(1000);
-        SCDSecondBeforeUpdateVictim = new SimpleCooldown(1000);
-        Dragon=ObjectAccessor::GetCreature(*me,me->GetOwnerGUID());
-        setTargetFromDragon();
-    }
-    void EnterCombat(Unit *who)override {}
-    
-    void Reset()
-    override {
-        SCDTimerUpdateMovement->reinitCD();
-        SCDSecondBeforeUpdateVictim->reinitCD();
-        Target = nullptr;
-                
-        // Jsais plus pouruquoi j'ai set tout ca mais jlai fait et ca marche :p
-        me->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 0);
-        me->SetFloatValue(UNIT_FIELD_COMBATREACH, 0);
-        me->SetFloatValue(UNIT_FIELD_RANGEDATTACKTIME, 0);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        public:
+        SimpleCooldown* SCDTimerUpdateMovement;
+        SimpleCooldown* SCDSecondBeforeUpdateVictim;
+        Unit* Target;
+        bool StarUpdateVictimTimer;
+        Creature* Dragon;
         
-        for (int i=0 ; i<10 ; i++)// Cast visual 10 times to make it more beatiful <3
-            DoCast(me, SPELL_SLEEP_DREAM_FOG, true);
-        //DoCast(me, VISUAL_SPELL_ID_NUAGE_ONIRIQUE, true);
-    }
-    
-    bool UpdateVictim(bool evade)
-    {
-        // On change pas de victime, on est face à un esprit assez borné!
-        return true;
-    }
-    
-    void DoMeleeAttackIfReady() override
-    {
-        // Borné, mais pacifiste!
-        return;
-    }
-    
-    void Instakill(Unit* target)
-    {
-		target->DealDamage(target, target->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-    }
-    
-    void UpdateAI(const uint32 diff)
-    override {   
-        if(!Dragon )
+        DreamFogAI(Creature *c) : ScriptedAI(c)
         {
+            SCDTimerUpdateMovement = new SimpleCooldown(1000);
+            SCDSecondBeforeUpdateVictim = new SimpleCooldown(1000);
             Dragon=ObjectAccessor::GetCreature(*me,me->GetOwnerGUID());
+            setTargetFromDragon();
+        }
+        void EnterCombat(Unit *who)override {}
+        
+        void Reset()
+        override {
+            SCDTimerUpdateMovement->reinitCD();
+            SCDSecondBeforeUpdateVictim->reinitCD();
+            Target = nullptr;
+                    
+            // Jsais plus pouruquoi j'ai set tout ca mais jlai fait et ca marche :p
+            me->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 0);
+            me->SetFloatValue(UNIT_FIELD_COMBATREACH, 0);
+            me->SetFloatValue(UNIT_FIELD_RANGEDATTACKTIME, 0);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            
+            for (int i=0 ; i<10 ; i++)// Cast visual 10 times to make it more beatiful <3
+                DoCast(me, SPELL_SLEEP_DREAM_FOG, true);
+            //DoCast(me, VISUAL_SPELL_ID_NUAGE_ONIRIQUE, true);
+        }
+        
+        bool UpdateVictim(bool evade)
+        {
+            // On change pas de victime, on est face à un esprit assez borné!
+            return true;
+        }
+        
+        void DoMeleeAttackIfReady() override
+        {
+            // Borné, mais pacifiste!
             return;
         }
         
-        if(Dragon->IsDead())
-            Instakill(me);
-        
-        //me->AI()->AttackStart(Cible);
-        if(SCDTimerUpdateMovement->CheckAndUpdate(diff))
-                me->GetMotionMaster()->MoveFollow(Target,0,0);
-        // Partie très moche a changer. Si l'esprit est trop proche (mais pas assez pour l'aura) alors on le téléporte sur le gars.
-        if(me->GetDistance(Target->GetPositionX(),Target->GetPositionY(),Target->GetPositionZ())<3) // J'ai mis 3 car c'est petit et ca fait un coeur!
+        void Instakill(Unit* target)
         {
-            me->Relocate(Target->GetPositionX(),Target->GetPositionY(),Target->GetPositionZ());
-            StarUpdateVictimTimer=true;
+    		target->DealDamage(target, target->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
         }
-        // Wait one second before death
-        if(StarUpdateVictimTimer && Dragon)
-        {
-            if(SCDSecondBeforeUpdateVictim->CheckAndUpdate(diff))
+        
+        void UpdateAI(const uint32 diff)
+        override {   
+            if(!Dragon )
             {
-                setTargetFromDragon();
-                StarUpdateVictimTimer=false;
+                Dragon=ObjectAccessor::GetCreature(*me,me->GetOwnerGUID());
+                return;
+            }
+            
+            if(Dragon->IsDead())
+                Instakill(me);
+            
+            //me->AI()->AttackStart(Cible);
+            if(SCDTimerUpdateMovement->CheckAndUpdate(diff))
+                    me->GetMotionMaster()->MoveFollow(Target,0,0);
+            // Partie très moche a changer. Si l'esprit est trop proche (mais pas assez pour l'aura) alors on le téléporte sur le gars.
+            if(me->GetDistance(Target->GetPositionX(),Target->GetPositionY(),Target->GetPositionZ())<3) // J'ai mis 3 car c'est petit et ca fait un coeur!
+            {
+                me->Relocate(Target->GetPositionX(),Target->GetPositionY(),Target->GetPositionZ());
+                StarUpdateVictimTimer=true;
+            }
+            // Wait one second before death
+            if(StarUpdateVictimTimer && Dragon)
+            {
+                if(SCDSecondBeforeUpdateVictim->CheckAndUpdate(diff))
+                {
+                    setTargetFromDragon();
+                    StarUpdateVictimTimer=false;
+                }
             }
         }
-    }
-
-    void setTarget(Unit* target)
-    {
-        Target = target;
-    }
     
-    void setTargetFromDragon()
+        void setTarget(Unit* target)
+        {
+            Target = target;
+        }
+        
+        void setTargetFromDragon()
+        {
+            if(!Dragon)
+                return;
+            setTarget(((DragonOfNightmareAI_template*)Dragon->AI())->SelectTarget(SELECT_TARGET_RANDOM,0));
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
     {
-        if(!Dragon)
-            return;
-        setTarget(((DragonOfNightmareAI_template*)Dragon->AI())->SelectTarget(SELECT_TARGET_RANDOM,0));
+        return new DreamFogAI(creature);
     }
 };
 
-CreatureAI* GetAI_DreamFog(Creature *_Creature)
-{
-    return new DreamFogAI (_Creature);
-}
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
@@ -303,206 +313,226 @@ CreatureAI* GetAI_DreamFog(Creature *_Creature)
 
 
 
-struct shadowSpiritAI : public ScriptedAI
-{   
-    Unit* Lethon;
-    SimpleCooldown* SCDTimerUpdateMovement;
-    SimpleCooldown* SCDFreezeWhenJustSpawn;
-    bool canStartMovement;
-    
-    shadowSpiritAI(Creature *c) : ScriptedAI(c)
-    {
-        SCDTimerUpdateMovement = new SimpleCooldown(1000);
-        SCDFreezeWhenJustSpawn= new SimpleCooldown(1500);
-    }
-    void EnterCombat(Unit *who)override {}
-    
-    void JustDied(Unit *victim)
-    override {
-        // Avoid to see the corpse
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-    }
-    
-    void Reset()
-    override {
-        SCDTimerUpdateMovement->reinitCD();
-        SCDFreezeWhenJustSpawn->reinitCD();
-        Lethon=nullptr;
-        canStartMovement=false;
-                
-        me->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 0);
-        me->SetFloatValue(UNIT_FIELD_COMBATREACH, 0);
-        me->SetFloatValue(UNIT_FIELD_RANGEDATTACKTIME, 0);
-        
-        DoCast(me,VISUAL_SPELL_SHADOW_SPIRIT,true);
-    }
-    
-    bool UpdateVictim(bool evade)
-    {
-        return true;
-    }
-    
-    void DoMeleeAttackIfReady() override
-    {
-        return;
-    }
-    
-    void AttackStart(Unit* who)
-    override {
-        return;
-    }
-    
-    void UpdateAI(const uint32 diff)
-    override {   
-        if( !Lethon )
-        {
-            // Il n'aime plus la vie
-            me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-            return;
-        }
-        
-        if(Lethon->IsDead())
-        {
-            // Il n'aime plus la vie
-            me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-            return;
-        }
-        
-        
-        
-        // Checking if the spirit can move
-        if(!canStartMovement && SCDFreezeWhenJustSpawn->CheckAndUpdate(diff))
-        {
-            canStartMovement=true;
-        }
-        
-        // Freeze Spirit
-        if(!canStartMovement)
-        {
-            return;
-        }
-        
-        // If spirit can move, he goes to Lethon and heal him
-        if(SCDTimerUpdateMovement->CheckAndUpdate(diff))
-                me->GetMotionMaster()->MoveFollow(Lethon,0,0);
-        
-        if(me->GetDistance(Lethon->GetPositionX(),Lethon->GetPositionY(),Lethon->GetPositionZ())<10)
-        {
-            // On donne la vie a lethon puis on se tire une balle in the head
-            DoCast(Lethon,SPELL_HEAL_SHADOW_SPIRIT,true);
-            me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-        }
-    }
-    
-};
 
-
-struct LethonAI : public DragonOfNightmareAI_template
+class npc_spiritshade : public CreatureScript
 {
-    int lowHpYellLeft; 
-    SimpleCooldown* SCDAoeShadowBolt; 
-    
-    LethonAI(Creature *c) : DragonOfNightmareAI_template(c)
+public:
+    npc_spiritshade() : CreatureScript("npc_spiritshade")
+    { }
+
+    class shadowSpiritAI : public ScriptedAI
     {
-        SCDAoeShadowBolt = new SimpleCooldown(TIMER_AOE_SHADOWBOLT_LETHON,1000); // On lance une SB dès le début
-        
-        // To make event of spirit more realist
-        me->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 1.5f);
-        me->SetFloatValue(UNIT_FIELD_COMBATREACH, 1.5f);
-        me->SetFloatValue(UNIT_FIELD_RANGEDATTACKTIME, 1.5f);
-    }
-    
-    void EnterCombat(Unit* u)
-    override {
-        me->Yell(YELL_ON_AGGRO_LETHON,LANG_UNIVERSAL,nullptr);
-        return;
-    }
-    
-    void Reset()
-    override {
-        // reset phase
-        DragonOfNightmareAI_template::Reset();
-        lowHpYellLeft=1;
-        SCDAoeShadowBolt->resetAtStart();
-    }
-    
-    void KilledUnit(Unit *victim)
-    override {
-        DragonOfNightmareAI_template::KilledUnit(victim);
-        return;
-    }
-    
-    void CastShadowSpirit()
-    {
-        //récupération de la liste d'aggro de Lethon
-        std::list<HostileReference*>& threatList = me->getThreatManager().getThreatList();
-            if (threatList.empty())
-                return;
-        // On prends les cibles intéressante (unit et vivantes : Lethon n'est pas nécrophile tention!)
-        std::list<Unit*> targets;
-        for (auto & itr : threatList) 
+    public:
+        Unit* Lethon;
+        SimpleCooldown* SCDTimerUpdateMovement;
+        SimpleCooldown* SCDFreezeWhenJustSpawn;
+        bool canStartMovement;
+
+        shadowSpiritAI(Creature *c) : ScriptedAI(c)
         {
-            Unit* unit = ObjectAccessor::GetUnit((*me), itr->getUnitGuid());
-            if (unit && unit->IsAlive())
-                targets.push_back(unit);
+            SCDTimerUpdateMovement = new SimpleCooldown(1000);
+            SCDFreezeWhenJustSpawn = new SimpleCooldown(1500);
         }
-        // On zigouille les unités interressantes. Enfin facon de parler :p
-        
-        Creature* ShadowSpirit;
-        for(auto & target : targets)
+        void EnterCombat(Unit *who)override {}
+
+        void JustDied(Unit *victim)
+            override {
+            // Avoid to see the corpse
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        }
+
+        void Reset()
+            override {
+            SCDTimerUpdateMovement->reinitCD();
+            SCDFreezeWhenJustSpawn->reinitCD();
+            Lethon = nullptr;
+            canStartMovement = false;
+
+            me->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 0);
+            me->SetFloatValue(UNIT_FIELD_COMBATREACH, 0);
+            me->SetFloatValue(UNIT_FIELD_RANGEDATTACKTIME, 0);
+
+            DoCast(me, VISUAL_SPELL_SHADOW_SPIRIT, true);
+        }
+
+        bool UpdateVictim(bool evade)
         {
-            DoCast(target,SPELL_STUN_POP_SPIRIT,true); // On les stun 3 secondes, tant pis si pas a portée
-            //(uint32 id, float x, float y, float z, float ang,TempSummonType spwtype,uint32 despwtime)
-            // Summon with absolute coordinates
-            ShadowSpirit=me->SummonCreature(ID_MOB_SHADOW_SPIRIT,target->GetPositionX(),target->GetPositionY(),target->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN,TIMER_DESPAWN_SHADOW_SPIRIT); 
-            if(ShadowSpirit)
+            return true;
+        }
+
+        void DoMeleeAttackIfReady() override
+        {
+            return;
+        }
+
+        void AttackStart(Unit* who)
+            override {
+            return;
+        }
+
+        void UpdateAI(const uint32 diff)
+            override {
+            if (!Lethon)
             {
-                ShadowSpirit->SetFaction(me->GetFaction());
-                ((shadowSpiritAI*)ShadowSpirit->AI())->Lethon=me;
+                // Il n'aime plus la vie
+                me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                return;
+            }
+
+            if (Lethon->IsDead())
+            {
+                // Il n'aime plus la vie
+                me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                return;
+            }
+
+
+
+            // Checking if the spirit can move
+            if (!canStartMovement && SCDFreezeWhenJustSpawn->CheckAndUpdate(diff))
+            {
+                canStartMovement = true;
+            }
+
+            // Freeze Spirit
+            if (!canStartMovement)
+            {
+                return;
+            }
+
+            // If spirit can move, he goes to Lethon and heal him
+            if (SCDTimerUpdateMovement->CheckAndUpdate(diff))
+                me->GetMotionMaster()->MoveFollow(Lethon, 0, 0);
+
+            if (me->GetDistance(Lethon->GetPositionX(), Lethon->GetPositionY(), Lethon->GetPositionZ())<10)
+            {
+                // On donne la vie a lethon puis on se tire une balle in the head
+                DoCast(Lethon, SPELL_HEAL_SHADOW_SPIRIT, true);
+                me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
             }
         }
-        return;
-    }
-    
-    
-    
-    void JustDied(Unit *victim)
-    override {
-        DragonOfNightmareAI_template::JustDied(victim);
-        me->Yell(TELL_AT_DEATH_LETHON,LANG_UNIVERSAL,nullptr);
-    }
-    
-    void UpdateAI(const uint32 diff)
-    override {
-        DragonOfNightmareAI_template::UpdateAI(diff);
-        
-        if(SCDAoeShadowBolt->CheckAndUpdate(diff))
-            DoCast(me,SPELL_AOE_SHADOWBOLT_LETHON,true);
-        
-        if(shouldCast25PrecentSpell(NumSpell25PrecentLeft))
-        {
-            CastShadowSpirit();
-            me->Yell(YELL_AT_PHASE_CHANGE_LETHON,LANG_UNIVERSAL,nullptr);
-        }
-        
-        if(lowHpYellLeft && me->IsBelowHPPercent(5))
-        {
-            lowHpYellLeft = 0;
-            me->Yell(YELL_AT_5_PRECENT_LIFE_LETHON,LANG_UNIVERSAL,nullptr);
-        }
-        DoMeleeAttackIfReady();
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new shadowSpiritAI(creature);
     }
 };
 
-CreatureAI* GetAI_LethonAI(Creature *_Creature)
-{
-    return new LethonAI (_Creature);
-}
 
-CreatureAI* GetAI_shadowSpiritAI(Creature *_Creature)
+class boss_lethon : public CreatureScript
 {
-    return new shadowSpiritAI (_Creature);
-}
+public:
+    boss_lethon() : CreatureScript("boss_lethon")
+    { }
+
+    class LethonAI : public DragonOfNightmareAI_template
+    {
+        public:
+        int lowHpYellLeft; 
+        SimpleCooldown* SCDAoeShadowBolt; 
+        
+        LethonAI(Creature *c) : DragonOfNightmareAI_template(c)
+        {
+            SCDAoeShadowBolt = new SimpleCooldown(TIMER_AOE_SHADOWBOLT_LETHON,1000); // On lance une SB dès le début
+            
+            // To make event of spirit more realist
+            me->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 1.5f);
+            me->SetFloatValue(UNIT_FIELD_COMBATREACH, 1.5f);
+            me->SetFloatValue(UNIT_FIELD_RANGEDATTACKTIME, 1.5f);
+        }
+        
+        void EnterCombat(Unit* u)
+        override {
+            me->Yell(YELL_ON_AGGRO_LETHON,LANG_UNIVERSAL,nullptr);
+            return;
+        }
+        
+        void Reset()
+        override {
+            // reset phase
+            DragonOfNightmareAI_template::Reset();
+            lowHpYellLeft=1;
+            SCDAoeShadowBolt->resetAtStart();
+        }
+        
+        void KilledUnit(Unit *victim)
+        override {
+            DragonOfNightmareAI_template::KilledUnit(victim);
+            return;
+        }
+        
+        void CastShadowSpirit()
+        {
+            //récupération de la liste d'aggro de Lethon
+            std::list<HostileReference*>& threatList = me->getThreatManager().getThreatList();
+                if (threatList.empty())
+                    return;
+            // On prends les cibles intéressante (unit et vivantes : Lethon n'est pas nécrophile tention!)
+            std::list<Unit*> targets;
+            for (auto & itr : threatList) 
+            {
+                Unit* unit = ObjectAccessor::GetUnit((*me), itr->getUnitGuid());
+                if (unit && unit->IsAlive())
+                    targets.push_back(unit);
+            }
+            // On zigouille les unités interressantes. Enfin facon de parler :p
+            
+            Creature* ShadowSpirit;
+            for(auto & target : targets)
+            {
+                DoCast(target,SPELL_STUN_POP_SPIRIT,true); // On les stun 3 secondes, tant pis si pas a portée
+                //(uint32 id, float x, float y, float z, float ang,TempSummonType spwtype,uint32 despwtime)
+                // Summon with absolute coordinates
+                ShadowSpirit=me->SummonCreature(ID_MOB_SHADOW_SPIRIT,target->GetPositionX(),target->GetPositionY(),target->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN,TIMER_DESPAWN_SHADOW_SPIRIT); 
+                if(ShadowSpirit)
+                {
+                    ShadowSpirit->SetFaction(me->GetFaction());
+                    ((npc_spiritshade::shadowSpiritAI*)ShadowSpirit->AI())->Lethon=me;
+                }
+            }
+            return;
+        }
+        
+        
+        
+        void JustDied(Unit *victim)
+        override {
+            DragonOfNightmareAI_template::JustDied(victim);
+            me->Yell(TELL_AT_DEATH_LETHON,LANG_UNIVERSAL,nullptr);
+        }
+        
+        void UpdateAI(const uint32 diff)
+        override {
+            DragonOfNightmareAI_template::UpdateAI(diff);
+            
+            if(SCDAoeShadowBolt->CheckAndUpdate(diff))
+                DoCast(me,SPELL_AOE_SHADOWBOLT_LETHON,true);
+            
+            if(shouldCast25PrecentSpell(NumSpell25PrecentLeft))
+            {
+                CastShadowSpirit();
+                me->Yell(YELL_AT_PHASE_CHANGE_LETHON,LANG_UNIVERSAL,nullptr);
+            }
+            
+            if(lowHpYellLeft && me->IsBelowHPPercent(5))
+            {
+                lowHpYellLeft = 0;
+                me->Yell(YELL_AT_5_PRECENT_LIFE_LETHON,LANG_UNIVERSAL,nullptr);
+            }
+            DoMeleeAttackIfReady();
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new LethonAI(creature);
+    }
+};
+
+
+
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
@@ -532,76 +562,86 @@ CreatureAI* GetAI_shadowSpiritAI(Creature *_Creature)
 #define TELL_AT_DEATH_EMERISS           "Non... Ne laissez pas la... corruption se..."
 #define YELL_AT_5_PRECENT_LIFE_EMERISS  "Mon sang... C'est impossible! Je ne me laisserais pas gagner par la corruption!"
 
-struct EmerissAI : public DragonOfNightmareAI_template
+
+class boss_emeriss : public CreatureScript
 {
-    int lowHpYellLeft; 
-    SimpleCooldown* SCDVolatileInfection; 
-    
-    EmerissAI(Creature *c) : DragonOfNightmareAI_template(c)
+public:
+    boss_emeriss() : CreatureScript("boss_emeriss")
+    { }
+
+    class EmerissAI : public DragonOfNightmareAI_template
     {
-        SCDVolatileInfection = new SimpleCooldown (TIMER_VOLATILE_INFECTION_EMERISS,1000); // On lance une SB dès le début
-    }
-    
-    void EnterCombat(Unit* u)
-    override {
-        me->Yell(YELL_ON_AGGRO_EMERISS,LANG_UNIVERSAL,nullptr);
-        return;
-    }
-    
-    void Reset()
-    override {
-        // reset phase
-        DragonOfNightmareAI_template::Reset();
-        lowHpYellLeft=1;
-        SCDVolatileInfection->resetAtStart();
-    }
-    
-    void KilledUnit(Unit *victim)
-    override {
-        DragonOfNightmareAI_template::KilledUnit(victim);
-        Creature* Mushroom=me->SummonCreature(CREATURE_MUSHROOM, victim->GetPositionX(), victim->GetPositionY(), victim->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, TIMER_MUSHROOM_SPAWN); 
-        if(Mushroom) // Bagger bagger bagger bagger Mushroom! Mushroom!
-        {
-                Mushroom->AI()->message(0,1); //set Stop to true
-                Mushroom->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                Mushroom->SetFaction(me->GetFaction());
-                Mushroom->CastSpell(Mushroom, SPELL_TOXIC_CLOUD_MUSHROOM, true);
-        }
-        return;
-    }
-    
-    void JustDied(Unit *victim)
-    override {
-        DragonOfNightmareAI_template::JustDied(victim);
-        me->Yell(TELL_AT_DEATH_EMERISS,LANG_UNIVERSAL,nullptr);
-    }
-    
-    void UpdateAI(const uint32 diff)
-    override {
-        DragonOfNightmareAI_template::UpdateAI(diff);
+        public:
+        int lowHpYellLeft; 
+        SimpleCooldown* SCDVolatileInfection; 
         
-        if(SCDVolatileInfection->CheckAndUpdate(diff))
-            DoCast(SelectTarget(SELECT_TARGET_RANDOM,0),SPELL_VOLATILE_INFECTION_EMERISS,true);
-        
-        if(shouldCast25PrecentSpell(NumSpell25PrecentLeft))
+        EmerissAI(Creature *c) : DragonOfNightmareAI_template(c)
         {
-            me->Yell(YELL_AT_PHASE_CHANGE_EMERISS,LANG_UNIVERSAL,nullptr);            
-            DoCast(me,SPELL_CORRUPTION_OF_THE_EARTH_EMERISS,true);
+            SCDVolatileInfection = new SimpleCooldown (TIMER_VOLATILE_INFECTION_EMERISS,1000); // On lance une SB dès le début
         }
         
-        if(lowHpYellLeft && me->IsBelowHPPercent(5))
-        {
-            lowHpYellLeft = 0;
-            me->Yell(YELL_AT_5_PRECENT_LIFE_EMERISS,LANG_UNIVERSAL,nullptr);
+        void EnterCombat(Unit* u)
+        override {
+            me->Yell(YELL_ON_AGGRO_EMERISS,LANG_UNIVERSAL,nullptr);
+            return;
         }
-        DoMeleeAttackIfReady();
+        
+        void Reset()
+        override {
+            // reset phase
+            DragonOfNightmareAI_template::Reset();
+            lowHpYellLeft=1;
+            SCDVolatileInfection->resetAtStart();
+        }
+        
+        void KilledUnit(Unit *victim)
+        override {
+            DragonOfNightmareAI_template::KilledUnit(victim);
+            Creature* Mushroom=me->SummonCreature(CREATURE_MUSHROOM, victim->GetPositionX(), victim->GetPositionY(), victim->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, TIMER_MUSHROOM_SPAWN); 
+            if(Mushroom) // Bagger bagger bagger bagger Mushroom! Mushroom!
+            {
+                    Mushroom->AI()->message(0,1); //set Stop to true
+                    Mushroom->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                    Mushroom->SetFaction(me->GetFaction());
+                    Mushroom->CastSpell(Mushroom, SPELL_TOXIC_CLOUD_MUSHROOM, true);
+            }
+            return;
+        }
+        
+        void JustDied(Unit *victim)
+        override {
+            DragonOfNightmareAI_template::JustDied(victim);
+            me->Yell(TELL_AT_DEATH_EMERISS,LANG_UNIVERSAL,nullptr);
+        }
+        
+        void UpdateAI(const uint32 diff)
+        override {
+            DragonOfNightmareAI_template::UpdateAI(diff);
+            
+            if(SCDVolatileInfection->CheckAndUpdate(diff))
+                DoCast(SelectTarget(SELECT_TARGET_RANDOM,0),SPELL_VOLATILE_INFECTION_EMERISS,true);
+            
+            if(shouldCast25PrecentSpell(NumSpell25PrecentLeft))
+            {
+                me->Yell(YELL_AT_PHASE_CHANGE_EMERISS,LANG_UNIVERSAL,nullptr);            
+                DoCast(me,SPELL_CORRUPTION_OF_THE_EARTH_EMERISS,true);
+            }
+            
+            if(lowHpYellLeft && me->IsBelowHPPercent(5))
+            {
+                lowHpYellLeft = 0;
+                me->Yell(YELL_AT_5_PRECENT_LIFE_EMERISS,LANG_UNIVERSAL,nullptr);
+            }
+            DoMeleeAttackIfReady();
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new EmerissAI(creature);
     }
 };
 
-CreatureAI* GetAI_boss_emeriss(Creature *_Creature)
-{
-    return new EmerissAI (_Creature);
-}
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -640,222 +680,238 @@ CreatureAI* GetAI_boss_emeriss(Creature *_Creature)
 // Sizes
 #define size_TabShadesOfTaerar          3
 
-struct boss_shadeoftaerarAI : public ScriptedAI
+
+class boss_shade_of_taerar : public CreatureScript
 {
-    
-    SimpleCooldown* SCDPoisonCLoud;
-    SimpleCooldown* SCDPoisonBreath;
-    
-    Creature* Taerar;
-    
-    boss_shadeoftaerarAI(Creature *c) : ScriptedAI(c) 
+public:
+    boss_shade_of_taerar() : CreatureScript("boss_shade_of_taerar")
+    { }
+
+    class boss_shadeoftaerarAI : public ScriptedAI
     {
-        SCDPoisonCLoud = new SimpleCooldown(TIMER_POISONCLOUD_SHADES);
-        SCDPoisonBreath = new SimpleCooldown(TIMER_POISONBREATH_SHADES);
-    }
+    public:
 
-    void Reset()
-    override {
-        SCDPoisonCLoud->resetAtStart();
-        SCDPoisonBreath->resetAtStart();
-    }
+        SimpleCooldown* SCDPoisonCLoud;
+        SimpleCooldown* SCDPoisonBreath;
 
-    void EnterCombat(Unit *who)
-    override {
-    }
+        Creature* Taerar;
 
-    void UpdateAI(const uint32 diff)
-    override {
-        if(!Taerar || Taerar->IsDead() || !Taerar->IsInCombat() )
+        boss_shadeoftaerarAI(Creature *c) : ScriptedAI(c)
         {
-            // Suicide
-            me->DespawnOrUnsummon();
+            SCDPoisonCLoud = new SimpleCooldown(TIMER_POISONCLOUD_SHADES);
+            SCDPoisonBreath = new SimpleCooldown(TIMER_POISONBREATH_SHADES);
         }
-        
-        if (!UpdateVictim())
-            return;
-        
-        if(SCDPoisonCLoud->CheckAndUpdate(diff))
-            DoCast(me->GetVictim(),SPELL_POISONCLOUD_SHADES);
-        
-        if(SCDPoisonBreath->CheckAndUpdate(diff))
-            DoCast(me->GetVictim(),SPELL_POISONBREATH_SHADES);
 
-        DoMeleeAttackIfReady();
-    }
-    
-    void KilledUnit(Unit *victim)
-    override {
-        if(!victim)
-            return;
-        // If someone is killed he takes the aura
-        ((DragonOfNightmareAI_template*)Taerar->AI())->KilledUnit(victim);
+        void Reset()
+            override {
+            SCDPoisonCLoud->resetAtStart();
+            SCDPoisonBreath->resetAtStart();
+        }
+
+        void EnterCombat(Unit *who)
+            override {
+        }
+
+        void UpdateAI(const uint32 diff)
+            override {
+            if (!Taerar || Taerar->IsDead() || !Taerar->IsInCombat())
+            {
+                // Suicide
+                me->DespawnOrUnsummon();
+            }
+
+            if (!UpdateVictim())
+                return;
+
+            if (SCDPoisonCLoud->CheckAndUpdate(diff))
+                DoCast(me->GetVictim(), SPELL_POISONCLOUD_SHADES);
+
+            if (SCDPoisonBreath->CheckAndUpdate(diff))
+                DoCast(me->GetVictim(), SPELL_POISONBREATH_SHADES);
+
+            DoMeleeAttackIfReady();
+        }
+
+        void KilledUnit(Unit *victim)
+            override {
+            if (!victim)
+                return;
+            // If someone is killed he takes the aura
+            ((DragonOfNightmareAI_template*)Taerar->AI())->KilledUnit(victim);
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_shadeoftaerarAI(creature);
     }
 };
 
-
-struct boss_taerarAI : public DragonOfNightmareAI_template
+class boss_taerar : public CreatureScript
 {
-    int lowHpYellLeft;
-    SimpleCooldown* SCDArcaneBlast;
-    SimpleCooldown* SCDBellowingGroar;
-    SimpleCooldown* SCDBanish;
-    bool isBanished;
-    
-    Creature *TabShadesOfTaerar[size_TabShadesOfTaerar];
-    
-    void resetShadesPointer()
+public:
+    boss_taerar() : CreatureScript("boss_taerar")
+    { }
+
+    class boss_taerarAI : public DragonOfNightmareAI_template
     {
-        for(auto & i : TabShadesOfTaerar)
-        {       // Evite un crash lors du pop du boss. 
-            i=nullptr;
-        }
-    }
-    
-    boss_taerarAI(Creature *c) : DragonOfNightmareAI_template(c)
-    {        
-        SCDArcaneBlast = new SimpleCooldown(TIMER_ARCANEBLAST_TAERAR);
-        SCDBellowingGroar = new SimpleCooldown(TIMER_BELLOWINGROAR_TAERAR);
-        SCDBanish = new SimpleCooldown(TIMER_BANISH_TAERAR);
-        resetShadesPointer();
-    }
-    
-    void EnterCombat(Unit* u)
-    override {
-        me->Yell(YELL_ON_AGGRO_TAERAR,LANG_UNIVERSAL,nullptr);
-        return;
-    }
-    
-    void Reset()
-    override {
-        resetShadesPointer();
-        // reset phase
-        lowHpYellLeft = 1;
-        isBanished=false;
+        public:
+        int lowHpYellLeft;
+        SimpleCooldown* SCDArcaneBlast;
+        SimpleCooldown* SCDBellowingGroar;
+        SimpleCooldown* SCDBanish;
+        bool isBanished;
         
-        SCDArcaneBlast->resetAtStart();
-        SCDBellowingGroar->resetAtStart();
-        SCDBanish->resetAtStart();
+        Creature *TabShadesOfTaerar[size_TabShadesOfTaerar];
         
-        me->RemoveAurasDueToSpellByCancel(SPELL_BANISH_TAERAR);
-        DragonOfNightmareAI_template::Reset();
-    }
-    
-    void KilledUnit(Unit *victim)
-    override {
-        DragonOfNightmareAI_template::KilledUnit(victim);
-    }
-    
-    void JustDied(Unit *victim)
-    override {
-        DragonOfNightmareAI_template::JustDied(victim);
-        me->Yell(TELL_AT_DEATH_TAERAR,LANG_UNIVERSAL,nullptr);
-    }
-    
-    void UpdateAI(const uint32 diff)
-    override {
-        if(!UpdateVictim())
-            return;
-        
-        if(isBanished)
+        void resetShadesPointer()
         {
-            if(SCDBanish->CheckAndUpdate(diff) || checkIfAllShadesAreDead())
-            {
-                me->RemoveAurasDueToSpellByCancel(SPELL_BANISH_TAERAR);
-                SCDBanish->resetAtStart();
-                isBanished = false;
-            }
-            return; // freeze
-        }
-        
-        DragonOfNightmareAI_template::UpdateAI(diff);
-        
-        if(SCDArcaneBlast->CheckAndUpdate(diff))
-            DoCast(SelectTarget(SELECT_TARGET_RANDOM,0),SPELL_ARCANEBLAST_TAERAR,true);
-        
-        if(SCDBellowingGroar->CheckAndUpdate(diff))
-            DoCast(me,SPELL_BELLOWINGROAR_TAERAR,false); // if true, no animation :'(
-        
-        if(shouldCast25PrecentSpell(NumSpell25PrecentLeft))
-        {
-            me->Yell(YELL_AT_PHASE_CHANGE_TAERAR,LANG_UNIVERSAL,nullptr);            
-            spawnShadesOfTaerar();
-            isBanished=true;
-        }
-        
-        if(lowHpYellLeft && me->IsBelowHPPercent(5))
-        {
-            lowHpYellLeft = 0;
-            me->Yell(YELL_AT_5_PRECENT_LIFE_TAERAR,LANG_UNIVERSAL,nullptr);
-        }
-        DoMeleeAttackIfReady();
-    }
-    
-    void spawnShadesOfTaerar()
-    {
-        if(!me->IsInCombat()) // évite l'invocation de shades au reset (arrive souvent)
-        {
-            return;
-        }
-        // Cas de figure peu probable : arriver a réinvoquer des shades 
-        // alors que les précédent ne sont pas mort
-        //killAllShades(); 
-        
-        Creature* pShadesOfTaerar;
-        boss_shadeoftaerarAI *ShadesOfTaerarAICasted;
-        for(auto & i : TabShadesOfTaerar)
-        {
-            pShadesOfTaerar=DoSpawnCreature(ID_MOB_SHADES_OF_TAERAR,rand()%40,rand()%40,0,0,TEMPSUMMON_TIMED_DESPAWN,TIMER_DESPAWN_SHADES_OF_TAERAR);
-            if(pShadesOfTaerar)
-            {
-                i = pShadesOfTaerar;
-                ShadesOfTaerarAICasted = (boss_shadeoftaerarAI*)pShadesOfTaerar->AI();
-                ShadesOfTaerarAICasted->Taerar=me;
-                
-                i->SetFaction(me->GetFaction());
-                Unit* target=SelectTarget(SELECT_TARGET_RANDOM,0);
-                i->AI()->AttackStart(target); // Si true ils ne se déplacent po :(
-                i->AddThreat(target,10000.0f);
-                
+            for(auto & i : TabShadesOfTaerar)
+            {       // Evite un crash lors du pop du boss. 
+                i=nullptr;
             }
         }
-        me->InterruptNonMeleeSpells(false);
-        me->AddAura(SPELL_BANISH_TAERAR,me);
-        return;
-    }
-    
-    bool checkIfAllShadesAreDead()
-    {
-        bool AllShadesDead = true;
-        for(auto & i : TabShadesOfTaerar) // Les mort sont trop NULL :D
-        {
-            if(i)
+        
+        boss_taerarAI(Creature *c) : DragonOfNightmareAI_template(c)
+        {        
+            SCDArcaneBlast = new SimpleCooldown(TIMER_ARCANEBLAST_TAERAR);
+            SCDBellowingGroar = new SimpleCooldown(TIMER_BELLOWINGROAR_TAERAR);
+            SCDBanish = new SimpleCooldown(TIMER_BANISH_TAERAR);
+            resetShadesPointer();
+        }
+        
+        void EnterCombat(Unit* u)
+        override {
+            me->Yell(YELL_ON_AGGRO_TAERAR,LANG_UNIVERSAL,nullptr);
+            return;
+        }
+        
+        void Reset()
+        override {
+            resetShadesPointer();
+            // reset phase
+            lowHpYellLeft = 1;
+            isBanished=false;
+            
+            SCDArcaneBlast->resetAtStart();
+            SCDBellowingGroar->resetAtStart();
+            SCDBanish->resetAtStart();
+            
+            me->RemoveAurasDueToSpellByCancel(SPELL_BANISH_TAERAR);
+            DragonOfNightmareAI_template::Reset();
+        }
+        
+        void KilledUnit(Unit *victim)
+        override {
+            DragonOfNightmareAI_template::KilledUnit(victim);
+        }
+        
+        void JustDied(Unit *victim)
+        override {
+            DragonOfNightmareAI_template::JustDied(victim);
+            me->Yell(TELL_AT_DEATH_TAERAR,LANG_UNIVERSAL,nullptr);
+        }
+        
+        void UpdateAI(const uint32 diff)
+        override {
+            if(!UpdateVictim())
+                return;
+            
+            if(isBanished)
             {
-                if( i->IsDead())
+                if(SCDBanish->CheckAndUpdate(diff) || checkIfAllShadesAreDead())
                 {
-                    i=nullptr;
+                    me->RemoveAurasDueToSpellByCancel(SPELL_BANISH_TAERAR);
+                    SCDBanish->resetAtStart();
+                    isBanished = false;
                 }
-                else
-                {
-                    AllShadesDead=false; // he is alive
-                }
+                return; // freeze
             }
             
+            DragonOfNightmareAI_template::UpdateAI(diff);
+            
+            if(SCDArcaneBlast->CheckAndUpdate(diff))
+                DoCast(SelectTarget(SELECT_TARGET_RANDOM,0),SPELL_ARCANEBLAST_TAERAR,true);
+            
+            if(SCDBellowingGroar->CheckAndUpdate(diff))
+                DoCast(me,SPELL_BELLOWINGROAR_TAERAR,false); // if true, no animation :'(
+            
+            if(shouldCast25PrecentSpell(NumSpell25PrecentLeft))
+            {
+                me->Yell(YELL_AT_PHASE_CHANGE_TAERAR,LANG_UNIVERSAL,nullptr);            
+                spawnShadesOfTaerar();
+                isBanished=true;
+            }
+            
+            if(lowHpYellLeft && me->IsBelowHPPercent(5))
+            {
+                lowHpYellLeft = 0;
+                me->Yell(YELL_AT_5_PRECENT_LIFE_TAERAR,LANG_UNIVERSAL,nullptr);
+            }
+            DoMeleeAttackIfReady();
         }
-        return AllShadesDead;
+        
+        void spawnShadesOfTaerar()
+        {
+            if(!me->IsInCombat()) // évite l'invocation de shades au reset (arrive souvent)
+            {
+                return;
+            }
+            // Cas de figure peu probable : arriver a réinvoquer des shades 
+            // alors que les précédent ne sont pas mort
+            //killAllShades(); 
+            
+            Creature* pShadesOfTaerar;
+            boss_shade_of_taerar::boss_shadeoftaerarAI *ShadesOfTaerarAICasted;
+            for(auto & i : TabShadesOfTaerar)
+            {
+                pShadesOfTaerar=DoSpawnCreature(ID_MOB_SHADES_OF_TAERAR,rand()%40,rand()%40,0,0,TEMPSUMMON_TIMED_DESPAWN,TIMER_DESPAWN_SHADES_OF_TAERAR);
+                if(pShadesOfTaerar)
+                {
+                    i = pShadesOfTaerar;
+                    ShadesOfTaerarAICasted = (boss_shade_of_taerar::boss_shadeoftaerarAI*)pShadesOfTaerar->AI();
+                    ShadesOfTaerarAICasted->Taerar=me;
+                    
+                    i->SetFaction(me->GetFaction());
+                    Unit* target=SelectTarget(SELECT_TARGET_RANDOM,0);
+                    i->AI()->AttackStart(target); // Si true ils ne se déplacent po :(
+                    i->AddThreat(target,10000.0f);
+                    
+                }
+            }
+            me->InterruptNonMeleeSpells(false);
+            me->AddAura(SPELL_BANISH_TAERAR,me);
+            return;
+        }
+        
+        bool checkIfAllShadesAreDead()
+        {
+            bool AllShadesDead = true;
+            for(auto & i : TabShadesOfTaerar) // Les mort sont trop NULL :D
+            {
+                if(i)
+                {
+                    if( i->IsDead())
+                    {
+                        i=nullptr;
+                    }
+                    else
+                    {
+                        AllShadesDead=false; // he is alive
+                    }
+                }
+                
+            }
+            return AllShadesDead;
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_taerarAI(creature);
     }
 };
 
-
-CreatureAI* GetAI_boss_taerar(Creature *_Creature)
-{
-    return new boss_taerarAI (_Creature);
-}
-
-CreatureAI* GetAI_boss_shadeoftaerar(Creature *_Creature)
-{
-    return new boss_shadeoftaerarAI (_Creature);
-}
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -892,173 +948,189 @@ CreatureAI* GetAI_boss_shadeoftaerar(Creature *_Creature)
 
 
 
-struct npc_dementeddruidsAI : public ScriptedAI
+
+
+
+class mob_dementeddruids : public CreatureScript
 {
-    SimpleCooldown *SCDMoonFire;
-    SimpleCooldown *SCDCurseOfThorns;
-    SimpleCooldown *SCDSilence;
-    Creature* Ysondre;
-    
-    void Instakill(Unit* Target)
+public:
+    mob_dementeddruids() : CreatureScript("mob_dementeddruids")
+    { }
+
+    class npc_dementeddruidsAI : public ScriptedAI
     {
-        Target->DealDamage(Target, Target->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-    }
-    
-    npc_dementeddruidsAI(Creature *c) : ScriptedAI(c) 
+    public:
+        SimpleCooldown *SCDMoonFire;
+        SimpleCooldown *SCDCurseOfThorns;
+        SimpleCooldown *SCDSilence;
+        Creature* Ysondre;
+
+        void Instakill(Unit* Target)
+        {
+            Target->DealDamage(Target, Target->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+        }
+
+        npc_dementeddruidsAI(Creature *c) : ScriptedAI(c)
+        {
+            SCDMoonFire = new SimpleCooldown(TIMER_MOONFIRE_DRUID);
+            SCDCurseOfThorns = new SimpleCooldown(TIMER_CURSE_OF_THORNS_DRUID);
+            SCDSilence = new SimpleCooldown(TIMER_SILENCE_DRUID);
+        }
+
+        void Reset()
+            override {
+            SCDMoonFire->resetAtStart();
+            SCDCurseOfThorns->resetAtStart();
+            SCDSilence->resetAtStart();
+        }
+
+        void EnterCombat(Unit *who)
+            override {
+        }
+
+        void KilledUnit(Unit *victim)
+            override {
+            if (!victim)
+                return;
+            // If someone is killed he takes the aura
+            ((DragonOfNightmareAI_template*)Ysondre->AI())->KilledUnit(victim);
+        }
+
+        void UpdateAI(const uint32 diff)
+            override {
+            if (!UpdateVictim())
+                return;
+
+            if (!Ysondre)
+            {
+                Ysondre = ObjectAccessor::GetCreature(*me, me->GetOwnerGUID());
+                return;
+            }
+
+            if (Ysondre->IsDead() || !Ysondre->IsInCombat())
+            {
+                Instakill(me);
+            }
+
+            if (SCDMoonFire->CheckAndUpdate(diff))
+                DoCast(me->GetVictim(), SPELL_MOONFIRE_DRUID, false);
+
+
+            Unit* TargetRandom;
+            if (SCDCurseOfThorns->CheckAndUpdate(diff))
+            {
+                if ((TargetRandom = SelectTarget(SELECT_TARGET_RANDOM, 0)))
+                    DoCast(TargetRandom, SPELL_CURSE_OF_THORNS_DRUID, false);
+            }
+
+
+            if (SCDSilence->CheckAndUpdate(diff))
+            {
+                if ((TargetRandom = SelectTarget(SELECT_TARGET_RANDOM, 0)))
+                    DoCast(TargetRandom, SPELL_SILENCE_DRUID, false);
+            }
+
+            DoMeleeAttackIfReady();
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
     {
-        SCDMoonFire=new SimpleCooldown(TIMER_MOONFIRE_DRUID);
-        SCDCurseOfThorns=new SimpleCooldown(TIMER_CURSE_OF_THORNS_DRUID);
-        SCDSilence=new SimpleCooldown(TIMER_SILENCE_DRUID);
-    }
-
-    void Reset()
-    override {
-        SCDMoonFire->resetAtStart();
-        SCDCurseOfThorns->resetAtStart();
-        SCDSilence->resetAtStart();
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-    }
-
-    void KilledUnit(Unit *victim)
-    override {
-        if(!victim)
-            return;
-        // If someone is killed he takes the aura
-        ((DragonOfNightmareAI_template*)Ysondre->AI())->KilledUnit(victim);
-    }
-    
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim())
-            return;
-
-        if(!Ysondre)
-        {
-            Ysondre=ObjectAccessor::GetCreature(*me,me->GetOwnerGUID());
-            return;
-        }
-        
-        if(Ysondre->IsDead() || !Ysondre->IsInCombat())
-        {
-            Instakill(me);
-        }
-        
-        if(SCDMoonFire->CheckAndUpdate(diff))
-            DoCast(me->GetVictim(),SPELL_MOONFIRE_DRUID,false);
-        
-        
-        Unit* TargetRandom;
-        if(SCDCurseOfThorns->CheckAndUpdate(diff))
-        {
-            if((TargetRandom = SelectTarget(SELECT_TARGET_RANDOM,0)))
-                DoCast(TargetRandom,SPELL_CURSE_OF_THORNS_DRUID,false);
-        }
-            
-        
-        if(SCDSilence->CheckAndUpdate(diff))
-        {
-            if((TargetRandom = SelectTarget(SELECT_TARGET_RANDOM,0)))
-                DoCast(TargetRandom,SPELL_SILENCE_DRUID,false);
-        }
-
-        DoMeleeAttackIfReady();
+        return new npc_dementeddruidsAI(creature);
     }
 };
 
 
-
-struct boss_ysondreAI : public DragonOfNightmareAI_template
+class boss_ysondre : public CreatureScript
 {
-    
-    SimpleCooldown *SCDLightningWave;
-    
-    boss_ysondreAI(Creature *c) : DragonOfNightmareAI_template(c) 
+public:
+    boss_ysondre() : CreatureScript("boss_ysondre")
+    { }
+
+    class boss_ysondreAI : public DragonOfNightmareAI_template
     {
-        SCDLightningWave=new SimpleCooldown(TIMER_LITHGNING_WAVE_YSONDRE);
-    }
-    
-    void JustDied(Unit *victim)
-    override {
-        me->Yell(TELL_AT_DEATH_YSONDRE,LANG_UNIVERSAL,nullptr);
-        DragonOfNightmareAI_template::JustDied(victim);
-    }
-    
-    void KilledUnit(Unit *victim)
-    override {
-        DragonOfNightmareAI_template::KilledUnit(victim);
-    }
-
-    void Reset()
-    override {
-        DragonOfNightmareAI_template::Reset();
-        SCDLightningWave->resetAtStart();
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-        me->Yell(YELL_ON_AGGRO_YSONDRE,LANG_UNIVERSAL,nullptr);
-    }
-
-    void SummonDruids()
-    {
-        Unit* Target;
-        npc_dementeddruidsAI* Druid;
-        Creature* DruidCreature;
-        for(int i=0 ; i<10 ; i++)
+        public:
+        
+        SimpleCooldown *SCDLightningWave;
+        
+        boss_ysondreAI(Creature *c) : DragonOfNightmareAI_template(c) 
         {
-            Target = SelectTarget(SELECT_TARGET_RANDOM,0);
-            if(Target)
+            SCDLightningWave=new SimpleCooldown(TIMER_LITHGNING_WAVE_YSONDRE);
+        }
+        
+        void JustDied(Unit *victim)
+        override {
+            me->Yell(TELL_AT_DEATH_YSONDRE,LANG_UNIVERSAL,nullptr);
+            DragonOfNightmareAI_template::JustDied(victim);
+        }
+        
+        void KilledUnit(Unit *victim)
+        override {
+            DragonOfNightmareAI_template::KilledUnit(victim);
+        }
+    
+        void Reset()
+        override {
+            DragonOfNightmareAI_template::Reset();
+            SCDLightningWave->resetAtStart();
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+            me->Yell(YELL_ON_AGGRO_YSONDRE,LANG_UNIVERSAL,nullptr);
+        }
+    
+        void SummonDruids()
+        {
+            Unit* Target;
+            mob_dementeddruids::npc_dementeddruidsAI* Druid;
+            Creature* DruidCreature;
+            for(int i=0 ; i<10 ; i++)
             {
-                // Summon with absolute coordinate
-                DruidCreature = me->SummonCreature(ID_MOD_DRUID_YSONDRE,Target->GetPositionX()+rand()%10,Target->GetPositionY()+rand()%10,Target->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN,TIMER_SPAWN_DRUID);
-                if(DruidCreature)
+                Target = SelectTarget(SELECT_TARGET_RANDOM,0);
+                if(Target)
                 {
-                    Druid=((npc_dementeddruidsAI*)DruidCreature->AI());
-                    Druid->Ysondre=me;
-                    Druid->AttackStart(Target);
-                    DruidCreature->AddThreat(Target,6000.0f);
+                    // Summon with absolute coordinate
+                    DruidCreature = me->SummonCreature(ID_MOD_DRUID_YSONDRE,Target->GetPositionX()+rand()%10,Target->GetPositionY()+rand()%10,Target->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN,TIMER_SPAWN_DRUID);
+                    if(DruidCreature)
+                    {
+                        Druid=((mob_dementeddruids::npc_dementeddruidsAI*)DruidCreature->AI());
+                        Druid->Ysondre=me;
+                        Druid->AttackStart(Target);
+                        DruidCreature->AddThreat(Target,6000.0f);
+                    }
                 }
             }
         }
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        DragonOfNightmareAI_template::UpdateAI(diff);
-
-        if(SCDLightningWave->CheckAndUpdate(diff))
-                DoCast(SelectTarget(SELECT_TARGET_RANDOM,0),SPELL_LIGHTNINGWAVE_YSONDRE,true);
-
-        if(shouldCast25PrecentSpell(NumSpell25PrecentLeft))
-        {
-                me->Yell(YELL_AT_PHASE_CHANGE_YSONDRE,LANG_UNIVERSAL,nullptr);
-                SummonDruids();
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            DragonOfNightmareAI_template::UpdateAI(diff);
+    
+            if(SCDLightningWave->CheckAndUpdate(diff))
+                    DoCast(SelectTarget(SELECT_TARGET_RANDOM,0),SPELL_LIGHTNINGWAVE_YSONDRE,true);
+    
+            if(shouldCast25PrecentSpell(NumSpell25PrecentLeft))
+            {
+                    me->Yell(YELL_AT_PHASE_CHANGE_YSONDRE,LANG_UNIVERSAL,nullptr);
+                    SummonDruids();
+            }
+                    
+            if(lowHpYellLeft && me->IsBelowHPPercent(5))
+            {
+                lowHpYellLeft = 0;
+                me->Yell(YELL_AT_5_PRECENT_LIFE_YSONDRE,LANG_UNIVERSAL,nullptr);
+            }
+                    
+            DoMeleeAttackIfReady();
         }
-                
-        if(lowHpYellLeft && me->IsBelowHPPercent(5))
-        {
-            lowHpYellLeft = 0;
-            me->Yell(YELL_AT_5_PRECENT_LIFE_YSONDRE,LANG_UNIVERSAL,nullptr);
-        }
-                
-        DoMeleeAttackIfReady();
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_ysondreAI(creature);
     }
 };
-
-
-
-CreatureAI* GetAI_boss_ysondre(Creature *_Creature)
-{
-    return new boss_ysondreAI (_Creature);
-}
-
-CreatureAI* GetAI_npc_dementeddruidsAI(Creature *_Creature)
-{
-    return new npc_dementeddruidsAI (_Creature);
-}
 
 
 
@@ -1075,45 +1147,12 @@ CreatureAI* GetAI_npc_dementeddruidsAI(Creature *_Creature)
 
 void AddSC_boss_dragonsofnightmare()
 {
-    OLDScript *newscript;
-    
-    newscript = new OLDScript;
-    newscript->Name="npc_dreamfog";
-    newscript->GetAI = &GetAI_DreamFog;
-    sScriptMgr->RegisterOLDScript(newscript);
-    
-    newscript = new OLDScript;
-    newscript->Name="boss_lethon";
-    newscript->GetAI = &GetAI_LethonAI;
-    sScriptMgr->RegisterOLDScript(newscript);
-    
-    newscript = new OLDScript;
-    newscript->Name="npc_spiritshade";
-    newscript->GetAI = &GetAI_shadowSpiritAI;
-    sScriptMgr->RegisterOLDScript(newscript);
-    
-    newscript = new OLDScript;
-    newscript->Name="boss_emeriss";
-    newscript->GetAI = &GetAI_boss_emeriss;
-    sScriptMgr->RegisterOLDScript(newscript);
-    
-    newscript = new OLDScript;
-    newscript->Name="boss_taerar";
-    newscript->GetAI = &GetAI_boss_taerar;
-    sScriptMgr->RegisterOLDScript(newscript);
-
-    newscript = new OLDScript;
-    newscript->Name="boss_shade_of_taerar";
-    newscript->GetAI = &GetAI_boss_shadeoftaerar;
-    sScriptMgr->RegisterOLDScript(newscript);
-    
-    newscript = new OLDScript;
-    newscript->Name="boss_ysondre";
-    newscript->GetAI = &GetAI_boss_ysondre;
-    sScriptMgr->RegisterOLDScript(newscript);
-
-    newscript = new OLDScript;
-    newscript->Name="mob_dementeddruids";
-    newscript->GetAI = &GetAI_npc_dementeddruidsAI;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_dreamfog();
+    new boss_lethon();
+    new npc_spiritshade();
+    new boss_emeriss();
+    new boss_taerar();
+    new boss_shade_of_taerar();
+    new boss_ysondre();
+    new mob_dementeddruids();
 }

@@ -40,141 +40,147 @@ EndScriptData */
 #define SPELL_ENRAGE                33653
 #define SPELL_MARK_DEATH            37128
 
-struct boss_doomwalkerAI : public ScriptedAI
+
+class boss_doomwalker : public CreatureScript
 {
-    boss_doomwalkerAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_doomwalker() : CreatureScript("boss_doomwalker")
+    { }
 
-    uint32 Chain_Timer;
-    uint32 Enrage_Timer;
-    uint32 Overrun_Timer;
-    uint32 Quake_Timer;
-    uint32 Armor_Timer;
-
-    bool InEnrage;
-
-    void Reset()
-    override {
-        Enrage_Timer    = 0;
-        Armor_Timer     = 5000 + rand()%8000;
-        Chain_Timer     = 10000 + rand()%20000;
-        Quake_Timer     = 25000 + rand()%10000;
-        Overrun_Timer   = 30000 + rand()%15000;
-
-        InEnrage = false;
-    }
-
-    void KilledUnit(Unit* pVictim)
-    override {
-
-        DoScriptText(RAND(SAY_SLAY_1, SAY_SLAY_2, SAY_SLAY_3), me);
-
-        me->AddAura(SPELL_MARK_DEATH, pVictim);
-    }
-
-    void JustDied(Unit* Killer)
-    override {
-        DoScriptText(SAY_DEATH, me);
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-        DoScriptText(SAY_AGGRO, me);
-    }
+    class boss_doomwalkerAI : public ScriptedAI
+    {
+        public:
+        boss_doomwalkerAI(Creature *c) : ScriptedAI(c) {}
     
-    void MoveInLineOfSight(Unit* pWho)
-    override {
-        if (me->GetDistance(pWho) < 100 && pWho->HasAuraEffect(SPELL_MARK_DEATH))
-            me->Kill(pWho);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim())
-            return;
-
-        //hack to avoid BA
-        if(me->GetVictim()->GetPositionZ() > 50.0f)
-        {
-            EnterEvadeMode();
-            return;
+        uint32 Chain_Timer;
+        uint32 Enrage_Timer;
+        uint32 Overrun_Timer;
+        uint32 Quake_Timer;
+        uint32 Armor_Timer;
+    
+        bool InEnrage;
+    
+        void Reset()
+        override {
+            Enrage_Timer    = 0;
+            Armor_Timer     = 5000 + rand()%8000;
+            Chain_Timer     = 10000 + rand()%20000;
+            Quake_Timer     = 25000 + rand()%10000;
+            Overrun_Timer   = 30000 + rand()%15000;
+    
+            InEnrage = false;
         }
-
-        //Spell Enrage, when hp <= 20% gain enrage
-        if (me->GetHealthPct() <= 20)
-        {
-            if(Enrage_Timer < diff)
-            {
-                DoCast(me,SPELL_ENRAGE);
-                Enrage_Timer = 6000;
-                InEnrage = true;
-            }else Enrage_Timer -= diff;
+    
+        void KilledUnit(Unit* pVictim)
+        override {
+    
+            DoScriptText(RAND(SAY_SLAY_1, SAY_SLAY_2, SAY_SLAY_3), me);
+    
+            me->AddAura(SPELL_MARK_DEATH, pVictim);
         }
-
-        //Spell Overrun
-        if (Overrun_Timer < diff)
-        {
-            DoScriptText(RAND(SAY_OVERRUN_1, SAY_OVERRUN_2), me);
-
-            DoCast(me->GetVictim(),SPELL_OVERRUN);
-            if(me->GetThreat(me->GetVictim()))
-                DoModifyThreatPercent(me->GetVictim(),-100);    // Reset MT threat
-            Overrun_Timer = 25000 + rand()%15000;
-        }else Overrun_Timer -= diff;
-
-        //Spell Earthquake
-        if (Quake_Timer < diff)
-        {
-            if (rand()%2)
+    
+        void JustDied(Unit* Killer)
+        override {
+            DoScriptText(SAY_DEATH, me);
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+            DoScriptText(SAY_AGGRO, me);
+        }
+        
+        void MoveInLineOfSight(Unit* pWho)
+        override {
+            if (me->GetDistance(pWho) < 100 && pWho->HasAuraEffect(SPELL_MARK_DEATH))
+                me->Kill(pWho);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim())
                 return;
+    
+            //hack to avoid BA
+            if(me->GetVictim()->GetPositionZ() > 50.0f)
+            {
+                EnterEvadeMode();
+                return;
+            }
+    
+            //Spell Enrage, when hp <= 20% gain enrage
+            if (me->GetHealthPct() <= 20)
+            {
+                if(Enrage_Timer < diff)
+                {
+                    DoCast(me,SPELL_ENRAGE);
+                    Enrage_Timer = 6000;
+                    InEnrage = true;
+                }else Enrage_Timer -= diff;
+            }
+    
+            //Spell Overrun
+            if (Overrun_Timer < diff)
+            {
+                DoScriptText(RAND(SAY_OVERRUN_1, SAY_OVERRUN_2), me);
+    
+                DoCast(me->GetVictim(),SPELL_OVERRUN);
+                if(me->GetThreat(me->GetVictim()))
+                    DoModifyThreatPercent(me->GetVictim(),-100);    // Reset MT threat
+                Overrun_Timer = 25000 + rand()%15000;
+            }else Overrun_Timer -= diff;
+    
+            //Spell Earthquake
+            if (Quake_Timer < diff)
+            {
+                if (rand()%2)
+                    return;
+    
+                DoScriptText(RAND(SAY_EARTHQUAKE_1, SAY_EARTHQUAKE_2), me);
+    
+                //remove enrage before casting earthquake because enrage + earthquake = 16000dmg over 8sec and all dead
+                if (InEnrage)
+                    me->RemoveAura(SPELL_ENRAGE, 0);
+    
+                DoCast(me,SPELL_EARTHQUAKE);
+                Quake_Timer = 30000 + rand()%25000;
+            }else Quake_Timer -= diff;
+    
+            //Spell Chain Lightning
+            if (Chain_Timer < diff)
+            {
+                Unit* target = nullptr;
+                target = SelectTarget(SELECT_TARGET_RANDOM,1);
+    
+                // According to WoWHead, shouldn't hit the main tank
+                /*if (!target)
+                    target = me->GetVictim();*/
+    
+                if (target)
+                    DoCast(target,SPELL_CHAIN_LIGHTNING);
+    
+                Chain_Timer = 10000 + rand()%25000;
+            }else Chain_Timer -= diff;
+    
+            //Spell Sunder Armor
+            if (Armor_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_SUNDER_ARMOR);
+                Armor_Timer = 10000 + rand()%15000;
+            }else Armor_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-            DoScriptText(RAND(SAY_EARTHQUAKE_1, SAY_EARTHQUAKE_2), me);
-
-            //remove enrage before casting earthquake because enrage + earthquake = 16000dmg over 8sec and all dead
-            if (InEnrage)
-                me->RemoveAura(SPELL_ENRAGE, 0);
-
-            DoCast(me,SPELL_EARTHQUAKE);
-            Quake_Timer = 30000 + rand()%25000;
-        }else Quake_Timer -= diff;
-
-        //Spell Chain Lightning
-        if (Chain_Timer < diff)
-        {
-            Unit* target = nullptr;
-            target = SelectTarget(SELECT_TARGET_RANDOM,1);
-
-            // According to WoWHead, shouldn't hit the main tank
-            /*if (!target)
-                target = me->GetVictim();*/
-
-            if (target)
-                DoCast(target,SPELL_CHAIN_LIGHTNING);
-
-            Chain_Timer = 10000 + rand()%25000;
-        }else Chain_Timer -= diff;
-
-        //Spell Sunder Armor
-        if (Armor_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_SUNDER_ARMOR);
-            Armor_Timer = 10000 + rand()%15000;
-        }else Armor_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_doomwalkerAI(creature);
     }
 };
 
-CreatureAI* GetAI_boss_doomwalker(Creature *_Creature)
-{
-    return new boss_doomwalkerAI (_Creature);
-}
 
 void AddSC_boss_doomwalker()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name = "boss_doomwalker";
-    newscript->GetAI = &GetAI_boss_doomwalker;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_doomwalker();
 }
 
