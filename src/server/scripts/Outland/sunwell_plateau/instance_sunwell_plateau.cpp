@@ -593,6 +593,10 @@ public:
                     Encounter = NOT_STARTED;
             OUT_LOAD_INST_DATA_COMPLETE;
         }
+
+        // Storage for GO-Guids and NPC-Guids
+        typedef std::map<uint32, uint64> EntryGuidMap;
+        EntryGuidMap m_mNpcEntryGuidStore;                  ///< Store unique NPC-Guids by entry
     };
 };
 

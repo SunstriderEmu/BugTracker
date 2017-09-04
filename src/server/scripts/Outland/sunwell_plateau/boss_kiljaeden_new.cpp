@@ -1,4 +1,5 @@
 // Some fixes to do, converstion from CreatureAINew is not yet finished. See FIXME's
+//Dialogs have been disabled with removal of DialogueHelper class, dialogs must be reimplemented. All dialogs are still in creature_text table, ids are in comments in this scripts
 
 #include "def_sunwell_plateau.h"
 
@@ -297,21 +298,22 @@ enum
     POINT_END_STUN,
 };
 
-static const DialogueEntry firstDialogue[] =
+/*
+static const  uint32  firstDialogue[][] =
 {
     {SAY_KALEC_1,                 CREATURE_KALECGOS,  5000},
     {SAY_ANVEENA_1,               CREATURE_ANVEENA,   3000},
     {0,                           0,                  0},
 };
 
-static const DialogueEntry secondDialogue[] =
+static const  uint32  secondDialogue[][] =
 {
     {SAY_KALEC_2,                 CREATURE_KALECGOS,  7000},
     {SAY_ANVEENA_2,               CREATURE_ANVEENA,   5000},
     {0,                           0,                  0},
 };
 
-static const DialogueEntry thirdDialogue[] =
+static const uint32*  thirdDialogue[] =
 {
     {SAY_KALEC_3,                 CREATURE_KALECGOS,  10000},//Anveena, I love you! Focus on my voice, come back for me now! Only you can cleanse the Sunwell!
     {SAY_ANVEENA_3,               CREATURE_ANVEENA,   2000}, //Kalec... Kalec?
@@ -324,7 +326,7 @@ static const DialogueEntry thirdDialogue[] =
 };
 
 // Epilogue dialogue
-static const DialogueEntry aOutroDialogue[] =
+static const uint32  aOutroDialogue[][] =
 {
     {POINT_KILJAEDEN_DIE,         0,                  15000},
     {POINT_TELEPORT_KALECGOS,     0,                  2000},
@@ -356,6 +358,7 @@ static const DialogueEntry aOutroDialogue[] =
     {POINT_EVENT_VELEN_EXIT,      0,                  0},
     {0,                           0,                  0},
 };
+*/
 
 struct EventLocations
 {
@@ -614,7 +617,7 @@ class mob_kiljaeden_controller : public CreatureScript
 public:
     mob_kiljaeden_controller() : CreatureScript("mob_kiljaeden_controller") {}
     
-    class mob_kiljaeden_controllerAI : public CreatureAI, private DialogueHelper
+    class mob_kiljaeden_controllerAI : public CreatureAI
     {
         private:
             InstanceScript* pInstance;
@@ -634,10 +637,9 @@ public:
             uint32 combatCheckTimer;
             uint8 phase;
         public:
-            mob_kiljaeden_controllerAI(Creature* creature) : CreatureAI(creature), Summons(me), DialogueHelper(aOutroDialogue)
+            mob_kiljaeden_controllerAI(Creature* creature) : CreatureAI(creature), Summons(me)
             {
                 pInstance = ((InstanceScript*)creature->GetInstanceScript());
-                InitializeDialogueHelper(pInstance);
                 SetCombatMovementAllowed(false);
             }
 
@@ -754,9 +756,10 @@ public:
 
             void startDialogueText()
             {
-                StartNextDialogueText(POINT_KILJAEDEN_DIE);
+                //StartNextDialogueText(POINT_KILJAEDEN_DIE);
             }
 
+            /*
             void JustDidDialogueStep(int32 iEntry)
             override {
                 if (!pInstance)
@@ -948,6 +951,7 @@ public:
                         break;
                 }
             }
+            */
 
             /*FIXME
             void summonedMovementInform(Creature* pSummoned, uint32 uiType, uint32 uiPointId)
@@ -1057,7 +1061,7 @@ public:
 
             void UpdateAI(uint32 const diff)
             override {
-                DialogueUpdate(diff);
+                //DialogueUpdate(diff);
 
                 events.Update(diff);
             
@@ -1122,7 +1126,7 @@ class boss_kiljaeden : public CreatureScript
 public:
     boss_kiljaeden() : CreatureScript("boss_kiljaeden") {}
 
-    class boss_kiljaedenAI : public CreatureAI, private DialogueHelper
+    class boss_kiljaedenAI : public CreatureAI
     {
         private:
             InstanceScript* pInstance;
@@ -1142,11 +1146,10 @@ public:
 
         public:
 
-        boss_kiljaedenAI(Creature* creature) : CreatureAI(creature), Summons(me), DialogueHelper(firstDialogue), bumpHelper(2000)
+        boss_kiljaedenAI(Creature* creature) : CreatureAI(creature), Summons(me), bumpHelper(2000)
         {
             SetCombatMovementAllowed(false);
             pInstance = ((InstanceScript*)creature->GetInstanceScript());
-            InitializeDialogueHelper(pInstance);
             me->SetDisableGravity(true);
             me->Relocate(KJLocation[0], KJLocation[1], KJLocation[2]);
             me->SendMovementFlagUpdate();
@@ -1321,6 +1324,7 @@ public:
         }
         */
 
+        /*
         void JustDidDialogueStep(int32 iEntry)
         override {
             if (!pInstance)
@@ -1345,6 +1349,7 @@ public:
                     break;
             }
         }
+        */
 
         void bumpClosePlayers(const uint32 diff)
         {
@@ -1383,7 +1388,7 @@ public:
                 return;
             }
 
-            DialogueUpdate(diff);
+            //DialogueUpdate(diff);
 
             if (!UpdateVictim())
                 return;
@@ -1396,7 +1401,7 @@ public:
                 if (me->IsBelowHPPercent(80))
                 {
                     firstDialogueStep = true;
-                    StartNextDialogueText(SAY_KALEC_1);
+                    //StartNextDialogueText(SAY_KALEC_1);
                 }
             }
 
@@ -1404,9 +1409,9 @@ public:
             {
                 if (me->IsBelowHPPercent(50))
                 {
-                    SetNewArray(secondDialogue);
+                    //SetNewArray(secondDialogue);
                     secondDialogueStep = true;
-                    StartNextDialogueText(SAY_KALEC_2);
+                    //StartNextDialogueText(SAY_KALEC_2);
                 }
             }
 
@@ -1415,9 +1420,9 @@ public:
                 if (me->IsBelowHPPercent(25))
                 {
                     events.CancelEvent(EVENT_DARKNESS); //no darkness before phase changed
-                    SetNewArray(thirdDialogue);
+                    //SetNewArray(thirdDialogue);
                     thirdDialogueStep = true;
-                    StartNextDialogueText(SAY_KALEC_3);
+                    //StartNextDialogueText(SAY_KALEC_3);
                 }
             }
 
