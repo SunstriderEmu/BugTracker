@@ -35,103 +35,109 @@ EndScriptData */
 #define SPELL_FROSTBOLT               10179
 #define SPELL_SUMMON_FROST_SPECTRES   12642
 
-struct boss_amnennar_the_coldbringerAI : public ScriptedAI
+
+class boss_amnennar_the_coldbringer : public CreatureScript
 {
-    boss_amnennar_the_coldbringerAI(Creature *c) : ScriptedAI(c)
+public:
+    boss_amnennar_the_coldbringer() : CreatureScript("boss_amnennar_the_coldbringer")
+    { }
+
+    class boss_amnennar_the_coldbringerAI : public ScriptedAI
     {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-    }
-
-    InstanceScript *pInstance;
-    uint32 AmnenarsWrath_Timer;
-    uint32 FrostBolt_Timer;
-    bool Spectrals;
-    int Rand;
-    int RandX;
-    int RandY;
-    Creature* Summoned;
-
-    void Reset()
-    override {
-        AmnenarsWrath_Timer = 8000;
-        FrostBolt_Timer = 1000;
-        Spectrals = false;
-        
-        if (pInstance && pInstance->GetData(DATA_AMNENNAR_THE_COLDBRINGER_EVENT) != DONE)
-            pInstance->SetData(DATA_AMNENNAR_THE_COLDBRINGER_EVENT, NOT_STARTED);
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-        if (pInstance)
-            pInstance->SetData(DATA_AMNENNAR_THE_COLDBRINGER_EVENT, IN_PROGRESS);
-
-        me->Yell(SAY_0,LANG_UNIVERSAL,nullptr);
-        DoPlaySoundToSet(me,SOUND_AGGRO);
-    }
-
-    void JustDied(Unit *killer)
-    override {
-        if (pInstance)
-            pInstance->SetData(DATA_AMNENNAR_THE_COLDBRINGER_EVENT, DONE);
-    }
-
-    void KilledUnit(Unit* ) override
-    {
-        me->Yell(SAY_SLAY, LANG_UNIVERSAL, nullptr);
-        DoPlaySoundToSet(me, SOUND_SLAY);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim())
-            return;
-
-        //AmnenarsWrath_Timer
-        if (AmnenarsWrath_Timer < diff)
+        public:
+        boss_amnennar_the_coldbringerAI(Creature *c) : ScriptedAI(c)
         {
-            DoCast(me->GetVictim(),SPELL_AMNENNARSWRATH);
-            AmnenarsWrath_Timer = 12000;
-        } else AmnenarsWrath_Timer -= diff;
-
-        //FrostBolt_Timer
-        if (FrostBolt_Timer < diff)
-        {
-            Unit* target = nullptr;
-            target = SelectTarget(SELECT_TARGET_RANDOM,0);
-            if (target) DoCast(target,SPELL_FROSTBOLT);
-
-            FrostBolt_Timer = 8000;
-        } else FrostBolt_Timer -= diff;
-
-        if ( !Spectrals && me->GetHealthPct() < 50 )
-        {
-            me->Yell(SAY_1, LANG_UNIVERSAL, nullptr);
-            DoPlaySoundToSet(me, SOUND_SUMMON);
-
-            Unit* target = nullptr;
-            target = SelectTarget(SELECT_TARGET_RANDOM,0);
-
-            if(target)
-                DoCast(target, SPELL_SUMMON_FROST_SPECTRES);
-
-            Spectrals = true;
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
         }
+    
+        InstanceScript *pInstance;
+        uint32 AmnenarsWrath_Timer;
+        uint32 FrostBolt_Timer;
+        bool Spectrals;
+        int Rand;
+        int RandX;
+        int RandY;
+        Creature* Summoned;
+    
+        void Reset()
+        override {
+            AmnenarsWrath_Timer = 8000;
+            FrostBolt_Timer = 1000;
+            Spectrals = false;
+            
+            if (pInstance && pInstance->GetData(DATA_AMNENNAR_THE_COLDBRINGER_EVENT) != DONE)
+                pInstance->SetData(DATA_AMNENNAR_THE_COLDBRINGER_EVENT, NOT_STARTED);
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+            if (pInstance)
+                pInstance->SetData(DATA_AMNENNAR_THE_COLDBRINGER_EVENT, IN_PROGRESS);
+    
+            me->Yell(SAY_0,LANG_UNIVERSAL,nullptr);
+            DoPlaySoundToSet(me,SOUND_AGGRO);
+        }
+    
+        void JustDied(Unit *killer)
+        override {
+            if (pInstance)
+                pInstance->SetData(DATA_AMNENNAR_THE_COLDBRINGER_EVENT, DONE);
+        }
+    
+        void KilledUnit(Unit* ) override
+        {
+            me->Yell(SAY_SLAY, LANG_UNIVERSAL, nullptr);
+            DoPlaySoundToSet(me, SOUND_SLAY);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim())
+                return;
+    
+            //AmnenarsWrath_Timer
+            if (AmnenarsWrath_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_AMNENNARSWRATH);
+                AmnenarsWrath_Timer = 12000;
+            } else AmnenarsWrath_Timer -= diff;
+    
+            //FrostBolt_Timer
+            if (FrostBolt_Timer < diff)
+            {
+                Unit* target = nullptr;
+                target = SelectTarget(SELECT_TARGET_RANDOM,0);
+                if (target) DoCast(target,SPELL_FROSTBOLT);
+    
+                FrostBolt_Timer = 8000;
+            } else FrostBolt_Timer -= diff;
+    
+            if ( !Spectrals && me->GetHealthPct() < 50 )
+            {
+                me->Yell(SAY_1, LANG_UNIVERSAL, nullptr);
+                DoPlaySoundToSet(me, SOUND_SUMMON);
+    
+                Unit* target = nullptr;
+                target = SelectTarget(SELECT_TARGET_RANDOM,0);
+    
+                if(target)
+                    DoCast(target, SPELL_SUMMON_FROST_SPECTRES);
+    
+                Spectrals = true;
+            }
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_amnennar_the_coldbringerAI(creature);
     }
 };
 
-CreatureAI* GetAI_boss_amnennar_the_coldbringer(Creature *_Creature)
-{
-    return new boss_amnennar_the_coldbringerAI (_Creature);
-}
 
 void AddSC_boss_amnennar_the_coldbringer()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_amnennar_the_coldbringer";
-    newscript->GetAI = &GetAI_boss_amnennar_the_coldbringer;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_amnennar_the_coldbringer();
 }

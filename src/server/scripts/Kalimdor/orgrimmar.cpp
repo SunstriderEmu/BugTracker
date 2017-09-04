@@ -23,33 +23,59 @@ EndContentData */
 
 #define GOSSIP_HNF "You may speak frankly, Neeru..."
 #define GOSSIP_SNF "[PH] ..."
-bool GossipHello_npc_neeru_fireblade(Player *player, Creature *_Creature)
+class npc_neeru_fireblade : public CreatureScript
 {
-    if (_Creature->IsQuestGiver())
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+public:
+    npc_neeru_fireblade() : CreatureScript("npc_neeru_fireblade")
+    { }
 
-    if (player->GetQuestStatus(QUEST_5727) == QUEST_STATUS_INCOMPLETE)
-        player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HNF, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-
-    player->SEND_GOSSIP_MENU_TEXTID(4513, _Creature->GetGUID());
-    return true;
-}
-
-bool GossipSelect_npc_neeru_fireblade(Player *player, Creature *_Creature, uint32 sender, uint32 action)
-{
-    switch (action)
+    class npc_neeru_firebladeAI : public ScriptedAI
     {
-        case GOSSIP_ACTION_INFO_DEF+1:
-            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SNF, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-            player->SEND_GOSSIP_MENU_TEXTID(4513, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+2:
-            player->CLOSE_GOSSIP_MENU();
-            player->AreaExploredOrEventHappens(QUEST_5727);
-            break;
+    public:
+        npc_neeru_firebladeAI(Creature* creature) : ScriptedAI(creature)
+        {}
+
+
+        virtual bool GossipHello(Player* player) override
+        {
+            if (me->IsQuestGiver())
+                player->PrepareQuestMenu( me->GetGUID() );
+
+            if (player->GetQuestStatus(QUEST_5727) == QUEST_STATUS_INCOMPLETE)
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HNF, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+
+            player->SEND_GOSSIP_MENU_TEXTID(4513, me->GetGUID());
+            return true;
+
+        }
+
+
+        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        {
+            switch (action)
+            {
+                case GOSSIP_ACTION_INFO_DEF+1:
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SNF, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+                    player->SEND_GOSSIP_MENU_TEXTID(4513, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF+2:
+                    player->CLOSE_GOSSIP_MENU();
+                    player->AreaExploredOrEventHappens(QUEST_5727);
+                    break;
+            }
+            return true;
+
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_neeru_firebladeAI(creature);
     }
-    return true;
-}
+};
+
+
 
 /*######
 ## npc_shenthul
@@ -57,80 +83,92 @@ bool GossipSelect_npc_neeru_fireblade(Player *player, Creature *_Creature, uint3
 
 #define QUEST_2460  2460
 
-struct npc_shenthulAI : public ScriptedAI
+class npc_shenthul : public CreatureScript
 {
-    npc_shenthulAI(Creature* c) : ScriptedAI(c) {}
+public:
+    npc_shenthul() : CreatureScript("npc_shenthul")
+    { }
 
-    bool CanTalk;
-    bool CanEmote;
-    uint32 Salute_Timer;
-    uint32 Reset_Timer;
-    uint64 playerGUID;
-
-    void Reset()
-    override {
-        CanTalk = false;
-        CanEmote = false;
-        Salute_Timer = 6000;
-        Reset_Timer = 0;
-        playerGUID = 0;
-    }
-
-    void EnterCombat(Unit* who) override { }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if( CanEmote )
-        {
-            if( Reset_Timer < diff )
+    class npc_shenthulAI : public ScriptedAI
+    {
+        public:
+        npc_shenthulAI(Creature* c) : ScriptedAI(c) {}
+    
+        bool CanTalk;
+        bool CanEmote;
+        uint32 Salute_Timer;
+        uint32 Reset_Timer;
+        uint64 playerGUID;
+    
+        void Reset()
+        override {
+            CanTalk = false;
+            CanEmote = false;
+            Salute_Timer = 6000;
+            Reset_Timer = 0;
+            playerGUID = 0;
+        }
+    
+        void EnterCombat(Unit* who) override { }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if( CanEmote )
             {
-                if( Player* temp = ObjectAccessor::GetPlayer(*me, playerGUID) )
-                    temp->FailQuest(QUEST_2460);
-                Reset();
-            } else Reset_Timer -= diff;
+                if( Reset_Timer < diff )
+                {
+                    if( Player* temp = ObjectAccessor::GetPlayer(*me, playerGUID) )
+                        temp->FailQuest(QUEST_2460);
+                    Reset();
+                } else Reset_Timer -= diff;
+            }
+    
+            if( CanTalk && !CanEmote )
+            {
+                if( Salute_Timer < diff )
+                {
+                    me->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE);
+                    CanEmote = true;
+                    Reset_Timer = 60000;
+                } else Salute_Timer -= diff;
+            }
+    
+            if (!UpdateVictim())
+                return;
+    
+            DoMeleeAttackIfReady();
         }
 
-        if( CanTalk && !CanEmote )
+        virtual void QuestAccept(Player* player, Quest const* quest) override
         {
-            if( Salute_Timer < diff )
+            if( quest->GetQuestId() == QUEST_2460 )
             {
-                me->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE);
-                CanEmote = true;
-                Reset_Timer = 60000;
-            } else Salute_Timer -= diff;
+                ((npc_shenthul::npc_shenthulAI*)me->AI())->CanTalk = true;
+                ((npc_shenthul::npc_shenthulAI*)me->AI())->playerGUID = player->GetGUID();
+            }
         }
 
-        if (!UpdateVictim())
-            return;
 
-        DoMeleeAttackIfReady();
+        virtual void ReceiveEmote(Player* player, uint32 emote) override
+        {
+            if( emote == TEXTEMOTE_SALUTE && player->GetQuestStatus(QUEST_2460) == QUEST_STATUS_INCOMPLETE )
+                if( ((npc_shenthul::npc_shenthulAI*)me->AI())->CanEmote )
+            {
+                player->AreaExploredOrEventHappens(QUEST_2460);
+                ((npc_shenthul::npc_shenthulAI*)me->AI())->Reset();
+            }
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_shenthulAI(creature);
     }
 };
-CreatureAI* GetAI_npc_shenthul(Creature *_Creature)
-{
-    return new npc_shenthulAI (_Creature);
-}
 
-bool QuestAccept_npc_shenthul(Player* player, Creature* creature, Quest const* quest)
-{
-    if( quest->GetQuestId() == QUEST_2460 )
-    {
-        ((npc_shenthulAI*)creature->AI())->CanTalk = true;
-        ((npc_shenthulAI*)creature->AI())->playerGUID = player->GetGUID();
-    }
-    return true;
-}
 
-bool ReciveEmote_npc_shenthul(Player *player, Creature *_Creature, uint32 emote)
-{
-    if( emote == TEXTEMOTE_SALUTE && player->GetQuestStatus(QUEST_2460) == QUEST_STATUS_INCOMPLETE )
-        if( ((npc_shenthulAI*)_Creature->AI())->CanEmote )
-    {
-        player->AreaExploredOrEventHappens(QUEST_2460);
-        ((npc_shenthulAI*)_Creature->AI())->Reset();
-    }
-    return true;
-}
+
 
 /*######
 ## npc_thrall_warchief
@@ -355,80 +393,79 @@ public:
                 break;
             }
         }
+
+        bool GossipHello(Player* player) override
+        {
+            if (me->IsQuestGiver())
+                player->PrepareQuestMenu(me->GetGUID());
+
+            if (player->GetQuestStatus(QUEST_6566) == QUEST_STATUS_INCOMPLETE)
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HTW, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+
+            SEND_PREPARED_GOSSIP_MENU(player, me);
+            return true;
+        }
+
+        bool GossipSelect(Player *player, uint32 sender, uint32 action) override
+        {
+            switch (action)
+            {
+            case GOSSIP_ACTION_INFO_DEF + 1:
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_STW1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+                player->SEND_GOSSIP_MENU_TEXTID(5733, me->GetGUID());
+                break;
+            case GOSSIP_ACTION_INFO_DEF + 2:
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_STW2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+                player->SEND_GOSSIP_MENU_TEXTID(5734, me->GetGUID());
+                break;
+            case GOSSIP_ACTION_INFO_DEF + 3:
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_STW3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
+                player->SEND_GOSSIP_MENU_TEXTID(5735, me->GetGUID());
+                break;
+            case GOSSIP_ACTION_INFO_DEF + 4:
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_STW4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
+                player->SEND_GOSSIP_MENU_TEXTID(5736, me->GetGUID());
+                break;
+            case GOSSIP_ACTION_INFO_DEF + 5:
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_STW5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6);
+                player->SEND_GOSSIP_MENU_TEXTID(5737, me->GetGUID());
+                break;
+            case GOSSIP_ACTION_INFO_DEF + 6:
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_STW6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 7);
+                player->SEND_GOSSIP_MENU_TEXTID(5738, me->GetGUID());
+                break;
+            case GOSSIP_ACTION_INFO_DEF + 7:
+                player->CLOSE_GOSSIP_MENU();
+                player->AreaExploredOrEventHappens(QUEST_6566);
+                break;
+            }
+            return true;
+        }
+
+        void QuestReward(Player* pPlayer, Quest const* pQuest, uint32 /*opt*/) override
+        {
+            switch (pQuest->GetQuestId())
+            {
+                //The Brokering of Peace
+                case 8485:
+                {
+                    std::stringstream sst;
+                    //TODO TRANSLATE
+                    sst << "Sachez tous que " << pPlayer->GetName() << " - " << pPlayer->GetClass() << " de la Horde - a gagné le respect du Chef de guerre. Il a engagé la diplomatie avec les Grumegueules et accompli diverses actions en notre nom. Il est allé bien au delà de l'appel du devoir. Trois félicitations pour " << pPlayer->GetName() << " - un vrai héros de la Horde !";
+                    me->Yell(sst.str().c_str(), LANG_UNIVERSAL);
+                    break;
+                }
+                //Messenger to Thrall
+                case 9438:
+                {
+                    me->AI()->message(MESSAGE_START_MESSENGER_EVENT, 0);
+                    break;
+                }
+            }
+        }
     };
 
-    bool OnGossipHello(Player* player, Creature* creature) override
-    {
-        if (creature->IsQuestGiver())
-            player->PrepareQuestMenu(creature->GetGUID());
 
-        if (player->GetQuestStatus(QUEST_6566) == QUEST_STATUS_INCOMPLETE)
-            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HTW, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-
-        SEND_PREPARED_GOSSIP_MENU(player, creature);
-        return true;
-    }
-
-
-    bool OnGossipSelect(Player *player, Creature *_Creature, uint32 sender, uint32 action) override
-    {
-        switch (action)
-        {
-        case GOSSIP_ACTION_INFO_DEF + 1:
-            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_STW1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-            player->SEND_GOSSIP_MENU_TEXTID(5733, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 2:
-            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_STW2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
-            player->SEND_GOSSIP_MENU_TEXTID(5734, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 3:
-            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_STW3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
-            player->SEND_GOSSIP_MENU_TEXTID(5735, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 4:
-            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_STW4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
-            player->SEND_GOSSIP_MENU_TEXTID(5736, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 5:
-            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_STW5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6);
-            player->SEND_GOSSIP_MENU_TEXTID(5737, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 6:
-            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_STW6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 7);
-            player->SEND_GOSSIP_MENU_TEXTID(5738, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 7:
-            player->CLOSE_GOSSIP_MENU();
-            player->AreaExploredOrEventHappens(QUEST_6566);
-            break;
-        }
-        return true;
-    }
-
-    bool OnQuestComplete(Player* pPlayer, Creature* pCreature, Quest const* pQuest) override
-    {
-        switch (pQuest->GetQuestId())
-        {
-            //The Brokering of Peace
-            case 8485:
-            {
-                std::stringstream sst;
-                //TODO TRANSLATE
-                sst << "Sachez tous que " << pPlayer->GetName() << " - " << pPlayer->GetClass() << " de la Horde - a gagné le respect du Chef de guerre. Il a engagé la diplomatie avec les Grumegueules et accompli diverses actions en notre nom. Il est allé bien au delà de l'appel du devoir. Trois félicitations pour " << pPlayer->GetName() << " - un vrai héros de la Horde !";
-                pCreature->Yell(sst.str().c_str(), LANG_UNIVERSAL);
-                break;
-            }
-            //Messenger to Thrall
-            case 9438:
-            {
-                pCreature->AI()->message(MESSAGE_START_MESSENGER_EVENT, 0);
-                break;
-            }
-        }
-
-        return true;
-    }
 
     CreatureAI* GetAI(Creature* creature) const
         override {
@@ -441,64 +478,76 @@ public:
 ## npc_eitrigg
 ######*/
 
-bool GossipHello_npc_eitrigg(Player* player, Creature* creature)
+class npc_eitrigg : public CreatureScript
 {
-    if (creature->IsQuestGiver())
-        player->PrepareQuestMenu(creature->GetGUID());
-        
-    //TODO translate
-    if (player->GetQuestStatus(4941) == QUEST_STATUS_INCOMPLETE)
-        player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "[PH] Valider la quête \"Sagesse d'Eitrigg\".", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+public:
+    npc_eitrigg() : CreatureScript("npc_eitrigg")
+    { }
 
-    SEND_PREPARED_GOSSIP_MENU(player, creature);
-    return true;
-}
-
-bool GossipSelect_npc_eitrigg(Player* player, Creature* creature, uint32 sender, uint32 action)
-{
-    if (action == GOSSIP_ACTION_INFO_DEF + 1)
-        player->AreaExploredOrEventHappens(4941);
-        
-    player->CLOSE_GOSSIP_MENU();
-        
-    return true;
-}
-
-bool GossipQuestComplete_npc_eitrigg(Player* player, Creature* creature, Quest const* quest)
-{
-    switch (quest->GetQuestId())
+    class npc_eitriggAI : public ScriptedAI
     {
-    case 9438: //Messenger to Thrall
+    public:
+        npc_eitriggAI(Creature* creature) : ScriptedAI(creature)
+        {}
 
-        break;
+
+        virtual bool GossipHello(Player* player) override
+        {
+            if (me->IsQuestGiver())
+                player->PrepareQuestMenu(me->GetGUID());
+                
+            //TODO translate
+            if (player->GetQuestStatus(4941) == QUEST_STATUS_INCOMPLETE)
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "[PH] Valider la quête \"Sagesse d'Eitrigg\".", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+
+            SEND_PREPARED_GOSSIP_MENU(player, me);
+            return true;
+
+        }
+
+
+        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        {
+            if (action == GOSSIP_ACTION_INFO_DEF + 1)
+                player->AreaExploredOrEventHappens(4941);
+                
+            player->CLOSE_GOSSIP_MENU();
+                
+            return true;
+
+        }
+
+
+        virtual void QuestReward(Player* player, Quest const* quest, uint32 /*opt*/) override
+        {
+            switch (quest->GetQuestId())
+            {
+            case 9438: //Messenger to Thrall
+
+                break;
+            }
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_eitriggAI(creature);
     }
-    return true;
-}
+};
+
+
+
 
 void AddSC_orgrimmar()
 {
-    OLDScript *newscript;
 
-    newscript = new OLDScript;
-    newscript->Name="npc_neeru_fireblade";
-    newscript->OnGossipHello =  &GossipHello_npc_neeru_fireblade;
-    newscript->OnGossipSelect = &GossipSelect_npc_neeru_fireblade;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_neeru_fireblade();
 
-    newscript = new OLDScript;
-    newscript->Name="npc_shenthul";
-    newscript->GetAI = &GetAI_npc_shenthul;
-    newscript->OnQuestAccept =  &QuestAccept_npc_shenthul;
-    newscript->OnReceiveEmote = &ReciveEmote_npc_shenthul;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_shenthul();
 
     new npc_thrall_warchief();
     
-    newscript = new OLDScript;
-    newscript->Name = "npc_eitrigg";
-    newscript->OnGossipHello = &GossipHello_npc_eitrigg;
-    newscript->OnGossipSelect = &GossipSelect_npc_eitrigg;
-    newscript->OnQuestComplete = &GossipQuestComplete_npc_eitrigg;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_eitrigg();
 }
 

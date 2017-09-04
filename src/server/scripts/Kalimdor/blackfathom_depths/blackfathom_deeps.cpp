@@ -47,7 +47,7 @@ public:
             {
                 me->UseDoorOrButton();
                 me->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NOT_SELECTABLE);
-                switch (go->GetEntry()) {
+                switch (me->GetEntry()) {
                 case 21118: // North West
                     for (uint8 i = 0; i < 4; i++) {
                         if (Creature* summon = p->SummonCreature(4825, -769.013123, -153.537262, -25.879938, 3.121223, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 60000))

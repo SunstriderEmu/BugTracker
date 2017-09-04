@@ -23,82 +23,88 @@ enum Spells
     SPELL_WITHERED_TOUCH          = 11442,
 };
 
-struct boss_plaguemaw_the_rottingAI : public ScriptedAI
+
+class boss_plaguemaw_the_rotting : public CreatureScript
 {
-    boss_plaguemaw_the_rottingAI(Creature *c) : ScriptedAI(c)
+public:
+    boss_plaguemaw_the_rotting() : CreatureScript("boss_plaguemaw_the_rotting")
+    { }
+
+    class boss_plaguemaw_the_rottingAI : public ScriptedAI
     {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-    }
-    
-    InstanceScript *pInstance;
-    uint32 eventTimer;
-    uint32 putridstenchTimer;
-    uint32 witheredtouchTimer;
-
-    void Reset()
-    override {
-        eventTimer = 500;
-        putridstenchTimer = urand(8000, 12000);
-        witheredtouchTimer = urand(8000, 12000);
-
-        if (pInstance && pInstance->GetData(DATA_PLAGUEMAW_THE_ROTTING_EVENT) != DONE)
-            pInstance->SetData(DATA_PLAGUEMAW_THE_ROTTING_EVENT, NOT_STARTED);
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-        if (pInstance)
-            pInstance->SetData(DATA_PLAGUEMAW_THE_ROTTING_EVENT, IN_PROGRESS);
-    }
-    
-    void JustDied(Unit *killer)
-    override {
-        if (pInstance)
-            pInstance->SetData(DATA_PLAGUEMAW_THE_ROTTING_EVENT, DONE);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim())
-            return;
-
-        if (eventTimer <= diff)
+        public:
+        boss_plaguemaw_the_rottingAI(Creature *c) : ScriptedAI(c)
         {
-            if (putridstenchTimer <= diff)
-            {
-                DoCast(me, SPELL_PUTRID_STENCH);
-                putridstenchTimer = urand(15000, 23000);
-            }
-            else
-                putridstenchTimer -= diff;
-
-            if (witheredtouchTimer <= diff)
-            {
-                DoCast(SelectTarget(SELECT_TARGET_RANDOM, 0, 5.0f, false), SPELL_WITHERED_TOUCH);
-                witheredtouchTimer = urand(15000, 23000);
-            }
-            else
-                witheredtouchTimer -= diff;
-
-            eventTimer = 500;
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
         }
-        else
-            eventTimer -= diff;
+        
+        InstanceScript *pInstance;
+        uint32 eventTimer;
+        uint32 putridstenchTimer;
+        uint32 witheredtouchTimer;
+    
+        void Reset()
+        override {
+            eventTimer = 500;
+            putridstenchTimer = urand(8000, 12000);
+            witheredtouchTimer = urand(8000, 12000);
+    
+            if (pInstance && pInstance->GetData(DATA_PLAGUEMAW_THE_ROTTING_EVENT) != DONE)
+                pInstance->SetData(DATA_PLAGUEMAW_THE_ROTTING_EVENT, NOT_STARTED);
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+            if (pInstance)
+                pInstance->SetData(DATA_PLAGUEMAW_THE_ROTTING_EVENT, IN_PROGRESS);
+        }
+        
+        void JustDied(Unit *killer)
+        override {
+            if (pInstance)
+                pInstance->SetData(DATA_PLAGUEMAW_THE_ROTTING_EVENT, DONE);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim())
+                return;
+    
+            if (eventTimer <= diff)
+            {
+                if (putridstenchTimer <= diff)
+                {
+                    DoCast(me, SPELL_PUTRID_STENCH);
+                    putridstenchTimer = urand(15000, 23000);
+                }
+                else
+                    putridstenchTimer -= diff;
+    
+                if (witheredtouchTimer <= diff)
+                {
+                    DoCast(SelectTarget(SELECT_TARGET_RANDOM, 0, 5.0f, false), SPELL_WITHERED_TOUCH);
+                    witheredtouchTimer = urand(15000, 23000);
+                }
+                else
+                    witheredtouchTimer -= diff;
+    
+                eventTimer = 500;
+            }
+            else
+                eventTimer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_plaguemaw_the_rottingAI(creature);
     }
 };
 
-CreatureAI* GetAI_boss_plaguemaw_the_rotting(Creature *_Creature)
-{
-    return new boss_plaguemaw_the_rottingAI (_Creature);
-}
 
 void AddSC_boss_plaguemaw_the_rotting()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_plaguemaw_the_rotting";
-    newscript->GetAI = &GetAI_boss_plaguemaw_the_rotting;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_plaguemaw_the_rotting();
 }

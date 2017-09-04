@@ -37,93 +37,99 @@ enum Spells
     SPELL_PARALYZE                     = 23414   //doesnt work correct (core)
 };
 
-struct boss_ayamissAI : public ScriptedAI
+class boss_ayamiss : public CreatureScript
 {
-    boss_ayamissAI(Creature *c) : ScriptedAI(c)
+public:
+    boss_ayamiss() : CreatureScript("boss_ayamiss")
+    { }
+
+    class boss_ayamissAI : public ScriptedAI
     {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-    }
-
-    Unit *pTarget;
-    uint32 STINGERSPRAY_Timer;
-    uint32 POISONSTINGER_Timer;
-    uint32 SUMMONSWARMER_Timer;
-    uint32 phase;
-
-    InstanceScript *pInstance;
-
-    void Reset() override
-    {
-        pTarget = nullptr;
-        STINGERSPRAY_Timer = 30000;
-        POISONSTINGER_Timer = 30000;
-        SUMMONSWARMER_Timer = 60000;
-        phase=1;
-
-        if (pInstance)
-            pInstance->SetData(DATA_AYAMISS_EVENT, NOT_STARTED);
-    }
-
-    void EnterCombat(Unit *who) override
-    {
-        pTarget = who;
-
-        if (pInstance)
-            pInstance->SetData(DATA_AYAMISS_EVENT, IN_PROGRESS);
-    }
-
-    void JustDied(Unit *killer) override
-    {
-        if (pInstance)
-            pInstance->SetData(DATA_AYAMISS_EVENT, DONE);
-    }
-
-    void UpdateAI(const uint32 diff) override
-    {
-        if (!UpdateVictim() )
-            return;
-
-        //If he is 70% start phase 2
-        if (phase==1 && me->GetHealthPct() <= 70 && !me->IsNonMeleeSpellCast(false))
+        public:
+        boss_ayamissAI(Creature *c) : ScriptedAI(c)
         {
-            phase=2;
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
         }
-
-        //STINGERSPRAY_Timer (only in phase2)
-        if (phase==2 && STINGERSPRAY_Timer < diff)
+    
+        Unit *pTarget;
+        uint32 STINGERSPRAY_Timer;
+        uint32 POISONSTINGER_Timer;
+        uint32 SUMMONSWARMER_Timer;
+        uint32 phase;
+    
+        InstanceScript *pInstance;
+    
+        void Reset() override
         {
-            DoCast(me->GetVictim(),SPELL_STINGERSPRAY);
+            pTarget = nullptr;
             STINGERSPRAY_Timer = 30000;
-        }else STINGERSPRAY_Timer -= diff;
-
-        //POISONSTINGER_Timer (only in phase1)
-        if (phase==1 && POISONSTINGER_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_POISONSTINGER);
             POISONSTINGER_Timer = 30000;
-        }else POISONSTINGER_Timer -= diff;
-
-        //SUMMONSWARMER_Timer (only in phase1)
-        if (SUMMONSWARMER_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_SUMMONSWARMER);
             SUMMONSWARMER_Timer = 60000;
-        }else SUMMONSWARMER_Timer -= diff;
+            phase=1;
+    
+            if (pInstance)
+                pInstance->SetData(DATA_AYAMISS_EVENT, NOT_STARTED);
+        }
+    
+        void EnterCombat(Unit *who) override
+        {
+            pTarget = who;
+    
+            if (pInstance)
+                pInstance->SetData(DATA_AYAMISS_EVENT, IN_PROGRESS);
+        }
+    
+        void JustDied(Unit *killer) override
+        {
+            if (pInstance)
+                pInstance->SetData(DATA_AYAMISS_EVENT, DONE);
+        }
+    
+        void UpdateAI(const uint32 diff) override
+        {
+            if (!UpdateVictim() )
+                return;
+    
+            //If he is 70% start phase 2
+            if (phase==1 && me->GetHealthPct() <= 70 && !me->IsNonMeleeSpellCast(false))
+            {
+                phase=2;
+            }
+    
+            //STINGERSPRAY_Timer (only in phase2)
+            if (phase==2 && STINGERSPRAY_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_STINGERSPRAY);
+                STINGERSPRAY_Timer = 30000;
+            }else STINGERSPRAY_Timer -= diff;
+    
+            //POISONSTINGER_Timer (only in phase1)
+            if (phase==1 && POISONSTINGER_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_POISONSTINGER);
+                POISONSTINGER_Timer = 30000;
+            }else POISONSTINGER_Timer -= diff;
+    
+            //SUMMONSWARMER_Timer (only in phase1)
+            if (SUMMONSWARMER_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_SUMMONSWARMER);
+                SUMMONSWARMER_Timer = 60000;
+            }else SUMMONSWARMER_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_ayamissAI(creature);
     }
 };
-CreatureAI* GetAI_boss_ayamiss(Creature *_Creature)
-{
-    return new boss_ayamissAI (_Creature);
-}
+
 
 void AddSC_boss_ayamiss()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_ayamiss";
-    newscript->GetAI = &GetAI_boss_ayamiss;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_ayamiss();
 }
 

@@ -40,111 +40,117 @@ EndScriptData */
 #define SPELL_MAGIC_DISRUPTION_AURA 33834
 #define SPELL_WING_BUFFET           31475
 
-struct boss_epoch_hunterAI : public ScriptedAI
+
+class boss_epoch_hunter : public CreatureScript
 {
-    boss_epoch_hunterAI(Creature *c) : ScriptedAI(c)
+public:
+    boss_epoch_hunter() : CreatureScript("boss_epoch_hunter")
+    { }
+
+    class boss_epoch_hunterAI : public ScriptedAI
     {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-    }
-
-    InstanceScript *pInstance;
-
-    uint32 SandBreath_Timer;
-    uint32 ImpendingDeath_Timer;
-    uint32 WingBuffet_Timer;
-    uint32 Mda_Timer;
-
-    void Reset()
-    override {
-        SandBreath_Timer = 25000;
-        ImpendingDeath_Timer = 30000;
-        WingBuffet_Timer = 35000;
-        Mda_Timer = 40000;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-        switch(rand()%2)
+        public:
+        boss_epoch_hunterAI(Creature *c) : ScriptedAI(c)
         {
-            case 0: DoScriptText(SAY_AGGRO1, me); break;
-            case 1: DoScriptText(SAY_AGGRO2, me); break;
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
         }
-    }
-
-    void KilledUnit(Unit *victim)
-    override {
-        switch(rand()%2)
-        {
-            case 0: DoScriptText(SAY_SLAY1, me); break;
-            case 1: DoScriptText(SAY_SLAY2, me); break;
+    
+        InstanceScript *pInstance;
+    
+        uint32 SandBreath_Timer;
+        uint32 ImpendingDeath_Timer;
+        uint32 WingBuffet_Timer;
+        uint32 Mda_Timer;
+    
+        void Reset()
+        override {
+            SandBreath_Timer = 25000;
+            ImpendingDeath_Timer = 30000;
+            WingBuffet_Timer = 35000;
+            Mda_Timer = 40000;
         }
-    }
-
-    void JustDied(Unit *victim)
-    override {
-        DoScriptText(SAY_DEATH, me);
-
-        if (pInstance && pInstance->GetData(TYPE_THRALL_EVENT) == IN_PROGRESS)
-            pInstance->SetData(TYPE_THRALL_PART4, DONE);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        //Return since we have no target
-        if (!UpdateVictim() )
-            return;
-
-        //Sand Breath
-        if (SandBreath_Timer < diff)
-        {
-            if (me->IsNonMeleeSpellCast(false))
-                me->InterruptNonMeleeSpells(false);
-
-            DoCast(me->GetVictim(),SPELL_SAND_BREATH);
-
+    
+        void EnterCombat(Unit *who)
+        override {
             switch(rand()%2)
             {
-                case 0: DoScriptText(SAY_BREATH1, me); break;
-                case 1: DoScriptText(SAY_BREATH2, me); break;
+                case 0: DoScriptText(SAY_AGGRO1, me); break;
+                case 1: DoScriptText(SAY_AGGRO2, me); break;
             }
+        }
+    
+        void KilledUnit(Unit *victim)
+        override {
+            switch(rand()%2)
+            {
+                case 0: DoScriptText(SAY_SLAY1, me); break;
+                case 1: DoScriptText(SAY_SLAY2, me); break;
+            }
+        }
+    
+        void JustDied(Unit *victim)
+        override {
+            DoScriptText(SAY_DEATH, me);
+    
+            if (pInstance && pInstance->GetData(TYPE_THRALL_EVENT) == IN_PROGRESS)
+                pInstance->SetData(TYPE_THRALL_PART4, DONE);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            //Return since we have no target
+            if (!UpdateVictim() )
+                return;
+    
+            //Sand Breath
+            if (SandBreath_Timer < diff)
+            {
+                if (me->IsNonMeleeSpellCast(false))
+                    me->InterruptNonMeleeSpells(false);
+    
+                DoCast(me->GetVictim(),SPELL_SAND_BREATH);
+    
+                switch(rand()%2)
+                {
+                    case 0: DoScriptText(SAY_BREATH1, me); break;
+                    case 1: DoScriptText(SAY_BREATH2, me); break;
+                }
+    
+                SandBreath_Timer = 25000+rand()%5000;
+            }else SandBreath_Timer -= diff;
+    
+            if (ImpendingDeath_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_IMPENDING_DEATH);
+                ImpendingDeath_Timer = 30000+rand()%5000;
+            }else ImpendingDeath_Timer -= diff;
+    
+            if (WingBuffet_Timer < diff)
+            {
+                if (Unit *target = SelectTarget(SELECT_TARGET_RANDOM,0))
+                    DoCast(target,SPELL_WING_BUFFET);
+                WingBuffet_Timer = 25000+rand()%10000;
+            }else WingBuffet_Timer -= diff;
+    
+            if (Mda_Timer < diff)
+            {
+                DoCast(me,SPELL_MAGIC_DISRUPTION_AURA);
+                Mda_Timer = 15000;
+            }else Mda_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-            SandBreath_Timer = 25000+rand()%5000;
-        }else SandBreath_Timer -= diff;
-
-        if (ImpendingDeath_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_IMPENDING_DEATH);
-            ImpendingDeath_Timer = 30000+rand()%5000;
-        }else ImpendingDeath_Timer -= diff;
-
-        if (WingBuffet_Timer < diff)
-        {
-            if (Unit *target = SelectTarget(SELECT_TARGET_RANDOM,0))
-                DoCast(target,SPELL_WING_BUFFET);
-            WingBuffet_Timer = 25000+rand()%10000;
-        }else WingBuffet_Timer -= diff;
-
-        if (Mda_Timer < diff)
-        {
-            DoCast(me,SPELL_MAGIC_DISRUPTION_AURA);
-            Mda_Timer = 15000;
-        }else Mda_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_epoch_hunterAI(creature);
     }
 };
 
-CreatureAI* GetAI_boss_epoch_hunter(Creature *_Creature)
-{
-    return new boss_epoch_hunterAI (_Creature);
-}
 
 void AddSC_boss_epoch_hunter()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_epoch_hunter";
-    newscript->GetAI = &GetAI_boss_epoch_hunter;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_epoch_hunter();
 }
 

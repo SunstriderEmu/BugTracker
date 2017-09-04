@@ -36,129 +36,165 @@ EndContentData */
 
 #define GOSSIP_SW "Tell me a story, Skorn."
 
-bool GossipHello_npc_skorn_whitecloud(Player* pPlayer, Creature* pCreature)
+class npc_skorn_whitecloud : public CreatureScript
 {
-    if (pCreature->IsQuestGiver())
-        pPlayer->PrepareQuestMenu(pCreature->GetGUID());
+public:
+    npc_skorn_whitecloud() : CreatureScript("npc_skorn_whitecloud")
+    { }
 
-    if (!pPlayer->GetQuestRewardStatus(770))
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SW, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+    class npc_skorn_whitecloudAI : public ScriptedAI
+    {
+    public:
+        npc_skorn_whitecloudAI(Creature* creature) : ScriptedAI(creature)
+        {}
 
-    pPlayer->SEND_GOSSIP_MENU_TEXTID(522, pCreature->GetGUID());
 
-    return true;
-}
+        virtual bool GossipHello(Player* pPlayer) override
+        {
+            if (me->IsQuestGiver())
+                pPlayer->PrepareQuestMenu(me->GetGUID());
 
-bool GossipSelect_npc_skorn_whitecloud(Player* pPlayer, Creature* pCreature, uint32 sender, uint32 action)
-{
-    if (action == GOSSIP_ACTION_INFO_DEF)
-        pPlayer->SEND_GOSSIP_MENU_TEXTID(523, pCreature->GetGUID());
+            if (!pPlayer->GetQuestRewardStatus(770))
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SW, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
-    return true;
-}
+            pPlayer->SEND_GOSSIP_MENU_TEXTID(522, me->GetGUID());
+
+            return true;
+
+        }
+
+
+        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        {
+            if (action == GOSSIP_ACTION_INFO_DEF)
+                pPlayer->SEND_GOSSIP_MENU_TEXTID(523, me->GetGUID());
+
+            return true;
+
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_skorn_whitecloudAI(creature);
+    }
+};
+
+
 
 /*#####
 # npc_kyle_frenzied
 ######*/
 
-struct npc_kyle_frenziedAI : public ScriptedAI
+
+class npc_kyle_frenzied : public CreatureScript
 {
-    npc_kyle_frenziedAI(Creature *c) : ScriptedAI(c) {}
+public:
+    npc_kyle_frenzied() : CreatureScript("npc_kyle_frenzied")
+    { }
 
-    int STATE;
-    uint32 wait;
-    uint64 player;
-
-    void Reset()
-    override {
-        STATE = 0;
-        me->SetDefaultMovementType(WAYPOINT_MOTION_TYPE);
-        me->GetMotionMaster()->Initialize();
-    }
-    void EnterCombat(Unit* pWho) override {}
-
-    void SpellHit(Unit* pCaster, const SpellInfo* spell)
-    override {   // we can feed him without any quest
-        if(spell->Id == 42222 && pCaster->GetTypeId() == TYPEID_PLAYER && (pCaster)->ToPlayer()->GetTeam() == HORDE)
-        {
-            STATE = 1;
-            player = pCaster->GetGUID();
-            float x, y, z, z2;
-            pCaster->GetPosition(x, y, z);
-            x = x + 3.7*cos(pCaster->GetOrientation());
-            y = y + 3.7*sin(pCaster->GetOrientation());
-            z2 = me->GetBaseMap()->GetHeight(x, y, z, false);
-            z = (z2 <= INVALID_HEIGHT) ? z : z2;
-            me->SetDefaultMovementType(IDLE_MOTION_TYPE);       //there is other way to stop waypoint movement?
+    class npc_kyle_frenziedAI : public ScriptedAI
+    {
+        public:
+        npc_kyle_frenziedAI(Creature *c) : ScriptedAI(c) {}
+    
+        int STATE;
+        uint32 wait;
+        uint64 player;
+    
+        void Reset()
+        override {
+            STATE = 0;
+            me->SetDefaultMovementType(WAYPOINT_MOTION_TYPE);
             me->GetMotionMaster()->Initialize();
-            me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
-            me->GetMotionMaster()->MovePoint(0, x, y, z);
         }
-    }
-
-    void MovementInform(uint32 type, uint32 id)
-    override {
-        if(type == POINT_MOTION_TYPE)
-        {
-            switch(STATE)
+        void EnterCombat(Unit* pWho) override {}
+    
+        void SpellHit(Unit* pCaster, const SpellInfo* spell)
+        override {   // we can feed him without any quest
+            if(spell->Id == 42222 && pCaster->GetTypeId() == TYPEID_PLAYER && (pCaster)->ToPlayer()->GetTeam() == HORDE)
             {
-            case 1:
-                {
-                Unit *plr = ObjectAccessor::GetUnit((*me),player);
-                if(plr)
-                    me->SetOrientation(me->GetAngle(plr));
-                me->HandleEmoteCommand(EMOTE_STATE_USESTANDING);    //eat
-                WorldPacket data;
-                me->BuildHeartBeatMsg(&data);
-                me->SendMessageToSet(&data,true);
-                wait = 3000;
-                STATE = 2;
-                break;
-                }
-            case 4:
-                me->SetDeathState(JUST_DIED);
-                me->Respawn();
-                break;
-            }
-        }
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!STATE || STATE == 4)
-            return;
-        if (wait < diff)
-        {
-            switch(STATE)
-            {
-            case 2:
-                STATE = 3; wait = 7000;
-                me->UpdateEntry(23622);
-                me->HandleEmoteCommand(EMOTE_ONESHOT_DANCE);
-                break;
-            case 3:
-                STATE = 4;  //go home
-                Player *plr = ObjectAccessor::GetPlayer(*me, player);
-                if(plr && plr->GetQuestStatus(11129) == QUEST_STATUS_INCOMPLETE)
-                    plr->CompleteQuest(11129);
-                float x, y, z, z2, angle;
-                angle = me->GetAngle(-2146, -430);
-                me->GetPosition(x,y,z);
-                x = x + 40*cos(angle);
-                y = y + 40*sin(angle);
-                z2 = me->GetBaseMap()->GetHeight(x,y,MAX_HEIGHT,false);
+                STATE = 1;
+                player = pCaster->GetGUID();
+                float x, y, z, z2;
+                pCaster->GetPosition(x, y, z);
+                x = x + 3.7*cos(pCaster->GetOrientation());
+                y = y + 3.7*sin(pCaster->GetOrientation());
+                z2 = me->GetBaseMap()->GetHeight(x, y, z, false);
                 z = (z2 <= INVALID_HEIGHT) ? z : z2;
-                me->GetMotionMaster()->MovePoint(0,x,y,z);
-                break;
+                me->SetDefaultMovementType(IDLE_MOTION_TYPE);       //there is other way to stop waypoint movement?
+                me->GetMotionMaster()->Initialize();
+                me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
+                me->GetMotionMaster()->MovePoint(0, x, y, z);
             }
-        } else wait -= diff;
+        }
+    
+        void MovementInform(uint32 type, uint32 id)
+        override {
+            if(type == POINT_MOTION_TYPE)
+            {
+                switch(STATE)
+                {
+                case 1:
+                    {
+                    Unit *plr = ObjectAccessor::GetUnit((*me),player);
+                    if(plr)
+                        me->SetOrientation(me->GetAngle(plr));
+                    me->HandleEmoteCommand(EMOTE_STATE_USESTANDING);    //eat
+                    WorldPacket data;
+                    me->BuildHeartBeatMsg(&data);
+                    me->SendMessageToSet(&data,true);
+                    wait = 3000;
+                    STATE = 2;
+                    break;
+                    }
+                case 4:
+                    me->SetDeathState(JUST_DIED);
+                    me->Respawn();
+                    break;
+                }
+            }
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!STATE || STATE == 4)
+                return;
+            if (wait < diff)
+            {
+                switch(STATE)
+                {
+                case 2:
+                    STATE = 3; wait = 7000;
+                    me->UpdateEntry(23622);
+                    me->HandleEmoteCommand(EMOTE_ONESHOT_DANCE);
+                    break;
+                case 3:
+                    STATE = 4;  //go home
+                    Player *plr = ObjectAccessor::GetPlayer(*me, player);
+                    if(plr && plr->GetQuestStatus(11129) == QUEST_STATUS_INCOMPLETE)
+                        plr->CompleteQuest(11129);
+                    float x, y, z, z2, angle;
+                    angle = me->GetAngle(-2146, -430);
+                    me->GetPosition(x,y,z);
+                    x = x + 40*cos(angle);
+                    y = y + 40*sin(angle);
+                    z2 = me->GetBaseMap()->GetHeight(x,y,MAX_HEIGHT,false);
+                    z = (z2 <= INVALID_HEIGHT) ? z : z2;
+                    me->GetMotionMaster()->MovePoint(0,x,y,z);
+                    break;
+                }
+            } else wait -= diff;
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_kyle_frenziedAI(creature);
     }
 };
 
-CreatureAI* GetAI_npc_kyle_frenzied(Creature* pCreature)
-{
-    return new npc_kyle_frenziedAI(pCreature);
-}
 
 /*#####
 # npc_plains_vision
@@ -220,10 +256,6 @@ float wp_plain_vision[50][3] =
 
 struct npc_plains_visionAI  : public ScriptedAI
 {
-    npc_plains_visionAI(Creature *c) : ScriptedAI(c)
-    {
-        despawnTimer = 900000;
-    }
 
     bool newWaypoint;
     uint8 WayPointId;
@@ -271,10 +303,72 @@ struct npc_plains_visionAI  : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_npc_plains_vision(Creature* pCreature)
+class npc_plains_vision : public CreatureScript
 {
-      return new npc_plains_visionAI(pCreature);
-}
+public:
+    npc_plains_vision() : CreatureScript("npc_plains_vision")
+    { }
+
+    class npc_plains_visionAI  : public ScriptedAI
+    {
+        public:
+        npc_plains_visionAI(Creature *c) : ScriptedAI(c)
+        {
+            despawnTimer = 900000;
+        }
+    
+        bool newWaypoint;
+        uint8 WayPointId;
+        uint8 amountWP;
+        uint32 despawnTimer;
+    
+        void Reset()
+        override {
+            WayPointId = 0;
+            newWaypoint = true;
+            amountWP  = 49;
+        }
+    
+        void EnterCombat(Unit* pWho) override {}
+    
+        void MovementInform(uint32 type, uint32 id)
+        override {
+            if(type != POINT_MOTION_TYPE)
+                return;
+    
+            if (id < amountWP)
+            {
+                ++WayPointId;
+                newWaypoint = true;
+            }
+            else
+            {
+                me->DespawnOrUnsummon();
+            }
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (despawnTimer <= diff) {
+                me->DisappearAndDie();
+            }
+            else
+                despawnTimer -= diff;
+    
+            if (newWaypoint)
+            {
+                me->GetMotionMaster()->MovePoint(WayPointId, wp_plain_vision[WayPointId][0], wp_plain_vision[WayPointId][1], wp_plain_vision[WayPointId][2]);
+                newWaypoint = false;
+            }
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_plains_visionAI(creature);
+    }
+};
+
 
 /*#####
 #
@@ -282,22 +376,11 @@ CreatureAI* GetAI_npc_plains_vision(Creature* pCreature)
 
 void AddSC_mulgore()
 {
-    OLDScript* newscript;
 
-    newscript = new OLDScript;
-    newscript->Name="npc_skorn_whitecloud";
-    newscript->OnGossipHello = &GossipHello_npc_skorn_whitecloud;
-    newscript->OnGossipSelect = &GossipSelect_npc_skorn_whitecloud;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_skorn_whitecloud();
 
-    newscript = new OLDScript;
-    newscript->Name="npc_kyle_frenzied";
-    newscript->GetAI = &GetAI_npc_kyle_frenzied;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_kyle_frenzied();
 
-    newscript = new OLDScript;
-    newscript->Name = "npc_plains_vision";
-    newscript->GetAI = &GetAI_npc_plains_vision;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_plains_vision();
 }
 

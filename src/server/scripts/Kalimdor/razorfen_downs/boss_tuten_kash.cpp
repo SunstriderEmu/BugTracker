@@ -23,69 +23,79 @@ enum Spells
     SPELL_CURSE_OF_TUTEN_KASH     = 12255,
 };
 
-struct boss_tuten_kashAI : public ScriptedAI
+
+class boss_tuten_kash : public CreatureScript
 {
-    boss_tuten_kashAI(Creature* c) : ScriptedAI(c)
+public:
+    boss_tuten_kash() : CreatureScript("boss_tuten_kash")
+    { }
+
+    class boss_tuten_kashAI : public ScriptedAI
     {
-        pInstance =(InstanceScript*)me->GetInstanceScript();
-    }
-
-    InstanceScript* pInstance;
-
-    uint32 WebSprayTimer;
-    uint32 CurseOfTutenKashTimer;
-
-    void Reset()
-    override {
-        WebSprayTimer = urand(3000, 5000);
-        CurseOfTutenKashTimer = urand(9000, 14000);
-
-        if (pInstance && pInstance->GetData(DATA_TUTEN_KASH_EVENT) != DONE)
-                pInstance->SetData(DATA_TUTEN_KASH_EVENT, NOT_STARTED);
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-        if (pInstance)
-            pInstance->SetData(DATA_TUTEN_KASH_EVENT, IN_PROGRESS);
-    }
-
-    void JustDied(Unit* Killer)
-    override {
-        if(pInstance)
-            pInstance->SetData(DATA_TUTEN_KASH_EVENT, DONE);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if(!UpdateVictim())
-            return;
-
-        if (WebSprayTimer <= diff)
+        public:
+        boss_tuten_kashAI(Creature* c) : ScriptedAI(c)
         {
-            DoCast(SelectTarget(SELECT_TARGET_RANDOM, 0, 30.0f, true), SPELL_WEB_SPRAY);
-            WebSprayTimer = urand(6000, 8000);
+            pInstance =(InstanceScript*)me->GetInstanceScript();
         }
-        else
-            WebSprayTimer -= diff;
-
-        if (CurseOfTutenKashTimer <= diff)
-        {
-            me->InterruptNonMeleeSpells(false);
-            DoCast(me, SPELL_CURSE_OF_TUTEN_KASH);
-            CurseOfTutenKashTimer = urand(15000, 25000);
+    
+        InstanceScript* pInstance;
+    
+        uint32 WebSprayTimer;
+        uint32 CurseOfTutenKashTimer;
+    
+        void Reset()
+        override {
+            WebSprayTimer = urand(3000, 5000);
+            CurseOfTutenKashTimer = urand(9000, 14000);
+    
+            if (pInstance && pInstance->GetData(DATA_TUTEN_KASH_EVENT) != DONE)
+                    pInstance->SetData(DATA_TUTEN_KASH_EVENT, NOT_STARTED);
         }
-        else
-            CurseOfTutenKashTimer -= diff;
+    
+        void EnterCombat(Unit *who)
+        override {
+            if (pInstance)
+                pInstance->SetData(DATA_TUTEN_KASH_EVENT, IN_PROGRESS);
+        }
+    
+        void JustDied(Unit* Killer)
+        override {
+            if(pInstance)
+                pInstance->SetData(DATA_TUTEN_KASH_EVENT, DONE);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if(!UpdateVictim())
+                return;
+    
+            if (WebSprayTimer <= diff)
+            {
+                DoCast(SelectTarget(SELECT_TARGET_RANDOM, 0, 30.0f, true), SPELL_WEB_SPRAY);
+                WebSprayTimer = urand(6000, 8000);
+            }
+            else
+                WebSprayTimer -= diff;
+    
+            if (CurseOfTutenKashTimer <= diff)
+            {
+                me->InterruptNonMeleeSpells(false);
+                DoCast(me, SPELL_CURSE_OF_TUTEN_KASH);
+                CurseOfTutenKashTimer = urand(15000, 25000);
+            }
+            else
+                CurseOfTutenKashTimer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_tuten_kashAI(creature);
     }
 };
 
-CreatureAI* GetAI_boss_tuten_kash(Creature *_Creature)
-{
-    return new boss_tuten_kashAI(_Creature);
-}
 
 class Gong : public GameObjectScript
 {
@@ -154,11 +164,7 @@ public:
 
 void AddSC_boss_tuten_kash()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_tuten_kash";
-    newscript->GetAI = &GetAI_boss_tuten_kash;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_tuten_kash();
 
     new Gong();
 }

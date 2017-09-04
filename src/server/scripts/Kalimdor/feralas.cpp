@@ -30,31 +30,57 @@ EndScriptData */
 
 #define GOSSIP_HELLO "Buy somethin', will ya?"
 
-bool GossipHello_npc_gregan_brewspewer(Player* pPlayer, Creature* pCreature)
+class npc_gregan_brewspewer : public CreatureScript
 {
-    if (pCreature->IsQuestGiver())
-        pPlayer->PrepareQuestMenu(pCreature->GetGUID());
+public:
+    npc_gregan_brewspewer() : CreatureScript("npc_gregan_brewspewer")
+    { }
 
-    if (pCreature->IsVendor() && pPlayer->GetQuestStatus(3909) == QUEST_STATUS_INCOMPLETE)
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HELLO, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-
-    pPlayer->SEND_GOSSIP_MENU_TEXTID(2433, pCreature->GetGUID());
-    
-    return true;
-}
-
-bool GossipSelect_npc_gregan_brewspewer(Player* pPlayer, Creature* pCreature, uint32 sender, uint32 action )
-{
-    if (action == GOSSIP_ACTION_INFO_DEF+1)
+    class npc_gregan_brewspewerAI : public ScriptedAI
     {
-        pPlayer->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
-        pPlayer->SEND_GOSSIP_MENU_TEXTID(2434, pCreature->GetGUID());
+    public:
+        npc_gregan_brewspewerAI(Creature* creature) : ScriptedAI(creature)
+        {}
+
+
+        virtual bool GossipHello(Player* pPlayer) override
+        {
+            if (me->IsQuestGiver())
+                pPlayer->PrepareQuestMenu(me->GetGUID());
+
+            if (me->IsVendor() && pPlayer->GetQuestStatus(3909) == QUEST_STATUS_INCOMPLETE)
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HELLO, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+
+            pPlayer->SEND_GOSSIP_MENU_TEXTID(2433, me->GetGUID());
+            
+            return true;
+
+        }
+
+
+        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        {
+            if (action == GOSSIP_ACTION_INFO_DEF+1)
+            {
+                pPlayer->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
+                pPlayer->SEND_GOSSIP_MENU_TEXTID(2434, me->GetGUID());
+            }
+            if (action == GOSSIP_ACTION_TRADE)
+                pPlayer->SEND_VENDORLIST(me->GetGUID());
+                
+            return true;
+
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_gregan_brewspewerAI(creature);
     }
-    if (action == GOSSIP_ACTION_TRADE)
-        pPlayer->SEND_VENDORLIST(pCreature->GetGUID());
-        
-    return true;
-}
+};
+
+
 
 /*######
 ## npc_oox22fe
@@ -81,101 +107,135 @@ enum eOOX
     FACTION_ESCORTEE_H      = 775
 };
 
-struct npc_oox22feAI : public npc_escortAI
+
+class npc_oox22fe : public CreatureScript
 {
-    npc_oox22feAI(Creature* pCreature) : npc_escortAI(pCreature) { }
+public:
+    npc_oox22fe() : CreatureScript("npc_oox22fe")
+    { }
 
-    void WaypointReached(uint32 i)
-    override {
-        switch (i)
-        {
-            // First Ambush(3 Yetis)
-            case 11:
-                DoScriptText(SAY_OOX_AMBUSH, me);
-                for (uint8 j = 0; j < 3; ++j)
-                    me->SummonCreature(NPC_YETI, -4887.69, 1598.1, 67.45, 0.68, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
-                break;
-            //Second Ambush(3 Gorillas)
-            case 21:
-                DoScriptText(SAY_OOX_AMBUSH, me);
-                for (uint8 j = 0; j < 3; ++j)
-                    me->SummonCreature(NPC_GORILLA, -4599.37, 2010.59, 52.77, 3.84, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
-                break;
-            //Third Ambush(4 Gnolls)
-            case 30:
-                DoScriptText(SAY_OOX_AMBUSH, me);
-                me->SummonCreature(NPC_WOODPAW_REAVER, -4425.14, 2075.87, 47.77, 3.77, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
-                me->SummonCreature(NPC_WOODPAW_BRUTE , -4426.68, 2077.98, 47.57, 3.77, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
-                me->SummonCreature(NPC_WOODPAW_MYSTIC, -4428.33, 2080.24, 47.43, 3.87, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
-                me->SummonCreature(NPC_WOODPAW_ALPHA , -4430.04, 2075.54, 46.83, 3.81, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
-                break;
-            case 37:
-                DoScriptText(SAY_OOX_END, me);
-                if (Player* pPlayer = GetPlayerForEscort())
-                    pPlayer->GroupEventHappens(QUEST_RESCUE_OOX22FE, me);
-                break;
+    class npc_oox22feAI : public npc_escortAI
+    {
+        public:
+        npc_oox22feAI(Creature* pCreature) : npc_escortAI(pCreature) { }
+    
+        void WaypointReached(uint32 i)
+        override {
+            switch (i)
+            {
+                // First Ambush(3 Yetis)
+                case 11:
+                    DoScriptText(SAY_OOX_AMBUSH, me);
+                    for (uint8 j = 0; j < 3; ++j)
+                        me->SummonCreature(NPC_YETI, -4887.69, 1598.1, 67.45, 0.68, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
+                    break;
+                //Second Ambush(3 Gorillas)
+                case 21:
+                    DoScriptText(SAY_OOX_AMBUSH, me);
+                    for (uint8 j = 0; j < 3; ++j)
+                        me->SummonCreature(NPC_GORILLA, -4599.37, 2010.59, 52.77, 3.84, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
+                    break;
+                //Third Ambush(4 Gnolls)
+                case 30:
+                    DoScriptText(SAY_OOX_AMBUSH, me);
+                    me->SummonCreature(NPC_WOODPAW_REAVER, -4425.14, 2075.87, 47.77, 3.77, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
+                    me->SummonCreature(NPC_WOODPAW_BRUTE , -4426.68, 2077.98, 47.57, 3.77, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
+                    me->SummonCreature(NPC_WOODPAW_MYSTIC, -4428.33, 2080.24, 47.43, 3.87, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
+                    me->SummonCreature(NPC_WOODPAW_ALPHA , -4430.04, 2075.54, 46.83, 3.81, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
+                    break;
+                case 37:
+                    DoScriptText(SAY_OOX_END, me);
+                    if (Player* pPlayer = GetPlayerForEscort())
+                        pPlayer->GroupEventHappens(QUEST_RESCUE_OOX22FE, me);
+                    break;
+            }
         }
-    }
+    
+        void Reset()
+        override {
+            if (!HasEscortState(STATE_ESCORT_ESCORTING))
+                me->SetStandState(UNIT_STAND_STATE_DEAD);
+        }
+    
+        void EnterCombat(Unit* pWho)
+        override {
+            if (pWho->GetEntry() == NPC_YETI || pWho->GetEntry() == NPC_GORILLA || pWho->GetEntry() == NPC_WOODPAW_REAVER ||
+                    pWho->GetEntry() == NPC_WOODPAW_BRUTE || pWho->GetEntry() == NPC_WOODPAW_MYSTIC)
+                return;
+            DoScriptText(RAND(SAY_OOX_AGGRO1,SAY_OOX_AGGRO2), me);
+        }
+    
+        void JustSummoned(Creature* summoned)
+        override {
+            summoned->AI()->AttackStart(me);
+        }
 
-    void Reset()
-    override {
-        if (!HasEscortState(STATE_ESCORT_ESCORTING))
-            me->SetStandState(UNIT_STAND_STATE_DEAD);
-    }
+        virtual void QuestAccept(Player* pPlayer, Quest const* pQuest) override
+        {
+            if (pQuest->GetQuestId() == QUEST_RESCUE_OOX22FE)
+            {
+                me->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
+                me->SetHealth(me->GetMaxHealth());
+                me->SetUInt32Value(UNIT_FIELD_BYTES_1,0);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
+                DoScriptText(SAY_OOX_START, me);
 
-    void EnterCombat(Unit* pWho)
-    override {
-        if (pWho->GetEntry() == NPC_YETI || pWho->GetEntry() == NPC_GORILLA || pWho->GetEntry() == NPC_WOODPAW_REAVER ||
-                pWho->GetEntry() == NPC_WOODPAW_BRUTE || pWho->GetEntry() == NPC_WOODPAW_MYSTIC)
-            return;
-        DoScriptText(RAND(SAY_OOX_AGGRO1,SAY_OOX_AGGRO2), me);
-    }
+                if (npc_escortAI* pEscortAI = CAST_AI(npc_oox22feAI, me->AI()))
+                    pEscortAI->Start(true, false, pPlayer->GetGUID());
 
-    void JustSummoned(Creature* summoned)
-    override {
-        summoned->AI()->AttackStart(me);
+            }
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_oox22feAI(creature);
     }
 };
 
-CreatureAI* GetAI_npc_oox22fe(Creature* pCreature)
-{
-    return new npc_oox22feAI(pCreature);
-}
 
-bool QuestAccept_npc_oox22fe(Player* pPlayer, Creature* pCreature, const Quest* pQuest)
-{
-    if (pQuest->GetQuestId() == QUEST_RESCUE_OOX22FE)
-    {
-        pCreature->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
-        pCreature->SetHealth(pCreature->GetMaxHealth());
-        pCreature->SetUInt32Value(UNIT_FIELD_BYTES_1,0);
-        pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
-        DoScriptText(SAY_OOX_START, pCreature);
-
-        if (npc_escortAI* pEscortAI = CAST_AI(npc_oox22feAI, pCreature->AI()))
-            pEscortAI->Start(true, false, pPlayer->GetGUID());
-
-    }
-    return true;
-}
 
 /*######
 ## npc_screecher_spirit
 ######*/
 
-bool GossipHello_npc_screecher_spirit(Player* pPlayer, Creature* pCreature)
+class npc_screecher_spirit : public CreatureScript
 {
-    if (Creature* screecher = pCreature->FindNearestCreature(5307, 2.0f, false))
-        screecher->RemoveCorpse();
-    else if (Creature* screecher = pCreature->FindNearestCreature(5308, 2.0f, false))
-        screecher->RemoveCorpse();
+public:
+    npc_screecher_spirit() : CreatureScript("npc_screecher_spirit")
+    { }
 
-    pPlayer->SEND_GOSSIP_MENU_TEXTID(2039, pCreature->GetGUID() );
-    pPlayer->TalkedToCreature(pCreature->GetEntry(), pCreature->GetGUID());
-    pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+    class npc_screecher_spiritAI : public ScriptedAI
+    {
+    public:
+        npc_screecher_spiritAI(Creature* creature) : ScriptedAI(creature)
+        {}
 
-    return true;
-}
+
+        virtual bool GossipHello(Player* pPlayer) override
+        {
+            if (Creature* screecher = me->FindNearestCreature(5307, 2.0f, false))
+                screecher->RemoveCorpse();
+            else if (Creature* screecher = me->FindNearestCreature(5308, 2.0f, false))
+                screecher->RemoveCorpse();
+
+            pPlayer->SEND_GOSSIP_MENU_TEXTID(2039, me->GetGUID() );
+            pPlayer->TalkedToCreature(me->GetEntry(), me->GetGUID());
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+
+            return true;
+
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_screecher_spiritAI(creature);
+    }
+};
+
 
 /*######
 ## AddSC
@@ -183,23 +243,11 @@ bool GossipHello_npc_screecher_spirit(Player* pPlayer, Creature* pCreature)
 
 void AddSC_feralas()
 {
-    OLDScript* newscript;
 
-    newscript = new OLDScript;
-    newscript->Name="npc_gregan_brewspewer";
-    newscript->OnGossipHello = &GossipHello_npc_gregan_brewspewer;
-    newscript->OnGossipSelect = &GossipSelect_npc_gregan_brewspewer;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_gregan_brewspewer();
 
-    newscript = new OLDScript;
-    newscript->Name = "npc_oox22fe";
-    newscript->GetAI = &GetAI_npc_oox22fe;
-    newscript->OnQuestAccept = &QuestAccept_npc_oox22fe;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_oox22fe();
 
-    newscript = new OLDScript;
-    newscript->Name="npc_screecher_spirit";
-    newscript->OnGossipHello = &GossipHello_npc_screecher_spirit;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_screecher_spirit();
 }
 

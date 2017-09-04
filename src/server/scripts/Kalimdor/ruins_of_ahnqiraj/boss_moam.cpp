@@ -50,113 +50,119 @@ enum CombatPhase
     STONE
 };
 
-struct boss_moamAI : public ScriptedAI
+
+class boss_moam : public CreatureScript
 {
-    boss_moamAI(Creature *c) : ScriptedAI(c)
+public:
+    boss_moam() : CreatureScript("boss_moam")
+    { }
+
+    class boss_moamAI : public ScriptedAI
     {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-    }
-
-    uint32 uiTrampleTimer;
-    uint32 uiDrainManaTimer;
-    uint32 uiPhaseTimer;
-    CombatPhase Phase;
-
-    InstanceScript *pInstance;
-
-    void Reset()
-    override {
-        uiTrampleTimer = urand(3000,7000);
-        uiDrainManaTimer = urand(3000,7000);
-        uiPhaseTimer = 90000;
-        Phase = NORMALPHASE;
-        me->SetPower(POWER_MANA,0);
-
-        if (pInstance)
-            pInstance->SetData(DATA_MOAM_EVENT, NOT_STARTED);
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-        DoScriptText(EMOTE_AGGRO, me);
-
-        if (pInstance)
-            pInstance->SetData(DATA_MOAM_EVENT, IN_PROGRESS);
-    }
-
-    void JustDied(Unit *killer)
-    override {
-        if (pInstance)
-            pInstance->SetData(DATA_MOAM_EVENT, DONE);
-    }
-
-    void DrainMana()
-    {
-        for (uint8 i=0;i<6;++i)
+        public:
+        boss_moamAI(Creature *c) : ScriptedAI(c)
         {
-            if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM,0,100,true))
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
+        }
+    
+        uint32 uiTrampleTimer;
+        uint32 uiDrainManaTimer;
+        uint32 uiPhaseTimer;
+        CombatPhase Phase;
+    
+        InstanceScript *pInstance;
+    
+        void Reset()
+        override {
+            uiTrampleTimer = urand(3000,7000);
+            uiDrainManaTimer = urand(3000,7000);
+            uiPhaseTimer = 90000;
+            Phase = NORMALPHASE;
+            me->SetPower(POWER_MANA,0);
+    
+            if (pInstance)
+                pInstance->SetData(DATA_MOAM_EVENT, NOT_STARTED);
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+            DoScriptText(EMOTE_AGGRO, me);
+    
+            if (pInstance)
+                pInstance->SetData(DATA_MOAM_EVENT, IN_PROGRESS);
+        }
+    
+        void JustDied(Unit *killer)
+        override {
+            if (pInstance)
+                pInstance->SetData(DATA_MOAM_EVENT, DONE);
+        }
+    
+        void DrainMana()
+        {
+            for (uint8 i=0;i<6;++i)
             {
-                pTarget->ModifyPower(POWER_MANA, -500);
-                me->ModifyPower(POWER_MANA, 1000);
+                if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM,0,100,true))
+                {
+                    pTarget->ModifyPower(POWER_MANA, -500);
+                    me->ModifyPower(POWER_MANA, 1000);
+                }
             }
         }
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (Phase == NORMALPHASE)
-        {
-            if (!UpdateVictim())
-                return;
-            
-            //If we are 100%MANA cast Arcane Erruption
-            if (me->GetPower(POWER_MANA) == me->GetMaxPower(POWER_MANA))
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (Phase == NORMALPHASE)
             {
-                DoCast(me->GetVictim(),SPELL_ARCANEERUPTION);
-                DoScriptText(EMOTE_MANA_FULL, me);
-                me->SetPower(POWER_MANA,0);
+                if (!UpdateVictim())
+                    return;
+                
+                //If we are 100%MANA cast Arcane Erruption
+                if (me->GetPower(POWER_MANA) == me->GetMaxPower(POWER_MANA))
+                {
+                    DoCast(me->GetVictim(),SPELL_ARCANEERUPTION);
+                    DoScriptText(EMOTE_MANA_FULL, me);
+                    me->SetPower(POWER_MANA,0);
+                }
+                
+                //Trample Spell
+                if (uiTrampleTimer < diff)
+                {
+                    DoCast(me->GetVictim(),SPELL_TRAMPLE);
+                    uiTrampleTimer = urand(3000,7000);
+                } else uiTrampleTimer -= diff;
+                
+                //Drain Mana
+                if (uiDrainManaTimer < diff)
+                {
+                    DrainMana();
+                    uiDrainManaTimer = urand(3000,7000);
+                } else uiDrainManaTimer -= diff;
+                
+                DoMeleeAttackIfReady();
+                
+                //After 90secs change phase
+                if (uiPhaseTimer < diff)
+                {
+                    Phase = STONE;
+                    DoCast(me,SPELL_SUMMONMANA);
+                    DoCast(me,SPELL_SUMMONMANA);
+                    DoCast(me,SPELL_SUMMONMANA);
+                    DoCast(me,SPELL_GRDRSLEEP);
+                } else uiPhaseTimer -= diff;
             }
-            
-            //Trample Spell
-            if (uiTrampleTimer < diff)
-            {
-                DoCast(me->GetVictim(),SPELL_TRAMPLE);
-                uiTrampleTimer = urand(3000,7000);
-            } else uiTrampleTimer -= diff;
-            
-            //Drain Mana
-            if (uiDrainManaTimer < diff)
-            {
-                DrainMana();
-                uiDrainManaTimer = urand(3000,7000);
-            } else uiDrainManaTimer -= diff;
-            
-            DoMeleeAttackIfReady();
-            
-            //After 90secs change phase
-            if (uiPhaseTimer < diff)
-            {
-                Phase = STONE;
-                DoCast(me,SPELL_SUMMONMANA);
-                DoCast(me,SPELL_SUMMONMANA);
-                DoCast(me,SPELL_SUMMONMANA);
-                DoCast(me,SPELL_GRDRSLEEP);
-            } else uiPhaseTimer -= diff;
         }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_moamAI(creature);
     }
 };
 
-CreatureAI* GetAI_boss_moam(Creature *_Creature)
-{
-    return new boss_moamAI (_Creature);
-}
 
 void AddSC_boss_moam()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_moam";
-    newscript->GetAI = &GetAI_boss_moam;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_moam();
 }
 

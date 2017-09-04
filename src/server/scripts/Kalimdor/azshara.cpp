@@ -36,120 +36,156 @@ EndContentData */
 ## mobs_spitelashes
 ######*/
 
-struct mobs_spitelashesAI : public ScriptedAI
+class mobs_spitelashes : public CreatureScript
 {
-    mobs_spitelashesAI(Creature *c) : ScriptedAI(c) {}
+public:
+    mobs_spitelashes() : CreatureScript("mobs_spitelashes")
+    { }
 
-    uint32 morphtimer;
-    bool spellhit;
-
-    void Reset() override
+    class mobs_spitelashesAI : public ScriptedAI
     {
-        morphtimer = 0;
-        spellhit = false;
-    }
-
-    void SpellHit(Unit *Hitter, const SpellInfo *Spellkind) override
-    {
-        if( !spellhit &&
-            Hitter->GetTypeId() == TYPEID_PLAYER &&
-            (Hitter->ToPlayer())->GetQuestStatus(9364) == QUEST_STATUS_INCOMPLETE &&
-            (Spellkind->Id==118 || Spellkind->Id== 12824 || Spellkind->Id== 12825 || Spellkind->Id== 12826) )
+        public:
+        mobs_spitelashesAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 morphtimer;
+        bool spellhit;
+    
+        void Reset() override
         {
-            spellhit=true;
-            DoCast(me,29124);                       //become a sheep
+            morphtimer = 0;
+            spellhit = false;
         }
-    }
-
-    void UpdateAI(const uint32 diff) override
-    {
-        // we mustn't remove the creature in the same round in which we cast the summon spell, otherwise there will be no summons
-        if( spellhit && morphtimer>=5000 )
+    
+        void SpellHit(Unit *Hitter, const SpellInfo *Spellkind) override
         {
-            me->DespawnOrUnsummon();
-            EnterEvadeMode();                               //spellhit will be set to false
-            return;
-        }
-        // walk 5 seconds before summoning
-        if( spellhit && morphtimer<5000 )
-        {
-            morphtimer+=diff;
-            if( morphtimer>=5000 )
+            if( !spellhit &&
+                Hitter->GetTypeId() == TYPEID_PLAYER &&
+                (Hitter->ToPlayer())->GetQuestStatus(9364) == QUEST_STATUS_INCOMPLETE &&
+                (Spellkind->Id==118 || Spellkind->Id== 12824 || Spellkind->Id== 12825 || Spellkind->Id== 12826) )
             {
-                DoCast(me,28406);                   //summon copies
-                DoCast(me,6924);                    //visual explosion
+                spellhit=true;
+                DoCast(me,29124);                       //become a sheep
             }
         }
-        if (!UpdateVictim() )
-            return;
+    
+        void UpdateAI(const uint32 diff) override
+        {
+            // we mustn't remove the creature in the same round in which we cast the summon spell, otherwise there will be no summons
+            if( spellhit && morphtimer>=5000 )
+            {
+                me->DespawnOrUnsummon();
+                EnterEvadeMode();                               //spellhit will be set to false
+                return;
+            }
+            // walk 5 seconds before summoning
+            if( spellhit && morphtimer<5000 )
+            {
+                morphtimer+=diff;
+                if( morphtimer>=5000 )
+                {
+                    DoCast(me,28406);                   //summon copies
+                    DoCast(me,6924);                    //visual explosion
+                }
+            }
+            if (!UpdateVictim() )
+                return;
+    
+            //TODO: add abilities for the different creatures
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        //TODO: add abilities for the different creatures
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new mobs_spitelashesAI(creature);
     }
 };
-CreatureAI* GetAI_mobs_spitelashes(Creature *pCreature)
-{
-    return new mobs_spitelashesAI (pCreature);
-}
+
 
 /*######
 ## npc_loramus_thalipedes
 ######*/
 
-bool GossipHello_npc_loramus_thalipedes(Player *pPlayer, Creature *pCreature)
+class npc_loramus_thalipedes : public CreatureScript
 {
-    if (pCreature->IsQuestGiver())
-        pPlayer->PrepareQuestMenu(pCreature->GetGUID());
+public:
+    npc_loramus_thalipedes() : CreatureScript("npc_loramus_thalipedes")
+    { }
 
-    //TODO translate
-    if (pPlayer->GetQuestStatus(2744) == QUEST_STATUS_INCOMPLETE)
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Pouvez-vous m'aider ?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-
-    if (pPlayer->GetQuestStatus(3141) == QUEST_STATUS_INCOMPLETE)
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Racontez-moi votre histoire", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-    
-    SEND_PREPARED_GOSSIP_MENU(pPlayer, pCreature);
-
-    return true;
-}
-
-bool GossipSelect_npc_loramus_thalipedes(Player *pPlayer, Creature *pCreature, uint32 sender, uint32 action)
-{
-    //TODO translate
-    switch (action)
+    class npc_loramus_thalipedesAI : public ScriptedAI
     {
-        case GOSSIP_ACTION_INFO_DEF+1:
-            pPlayer->CLOSE_GOSSIP_MENU();
-            pPlayer->AreaExploredOrEventHappens(2744);
-            break;
+    public:
+        npc_loramus_thalipedesAI(Creature* creature) : ScriptedAI(creature)
+        {}
 
-        case GOSSIP_ACTION_INFO_DEF+2:
-            pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, "Continuez", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 21);
-            pPlayer->SEND_GOSSIP_MENU_TEXTID(1813, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+21:
-            pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, "Je ne comprends pas", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 22);
-            pPlayer->SEND_GOSSIP_MENU_TEXTID(1814, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+22:
-            pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, "En effet", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 23);
-            pPlayer->SEND_GOSSIP_MENU_TEXTID(1815, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+23:
-            pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, "Je ferai ceci avec ou sans votre aide, Loramus", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 24);
-            pPlayer->SEND_GOSSIP_MENU_TEXTID(1816, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+24:
-            pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, "Oui", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 25);
-            pPlayer->SEND_GOSSIP_MENU_TEXTID(1817, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+25:
-            pPlayer->CLOSE_GOSSIP_MENU();
-            pPlayer->AreaExploredOrEventHappens(3141);
-            break;
+
+        virtual bool GossipHello(Player* pPlayer) override
+        {
+            if (me->IsQuestGiver())
+                pPlayer->PrepareQuestMenu(me->GetGUID());
+
+            //TODO translate
+            if (pPlayer->GetQuestStatus(2744) == QUEST_STATUS_INCOMPLETE)
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Pouvez-vous m'aider ?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+
+            if (pPlayer->GetQuestStatus(3141) == QUEST_STATUS_INCOMPLETE)
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Racontez-moi votre histoire", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+            
+            SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
+
+            return true;
+
+        }
+
+
+        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        {
+            //TODO translate
+            switch (action)
+            {
+                case GOSSIP_ACTION_INFO_DEF+1:
+                    pPlayer->CLOSE_GOSSIP_MENU();
+                    pPlayer->AreaExploredOrEventHappens(2744);
+                    break;
+
+                case GOSSIP_ACTION_INFO_DEF+2:
+                    pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, "Continuez", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 21);
+                    pPlayer->SEND_GOSSIP_MENU_TEXTID(1813, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF+21:
+                    pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, "Je ne comprends pas", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 22);
+                    pPlayer->SEND_GOSSIP_MENU_TEXTID(1814, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF+22:
+                    pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, "En effet", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 23);
+                    pPlayer->SEND_GOSSIP_MENU_TEXTID(1815, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF+23:
+                    pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, "Je ferai ceci avec ou sans votre aide, Loramus", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 24);
+                    pPlayer->SEND_GOSSIP_MENU_TEXTID(1816, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF+24:
+                    pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, "Oui", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 25);
+                    pPlayer->SEND_GOSSIP_MENU_TEXTID(1817, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF+25:
+                    pPlayer->CLOSE_GOSSIP_MENU();
+                    pPlayer->AreaExploredOrEventHappens(3141);
+                    break;
+            }
+            return true;
+
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_loramus_thalipedesAI(creature);
     }
-    return true;
-}
+};
+
+
 
 /*####
 # mob_rizzle_sprysprocket
@@ -238,279 +274,289 @@ float WPs[58][4] =
 	{ 1873.57f, -3695.32f, 33.9118f, 3.44f }
 };
 
-struct mob_rizzle_sprysprocketAI : public ScriptedAI
+
+class mob_rizzle_sprysprocket : public CreatureScript
 {
-    mob_rizzle_sprysprocketAI(Creature *c) : ScriptedAI(c) {}
+public:
+    mob_rizzle_sprysprocket() : CreatureScript("mob_rizzle_sprysprocket")
+    { }
 
-    uint32 spellEscape_Timer;
-    uint32 Teleport_Timer;
-    uint32 Check_Timer;
-    uint32 Grenade_Timer;
-    uint32 Must_Die_Timer;
-    uint32 CurrWP;
-
-    uint64 PlayerGUID;
-
-    bool Must_Die;
-    bool Escape;
-    bool ContinueWP;
-    bool Reached;
-
-    void Reset() override
+    class mob_rizzle_sprysprocketAI : public ScriptedAI
     {
-        spellEscape_Timer = 1300;
-        Teleport_Timer = 3500;
-        Check_Timer = 10000;
-        Grenade_Timer = 30000;
-        Must_Die_Timer = 3000;
-        CurrWP = 0;
-
-        PlayerGUID = 0;
-
-        Must_Die = false;
-        Escape = false;
-        ContinueWP = false;
-        Reached = false;
-    }
-
-    void Despawn()
-    {
-        me->DespawnOrUnsummon();
-    }
-
-    void UpdateAI(const uint32 diff) override
-    {
-        if(Must_Die)
+        public:
+        mob_rizzle_sprysprocketAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 spellEscape_Timer;
+        uint32 Teleport_Timer;
+        uint32 Check_Timer;
+        uint32 Grenade_Timer;
+        uint32 Must_Die_Timer;
+        uint32 CurrWP;
+    
+        uint64 PlayerGUID;
+    
+        bool Must_Die;
+        bool Escape;
+        bool ContinueWP;
+        bool Reached;
+    
+        void Reset() override
         {
-            if(Must_Die_Timer < diff)
-            {
-                Despawn();
-                return;
-            } else { Must_Die_Timer -= diff; }
-        }
-        
-        if(!Escape)
-        {
-            if(!PlayerGUID)
-                return;
-
-            if(spellEscape_Timer < diff)
-            {
-                DoCast(me, SPELL_RIZZLE_ESCAPE, false);
-                spellEscape_Timer = 10000;
-            } else spellEscape_Timer -= diff;
-
-            if(Teleport_Timer < diff)
-            {
-                //temp solution - unit can't be teleported by core using spelleffect 5, only players
-                Map *map = me->GetMap();
-                if(map)
-                {
-                    map->CreatureRelocation(me, 3706.39, -3969.15, 35.9118, 0);
-                    //me->AI_SendMoveToPacket(3706.39, -3969.15, 35.9118, 0, 0, 0);
-                }
-                //begin swimming and summon depth charges
-                Player* player = ObjectAccessor::GetPlayer(*me, PlayerGUID);
-                SendText(MSG_ESCAPE_NOTICE, player);
-                DoCast(me, SPELL_PERIODIC_DEPTH_CHARGE);
-                me->SetDisableGravity(true);
-                me->SetSwim(true);
-                me->SetSpeedRate(MOVE_RUN, 0.85f, true);
-                me->GetMotionMaster()->MovementExpired();
-                me->GetMotionMaster()->MovePoint(CurrWP, WPs[CurrWP][0], WPs[CurrWP][1], WPs[CurrWP][2]);
-                Escape = true;
-            } else Teleport_Timer -= diff;
-
-            return;
-        }
-
-        if(ContinueWP)
-        {
-            me->GetMotionMaster()->MovePoint(CurrWP, WPs[CurrWP][0], WPs[CurrWP][1], WPs[CurrWP][2]);
-            ContinueWP = false;
-        }
-
-        if(Grenade_Timer < diff)
-        {
-            Player *player = (Player*)ObjectAccessor::GetUnit((*me), PlayerGUID);
-            if(player)
-            {
-               DoScriptText(SAY_RIZZLE_GRENADE, me, player);
-               DoCast(player, SPELL_RIZZLE_FROST_GRENADE, true);
-            }
+            spellEscape_Timer = 1300;
+            Teleport_Timer = 3500;
+            Check_Timer = 10000;
             Grenade_Timer = 30000;
-        } else Grenade_Timer -= diff;
-
-        if(Check_Timer < diff)
+            Must_Die_Timer = 3000;
+            CurrWP = 0;
+    
+            PlayerGUID = 0;
+    
+            Must_Die = false;
+            Escape = false;
+            ContinueWP = false;
+            Reached = false;
+        }
+    
+        void Despawn()
         {
-            Player *player = (Player*)ObjectAccessor::GetUnit((*me), PlayerGUID);
-            if(!player)
+            me->DespawnOrUnsummon();
+        }
+    
+        void UpdateAI(const uint32 diff) override
+        {
+            if(Must_Die)
+            {
+                if(Must_Die_Timer < diff)
+                {
+                    Despawn();
+                    return;
+                } else { Must_Die_Timer -= diff; }
+            }
+            
+            if(!Escape)
+            {
+                if(!PlayerGUID)
+                    return;
+    
+                if(spellEscape_Timer < diff)
+                {
+                    DoCast(me, SPELL_RIZZLE_ESCAPE, false);
+                    spellEscape_Timer = 10000;
+                } else spellEscape_Timer -= diff;
+    
+                if(Teleport_Timer < diff)
+                {
+                    //temp solution - unit can't be teleported by core using spelleffect 5, only players
+                    Map *map = me->GetMap();
+                    if(map)
+                    {
+                        map->CreatureRelocation(me, 3706.39, -3969.15, 35.9118, 0);
+                        //me->AI_SendMoveToPacket(3706.39, -3969.15, 35.9118, 0, 0, 0);
+                    }
+                    //begin swimming and summon depth charges
+                    Player* player = ObjectAccessor::GetPlayer(*me, PlayerGUID);
+                    SendText(MSG_ESCAPE_NOTICE, player);
+                    DoCast(me, SPELL_PERIODIC_DEPTH_CHARGE);
+                    me->SetDisableGravity(true);
+                    me->SetSwim(true);
+                    me->SetSpeedRate(MOVE_RUN, 0.85f, true);
+                    me->GetMotionMaster()->MovementExpired();
+                    me->GetMotionMaster()->MovePoint(CurrWP, WPs[CurrWP][0], WPs[CurrWP][1], WPs[CurrWP][2]);
+                    Escape = true;
+                } else Teleport_Timer -= diff;
+    
+                return;
+            }
+    
+            if(ContinueWP)
+            {
+                me->GetMotionMaster()->MovePoint(CurrWP, WPs[CurrWP][0], WPs[CurrWP][1], WPs[CurrWP][2]);
+                ContinueWP = false;
+            }
+    
+            if(Grenade_Timer < diff)
+            {
+                Player *player = (Player*)ObjectAccessor::GetUnit((*me), PlayerGUID);
+                if(player)
+                {
+                   DoScriptText(SAY_RIZZLE_GRENADE, me, player);
+                   DoCast(player, SPELL_RIZZLE_FROST_GRENADE, true);
+                }
+                Grenade_Timer = 30000;
+            } else Grenade_Timer -= diff;
+    
+            if(Check_Timer < diff)
+            {
+                Player *player = (Player*)ObjectAccessor::GetUnit((*me), PlayerGUID);
+                if(!player)
+                {
+                    Despawn();
+                    return;
+                }
+                float dist = me->GetDistance(player);
+                if(dist < 10 && me->GetPositionX() > player->GetPositionX() && !Reached)
+                {
+                    DoScriptText(SAY_RIZZLE_FINAL, me);
+                    me->SetUInt32Value(UNIT_NPC_FLAGS, 1);
+                    me->SetFaction(FACTION_FRIENDLY);
+                    me->GetMotionMaster()->MoveIdle();
+                    me->RemoveAurasDueToSpell(SPELL_PERIODIC_DEPTH_CHARGE);
+                    Reached = true;
+                }
+    
+                Check_Timer = 1000;
+            } else Check_Timer -= diff;
+    
+        }
+    
+        void SendText(const char *text, Player* player)
+        {
+            WorldPacket data(SMSG_SERVER_MESSAGE, 0);              // guess size
+            data << text;
+            if(player)
+                player->GetSession()->SendPacket(&data);
+        }
+    
+        void AttackStart(Unit *who) override
+        {
+            if (!who || PlayerGUID)
+                return;
+    
+            if(who->GetTypeId() == TYPEID_PLAYER && (who->ToPlayer())->GetQuestStatus(10994) == QUEST_STATUS_INCOMPLETE)
+            {
+                PlayerGUID = who->GetGUID();
+                DoScriptText(SAY_RIZZLE_START, me);
+                DoCast(who, SPELL_RIZZLE_BLACKJACK, false);
+                return;
+            }
+        }
+    
+        void MovementInform(uint32 type, uint32 id) override
+        {
+            if (type != POINT_MOTION_TYPE)
+                return;
+    
+            if(id == 57)
             {
                 Despawn();
                 return;
             }
-            float dist = me->GetDistance(player);
-            if(dist < 10 && me->GetPositionX() > player->GetPositionX() && !Reached)
+    
+            ++CurrWP;
+            ContinueWP = true;
+        }
+    
+
+        virtual bool GossipHello(Player* pPlayer) override
+        {
+            if(pPlayer->GetQuestStatus(10994) != QUEST_STATUS_INCOMPLETE)
+                return true;
+            pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_GET_MOONSTONE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+            pPlayer->SEND_GOSSIP_MENU_TEXTID(10811,me->GetGUID());
+            return true;
+
+        }
+
+
+        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        {
+            if (action == GOSSIP_ACTION_INFO_DEF + 1 && pPlayer->GetQuestStatus(10994) == QUEST_STATUS_INCOMPLETE)
             {
-                DoScriptText(SAY_RIZZLE_FINAL, me);
-                me->SetUInt32Value(UNIT_NPC_FLAGS, 1);
-                me->SetFaction(FACTION_FRIENDLY);
-                me->GetMotionMaster()->MoveIdle();
-                me->RemoveAurasDueToSpell(SPELL_PERIODIC_DEPTH_CHARGE);
-                Reached = true;
+                pPlayer->CLOSE_GOSSIP_MENU();
+                me->CastSpell(pPlayer, SPELL_GIVE_SOUTHFURY_MOONSTONE, true);
+                ((mob_rizzle_sprysprocket::mob_rizzle_sprysprocketAI*)me->AI())->Must_Die_Timer = 3000;
+                ((mob_rizzle_sprysprocket::mob_rizzle_sprysprocketAI*)me->AI())->Must_Die = true;
             }
+            return true;
 
-            Check_Timer = 1000;
-        } else Check_Timer -= diff;
-
-    }
-
-    void SendText(const char *text, Player* player)
-    {
-        WorldPacket data(SMSG_SERVER_MESSAGE, 0);              // guess size
-        data << text;
-        if(player)
-            player->GetSession()->SendPacket(&data);
-    }
-
-    void AttackStart(Unit *who) override
-    {
-        if (!who || PlayerGUID)
-            return;
-
-        if(who->GetTypeId() == TYPEID_PLAYER && (who->ToPlayer())->GetQuestStatus(10994) == QUEST_STATUS_INCOMPLETE)
-        {
-            PlayerGUID = who->GetGUID();
-            DoScriptText(SAY_RIZZLE_START, me);
-            DoCast(who, SPELL_RIZZLE_BLACKJACK, false);
-            return;
-        }
-    }
-
-    void MovementInform(uint32 type, uint32 id) override
-    {
-        if (type != POINT_MOTION_TYPE)
-            return;
-
-        if(id == 57)
-        {
-            Despawn();
-            return;
         }
 
-        ++CurrWP;
-        ContinueWP = true;
-    }
+    };
 
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new mob_rizzle_sprysprocketAI(creature);
+    }
 };
 
-bool GossipHello_mob_rizzle_sprysprocket(Player *pPlayer, Creature *pCreature)
-{
-    if(pPlayer->GetQuestStatus(10994) != QUEST_STATUS_INCOMPLETE)
-        return true;
-    pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_GET_MOONSTONE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-    pPlayer->SEND_GOSSIP_MENU_TEXTID(10811,pCreature->GetGUID());
-    return true;
-}
 
-bool GossipSelect_mob_rizzle_sprysprocket(Player *pPlayer, Creature *pCreature, uint32 sender, uint32 action )
-{
-    if (action == GOSSIP_ACTION_INFO_DEF + 1 && pPlayer->GetQuestStatus(10994) == QUEST_STATUS_INCOMPLETE)
-    {
-        pPlayer->CLOSE_GOSSIP_MENU();
-        pCreature->CastSpell(pPlayer, SPELL_GIVE_SOUTHFURY_MOONSTONE, true);
-        ((mob_rizzle_sprysprocketAI*)pCreature->AI())->Must_Die_Timer = 3000;
-        ((mob_rizzle_sprysprocketAI*)pCreature->AI())->Must_Die = true;
-    }
-    return true;
-}
 
-CreatureAI* GetAI_mob_rizzle_sprysprocket(Creature *pCreature)
-{
-    return new mob_rizzle_sprysprocketAI (pCreature);
-}
 
 /*####
 # mob_depth_charge
 ####*/
 
-struct mob_depth_chargeAI : public ScriptedAI
+
+class mob_depth_charge : public CreatureScript
 {
-    mob_depth_chargeAI(Creature *c) : ScriptedAI(c) {}
+public:
+    mob_depth_charge() : CreatureScript("mob_depth_charge")
+    { }
 
-    bool we_must_die;
-    uint32 must_die_timer;
-
-    void Reset() override
+    class mob_depth_chargeAI : public ScriptedAI
     {
-        me->SetDisableGravity(true);
-        me->SetSwim(true);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        we_must_die = false;
-        must_die_timer = 1000;
-    }
-
-    void UpdateAI(const uint32 diff) override
-    {
-        if(we_must_die)
+        public:
+        mob_depth_chargeAI(Creature *c) : ScriptedAI(c) {}
+    
+        bool we_must_die;
+        uint32 must_die_timer;
+    
+        void Reset() override
         {
-            if(must_die_timer < diff)
+            me->SetDisableGravity(true);
+            me->SetSwim(true);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            we_must_die = false;
+            must_die_timer = 1000;
+        }
+    
+        void UpdateAI(const uint32 diff) override
+        {
+            if(we_must_die)
             {
-                me->DespawnOrUnsummon();
-            } else { must_die_timer -= diff; }
-        }
-        return;
-    }
-
-    void MoveInLineOfSight(Unit *who) override
-    {
-        if (!who)
+                if(must_die_timer < diff)
+                {
+                    me->DespawnOrUnsummon();
+                } else { must_die_timer -= diff; }
+            }
             return;
-
-        if(who->GetTypeId() == TYPEID_PLAYER && me->IsWithinDistInMap(who, 5))
+        }
+    
+        void MoveInLineOfSight(Unit *who) override
         {
-            DoCast(who, SPELL_DEPTH_CHARGE_TRAP);
-            we_must_die = true;
+            if (!who)
+                return;
+    
+            if(who->GetTypeId() == TYPEID_PLAYER && me->IsWithinDistInMap(who, 5))
+            {
+                DoCast(who, SPELL_DEPTH_CHARGE_TRAP);
+                we_must_die = true;
+                return;
+            }
+        }
+    
+        void AttackStart(Unit *who) override
+        {
             return;
         }
-    }
+    };
 
-    void AttackStart(Unit *who) override
+    CreatureAI* GetAI(Creature* creature) const override
     {
-        return;
+        return new mob_depth_chargeAI(creature);
     }
 };
 
-CreatureAI* GetAI_mob_depth_charge(Creature *pCreature)
-{
-    return new mob_depth_chargeAI (pCreature);
-}
 
 void AddSC_azshara()
 {
-    OLDScript *newscript;
 
-    newscript = new OLDScript;
-    newscript->Name="mobs_spitelashes";
-    newscript->GetAI = &GetAI_mobs_spitelashes;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new mobs_spitelashes();
 
-    newscript = new OLDScript;
-    newscript->Name="npc_loramus_thalipedes";
-    newscript->OnGossipHello =  &GossipHello_npc_loramus_thalipedes;
-    newscript->OnGossipSelect = &GossipSelect_npc_loramus_thalipedes;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_loramus_thalipedes();
 
-    newscript = new OLDScript;
-    newscript->Name="mob_rizzle_sprysprocket";
-    newscript->GetAI = &GetAI_mob_rizzle_sprysprocket;
-    newscript->OnGossipHello =  &GossipHello_mob_rizzle_sprysprocket;
-    newscript->OnGossipSelect = &GossipSelect_mob_rizzle_sprysprocket;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new mob_rizzle_sprysprocket();
 
-    newscript = new OLDScript;
-    newscript->Name="mob_depth_charge";
-    newscript->GetAI = &GetAI_mob_depth_charge;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new mob_depth_charge();
 }
 

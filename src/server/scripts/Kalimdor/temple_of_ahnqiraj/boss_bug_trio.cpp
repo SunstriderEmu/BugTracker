@@ -35,300 +35,320 @@ EndScriptData */
 #define SPELL_HEAL      25807
 #define SPELL_FEAR      19408
 
-struct boss_kriAI : public ScriptedAI
+
+
+
+class boss_yauj : public CreatureScript
 {
-    boss_kriAI(Creature *c) : ScriptedAI(c)
+public:
+    boss_yauj() : CreatureScript("boss_yauj")
+    { }
+
+    class boss_yaujAI : public ScriptedAI
     {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-    }
-
-    InstanceScript *pInstance;
-
-    uint32 Cleave_Timer;
-    uint32 ToxicVolley_Timer;
-    uint32 Check_Timer;
-
-    bool VemDead;
-    bool Death;
-
-    void Reset() override
-    {
-        Cleave_Timer = 4000 + rand()%4000;
-        ToxicVolley_Timer = 6000 + rand()%6000;
-        Check_Timer = 2000;
-
-        VemDead = false;
-        Death = false;
-    }
-
-    void JustDied(Unit* killer) override
-    {
-        if(pInstance)
+        public:
+        boss_yaujAI(Creature *c) : ScriptedAI(c)
         {
-            if(pInstance->GetData(DATA_BUG_TRIO_DEATH) < 2)
-                                                            // Unlootable if death
-                me->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-
-            pInstance->SetData(DATA_BUG_TRIO_DEATH, 1);
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
         }
-    }
-    void UpdateAI(const uint32 diff) override
-    {
-        //Return since we have no target
-        if (!UpdateVictim())
-            return;
-
-        //Cleave_Timer
-        if (Cleave_Timer < diff)
+    
+        InstanceScript *pInstance;
+    
+        uint32 Heal_Timer;
+        uint32 Fear_Timer;
+        uint32 Check_Timer;
+    
+        bool VemDead;
+    
+        void Reset() override
         {
-            DoCast(me->GetVictim(),SPELL_CLEAVE);
-            Cleave_Timer = 5000 + rand()%7000;
-        }else Cleave_Timer -= diff;
-
-        //ToxicVolley_Timer
-        if (ToxicVolley_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_TOXIC_VOLLEY);
-            ToxicVolley_Timer = 10000 + rand()%5000;
-        }else ToxicVolley_Timer -= diff;
-
-        if (me->GetHealth() <= me->GetMaxHealth() * 0.05 && !Death)
-        {
-            DoCast(me->GetVictim(),SPELL_POISON_CLOUD);
-            Death = true;
+            Heal_Timer = 25000 + rand()%15000;
+            Fear_Timer = 12000 + rand()%12000;
+            Check_Timer = 2000;
+    
+            VemDead = false;
         }
-
-        if(!VemDead)
-        {
-            //Checking if Vem is dead. If yes we will enrage.
-            if(Check_Timer < diff)
-            {
-                if(pInstance && pInstance->GetData(DATA_VEMISDEAD))
-                {
-                    DoCast(me, SPELL_ENRAGE);
-                    VemDead = true;
-                }
-                Check_Timer = 2000;
-            }else Check_Timer -=diff;
-        }
-
-        DoMeleeAttackIfReady();
-    }
-};
-
-struct boss_vemAI : public ScriptedAI
-{
-    boss_vemAI(Creature *c) : ScriptedAI(c)
-    {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-    }
-
-    InstanceScript *pInstance;
-
-    uint32 Charge_Timer;
-    uint32 KnockBack_Timer;
-    uint32 Enrage_Timer;
-
-    bool Enraged;
-
-    void Reset() override
-    {
-        Charge_Timer = 15000 + rand()%12000;
-        KnockBack_Timer = 8000 + rand()%12000;
-        Enrage_Timer = 120000;
-
-        Enraged = false;
-    }
-
-    void JustDied(Unit* Killer) override
-    {
-        if(pInstance)
-        {
-            pInstance->SetData(DATA_VEM_DEATH, 0);
-            if(pInstance->GetData(DATA_BUG_TRIO_DEATH) < 2)
-                                                            // Unlootable if death
-                me->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-            pInstance->SetData(DATA_BUG_TRIO_DEATH, 1);
-        }
-    }
-
-    void UpdateAI(const uint32 diff) override
-    {
-        //Return since we have no target
-        if (!UpdateVictim())
-            return;
-
-        //Charge_Timer
-        if (Charge_Timer < diff)
-        {
-            Unit* target = nullptr;
-            target = SelectTarget(SELECT_TARGET_RANDOM,0);
-            if(target)
-            {
-                DoCast(target, SPELL_CHARGE);
-                //me->SendMonsterMove(target->GetPositionX(), target->GetPositionY(), target->GetPositionZ(), 0, true,1);
-                AttackStart(target);
-            }
-
-            Charge_Timer = 8000 + rand()%8000;
-        }else Charge_Timer -= diff;
-
-        //KnockBack_Timer
-        if (KnockBack_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_KNOCKBACK);
-            if(me->GetThreat(me->GetVictim()))
-                DoModifyThreatPercent(me->GetVictim(),-80);
-            KnockBack_Timer = 15000 + rand()%10000;
-        }else KnockBack_Timer -= diff;
-
-        //Enrage_Timer
-        if (!Enraged && Enrage_Timer < diff)
-        {
-            DoCast(me,SPELL_ENRAGE);
-            Enraged = true;
-        }else Charge_Timer -= diff;
-
-        DoMeleeAttackIfReady();
-    }
-};
-
-struct boss_yaujAI : public ScriptedAI
-{
-    boss_yaujAI(Creature *c) : ScriptedAI(c)
-    {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-    }
-
-    InstanceScript *pInstance;
-
-    uint32 Heal_Timer;
-    uint32 Fear_Timer;
-    uint32 Check_Timer;
-
-    bool VemDead;
-
-    void Reset() override
-    {
-        Heal_Timer = 25000 + rand()%15000;
-        Fear_Timer = 12000 + rand()%12000;
-        Check_Timer = 2000;
-
-        VemDead = false;
-    }
-
-    void JustDied(Unit* Killer) override
-    {
-        if(pInstance)
-        {
-            if(pInstance->GetData(DATA_BUG_TRIO_DEATH) < 2)
-                                                            // Unlootable if death
-                me->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-            pInstance->SetData(DATA_BUG_TRIO_DEATH, 1);
-        }
-
-        for(int i = 0; i < 10;i++)
-        {
-            Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0);
-            Creature* Summoned = me->SummonCreature(15621,me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(),0,TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN,90000);
-            if(Summoned && target)
-                ((CreatureAI*)Summoned->AI())->AttackStart(target);
-        }
-    }
-
-    void UpdateAI(const uint32 diff) override
-    {
-        //Return since we have no target
-        if (!UpdateVictim())
-            return;
-
-        //Fear_Timer
-        if (Fear_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_FEAR);
-            DoResetThreat();
-            Fear_Timer = 20000;
-        }else Fear_Timer -= diff;
-
-        //Casting Heal to other twins or herself.
-        if(Heal_Timer < diff)
+    
+        void JustDied(Unit* Killer) override
         {
             if(pInstance)
             {
-                Unit *pKri = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_KRI));
-                Unit *pVem = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_VEM));
-
-                switch(rand()%3)
-                {
-                    case 0:
-                        if(pKri)
-                            DoCast(pKri, SPELL_HEAL);
-                        break;
-                    case 1:
-                        if(pVem)
-                            DoCast(pVem, SPELL_HEAL);
-                        break;
-                    case 2:
-                        DoCast(me, SPELL_HEAL);
-                        break;
-                }
+                if(pInstance->GetData(DATA_BUG_TRIO_DEATH) < 2)
+                                                                // Unlootable if death
+                    me->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+                pInstance->SetData(DATA_BUG_TRIO_DEATH, 1);
             }
-
-            Heal_Timer = 15000+rand()%15000;
-        }else Heal_Timer -= diff;
-
-        //Checking if Vem is dead. If yes we will enrage.
-        if(Check_Timer < diff)
+    
+            for(int i = 0; i < 10;i++)
+            {
+                Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0);
+                Creature* Summoned = me->SummonCreature(15621,me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(),0,TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN,90000);
+                if(Summoned && target)
+                    ((CreatureAI*)Summoned->AI())->AttackStart(target);
+            }
+        }
+    
+        void UpdateAI(const uint32 diff) override
         {
-            if (!VemDead)
+            //Return since we have no target
+            if (!UpdateVictim())
+                return;
+    
+            //Fear_Timer
+            if (Fear_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_FEAR);
+                DoResetThreat();
+                Fear_Timer = 20000;
+            }else Fear_Timer -= diff;
+    
+            //Casting Heal to other twins or herself.
+            if(Heal_Timer < diff)
             {
                 if(pInstance)
                 {
-                    if(pInstance->GetData(DATA_VEMISDEAD))
+                    Unit *pKri = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_KRI));
+                    Unit *pVem = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_VEM));
+    
+                    switch(rand()%3)
+                    {
+                        case 0:
+                            if(pKri)
+                                DoCast(pKri, SPELL_HEAL);
+                            break;
+                        case 1:
+                            if(pVem)
+                                DoCast(pVem, SPELL_HEAL);
+                            break;
+                        case 2:
+                            DoCast(me, SPELL_HEAL);
+                            break;
+                    }
+                }
+    
+                Heal_Timer = 15000+rand()%15000;
+            }else Heal_Timer -= diff;
+    
+            //Checking if Vem is dead. If yes we will enrage.
+            if(Check_Timer < diff)
+            {
+                if (!VemDead)
+                {
+                    if(pInstance)
+                    {
+                        if(pInstance->GetData(DATA_VEMISDEAD))
+                        {
+                            DoCast(me, SPELL_ENRAGE);
+                            VemDead = true;
+                        }
+                    }
+                }
+                Check_Timer = 2000;
+            }else Check_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_yaujAI(creature);
+    }
+};
+
+
+class boss_vem : public CreatureScript
+{
+public:
+    boss_vem() : CreatureScript("boss_vem")
+    { }
+
+    class boss_vemAI : public ScriptedAI
+    {
+        public:
+        boss_vemAI(Creature *c) : ScriptedAI(c)
+        {
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
+        }
+    
+        InstanceScript *pInstance;
+    
+        uint32 Charge_Timer;
+        uint32 KnockBack_Timer;
+        uint32 Enrage_Timer;
+    
+        bool Enraged;
+    
+        void Reset() override
+        {
+            Charge_Timer = 15000 + rand()%12000;
+            KnockBack_Timer = 8000 + rand()%12000;
+            Enrage_Timer = 120000;
+    
+            Enraged = false;
+        }
+    
+        void JustDied(Unit* Killer) override
+        {
+            if(pInstance)
+            {
+                pInstance->SetData(DATA_VEM_DEATH, 0);
+                if(pInstance->GetData(DATA_BUG_TRIO_DEATH) < 2)
+                                                                // Unlootable if death
+                    me->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+                pInstance->SetData(DATA_BUG_TRIO_DEATH, 1);
+            }
+        }
+    
+        void UpdateAI(const uint32 diff) override
+        {
+            //Return since we have no target
+            if (!UpdateVictim())
+                return;
+    
+            //Charge_Timer
+            if (Charge_Timer < diff)
+            {
+                Unit* target = nullptr;
+                target = SelectTarget(SELECT_TARGET_RANDOM,0);
+                if(target)
+                {
+                    DoCast(target, SPELL_CHARGE);
+                    //me->SendMonsterMove(target->GetPositionX(), target->GetPositionY(), target->GetPositionZ(), 0, true,1);
+                    AttackStart(target);
+                }
+    
+                Charge_Timer = 8000 + rand()%8000;
+            }else Charge_Timer -= diff;
+    
+            //KnockBack_Timer
+            if (KnockBack_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_KNOCKBACK);
+                if(me->GetThreat(me->GetVictim()))
+                    DoModifyThreatPercent(me->GetVictim(),-80);
+                KnockBack_Timer = 15000 + rand()%10000;
+            }else KnockBack_Timer -= diff;
+    
+            //Enrage_Timer
+            if (!Enraged && Enrage_Timer < diff)
+            {
+                DoCast(me,SPELL_ENRAGE);
+                Enraged = true;
+            }else Charge_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_vemAI(creature);
+    }
+};
+
+
+class boss_kri : public CreatureScript
+{
+public:
+    boss_kri() : CreatureScript("boss_kri")
+    { }
+
+    class boss_kriAI : public ScriptedAI
+    {
+        public:
+        boss_kriAI(Creature *c) : ScriptedAI(c)
+        {
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
+        }
+    
+        InstanceScript *pInstance;
+    
+        uint32 Cleave_Timer;
+        uint32 ToxicVolley_Timer;
+        uint32 Check_Timer;
+    
+        bool VemDead;
+        bool Death;
+    
+        void Reset() override
+        {
+            Cleave_Timer = 4000 + rand()%4000;
+            ToxicVolley_Timer = 6000 + rand()%6000;
+            Check_Timer = 2000;
+    
+            VemDead = false;
+            Death = false;
+        }
+    
+        void JustDied(Unit* killer) override
+        {
+            if(pInstance)
+            {
+                if(pInstance->GetData(DATA_BUG_TRIO_DEATH) < 2)
+                                                                // Unlootable if death
+                    me->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+    
+                pInstance->SetData(DATA_BUG_TRIO_DEATH, 1);
+            }
+        }
+        void UpdateAI(const uint32 diff) override
+        {
+            //Return since we have no target
+            if (!UpdateVictim())
+                return;
+    
+            //Cleave_Timer
+            if (Cleave_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_CLEAVE);
+                Cleave_Timer = 5000 + rand()%7000;
+            }else Cleave_Timer -= diff;
+    
+            //ToxicVolley_Timer
+            if (ToxicVolley_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_TOXIC_VOLLEY);
+                ToxicVolley_Timer = 10000 + rand()%5000;
+            }else ToxicVolley_Timer -= diff;
+    
+            if (me->GetHealth() <= me->GetMaxHealth() * 0.05 && !Death)
+            {
+                DoCast(me->GetVictim(),SPELL_POISON_CLOUD);
+                Death = true;
+            }
+    
+            if(!VemDead)
+            {
+                //Checking if Vem is dead. If yes we will enrage.
+                if(Check_Timer < diff)
+                {
+                    if(pInstance && pInstance->GetData(DATA_VEMISDEAD))
                     {
                         DoCast(me, SPELL_ENRAGE);
                         VemDead = true;
                     }
-                }
+                    Check_Timer = 2000;
+                }else Check_Timer -=diff;
             }
-            Check_Timer = 2000;
-        }else Check_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_kriAI(creature);
     }
 };
 
-CreatureAI* GetAI_boss_yauj(Creature *_Creature)
-{
-    return new boss_yaujAI (_Creature);
-}
-
-CreatureAI* GetAI_boss_vem(Creature *_Creature)
-{
-    return new boss_vemAI (_Creature);
-}
-
-CreatureAI* GetAI_boss_kri(Creature *_Creature)
-{
-    return new boss_kriAI (_Creature);
-}
 
 void AddSC_bug_trio()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_kri";
-    newscript->GetAI = &GetAI_boss_kri;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_kri();
 
-    newscript = new OLDScript;
-    newscript->Name="boss_vem";
-    newscript->GetAI = &GetAI_boss_vem;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_vem();
 
-    newscript = new OLDScript;
-    newscript->Name="boss_yauj";
-    newscript->GetAI = &GetAI_boss_yauj;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_yauj();
 }
 

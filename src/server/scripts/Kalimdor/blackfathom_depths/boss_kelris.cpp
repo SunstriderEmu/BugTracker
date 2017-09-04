@@ -33,77 +33,83 @@ enum Yells
     SAY_DEATH                                              = -568
 };
 
-struct boss_kelrisAI : public ScriptedAI
-{
-    boss_kelrisAI(Creature* c) : ScriptedAI(c)
-    {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-    }
-    
-    uint32 uiMindBlastTimer;
-    uint32 uiSleepTimer;
-    
-    InstanceScript *pInstance;
-    
-    void Reset()
-    override {
-        uiMindBlastTimer = urand(2000,5000);
-        uiSleepTimer = urand(9000,12000);
-        if (pInstance)
-            pInstance->SetData(TYPE_KELRIS, NOT_STARTED);
-    }
-    
-    void EnterCombat(Unit* pWho)
-    override {
-        DoScriptText(SAY_AGGRO, me);
-        if (pInstance)
-            pInstance->SetData(TYPE_KELRIS, IN_PROGRESS);
-    }
-    
-    void JustDied(Unit* pKiller)
-    override {
-        DoScriptText(SAY_DEATH, me);
-        if (pInstance)
-            pInstance->SetData(TYPE_KELRIS, DONE);
-    }
-    
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim())
-            return;
-        
-        if (uiMindBlastTimer < diff)
-        {
-            if (me->GetVictim())
-                DoCast(me->GetVictim(), SPELL_MIND_BLAST);
-            uiMindBlastTimer = urand(7000,9000);
-        } else uiMindBlastTimer -= diff;
 
-        if (uiSleepTimer < diff)
+class boss_kelris : public CreatureScript
+{
+public:
+    boss_kelris() : CreatureScript("boss_kelris")
+    { }
+
+    class boss_kelrisAI : public ScriptedAI
+    {
+        public:
+        boss_kelrisAI(Creature* c) : ScriptedAI(c)
         {
-            if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
-            {
-                DoScriptText(SAY_SLEEP, me);
-                DoCast(pTarget, SPELL_SLEEP);
-            }
-            uiSleepTimer = urand(15000,20000);
-        } else uiSleepTimer -= diff;
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
+        }
         
-        DoMeleeAttackIfReady();
+        uint32 uiMindBlastTimer;
+        uint32 uiSleepTimer;
+        
+        InstanceScript *pInstance;
+        
+        void Reset()
+        override {
+            uiMindBlastTimer = urand(2000,5000);
+            uiSleepTimer = urand(9000,12000);
+            if (pInstance)
+                pInstance->SetData(TYPE_KELRIS, NOT_STARTED);
+        }
+        
+        void EnterCombat(Unit* pWho)
+        override {
+            DoScriptText(SAY_AGGRO, me);
+            if (pInstance)
+                pInstance->SetData(TYPE_KELRIS, IN_PROGRESS);
+        }
+        
+        void JustDied(Unit* pKiller)
+        override {
+            DoScriptText(SAY_DEATH, me);
+            if (pInstance)
+                pInstance->SetData(TYPE_KELRIS, DONE);
+        }
+        
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim())
+                return;
+            
+            if (uiMindBlastTimer < diff)
+            {
+                if (me->GetVictim())
+                    DoCast(me->GetVictim(), SPELL_MIND_BLAST);
+                uiMindBlastTimer = urand(7000,9000);
+            } else uiMindBlastTimer -= diff;
+    
+            if (uiSleepTimer < diff)
+            {
+                if (Unit* pTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
+                {
+                    DoScriptText(SAY_SLEEP, me);
+                    DoCast(pTarget, SPELL_SLEEP);
+                }
+                uiSleepTimer = urand(15000,20000);
+            } else uiSleepTimer -= diff;
+            
+            DoMeleeAttackIfReady();
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_kelrisAI(creature);
     }
 };
 
-CreatureAI* GetAI_boss_kelris(Creature* pCreature)
-{
-    return new boss_kelrisAI(pCreature);
-}
 
 void AddSC_boss_kelris()
 {
-    OLDScript* newscript;
     
-    newscript = new OLDScript;
-    newscript->Name = "boss_kelris";
-    newscript->GetAI = &GetAI_boss_kelris;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_kelris();
 }
