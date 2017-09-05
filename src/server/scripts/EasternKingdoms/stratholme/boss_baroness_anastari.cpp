@@ -29,95 +29,101 @@ EndScriptData */
 #define SPELL_SILENCE    18327
 //#define SPELL_POSSESS   17244
 
-struct boss_baroness_anastariAI : public ScriptedAI
+class boss_baroness_anastari : public CreatureScript
 {
-    boss_baroness_anastariAI(Creature *c) : ScriptedAI(c)
+public:
+    boss_baroness_anastari() : CreatureScript("boss_baroness_anastari")
+    { }
+
+    class boss_baroness_anastariAI : public ScriptedAI
     {
-        pInstance = (InstanceScript*)me->GetInstanceScript();
-    }
-
-    InstanceScript* pInstance;
-
-    uint32 BansheeWail_Timer;
-    uint32 BansheeCurse_Timer;
-    uint32 Silence_Timer;
-    //uint32 Possess_Timer;
-
-    void Reset() override
-    {
-        BansheeWail_Timer = 1000;
-        BansheeCurse_Timer = 11000;
-        Silence_Timer = 13000;
-        //Possess_Timer = 35000;
-    }
-
-     void JustDied(Unit* Killer) override
-     {
-         if (pInstance)
-             pInstance->SetData(TYPE_BARONESS,IN_PROGRESS);
-     }
-
-    void UpdateAI(const uint32 diff) override
-    {
-        if (!UpdateVictim())
-            return;
-
-        //BansheeWail
-        if (BansheeWail_Timer < diff)
+        public:
+        boss_baroness_anastariAI(Creature *c) : ScriptedAI(c)
         {
-            if (rand()%100 < 95)
-                DoCast(me->GetVictim(),SPELL_BANSHEEWAIL);
-            //4 seconds until we should cast this again
-            BansheeWail_Timer = 4000;
-        }else BansheeWail_Timer -= diff;
-
-        //BansheeCurse
-        if (BansheeCurse_Timer < diff)
-        {
-            if (rand()%100 < 75)
-                DoCast(me->GetVictim(),SPELL_BANSHEECURSE);
-            //18 seconds until we should cast this again
-            BansheeCurse_Timer = 18000;
-        }else BansheeCurse_Timer -= diff;
-
-        //Silence
-        if (Silence_Timer < diff)
-        {
-            if (rand()%100 < 80)
-                DoCast(me->GetVictim(),SPELL_SILENCE);
-            //13 seconds until we should cast this again
-            Silence_Timer = 13000;
-        }else Silence_Timer -= diff;
-
-        //Possess
-        /*            if (Possess_Timer < diff)
-        {
-        //Cast
-          if (rand()%100 < 65)
-        {
-        Unit* target = NULL;
-        target = SelectTarget(SELECT_TARGET_RANDOM,0);
-        if (target)DoCast(target,SPELL_POSSESS);
+            pInstance = (InstanceScript*)me->GetInstanceScript();
         }
-        //50 seconds until we should cast this again
-        Possess_Timer = 50000;
-        }else Possess_Timer -= diff;
-        */
+    
+        InstanceScript* pInstance;
+    
+        uint32 BansheeWail_Timer;
+        uint32 BansheeCurse_Timer;
+        uint32 Silence_Timer;
+        //uint32 Possess_Timer;
+    
+        void Reset() override
+        {
+            BansheeWail_Timer = 1000;
+            BansheeCurse_Timer = 11000;
+            Silence_Timer = 13000;
+            //Possess_Timer = 35000;
+        }
+    
+         void JustDied(Unit* Killer) override
+         {
+             if (pInstance)
+                 pInstance->SetData(TYPE_BARONESS,IN_PROGRESS);
+         }
+    
+        void UpdateAI(const uint32 diff) override
+        {
+            if (!UpdateVictim())
+                return;
+    
+            //BansheeWail
+            if (BansheeWail_Timer < diff)
+            {
+                if (rand()%100 < 95)
+                    DoCast(me->GetVictim(),SPELL_BANSHEEWAIL);
+                //4 seconds until we should cast this again
+                BansheeWail_Timer = 4000;
+            }else BansheeWail_Timer -= diff;
+    
+            //BansheeCurse
+            if (BansheeCurse_Timer < diff)
+            {
+                if (rand()%100 < 75)
+                    DoCast(me->GetVictim(),SPELL_BANSHEECURSE);
+                //18 seconds until we should cast this again
+                BansheeCurse_Timer = 18000;
+            }else BansheeCurse_Timer -= diff;
+    
+            //Silence
+            if (Silence_Timer < diff)
+            {
+                if (rand()%100 < 80)
+                    DoCast(me->GetVictim(),SPELL_SILENCE);
+                //13 seconds until we should cast this again
+                Silence_Timer = 13000;
+            }else Silence_Timer -= diff;
+    
+            //Possess
+            /*            if (Possess_Timer < diff)
+            {
+            //Cast
+              if (rand()%100 < 65)
+            {
+            Unit* target = NULL;
+            target = SelectTarget(SELECT_TARGET_RANDOM,0);
+            if (target)DoCast(target,SPELL_POSSESS);
+            }
+            //50 seconds until we should cast this again
+            Possess_Timer = 50000;
+            }else Possess_Timer -= diff;
+            */
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_baroness_anastariAI(creature);
     }
 };
-CreatureAI* GetAI_boss_baroness_anastari(Creature *_Creature)
-{
-    return new boss_baroness_anastariAI (_Creature);
-}
+
 
 void AddSC_boss_baroness_anastari()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_baroness_anastari";
-    newscript->GetAI = &GetAI_boss_baroness_anastari;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_baroness_anastari();
 }
 

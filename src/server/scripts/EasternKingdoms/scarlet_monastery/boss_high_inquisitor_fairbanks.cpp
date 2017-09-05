@@ -32,117 +32,123 @@ EndScriptData */
 #define SPELL_DEVOURINGPLAGUE3          19277
 #define SPELL_MINDBLAST5                8105
 
-struct boss_high_inquisitor_fairbanksAI : public ScriptedAI
+
+class boss_high_inquisitor_fairbanks : public CreatureScript
 {
-    boss_high_inquisitor_fairbanksAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_high_inquisitor_fairbanks() : CreatureScript("boss_high_inquisitor_fairbanks")
+    { }
 
-    uint32 Healing_Timer;
-    uint32 Sleep2_Timer;
-    uint32 Smite_Timer;
-    uint32 ShadowWordPain_Timer;
-    uint32 CurseOfBlood_Timer;
-    uint32 DevouringPlague3_Timer;
-    uint32 MindBlast5_Timer;
+    class boss_high_inquisitor_fairbanksAI : public ScriptedAI
+    {
+        public:
+        boss_high_inquisitor_fairbanksAI(Creature *c) : ScriptedAI(c) {}
     
-    bool ashbringer;
-
-    void Reset()
-    override {
-        if (ashbringer)
-            return;
-
-        ashbringer = false;
-        Healing_Timer = 300;
-        Sleep2_Timer = 45000;
-        Smite_Timer = 30000;
-        ShadowWordPain_Timer = 30000;
-        CurseOfBlood_Timer = 45000;
-        DevouringPlague3_Timer = 60000;
-        MindBlast5_Timer = 20000;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-    }
+        uint32 Healing_Timer;
+        uint32 Sleep2_Timer;
+        uint32 Smite_Timer;
+        uint32 ShadowWordPain_Timer;
+        uint32 CurseOfBlood_Timer;
+        uint32 DevouringPlague3_Timer;
+        uint32 MindBlast5_Timer;
+        
+        bool ashbringer;
     
-    void SpellHit(Unit* caster, SpellInfo const* spell)
-    override {
-        if (spell->Id != 28441 || ashbringer)
-            return;
-
-        ashbringer = true;
-        me->UpdateEntry(16439);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim())
-            return;
-
-        //If we are <45% hp cast Renew rank 6 or Flash heal rank 4
-        if ( me->GetHealth()*100 / me->GetMaxHealth() <= 45 && !me->IsNonMeleeSpellCast(false) && Healing_Timer < diff)
-        {
-            DoCast(me, rand()%2 ? SPELL_RENEW6 : SPELL_FLASHHEAL4);
-            Healing_Timer = 30000;
-        }else Healing_Timer -= diff;
-
-        //Sleep2_Timer
-        if (Sleep2_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_SLEEP2);
+        void Reset()
+        override {
+            if (ashbringer)
+                return;
+    
+            ashbringer = false;
+            Healing_Timer = 300;
             Sleep2_Timer = 45000;
-        }else Sleep2_Timer -= diff;
-
-        //Smite_Timer
-        if (Smite_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_SMITE);
-            Smite_Timer = 20000;
-        }else Smite_Timer -= diff;
-
-        //ShadowWordPain_Timer
-        if (ShadowWordPain_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_SHADOWWORDPAIN);
+            Smite_Timer = 30000;
             ShadowWordPain_Timer = 30000;
-        }else ShadowWordPain_Timer -= diff;
+            CurseOfBlood_Timer = 45000;
+            DevouringPlague3_Timer = 60000;
+            MindBlast5_Timer = 20000;
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+        }
+        
+        void SpellHit(Unit* caster, SpellInfo const* spell)
+        override {
+            if (spell->Id != 28441 || ashbringer)
+                return;
+    
+            ashbringer = true;
+            me->UpdateEntry(16439);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim())
+                return;
+    
+            //If we are <45% hp cast Renew rank 6 or Flash heal rank 4
+            if ( me->GetHealthPct() <= 45 && !me->IsNonMeleeSpellCast(false) && Healing_Timer < diff)
+            {
+                DoCast(me, rand()%2 ? SPELL_RENEW6 : SPELL_FLASHHEAL4);
+                Healing_Timer = 30000;
+            }else Healing_Timer -= diff;
+    
+            //Sleep2_Timer
+            if (Sleep2_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_SLEEP2);
+                Sleep2_Timer = 45000;
+            }else Sleep2_Timer -= diff;
+    
+            //Smite_Timer
+            if (Smite_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_SMITE);
+                Smite_Timer = 20000;
+            }else Smite_Timer -= diff;
+    
+            //ShadowWordPain_Timer
+            if (ShadowWordPain_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_SHADOWWORDPAIN);
+                ShadowWordPain_Timer = 30000;
+            }else ShadowWordPain_Timer -= diff;
+    
+            //CurseOfBlood_Timer
+            if (CurseOfBlood_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_CURSEOFBLOOD);
+                CurseOfBlood_Timer = 25000;
+            }else CurseOfBlood_Timer -= diff;
+    
+            //DevouringPlague3_Timer
+            if (DevouringPlague3_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_DEVOURINGPLAGUE3);
+                DevouringPlague3_Timer = 35000;
+            }else DevouringPlague3_Timer -= diff;
+    
+            //MindBlast5_Timer
+            if (MindBlast5_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_MINDBLAST5);
+                MindBlast5_Timer = 30000;
+            }else MindBlast5_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        //CurseOfBlood_Timer
-        if (CurseOfBlood_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_CURSEOFBLOOD);
-            CurseOfBlood_Timer = 25000;
-        }else CurseOfBlood_Timer -= diff;
-
-        //DevouringPlague3_Timer
-        if (DevouringPlague3_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_DEVOURINGPLAGUE3);
-            DevouringPlague3_Timer = 35000;
-        }else DevouringPlague3_Timer -= diff;
-
-        //MindBlast5_Timer
-        if (MindBlast5_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_MINDBLAST5);
-            MindBlast5_Timer = 30000;
-        }else MindBlast5_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_high_inquisitor_fairbanksAI(creature);
     }
 };
 
-CreatureAI* GetAI_boss_high_inquisitor_fairbanks(Creature *_Creature)
-{
-    return new boss_high_inquisitor_fairbanksAI (_Creature);
-}
 
 void AddSC_boss_high_inquisitor_fairbanks()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name = "boss_high_inquisitor_fairbanks";
-    newscript->GetAI = &GetAI_boss_high_inquisitor_fairbanks;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_high_inquisitor_fairbanks();
 }
 

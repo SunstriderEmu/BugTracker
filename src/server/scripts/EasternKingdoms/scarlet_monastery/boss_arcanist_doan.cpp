@@ -39,134 +39,140 @@ EndScriptData */
 #define SOUND_AGGRO                     5842
 #define SOUND_SPECIALAE                 5843
 
-struct boss_arcanist_doanAI : public ScriptedAI
+class boss_arcanist_doan : public CreatureScript
 {
-    boss_arcanist_doanAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_arcanist_doan() : CreatureScript("boss_arcanist_doan")
+    { }
 
-    uint32 FullAOE_Timer;
-    uint32 Polymorph_Timer;
-    uint32 Yell_Timer;
-    uint32 ArcaneBubble_Timer;
-    uint32 AoESilence_Timer;
-    uint32 ArcaneExplosion3_Timer;
-    uint32 ArcaneExplosion4_Timer;
-    uint32 Blink_Timer;
-    uint32 Fireball_Timer;
-    uint32 ManaShield4_Timer;
-
-    void Reset() override
+    class boss_arcanist_doanAI : public ScriptedAI
     {
-        FullAOE_Timer = 5000;
-        Polymorph_Timer = 1;
-        Yell_Timer = 2000;
-        ArcaneBubble_Timer = 3000;
-        AoESilence_Timer = 20000;
-        ArcaneExplosion3_Timer = 10000;
-        ArcaneExplosion4_Timer = 10000;
-        Blink_Timer = 40000;
-        Fireball_Timer = 6000;
-        ManaShield4_Timer = 70000;
-    }
-
-    void EnterCombat(Unit *who) override
-    {
-        me->Yell(SAY_AGGRO,LANG_UNIVERSAL,nullptr);
-        DoPlaySoundToSet(me,SOUND_AGGRO);
-    }
-
-    void UpdateAI(const uint32 diff) override
-    {
-        if (!UpdateVictim())
-            return;
-
-        //If we are <50% hp cast Arcane Bubble and start casting SPECIAL FIRE AOE
-        if (me->GetHealth()*100 / me->GetMaxHealth() <= 50 && !me->IsNonMeleeSpellCast(false))
+        public:
+        boss_arcanist_doanAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 FullAOE_Timer;
+        uint32 Polymorph_Timer;
+        uint32 Yell_Timer;
+        uint32 ArcaneBubble_Timer;
+        uint32 AoESilence_Timer;
+        uint32 ArcaneExplosion3_Timer;
+        uint32 ArcaneExplosion4_Timer;
+        uint32 Blink_Timer;
+        uint32 Fireball_Timer;
+        uint32 ManaShield4_Timer;
+    
+        void Reset() override
         {
-            if (Polymorph_Timer < diff)
-            {
-                Unit* target = nullptr;
-
-                target = SelectTarget(SELECT_TARGET_RANDOM,0);
-                if (target)DoCast(target,SPELL_POLYMORPH);
-                Polymorph_Timer = 40000;
-            }else Polymorph_Timer -= diff;
-
-            if (Yell_Timer < diff)
-            {
-                me->Yell(SAY_SPECIALAE,LANG_UNIVERSAL,nullptr);
-                DoPlaySoundToSet(me,SOUND_SPECIALAE);
-                Yell_Timer = 40000;
-            }else Yell_Timer -= diff;
-
-            if (ArcaneBubble_Timer < diff)
-            {
-                DoCast(me,SPELL_ARCANEBUBBLE);
-                ArcaneBubble_Timer = 40000;
-            }else ArcaneBubble_Timer -= diff;
-
-            if (FullAOE_Timer < diff)
-            {
-                DoCast(me->GetVictim(),SPELL_FIREAOE);
-                FullAOE_Timer = 40000;
-            }else FullAOE_Timer -= diff;
-        }
-
-        //AoESilence_Timer
-        if (AoESilence_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_AOESILENCE);
-            AoESilence_Timer = 30000;
-        }else AoESilence_Timer -= diff;
-
-        //ArcaneExplosion3_Timer
-        if (ArcaneExplosion3_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_ARCANEEXPLOSION3);
-            ArcaneExplosion3_Timer = 8000;
-        }else ArcaneExplosion3_Timer -= diff;
-
-        //ArcaneExplosion4_Timer
-        if (ArcaneExplosion4_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_ARCANEEXPLOSION4);
+            FullAOE_Timer = 5000;
+            Polymorph_Timer = 1;
+            Yell_Timer = 2000;
+            ArcaneBubble_Timer = 3000;
+            AoESilence_Timer = 20000;
+            ArcaneExplosion3_Timer = 10000;
             ArcaneExplosion4_Timer = 10000;
-        }else ArcaneExplosion4_Timer -= diff;
-
-        //Blink_Timer
-        if (Blink_Timer < diff)
-        {
-            DoCast(me,SPELL_BLINK);
-            Blink_Timer = 30000;
-        }else Blink_Timer -= diff;
-
-        //Fireball_Timer
-        if (Fireball_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_FIREBALL);
-            Fireball_Timer = 12000;
-        }else Fireball_Timer -= diff;
-
-        //ManaShiled4_Timer
-        if (ManaShield4_Timer < diff)
-        {
-            DoCast(me,SPELL_MANASHIELD4);
+            Blink_Timer = 40000;
+            Fireball_Timer = 6000;
             ManaShield4_Timer = 70000;
-        }else ManaShield4_Timer -= diff;
+        }
+    
+        void EnterCombat(Unit *who) override
+        {
+            me->Yell(SAY_AGGRO,LANG_UNIVERSAL,nullptr);
+            DoPlaySoundToSet(me,SOUND_AGGRO);
+        }
+    
+        void UpdateAI(const uint32 diff) override
+        {
+            if (!UpdateVictim())
+                return;
+    
+            //If we are <50% hp cast Arcane Bubble and start casting SPECIAL FIRE AOE
+            if (me->GetHealthPct() <= 50 && !me->IsNonMeleeSpellCast(false))
+            {
+                if (Polymorph_Timer < diff)
+                {
+                    Unit* target = nullptr;
+    
+                    target = SelectTarget(SELECT_TARGET_RANDOM,0);
+                    if (target)DoCast(target,SPELL_POLYMORPH);
+                    Polymorph_Timer = 40000;
+                }else Polymorph_Timer -= diff;
+    
+                if (Yell_Timer < diff)
+                {
+                    me->Yell(SAY_SPECIALAE,LANG_UNIVERSAL,nullptr);
+                    DoPlaySoundToSet(me,SOUND_SPECIALAE);
+                    Yell_Timer = 40000;
+                }else Yell_Timer -= diff;
+    
+                if (ArcaneBubble_Timer < diff)
+                {
+                    DoCast(me,SPELL_ARCANEBUBBLE);
+                    ArcaneBubble_Timer = 40000;
+                }else ArcaneBubble_Timer -= diff;
+    
+                if (FullAOE_Timer < diff)
+                {
+                    DoCast(me->GetVictim(),SPELL_FIREAOE);
+                    FullAOE_Timer = 40000;
+                }else FullAOE_Timer -= diff;
+            }
+    
+            //AoESilence_Timer
+            if (AoESilence_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_AOESILENCE);
+                AoESilence_Timer = 30000;
+            }else AoESilence_Timer -= diff;
+    
+            //ArcaneExplosion3_Timer
+            if (ArcaneExplosion3_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_ARCANEEXPLOSION3);
+                ArcaneExplosion3_Timer = 8000;
+            }else ArcaneExplosion3_Timer -= diff;
+    
+            //ArcaneExplosion4_Timer
+            if (ArcaneExplosion4_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_ARCANEEXPLOSION4);
+                ArcaneExplosion4_Timer = 10000;
+            }else ArcaneExplosion4_Timer -= diff;
+    
+            //Blink_Timer
+            if (Blink_Timer < diff)
+            {
+                DoCast(me,SPELL_BLINK);
+                Blink_Timer = 30000;
+            }else Blink_Timer -= diff;
+    
+            //Fireball_Timer
+            if (Fireball_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_FIREBALL);
+                Fireball_Timer = 12000;
+            }else Fireball_Timer -= diff;
+    
+            //ManaShiled4_Timer
+            if (ManaShield4_Timer < diff)
+            {
+                DoCast(me,SPELL_MANASHIELD4);
+                ManaShield4_Timer = 70000;
+            }else ManaShield4_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_arcanist_doanAI(creature);
     }
 };
-CreatureAI* GetAI_boss_arcanist_doan(Creature *_Creature)
-{
-    return new boss_arcanist_doanAI (_Creature);
-}
+
 
 void AddSC_boss_arcanist_doan()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_arcanist_doan";
-    newscript->GetAI = &GetAI_boss_arcanist_doan;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_arcanist_doan();
 }
 

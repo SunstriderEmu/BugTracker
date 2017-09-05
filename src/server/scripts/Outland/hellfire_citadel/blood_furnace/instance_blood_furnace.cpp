@@ -481,19 +481,29 @@ public:
     PrisonCellLevel() : GameObjectScript("go_prison_cell_lever")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* pGo) override
+    struct PrisonCellLevelAI : public GameObjectAI
     {
-        InstanceScript* pInstance = (InstanceScript*)pGo->GetInstanceScript();
+        PrisonCellLevelAI(GameObject* go) : GameObjectAI(go), instance(go->GetInstanceScript()) {}
 
-        if (!pInstance)
-            return false;
+        InstanceScript* instance;
 
-        if (pInstance->GetData(DATA_BROGGOKEVENT) != DONE && pInstance->GetData(DATA_BROGGOKEVENT) != IN_PROGRESS)
+        bool GossipHello(Player* /*player*/) override
         {
-            pInstance->SetData(DATA_BROGGOKEVENT, IN_PROGRESS);
-        }
+            if (!instance)
+                return false;
 
-        return false;
+            if (instance->GetData(DATA_BROGGOKEVENT) != DONE && instance->GetData(DATA_BROGGOKEVENT) != IN_PROGRESS)
+            {
+                instance->SetData(DATA_BROGGOKEVENT, IN_PROGRESS);
+            }
+
+            return false;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new PrisonCellLevelAI(go);
     }
 };
 

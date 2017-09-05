@@ -37,148 +37,154 @@ enum Texts
     SAY_ONAGGRO = -1801008
 };
 
-struct boss_rage_winterchillAI : public hyjal_trashAI
+
+class boss_rage_winterchill : public CreatureScript
 {
-    boss_rage_winterchillAI(Creature *c) : hyjal_trashAI(c)
+public:
+    boss_rage_winterchill() : CreatureScript("boss_rage_winterchill")
+    { }
+
+    class boss_rage_winterchillAI : public hyjal_trashAI
     {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-        go = false;
-        pos = 0;
-    }
-
-    uint32 FrostArmorTimer;
-    uint32 DecayTimer;
-    uint32 NovaTimer;
-    uint32 IceboltTimer;
-    uint32 BerserkTimer;
-    bool go;
-    uint32 pos;
-
-    void Reset()
-    override {
-        damageTaken = 0;
-        FrostArmorTimer = TIMER_FROST_ARMOR;
-        DecayTimer = TIMER_DEATH_AND_DECAY;
-        NovaTimer = TIMER_FROST_NOVA_FIRST;
-        IceboltTimer = TIMER_ICEBOLT_START;
-        BerserkTimer = TIMER_ENRAGE;
-
-        if(pInstance && IsEvent)
-            pInstance->SetData(DATA_RAGEWINTERCHILLEVENT, NOT_STARTED);
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-        if(pInstance && IsEvent)
-            pInstance->SetData(DATA_RAGEWINTERCHILLEVENT, IN_PROGRESS);
-
-        DoScriptText(SAY_ONAGGRO,me);
-    }
-
-    void KilledUnit(Unit *victim)
-    override {
-        DoScriptText(SAY_ONSLAY1 - rand()%3,me);
-    }
-
-    void WaypointReached(uint32 i)
-    override {
-        pos = i;
-        if (i == 7 && pInstance)
+        public:
+        boss_rage_winterchillAI(Creature *c) : hyjal_trashAI(c)
         {
-            Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
-            if (target && target->IsAlive())
-                me->AddThreat(target,0.0);
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
+            go = false;
+            pos = 0;
         }
-    }
-
-    void JustDied(Unit *victim)
-    override {
-        hyjal_trashAI::JustDied(victim);
-        if(pInstance && IsEvent)
-            pInstance->SetData(DATA_RAGEWINTERCHILLEVENT, DONE);
-
-        DoScriptText(SAY_ONDEATH,me);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (IsEvent)
-        {
-            //Must update npc_escortAI
-            npc_escortAI::UpdateAI(diff);
-            if(!go)
+    
+        uint32 FrostArmorTimer;
+        uint32 DecayTimer;
+        uint32 NovaTimer;
+        uint32 IceboltTimer;
+        uint32 BerserkTimer;
+        bool go;
+        uint32 pos;
+    
+        void Reset()
+        override {
+            damageTaken = 0;
+            FrostArmorTimer = TIMER_FROST_ARMOR;
+            DecayTimer = TIMER_DEATH_AND_DECAY;
+            NovaTimer = TIMER_FROST_NOVA_FIRST;
+            IceboltTimer = TIMER_ICEBOLT_START;
+            BerserkTimer = TIMER_ENRAGE;
+    
+            if(pInstance && IsEvent)
+                pInstance->SetData(DATA_RAGEWINTERCHILLEVENT, NOT_STARTED);
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+            if(pInstance && IsEvent)
+                pInstance->SetData(DATA_RAGEWINTERCHILLEVENT, IN_PROGRESS);
+    
+            DoScriptText(SAY_ONAGGRO,me);
+        }
+    
+        void KilledUnit(Unit *victim)
+        override {
+            DoScriptText(SAY_ONSLAY1 - rand()%3,me);
+        }
+    
+        void WaypointReached(uint32 i)
+        override {
+            pos = i;
+            if (i == 7 && pInstance)
             {
-                go = true;
-                if(pInstance)
+                Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
+                if (target && target->IsAlive())
+                    me->AddThreat(target,0.0);
+            }
+        }
+    
+        void JustDied(Unit *victim)
+        override {
+            hyjal_trashAI::JustDied(victim);
+            if(pInstance && IsEvent)
+                pInstance->SetData(DATA_RAGEWINTERCHILLEVENT, DONE);
+    
+            DoScriptText(SAY_ONDEATH,me);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (IsEvent)
+            {
+                //Must update npc_escortAI
+                npc_escortAI::UpdateAI(diff);
+                if(!go)
                 {
-                    ((npc_escortAI*)(me->AI()))->AddWaypoint(0, 4896.08,    -1576.35,    1333.65);
-                    ((npc_escortAI*)(me->AI()))->AddWaypoint(1, 4898.68,    -1615.02,    1329.48);
-                    ((npc_escortAI*)(me->AI()))->AddWaypoint(2, 4907.12,    -1667.08,    1321.00);
-                    ((npc_escortAI*)(me->AI()))->AddWaypoint(3, 4963.18,    -1699.35,    1340.51);
-                    ((npc_escortAI*)(me->AI()))->AddWaypoint(4, 4989.16,    -1716.67,    1335.74);
-                    ((npc_escortAI*)(me->AI()))->AddWaypoint(5, 5026.27,    -1736.89,    1323.02);
-                    ((npc_escortAI*)(me->AI()))->AddWaypoint(6, 5037.77,    -1770.56,    1324.36);
-                    ((npc_escortAI*)(me->AI()))->AddWaypoint(7, 5067.23,    -1789.95,    1321.17);
-                    ((npc_escortAI*)(me->AI()))->Start(false, true, true);
-                    ((npc_escortAI*)(me->AI()))->SetDespawnAtEnd(false);
+                    go = true;
+                    if(pInstance)
+                    {
+                        ((npc_escortAI*)(me->AI()))->AddWaypoint(0, 4896.08,    -1576.35,    1333.65);
+                        ((npc_escortAI*)(me->AI()))->AddWaypoint(1, 4898.68,    -1615.02,    1329.48);
+                        ((npc_escortAI*)(me->AI()))->AddWaypoint(2, 4907.12,    -1667.08,    1321.00);
+                        ((npc_escortAI*)(me->AI()))->AddWaypoint(3, 4963.18,    -1699.35,    1340.51);
+                        ((npc_escortAI*)(me->AI()))->AddWaypoint(4, 4989.16,    -1716.67,    1335.74);
+                        ((npc_escortAI*)(me->AI()))->AddWaypoint(5, 5026.27,    -1736.89,    1323.02);
+                        ((npc_escortAI*)(me->AI()))->AddWaypoint(6, 5037.77,    -1770.56,    1324.36);
+                        ((npc_escortAI*)(me->AI()))->AddWaypoint(7, 5067.23,    -1789.95,    1321.17);
+                        ((npc_escortAI*)(me->AI()))->Start(false, true, true);
+                        ((npc_escortAI*)(me->AI()))->SetDespawnAtEnd(false);
+                    }
                 }
             }
+    
+            //Return since we have no target
+            if (!UpdateVictim() )
+                return;
+    
+            if(FrostArmorTimer < diff)
+            {
+                if(DoCast(me, SPELL_FROST_ARMOR) == SPELL_CAST_OK)
+                    FrostArmorTimer = TIMER_FROST_ARMOR;
+            } else FrostArmorTimer -= diff;
+    
+            if(DecayTimer < diff)
+            {
+                if(DoCast(SelectTarget(SELECT_TARGET_RANDOM, 0, 30.0f, true), SPELL_DEATH_AND_DECAY) == SPELL_CAST_OK)
+                {
+                    DecayTimer = TIMER_DEATH_AND_DECAY;
+                    DoScriptText(SAY_DECAY1 - rand()%2,me);
+                }
+            } else DecayTimer -= diff;
+    
+            if(NovaTimer < diff)
+            {
+                if(DoCast(me->GetVictim(), SPELL_FROST_NOVA) == SPELL_CAST_OK)
+                {
+                    NovaTimer = TIMER_FROST_NOVA;
+                    DoScriptText(SAY_NOVA1 - rand()%2,me);
+                }
+            } else NovaTimer -= diff;
+    
+            if(IceboltTimer < diff)
+            {
+                if(DoCast(SelectTarget(SELECT_TARGET_RANDOM,0,40.0f,true), SPELL_ICEBOLT) == SPELL_CAST_OK)
+                    IceboltTimer = TIMER_ICEBOLT;
+            } else IceboltTimer -= diff;
+    
+            if(BerserkTimer < diff)
+            {
+                if(DoCast(me,SPELL_BERSERK,true) == SPELL_CAST_OK)
+                    BerserkTimer = 300000;
+            } else BerserkTimer -= diff;
+    
+            DoMeleeAttackIfReady();
         }
+    };
 
-        //Return since we have no target
-        if (!UpdateVictim() )
-            return;
-
-        if(FrostArmorTimer < diff)
-        {
-            if(DoCast(me, SPELL_FROST_ARMOR) == SPELL_CAST_OK)
-                FrostArmorTimer = TIMER_FROST_ARMOR;
-        } else FrostArmorTimer -= diff;
-
-        if(DecayTimer < diff)
-        {
-            if(DoCast(SelectTarget(SELECT_TARGET_RANDOM, 0, 30.0f, true), SPELL_DEATH_AND_DECAY) == SPELL_CAST_OK)
-            {
-                DecayTimer = TIMER_DEATH_AND_DECAY;
-                DoScriptText(SAY_DECAY1 - rand()%2,me);
-            }
-        } else DecayTimer -= diff;
-
-        if(NovaTimer < diff)
-        {
-            if(DoCast(me->GetVictim(), SPELL_FROST_NOVA) == SPELL_CAST_OK)
-            {
-                NovaTimer = TIMER_FROST_NOVA;
-                DoScriptText(SAY_NOVA1 - rand()%2,me);
-            }
-        } else NovaTimer -= diff;
-
-        if(IceboltTimer < diff)
-        {
-            if(DoCast(SelectTarget(SELECT_TARGET_RANDOM,0,40.0f,true), SPELL_ICEBOLT) == SPELL_CAST_OK)
-                IceboltTimer = TIMER_ICEBOLT;
-        } else IceboltTimer -= diff;
-
-        if(BerserkTimer < diff)
-        {
-            if(DoCast(me,SPELL_BERSERK,true) == SPELL_CAST_OK)
-                BerserkTimer = 300000;
-        } else BerserkTimer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_rage_winterchillAI(creature);
     }
 };
 
-CreatureAI* GetAI_boss_rage_winterchill(Creature *_Creature)
-{
-    return new boss_rage_winterchillAI (_Creature);
-}
 
 void AddSC_boss_rage_winterchill()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_rage_winterchill";
-    newscript->GetAI = &GetAI_boss_rage_winterchill;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_rage_winterchill();
 }

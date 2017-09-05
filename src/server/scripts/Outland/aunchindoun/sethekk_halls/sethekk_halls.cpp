@@ -36,27 +36,53 @@ EndContentData */
 #define QUEST_BRO_AGAINST_BRO   10097
 #define GOSSIP_FREE_LAKKA       "You're free, Lakka!"
 
-bool GossipHello_npc_lakka(Player *player, Creature *_Creature)
+class npc_lakka : public CreatureScript
 {
-    if( player->GetQuestStatus(QUEST_BRO_AGAINST_BRO) == QUEST_STATUS_INCOMPLETE )
+public:
+    npc_lakka() : CreatureScript("npc_lakka")
+    { }
+
+   class npc_lakkaAI : public ScriptedAI
+   {
+   public:
+        npc_lakkaAI(Creature* creature) : ScriptedAI(creature)
+        {}
+
+
+        virtual bool GossipHello(Player* player) override
+        {
+            if( player->GetQuestStatus(QUEST_BRO_AGAINST_BRO) == QUEST_STATUS_INCOMPLETE )
+            {
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_FREE_LAKKA, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+                SEND_PREPARED_GOSSIP_MENU(player, me);
+            }
+
+            return true;
+
+        }
+
+
+        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        {
+            if( action == GOSSIP_ACTION_INFO_DEF+1 )
+            {
+                player->KilledMonsterCredit(18956,me->GetGUID());
+                player->CLOSE_GOSSIP_MENU();
+            }
+
+            return true;
+
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
     {
-        player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_FREE_LAKKA, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-        SEND_PREPARED_GOSSIP_MENU(player, _Creature);
+        return new npc_lakkaAI(creature);
     }
+};
 
-    return true;
-}
 
-bool GossipSelect_npc_lakka(Player *player, Creature *_Creature, uint32 sender, uint32 action)
-{
-    if( action == GOSSIP_ACTION_INFO_DEF+1 )
-    {
-        player->KilledMonsterCredit(18956,_Creature->GetGUID());
-        player->CLOSE_GOSSIP_MENU();
-    }
-
-    return true;
-}
 
 bool hasDespawned = false;
 
@@ -66,24 +92,36 @@ public:
     RavensClaw() : GameObjectScript("go_ravens_claw")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGo) override
+    struct RavensClawAI : public GameObjectAI
     {
-        if (InstanceScript* pInstance = ((InstanceScript*)pGo->GetInstanceScript())) {
-            if (pInstance->GetData64(ANZU_SUMMONER) != 0 && pPlayer->GetGUID() != pInstance->GetData64(ANZU_SUMMONER)) {      // Hehe, two different players summoning Anzu ? We aren't going to be friends...
-                pPlayer->DealDamage(pPlayer, pPlayer->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+        RavensClawAI(GameObject* obj) : GameObjectAI(obj), pInstance(obj->GetInstanceScript()) { }
 
-                if (Creature* secondAnzu = pGo->FindNearestCreature(23035, 30.0f, true)) {
-                    if (!hasDespawned) {
-                        secondAnzu->DisappearAndDie();
-                        hasDespawned = true;
+        InstanceScript* pInstance;
+
+        bool GossipHello(Player* pPlayer) override
+        {
+            if (pInstance) {
+                if (pInstance->GetData64(ANZU_SUMMONER) != 0 && pPlayer->GetGUID() != pInstance->GetData64(ANZU_SUMMONER)) {      // Hehe, two different players summoning Anzu ? We aren't going to be friends...
+                    pPlayer->DealDamage(pPlayer, pPlayer->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+
+                    if (Creature* secondAnzu = me->FindNearestCreature(23035, 30.0f, true)) {
+                        if (!hasDespawned) {
+                            secondAnzu->DisappearAndDie();
+                            hasDespawned = true;
+                        }
                     }
                 }
+                else
+                    pInstance->SetData64(ANZU_SUMMONER, pPlayer->GetGUID());
+                return false;
             }
-            else
-                pInstance->SetData64(ANZU_SUMMONER, pPlayer->GetGUID());
-            return false;
+            return true;
         }
-        return true;
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new RavensClawAI(go);
     }
 };
 
@@ -93,13 +131,8 @@ public:
 
 void AddSC_sethekk_halls()
 {
-    OLDScript *newscript;
 
-    newscript = new OLDScript;
-    newscript->Name = "npc_lakka";
-    newscript->OnGossipHello = &GossipHello_npc_lakka;
-    newscript->OnGossipSelect = &GossipSelect_npc_lakka;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_lakka();
     
     new RavensClaw();
 }

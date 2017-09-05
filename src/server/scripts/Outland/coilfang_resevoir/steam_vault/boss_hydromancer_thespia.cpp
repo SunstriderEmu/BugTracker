@@ -41,157 +41,170 @@ EndContentData */
 #define SPELL_LUNG_BURST            31481
 #define SPELL_ENVELOPING_WINDS      31718
 
-struct boss_thespiaAI : public ScriptedAI
-{
-    boss_thespiaAI(Creature *c) : ScriptedAI(c)
-    {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-        HeroicMode = me->GetMap()->IsHeroic();
-    }
-
-    InstanceScript *pInstance;
-    bool HeroicMode;
-
-    uint32 LightningCloud_Timer;
-    uint32 LungBurst_Timer;
-    uint32 EnvelopingWinds_Timer;
-
-    void Reset()
-    override {
-        LightningCloud_Timer = 15000;
-        LungBurst_Timer = 7000;
-        EnvelopingWinds_Timer = 9000;
-
-        if (pInstance && me->IsAlive())
-            pInstance->SetData(TYPE_HYDROMANCER_THESPIA, NOT_STARTED);
-    }
-
-    void JustDied(Unit* Killer)
-    override {
-        DoScriptText(SAY_DEAD, me);
-
-        if (pInstance)
-            pInstance->SetData(TYPE_HYDROMANCER_THESPIA, DONE);
-    }
-
-    void KilledUnit(Unit* victim)
-    override {
-        switch(rand()%2)
-        {
-            case 0: DoScriptText(SAY_SLAY_1, me); break;
-            case 1: DoScriptText(SAY_SLAY_2, me); break;
-        }
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-        switch(rand()%3)
-        {
-            case 0: DoScriptText(SAY_AGGRO_1, me); break;
-            case 1: DoScriptText(SAY_AGGRO_2, me); break;
-            case 2: DoScriptText(SAY_AGGRO_3, me); break;
-        }
-
-        if (pInstance)
-            pInstance->SetData(TYPE_HYDROMANCER_THESPIA, IN_PROGRESS);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim())
-            return;
-
-        //LightningCloud_Timer
-        if (LightningCloud_Timer < diff)
-        {
-            //cast twice in Heroic mode
-            if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0))
-                DoCast(target, SPELL_LIGHTNING_CLOUD);
-            if (HeroicMode)
-                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0))
-                    DoCast(target, SPELL_LIGHTNING_CLOUD);
-            LightningCloud_Timer = 15000+rand()%10000;
-        }else LightningCloud_Timer -=diff;
-
-        //LungBurst_Timer
-        if (LungBurst_Timer < diff)
-        {
-            if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0))
-                DoCast(target, SPELL_LUNG_BURST);
-            LungBurst_Timer = 7000+rand()%5000;
-        }else LungBurst_Timer -=diff;
-
-        //EnvelopingWinds_Timer
-        if (EnvelopingWinds_Timer < diff)
-        {
-            //cast twice in Heroic mode
-            if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0))
-                DoCast(target, SPELL_ENVELOPING_WINDS);
-            if (HeroicMode)
-                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0))
-                    DoCast(target, SPELL_ENVELOPING_WINDS);
-            EnvelopingWinds_Timer = 10000+rand()%5000;
-        }else EnvelopingWinds_Timer -=diff;
-
-        DoMeleeAttackIfReady();
-    }
-};
 
 #define SPELL_WATER_BOLT_VOLLEY     34449
 #define H_SPELL_WATER_BOLT_VOLLEY   37924
 
-struct mob_coilfang_waterelementalAI : public ScriptedAI
+
+class boss_hydromancer_thespia : public CreatureScript
 {
-    mob_coilfang_waterelementalAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_hydromancer_thespia() : CreatureScript("boss_hydromancer_thespia")
+    { }
 
-    bool HeroicMode;
-    uint32 WaterBoltVolley_Timer;
-
-    void Reset()
-    override {
-        HeroicMode = me->GetMap()->IsHeroic();
-        WaterBoltVolley_Timer = 3000+rand()%3000;
-    }
-
-    void EnterCombat(Unit *who) override { }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim())
-            return;
-
-        if (WaterBoltVolley_Timer < diff)
+    class boss_thespiaAI : public ScriptedAI
+    {
+        public:
+        boss_thespiaAI(Creature *c) : ScriptedAI(c)
         {
-            DoCast(me, HeroicMode ? H_SPELL_WATER_BOLT_VOLLEY : SPELL_WATER_BOLT_VOLLEY);
-            WaterBoltVolley_Timer = 7000+rand()%5000;
-        }else WaterBoltVolley_Timer -= diff;
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
+            HeroicMode = me->GetMap()->IsHeroic();
+        }
+    
+        InstanceScript *pInstance;
+        bool HeroicMode;
+    
+        uint32 LightningCloud_Timer;
+        uint32 LungBurst_Timer;
+        uint32 EnvelopingWinds_Timer;
+    
+        void Reset()
+        override {
+            LightningCloud_Timer = 15000;
+            LungBurst_Timer = 7000;
+            EnvelopingWinds_Timer = 9000;
+    
+            if (pInstance && me->IsAlive())
+                pInstance->SetData(TYPE_HYDROMANCER_THESPIA, NOT_STARTED);
+        }
+    
+        void JustDied(Unit* Killer)
+        override {
+            DoScriptText(SAY_DEAD, me);
+    
+            if (pInstance)
+                pInstance->SetData(TYPE_HYDROMANCER_THESPIA, DONE);
+        }
+    
+        void KilledUnit(Unit* victim)
+        override {
+            switch(rand()%2)
+            {
+                case 0: DoScriptText(SAY_SLAY_1, me); break;
+                case 1: DoScriptText(SAY_SLAY_2, me); break;
+            }
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+            switch(rand()%3)
+            {
+                case 0: DoScriptText(SAY_AGGRO_1, me); break;
+                case 1: DoScriptText(SAY_AGGRO_2, me); break;
+                case 2: DoScriptText(SAY_AGGRO_3, me); break;
+            }
+    
+            if (pInstance)
+                pInstance->SetData(TYPE_HYDROMANCER_THESPIA, IN_PROGRESS);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim())
+                return;
+    
+            //LightningCloud_Timer
+            if (LightningCloud_Timer < diff)
+            {
+                //cast twice in Heroic mode
+                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0))
+                    DoCast(target, SPELL_LIGHTNING_CLOUD);
+                if (HeroicMode)
+                    if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0))
+                        DoCast(target, SPELL_LIGHTNING_CLOUD);
+                LightningCloud_Timer = 15000+rand()%10000;
+            }else LightningCloud_Timer -=diff;
+    
+            //LungBurst_Timer
+            if (LungBurst_Timer < diff)
+            {
+                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0))
+                    DoCast(target, SPELL_LUNG_BURST);
+                LungBurst_Timer = 7000+rand()%5000;
+            }else LungBurst_Timer -=diff;
+    
+            //EnvelopingWinds_Timer
+            if (EnvelopingWinds_Timer < diff)
+            {
+                //cast twice in Heroic mode
+                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0))
+                    DoCast(target, SPELL_ENVELOPING_WINDS);
+                if (HeroicMode)
+                    if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0))
+                        DoCast(target, SPELL_ENVELOPING_WINDS);
+                EnvelopingWinds_Timer = 10000+rand()%5000;
+            }else EnvelopingWinds_Timer -=diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_thespiaAI(creature);
     }
 };
 
-CreatureAI* GetAI_boss_thespiaAI(Creature *_Creature)
-{
-    return new boss_thespiaAI (_Creature);
-}
 
-CreatureAI* GetAI_mob_coilfang_waterelementalAI(Creature *_Creature)
+class mob_coilfang_waterelemental : public CreatureScript
 {
-    return new mob_coilfang_waterelementalAI (_Creature);
-}
+public:
+    mob_coilfang_waterelemental() : CreatureScript("mob_coilfang_waterelemental")
+    { }
+
+    class mob_coilfang_waterelementalAI : public ScriptedAI
+    {
+        public:
+        mob_coilfang_waterelementalAI(Creature *c) : ScriptedAI(c) {}
+    
+        bool HeroicMode;
+        uint32 WaterBoltVolley_Timer;
+    
+        void Reset()
+        override {
+            HeroicMode = me->GetMap()->IsHeroic();
+            WaterBoltVolley_Timer = 3000+rand()%3000;
+        }
+    
+        void EnterCombat(Unit *who) override { }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim())
+                return;
+    
+            if (WaterBoltVolley_Timer < diff)
+            {
+                DoCast(me, HeroicMode ? H_SPELL_WATER_BOLT_VOLLEY : SPELL_WATER_BOLT_VOLLEY);
+                WaterBoltVolley_Timer = 7000+rand()%5000;
+            }else WaterBoltVolley_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new mob_coilfang_waterelementalAI(creature);
+    }
+};
+
 
 void AddSC_boss_hydromancer_thespia()
 {
-    OLDScript *newscript;
 
-    newscript = new OLDScript;
-    newscript->Name="boss_hydromancer_thespia";
-    newscript->GetAI = &GetAI_boss_thespiaAI;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_hydromancer_thespia();
 
-    newscript = new OLDScript;
-    newscript->Name="mob_coilfang_waterelemental";
-    newscript->GetAI = &GetAI_mob_coilfang_waterelementalAI;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new mob_coilfang_waterelemental();
 }
 

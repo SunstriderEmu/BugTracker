@@ -47,121 +47,126 @@ enum eMist
 
 const float m_afToForestLoc[] = {10648.7f, 1790.63f, 1324.08f};
 
-struct npc_mistAI : public FollowerAI
+
+
+class npc_mist : public CreatureScript
 {
-    npc_mistAI(Creature* pCreature) : FollowerAI(pCreature) { }
+public:
+    npc_mist() : CreatureScript("npc_mist")
+    { }
 
-    uint32 m_uiPostEventTimer;
-    uint32 m_uiPhasePostEvent;
-
-    uint64 AryniaGUID;
-
-    void Reset() 
-    override { 
-        m_uiPostEventTimer = 1000;
-        m_uiPhasePostEvent = 0;
-
-        AryniaGUID = 0;
-    }
+    class npc_mistAI : public FollowerAI
+    {
+        public:
+        npc_mistAI(Creature* pCreature) : FollowerAI(pCreature) { }
     
-    void EnterCombat(Unit *pWho) override {}
-
-    void MoveInLineOfSight(Unit *pWho)
-    override {
-        FollowerAI::MoveInLineOfSight(pWho);
-
-        if (!me->GetVictim() && !HasFollowState(STATE_FOLLOW_COMPLETE | STATE_FOLLOW_POSTEVENT) && pWho->GetEntry() == NPC_ARYNIA)
-        {
-            if (me->IsWithinDistInMap(pWho, INTERACTION_DISTANCE))
+        uint32 m_uiPostEventTimer;
+        uint32 m_uiPhasePostEvent;
+    
+        uint64 AryniaGUID;
+    
+        void Reset() 
+        override { 
+            m_uiPostEventTimer = 1000;
+            m_uiPhasePostEvent = 0;
+    
+            AryniaGUID = 0;
+        }
+        
+        void EnterCombat(Unit *pWho) override {}
+    
+        void MoveInLineOfSight(Unit *pWho)
+        override {
+            FollowerAI::MoveInLineOfSight(pWho);
+    
+            if (!me->GetVictim() && !HasFollowState(STATE_FOLLOW_COMPLETE | STATE_FOLLOW_POSTEVENT) && pWho->GetEntry() == NPC_ARYNIA)
             {
-                if (Player* pPlayer = GetLeaderForFollower())
+                if (me->IsWithinDistInMap(pWho, INTERACTION_DISTANCE))
                 {
-                    if (pPlayer->GetQuestStatus(QUEST_MIST) == QUEST_STATUS_INCOMPLETE)
-                        pPlayer->GroupEventHappens(QUEST_MIST, me);
+                    if (Player* pPlayer = GetLeaderForFollower())
+                    {
+                        if (pPlayer->GetQuestStatus(QUEST_MIST) == QUEST_STATUS_INCOMPLETE)
+                            pPlayer->GroupEventHappens(QUEST_MIST, me);
+                    }
+    
+                    AryniaGUID = pWho->GetGUID();
+                    SetFollowComplete(true);
                 }
-
-                AryniaGUID = pWho->GetGUID();
-                SetFollowComplete(true);
             }
         }
-    }
+        
+        void MovementInform(uint32 uiMotionType, uint32 uiPointId)
+        override {
+            FollowerAI::MovementInform(uiMotionType, uiPointId);
     
-    void MovementInform(uint32 uiMotionType, uint32 uiPointId)
-    override {
-        FollowerAI::MovementInform(uiMotionType, uiPointId);
-
-        if (uiMotionType != POINT_MOTION_TYPE)
-            return;
-
-        if (uiPointId == POINT_ID_TO_FOREST)
-            SetFollowComplete();
-    }
-
-    void UpdateFollowerAI(const uint32 uiDiff)
-    override {
-        if (!UpdateVictim())
-        {
-            if (HasFollowState(STATE_FOLLOW_POSTEVENT))
+            if (uiMotionType != POINT_MOTION_TYPE)
+                return;
+    
+            if (uiPointId == POINT_ID_TO_FOREST)
+                SetFollowComplete();
+        }
+    
+        void UpdateFollowerAI(const uint32 uiDiff)
+        override {
+            if (!UpdateVictim())
             {
-                if (m_uiPostEventTimer <= uiDiff)
+                if (HasFollowState(STATE_FOLLOW_POSTEVENT))
                 {
-                    m_uiPostEventTimer = 3000;
-
-                    Unit *pArynia = ObjectAccessor::GetUnit(*me, AryniaGUID);
-                    if (!pArynia || !pArynia->IsAlive())
+                    if (m_uiPostEventTimer <= uiDiff)
                     {
-                        SetFollowComplete();
-                        return;
+                        m_uiPostEventTimer = 3000;
+    
+                        Unit *pArynia = ObjectAccessor::GetUnit(*me, AryniaGUID);
+                        if (!pArynia || !pArynia->IsAlive())
+                        {
+                            SetFollowComplete();
+                            return;
+                        }
+    
+                        switch(m_uiPhasePostEvent)
+                        {
+                        case 0:
+                            DoScriptText(SAY_AT_HOME, pArynia);
+                            break;
+                        case 1:
+                            DoScriptText(EMOTE_AT_HOME, me);
+                            me->GetMotionMaster()->MovePoint(POINT_ID_TO_FOREST, m_afToForestLoc[0], m_afToForestLoc[1], m_afToForestLoc[2]);
+                            break;
+                        }
+    
+                        ++m_uiPhasePostEvent;
                     }
-
-                    switch(m_uiPhasePostEvent)
-                    {
-                    case 0:
-                        DoScriptText(SAY_AT_HOME, pArynia);
-                        break;
-                    case 1:
-                        DoScriptText(EMOTE_AT_HOME, me);
-                        me->GetMotionMaster()->MovePoint(POINT_ID_TO_FOREST, m_afToForestLoc[0], m_afToForestLoc[1], m_afToForestLoc[2]);
-                        break;
-                    }
-
-                    ++m_uiPhasePostEvent;
+                    else
+                        m_uiPostEventTimer -= uiDiff;
                 }
-                else
-                    m_uiPostEventTimer -= uiDiff;
+    
+                return;
             }
-
-            return;
+    
+            DoMeleeAttackIfReady();
         }
 
-        DoMeleeAttackIfReady();
+        virtual void QuestAccept(Player* pPlayer, Quest const* pQuest) override
+        {
+            if (pQuest->GetQuestId() == QUEST_MIST)
+            {
+                if (npc_mistAI* pMistAI = CAST_AI(npc_mist::npc_mistAI, me->AI()))
+                    pMistAI->StartFollow(pPlayer, FACTION_DARNASSUS, pQuest);
+            }
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_mistAI(creature);
     }
 };
 
 
-CreatureAI* GetAI_npc_mist(Creature* pCreature)
-{
-    return new npc_mistAI(pCreature);
-}
-
-bool QuestAccept_npc_mist(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
-{
-    if (pQuest->GetQuestId() == QUEST_MIST)
-    {
-        if (npc_mistAI* pMistAI = CAST_AI(npc_mistAI, pCreature->AI()))
-            pMistAI->StartFollow(pPlayer, FACTION_DARNASSUS, pQuest);
-    }
-
-    return true;
-}
 
 void AddSC_teldrassil()
 {
-    OLDScript *newscript;
 
-    newscript = new OLDScript;
-    newscript->Name = "npc_mist";
-    newscript->GetAI = &GetAI_npc_mist;
-    newscript->OnQuestAccept = &QuestAccept_npc_mist;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_mist();
 }

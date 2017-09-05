@@ -28,37 +28,58 @@ EndScriptData */
 
 #include "def_razorfen_downs.h"
 
-bool GossipHello_npc_henry_stern(Player *pPlayer, Creature *pCreature)
+class npc_henry_stern : public CreatureScript
 {
-    if (pPlayer->HasSkill(SKILL_COOKING) && pPlayer->GetBaseSkillValue(SKILL_COOKING) >= 175)
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Je voudrais apprendre à confectionner du Thé de dorépine.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-    if (pPlayer->HasSkill(SKILL_ALCHEMY) && pPlayer->GetBaseSkillValue(SKILL_ALCHEMY) >= 175)
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Je voudrais apprendre à faire de la potion de sang de troll hargneux.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-    
-    pPlayer->SEND_GOSSIP_MENU_TEXTID(3377, pCreature->GetGUID());
-    
-    return true;
-}
+public:
+    npc_henry_stern() : CreatureScript("npc_henry_stern")
+    { }
 
-bool GossipSelect_npc_henry_stern(Player *pPlayer, Creature *pCreature, uint32 sender, uint32 action)
-{
-    if (action == GOSSIP_ACTION_INFO_DEF+1)
-        pPlayer->LearnSpell(13028, false);
-    else if (action == GOSSIP_ACTION_INFO_DEF+2)
-        pPlayer->LearnSpell(3451, false);
-        
-    pPlayer->CLOSE_GOSSIP_MENU();
-    
-    return true;
-}
+    class npc_henry_sternAI : public ScriptedAI
+    {
+    public:
+        npc_henry_sternAI(Creature* creature) : ScriptedAI(creature)
+        {}
+
+
+        virtual bool GossipHello(Player* pPlayer) override
+        {
+            if (pPlayer->HasSkill(SKILL_COOKING) && pPlayer->GetBaseSkillValue(SKILL_COOKING) >= 175)
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Je voudrais apprendre à confectionner du Thé de dorépine.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+            if (pPlayer->HasSkill(SKILL_ALCHEMY) && pPlayer->GetBaseSkillValue(SKILL_ALCHEMY) >= 175)
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Je voudrais apprendre à faire de la potion de sang de troll hargneux.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+            
+            pPlayer->SEND_GOSSIP_MENU_TEXTID(3377, me->GetGUID());
+            
+            return true;
+
+        }
+
+
+        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        {
+            if (action == GOSSIP_ACTION_INFO_DEF+1)
+                pPlayer->LearnSpell(13028, false);
+            else if (action == GOSSIP_ACTION_INFO_DEF+2)
+                pPlayer->LearnSpell(3451, false);
+                
+            pPlayer->CLOSE_GOSSIP_MENU();
+            
+            return true;
+
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_henry_sternAI(creature);
+    }
+};
+
+
 
 void AddSC_razorfen_downs()
 {
-    OLDScript *newscript;
     
-    newscript = new OLDScript;
-    newscript->Name = "npc_henry_stern";
-    newscript->OnGossipHello = &GossipHello_npc_henry_stern;
-    newscript->OnGossipSelect = &GossipSelect_npc_henry_stern;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_henry_stern();
 }

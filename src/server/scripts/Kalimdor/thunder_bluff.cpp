@@ -35,104 +35,114 @@ EndScriptData */
 
 #define GOSSIP_HCB "I know this is rather silly but a young ward who is a bit shy would like your hoofprint."
 //TODO: verify abilities/timers
-struct npc_cairne_bloodhoofAI : public ScriptedAI
+class npc_cairne_bloodhoof : public CreatureScript
 {
-    npc_cairne_bloodhoofAI(Creature* c) : ScriptedAI(c) {}
+public:
+    npc_cairne_bloodhoof() : CreatureScript("npc_cairne_bloodhoof")
+    { }
 
-    uint32 BerserkerCharge_Timer;
-    uint32 Cleave_Timer;
-    uint32 MortalStrike_Timer;
-    uint32 Thunderclap_Timer;
-    uint32 Uppercut_Timer;
-
-    void Reset()
-    override {
-        BerserkerCharge_Timer = 30000;
-        Cleave_Timer = 5000;
-        MortalStrike_Timer = 10000;
-        Thunderclap_Timer = 15000;
-        Uppercut_Timer = 10000;
-    }
-
-    void EnterCombat(Unit *who) override {}
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if(!UpdateVictim())
-            return;
-
-        if( BerserkerCharge_Timer < diff )
-        {
-            Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0);
-            if( target )
-                DoCast(target,SPELL_BERSERKER_CHARGE);
-            BerserkerCharge_Timer = 25000;
-        }else BerserkerCharge_Timer -= diff;
-
-        if( Uppercut_Timer < diff )
-        {
-            DoCast(me->GetVictim(),SPELL_UPPERCUT);
-            Uppercut_Timer = 20000;
-        }else Uppercut_Timer -= diff;
-
-        if( Thunderclap_Timer < diff )
-        {
-            DoCast(me->GetVictim(),SPELL_THUNDERCLAP);
+    class npc_cairne_bloodhoofAI : public ScriptedAI
+    {
+        public:
+        npc_cairne_bloodhoofAI(Creature* c) : ScriptedAI(c) {}
+    
+        uint32 BerserkerCharge_Timer;
+        uint32 Cleave_Timer;
+        uint32 MortalStrike_Timer;
+        uint32 Thunderclap_Timer;
+        uint32 Uppercut_Timer;
+    
+        void Reset()
+        override {
+            BerserkerCharge_Timer = 30000;
+            Cleave_Timer = 5000;
+            MortalStrike_Timer = 10000;
             Thunderclap_Timer = 15000;
-        }else Thunderclap_Timer -= diff;
+            Uppercut_Timer = 10000;
+        }
+    
+        void EnterCombat(Unit *who) override {}
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if(!UpdateVictim())
+                return;
+    
+            if( BerserkerCharge_Timer < diff )
+            {
+                Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0);
+                if( target )
+                    DoCast(target,SPELL_BERSERKER_CHARGE);
+                BerserkerCharge_Timer = 25000;
+            }else BerserkerCharge_Timer -= diff;
+    
+            if( Uppercut_Timer < diff )
+            {
+                DoCast(me->GetVictim(),SPELL_UPPERCUT);
+                Uppercut_Timer = 20000;
+            }else Uppercut_Timer -= diff;
+    
+            if( Thunderclap_Timer < diff )
+            {
+                DoCast(me->GetVictim(),SPELL_THUNDERCLAP);
+                Thunderclap_Timer = 15000;
+            }else Thunderclap_Timer -= diff;
+    
+            if( MortalStrike_Timer < diff )
+            {
+                DoCast(me->GetVictim(),SPELL_MORTAL_STRIKE);
+                MortalStrike_Timer = 15000;
+            }else MortalStrike_Timer -= diff;
+    
+            if( Cleave_Timer < diff )
+            {
+                DoCast(me->GetVictim(),SPELL_CLEAVE);
+                Cleave_Timer = 7000;
+            }else Cleave_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
 
-        if( MortalStrike_Timer < diff )
+        virtual bool GossipHello(Player* player) override
         {
-            DoCast(me->GetVictim(),SPELL_MORTAL_STRIKE);
-            MortalStrike_Timer = 15000;
-        }else MortalStrike_Timer -= diff;
+            if (me->IsQuestGiver())
+                player->PrepareQuestMenu( me->GetGUID() );
 
-        if( Cleave_Timer < diff )
+            if( player->GetQuestStatus(925) == QUEST_STATUS_INCOMPLETE )
+                player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_HCB, GOSSIP_SENDER_MAIN, GOSSIP_SENDER_INFO );
+
+            player->SEND_GOSSIP_MENU_TEXTID(7013, me->GetGUID() );
+
+            return true;
+
+        }
+
+
+        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
         {
-            DoCast(me->GetVictim(),SPELL_CLEAVE);
-            Cleave_Timer = 7000;
-        }else Cleave_Timer -= diff;
+            if( action == GOSSIP_SENDER_INFO )
+            {
+                player->CastSpell(player, 23123, false);
+                player->SEND_GOSSIP_MENU_TEXTID(7014, me->GetGUID() );
+            }
+            return true;
 
-        DoMeleeAttackIfReady();
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_cairne_bloodhoofAI(creature);
     }
 };
-CreatureAI* GetAI_npc_cairne_bloodhoof(Creature *_Creature)
-{
-    return new npc_cairne_bloodhoofAI (_Creature);
-}
 
-bool GossipHello_npc_cairne_bloodhoof(Player *player, Creature *_Creature)
-{
-    if (_Creature->IsQuestGiver())
-        player->PrepareQuestMenu( _Creature->GetGUID() );
 
-    if( player->GetQuestStatus(925) == QUEST_STATUS_INCOMPLETE )
-        player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_HCB, GOSSIP_SENDER_MAIN, GOSSIP_SENDER_INFO );
 
-    player->SEND_GOSSIP_MENU_TEXTID(7013, _Creature->GetGUID() );
-
-    return true;
-}
-
-bool GossipSelect_npc_cairne_bloodhoof(Player *player, Creature *_Creature, uint32 sender, uint32 action )
-{
-    if( action == GOSSIP_SENDER_INFO )
-    {
-        player->CastSpell(player, 23123, false);
-        player->SEND_GOSSIP_MENU_TEXTID(7014, _Creature->GetGUID() );
-    }
-    return true;
-}
 
 void AddSC_thunder_bluff()
 {
-    OLDScript *newscript;
 
-    newscript = new OLDScript;
-    newscript->Name="npc_cairne_bloodhoof";
-    newscript->GetAI = &GetAI_npc_cairne_bloodhoof;
-    newscript->OnGossipHello = &GossipHello_npc_cairne_bloodhoof;
-    newscript->OnGossipSelect = &GossipSelect_npc_cairne_bloodhoof;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_cairne_bloodhoof();
 }
 

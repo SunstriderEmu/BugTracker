@@ -27,70 +27,76 @@ EndScriptData */
 #define SPELL_HEX               16708
 #define SPELL_CLEAVE            20691
 
-struct boss_shadowvoshAI : public ScriptedAI
+class boss_shadow_hunter_voshgajin : public CreatureScript
 {
-    boss_shadowvoshAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_shadow_hunter_voshgajin() : CreatureScript("boss_shadow_hunter_voshgajin")
+    { }
 
-    uint32 CurseOfBlood_Timer;
-    uint32 Hex_Timer;
-    uint32 Cleave_Timer;
+    class boss_shadowvoshAI : public ScriptedAI
+    {
+        public:
+        boss_shadowvoshAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 CurseOfBlood_Timer;
+        uint32 Hex_Timer;
+        uint32 Cleave_Timer;
+    
+        void Reset()
+        override {
+            CurseOfBlood_Timer = 2000;
+            Hex_Timer = 8000;
+            Cleave_Timer = 14000;
+    
+            //me->CastSpell(me,SPELL_ICEARMOR,true);
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            //Return since we have no target
+            if (!UpdateVictim() )
+                return;
+    
+            //CurseOfBlood_Timer
+            if (CurseOfBlood_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_CURSEOFBLOOD);
+                CurseOfBlood_Timer = 45000;
+            }else CurseOfBlood_Timer -= diff;
+    
+            //Hex_Timer
+            if (Hex_Timer < diff)
+            {
+                Unit* target = nullptr;
+                target = SelectTarget(SELECT_TARGET_RANDOM,0);
+                if (target) DoCast(target,SPELL_HEX);
+                Hex_Timer = 15000;
+            }else Hex_Timer -= diff;
+    
+            //Cleave_Timer
+            if (Cleave_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_CLEAVE);
+                Cleave_Timer = 7000;
+            }else Cleave_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-    void Reset()
-    override {
-        CurseOfBlood_Timer = 2000;
-        Hex_Timer = 8000;
-        Cleave_Timer = 14000;
-
-        //me->CastSpell(me,SPELL_ICEARMOR,true);
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        //Return since we have no target
-        if (!UpdateVictim() )
-            return;
-
-        //CurseOfBlood_Timer
-        if (CurseOfBlood_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_CURSEOFBLOOD);
-            CurseOfBlood_Timer = 45000;
-        }else CurseOfBlood_Timer -= diff;
-
-        //Hex_Timer
-        if (Hex_Timer < diff)
-        {
-            Unit* target = nullptr;
-            target = SelectTarget(SELECT_TARGET_RANDOM,0);
-            if (target) DoCast(target,SPELL_HEX);
-            Hex_Timer = 15000;
-        }else Hex_Timer -= diff;
-
-        //Cleave_Timer
-        if (Cleave_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_CLEAVE);
-            Cleave_Timer = 7000;
-        }else Cleave_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_shadowvoshAI(creature);
     }
 };
-CreatureAI* GetAI_boss_shadowvosh(Creature *_Creature)
-{
-    return new boss_shadowvoshAI (_Creature);
-}
+
 
 void AddSC_boss_shadowvosh()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_shadow_hunter_voshgajin";
-    newscript->GetAI = &GetAI_boss_shadowvosh;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_shadow_hunter_voshgajin();
 }
 

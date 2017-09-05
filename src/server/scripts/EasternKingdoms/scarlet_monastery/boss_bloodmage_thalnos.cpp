@@ -37,101 +37,107 @@ EndScriptData */
 #define SOUND_HEALTH                    5846
 #define SOUND_DEATH                     5845
 
-struct boss_bloodmage_thalnosAI : public ScriptedAI
+
+class boss_bloodmage_thalnos : public CreatureScript
 {
-    boss_bloodmage_thalnosAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_bloodmage_thalnos() : CreatureScript("boss_bloodmage_thalnos")
+    { }
 
-    uint32 FrostNova2_Timer;
-    uint32 FlameShock3_Timer;
-    uint32 ShadowBolt5_Timer;
-    uint32 FlameSpike_Timer;
-    uint32 FireNova_Timer;
-    uint32 Yell_Timer;
-
-    void Reset() override
+    class boss_bloodmage_thalnosAI : public ScriptedAI
     {
-        Yell_Timer = 1;
-        FrostNova2_Timer = 10000;
-        FlameShock3_Timer = 15000;
-        ShadowBolt5_Timer = 20000;
-        FlameSpike_Timer = 20000;
-        FireNova_Timer = 10000;
-    }
-
-    void EnterCombat(Unit *who) override
-    {
-        me->Yell(SAY_AGGRO,LANG_UNIVERSAL,nullptr);
-        DoPlaySoundToSet(me,SOUND_AGGRO);
-    }
-
-    void UpdateAI(const uint32 diff) override
-    {
-        if (!UpdateVictim())
-            return;
-
-        //If we are <35% hp
-        if ( me->GetHealth()*100 / me->GetMaxHealth() <= 35)
+        public:
+        boss_bloodmage_thalnosAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 FrostNova2_Timer;
+        uint32 FlameShock3_Timer;
+        uint32 ShadowBolt5_Timer;
+        uint32 FlameSpike_Timer;
+        uint32 FireNova_Timer;
+        uint32 Yell_Timer;
+    
+        void Reset() override
         {
-            Yell_Timer -= diff;
-
-            if (Yell_Timer < diff)
-            {
-                me->Yell(SAY_HEALTH,LANG_UNIVERSAL,nullptr);
-                DoPlaySoundToSet(me,SOUND_HEALTH);
-                Yell_Timer = 900000;
-            }
-        }
-
-        //FrostNova2_Timer
-        if (FrostNova2_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_FROSTNOVA2);
+            Yell_Timer = 1;
             FrostNova2_Timer = 10000;
-        }else FrostNova2_Timer -= diff;
-
-        //FlameShock3_Timer
-        if (FlameShock3_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_FLAMESHOCK3);
             FlameShock3_Timer = 15000;
-        }else FlameShock3_Timer -= diff;
-
-        //ShadowBolt5_Timer
-        if (ShadowBolt5_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_SHADOWBOLT5);
             ShadowBolt5_Timer = 20000;
-        }else ShadowBolt5_Timer -= diff;
-
-        //FlameSpike_Timer
-        if (FlameSpike_Timer < diff)
+            FlameSpike_Timer = 20000;
+            FireNova_Timer = 10000;
+        }
+    
+        void EnterCombat(Unit *who) override
         {
-            DoCast(me->GetVictim(),SPELL_FLAMESPIKE);
-            FlameSpike_Timer = 30000;
-        }else FlameSpike_Timer -= diff;
-
-        //FireNova_Timer
-        if (FireNova_Timer < diff)
+            me->Yell(SAY_AGGRO,LANG_UNIVERSAL,nullptr);
+            DoPlaySoundToSet(me,SOUND_AGGRO);
+        }
+    
+        void UpdateAI(const uint32 diff) override
         {
-            DoCast(me->GetVictim(),SPELL_FIRENOVA);
-            FireNova_Timer = 20000;
-        }else FireNova_Timer -= diff;
+            if (!UpdateVictim())
+                return;
+    
+            //If we are <35% hp
+            if ( me->GetHealthPct() <= 35)
+            {
+                Yell_Timer -= diff;
+    
+                if (Yell_Timer < diff)
+                {
+                    me->Yell(SAY_HEALTH,LANG_UNIVERSAL,nullptr);
+                    DoPlaySoundToSet(me,SOUND_HEALTH);
+                    Yell_Timer = 900000;
+                }
+            }
+    
+            //FrostNova2_Timer
+            if (FrostNova2_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_FROSTNOVA2);
+                FrostNova2_Timer = 10000;
+            }else FrostNova2_Timer -= diff;
+    
+            //FlameShock3_Timer
+            if (FlameShock3_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_FLAMESHOCK3);
+                FlameShock3_Timer = 15000;
+            }else FlameShock3_Timer -= diff;
+    
+            //ShadowBolt5_Timer
+            if (ShadowBolt5_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_SHADOWBOLT5);
+                ShadowBolt5_Timer = 20000;
+            }else ShadowBolt5_Timer -= diff;
+    
+            //FlameSpike_Timer
+            if (FlameSpike_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_FLAMESPIKE);
+                FlameSpike_Timer = 30000;
+            }else FlameSpike_Timer -= diff;
+    
+            //FireNova_Timer
+            if (FireNova_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_FIRENOVA);
+                FireNova_Timer = 20000;
+            }else FireNova_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_bloodmage_thalnosAI(creature);
     }
 };
 
-CreatureAI* GetAI_boss_bloodmage_thalnos(Creature *_Creature)
-{
-    return new boss_bloodmage_thalnosAI (_Creature);
-}
 
 void AddSC_boss_bloodmage_thalnos()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_bloodmage_thalnos";
-    newscript->GetAI = &GetAI_boss_bloodmage_thalnos;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_bloodmage_thalnos();
 }
 

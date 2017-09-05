@@ -67,112 +67,122 @@ enum eKerlonian
 };
 
 //TODO: make concept similar as "ringo" -escort. Find a way to run the scripted attacks, _if_ player are choosing road.
-struct npc_kerlonianAI : public FollowerAI
+
+class npc_kerlonian : public CreatureScript
 {
-    npc_kerlonianAI(Creature* pCreature) : FollowerAI(pCreature) { }
+public:
+    npc_kerlonian() : CreatureScript("npc_kerlonian")
+    { }
 
-    uint32 m_uiFallAsleepTimer;
-
-    void Reset()
-    override {
-        m_uiFallAsleepTimer = urand(10000, 45000);
-    }
-
-    void MoveInLineOfSight(Unit* pWho)
-    override {
-        FollowerAI::MoveInLineOfSight(pWho);
-
-        if (!me->GetVictim() && !HasFollowState(STATE_FOLLOW_COMPLETE) && pWho->GetEntry() == NPC_LILADRIS)
-        {
-            if (me->IsWithinDistInMap(pWho, INTERACTION_DISTANCE*5))
+    class npc_kerlonianAI : public FollowerAI
+    {
+        public:
+        npc_kerlonianAI(Creature* pCreature) : FollowerAI(pCreature) { }
+    
+        uint32 m_uiFallAsleepTimer;
+    
+        void Reset()
+        override {
+            m_uiFallAsleepTimer = urand(10000, 45000);
+        }
+    
+        void MoveInLineOfSight(Unit* pWho)
+        override {
+            FollowerAI::MoveInLineOfSight(pWho);
+    
+            if (!me->GetVictim() && !HasFollowState(STATE_FOLLOW_COMPLETE) && pWho->GetEntry() == NPC_LILADRIS)
             {
-                if (Player* pPlayer = GetLeaderForFollower())
+                if (me->IsWithinDistInMap(pWho, INTERACTION_DISTANCE*5))
                 {
-                    if (pPlayer->GetQuestStatus(QUEST_SLEEPER_AWAKENED) == QUEST_STATUS_INCOMPLETE)
-                        pPlayer->GroupEventHappens(QUEST_SLEEPER_AWAKENED, me);
-
-                    DoScriptText(SAY_KER_END, me);
+                    if (Player* pPlayer = GetLeaderForFollower())
+                    {
+                        if (pPlayer->GetQuestStatus(QUEST_SLEEPER_AWAKENED) == QUEST_STATUS_INCOMPLETE)
+                            pPlayer->GroupEventHappens(QUEST_SLEEPER_AWAKENED, me);
+    
+                        DoScriptText(SAY_KER_END, me);
+                    }
+    
+                    SetFollowComplete();
                 }
-
-                SetFollowComplete();
             }
         }
-    }
-
-    void SpellHit(Unit* pCaster, const SpellInfo* pSpell)
-    override {
-        if (HasFollowState(STATE_FOLLOW_INPROGRESS | STATE_FOLLOW_PAUSED) && pSpell->Id == SPELL_AWAKEN)
-            ClearSleeping();
-    }
-
-    void SetSleeping()
-    {
-        SetFollowPaused(true);
-
-        DoScriptText(RAND(EMOTE_KER_SLEEP_1,EMOTE_KER_SLEEP_2,EMOTE_KER_SLEEP_3), me);
-
-        DoScriptText(RAND(SAY_KER_SLEEP_1,SAY_KER_SLEEP_2,SAY_KER_SLEEP_3,SAY_KER_SLEEP_4), me);
-
-        me->SetStandState(UNIT_STAND_STATE_SLEEP);
-        me->CastSpell(me, SPELL_SLEEP_VISUAL, false);
-    }
-
-    void ClearSleeping()
-    {
-        me->RemoveAurasDueToSpell(SPELL_SLEEP_VISUAL);
-        me->SetStandState(UNIT_STAND_STATE_STAND);
-
-        DoScriptText(EMOTE_KER_AWAKEN, me);
-
-        SetFollowPaused(false);
-    }
-
-    void EnterCombat(Unit* pWho) override {}
-
-    void UpdateFollowerAI(const uint32 uiDiff)
-    override {
-        if (!UpdateVictim())
+    
+        void SpellHit(Unit* pCaster, const SpellInfo* pSpell)
+        override {
+            if (HasFollowState(STATE_FOLLOW_INPROGRESS | STATE_FOLLOW_PAUSED) && pSpell->Id == SPELL_AWAKEN)
+                ClearSleeping();
+        }
+    
+        void SetSleeping()
         {
-            if (!HasFollowState(STATE_FOLLOW_INPROGRESS))
+            SetFollowPaused(true);
+    
+            DoScriptText(RAND(EMOTE_KER_SLEEP_1,EMOTE_KER_SLEEP_2,EMOTE_KER_SLEEP_3), me);
+    
+            DoScriptText(RAND(SAY_KER_SLEEP_1,SAY_KER_SLEEP_2,SAY_KER_SLEEP_3,SAY_KER_SLEEP_4), me);
+    
+            me->SetStandState(UNIT_STAND_STATE_SLEEP);
+            me->CastSpell(me, SPELL_SLEEP_VISUAL, false);
+        }
+    
+        void ClearSleeping()
+        {
+            me->RemoveAurasDueToSpell(SPELL_SLEEP_VISUAL);
+            me->SetStandState(UNIT_STAND_STATE_STAND);
+    
+            DoScriptText(EMOTE_KER_AWAKEN, me);
+    
+            SetFollowPaused(false);
+        }
+    
+        void EnterCombat(Unit* pWho) override {}
+    
+        void UpdateFollowerAI(const uint32 uiDiff)
+        override {
+            if (!UpdateVictim())
+            {
+                if (!HasFollowState(STATE_FOLLOW_INPROGRESS))
+                    return;
+    
+                if (!HasFollowState(STATE_FOLLOW_PAUSED))
+                {
+                    if (m_uiFallAsleepTimer <= uiDiff)
+                    {
+                        SetSleeping();
+                        m_uiFallAsleepTimer = urand(25000, 90000);
+                    }
+                    else
+                        m_uiFallAsleepTimer -= uiDiff;
+                }
+    
                 return;
-
-            if (!HasFollowState(STATE_FOLLOW_PAUSED))
-            {
-                if (m_uiFallAsleepTimer <= uiDiff)
-                {
-                    SetSleeping();
-                    m_uiFallAsleepTimer = urand(25000, 90000);
-                }
-                else
-                    m_uiFallAsleepTimer -= uiDiff;
             }
-
-            return;
+    
+            DoMeleeAttackIfReady();
         }
 
-        DoMeleeAttackIfReady();
+        virtual void QuestAccept(Player* pPlayer, Quest const* pQuest) override
+        {
+            if (pQuest->GetQuestId() == QUEST_SLEEPER_AWAKENED)
+            {
+                if (npc_kerlonianAI* pKerlonianAI = CAST_AI(npc_kerlonian::npc_kerlonianAI, me->AI()))
+                {
+                    me->SetStandState(UNIT_STAND_STATE_STAND);
+                    DoScriptText(SAY_KER_START, me, pPlayer);
+                    pKerlonianAI->StartFollow(pPlayer, FACTION_KER_ESCORTEE, pQuest);
+                }
+            }
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_kerlonianAI(creature);
     }
 };
 
-CreatureAI* GetAI_npc_kerlonian(Creature* pCreature)
-{
-    return new npc_kerlonianAI(pCreature);
-}
 
-bool QuestAccept_npc_kerlonian(Player* pPlayer, Creature* pCreature, const Quest* pQuest)
-{
-    if (pQuest->GetQuestId() == QUEST_SLEEPER_AWAKENED)
-    {
-        if (npc_kerlonianAI* pKerlonianAI = CAST_AI(npc_kerlonianAI, pCreature->AI()))
-        {
-            pCreature->SetStandState(UNIT_STAND_STATE_STAND);
-            DoScriptText(SAY_KER_START, pCreature, pPlayer);
-            pKerlonianAI->StartFollow(pPlayer, FACTION_KER_ESCORTEE, pQuest);
-        }
-    }
-
-    return true;
-}
 
 /*####
 # npc_threshwackonator
@@ -189,70 +199,86 @@ enum eThreshwackonator
 
 #define GOSSIP_ITEM_INSERT_KEY  "[PH] Insert key"
 
-struct npc_threshwackonatorAI : public FollowerAI
+
+class npc_threshwackonator : public CreatureScript
 {
-    npc_threshwackonatorAI(Creature* pCreature) : FollowerAI(pCreature) { }
+public:
+    npc_threshwackonator() : CreatureScript("npc_threshwackonator")
+    { }
 
-    void Reset() override { }
+    class npc_threshwackonatorAI : public FollowerAI
+    {
+        public:
+        npc_threshwackonatorAI(Creature* pCreature) : FollowerAI(pCreature) { }
     
-    void EnterCombat(Unit* pWho) override {}
-
-    void MoveInLineOfSight(Unit* pWho)
-    override {
-        FollowerAI::MoveInLineOfSight(pWho);
-
-        if (!me->GetVictim() && !HasFollowState(STATE_FOLLOW_COMPLETE) && pWho->GetEntry() == NPC_GELKAK)
-        {
-            if (me->IsWithinDistInMap(pWho, 10.0f))
+        void Reset() override { }
+        
+        void EnterCombat(Unit* pWho) override {}
+    
+        void MoveInLineOfSight(Unit* pWho)
+        override {
+            FollowerAI::MoveInLineOfSight(pWho);
+    
+            if (!me->GetVictim() && !HasFollowState(STATE_FOLLOW_COMPLETE) && pWho->GetEntry() == NPC_GELKAK)
             {
-                DoScriptText(SAY_AT_CLOSE, pWho);
-                DoAtEnd();
+                if (me->IsWithinDistInMap(pWho, 10.0f))
+                {
+                    DoScriptText(SAY_AT_CLOSE, pWho);
+                    DoAtEnd();
+                }
             }
         }
-    }
-
-    void DoAtEnd()
-    {
-        me->SetFaction(FACTION_HOSTILE);
-
-        SetFollowComplete(true);
-
-        if (Player* pHolder = GetLeaderForFollower()) {
-            me->AI()->AttackStart(pHolder);
-            me->GetMotionMaster()->MoveChase(pHolder);
+    
+        void DoAtEnd()
+        {
+            me->SetFaction(FACTION_HOSTILE);
+    
+            SetFollowComplete(true);
+    
+            if (Player* pHolder = GetLeaderForFollower()) {
+                me->AI()->AttackStart(pHolder);
+                me->GetMotionMaster()->MoveChase(pHolder);
+            }
         }
+
+        virtual bool GossipHello(Player* pPlayer) override
+        {
+            if (pPlayer->GetQuestStatus(QUEST_GYROMAST_REV) == QUEST_STATUS_INCOMPLETE)
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_INSERT_KEY, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+
+            SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
+            return true;
+
+        }
+
+
+        virtual bool GossipSelect(Player* pPlayer, uint32 uiSender, uint32 uiAction) override
+        {
+            if (uiAction == GOSSIP_ACTION_INFO_DEF+1)
+            {
+                pPlayer->CLOSE_GOSSIP_MENU();
+
+                if (npc_threshwackonatorAI* pThreshAI = CAST_AI(npc_threshwackonator::npc_threshwackonatorAI, me->AI()))
+                {
+                    DoScriptText(EMOTE_START, me);
+                    pThreshAI->StartFollow(pPlayer);
+                }
+            }
+
+            return true;
+
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_threshwackonatorAI(creature);
     }
 };
 
-CreatureAI* GetAI_npc_threshwackonator(Creature* pCreature)
-{
-    return new npc_threshwackonatorAI(pCreature);
-}
 
-bool GossipHello_npc_threshwackonator(Player* pPlayer, Creature* pCreature)
-{
-    if (pPlayer->GetQuestStatus(QUEST_GYROMAST_REV) == QUEST_STATUS_INCOMPLETE)
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_INSERT_KEY, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-    SEND_PREPARED_GOSSIP_MENU(pPlayer, pCreature);
-    return true;
-}
-
-bool GossipSelect_npc_threshwackonator(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
-{
-    if (uiAction == GOSSIP_ACTION_INFO_DEF+1)
-    {
-        pPlayer->CLOSE_GOSSIP_MENU();
-
-        if (npc_threshwackonatorAI* pThreshAI = CAST_AI(npc_threshwackonatorAI, pCreature->AI()))
-        {
-            DoScriptText(EMOTE_START, pCreature);
-            pThreshAI->StartFollow(pPlayer);
-        }
-    }
-
-    return true;
-}
 
 /*####
 # npc_prospector_remtravel
@@ -281,160 +307,190 @@ enum eRemtravel
     NPC_GRAVEL_GEO              = 2160
 };
 
-struct npc_prospector_remtravelAI : public npc_escortAI
+
+class npc_prospector_remtravel : public CreatureScript
 {
-    npc_prospector_remtravelAI(Creature* pCreature) : npc_escortAI(pCreature) {}
+public:
+    npc_prospector_remtravel() : CreatureScript("npc_prospector_remtravel")
+    { }
 
-    void WaypointReached(uint32 i)
-    override {
-        Player* pPlayer = GetPlayerForEscort();
-
-        if (!pPlayer)
-            return;
-
-        switch(i)
-        {
-            case 0:
-                DoScriptText(SAY_REM_START, me, pPlayer);
-                break;
-            case 1:
-                DoScriptText(SAY_REM_RAMP1_1, me, pPlayer);
-                break;
-            case 2:
-                DoSpawnCreature(NPC_GRAVEL_SCOUT, -10.0f, 5.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                DoSpawnCreature(NPC_GRAVEL_BONE, -10.0f, 7.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                break;
-            case 4:
-                DoScriptText(SAY_REM_RAMP1_2, me, pPlayer);
-                break;
-            case 7:
-                DoScriptText(SAY_REM_TENT1_1, me, pPlayer);
-                DoSpawnCreature(NPC_GRAVEL_SCOUT, -10.0f, 5.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                DoSpawnCreature(NPC_GRAVEL_BONE, -10.0f, 7.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                break;
-            case 8:
-                DoScriptText(SAY_REM_TENT1_2, me, pPlayer);
-                break;
-            case 14:
-                DoScriptText(SAY_REM_MOSS_PROGRESS, me, pPlayer);
-                break;
-            case 15:
-                DoSpawnCreature(NPC_GRAVEL_SCOUT, -15.0f, 3.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                DoSpawnCreature(NPC_GRAVEL_BONE, -15.0f, 5.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                DoSpawnCreature(NPC_GRAVEL_GEO, -15.0f, 7.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                break;
-            case 18:
-                DoScriptText(SAY_REM_BOOK, me, pPlayer);
-                break;
-            case 24:
-                DoScriptText(SAY_REM_REMEMBER, me, pPlayer);
-                break;
-            case 25:
-                DoScriptText(EMOTE_REM_END, me, pPlayer);
-                pPlayer->GroupEventHappens(QUEST_ABSENT_MINDED_PT2, me);
-                break;
+    class npc_prospector_remtravelAI : public npc_escortAI
+    {
+        public:
+        npc_prospector_remtravelAI(Creature* pCreature) : npc_escortAI(pCreature) {}
+    
+        void WaypointReached(uint32 i)
+        override {
+            Player* pPlayer = GetPlayerForEscort();
+    
+            if (!pPlayer)
+                return;
+    
+            switch(i)
+            {
+                case 0:
+                    DoScriptText(SAY_REM_START, me, pPlayer);
+                    break;
+                case 1:
+                    DoScriptText(SAY_REM_RAMP1_1, me, pPlayer);
+                    break;
+                case 2:
+                    DoSpawnCreature(NPC_GRAVEL_SCOUT, -10.0f, 5.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+                    DoSpawnCreature(NPC_GRAVEL_BONE, -10.0f, 7.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+                    break;
+                case 4:
+                    DoScriptText(SAY_REM_RAMP1_2, me, pPlayer);
+                    break;
+                case 7:
+                    DoScriptText(SAY_REM_TENT1_1, me, pPlayer);
+                    DoSpawnCreature(NPC_GRAVEL_SCOUT, -10.0f, 5.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+                    DoSpawnCreature(NPC_GRAVEL_BONE, -10.0f, 7.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+                    break;
+                case 8:
+                    DoScriptText(SAY_REM_TENT1_2, me, pPlayer);
+                    break;
+                case 14:
+                    DoScriptText(SAY_REM_MOSS_PROGRESS, me, pPlayer);
+                    break;
+                case 15:
+                    DoSpawnCreature(NPC_GRAVEL_SCOUT, -15.0f, 3.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+                    DoSpawnCreature(NPC_GRAVEL_BONE, -15.0f, 5.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+                    DoSpawnCreature(NPC_GRAVEL_GEO, -15.0f, 7.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+                    break;
+                case 18:
+                    DoScriptText(SAY_REM_BOOK, me, pPlayer);
+                    break;
+                case 24:
+                    DoScriptText(SAY_REM_REMEMBER, me, pPlayer);
+                    break;
+                case 25:
+                    DoScriptText(EMOTE_REM_END, me, pPlayer);
+                    pPlayer->GroupEventHappens(QUEST_ABSENT_MINDED_PT2, me);
+                    break;
+            }
         }
-    }
+    
+        void Reset() override {}
+    
+        void EnterCombat(Unit* who)
+        override {
+            if (rand()%2)
+                DoScriptText(SAY_REM_AGGRO, me, who);
+        }
 
-    void Reset() override {}
+        virtual void QuestAccept(Player* pPlayer, Quest const* pQuest) override
+        {
+            if (pQuest->GetQuestId() == QUEST_ABSENT_MINDED_PT2)
+            {
+                ((npc_escortAI*)(me->AI()))->Start(true, true, false, pPlayer->GetGUID(), me->GetEntry());
+                me->SetFaction(FACTION_ESCORTEE);
+            }
+        }
 
-    void EnterCombat(Unit* who)
-    override {
-        if (rand()%2)
-            DoScriptText(SAY_REM_AGGRO, me, who);
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_prospector_remtravelAI(creature);
     }
 };
 
-CreatureAI* GetAI_npc_prospector_remtravel(Creature* pCreature)
-{
-    return new npc_prospector_remtravelAI(pCreature);
-}
 
-bool QuestAccept_npc_prospector_remtravel(Player* pPlayer, Creature* pCreature, const Quest* pQuest)
-{
-    if (pQuest->GetQuestId() == QUEST_ABSENT_MINDED_PT2)
-    {
-        ((npc_escortAI*)(pCreature->AI()))->Start(true, true, false, pPlayer->GetGUID(), pCreature->GetEntry());
-        pCreature->SetFaction(FACTION_ESCORTEE);
-    }
-
-    return true;
-}
 
 /*######
 ## npc_rabid_thistle_bear
 ######*/
 
-struct npc_rabid_thistle_bearAI : public ScriptedAI
+
+class npc_rabid_thistle_bear : public CreatureScript
 {
-    npc_rabid_thistle_bearAI(Creature* pCreature) : ScriptedAI(pCreature) {}
-    
-    uint64 guid;
+public:
+    npc_rabid_thistle_bear() : CreatureScript("npc_rabid_thistle_bear")
+    { }
 
-    void Reset() override {}
-
-    void EnterCombat(Unit* who) override {}
-    
-    bool sOnDummyEffect(Unit* caster, uint32 spellId, uint32 effIndex)
-    override {
-        if (spellId == 9439) {
-            if (Player* plr = ObjectAccessor::GetPlayer(*me, guid)) {
-                me->UpdateEntry(11836);
-                me->GetMotionMaster()->MoveFollow(plr, PET_FOLLOW_DIST, me->GetFollowAngle());
-                plr->CastedCreatureOrGO(11836, me->GetGUID(), 9437);
-                me->CombatStop();
-                plr->CombatStop();
-            }
-        }
-        return true;
-    }
-    
-    void UpdateAI(uint32 const diff)
-    override {
-        if (!UpdateVictim())
-            return;
-            
-        if (me->GetVictim()->ToPlayer())
-            guid = me->GetVictim()->GetGUID();
+    class npc_rabid_thistle_bearAI : public ScriptedAI
+    {
+        public:
+        npc_rabid_thistle_bearAI(Creature* pCreature) : ScriptedAI(pCreature) {}
         
-        DoMeleeAttackIfReady();
+        uint64 guid;
+    
+        void Reset() override {}
+    
+        void EnterCombat(Unit* who) override {}
+        
+        bool sOnDummyEffect(Unit* caster, uint32 spellId, uint32 effIndex)
+        override {
+            if (spellId == 9439) {
+                if (Player* plr = ObjectAccessor::GetPlayer(*me, guid)) {
+                    me->UpdateEntry(11836);
+                    me->GetMotionMaster()->MoveFollow(plr, PET_FOLLOW_DIST, me->GetFollowAngle());
+                    plr->CastedCreatureOrGO(11836, me->GetGUID(), 9437);
+                    me->CombatStop();
+                    plr->CombatStop();
+                }
+            }
+            return true;
+        }
+        
+        void UpdateAI(uint32 const diff)
+        override {
+            if (!UpdateVictim())
+                return;
+                
+            if (me->GetVictim()->ToPlayer())
+                guid = me->GetVictim()->GetGUID();
+            
+            DoMeleeAttackIfReady();
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_rabid_thistle_bearAI(creature);
     }
 };
 
-CreatureAI* GetAI_npc_rabid_thistle_bear(Creature* pCreature)
-{
-    return new npc_rabid_thistle_bearAI(pCreature);
-}
 
 /*######
 ## npc_tharnariun_treetender
 ######*/
 
-struct npc_tharnariun_treetenderAI : public ScriptedAI
+
+class npc_tharnariun_treetender : public CreatureScript
 {
-    npc_tharnariun_treetenderAI(Creature* c) : ScriptedAI(c) {}
-    
-    void EnterCombat(Unit* who) override {}
-    
-    void MoveInLineOfSight(Unit* who)
-    override {
-        if (who->ToCreature() && who->GetEntry() == 11836)
-            who->ToCreature()->ForcedDespawn();
-    }
-    
-    void UpdateAI(uint32 const diff)
-    override {
-        if (!UpdateVictim())
-            return;
-            
-        DoMeleeAttackIfReady();
+public:
+    npc_tharnariun_treetender() : CreatureScript("npc_tharnariun_treetender")
+    { }
+
+    class npc_tharnariun_treetenderAI : public ScriptedAI
+    {
+        public:
+        npc_tharnariun_treetenderAI(Creature* c) : ScriptedAI(c) {}
+        
+        void EnterCombat(Unit* who) override {}
+        
+        void MoveInLineOfSight(Unit* who)
+        override {
+            if (who->ToCreature() && who->GetEntry() == 11836)
+                who->ToCreature()->ForcedDespawn();
+        }
+        
+        void UpdateAI(uint32 const diff)
+        override {
+            if (!UpdateVictim())
+                return;
+                
+            DoMeleeAttackIfReady();
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_tharnariun_treetenderAI(creature);
     }
 };
 
-CreatureAI* GetAI_npc_tharnariun_treetender(Creature* creature)
-{
-    return new npc_tharnariun_treetenderAI(creature);
-}
 
 /*######
 ## npc_sentinel_aynasha
@@ -455,144 +511,154 @@ enum AynashaData
     TALK_QUESTFINISHED3     = 3
 };
 
-struct npc_sentinel_aynashaAI : public ScriptedAI
+
+class npc_sentinel_aynasha : public CreatureScript
 {
-    npc_sentinel_aynashaAI(Creature* c) : ScriptedAI(c)
+public:
+    npc_sentinel_aynasha() : CreatureScript("npc_sentinel_aynasha")
+    { }
+
+    class npc_sentinel_aynashaAI : public ScriptedAI
     {
-        timer = 0;
-        step = 0;
-        said = false;
-    }
-    
-    uint32 timer;
-    uint32 step;
-    bool said;
-    
-    void Reset()
-    override {
-        me->RemoveAurasDueToSpell(18373);
-    }
-    
-    void EnterCombat(Unit* who) override {}
-    
-    void MovementInform(uint32 type, uint32 id)
-    override {
-        if (id == 1) {
-            me->DisappearAndDie();
-            me->Respawn();
+        public:
+        npc_sentinel_aynashaAI(Creature* c) : ScriptedAI(c)
+        {
             timer = 0;
             step = 0;
             said = false;
         }
-    }
-    
-    void MoveInLineOfSight(Unit* who)
-    override {
-        if (!who->ToPlayer())
-            return;
-
-        if (!said && who->ToPlayer()->GetQuestStatus(QUEST_ONESHOT_ONEKILL) == QUEST_STATUS_COMPLETE && step == 3) {
-            said = true;
-            timer = 1;
-        }
-    }
-    
-    void EnterEvadeMode(EvadeReason why)
-    override {
-        CreatureAI::EnterEvadeMode(why);
-        me->GetMotionMaster()->MoveIdle();
-    }
-    
-    void UpdateAI(uint32 const diff)
-    override {
-        if (timer) {
-            if (timer <= diff) {
-                switch (step) {
-                case 0: // 2 mobs
-                    if (Creature* tracker = me->SummonCreature(NPC_BLACKWOOD_TRACKER, 4387.776855, -36.047455, 82.273827, 3.583573, TEMPSUMMON_DEAD_DESPAWN, 0))
-                        tracker->AI()->AttackStart(me);
-                    if (Creature* tracker = me->SummonCreature(NPC_BLACKWOOD_TRACKER, 4388.480469, -37.534382, 82.793724, 3.583573, TEMPSUMMON_DEAD_DESPAWN, 0))
-                        tracker->AI()->AttackStart(me);
-                    timer = 50000;
-                    step++;
-                    break;
-                case 1: // 3 mobs
-                    if (Creature* tracker = me->SummonCreature(NPC_BLACKWOOD_TRACKER, 4387.776855, -36.047455, 82.273827, 3.583573, TEMPSUMMON_DEAD_DESPAWN, 0))
-                        tracker->AI()->AttackStart(me);
-                    if (Creature* tracker = me->SummonCreature(NPC_BLACKWOOD_TRACKER, 4388.480469, -37.534382, 82.793724, 3.583573, TEMPSUMMON_DEAD_DESPAWN, 0))
-                        tracker->AI()->AttackStart(me);
-                    if (Creature* tracker = me->SummonCreature(NPC_BLACKWOOD_TRACKER, 4389.127441, -38.901089, 83.472984, 3.583573, TEMPSUMMON_DEAD_DESPAWN, 0))
-                        tracker->AI()->AttackStart(me);
-                    timer = 60000;
-                    step++;
-                    break;
-                case 2: // Boss
-                    if (Creature* marosh = me->SummonCreature(NPC_MAROSH_THE_DEVIOUS, 4388.480469, -37.534382, 82.793724, 3.583573, TEMPSUMMON_DEAD_DESPAWN, 0))
-                        marosh->AI()->AttackStart(me);
-                    timer = 0;
-                    step++;
-                    break;
-                case 3: // Thanks 1
-                    Talk(TALK_QUESTFINISHED1);
-                    timer = 5000;
-                    step++;
-                    break;
-                case 4: // Thanks 2
-                    Talk(TALK_QUESTFINISHED2);
-                    timer = 5000;
-                    step++;
-                    break;
-                    
-                case 5: // Thanks 3
-                    Talk(TALK_QUESTFINISHED3);
-                    timer = 5000;
-                    step++;
-                    break;
-                case 6: // I'm leaving, cyaaa!
-                    me->RemoveUnitMovementFlag(0x00000100/*MOVEMENTFLAG_WALKING*/);
-                    //me->GetMotionMaster()->MovePoint(1, 4363.714844, -5.714110, 66.114090);
-                    me->DisappearAndDie();
-                    me->Respawn();
-                    timer = 0;
-                    step = 0;
-                    said = false;
-                    break;
-                default:
-                    break;
-                }
-            }
-            else
-                timer -= diff;
+        
+        uint32 timer;
+        uint32 step;
+        bool said;
+        
+        void Reset()
+        override {
+            me->RemoveAurasDueToSpell(18373);
         }
         
-        if (!UpdateVictim())
-            return;
+        void EnterCombat(Unit* who) override {}
+        
+        void MovementInform(uint32 type, uint32 id)
+        override {
+            if (id == 1) {
+                me->DisappearAndDie();
+                me->Respawn();
+                timer = 0;
+                step = 0;
+                said = false;
+            }
+        }
+        
+        void MoveInLineOfSight(Unit* who)
+        override {
+            if (!who->ToPlayer())
+                return;
+    
+            if (!said && who->ToPlayer()->GetQuestStatus(QUEST_ONESHOT_ONEKILL) == QUEST_STATUS_COMPLETE && step == 3) {
+                said = true;
+                timer = 1;
+            }
+        }
+        
+        void EnterEvadeMode(EvadeReason why)
+        override {
+            CreatureAI::EnterEvadeMode(why);
+            me->GetMotionMaster()->MoveIdle();
+        }
+        
+        void UpdateAI(uint32 const diff)
+        override {
+            if (timer) {
+                if (timer <= diff) {
+                    switch (step) {
+                    case 0: // 2 mobs
+                        if (Creature* tracker = me->SummonCreature(NPC_BLACKWOOD_TRACKER, 4387.776855, -36.047455, 82.273827, 3.583573, TEMPSUMMON_DEAD_DESPAWN, 0))
+                            tracker->AI()->AttackStart(me);
+                        if (Creature* tracker = me->SummonCreature(NPC_BLACKWOOD_TRACKER, 4388.480469, -37.534382, 82.793724, 3.583573, TEMPSUMMON_DEAD_DESPAWN, 0))
+                            tracker->AI()->AttackStart(me);
+                        timer = 50000;
+                        step++;
+                        break;
+                    case 1: // 3 mobs
+                        if (Creature* tracker = me->SummonCreature(NPC_BLACKWOOD_TRACKER, 4387.776855, -36.047455, 82.273827, 3.583573, TEMPSUMMON_DEAD_DESPAWN, 0))
+                            tracker->AI()->AttackStart(me);
+                        if (Creature* tracker = me->SummonCreature(NPC_BLACKWOOD_TRACKER, 4388.480469, -37.534382, 82.793724, 3.583573, TEMPSUMMON_DEAD_DESPAWN, 0))
+                            tracker->AI()->AttackStart(me);
+                        if (Creature* tracker = me->SummonCreature(NPC_BLACKWOOD_TRACKER, 4389.127441, -38.901089, 83.472984, 3.583573, TEMPSUMMON_DEAD_DESPAWN, 0))
+                            tracker->AI()->AttackStart(me);
+                        timer = 60000;
+                        step++;
+                        break;
+                    case 2: // Boss
+                        if (Creature* marosh = me->SummonCreature(NPC_MAROSH_THE_DEVIOUS, 4388.480469, -37.534382, 82.793724, 3.583573, TEMPSUMMON_DEAD_DESPAWN, 0))
+                            marosh->AI()->AttackStart(me);
+                        timer = 0;
+                        step++;
+                        break;
+                    case 3: // Thanks 1
+                        Talk(TALK_QUESTFINISHED1);
+                        timer = 5000;
+                        step++;
+                        break;
+                    case 4: // Thanks 2
+                        Talk(TALK_QUESTFINISHED2);
+                        timer = 5000;
+                        step++;
+                        break;
+                        
+                    case 5: // Thanks 3
+                        Talk(TALK_QUESTFINISHED3);
+                        timer = 5000;
+                        step++;
+                        break;
+                    case 6: // I'm leaving, cyaaa!
+                        me->RemoveUnitMovementFlag(0x00000100/*MOVEMENTFLAG_WALKING*/);
+                        //me->GetMotionMaster()->MovePoint(1, 4363.714844, -5.714110, 66.114090);
+                        me->DisappearAndDie();
+                        me->Respawn();
+                        timer = 0;
+                        step = 0;
+                        said = false;
+                        break;
+                    default:
+                        break;
+                    }
+                }
+                else
+                    timer -= diff;
+            }
             
-        if (me->GetVictim()->IsWithinDistInMap(me, 8.0f)) {
-            me->GetMotionMaster()->MoveChase(me->GetVictim());
-            DoMeleeAttackIfReady();
+            if (!UpdateVictim())
+                return;
+                
+            if (me->GetVictim()->IsWithinDistInMap(me, 8.0f)) {
+                me->GetMotionMaster()->MoveChase(me->GetVictim());
+                DoMeleeAttackIfReady();
+            }
+            else {
+                //me->GetMotionMaster()->MoveIdle();
+                DoCast(me->GetVictim(), SPELL_AYNASHAS_BOW);
+            }
         }
-        else {
-            //me->GetMotionMaster()->MoveIdle();
-            DoCast(me->GetVictim(), SPELL_AYNASHAS_BOW);
+
+        virtual void QuestAccept(Player* player, Quest const* quest) override
+        {
+            if (quest->GetQuestId() == QUEST_ONESHOT_ONEKILL) {
+                ((npc_sentinel_aynasha::npc_sentinel_aynashaAI*)me->AI())->timer = 8000;
+                me->AI()->Talk(TALK_QUESTACCEPT);
+            }
         }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_sentinel_aynashaAI(creature);
     }
 };
 
-CreatureAI* GetAI_npc_sentinel_aynasha(Creature* creature)
-{
-    return new npc_sentinel_aynashaAI(creature);
-}
 
-bool QuestAccept_npc_sentinel_aynasha(Player* player, Creature* creature, Quest const* quest)
-{
-    if (quest->GetQuestId() == QUEST_ONESHOT_ONEKILL) {
-        ((npc_sentinel_aynashaAI*)creature->AI())->timer = 8000;
-        creature->AI()->Talk(TALK_QUESTACCEPT);
-    }
-    
-    return true;
-}
 
 /*######
 ## AddSC
@@ -600,41 +666,16 @@ bool QuestAccept_npc_sentinel_aynasha(Player* player, Creature* creature, Quest 
 
 void AddSC_darkshore()
 {
-    OLDScript* newscript;
 
-    newscript = new OLDScript;
-    newscript->Name = "npc_kerlonian";
-    newscript->GetAI = &GetAI_npc_kerlonian;
-    newscript->OnQuestAccept = &QuestAccept_npc_kerlonian;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_kerlonian();
     
-    newscript = new OLDScript;
-    newscript->Name = "npc_threshwackonator";
-    newscript->GetAI = &GetAI_npc_threshwackonator;
-    newscript->OnGossipHello = &GossipHello_npc_threshwackonator;
-    newscript->OnGossipSelect = &GossipSelect_npc_threshwackonator;
-    newscript->OnGossipSelect = &GossipSelect_npc_threshwackonator;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_threshwackonator();
     
-    newscript = new OLDScript;
-    newscript->Name = "npc_prospector_remtravel";
-    newscript->GetAI = &GetAI_npc_prospector_remtravel;
-    newscript->OnQuestAccept = &QuestAccept_npc_prospector_remtravel;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_prospector_remtravel();
     
-    newscript = new OLDScript;
-    newscript->Name = "npc_rabid_thistle_bear";
-    newscript->GetAI = &GetAI_npc_rabid_thistle_bear;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_rabid_thistle_bear();
     
-    newscript = new OLDScript;
-    newscript->Name = "npc_tharnariun_treetender";
-    newscript->GetAI = &GetAI_npc_tharnariun_treetender;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_tharnariun_treetender();
     
-    newscript = new OLDScript;
-    newscript->Name = "npc_sentinel_aynasha";
-    newscript->GetAI = &GetAI_npc_sentinel_aynasha;
-    newscript->OnQuestAccept = &QuestAccept_npc_sentinel_aynasha;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_sentinel_aynasha();
 }

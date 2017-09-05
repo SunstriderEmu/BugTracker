@@ -216,7 +216,7 @@ public:
 
                         if (map->IsDungeon() && pUnit)
                         {
-                            pUnit->SetVisibility(VISIBILITY_OFF);
+                            pUnit->SetVisible(false);
                             Map::PlayerList const &PlayerList = map->GetPlayers();
                             if (PlayerList.isEmpty())
                                 break;

@@ -28,59 +28,65 @@ EndScriptData */
 #define SPELL_HEALING_POTION    15504
 #define SPELL_HOOKEDNET         15609
 
-struct boss_quatermasterzigrisAI : public ScriptedAI
+class quartermaster_zigris : public CreatureScript
 {
-    boss_quatermasterzigrisAI(Creature *c) : ScriptedAI(c) {}
+public:
+    quartermaster_zigris() : CreatureScript("quartermaster_zigris")
+    { }
 
-    uint32 Shoot_Timer;
-    uint32 StunBomb_Timer;
-    //uint32 HelingPotion_Timer;
+    class boss_quatermasterzigrisAI : public ScriptedAI
+    {
+        public:
+        boss_quatermasterzigrisAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 Shoot_Timer;
+        uint32 StunBomb_Timer;
+        //uint32 HelingPotion_Timer;
+    
+        void Reset()
+        override {
+            Shoot_Timer = 1000;
+            StunBomb_Timer = 16000;
+            //HelingPotion_Timer = 25000;
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            //Return since we have no target
+            if (!UpdateVictim() )
+                return;
+    
+            //Shoot_Timer
+            if (Shoot_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_SHOOT);
+                Shoot_Timer = 500;
+            }else Shoot_Timer -= diff;
+    
+            //StunBomb_Timer
+            if (StunBomb_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_STUNBOMB);
+                StunBomb_Timer = 14000;
+            }else StunBomb_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-    void Reset()
-    override {
-        Shoot_Timer = 1000;
-        StunBomb_Timer = 16000;
-        //HelingPotion_Timer = 25000;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        //Return since we have no target
-        if (!UpdateVictim() )
-            return;
-
-        //Shoot_Timer
-        if (Shoot_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_SHOOT);
-            Shoot_Timer = 500;
-        }else Shoot_Timer -= diff;
-
-        //StunBomb_Timer
-        if (StunBomb_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_STUNBOMB);
-            StunBomb_Timer = 14000;
-        }else StunBomb_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_quatermasterzigrisAI(creature);
     }
 };
-CreatureAI* GetAI_boss_quatermasterzigris(Creature *_Creature)
-{
-    return new boss_quatermasterzigrisAI (_Creature);
-}
+
 
 void AddSC_boss_quatermasterzigris()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="quartermaster_zigris";
-    newscript->GetAI = &GetAI_boss_quatermasterzigris;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new quartermaster_zigris();
 }
 

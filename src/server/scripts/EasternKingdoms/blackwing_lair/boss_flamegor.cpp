@@ -29,70 +29,76 @@ EndScriptData */
 #define SPELL_WINGBUFFET         23339
 #define SPELL_FRENZY             23342                      //This spell periodically triggers fire nova
 
-struct boss_flamegorAI : public ScriptedAI
+class boss_flamegor : public CreatureScript
 {
-    boss_flamegorAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_flamegor() : CreatureScript("boss_flamegor")
+    { }
 
-    uint32 ShadowFlame_Timer;
-    uint32 WingBuffet_Timer;
-    uint32 Frenzy_Timer;
+    class boss_flamegorAI : public ScriptedAI
+    {
+        public:
+        boss_flamegorAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 ShadowFlame_Timer;
+        uint32 WingBuffet_Timer;
+        uint32 Frenzy_Timer;
+    
+        void Reset()
+        override {
+            ShadowFlame_Timer = 21000;                          //These times are probably wrong
+            WingBuffet_Timer = 35000;
+            Frenzy_Timer = 10000;
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+            DoZoneInCombat();
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim() )
+                return;
+    
+            //ShadowFlame_Timer
+            if (ShadowFlame_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_SHADOWFLAME);
+                ShadowFlame_Timer = 15000 + rand()%7000;
+            }else ShadowFlame_Timer -= diff;
+    
+            //WingBuffet_Timer
+            if (WingBuffet_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_WINGBUFFET);
+                if(me->GetThreat(me->GetVictim()))
+                    DoModifyThreatPercent(me->GetVictim(),-75);
+    
+                WingBuffet_Timer = 25000;
+            }else WingBuffet_Timer -= diff;
+    
+            //Frenzy_Timer
+            if (Frenzy_Timer < diff)
+            {
+                DoScriptText(EMOTE_FRENZY, me);
+                DoCast(me,SPELL_FRENZY);
+                Frenzy_Timer = 8000 + (rand()%2000);
+            }else Frenzy_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-    void Reset()
-    override {
-        ShadowFlame_Timer = 21000;                          //These times are probably wrong
-        WingBuffet_Timer = 35000;
-        Frenzy_Timer = 10000;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-        DoZoneInCombat();
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim() )
-            return;
-
-        //ShadowFlame_Timer
-        if (ShadowFlame_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_SHADOWFLAME);
-            ShadowFlame_Timer = 15000 + rand()%7000;
-        }else ShadowFlame_Timer -= diff;
-
-        //WingBuffet_Timer
-        if (WingBuffet_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_WINGBUFFET);
-            if(me->GetThreat(me->GetVictim()))
-                DoModifyThreatPercent(me->GetVictim(),-75);
-
-            WingBuffet_Timer = 25000;
-        }else WingBuffet_Timer -= diff;
-
-        //Frenzy_Timer
-        if (Frenzy_Timer < diff)
-        {
-            DoScriptText(EMOTE_FRENZY, me);
-            DoCast(me,SPELL_FRENZY);
-            Frenzy_Timer = 8000 + (rand()%2000);
-        }else Frenzy_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_flamegorAI(creature);
     }
 };
-CreatureAI* GetAI_boss_flamegor(Creature *_Creature)
-{
-    return new boss_flamegorAI (_Creature);
-}
+
 
 void AddSC_boss_flamegor()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_flamegor";
-    newscript->GetAI = &GetAI_boss_flamegor;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_flamegor();
 }
 

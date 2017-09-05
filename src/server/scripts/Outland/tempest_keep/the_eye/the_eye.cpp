@@ -31,69 +31,75 @@ EndContentData */
 #define SPELL_COUNTERCHARGE     35035
 #define SPELL_KNOCKAWAY         22893
 
-struct mob_crystalcore_devastatorAI : public ScriptedAI
+
+class mob_crystalcore_devastator : public CreatureScript
 {
-    mob_crystalcore_devastatorAI(Creature *c) : ScriptedAI(c) {}
+public:
+    mob_crystalcore_devastator() : CreatureScript("mob_crystalcore_devastator")
+    { }
 
-    uint32 Knockaway_Timer;
-    uint32 Countercharge_Timer;
-
-    void Reset()
-    override {
-        Countercharge_Timer = 9000;
-        Knockaway_Timer = 25000;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim())
-            return;
-
-        //Check if we have a current target
-        //Knockaway_Timer
-        if (Knockaway_Timer < diff)
-        {
-            me->CastSpell(me->GetVictim(),SPELL_KNOCKAWAY, true);
-
-            // current aggro target is knocked away pick new target
-            Unit* Target = SelectTarget(SELECT_TARGET_TOPAGGRO, 0);
-
-            if (!Target || Target == me->GetVictim())
-                Target = SelectTarget(SELECT_TARGET_TOPAGGRO, 1);
-
-            if (Target)
-                me->TauntApply(Target);
-
-            Knockaway_Timer = 23000;
+    class mob_crystalcore_devastatorAI : public ScriptedAI
+    {
+        public:
+        mob_crystalcore_devastatorAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 Knockaway_Timer;
+        uint32 Countercharge_Timer;
+    
+        void Reset()
+        override {
+            Countercharge_Timer = 9000;
+            Knockaway_Timer = 25000;
         }
-        else Knockaway_Timer -= diff;
+    
+        void EnterCombat(Unit *who)
+        override {
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim())
+                return;
+    
+            //Check if we have a current target
+            //Knockaway_Timer
+            if (Knockaway_Timer < diff)
+            {
+                me->CastSpell(me->GetVictim(),SPELL_KNOCKAWAY, true);
+    
+                // current aggro target is knocked away pick new target
+                Unit* Target = SelectTarget(SELECT_TARGET_TOPAGGRO, 0);
+    
+                if (!Target || Target == me->GetVictim())
+                    Target = SelectTarget(SELECT_TARGET_TOPAGGRO, 1);
+    
+                if (Target)
+                    me->TauntApply(Target);
+    
+                Knockaway_Timer = 23000;
+            }
+            else Knockaway_Timer -= diff;
+    
+            //Countercharge_Timer
+            if (Countercharge_Timer < diff)
+            {
+                DoCast(this->me,SPELL_COUNTERCHARGE);
+                Countercharge_Timer = 45000;
+            }else Countercharge_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        //Countercharge_Timer
-        if (Countercharge_Timer < diff)
-        {
-            DoCast(this->me,SPELL_COUNTERCHARGE);
-            Countercharge_Timer = 45000;
-        }else Countercharge_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new mob_crystalcore_devastatorAI(creature);
     }
 };
 
-CreatureAI* GetAI_mob_crystalcore_devastator(Creature *_Creature)
-{
-    return new mob_crystalcore_devastatorAI (_Creature);
-}
 
 void AddSC_the_eye()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="mob_crystalcore_devastator";
-    newscript->GetAI = &GetAI_mob_crystalcore_devastator;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new mob_crystalcore_devastator();
 }
 

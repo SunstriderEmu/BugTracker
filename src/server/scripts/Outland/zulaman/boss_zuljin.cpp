@@ -215,7 +215,7 @@ public:
         
         void setPhase(uint32 newPhase)
         {
-            uint8 phase = newPhase;
+            phase = newPhase;
             events.SetPhase(newPhase);
             switch (newPhase) {
             case PHASE_TROLL:

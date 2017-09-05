@@ -41,92 +41,102 @@ EndContentData */
 
 #define QUEST_DEFIAS_BROTHERHOOD    155
 
-struct npc_defias_traitorAI : public npc_escortAI
+
+class npc_defias_traitor : public CreatureScript
 {
-    npc_defias_traitorAI(Creature *c) : npc_escortAI(c) {}
+public:
+    npc_defias_traitor() : CreatureScript("npc_defias_traitor")
+    { }
 
-    bool IsWalking;
-    bool complete;
-
-    void WaypointReached(uint32 i)
-    override {
-        Player* player = GetPlayerForEscort();
-
-        if (!player)
-            return;
-
-        if (IsWalking && !me->HasUnitMovementFlag(MOVEMENTFLAG_WALKING))
-            me->AddUnitMovementFlag(MOVEMENTFLAG_WALKING);
-
-        switch (i)
-        {
-            case 35:
-                IsWalking = true;
-                break;
-            case 36:
-                DoScriptText(SAY_PROGRESS, me, player);
-                break;
-            case 44:
-                DoScriptText(SAY_END, me, player);
-                {
-                    if (player && player->GetTypeId() == TYPEID_PLAYER)
-                        (player->ToPlayer())->GroupEventHappens(QUEST_DEFIAS_BROTHERHOOD,me);
-                        
-                    complete = true;
-                }
-                break;
+    class npc_defias_traitorAI : public npc_escortAI
+    {
+        public:
+        npc_defias_traitorAI(Creature *c) : npc_escortAI(c) {}
+    
+        bool IsWalking;
+        bool complete;
+    
+        void WaypointReached(uint32 i)
+        override {
+            Player* player = GetPlayerForEscort();
+    
+            if (!player)
+                return;
+    
+            if (IsWalking && !me->HasUnitMovementFlag(MOVEMENTFLAG_WALKING))
+                me->AddUnitMovementFlag(MOVEMENTFLAG_WALKING);
+    
+            switch (i)
+            {
+                case 35:
+                    IsWalking = true;
+                    break;
+                case 36:
+                    DoScriptText(SAY_PROGRESS, me, player);
+                    break;
+                case 44:
+                    DoScriptText(SAY_END, me, player);
+                    {
+                        if (player && player->GetTypeId() == TYPEID_PLAYER)
+                            (player->ToPlayer())->GroupEventHappens(QUEST_DEFIAS_BROTHERHOOD,me);
+                            
+                        complete = true;
+                    }
+                    break;
+            }
         }
-    }
-    void EnterCombat(Unit* who)
-    override {
-        switch(rand()%2)
-        {
-            case 0: DoScriptText(SAY_AGGRO_1, me, who); break;
-            case 1: DoScriptText(SAY_AGGRO_2, me, who); break;
+        void EnterCombat(Unit* who)
+        override {
+            switch(rand()%2)
+            {
+                case 0: DoScriptText(SAY_AGGRO_1, me, who); break;
+                case 1: DoScriptText(SAY_AGGRO_2, me, who); break;
+            }
         }
-    }
-
-    void Reset()
-    override {
-        if (IsWalking && !me->HasUnitMovementFlag(MOVEMENTFLAG_WALKING))
-        {
-            me->AddUnitMovementFlag(MOVEMENTFLAG_WALKING);
-            return;
+    
+        void Reset()
+        override {
+            if (IsWalking && !me->HasUnitMovementFlag(MOVEMENTFLAG_WALKING))
+            {
+                me->AddUnitMovementFlag(MOVEMENTFLAG_WALKING);
+                return;
+            }
+            IsWalking = false;
+            complete = false;
         }
-        IsWalking = false;
-        complete = false;
-    }
-
-    void JustDied(Unit* killer)
-    override {
-        if (PlayerGUID && !complete)
-        {
-            if (Player* player = GetPlayerForEscort())
-                player->FailQuest(QUEST_DEFIAS_BROTHERHOOD);
+    
+        void JustDied(Unit* killer)
+        override {
+            if (PlayerGUID && !complete)
+            {
+                if (Player* player = GetPlayerForEscort())
+                    player->FailQuest(QUEST_DEFIAS_BROTHERHOOD);
+            }
         }
-    }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            npc_escortAI::UpdateAI(diff);
+        }
 
-    void UpdateAI(const uint32 diff)
-    override {
-        npc_escortAI::UpdateAI(diff);
+        virtual void QuestAccept(Player* player, Quest const* quest) override
+        {
+            if (quest->GetQuestId() == QUEST_DEFIAS_BROTHERHOOD)
+            {
+                ((npc_escortAI*)(me->AI()))->Start(true, true, true, player->GetGUID(), me->GetEntry());
+                DoScriptText(SAY_START, me, player);
+            }
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_defias_traitorAI(creature);
     }
 };
 
-bool QuestAccept_npc_defias_traitor(Player* player, Creature* creature, Quest const* quest)
-{
-    if (quest->GetQuestId() == QUEST_DEFIAS_BROTHERHOOD)
-    {
-        ((npc_escortAI*)(creature->AI()))->Start(true, true, true, player->GetGUID(), creature->GetEntry());
-        DoScriptText(SAY_START, creature, player);
-    }
 
-    return true;
-}
-
-CreatureAI* GetAI_npc_defias_traitor(Creature *pCreature)
-{
-    return new npc_defias_traitorAI(pCreature);
-}
 
 /*######
 ## npc_daphne_stilwell
@@ -146,144 +156,154 @@ enum eEnums
     EQUIP_ID_RIFLE      = 2511
 };
 
-struct npc_daphne_stilwellAI : public npc_escortAI
+
+class npc_daphne_stilwell : public CreatureScript
 {
-    npc_daphne_stilwellAI(Creature* pCreature) : npc_escortAI(pCreature) {}
+public:
+    npc_daphne_stilwell() : CreatureScript("npc_daphne_stilwell")
+    { }
 
-    uint32 uiWPHolder;
-    uint32 uiShootTimer;
-
-    void Reset()
-    override {
-        if (HasEscortState(STATE_ESCORT_ESCORTING))
-        {
-            switch(uiWPHolder)
+    class npc_daphne_stilwellAI : public npc_escortAI
+    {
+        public:
+        npc_daphne_stilwellAI(Creature* pCreature) : npc_escortAI(pCreature) {}
+    
+        uint32 uiWPHolder;
+        uint32 uiShootTimer;
+    
+        void Reset()
+        override {
+            if (HasEscortState(STATE_ESCORT_ESCORTING))
             {
-                case 7: DoScriptText(SAY_DS_DOWN_1, me); break;
-                case 8: DoScriptText(SAY_DS_DOWN_2, me); break;
-                case 9: DoScriptText(SAY_DS_DOWN_3, me); break;
+                switch(uiWPHolder)
+                {
+                    case 7: DoScriptText(SAY_DS_DOWN_1, me); break;
+                    case 8: DoScriptText(SAY_DS_DOWN_2, me); break;
+                    case 9: DoScriptText(SAY_DS_DOWN_3, me); break;
+                }
+            }
+            else
+                uiWPHolder = 0;
+    
+            uiShootTimer = 0;
+        }
+        
+        void EnterCombat(Unit* who) override {}
+    
+        void WaypointReached(uint32 uiPoint)
+        override {
+            Player* pPlayer = GetPlayerForEscort();
+    
+            if (!pPlayer)
+                return;
+    
+            uiWPHolder = uiPoint;
+    
+            switch(uiPoint)
+            {
+                case 4:
+                    SetEquipmentSlots(false, EQUIP_NO_CHANGE, EQUIP_NO_CHANGE, EQUIP_ID_RIFLE);
+                    me->SetSheath(SHEATH_STATE_RANGED);
+                    me->HandleEmoteCommand(EMOTE_STATE_USESTANDING_NO_SHEATHE);
+                    break;
+                case 7:
+                    me->SummonCreature(NPC_DEFIAS_RAIDER, -11450.836, 1569.755, 54.267, 4.230, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+                    me->SummonCreature(NPC_DEFIAS_RAIDER, -11449.697, 1569.124, 54.421, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+                    me->SummonCreature(NPC_DEFIAS_RAIDER, -11448.237, 1568.307, 54.620, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+                    break;
+                case 8:
+                    me->SetSheath(SHEATH_STATE_RANGED);
+                    me->SummonCreature(NPC_DEFIAS_RAIDER, -11450.836, 1569.755, 54.267, 4.230, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+                    me->SummonCreature(NPC_DEFIAS_RAIDER, -11449.697, 1569.124, 54.421, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+                    me->SummonCreature(NPC_DEFIAS_RAIDER, -11448.237, 1568.307, 54.620, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+                    me->SummonCreature(NPC_DEFIAS_RAIDER, -11448.037, 1570.213, 54.961, 4.283, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+                    break;
+                case 9:
+                    me->SetSheath(SHEATH_STATE_RANGED);
+                    me->SummonCreature(NPC_DEFIAS_RAIDER, -11450.836, 1569.755, 54.267, 4.230, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+                    me->SummonCreature(NPC_DEFIAS_RAIDER, -11449.697, 1569.124, 54.421, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+                    me->SummonCreature(NPC_DEFIAS_RAIDER, -11448.237, 1568.307, 54.620, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+                    me->SummonCreature(NPC_DEFIAS_RAIDER, -11448.037, 1570.213, 54.961, 4.283, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+                    me->SummonCreature(NPC_DEFIAS_RAIDER, -11449.018, 1570.738, 54.828, 4.220, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+                    break;
+                case 10:
+                    SetRun(false);
+                    break;
+                case 11:
+                    DoScriptText(SAY_DS_PROLOGUE, me);
+                    break;
+                case 13:
+                    SetEquipmentSlots(true);
+                    me->SetSheath(SHEATH_STATE_UNARMED);
+                    me->HandleEmoteCommand(EMOTE_STATE_USESTANDING_NO_SHEATHE);
+                    break;
+                case 17:
+                    pPlayer->GroupEventHappens(QUEST_TOME_VALOR, me);
+                    break;
             }
         }
-        else
-            uiWPHolder = 0;
-
-        uiShootTimer = 0;
-    }
     
-    void EnterCombat(Unit* who) override {}
-
-    void WaypointReached(uint32 uiPoint)
-    override {
-        Player* pPlayer = GetPlayerForEscort();
-
-        if (!pPlayer)
-            return;
-
-        uiWPHolder = uiPoint;
-
-        switch(uiPoint)
-        {
-            case 4:
-                SetEquipmentSlots(false, EQUIP_NO_CHANGE, EQUIP_NO_CHANGE, EQUIP_ID_RIFLE);
-                me->SetSheath(SHEATH_STATE_RANGED);
-                me->HandleEmoteCommand(EMOTE_STATE_USESTANDING_NO_SHEATHE);
-                break;
-            case 7:
-                me->SummonCreature(NPC_DEFIAS_RAIDER, -11450.836, 1569.755, 54.267, 4.230, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                me->SummonCreature(NPC_DEFIAS_RAIDER, -11449.697, 1569.124, 54.421, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                me->SummonCreature(NPC_DEFIAS_RAIDER, -11448.237, 1568.307, 54.620, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                break;
-            case 8:
-                me->SetSheath(SHEATH_STATE_RANGED);
-                me->SummonCreature(NPC_DEFIAS_RAIDER, -11450.836, 1569.755, 54.267, 4.230, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                me->SummonCreature(NPC_DEFIAS_RAIDER, -11449.697, 1569.124, 54.421, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                me->SummonCreature(NPC_DEFIAS_RAIDER, -11448.237, 1568.307, 54.620, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                me->SummonCreature(NPC_DEFIAS_RAIDER, -11448.037, 1570.213, 54.961, 4.283, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                break;
-            case 9:
-                me->SetSheath(SHEATH_STATE_RANGED);
-                me->SummonCreature(NPC_DEFIAS_RAIDER, -11450.836, 1569.755, 54.267, 4.230, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                me->SummonCreature(NPC_DEFIAS_RAIDER, -11449.697, 1569.124, 54.421, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                me->SummonCreature(NPC_DEFIAS_RAIDER, -11448.237, 1568.307, 54.620, 4.206, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                me->SummonCreature(NPC_DEFIAS_RAIDER, -11448.037, 1570.213, 54.961, 4.283, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                me->SummonCreature(NPC_DEFIAS_RAIDER, -11449.018, 1570.738, 54.828, 4.220, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
-                break;
-            case 10:
-                SetRun(false);
-                break;
-            case 11:
-                DoScriptText(SAY_DS_PROLOGUE, me);
-                break;
-            case 13:
-                SetEquipmentSlots(true);
-                me->SetSheath(SHEATH_STATE_UNARMED);
-                me->HandleEmoteCommand(EMOTE_STATE_USESTANDING_NO_SHEATHE);
-                break;
-            case 17:
-                pPlayer->GroupEventHappens(QUEST_TOME_VALOR, me);
-                break;
+        void AttackStart(Unit* pWho)
+        override {
+            if (!pWho)
+                return;
+    
+            if (me->Attack(pWho, false))
+            {
+                me->AddThreat(pWho, 0.0f);
+                me->SetInCombatWith(pWho);
+                pWho->SetInCombatWith(me);
+    
+                me->GetMotionMaster()->MoveChase(pWho, 30.0f);
+            }
         }
-    }
-
-    void AttackStart(Unit* pWho)
-    override {
-        if (!pWho)
-            return;
-
-        if (me->Attack(pWho, false))
-        {
-            me->AddThreat(pWho, 0.0f);
-            me->SetInCombatWith(pWho);
-            pWho->SetInCombatWith(me);
-
-            me->GetMotionMaster()->MoveChase(pWho, 30.0f);
+    
+        void JustSummoned(Creature* pSummoned)
+        override {
+            pSummoned->AI()->AttackStart(me);
         }
-    }
+    
+        void Update(const uint32 diff)
+        {
+            npc_escortAI::UpdateAI(diff);
+    
+            if (!UpdateVictim())
+                return;
+    
+            if (uiShootTimer <= diff)
+            {
+                uiShootTimer = 1500;
+    
+                //if (!me->IsWithinDist(me->GetVictim(), ATTACK_DISTANCE))
+                if (me->GetDistance2d(me->GetVictim()) > ATTACK_DISTANCE)
+                    DoCast(me->GetVictim(), SPELL_SHOOT);
+                else
+                    DoMeleeAttackIfReady();
+            } else uiShootTimer -= diff;
+            
+            DoMeleeAttackIfReady();
+        }
 
-    void JustSummoned(Creature* pSummoned)
-    override {
-        pSummoned->AI()->AttackStart(me);
-    }
+        virtual void QuestAccept(Player* pPlayer, Quest const* pQuest) override
+        {
+            if (pQuest->GetQuestId() == QUEST_TOME_VALOR)
+            {
+                DoScriptText(SAY_DS_START, me);
 
-    void Update(const uint32 diff)
+                if (npc_escortAI* pEscortAI = CAST_AI(npc_daphne_stilwellAI, me->AI()))
+                    pEscortAI->Start(true, true, true, pPlayer->GetGUID(), me->GetEntry());
+            }
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
     {
-        npc_escortAI::UpdateAI(diff);
-
-        if (!UpdateVictim())
-            return;
-
-        if (uiShootTimer <= diff)
-        {
-            uiShootTimer = 1500;
-
-            //if (!me->IsWithinDist(me->GetVictim(), ATTACK_DISTANCE))
-            if (me->GetDistance2d(me->GetVictim()) > ATTACK_DISTANCE)
-                DoCast(me->GetVictim(), SPELL_SHOOT);
-            else
-                DoMeleeAttackIfReady();
-        } else uiShootTimer -= diff;
-        
-        DoMeleeAttackIfReady();
+        return new npc_daphne_stilwellAI(creature);
     }
 };
 
-bool QuestAccept_npc_daphne_stilwell(Player* pPlayer, Creature* pCreature, const Quest* pQuest)
-{
-    if (pQuest->GetQuestId() == QUEST_TOME_VALOR)
-    {
-        DoScriptText(SAY_DS_START, pCreature);
 
-        if (npc_escortAI* pEscortAI = CAST_AI(npc_daphne_stilwellAI, pCreature->AI()))
-            pEscortAI->Start(true, true, true, pPlayer->GetGUID(), pCreature->GetEntry());
-    }
-
-    return true;
-}
-
-CreatureAI* GetAI_npc_daphne_stilwell(Creature* pCreature)
-{
-    return new npc_daphne_stilwellAI(pCreature);
-}
 
 /*######
 ## AddSC
@@ -291,18 +311,9 @@ CreatureAI* GetAI_npc_daphne_stilwell(Creature* pCreature)
 
 void AddSC_westfall()
 {
-    OLDScript *newscript;
 
-    newscript = new OLDScript;
-    newscript->Name="npc_defias_traitor";
-    newscript->GetAI = &GetAI_npc_defias_traitor;
-    newscript->OnQuestAccept = &QuestAccept_npc_defias_traitor;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_defias_traitor();
     
-    newscript = new OLDScript;
-    newscript->Name="npc_daphne_stilwell";
-    newscript->GetAI = &GetAI_npc_daphne_stilwell;
-    newscript->OnQuestAccept = &QuestAccept_npc_daphne_stilwell;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_daphne_stilwell();
 }
 

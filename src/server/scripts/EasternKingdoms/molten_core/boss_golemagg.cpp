@@ -127,7 +127,7 @@ class Boss_Golemagg : public CreatureScript
                         events.RescheduleEvent(EV_EARTHQUAKE, urand(3000, 4000));
                         break;
                     case EV_ENRAGE:
-                        if (me->GetHealth()*100 / me->GetMaxHealth() < 10.0f)
+                        if (me->GetHealthPct()  < 10.0f)
                             me->CastSpell(me, SPELL_ENRAGE);
 
                         events.RescheduleEvent(EV_ENRAGE, 62000);

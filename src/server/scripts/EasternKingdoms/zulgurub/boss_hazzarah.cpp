@@ -27,79 +27,85 @@ EndScriptData */
 #define SPELL_MANABURN         26046
 #define SPELL_SLEEP            24664
 
-struct boss_hazzarahAI : public ScriptedAI
+class boss_hazzarah : public CreatureScript
 {
-    boss_hazzarahAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_hazzarah() : CreatureScript("boss_hazzarah")
+    { }
 
-    uint32 ManaBurn_Timer;
-    uint32 Sleep_Timer;
-    uint32 Illusions_Timer;
-    Creature* Illusion;
-
-    void Reset()
-    override {
-        ManaBurn_Timer = 4000 + rand()%6000;
-        Sleep_Timer = 10000 + rand()%8000;
-        Illusions_Timer = 10000 + rand()%8000;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim())
-            return;
-
-        //ManaBurn_Timer
-        if (ManaBurn_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_MANABURN);
-            ManaBurn_Timer = 8000 + rand()%8000;
-        }else ManaBurn_Timer -= diff;
-
-        //Sleep_Timer
-        if (Sleep_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_SLEEP);
-            Sleep_Timer = 12000 + rand()%8000;
-        }else Sleep_Timer -= diff;
-
-        //Illusions_Timer
-        if (Illusions_Timer < diff)
-        {
-            //We will summon 3 illusions that will spawn on a random gamer and attack this gamer
-            //We will just use one model for the beginning
-            Unit* target = nullptr;
-            for(int i = 0; i < 3;i++)
+    class boss_hazzarahAI : public ScriptedAI
+    {
+        public:
+        boss_hazzarahAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 ManaBurn_Timer;
+        uint32 Sleep_Timer;
+        uint32 Illusions_Timer;
+        Creature* Illusion;
+    
+        void Reset()
+        override {
+            ManaBurn_Timer = 4000 + rand()%6000;
+            Sleep_Timer = 10000 + rand()%8000;
+            Illusions_Timer = 10000 + rand()%8000;
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim())
+                return;
+    
+            //ManaBurn_Timer
+            if (ManaBurn_Timer < diff)
             {
-                target = SelectTarget(SELECT_TARGET_RANDOM,0);
-                if(!target)
-                    return;
+                DoCast(me->GetVictim(),SPELL_MANABURN);
+                ManaBurn_Timer = 8000 + rand()%8000;
+            }else ManaBurn_Timer -= diff;
+    
+            //Sleep_Timer
+            if (Sleep_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_SLEEP);
+                Sleep_Timer = 12000 + rand()%8000;
+            }else Sleep_Timer -= diff;
+    
+            //Illusions_Timer
+            if (Illusions_Timer < diff)
+            {
+                //We will summon 3 illusions that will spawn on a random gamer and attack this gamer
+                //We will just use one model for the beginning
+                Unit* target = nullptr;
+                for(int i = 0; i < 3;i++)
+                {
+                    target = SelectTarget(SELECT_TARGET_RANDOM,0);
+                    if(!target)
+                        return;
+    
+                    Illusion = me->SummonCreature(15163,target->GetPositionX(), target->GetPositionY(), target->GetPositionZ(),0,TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN,30000);
+                    if(Illusion)
+                        ((CreatureAI*)Illusion->AI())->AttackStart(target);
+                }
+    
+                Illusions_Timer = 15000 + rand()%10000;
+            }else Illusions_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-                Illusion = me->SummonCreature(15163,target->GetPositionX(), target->GetPositionY(), target->GetPositionZ(),0,TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN,30000);
-                if(Illusion)
-                    ((CreatureAI*)Illusion->AI())->AttackStart(target);
-            }
-
-            Illusions_Timer = 15000 + rand()%10000;
-        }else Illusions_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_hazzarahAI(creature);
     }
 };
-CreatureAI* GetAI_boss_hazzarah(Creature *_Creature)
-{
-    return new boss_hazzarahAI (_Creature);
-}
+
 
 void AddSC_boss_hazzarah()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_hazzarah";
-    newscript->GetAI = &GetAI_boss_hazzarah;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_hazzarah();
 }
 

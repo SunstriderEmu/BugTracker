@@ -38,226 +38,232 @@ EndScriptData */
 #define SPELL_BURNINGADRENALINE     23620
 #define SPELL_CLEAVE                20684                   //Chain cleave is most likely named something different and contains a dummy effect
 
-struct boss_vaelAI : public ScriptedAI
+class boss_vaelastrasz : public CreatureScript
 {
-    boss_vaelAI(Creature *c) : ScriptedAI(c)
+public:
+    boss_vaelastrasz() : CreatureScript("boss_vaelastrasz")
+    { }
+
+    class boss_vaelAI : public ScriptedAI
     {
-        c->SetUInt32Value(UNIT_NPC_FLAGS,1);
-        c->SetFaction(35);
-        c->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-    }
-
-    uint64 PlayerGUID;
-    uint32 SpeachTimer;
-    uint32 SpeachNum;
-    uint32 Cleave_Timer;
-    uint32 FlameBreath_Timer;
-    uint32 FireNova_Timer;
-    uint32 BurningAdrenalineCaster_Timer;
-    uint32 BurningAdrenalineTank_Timer;
-    uint32 TailSwipe_Timer;
-    bool HasYelled;
-    bool DoingSpeach;
-
-    void Reset()
-    override {
-        PlayerGUID = 0;
-        SpeachTimer = 0;
-        SpeachNum = 0;
-        Cleave_Timer = 8000;                                //These times are probably wrong
-        FlameBreath_Timer = 11000;
-        BurningAdrenalineCaster_Timer = 15000;
-        BurningAdrenalineTank_Timer = 45000;
-        FireNova_Timer = 5000;
-        TailSwipe_Timer = 20000;
-        HasYelled = false;
-        DoingSpeach = false;
-
-        me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
-        me->ApplySpellImmune(1, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
-    }
-
-    void BeginSpeach(Unit* target)
-    {
-        //Stand up and begin speach
-        PlayerGUID = target->GetGUID();
-
-        //10 seconds
-        DoScriptText(SAY_LINE1, me);
-
-        SpeachTimer = 10000;
-        SpeachNum = 0;
-        DoingSpeach = true;
-
-        me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-    }
-
-    void KilledUnit(Unit *victim)
-    override {
-        if (rand()%5)
-            return;
-
-        DoScriptText(SAY_KILLTARGET, me, victim);
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-        DoCast(me,SPELL_ESSENCEOFTHERED);
-        DoZoneInCombat();
-        me->SetHealth(int(me->GetMaxHealth()*.3));
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        //Speach
-        if (DoingSpeach)
+        public:
+        boss_vaelAI(Creature *c) : ScriptedAI(c)
         {
-            if (SpeachTimer < diff)
-            {
-                switch (SpeachNum)
-                {
-                    case 0:
-                        //16 seconds till next line
-                        DoScriptText(SAY_LINE2, me);
-                        SpeachTimer = 16000;
-                        SpeachNum++;
-                        break;
-                    case 1:
-                        //This one is actually 16 seconds but we only go to 10 seconds because he starts attacking after he says "I must fight this!"
-                        DoScriptText(SAY_LINE3, me);
-                        SpeachTimer = 10000;
-                        SpeachNum++;
-                        break;
-                    case 2:
-                        me->SetFaction(103);
-                        if (PlayerGUID && ObjectAccessor::GetUnit((*me),PlayerGUID))
-                        {
-                            AttackStart(ObjectAccessor::GetUnit((*me),PlayerGUID));
-                            DoCast(me,SPELL_ESSENCEOFTHERED);
-                        }
-                        SpeachTimer = 0;
-                        DoingSpeach = false;
-                        break;
-                }
-            }else SpeachTimer -= diff;
+            c->SetUInt32Value(UNIT_NPC_FLAGS,1);
+            c->SetFaction(FACTION_FRIENDLY);
+            c->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         }
-
-        //Return since we have no target
-        if (!UpdateVictim() )
-            return;
-
-        // Yell if hp lower than 15%
-        if (me->GetHealth()*100 / me->GetMaxHealth() < 15 && !HasYelled)
-        {
-            DoScriptText(SAY_HALFLIFE, me);
-            HasYelled = true;
-        }
-
-        //Cleave_Timer
-        if (Cleave_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_CLEAVE);
-            Cleave_Timer = 15000;
-        }else Cleave_Timer -= diff;
-
-        //FlameBreath_Timer
-        if (FlameBreath_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_FLAMEBREATH);
-            FlameBreath_Timer = 4000 + rand()%4000;
-        }else FlameBreath_Timer -= diff;
-
-        //BurningAdrenalineCaster_Timer
-        if (BurningAdrenalineCaster_Timer < diff)
-        {
-            Unit* target = nullptr;
-
-            int i = 0 ;
-            while (i < 3)                                   // max 3 tries to get a random target with power_mana
-            {
-                ++i;
-                target = SelectTarget(SELECT_TARGET_RANDOM,1);//not aggro leader
-                if (target)
-                    if (target->GetPowerType() == POWER_MANA)
-                        i=3;
-            }
-            if (target)                                     // cast on self (see below)
-                target->CastSpell(target,SPELL_BURNINGADRENALINE,1);
-
+    
+        uint64 PlayerGUID;
+        uint32 SpeachTimer;
+        uint32 SpeachNum;
+        uint32 Cleave_Timer;
+        uint32 FlameBreath_Timer;
+        uint32 FireNova_Timer;
+        uint32 BurningAdrenalineCaster_Timer;
+        uint32 BurningAdrenalineTank_Timer;
+        uint32 TailSwipe_Timer;
+        bool HasYelled;
+        bool DoingSpeach;
+    
+        void Reset()
+        override {
+            PlayerGUID = 0;
+            SpeachTimer = 0;
+            SpeachNum = 0;
+            Cleave_Timer = 8000;                                //These times are probably wrong
+            FlameBreath_Timer = 11000;
             BurningAdrenalineCaster_Timer = 15000;
-        }else BurningAdrenalineCaster_Timer -= diff;
-
-        //BurningAdrenalineTank_Timer
-        if (BurningAdrenalineTank_Timer < diff)
-        {
-            // have the victim cast the spell on himself otherwise the third effect aura will be applied
-            // to Vael instead of the player
-            me->GetVictim()->CastSpell(me->GetVictim(),SPELL_BURNINGADRENALINE,1);
-
             BurningAdrenalineTank_Timer = 45000;
-        }else BurningAdrenalineTank_Timer -= diff;
-
-        //FireNova_Timer
-        if (FireNova_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_FIRENOVA);
             FireNova_Timer = 5000;
-        }else FireNova_Timer -= diff;
-
-        //TailSwipe_Timer
-        if (TailSwipe_Timer < diff)
-        {
-            //Only cast if we are behind
-            /*if (!me->HasInArc( M_PI, me->GetVictim()))
-            {
-            DoCast(me->GetVictim(),SPELL_TAILSWIPE);
-            }*/
-
             TailSwipe_Timer = 20000;
-        }else TailSwipe_Timer -= diff;
+            HasYelled = false;
+            DoingSpeach = false;
+    
+            me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
+            me->ApplySpellImmune(1, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
+        }
+    
+        void BeginSpeach(Unit* target)
+        {
+            //Stand up and begin speach
+            PlayerGUID = target->GetGUID();
+    
+            //10 seconds
+            DoScriptText(SAY_LINE1, me);
+    
+            SpeachTimer = 10000;
+            SpeachNum = 0;
+            DoingSpeach = true;
+    
+            me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+        }
+    
+        void KilledUnit(Unit *victim)
+        override {
+            if (rand()%5)
+                return;
+    
+            DoScriptText(SAY_KILLTARGET, me, victim);
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+            DoCast(me,SPELL_ESSENCEOFTHERED);
+            DoZoneInCombat();
+            me->SetHealth(int(me->GetMaxHealth()*.3));
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            //Speach
+            if (DoingSpeach)
+            {
+                if (SpeachTimer < diff)
+                {
+                    switch (SpeachNum)
+                    {
+                        case 0:
+                            //16 seconds till next line
+                            DoScriptText(SAY_LINE2, me);
+                            SpeachTimer = 16000;
+                            SpeachNum++;
+                            break;
+                        case 1:
+                            //This one is actually 16 seconds but we only go to 10 seconds because he starts attacking after he says "I must fight this!"
+                            DoScriptText(SAY_LINE3, me);
+                            SpeachTimer = 10000;
+                            SpeachNum++;
+                            break;
+                        case 2:
+                            me->SetFaction(FACTION_DRAGONFLIGHT_BLACK);
+                            if (PlayerGUID && ObjectAccessor::GetUnit((*me),PlayerGUID))
+                            {
+                                AttackStart(ObjectAccessor::GetUnit((*me),PlayerGUID));
+                                DoCast(me,SPELL_ESSENCEOFTHERED);
+                            }
+                            SpeachTimer = 0;
+                            DoingSpeach = false;
+                            break;
+                    }
+                }else SpeachTimer -= diff;
+            }
+    
+            //Return since we have no target
+            if (!UpdateVictim() )
+                return;
+    
+            // Yell if hp lower than 15%
+            if (me->GetHealthPct()  < 15 && !HasYelled)
+            {
+                DoScriptText(SAY_HALFLIFE, me);
+                HasYelled = true;
+            }
+    
+            //Cleave_Timer
+            if (Cleave_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_CLEAVE);
+                Cleave_Timer = 15000;
+            }else Cleave_Timer -= diff;
+    
+            //FlameBreath_Timer
+            if (FlameBreath_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_FLAMEBREATH);
+                FlameBreath_Timer = 4000 + rand()%4000;
+            }else FlameBreath_Timer -= diff;
+    
+            //BurningAdrenalineCaster_Timer
+            if (BurningAdrenalineCaster_Timer < diff)
+            {
+                Unit* target = nullptr;
+    
+                int i = 0 ;
+                while (i < 3)                                   // max 3 tries to get a random target with power_mana
+                {
+                    ++i;
+                    target = SelectTarget(SELECT_TARGET_RANDOM,1);//not aggro leader
+                    if (target)
+                        if (target->GetPowerType() == POWER_MANA)
+                            i=3;
+                }
+                if (target)                                     // cast on self (see below)
+                    target->CastSpell(target,SPELL_BURNINGADRENALINE,1);
+    
+                BurningAdrenalineCaster_Timer = 15000;
+            }else BurningAdrenalineCaster_Timer -= diff;
+    
+            //BurningAdrenalineTank_Timer
+            if (BurningAdrenalineTank_Timer < diff)
+            {
+                // have the victim cast the spell on himself otherwise the third effect aura will be applied
+                // to Vael instead of the player
+                me->GetVictim()->CastSpell(me->GetVictim(),SPELL_BURNINGADRENALINE,1);
+    
+                BurningAdrenalineTank_Timer = 45000;
+            }else BurningAdrenalineTank_Timer -= diff;
+    
+            //FireNova_Timer
+            if (FireNova_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_FIRENOVA);
+                FireNova_Timer = 5000;
+            }else FireNova_Timer -= diff;
+    
+            //TailSwipe_Timer
+            if (TailSwipe_Timer < diff)
+            {
+                //Only cast if we are behind
+                /*if (!me->HasInArc( M_PI, me->GetVictim()))
+                {
+                DoCast(me->GetVictim(),SPELL_TAILSWIPE);
+                }*/
+    
+                TailSwipe_Timer = 20000;
+            }else TailSwipe_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
 
-        DoMeleeAttackIfReady();
+        virtual bool GossipHello(Player* player) override
+        {
+            player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM        , GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+            player->SEND_GOSSIP_MENU_TEXTID(907,me->GetGUID());
+
+            return true;
+
+        }
+
+
+        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        {
+            if (sender == GOSSIP_SENDER_MAIN)
+                SendDefaultMenu_boss_vael(player, action);
+
+            return true;
+
+        }
+
+        void SendDefaultMenu_boss_vael(Player *player, uint32 action)
+        {
+            if (action == GOSSIP_ACTION_INFO_DEF + 1)               //Fight time
+            {
+                player->CLOSE_GOSSIP_MENU();
+                BeginSpeach((Unit*)player);
+            }
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_vaelAI(creature);
     }
 };
 
-void SendDefaultMenu_boss_vael(Player *player, Creature *_Creature, uint32 action)
-{
-    if (action == GOSSIP_ACTION_INFO_DEF + 1)               //Fight time
-    {
-        player->CLOSE_GOSSIP_MENU();
-        ((boss_vaelAI*)_Creature->AI())->BeginSpeach((Unit*)player);
-    }
-}
-
-bool GossipSelect_boss_vael(Player *player, Creature *_Creature, uint32 sender, uint32 action )
-{
-    if (sender == GOSSIP_SENDER_MAIN)
-        SendDefaultMenu_boss_vael(player, _Creature, action);
-
-    return true;
-}
-
-bool GossipHello_boss_vael(Player *player, Creature *_Creature)
-{
-    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM        , GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-    player->SEND_GOSSIP_MENU_TEXTID(907,_Creature->GetGUID());
-
-    return true;
-}
-
-CreatureAI* GetAI_boss_vael(Creature *_Creature)
-{
-    return new boss_vaelAI (_Creature);
-}
 
 void AddSC_boss_vael()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_vaelastrasz";
-    newscript->GetAI = &GetAI_boss_vael;
-    newscript->OnGossipHello = &GossipHello_boss_vael;
-    newscript->OnGossipSelect = &GossipSelect_boss_vael;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_vaelastrasz();
 }
 

@@ -39,93 +39,114 @@ bool isHalloweenEventActive()
     return active;
 }
 
-bool GossipHello_npc_innkeeper(Player *player, Creature *_Creature)
+class npc_innkeeper : public CreatureScript
 {
-    if (_Creature->IsQuestGiver())
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+public:
+    npc_innkeeper() : CreatureScript("npc_innkeeper")
+    { }
 
-    if (isHalloweenEventActive()&& !player->GetAura(SPELL_TRICK_OR_TREATED,0))
+    class npc_innkeeperAI : public ScriptedAI
     {
-        char const* localizedEntry;
-        switch (player->GetSession()->GetSessionDbcLocale())
+    public:
+        npc_innkeeperAI(Creature* creature) : ScriptedAI(creature)
+        {}
+
+
+        virtual bool GossipHello(Player* player) override
         {
-            case LOCALE_enUS:
-                localizedEntry = LOCALE_TRICK_OR_TREAT_0;
-                break;
-            case LOCALE_frFR:
-                localizedEntry = LOCALE_TRICK_OR_TREAT_2;
-                break;
-            default:
-                localizedEntry = LOCALE_TRICK_OR_TREAT_0;
-        }
+            if (me->IsQuestGiver())
+                player->PrepareQuestMenu( me->GetGUID() );
 
-        player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, localizedEntry, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+HALLOWEEN_EVENTID);
-    }
-
-    player->TalkedToCreature(_Creature->GetEntry(),_Creature->GetGUID());
-    SEND_PREPARED_GOSSIP_MENU(player, _Creature);
-    return true;
-}
-
-bool GossipSelect_npc_innkeeper(Player *player, Creature *_Creature, uint32 sender, uint32 action )
-{
-    if (action == GOSSIP_ACTION_INFO_DEF+HALLOWEEN_EVENTID && isHalloweenEventActive() && !player->GetAura(SPELL_TRICK_OR_TREATED,0))
-    {
-        player->CLOSE_GOSSIP_MENU();
-        player->CastSpell(player, SPELL_TRICK_OR_TREATED, true);
-
-        // either trick or treat, 50% chance
-        if(rand()%2)
-        {
-            player->CastSpell(player, SPELL_TREAT, true);
-        }
-        else
-        {
-            int32 trickspell=0;
-            switch (rand()%9)                               // note that female characters can get male costumes and vice versa
+            if (isHalloweenEventActive()&& !player->GetAura(SPELL_TRICK_OR_TREATED,0))
             {
-                case 0:
-                    trickspell=24753;                       // cannot cast, random 30sec
-                    break;
-                case 1:
-                    trickspell=24713;                       // lepper gnome costume
-                    break;
-                case 2:
-                    trickspell=24735;                       // male ghost costume
-                    break;
-                case 3:
-                    trickspell=24736;                       // female ghostcostume
-                    break;
-                case 4:
-                    trickspell=24710;                       // male ninja costume
-                    break;
-                case 5:
-                    trickspell=24711;                       // female ninja costume
-                    break;
-                case 6:
-                    trickspell=24708;                       // male pirate costume
-                    break;
-                case 7:
-                    trickspell=24709;                       // female pirate costume
-                    break;
-                case 8:
-                    trickspell=24723;                       // skeleton costume
-                    break;
+                char const* localizedEntry;
+                switch (player->GetSession()->GetSessionDbcLocale())
+                {
+                    case LOCALE_enUS:
+                        localizedEntry = LOCALE_TRICK_OR_TREAT_0;
+                        break;
+                    case LOCALE_frFR:
+                        localizedEntry = LOCALE_TRICK_OR_TREAT_2;
+                        break;
+                    default:
+                        localizedEntry = LOCALE_TRICK_OR_TREAT_0;
+                }
+
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, localizedEntry, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+HALLOWEEN_EVENTID);
             }
-            player->CastSpell(player, trickspell, true);
+
+            player->TalkedToCreature(me->GetEntry(),me->GetGUID());
+            SEND_PREPARED_GOSSIP_MENU(player, me);
+            return true;
+
         }
-        return true;                                        // prevent Trinity core handling
+
+
+        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        {
+            if (action == GOSSIP_ACTION_INFO_DEF+HALLOWEEN_EVENTID && isHalloweenEventActive() && !player->GetAura(SPELL_TRICK_OR_TREATED,0))
+            {
+                player->CLOSE_GOSSIP_MENU();
+                player->CastSpell(player, SPELL_TRICK_OR_TREATED, true);
+
+                // either trick or treat, 50% chance
+                if(rand()%2)
+                {
+                    player->CastSpell(player, SPELL_TREAT, true);
+                }
+                else
+                {
+                    int32 trickspell=0;
+                    switch (rand()%9)                               // note that female characters can get male costumes and vice versa
+                    {
+                        case 0:
+                            trickspell=24753;                       // cannot cast, random 30sec
+                            break;
+                        case 1:
+                            trickspell=24713;                       // lepper gnome costume
+                            break;
+                        case 2:
+                            trickspell=24735;                       // male ghost costume
+                            break;
+                        case 3:
+                            trickspell=24736;                       // female ghostcostume
+                            break;
+                        case 4:
+                            trickspell=24710;                       // male ninja costume
+                            break;
+                        case 5:
+                            trickspell=24711;                       // female ninja costume
+                            break;
+                        case 6:
+                            trickspell=24708;                       // male pirate costume
+                            break;
+                        case 7:
+                            trickspell=24709;                       // female pirate costume
+                            break;
+                        case 8:
+                            trickspell=24723;                       // skeleton costume
+                            break;
+                    }
+                    player->CastSpell(player, trickspell, true);
+                }
+                return true;                                        // prevent Trinity core handling
+            }
+            return false;                                           // the player didn't select "trick or treat" or cheated, normal core handling
+
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_innkeeperAI(creature);
     }
-    return false;                                           // the player didn't select "trick or treat" or cheated, normal core handling
-}
+};
+
+
 
 void AddSC_npc_innkeeper()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="npc_innkeeper";
-    newscript->OnGossipHello = &GossipHello_npc_innkeeper;
-    newscript->OnGossipSelect = &GossipSelect_npc_innkeeper;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_innkeeper();
 }
 

@@ -65,111 +65,117 @@ EndScriptData */
 #define ADD_9Y -3180.766
 #define ADD_9Z 297.423
 
-struct boss_gluthAI : public ScriptedAI
+class boss_gluth : public CreatureScript
 {
-    boss_gluthAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_gluth() : CreatureScript("boss_gluth")
+    { }
 
-    uint32 MortalWound_Timer;
-    uint32 Decimate_Timer;
-    uint32 TerrifyingRoar_Timer;
-    uint32 Frenzy_Timer;
-    uint32 Enrage_Timer;
-    uint32 Summon_Timer;
-
-    void Reset()
-    override {
-        MortalWound_Timer = 8000;
-        Decimate_Timer = 100000;
-        TerrifyingRoar_Timer = 21000;
-        Frenzy_Timer = 15000;
-        Enrage_Timer = 304000;
-        Summon_Timer = 10000;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim())
-            return;
-
-        //MortalWound_Timer
-        if (MortalWound_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_MORTALWOUND);
-            MortalWound_Timer = 10000;
-        }else MortalWound_Timer -= diff;
-
-        //Decimate_Timer
-        if (Decimate_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_DECIMATE);
+    class boss_gluthAI : public ScriptedAI
+    {
+        public:
+        boss_gluthAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 MortalWound_Timer;
+        uint32 Decimate_Timer;
+        uint32 TerrifyingRoar_Timer;
+        uint32 Frenzy_Timer;
+        uint32 Enrage_Timer;
+        uint32 Summon_Timer;
+    
+        void Reset()
+        override {
+            MortalWound_Timer = 8000;
             Decimate_Timer = 100000;
-        }else Decimate_Timer -= diff;
-
-        //TerrifyingRoar_Timer
-        if (TerrifyingRoar_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_TERRIFYINGROAR);
-            TerrifyingRoar_Timer = 20000;
-        }else TerrifyingRoar_Timer -= diff;
-
-        //Frenzy_Timer
-        if (Frenzy_Timer < diff)
-        {
-            DoCast(me,SPELL_FRENZY);
-            Frenzy_Timer = 10500;
-        }else Frenzy_Timer -= diff;
-
-        //Enrage_Timer
-        if (Enrage_Timer < diff)
-        {
-            DoCast(me,SPELL_ENRAGE);
-            Enrage_Timer = 61000;
-        }else Enrage_Timer -= diff;
-
-        //Summon_Timer
-        if (Summon_Timer < diff)
-        {
-            Unit* target = nullptr;
-            Unit* SummonedZombies = nullptr;
-
-            SummonedZombies = me->SummonCreature(16360,ADD_1X,ADD_1Y,ADD_1Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
-            SummonedZombies = me->SummonCreature(16360,ADD_2X,ADD_2Y,ADD_2Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
-            SummonedZombies = me->SummonCreature(16360,ADD_3X,ADD_3Y,ADD_3Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
-            SummonedZombies = me->SummonCreature(16360,ADD_4X,ADD_4Y,ADD_4Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
-            SummonedZombies = me->SummonCreature(16360,ADD_5X,ADD_5Y,ADD_5Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
-            SummonedZombies = me->SummonCreature(16360,ADD_6X,ADD_6Y,ADD_6Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
-            SummonedZombies = me->SummonCreature(16360,ADD_7X,ADD_7Y,ADD_7Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
-            SummonedZombies = me->SummonCreature(16360,ADD_8X,ADD_8Y,ADD_8Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
-            SummonedZombies = me->SummonCreature(16360,ADD_9X,ADD_9Y,ADD_9Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
-
-            if (SummonedZombies)
+            TerrifyingRoar_Timer = 21000;
+            Frenzy_Timer = 15000;
+            Enrage_Timer = 304000;
+            Summon_Timer = 10000;
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim())
+                return;
+    
+            //MortalWound_Timer
+            if (MortalWound_Timer < diff)
             {
-                target = SelectTarget(SELECT_TARGET_RANDOM,0);
-                if (target)
-                    SummonedZombies->AddThreat(target,1.0f);
-            }
+                DoCast(me->GetVictim(),SPELL_MORTALWOUND);
+                MortalWound_Timer = 10000;
+            }else MortalWound_Timer -= diff;
+    
+            //Decimate_Timer
+            if (Decimate_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_DECIMATE);
+                Decimate_Timer = 100000;
+            }else Decimate_Timer -= diff;
+    
+            //TerrifyingRoar_Timer
+            if (TerrifyingRoar_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_TERRIFYINGROAR);
+                TerrifyingRoar_Timer = 20000;
+            }else TerrifyingRoar_Timer -= diff;
+    
+            //Frenzy_Timer
+            if (Frenzy_Timer < diff)
+            {
+                DoCast(me,SPELL_FRENZY);
+                Frenzy_Timer = 10500;
+            }else Frenzy_Timer -= diff;
+    
+            //Enrage_Timer
+            if (Enrage_Timer < diff)
+            {
+                DoCast(me,SPELL_ENRAGE);
+                Enrage_Timer = 61000;
+            }else Enrage_Timer -= diff;
+    
+            //Summon_Timer
+            if (Summon_Timer < diff)
+            {
+                Unit* target = nullptr;
+                Unit* SummonedZombies = nullptr;
+    
+                SummonedZombies = me->SummonCreature(16360,ADD_1X,ADD_1Y,ADD_1Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
+                SummonedZombies = me->SummonCreature(16360,ADD_2X,ADD_2Y,ADD_2Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
+                SummonedZombies = me->SummonCreature(16360,ADD_3X,ADD_3Y,ADD_3Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
+                SummonedZombies = me->SummonCreature(16360,ADD_4X,ADD_4Y,ADD_4Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
+                SummonedZombies = me->SummonCreature(16360,ADD_5X,ADD_5Y,ADD_5Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
+                SummonedZombies = me->SummonCreature(16360,ADD_6X,ADD_6Y,ADD_6Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
+                SummonedZombies = me->SummonCreature(16360,ADD_7X,ADD_7Y,ADD_7Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
+                SummonedZombies = me->SummonCreature(16360,ADD_8X,ADD_8Y,ADD_8Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
+                SummonedZombies = me->SummonCreature(16360,ADD_9X,ADD_9Y,ADD_9Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
+    
+                if (SummonedZombies)
+                {
+                    target = SelectTarget(SELECT_TARGET_RANDOM,0);
+                    if (target)
+                        SummonedZombies->AddThreat(target,1.0f);
+                }
+    
+                Summon_Timer = 28000;
+            } else Summon_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-            Summon_Timer = 28000;
-        } else Summon_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_gluthAI(creature);
     }
 };
-CreatureAI* GetAI_boss_gluth(Creature *_Creature)
-{
-    return new boss_gluthAI (_Creature);
-}
+
 
 void AddSC_boss_gluth()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_gluth";
-    newscript->GetAI = &GetAI_boss_gluth;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_gluth();
 }
 

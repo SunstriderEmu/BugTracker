@@ -66,18 +66,28 @@ public:
     NorthernCrystalPylon() : GameObjectScript("go_northern_crystal_pylon")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct NorthernCrystalPylonAI : public GameObjectAI
     {
-        if (_GO->GetGoType() == GAMEOBJECT_TYPE_QUESTGIVER)
+        NorthernCrystalPylonAI(GameObject* obj) : GameObjectAI(obj) { }
+
+        bool GossipHello(Player* player) override
         {
-            player->PrepareQuestMenu(_GO->GetGUID());
-            player->SendPreparedQuest(_GO->GetGUID());
+            if (me->GetGoType() == GAMEOBJECT_TYPE_QUESTGIVER)
+            {
+                player->PrepareQuestMenu(me->GetGUID());
+                player->SendPreparedQuest(me->GetGUID());
+            }
+
+            if (player->GetQuestStatus(4285) == QUEST_STATUS_INCOMPLETE)
+                player->AreaExploredOrEventHappens(4285);
+
+            return true;
         }
+    };
 
-        if (player->GetQuestStatus(4285) == QUEST_STATUS_INCOMPLETE)
-            player->AreaExploredOrEventHappens(4285);
-
-        return true;
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new NorthernCrystalPylonAI(go);
     }
 };
 
@@ -87,18 +97,28 @@ public:
     EasternCrystalPylon() : GameObjectScript("go_eastern_crystal_pylon")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct EasternCrystalPylonAI : public GameObjectAI
     {
-        if (_GO->GetGoType() == GAMEOBJECT_TYPE_QUESTGIVER)
+        EasternCrystalPylonAI(GameObject* obj) : GameObjectAI(obj) { }
+
+        bool GossipHello(Player* player) override
         {
-            player->PrepareQuestMenu(_GO->GetGUID());
-            player->SendPreparedQuest(_GO->GetGUID());
+            if (me->GetGoType() == GAMEOBJECT_TYPE_QUESTGIVER)
+            {
+                player->PrepareQuestMenu(me->GetGUID());
+                player->SendPreparedQuest(me->GetGUID());
+            }
+
+            if (player->GetQuestStatus(4287) == QUEST_STATUS_INCOMPLETE)
+                player->AreaExploredOrEventHappens(4287);
+
+            return true;
         }
-
-        if (player->GetQuestStatus(4287) == QUEST_STATUS_INCOMPLETE)
-            player->AreaExploredOrEventHappens(4287);
-
-        return true;
+    };
+    
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new EasternCrystalPylonAI(go);
     }
 };
 
@@ -108,18 +128,28 @@ public:
     WesternCrystalPylon() : GameObjectScript("go_western_crystal_pylon")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct WesternCrystalPylonAI : public GameObjectAI
     {
-        if (_GO->GetGoType() == GAMEOBJECT_TYPE_QUESTGIVER)
+        WesternCrystalPylonAI(GameObject* obj) : GameObjectAI(obj) { }
+
+        bool GossipHello(Player* player) override
         {
-            player->PrepareQuestMenu(_GO->GetGUID());
-            player->SendPreparedQuest(_GO->GetGUID());
+            if (me->GetGoType() == GAMEOBJECT_TYPE_QUESTGIVER)
+            {
+                player->PrepareQuestMenu(me->GetGUID());
+                player->SendPreparedQuest(me->GetGUID());
+            }
+
+            if (player->GetQuestStatus(4288) == QUEST_STATUS_INCOMPLETE)
+                player->AreaExploredOrEventHappens(4288);
+
+            return true;
         }
+    };
 
-        if (player->GetQuestStatus(4288) == QUEST_STATUS_INCOMPLETE)
-            player->AreaExploredOrEventHappens(4288);
-
-        return true;
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new WesternCrystalPylonAI(go);
     }
 };
 
@@ -133,13 +163,23 @@ public:
     BarovJournal() : GameObjectScript("go_barov_journal")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct BarovJournalAI : public GameObjectAI
     {
-        if (player->HasSkill(SKILL_TAILORING) && player->GetBaseSkillValue(SKILL_TAILORING) >= 280 && !player->HasSpell(26086))
+        BarovJournalAI(GameObject* obj) : GameObjectAI(obj) { }
+
+        bool GossipHello(Player* player) override
         {
-            player->CastSpell(player, 26095, false);
+            if (player->HasSkill(SKILL_TAILORING) && player->GetBaseSkillValue(SKILL_TAILORING) >= 280 && !player->HasSpell(26086))
+            {
+                player->CastSpell(player, 26095, false);
+            }
+            return true;
         }
-        return true;
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new BarovJournalAI(go);
     }
 };
 
@@ -149,13 +189,23 @@ public:
     FieldRepairBot74A() : GameObjectScript("go_field_repair_bot_74A")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct FieldRepairBot74A_AI : public GameObjectAI
     {
-        if (player->HasSkill(SKILL_ENGINEERING) && player->GetBaseSkillValue(SKILL_ENGINEERING) >= 300 && !player->HasSpell(22704))
+        FieldRepairBot74A_AI(GameObject* obj) : GameObjectAI(obj) { }
+
+        bool GossipHello(Player* player) override
         {
-            player->CastSpell(player, 22864, false);
+            if (player->HasSkill(SKILL_ENGINEERING) && player->GetBaseSkillValue(SKILL_ENGINEERING) >= 300 && !player->HasSpell(22704))
+            {
+                player->CastSpell(player, 22864, false);
+            }
+            return true;
         }
-        return true;
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new FieldRepairBot74A_AI(go);
     }
 };
 
@@ -165,12 +215,22 @@ public:
     OrbOfCommand() : GameObjectScript("go_orb_of_command")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct OrbOfCommandAI : public GameObjectAI
     {
-        if (player->GetQuestRewardStatus(7761))
-            player->TeleportTo(469, -7673.03, -1106.08, 396.65, 0.7);
+        OrbOfCommandAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        return true;
+        bool GossipHello(Player* player) override
+        {
+            if (player->GetQuestRewardStatus(7761))
+                player->TeleportTo(469, -7673.03, -1106.08, 396.65, 0.7);
+
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new OrbOfCommandAI(go);
     }
 };
 
@@ -180,13 +240,23 @@ public:
     TableOfMadness() : GameObjectScript("go_tablet_of_madness")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct TableOfMadnessAI : public GameObjectAI
     {
-        if (player->HasSkill(SKILL_ALCHEMY) && player->GetSkillValue(SKILL_ALCHEMY) >= 300 && !player->HasSpell(24266))
+        TableOfMadnessAI(GameObject* obj) : GameObjectAI(obj) { }
+
+        bool GossipHello(Player* player) override
         {
-            player->CastSpell(player, 24267, false);
+            if (player->HasSkill(SKILL_ALCHEMY) && player->GetSkillValue(SKILL_ALCHEMY) >= 300 && !player->HasSpell(24266))
+            {
+                player->CastSpell(player, 24267, false);
+            }
+            return true;
         }
-        return true;
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new TableOfMadnessAI(go);
     }
 };
 
@@ -196,16 +266,26 @@ public:
     TableOfTheSeven() : GameObjectScript("go_tablet_of_the_seven")
     {}
 
-    //TODO: use gossip option ("Transcript the Tablet") instead, if Trinity adds support.
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct TableOfTheSevenAI : public GameObjectAI
     {
-        if (_GO->GetGoType() != GAMEOBJECT_TYPE_QUESTGIVER)
+        TableOfTheSevenAI(GameObject* obj) : GameObjectAI(obj) { }
+
+        //TODO: use gossip option ("Transcript the Tablet") instead, if Trinity adds support.
+        bool GossipHello(Player* player) override
+        {
+            if (me->GetGoType() != GAMEOBJECT_TYPE_QUESTGIVER)
+                return true;
+
+            if (player->GetQuestStatus(4296) == QUEST_STATUS_INCOMPLETE)
+                player->CastSpell(player, 15065, false);
+
             return true;
+        }
+    };
 
-        if (player->GetQuestStatus(4296) == QUEST_STATUS_INCOMPLETE)
-            player->CastSpell(player, 15065, false);
-
-        return true;
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new TableOfTheSevenAI(go);
     }
 };
 
@@ -215,10 +295,20 @@ public:
     Teleporter() : GameObjectScript("go_teleporter")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct TeleporterAI : public GameObjectAI
     {
-        player->TeleportTo(0, 1807.07f, 336.105f, 70.3975f, 0.0f);
-        return false;
+        TeleporterAI(GameObject* obj) : GameObjectAI(obj) { }
+
+        bool GossipHello(Player* player) override
+        {
+            player->TeleportTo(0, 1807.07f, 336.105f, 70.3975f, 0.0f);
+            return false;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new TeleporterAI(go);
     }
 };
 
@@ -228,12 +318,22 @@ public:
     JumpATron() : GameObjectScript("go_jump_a_tron")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct JumpATronAI : public GameObjectAI
     {
-        if (player->GetQuestStatus(10111) == QUEST_STATUS_INCOMPLETE)
-            player->CastSpell(player, 33382, true);
+        JumpATronAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        return true;
+        bool GossipHello(Player* player) override
+        {
+            if (player->GetQuestStatus(10111) == QUEST_STATUS_INCOMPLETE)
+                player->CastSpell(player, 33382, true);
+
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new JumpATronAI(go);
     }
 };
 
@@ -243,24 +343,34 @@ public:
     EthereumPrison() : GameObjectScript("go_ethereum_prison")
     {}
 
-    float ethereum_NPC[2][7] =
+    struct EthereumPrisonAI : public GameObjectAI
     {
-        { 20785,20790,20789,20784,20786,20783,20788 }, // hostile npc
-        { 22810,22811,22812,22813,22814,22815,0 }      // fiendly npc (need script in acid ? only to cast spell reputation reward)
+        EthereumPrisonAI(GameObject* obj) : GameObjectAI(obj) { }
+
+        const float ethereum_NPC[2][7] =
+        {
+            { 20785,20790,20789,20784,20786,20783,20788 }, // hostile npc
+            { 22810,22811,22812,22813,22814,22815,0 }      // fiendly npc (need script in acid ? only to cast spell reputation reward)
+        };
+
+        bool GossipHello(Player* player) override
+        {
+            me->SetGoState(GO_STATE_ACTIVE);
+            switch (rand() % 2) {
+            case 0:
+                me->SummonCreature(ethereum_NPC[0][rand() % 6], me->GetPositionX(), me->GetPositionY(), me->GetPositionZ() + 0.3, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
+                break;
+            case 1:
+                me->SummonCreature(ethereum_NPC[1][rand() % 5], me->GetPositionX(), me->GetPositionY(), me->GetPositionZ() + 0.3, 0, TEMPSUMMON_TIMED_DESPAWN, 10000);
+                break;
+            }
+            return true;
+        }
     };
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    GameObjectAI* GetAI(GameObject* go) const override
     {
-        _GO->SetGoState(GO_STATE_ACTIVE);
-        switch (rand() % 2) {
-        case 0:
-            _GO->SummonCreature(ethereum_NPC[0][rand() % 6], _GO->GetPositionX(), _GO->GetPositionY(), _GO->GetPositionZ() + 0.3, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
-            break;
-        case 1:
-            _GO->SummonCreature(ethereum_NPC[1][rand() % 5], _GO->GetPositionX(), _GO->GetPositionY(), _GO->GetPositionZ() + 0.3, 0, TEMPSUMMON_TIMED_DESPAWN, 10000);
-            break;
-        }
-        return true;
+        return new EthereumPrisonAI(go);
     }
 };
 
@@ -275,12 +385,22 @@ public:
         NPC_ARIKARA = 10882,
     };
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGO) override
+    struct SacredFireOfLifeAI : public GameObjectAI
     {
-        if (pGO->GetGoType() == GAMEOBJECT_TYPE_GOOBER)
-            pPlayer->SummonCreature(NPC_ARIKARA, -5008.338, -2118.894, 83.657, 0.874, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+        SacredFireOfLifeAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        return true;
+        bool GossipHello(Player* pPlayer) override
+        {
+            if (me->GetGoType() == GAMEOBJECT_TYPE_GOOBER)
+                pPlayer->SummonCreature(NPC_ARIKARA, -5008.338, -2118.894, 83.657, 0.874, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000);
+
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new SacredFireOfLifeAI(go);
     }
 };
 
@@ -302,40 +422,50 @@ public:
         SPELL_CREATE_5_FLASK_OF_BEAST = 40965,
     };
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGO) override
+    struct FelCrystalforgeAI : public GameObjectAI
     {
-        if (pGO->GetGoType() == GAMEOBJECT_TYPE_QUESTGIVER) /* != GAMEOBJECT_TYPE_QUESTGIVER) */
-            pPlayer->PrepareQuestMenu(pGO->GetGUID()); /* return true*/
+        FelCrystalforgeAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_FEL_CRYSTALFORGE_ITEM_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_FEL_CRYSTALFORGE_ITEM_5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-
-        pPlayer->SEND_GOSSIP_MENU_TEXTID(GOSSIP_FEL_CRYSTALFORGE_TEXT, pGO->GetGUID());
-
-        return true;
-    }
-
-    bool OnGossipSelect(Player* pPlayer, GameObject* pGO, uint32 uiSender, uint32 uiAction) override
-    {
-        switch (uiAction)
+        bool GossipHello(Player* pPlayer) override
         {
-        case GOSSIP_ACTION_INFO_DEF:
-            pPlayer->CastSpell(pPlayer, SPELL_CREATE_1_FLASK_OF_BEAST, false);
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_FEL_CRYSTALFORGE_ITEM_RETURN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-            pPlayer->SEND_GOSSIP_MENU_TEXTID(GOSSIP_FEL_CRYSTALFORGE_ITEM_TEXT_RETURN, pGO->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 1:
-            pPlayer->CastSpell(pPlayer, SPELL_CREATE_5_FLASK_OF_BEAST, false);
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_FEL_CRYSTALFORGE_ITEM_RETURN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-            pPlayer->SEND_GOSSIP_MENU_TEXTID(GOSSIP_FEL_CRYSTALFORGE_ITEM_TEXT_RETURN, pGO->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 2:
+            if (me->GetGoType() == GAMEOBJECT_TYPE_QUESTGIVER) /* != GAMEOBJECT_TYPE_QUESTGIVER) */
+                pPlayer->PrepareQuestMenu(me->GetGUID()); /* return true*/
+
             pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_FEL_CRYSTALFORGE_ITEM_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
             pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_FEL_CRYSTALFORGE_ITEM_5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-            pPlayer->SEND_GOSSIP_MENU_TEXTID(GOSSIP_FEL_CRYSTALFORGE_TEXT, pGO->GetGUID());
-            break;
+
+            pPlayer->SEND_GOSSIP_MENU_TEXTID(GOSSIP_FEL_CRYSTALFORGE_TEXT, me->GetGUID());
+
+            return true;
         }
-        return true;
+
+        bool GossipSelect(Player* pPlayer, uint32 uiSender, uint32 uiAction) override
+        {
+            switch (uiAction)
+            {
+            case GOSSIP_ACTION_INFO_DEF:
+                pPlayer->CastSpell(pPlayer, SPELL_CREATE_1_FLASK_OF_BEAST, false);
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_FEL_CRYSTALFORGE_ITEM_RETURN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+                pPlayer->SEND_GOSSIP_MENU_TEXTID(GOSSIP_FEL_CRYSTALFORGE_ITEM_TEXT_RETURN, me->GetGUID());
+                break;
+            case GOSSIP_ACTION_INFO_DEF + 1:
+                pPlayer->CastSpell(pPlayer, SPELL_CREATE_5_FLASK_OF_BEAST, false);
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_FEL_CRYSTALFORGE_ITEM_RETURN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+                pPlayer->SEND_GOSSIP_MENU_TEXTID(GOSSIP_FEL_CRYSTALFORGE_ITEM_TEXT_RETURN, me->GetGUID());
+                break;
+            case GOSSIP_ACTION_INFO_DEF + 2:
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_FEL_CRYSTALFORGE_ITEM_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_FEL_CRYSTALFORGE_ITEM_5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+                pPlayer->SEND_GOSSIP_MENU_TEXTID(GOSSIP_FEL_CRYSTALFORGE_TEXT, me->GetGUID());
+                break;
+            }
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new FelCrystalforgeAI(go);
     }
 };
 
@@ -356,14 +486,24 @@ public:
         APEXIS_SHARD = 32569,
     };
 
-    bool OnGossipHello(Player* pPlayer, GameObject* _GO) override
+    struct BashirCrystalforgeAI : public GameObjectAI
     {
-        if (!pPlayer->HasItemCount(APEXIS_SHARD, 50, false))
-            pPlayer->CastSpell(pPlayer, SPELL_CREATE_1_FLASK_OF_SORCERER, false);
-        else
-            pPlayer->CastSpell(pPlayer, SPELL_CREATE_5_FLASK_OF_SORCERER, false);
+        BashirCrystalforgeAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        return false;
+        bool GossipHello(Player* pPlayer) override
+        {
+            if (!pPlayer->HasItemCount(APEXIS_SHARD, 50, false))
+                pPlayer->CastSpell(pPlayer, SPELL_CREATE_1_FLASK_OF_SORCERER, false);
+            else
+                pPlayer->CastSpell(pPlayer, SPELL_CREATE_5_FLASK_OF_SORCERER, false);
+
+            return false;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new BashirCrystalforgeAI(go);
     }
 };
 
@@ -378,20 +518,30 @@ public:
         QUEST_HAWKS_ESSENCE  = 10992,
     };
 
-    bool OnGossipHello(Player* pPlayer, GameObject* _GO) override
-    { //workaround as WDB data for this GO seem to be crazy (the GO from the two previous quests are working fine...)
-        if (pPlayer->GetQuestStatus(QUEST_HAWKS_ESSENCE) == QUEST_STATUS_INCOMPLETE)
-        {
-            ItemPosCountVec dest;
-            uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 32356, 1);
-            if (msg == EQUIP_ERR_OK)
-            {
-                Item* item = pPlayer->StoreNewItem(dest, 32356, true);
-                pPlayer->SendNewItem(item, 1, true, false);
-            }
-        }
+    struct ShrineHawkAI : public GameObjectAI
+    {
+        ShrineHawkAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        return false;
+        bool GossipHello(Player* pPlayer) override
+        { //workaround as WDB data for this GO seem to be crazy (the GO from the two previous quests are working fine...)
+            if (pPlayer->GetQuestStatus(QUEST_HAWKS_ESSENCE) == QUEST_STATUS_INCOMPLETE)
+            {
+                ItemPosCountVec dest;
+                uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 32356, 1);
+                if (msg == EQUIP_ERR_OK)
+                {
+                    Item* item = pPlayer->StoreNewItem(dest, 32356, true);
+                    pPlayer->SendNewItem(item, 1, true, false);
+                }
+            }
+
+            return false;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new ShrineHawkAI(go);
     }
 };
 
@@ -412,15 +562,25 @@ public:
         SPELL_SUMMON_RIZZLE = 39866
     };
 
-    bool OnGossipHello(Player* pPlayer, GameObject* _GO) override
+    struct SouthfuryMoonstoneAI : public GameObjectAI
     {
-        //implicitTarget=48 not implemented as of writing this code, and manual summon may be just ok for our purpose
-        //pPlayer->CastSpell(pPlayer,SPELL_SUMMON_RIZZLE,false);
+        SouthfuryMoonstoneAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        if (Creature* pCreature = pPlayer->SummonCreature(NPC_RIZZLE, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_DEAD_DESPAWN, 0))
-            pCreature->CastSpell(pPlayer, SPELL_BLACKJACK, false);
+        bool GossipHello(Player* pPlayer) override
+        {
+            //implicitTarget=48 not implemented as of writing this code, and manual summon may be just ok for our purpose
+            //pPlayer->CastSpell(pPlayer,SPELL_SUMMON_RIZZLE,false);
 
-        return false;
+            if (Creature* pCreature = pPlayer->SummonCreature(NPC_RIZZLE, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_DEAD_DESPAWN, 0))
+                pCreature->CastSpell(pPlayer, SPELL_BLACKJACK, false);
+
+            return false;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new SouthfuryMoonstoneAI(go);
     }
 };
 
@@ -436,12 +596,22 @@ public:
         MAGHAR_PRISONER = 18428,
     };
 
-    bool OnGossipHello(Player* pPlayer, GameObject* _GO) override
+    struct WarmaulPrisonAI : public GameObjectAI
     {
-        if (pPlayer->GetQuestStatus(QUEST_SURVIVORS) == QUEST_STATUS_INCOMPLETE)
-            pPlayer->KilledMonsterCredit(MAGHAR_PRISONER, 0);
+        WarmaulPrisonAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        return false;
+        bool GossipHello(Player* pPlayer) override
+        {
+            if (pPlayer->GetQuestStatus(QUEST_SURVIVORS) == QUEST_STATUS_INCOMPLETE)
+                pPlayer->KilledMonsterCredit(MAGHAR_PRISONER, 0);
+
+            return false;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new WarmaulPrisonAI(go);
     }
 };
 
@@ -461,17 +631,27 @@ public:
         GREEN_SPOT_GROG_KEG_CREDIT = 22356
     };
 
-    bool OnGossipHello(Player* pPlayer, GameObject* _GO) override
+    struct GreenSpotGrogKegAI : public GameObjectAI
     {
-        if (pPlayer->GetQuestStatus(QUEST_SMALLEST_CREATURES) == QUEST_STATUS_INCOMPLETE)
-        {
-            if (Creature* credit = pPlayer->FindNearestCreature(GREEN_SPOT_GROG_KEG_CREDIT, 5, true)) {
-                pPlayer->DealDamage(credit, credit->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-                credit->Respawn();
-            }
-        }
+        GreenSpotGrogKegAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        return false;
+        bool GossipHello(Player* pPlayer) override
+        {
+            if (pPlayer->GetQuestStatus(QUEST_SMALLEST_CREATURES) == QUEST_STATUS_INCOMPLETE)
+            {
+                if (Creature* credit = pPlayer->FindNearestCreature(GREEN_SPOT_GROG_KEG_CREDIT, 5, true)) {
+                    pPlayer->DealDamage(credit, credit->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                    credit->Respawn();
+                }
+            }
+
+            return false;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new GreenSpotGrogKegAI(go);
     }
 };
 
@@ -487,17 +667,27 @@ public:
         RIPE_MOONSHINE_KEG_CREDIT = 22367
     };
 
-    bool OnGossipHello(Player* pPlayer, GameObject* _GO) override
+    struct RipeMoonshineKegAI : public GameObjectAI
     {
-        if (pPlayer->GetQuestStatus(QUEST_SMALLEST_CREATURES) == QUEST_STATUS_INCOMPLETE)
-        {
-            if (Creature* credit = pPlayer->FindNearestCreature(RIPE_MOONSHINE_KEG_CREDIT, 5, true)) {
-                pPlayer->DealDamage(credit, credit->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-                credit->Respawn();
-            }
-        }
+        RipeMoonshineKegAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        return false;
+        bool GossipHello(Player* pPlayer) override
+        {
+            if (pPlayer->GetQuestStatus(QUEST_SMALLEST_CREATURES) == QUEST_STATUS_INCOMPLETE)
+            {
+                if (Creature* credit = pPlayer->FindNearestCreature(RIPE_MOONSHINE_KEG_CREDIT, 5, true)) {
+                    pPlayer->DealDamage(credit, credit->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                    credit->Respawn();
+                }
+            }
+
+            return false;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new RipeMoonshineKegAI(go);
     }
 };
 
@@ -512,17 +702,27 @@ public:
         FERMENTED_SEED_BEER_KEG_CREDIT = 22368,
     };
 
-    bool OnGossipHello(Player* pPlayer, GameObject* _GO) override
+    struct FermentedSeedBeerKegAI : public GameObjectAI
     {
-        if (pPlayer->GetQuestStatus(QUEST_SMALLEST_CREATURES) == QUEST_STATUS_INCOMPLETE)
-        {
-            if (Creature* credit = pPlayer->FindNearestCreature(FERMENTED_SEED_BEER_KEG_CREDIT, 5, true)) {
-                pPlayer->DealDamage(credit, credit->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-                credit->Respawn();
-            }
-        }
+        FermentedSeedBeerKegAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        return false;
+        bool GossipHello(Player* pPlayer) override
+        {
+            if (pPlayer->GetQuestStatus(QUEST_SMALLEST_CREATURES) == QUEST_STATUS_INCOMPLETE)
+            {
+                if (Creature* credit = pPlayer->FindNearestCreature(FERMENTED_SEED_BEER_KEG_CREDIT, 5, true)) {
+                    pPlayer->DealDamage(credit, credit->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                    credit->Respawn();
+                }
+            }
+
+            return false;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new FermentedSeedBeerKegAI(go);
     }
 };
 
@@ -532,22 +732,32 @@ public:
     PracticeLockbox() : GameObjectScript("go_practice_lockbox")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGo) override
+    struct PracticeLockboxAI : public GameObjectAI
     {
-        if (25 > rand() % 100)
-        {
-            switch (rand() % 2)
-            {
-            case 0:
-                pGo->CastSpell(pPlayer, 10017);
-                break;
-            case 1:
-                pGo->CastSpell(pPlayer, 10018);
-                break;
-            }
-        }
+        PracticeLockboxAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        return false;
+        bool GossipHello(Player* pPlayer) override
+        {
+            if (25 > rand() % 100)
+            {
+                switch (rand() % 2)
+                {
+                case 0:
+                    me->CastSpell(pPlayer, 10017);
+                    break;
+                case 1:
+                    me->CastSpell(pPlayer, 10018);
+                    break;
+                }
+            }
+
+            return false;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new PracticeLockboxAI(go);
     }
 };
 
@@ -557,16 +767,24 @@ public:
     CrystallineTear() : GameObjectScript("go_crystalline_tear")
     {}
 
-    bool OnQuestAccept(Player* pPlayer, GameObject* _GO, Quest const* quest) override
+    struct CrystallineTearAI : public GameObjectAI
     {
-        if (quest->GetQuestId() == 8519)
-        {
-            WorldPacket data(SMSG_TRIGGER_CINEMATIC, 4);
-            data << uint32(2);
-            pPlayer->GetSession()->SendPacket(&data);
-        }
+        CrystallineTearAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        return true;
+        void QuestAccept(Player* pPlayer, Quest const* quest) override
+        {
+            if (quest->GetQuestId() == 8519)
+            {
+                WorldPacket data(SMSG_TRIGGER_CINEMATIC, 4);
+                data << uint32(2);
+                pPlayer->GetSession()->SendPacket(&data);
+            }
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new CrystallineTearAI(go);
     }
 };
 
@@ -581,13 +799,23 @@ public:
         ENTRY_CRIMSON = 11120
     };
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGo) override
+    struct BlacksmithingPlansAI : public GameObjectAI
     {
-        pPlayer->SendLoot(pGo->GetGUID(), LOOT_CORPSE);
-        if (Creature* crimson = pGo->SummonCreature(ENTRY_CRIMSON, 3567.002930, -2931.949951, 125.001495, 5.163120, TEMPSUMMON_DEAD_DESPAWN, 0))
-            crimson->AI()->AttackStart(pPlayer);
+        BlacksmithingPlansAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        return true;
+        bool GossipHello(Player* pPlayer) override
+        {
+            pPlayer->SendLoot(me->GetGUID(), LOOT_CORPSE);
+            if (Creature* crimson = me->SummonCreature(ENTRY_CRIMSON, 3567.002930, -2931.949951, 125.001495, 5.163120, TEMPSUMMON_DEAD_DESPAWN, 0))
+                crimson->AI()->AttackStart(pPlayer);
+
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new BlacksmithingPlansAI(go);
     }
 };
 
@@ -604,23 +832,33 @@ public:
         ITEM_SLIME_SAMPLE = 12235,
     };
 
-    bool OnGossipHello(Player* pPlayer, GameObject* _GO) override
+    struct TestingEquipmentAI : public GameObjectAI
     {
-        if (pPlayer->GetQuestStatus(QUEST_BATCH_OF_OOZE) == QUEST_STATUS_INCOMPLETE) {
-            if (pPlayer->HasItemCount(ITEM_SLIME_SAMPLE, 1, false)) {
-                ItemPosCountVec dest;
-                uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, ITEM_TESTED_SAMPLE, 1);
-                if (msg == EQUIP_ERR_OK) {
-                    Item* item = pPlayer->StoreNewItem(dest, ITEM_TESTED_SAMPLE, true);
-                    pPlayer->SendNewItem(item, 1, true, false);
-                    pPlayer->DestroyItemCount(ITEM_SLIME_SAMPLE, 1, true, true);
+        TestingEquipmentAI(GameObject* obj) : GameObjectAI(obj) { }
+
+        bool GossipHello(Player* pPlayer) override
+        {
+            if (pPlayer->GetQuestStatus(QUEST_BATCH_OF_OOZE) == QUEST_STATUS_INCOMPLETE) {
+                if (pPlayer->HasItemCount(ITEM_SLIME_SAMPLE, 1, false)) {
+                    ItemPosCountVec dest;
+                    uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, ITEM_TESTED_SAMPLE, 1);
+                    if (msg == EQUIP_ERR_OK) {
+                        Item* item = pPlayer->StoreNewItem(dest, ITEM_TESTED_SAMPLE, true);
+                        pPlayer->SendNewItem(item, 1, true, false);
+                        pPlayer->DestroyItemCount(ITEM_SLIME_SAMPLE, 1, true, true);
+                    }
                 }
+
+                return false;
             }
 
-            return false;
+            return true;
         }
+    };
 
-        return true;
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new TestingEquipmentAI(go);
     }
 };
 
@@ -640,12 +878,22 @@ public:
         NPC_HIVE_AMBUSHER = 13301
     };
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGO) override
+    struct HivePodAI : public GameObjectAI
     {
-        pPlayer->SendLoot(pGO->GetGUID(), LOOT_CORPSE);
-        pGO->SummonCreature(NPC_HIVE_AMBUSHER, pGO->GetPositionX() + 1, pGO->GetPositionY(), pGO->GetPositionZ(), pGO->GetAngle(pPlayer), TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 60000);
-        pGO->SummonCreature(NPC_HIVE_AMBUSHER, pGO->GetPositionX(), pGO->GetPositionY() + 1, pGO->GetPositionZ(), pGO->GetAngle(pPlayer), TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 60000);
-        return true;
+        HivePodAI(GameObject* obj) : GameObjectAI(obj) { }
+
+        bool GossipHello(Player* pPlayer) override
+        {
+            pPlayer->SendLoot(me->GetGUID(), LOOT_CORPSE);
+            me->SummonCreature(NPC_HIVE_AMBUSHER, me->GetPositionX() + 1, me->GetPositionY(), me->GetPositionZ(), me->GetAngle(pPlayer), TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 60000);
+            me->SummonCreature(NPC_HIVE_AMBUSHER, me->GetPositionX(), me->GetPositionY() + 1, me->GetPositionZ(), me->GetAngle(pPlayer), TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 60000);
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new HivePodAI(go);
     }
 };
 
@@ -655,20 +903,30 @@ public:
     ForgedIllidariBlade() : GameObjectScript("go_forged_illidari_blade")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* _GO) override
+    struct ForgedIllidariBladeAI : public GameObjectAI
     {
-        if (pPlayer->GetQuestStatus(10679) == QUEST_STATUS_INCOMPLETE) {
-            ItemPosCountVec dest;
-            uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 30876, 1);
-            if (msg == EQUIP_ERR_OK) {
-                Item* item = pPlayer->StoreNewItem(dest, 30876, true);
-                pPlayer->SendNewItem(item, 1, true, false);
+        ForgedIllidariBladeAI(GameObject* obj) : GameObjectAI(obj) { }
+
+        bool GossipHello(Player* pPlayer) override
+        {
+            if (pPlayer->GetQuestStatus(10679) == QUEST_STATUS_INCOMPLETE) {
+                ItemPosCountVec dest;
+                uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 30876, 1);
+                if (msg == EQUIP_ERR_OK) {
+                    Item* item = pPlayer->StoreNewItem(dest, 30876, true);
+                    pPlayer->SendNewItem(item, 1, true, false);
+                }
+
+                return true;
             }
 
-            return true;
+            return false;
         }
+    };
 
-        return false;
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new ForgedIllidariBladeAI(go);
     }
 };
 
@@ -678,12 +936,22 @@ public:
     BloodFilledOrb() : GameObjectScript("go_blood_filled_orb")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGo) override
+    struct BloodFilledOrbAI : public GameObjectAI
     {
-        if (pPlayer->GetQuestStatus(9692) == QUEST_STATUS_INCOMPLETE)
-            pGo->SummonCreature(17830, pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), pPlayer->GetOrientation(), TEMPSUMMON_TIMED_DESPAWN, 60000);
+        BloodFilledOrbAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        return true;
+        bool GossipHello(Player* pPlayer) override
+        {
+            if (pPlayer->GetQuestStatus(9692) == QUEST_STATUS_INCOMPLETE)
+                me->SummonCreature(17830, pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), pPlayer->GetOrientation(), TEMPSUMMON_TIMED_DESPAWN, 60000);
+
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new BloodFilledOrbAI(go);
     }
 };
 
@@ -698,13 +966,23 @@ public:
         NPC_BLACKGUARD_SWORDSMITH = 11121
     };
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGo) override
+    struct CorruptionPlansAI : public GameObjectAI
     {
-        pPlayer->SendLoot(pGo->GetGUID(), LOOT_CORPSE);
-        if (Creature* swordsmith = pGo->SummonCreature(NPC_BLACKGUARD_SWORDSMITH, pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), pPlayer->GetOrientation(), TEMPSUMMON_CORPSE_TIMED_DESPAWN, 45000))
-            swordsmith->AI()->AttackStart(pPlayer);
+        CorruptionPlansAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        return true;
+        bool GossipHello(Player* pPlayer) override
+        {
+            pPlayer->SendLoot(me->GetGUID(), LOOT_CORPSE);
+            if (Creature* swordsmith = me->SummonCreature(NPC_BLACKGUARD_SWORDSMITH, pPlayer->GetPositionX(), pPlayer->GetPositionY(), pPlayer->GetPositionZ(), pPlayer->GetOrientation(), TEMPSUMMON_CORPSE_TIMED_DESPAWN, 45000))
+                swordsmith->AI()->AttackStart(pPlayer);
+
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new CorruptionPlansAI(go);
     }
 };
 
@@ -714,16 +992,26 @@ public:
     IceStoneAhune() : GameObjectScript("go_ice_stone_ahune")
     {}
 
-    bool OnGossipHello(Player* pPlayer, GameObject* pGo) override
+    struct IceStoneAhuneAI : public GameObjectAI
     {
-        if (pPlayer->HasItemCount(34953, 1, false)) {
-            pGo->SummonCreature(25740, -90.151627, -243.480011, -1.102788, 1.621057, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 600000);
-            pGo->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND);
-            pGo->SetLootState(GO_JUST_DEACTIVATED);
-            pGo->SetRespawnTime(86400);     // One day
-        }
+        IceStoneAhuneAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        return true;
+        bool GossipHello(Player* pPlayer) override
+        {
+            if (pPlayer->HasItemCount(34953, 1, false)) {
+                me->SummonCreature(25740, -90.151627, -243.480011, -1.102788, 1.621057, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 600000);
+                me->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND);
+                me->SetLootState(GO_JUST_DEACTIVATED);
+                me->SetRespawnTime(1 * DAY);
+            }
+
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new IceStoneAhuneAI(go);
     }
 };
 
@@ -733,19 +1021,29 @@ public:
     Matrix3005A() : GameObjectScript("go_matrix_3005a")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct Matrix3005A_AI : public GameObjectAI
     {
-        if (player->HasItemCount(9279, 1, false)) {
-            player->DestroyItemCount(9279, 1, true);
-            ItemPosCountVec dest;
-            uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 9280, 1);
-            if (msg == EQUIP_ERR_OK) {
-                Item* item = player->StoreNewItem(dest, 9280, true);
-                player->SendNewItem(item, 1, true, false);
-            }
-        }
+        Matrix3005A_AI(GameObject* obj) : GameObjectAI(obj) { }
 
-        return false;
+        bool GossipHello(Player* player) override
+        {
+            if (player->HasItemCount(9279, 1, false)) {
+                player->DestroyItemCount(9279, 1, true);
+                ItemPosCountVec dest;
+                uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 9280, 1);
+                if (msg == EQUIP_ERR_OK) {
+                    Item* item = player->StoreNewItem(dest, 9280, true);
+                    player->SendNewItem(item, 1, true, false);
+                }
+            }
+
+            return false;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new Matrix3005A_AI(go);
     }
 };
 
@@ -755,34 +1053,44 @@ public:
     MatrixPunchograph3005() : GameObjectScript("go_matrix_punchograph_3005")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* go) override
+    struct MatrixPunchograph3005_AI : public GameObjectAI
     {
-        uint32 itemEntry = 0;
+        MatrixPunchograph3005_AI(GameObject* obj) : GameObjectAI(obj) { }
 
-        switch (go->GetEntry()) {
-        case 142475: // B
-            itemEntry = 14639;
-            break;
-        case 142696: // D
-            itemEntry = 4413;
-        default:
-            break;
-        }
+        bool GossipHello(Player* player) override
+        {
+            uint32 itemEntry = 0;
 
-        if (!itemEntry)
-            return true;
-
-        if (player->HasItemCount(9327, 1, false) && !player->HasItemCount(itemEntry, 1, true)) {
-            //player->DestroyItemCount(9327, 1, true);
-            ItemPosCountVec dest;
-            uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemEntry, 1);
-            if (msg == EQUIP_ERR_OK) {
-                Item* item = player->StoreNewItem(dest, itemEntry, true);
-                player->SendNewItem(item, 1, true, false);
+            switch (me->GetEntry()) {
+            case 142475: // B
+                itemEntry = 14639;
+                break;
+            case 142696: // D
+                itemEntry = 4413;
+            default:
+                break;
             }
-        }
 
-        return false;
+            if (!itemEntry)
+                return true;
+
+            if (player->HasItemCount(9327, 1, false) && !player->HasItemCount(itemEntry, 1, true)) {
+                //player->DestroyItemCount(9327, 1, true);
+                ItemPosCountVec dest;
+                uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemEntry, 1);
+                if (msg == EQUIP_ERR_OK) {
+                    Item* item = player->StoreNewItem(dest, itemEntry, true);
+                    player->SendNewItem(item, 1, true, false);
+                }
+            }
+
+            return false;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new MatrixPunchograph3005_AI(go);
     }
 };
 
@@ -792,12 +1100,22 @@ public:
     TabletOfTheka() : GameObjectScript("go_tablet_of_theka")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct TabletOfThekaAI : public GameObjectAI
     {
-        if (Creature* theka = player->FindNearestCreature(7272, 150.0f, false))
-            player->AreaExploredOrEventHappens(2936);
+        TabletOfThekaAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        return true;
+        bool GossipHello(Player* player) override
+        {
+            if (Creature* theka = player->FindNearestCreature(7272, 150.0f, false))
+                player->AreaExploredOrEventHappens(2936);
+
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new TabletOfThekaAI(go);
     }
 };
 
@@ -807,13 +1125,23 @@ public:
     FelReaverControlConsole() : GameObjectScript("go_fel_reaver_control_console")
     {}
 
-    // Not working for some reason
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct FelReaverControlConsoleAI : public GameObjectAI
     {
-        if (Creature* felreaver = player->SummonCreature(21949, -2646.709961, 2673.530029, 74.858299, 4.974770, TEMPSUMMON_MANUAL_DESPAWN, 0))
-            player->CastSpell(felreaver, 530, true);
+        FelReaverControlConsoleAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        return true;
+        // Not working for some reason
+        bool GossipHello(Player* player) override
+        {
+            if (Creature* felreaver = player->SummonCreature(21949, -2646.709961, 2673.530029, 74.858299, 4.974770, TEMPSUMMON_MANUAL_DESPAWN, 0))
+                player->CastSpell(felreaver, 530, true);
+
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new FelReaverControlConsoleAI(go);
     }
 };
 
@@ -833,23 +1161,33 @@ class go_veil_skith_cage : public GameObjectScript
 public:
     go_veil_skith_cage() : GameObjectScript("go_veil_skith_cage") { }
 
-    bool OnGossipHello(Player* player, GameObject* go) override
+    struct go_veil_skith_cageAI : public GameObjectAI
     {
-        if (player->GetQuestStatus(QUEST_MISSING_FRIENDS) == QUEST_STATUS_INCOMPLETE)
+        go_veil_skith_cageAI(GameObject* obj) : GameObjectAI(obj) { }
+
+        bool GossipHello(Player* player) override
         {
-            std::list<Creature*> ChildrenList;
-            go->GetCreatureListWithEntryInGrid(ChildrenList, NPC_CAPTIVE_CHILD, INTERACTION_DISTANCE);
-            for (std::list<Creature*>::const_iterator itr = ChildrenList.begin(); itr != ChildrenList.end(); ++itr)
+            if (player->GetQuestStatus(QUEST_MISSING_FRIENDS) == QUEST_STATUS_INCOMPLETE)
             {
-                go->UseDoorOrButton();
-                player->KilledMonsterCredit(NPC_CAPTIVE_CHILD, (*itr)->GetGUID());
-                (*itr)->ForcedDespawn(5000);
-                (*itr)->GetMotionMaster()->MovePoint(1, go->GetPositionX() + 5, go->GetPositionY(), go->GetPositionZ());
-                (*itr)->AI()->Talk(SAY_FREE);
-                (*itr)->GetMotionMaster()->Clear();
+                std::list<Creature*> ChildrenList;
+                me->GetCreatureListWithEntryInGrid(ChildrenList, NPC_CAPTIVE_CHILD, INTERACTION_DISTANCE);
+                for (std::list<Creature*>::const_iterator itr = ChildrenList.begin(); itr != ChildrenList.end(); ++itr)
+                {
+                    me->UseDoorOrButton();
+                    player->KilledMonsterCredit(NPC_CAPTIVE_CHILD, (*itr)->GetGUID());
+                    (*itr)->ForcedDespawn(5000);
+                    (*itr)->GetMotionMaster()->MovePoint(1, me->GetPositionX() + 5, me->GetPositionY(), me->GetPositionZ());
+                    (*itr)->AI()->Talk(SAY_FREE);
+                    (*itr)->GetMotionMaster()->Clear();
+                }
             }
+            return false;
         }
-        return false;
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new go_veil_skith_cageAI(go);
     }
 };
 

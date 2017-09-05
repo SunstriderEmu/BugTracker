@@ -45,8 +45,6 @@ enum
     SAY_KILL =                -1409017,
     SAY_MAGMA_BLAST =         -1409018,
  
-    FACTION_FRIENDLY =              35,
- 
     CREATURE_SON_OF_FLAME =      12143,
     CREATURE_FLAME_OF_RAGNAROS = 13148,
  
@@ -79,8 +77,8 @@ enum
 };
 
 struct Locations { float x, y, z, o; };
-static Locations DomoNewLocation   = { 851.106262, -814.688660, -229.283966, 4.641055 };
-static Locations DomoInvocLocation = { 829.947754, -814.614807, -228.950043, 5.6      };
+static Locations DomoNewLocation   = { 851.106262f, -814.688660f, -229.283966f, 4.641055f };
+static Locations DomoInvocLocation = { 829.947754f, -814.614807f, -228.950043f, 5.6f      };
 
 enum
 {
@@ -172,7 +170,7 @@ class Boss_Ragnaros : public CreatureScript
                     case INTRO:
                         Intro_Timer = 0;
                         Intro_Phase = 0;
-                        me->SetVisibility(VISIBILITY_OFF);
+                        me->SetVisible(false);
                         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         me->SetFaction(FACTION_FRIENDLY);
                         me->AddAura(SPELL_SUBMERGE, me);
@@ -202,7 +200,7 @@ class Boss_Ragnaros : public CreatureScript
                     case EMERGING:
                         //submerge spell set this off, emerge set it back on but the animation is then skipped,
                         //so we have to set on back ourselves and wait a world update before continuing
-                        me->SetVisibility(VISIBILITY_ON);
+                        me->SetVisible(true);
                         Phase_Timer = EMERGING_TIME;
                         Emerging_Waited = false;
                         break;
@@ -326,7 +324,7 @@ class Boss_Ragnaros : public CreatureScript
                         Intro_Timer = 4000;
                         break;
                     case 3:
-                        me->SetVisibility(VISIBILITY_ON);
+                        me->SetVisible(true);
                         Intro_Timer = 0;
                         break;
                     case 4:

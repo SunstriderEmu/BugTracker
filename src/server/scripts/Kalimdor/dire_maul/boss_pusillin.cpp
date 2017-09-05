@@ -29,182 +29,192 @@ enum ePusillinSpells {
 
 #define GOSSIP_TEMP     "[PH] Donne-moi cette clé !"
 
-struct boss_pusillinAI : public ScriptedAI
+
+class boss_pusillin : public CreatureScript
 {
-    boss_pusillinAI(Creature *c) : ScriptedAI(c) 
+public:
+    boss_pusillin() : CreatureScript("boss_pusillin")
+    { }
+
+    class boss_pusillinAI : public ScriptedAI
     {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-    }
-
-    InstanceScript *pInstance;
-
-    uint8 step;
-    
-    uint32 fireballTimer;
-    uint32 fireblastTimer;
-    uint32 blastwaveTimer;
-
-    void Reset()
-    override {
-        /*if (pInstance && pInstance->GetData(DATA_PUSILLIN_STEP) < 4) {
-            step = 0;
-            pInstance->SetData(DATA_PUSILLIN_STEP, 0);
+        public:
+        boss_pusillinAI(Creature *c) : ScriptedAI(c) 
+        {
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
         }
-        else if (pInstance) {
-            step = 4;
-            pInstance->SetData(DATA_PUSILLIN_STEP, 4);
-            me->SetFaction(FACTION_HOSTILE);
-            // TODO: teleport him to last position
-        }*/
-        /*step = 0;
-        if (pInstance) {
-            step = pInstance->GetData(DATA_PUSILLIN_STEP);
+    
+        InstanceScript *pInstance;
+    
+        uint8 step;
+        
+        uint32 fireballTimer;
+        uint32 fireblastTimer;
+        uint32 blastwaveTimer;
+    
+        void Reset()
+        override {
+            /*if (pInstance && pInstance->GetData(DATA_PUSILLIN_STEP) < 4) {
+                step = 0;
+                pInstance->SetData(DATA_PUSILLIN_STEP, 0);
+            }
+            else if (pInstance) {
+                step = 4;
+                pInstance->SetData(DATA_PUSILLIN_STEP, 4);
+                me->SetFaction(FACTION_HOSTILE);
+                // TODO: teleport him to last position
+            }*/
+            /*step = 0;
+            if (pInstance) {
+                step = pInstance->GetData(DATA_PUSILLIN_STEP);
+                switch (step) {
+                case 1:
+                    me->SummonCreature(14354, -149.159958, -274.567322, -4.147923, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 6000000);
+                    me->DisappearAndDie();
+                    break;
+                case 2:
+                    me->SummonCreature(14354, 111.177673, -352.949677, -4.101341, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 6000000);
+                    me->DisappearAndDie();
+                    break;
+                case 3:
+                    me->SummonCreature(14354, 47.163609, -653.998535, -25.160894, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 6000000);
+                    me->DisappearAndDie();
+                    break;
+                case 4:
+                    if (Creature *pNewCre = me->SummonCreature(14354, 17.699953, -704.177368, -12.642654, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 6000000)) {
+                        pNewCre->SetFaction(FACTION_HOSTILE);
+                        pNewCre->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+                    }
+                    me->DisappearAndDie();
+                    break;
+                }
+            }*/
+            
+            fireballTimer = 6000;
+            fireblastTimer = 8000;
+            blastwaveTimer = 12000;
+        }
+        
+        uint8 GetStep()
+        {
+            return step;
+        }
+        
+        void SetStep(uint8 currStep)
+        {
+            step = currStep;
+        }
+        
+        void EnterCombat(Unit *pWho)
+        override {
+            DoCast(me, SPELL_SPIRIT_OF_RUNN, false);
+        }
+        
+        void UpdateAI(uint32 const diff)
+        override {
+            if (!UpdateVictim())
+                return;
+                
+            if (fireballTimer <= diff) {
+                DoCast(me->GetVictim(), SPELL_FIREBALL, false);
+                fireballTimer = 6000;
+            }
+            else
+                fireballTimer -= diff;
+                
+            if (fireblastTimer <= diff) {
+                DoCast(me->GetVictim(), SPELL_FIREBLAST, false);
+                fireblastTimer = 8000;
+            }
+            else
+                fireblastTimer -= diff;
+                
+            if (blastwaveTimer <= diff) {
+                DoCast(me->GetVictim(), SPELL_BLAST_WAVE, false);
+                blastwaveTimer = 15000;
+            }
+            else
+                blastwaveTimer -= diff;
+                
+            DoMeleeAttackIfReady();
+        }
+
+        virtual bool GossipHello(Player* pPlayer) override
+        {
+            uint8 step = ((boss_pusillin::boss_pusillinAI*)me->AI())->GetStep();
             switch (step) {
+            case 0:
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_TEMP, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+                pPlayer->SEND_GOSSIP_MENU_TEXTID(2601, me->GetGUID());
+                break;
             case 1:
-                me->SummonCreature(14354, -149.159958, -274.567322, -4.147923, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 6000000);
-                me->DisappearAndDie();
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_TEMP, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+                pPlayer->SEND_GOSSIP_MENU_TEXTID(2601, me->GetGUID());
                 break;
             case 2:
-                me->SummonCreature(14354, 111.177673, -352.949677, -4.101341, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 6000000);
-                me->DisappearAndDie();
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_TEMP, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+                pPlayer->SEND_GOSSIP_MENU_TEXTID(2601, me->GetGUID());
                 break;
             case 3:
-                me->SummonCreature(14354, 47.163609, -653.998535, -25.160894, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 6000000);
-                me->DisappearAndDie();
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_TEMP, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
+                pPlayer->SEND_GOSSIP_MENU_TEXTID(2601, me->GetGUID());
                 break;
             case 4:
-                if (Creature *pNewCre = me->SummonCreature(14354, 17.699953, -704.177368, -12.642654, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 6000000)) {
-                    pNewCre->SetFaction(FACTION_HOSTILE);
-                    pNewCre->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-                }
-                me->DisappearAndDie();
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_TEMP, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
+                pPlayer->SEND_GOSSIP_MENU_TEXTID(2601, me->GetGUID());
                 break;
             }
-        }*/
-        
-        fireballTimer = 6000;
-        fireblastTimer = 8000;
-        blastwaveTimer = 12000;
-    }
-    
-    uint8 GetStep()
+            
+            return true;
+
+        }
+
+
+        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        {
+            switch (action) {
+            case GOSSIP_ACTION_INFO_DEF + 1:
+                me->SetSpeedRate(MOVE_WALK, 8);
+                me->GetMotionMaster()->MovePoint(0, 21.937908, -198.946259, -4.132668);
+                ((boss_pusillin::boss_pusillinAI*)me->AI())->SetStep(1);
+                break;
+            case GOSSIP_ACTION_INFO_DEF + 2:
+                me->SetSpeedRate(MOVE_WALK, 8);
+                me->GetMotionMaster()->MovePoint(0, -135.910263, -349.494873, -4.070144);
+                ((boss_pusillin::boss_pusillinAI*)me->AI())->SetStep(2);
+                break;
+            case GOSSIP_ACTION_INFO_DEF + 3:
+                me->SetSpeedRate(MOVE_WALK, 8);
+                me->GetMotionMaster()->MovePoint(0, 112.385468, -469.288818, -2.719314);
+                ((boss_pusillin::boss_pusillinAI*)me->AI())->SetStep(3);
+                break;
+            case GOSSIP_ACTION_INFO_DEF + 4:
+                me->SetSpeedRate(MOVE_WALK, 8);
+                me->GetMotionMaster()->MovePoint(0, 25.040466, -696.303101, -25.160894);
+                ((boss_pusillin::boss_pusillinAI*)me->AI())->SetStep(4);
+                break;
+            case GOSSIP_ACTION_INFO_DEF + 5:
+                // TODO: start fight
+                break;
+            }
+            
+            return true;
+
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
     {
-        return step;
-    }
-    
-    void SetStep(uint8 currStep)
-    {
-        step = currStep;
-    }
-    
-    void EnterCombat(Unit *pWho)
-    override {
-        DoCast(me, SPELL_SPIRIT_OF_RUNN, false);
-    }
-    
-    void UpdateAI(uint32 const diff)
-    override {
-        if (!UpdateVictim())
-            return;
-            
-        if (fireballTimer <= diff) {
-            DoCast(me->GetVictim(), SPELL_FIREBALL, false);
-            fireballTimer = 6000;
-        }
-        else
-            fireballTimer -= diff;
-            
-        if (fireblastTimer <= diff) {
-            DoCast(me->GetVictim(), SPELL_FIREBLAST, false);
-            fireblastTimer = 8000;
-        }
-        else
-            fireblastTimer -= diff;
-            
-        if (blastwaveTimer <= diff) {
-            DoCast(me->GetVictim(), SPELL_BLAST_WAVE, false);
-            blastwaveTimer = 15000;
-        }
-        else
-            blastwaveTimer -= diff;
-            
-        DoMeleeAttackIfReady();
+        return new boss_pusillinAI(creature);
     }
 };
 
-bool GossipHello_boss_pusillin(Player *pPlayer, Creature *pCreature)
-{
-    uint8 step = ((boss_pusillinAI*)pCreature->AI())->GetStep();
-    switch (step) {
-    case 0:
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_TEMP, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-        pPlayer->SEND_GOSSIP_MENU_TEXTID(2601, pCreature->GetGUID());
-        break;
-    case 1:
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_TEMP, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-        pPlayer->SEND_GOSSIP_MENU_TEXTID(2601, pCreature->GetGUID());
-        break;
-    case 2:
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_TEMP, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
-        pPlayer->SEND_GOSSIP_MENU_TEXTID(2601, pCreature->GetGUID());
-        break;
-    case 3:
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_TEMP, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
-        pPlayer->SEND_GOSSIP_MENU_TEXTID(2601, pCreature->GetGUID());
-        break;
-    case 4:
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_TEMP, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
-        pPlayer->SEND_GOSSIP_MENU_TEXTID(2601, pCreature->GetGUID());
-        break;
-    }
-    
-    return true;
-}
 
-bool GossipSelect_boss_pusillin(Player *pPlayer, Creature *pCreature, uint32 sender, uint32 action)
-{
-    switch (action) {
-    case GOSSIP_ACTION_INFO_DEF + 1:
-        pCreature->SetSpeedRate(MOVE_WALK, 8);
-        pCreature->GetMotionMaster()->MovePoint(0, 21.937908, -198.946259, -4.132668);
-        ((boss_pusillinAI*)pCreature->AI())->SetStep(1);
-        break;
-    case GOSSIP_ACTION_INFO_DEF + 2:
-        pCreature->SetSpeedRate(MOVE_WALK, 8);
-        pCreature->GetMotionMaster()->MovePoint(0, -135.910263, -349.494873, -4.070144);
-        ((boss_pusillinAI*)pCreature->AI())->SetStep(2);
-        break;
-    case GOSSIP_ACTION_INFO_DEF + 3:
-        pCreature->SetSpeedRate(MOVE_WALK, 8);
-        pCreature->GetMotionMaster()->MovePoint(0, 112.385468, -469.288818, -2.719314);
-        ((boss_pusillinAI*)pCreature->AI())->SetStep(3);
-        break;
-    case GOSSIP_ACTION_INFO_DEF + 4:
-        pCreature->SetSpeedRate(MOVE_WALK, 8);
-        pCreature->GetMotionMaster()->MovePoint(0, 25.040466, -696.303101, -25.160894);
-        ((boss_pusillinAI*)pCreature->AI())->SetStep(4);
-        break;
-    case GOSSIP_ACTION_INFO_DEF + 5:
-        // TODO: start fight
-        break;
-    }
-    
-    return true;
-}
 
-CreatureAI* GetAI_boss_pusillin(Creature *pCreature)
-{
-    return new boss_pusillinAI(pCreature);
-}
 
 void AddSC_boss_pusillin()
 {
-    OLDScript *newscript;
     
-    newscript = new OLDScript;
-    newscript->Name = "boss_pusillin";
-    /*newscript->OnGossipHello = &GossipHello_boss_pusillin;
-    newscript->OnGossipSelect = &GossipSelect_boss_pusillin;*/
-    newscript->GetAI = &GetAI_boss_pusillin;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_pusillin();
 }

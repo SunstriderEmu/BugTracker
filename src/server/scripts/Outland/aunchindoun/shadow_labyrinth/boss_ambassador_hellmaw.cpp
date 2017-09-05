@@ -1,18 +1,3 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /* ScriptData
 SDName: Boss_Ambassador_Hellmaw
@@ -42,169 +27,175 @@ EndScriptData */
 #define SPELL_FEAR              33547
 #define SPELL_ENRAGE            0                           //need to find proper spell
 
-struct boss_ambassador_hellmawAI : public ScriptedAI
+class boss_ambassador_hellmaw : public CreatureScript
 {
-    boss_ambassador_hellmawAI(Creature *c) : ScriptedAI(c)
+public:
+    boss_ambassador_hellmaw() : CreatureScript("boss_ambassador_hellmaw")
+    { }
+
+    class boss_ambassador_hellmawAI : public ScriptedAI
     {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-        HeroicMode = me->GetMap()->IsHeroic();
-    }
-
-    InstanceScript* pInstance;
-    bool HeroicMode;
-
-    uint32 EventCheck_Timer;
-    uint32 CorrosiveAcid_Timer;
-    uint32 Fear_Timer;
-    uint32 Enrage_Timer;
-    bool Intro;
-    bool IsBanished;
-
-    void Reset() override
-    {
-        EventCheck_Timer = 5000;
-        CorrosiveAcid_Timer = 25000;
-        Fear_Timer = 40000;
-        Enrage_Timer = 180000;
-        Intro = false;
-        IsBanished = false;
-
-        if (pInstance)
+        public:
+        boss_ambassador_hellmawAI(Creature *c) : ScriptedAI(c)
         {
-            if (pInstance->GetData(TYPE_HELLMAW) == NOT_STARTED)
-            {
-                DoCast(me,SPELL_BANISH);
-                IsBanished = true;
-            }
-            else pInstance->SetData(TYPE_HELLMAW,FAIL);
-            if (pInstance->GetData(TYPE_OVERSEER) == DONE)
-            {
-                if (me->HasAuraEffect(SPELL_BANISH,0))
-                    me->RemoveAurasDueToSpell(SPELL_BANISH);
-                Intro = true;
-            }
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
+            HeroicMode = me->GetMap()->IsHeroic();
         }
-    }
-
-    void MoveInLineOfSight(Unit *who) override
-    {
-        if (me->HasAuraEffect(SPELL_BANISH,0))
-            return;
-
-        ScriptedAI::MoveInLineOfSight(who);
-    }
-
-    void MovementInform(uint32 type, uint32 id) override
-    {
-        if (type != POINT_MOTION_TYPE)
-            return;
-    }
-
-    void DoIntro() 
-    {
-        DoScriptText(SAY_INTRO, me);
-
-        if (me->HasAuraEffect(SPELL_BANISH,0))
-            me->RemoveAurasDueToSpell(SPELL_BANISH);
-
-        IsBanished = false;
-        Intro = true;
-
-        if (pInstance)
-            pInstance->SetData(TYPE_HELLMAW, IN_PROGRESS);
-    }
-
-    void EnterCombat(Unit *who) override
-    {
-        switch(rand()%3)
+    
+        InstanceScript* pInstance;
+        bool HeroicMode;
+    
+        uint32 EventCheck_Timer;
+        uint32 CorrosiveAcid_Timer;
+        uint32 Fear_Timer;
+        uint32 Enrage_Timer;
+        bool Intro;
+        bool IsBanished;
+    
+        void Reset() override
         {
-            case 0: DoScriptText(SAY_AGGRO1, me); break;
-            case 1: DoScriptText(SAY_AGGRO2, me); break;
-            case 2: DoScriptText(SAY_AGGRO3, me); break;
-        }
-    }
-
-    void KilledUnit(Unit *victim) override
-    {
-        switch(rand()%2)
-        {
-            case 0: DoScriptText(SAY_SLAY1, me); break;
-            case 1: DoScriptText(SAY_SLAY2, me); break;
-        }
-    }
-
-    void JustDied(Unit *victim) override
-    {
-        DoScriptText(SAY_DEATH, me);
-
-        if (pInstance)
-            pInstance->SetData(TYPE_HELLMAW, DONE);
-    }
-
-    void UpdateAI(const uint32 diff) override
-    {
-        if (!Intro)
-        {
-            if (EventCheck_Timer < diff)
-            {
-                if(pInstance)
-                {
-                    if (pInstance->GetData(TYPE_OVERSEER) == DONE)
-                        DoIntro();
-                }
-                EventCheck_Timer = 5000;
-            }else EventCheck_Timer -= diff;
-        }
-
-        if (!me->IsInCombat() && !IsBanished)
-        {
-            //this is where we add MovePoint()
-            //DoWhine("I haz no mount!", LANG_UNIVERSAL, NULL);
-        }
-
-        if (!UpdateVictim() )
-            return;
-
-        if(me->HasAuraEffect(SPELL_BANISH, 0))
-        {
-            EnterEvadeMode();
-            return;
-        }
-
-        if (CorrosiveAcid_Timer < diff)
-        {
-            DoCast(me,SPELL_CORROSIVE_ACID);
+            EventCheck_Timer = 5000;
             CorrosiveAcid_Timer = 25000;
-        }else CorrosiveAcid_Timer -= diff;
-
-        if (Fear_Timer < diff)
-        {
-            DoCast(me,SPELL_FEAR);
-            Fear_Timer = 35000;
-        }else Fear_Timer -= diff;
-
-        /*if (HeroicMode)
-        {
-            if (Enrage_Timer < diff)
+            Fear_Timer = 40000;
+            Enrage_Timer = 180000;
+            Intro = false;
+            IsBanished = false;
+    
+            if (pInstance)
             {
-                DoCast(me,SPELL_ENRAGE);
-            }else Enrage_Timer -= diff;
-        }*/
+                if (pInstance->GetData(TYPE_HELLMAW) == NOT_STARTED)
+                {
+                    DoCast(me,SPELL_BANISH);
+                    IsBanished = true;
+                }
+                else pInstance->SetData(TYPE_HELLMAW,FAIL);
+                if (pInstance->GetData(TYPE_OVERSEER) == DONE)
+                {
+                    if (me->HasAuraEffect(SPELL_BANISH,0))
+                        me->RemoveAurasDueToSpell(SPELL_BANISH);
+                    Intro = true;
+                }
+            }
+        }
+    
+        void MoveInLineOfSight(Unit *who) override
+        {
+            if (me->HasAuraEffect(SPELL_BANISH,0))
+                return;
+    
+            ScriptedAI::MoveInLineOfSight(who);
+        }
+    
+        void MovementInform(uint32 type, uint32 id) override
+        {
+            if (type != POINT_MOTION_TYPE)
+                return;
+        }
+    
+        void DoIntro() 
+        {
+            DoScriptText(SAY_INTRO, me);
+    
+            if (me->HasAuraEffect(SPELL_BANISH,0))
+                me->RemoveAurasDueToSpell(SPELL_BANISH);
+    
+            IsBanished = false;
+            Intro = true;
+    
+            if (pInstance)
+                pInstance->SetData(TYPE_HELLMAW, IN_PROGRESS);
+        }
+    
+        void EnterCombat(Unit *who) override
+        {
+            switch(rand()%3)
+            {
+                case 0: DoScriptText(SAY_AGGRO1, me); break;
+                case 1: DoScriptText(SAY_AGGRO2, me); break;
+                case 2: DoScriptText(SAY_AGGRO3, me); break;
+            }
+        }
+    
+        void KilledUnit(Unit *victim) override
+        {
+            switch(rand()%2)
+            {
+                case 0: DoScriptText(SAY_SLAY1, me); break;
+                case 1: DoScriptText(SAY_SLAY2, me); break;
+            }
+        }
+    
+        void JustDied(Unit *victim) override
+        {
+            DoScriptText(SAY_DEATH, me);
+    
+            if (pInstance)
+                pInstance->SetData(TYPE_HELLMAW, DONE);
+        }
+    
+        void UpdateAI(const uint32 diff) override
+        {
+            if (!Intro)
+            {
+                if (EventCheck_Timer < diff)
+                {
+                    if(pInstance)
+                    {
+                        if (pInstance->GetData(TYPE_OVERSEER) == DONE)
+                            DoIntro();
+                    }
+                    EventCheck_Timer = 5000;
+                }else EventCheck_Timer -= diff;
+            }
+    
+            if (!me->IsInCombat() && !IsBanished)
+            {
+                //this is where we add MovePoint()
+                //DoWhine("I haz no mount!", LANG_UNIVERSAL, NULL);
+            }
+    
+            if (!UpdateVictim() )
+                return;
+    
+            if(me->HasAuraEffect(SPELL_BANISH, 0))
+            {
+                EnterEvadeMode();
+                return;
+            }
+    
+            if (CorrosiveAcid_Timer < diff)
+            {
+                DoCast(me,SPELL_CORROSIVE_ACID);
+                CorrosiveAcid_Timer = 25000;
+            }else CorrosiveAcid_Timer -= diff;
+    
+            if (Fear_Timer < diff)
+            {
+                DoCast(me,SPELL_FEAR);
+                Fear_Timer = 35000;
+            }else Fear_Timer -= diff;
+    
+            /*if (HeroicMode)
+            {
+                if (Enrage_Timer < diff)
+                {
+                    DoCast(me,SPELL_ENRAGE);
+                }else Enrage_Timer -= diff;
+            }*/
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_ambassador_hellmawAI(creature);
     }
 };
-CreatureAI* GetAI_boss_ambassador_hellmaw(Creature *_Creature)
-{
-    return new boss_ambassador_hellmawAI (_Creature);
-}
+
 
 void AddSC_boss_ambassador_hellmaw()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_ambassador_hellmaw";
-    newscript->GetAI = &GetAI_boss_ambassador_hellmaw;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_ambassador_hellmaw();
 }
 

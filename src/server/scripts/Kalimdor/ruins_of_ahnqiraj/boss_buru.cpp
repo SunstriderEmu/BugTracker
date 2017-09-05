@@ -121,7 +121,7 @@ public:
             else
                 gatheringspeedTimer -= diff;
 
-            perc = (me->GetHealth()*100) / me->GetMaxHealth();
+            perc = me->GetHealthPct();
             if (perc <= 20 && !actionDone)
             {
                 phase = 1;

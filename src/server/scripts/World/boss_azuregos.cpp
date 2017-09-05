@@ -97,7 +97,7 @@ public:
                     std::list<Player*> players;
                     Trinity::AnyPlayerInObjectRangeCheck check(me, 25.0f);
                     Trinity::PlayerListSearcher<Trinity::AnyPlayerInObjectRangeCheck> searcher(me, players, check);
-                    me->VisitNearbyGridObject(25.0f, searcher);
+                    Cell::VisitGridObjects(me, searcher, 25.0f);
                     
                     for (std::list<Player*>::const_iterator itr = players.begin(); itr != players.end(); itr++) {
                         (*itr)->TeleportTo(me->GetMapId(), x, y, z, (*itr)->GetOrientation(), TELE_TO_NOT_LEAVE_COMBAT);

@@ -50,13 +50,13 @@ public:
     {
         if (player->IsAlive() && !player->IsInCombat())
         {
-            if (player->GetTeam() == TEAM_ALLIANCE && player->GetQuestRewardStatus(10589))
+            if (player->GetTeam() == ALLIANCE && player->GetQuestRewardStatus(10589))
             {
                 player->CastSpell(player, SPELL_TELE_A_TO, false);
                 return true;
             }
 
-            if (player->GetTeam() == TEAM_HORDE && player->GetQuestRewardStatus(10604))
+            if (player->GetTeam() == HORDE && player->GetQuestRewardStatus(10604))
             {
                 player->CastSpell(player, SPELL_TELE_H_TO, false);
                 return true;
@@ -182,9 +182,10 @@ public:
     bool HandleTrigger(Player* player, uint32 questId, uint32 childId)
     {
         if (player->GetQuestStatus(questId) == QUEST_STATUS_INCOMPLETE) {
-            if (Pet* pet = player->GetMiniPet()) {
-                if (pet->GetEntry() == childId)
-                    player->AreaExploredOrEventHappens(questId);
+			if (uint64 critter_guid = player->GetCritterGUID())
+				if (Creature* pet = player->GetMap()->GetCreature(critter_guid)) {
+					if (pet->GetEntry() == childId)
+						player->AreaExploredOrEventHappens(questId);
             }
         }
         return true;
@@ -262,14 +263,16 @@ class ATChildWeekQuest10951 : AreaTriggerScript
 public:
     ATChildWeekQuest10951() : AreaTriggerScript("at_childweek_quest10951") {}
 
-    bool OnTrigger(Player *pPlayer, AreaTriggerEntry const *at) override
+    bool OnTrigger(Player* player, AreaTriggerEntry const *at) override
     {
-        if (pPlayer->GetQuestStatus(10951) == QUEST_STATUS_INCOMPLETE || pPlayer->GetQuestStatus(10952) == QUEST_STATUS_INCOMPLETE) {
-            if (Pet* pet = pPlayer->GetMiniPet()) {
-                if (pet->GetEntry() == 22817)
-                    pPlayer->AreaExploredOrEventHappens(10951); // Horde
-                else if (pet->GetEntry() == 22818)
-                    pPlayer->AreaExploredOrEventHappens(10952); // Alliance
+        if (player->GetQuestStatus(10951) == QUEST_STATUS_INCOMPLETE || player->GetQuestStatus(10952) == QUEST_STATUS_INCOMPLETE) {
+
+			if (uint64 critter_guid = player->GetCritterGUID())
+				if (Creature* pet = player->GetMap()->GetCreature(critter_guid)) {
+					if (pet->GetEntry() == 22817)
+						player->AreaExploredOrEventHappens(10951); // Horde
+					else if (pet->GetEntry() == 22818)
+						player->AreaExploredOrEventHappens(10952); // Alliance
             }
         }
 

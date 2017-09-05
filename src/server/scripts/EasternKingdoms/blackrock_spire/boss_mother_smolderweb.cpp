@@ -27,61 +27,67 @@ EndScriptData */
 #define SPELL_MOTHERSMILK               16468
 #define SPELL_SUMMON_SPIRE_SPIDERLING   16103
 
-struct boss_mothersmolderwebAI : public ScriptedAI
+class boss_mother_smolderweb : public CreatureScript
 {
-    boss_mothersmolderwebAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_mother_smolderweb() : CreatureScript("boss_mother_smolderweb")
+    { }
 
-    uint32 Crystalize_Timer;
-    uint32 MothersMilk_Timer;
+    class boss_mothersmolderwebAI : public ScriptedAI
+    {
+        public:
+        boss_mothersmolderwebAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 Crystalize_Timer;
+        uint32 MothersMilk_Timer;
+    
+        void Reset()
+        override {
+            Crystalize_Timer = 20000;
+            MothersMilk_Timer = 10000;
+        }
+    
+        void EnterCombat(Unit *who) override { }
+    
+        void DamageTaken(Unit *done_by, uint32 &damage)
+        override {
+            if( me->GetHealth() <= damage )
+                me->CastSpell(me,SPELL_SUMMON_SPIRE_SPIDERLING,true);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            //Return since we have no target
+            if (!UpdateVictim() )
+                return;
+    
+            //Crystalize_Timer
+            if( Crystalize_Timer < diff )
+            {
+                DoCast(me,SPELL_CRYSTALIZE);
+                Crystalize_Timer = 15000;
+            }else Crystalize_Timer -= diff;
+    
+            //MothersMilk_Timer
+            if( MothersMilk_Timer < diff )
+            {
+                DoCast(me,SPELL_MOTHERSMILK);
+                MothersMilk_Timer = 5000+rand()%7500;
+            }else MothersMilk_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-    void Reset()
-    override {
-        Crystalize_Timer = 20000;
-        MothersMilk_Timer = 10000;
-    }
-
-    void EnterCombat(Unit *who) override { }
-
-    void DamageTaken(Unit *done_by, uint32 &damage)
-    override {
-        if( me->GetHealth() <= damage )
-            me->CastSpell(me,SPELL_SUMMON_SPIRE_SPIDERLING,true);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        //Return since we have no target
-        if (!UpdateVictim() )
-            return;
-
-        //Crystalize_Timer
-        if( Crystalize_Timer < diff )
-        {
-            DoCast(me,SPELL_CRYSTALIZE);
-            Crystalize_Timer = 15000;
-        }else Crystalize_Timer -= diff;
-
-        //MothersMilk_Timer
-        if( MothersMilk_Timer < diff )
-        {
-            DoCast(me,SPELL_MOTHERSMILK);
-            MothersMilk_Timer = 5000+rand()%7500;
-        }else MothersMilk_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_mothersmolderwebAI(creature);
     }
 };
-CreatureAI* GetAI_boss_mothersmolderweb(Creature *_Creature)
-{
-    return new boss_mothersmolderwebAI (_Creature);
-}
+
 
 void AddSC_boss_mothersmolderweb()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_mother_smolderweb";
-    newscript->GetAI = &GetAI_boss_mothersmolderweb;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_mother_smolderweb();
 }
 

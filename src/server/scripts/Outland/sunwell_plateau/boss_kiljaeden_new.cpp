@@ -1,4 +1,5 @@
 // Some fixes to do, converstion from CreatureAINew is not yet finished. See FIXME's
+//Dialogs have been disabled with removal of DialogueHelper class, dialogs must be reimplemented. All dialogs are still in creature_text table, ids are in comments in this scripts
 
 #include "def_sunwell_plateau.h"
 
@@ -297,21 +298,22 @@ enum
     POINT_END_STUN,
 };
 
-static const DialogueEntry firstDialogue[] =
+/*
+static const  uint32  firstDialogue[][] =
 {
     {SAY_KALEC_1,                 CREATURE_KALECGOS,  5000},
     {SAY_ANVEENA_1,               CREATURE_ANVEENA,   3000},
     {0,                           0,                  0},
 };
 
-static const DialogueEntry secondDialogue[] =
+static const  uint32  secondDialogue[][] =
 {
     {SAY_KALEC_2,                 CREATURE_KALECGOS,  7000},
     {SAY_ANVEENA_2,               CREATURE_ANVEENA,   5000},
     {0,                           0,                  0},
 };
 
-static const DialogueEntry thirdDialogue[] =
+static const uint32*  thirdDialogue[] =
 {
     {SAY_KALEC_3,                 CREATURE_KALECGOS,  10000},//Anveena, I love you! Focus on my voice, come back for me now! Only you can cleanse the Sunwell!
     {SAY_ANVEENA_3,               CREATURE_ANVEENA,   2000}, //Kalec... Kalec?
@@ -324,7 +326,7 @@ static const DialogueEntry thirdDialogue[] =
 };
 
 // Epilogue dialogue
-static const DialogueEntry aOutroDialogue[] =
+static const uint32  aOutroDialogue[][] =
 {
     {POINT_KILJAEDEN_DIE,         0,                  15000},
     {POINT_TELEPORT_KALECGOS,     0,                  2000},
@@ -356,6 +358,7 @@ static const DialogueEntry aOutroDialogue[] =
     {POINT_EVENT_VELEN_EXIT,      0,                  0},
     {0,                           0,                  0},
 };
+*/
 
 struct EventLocations
 {
@@ -425,21 +428,31 @@ public:
     OrbOfTheBlueFlight() : GameObjectScript("go_orb_of_the_blue_flight")
     {}
 
-    bool OnGossipHello(Player* plr, GameObject* go) override
+    struct OrbOfTheBlueFlightAI : public GameObjectAI
     {
-        if (go->GetUInt32Value(GAMEOBJECT_FACTION) == 35)
+        OrbOfTheBlueFlightAI(GameObject* obj) : GameObjectAI(obj) { }
+
+        bool GossipHello(Player* plr) override
         {
-            //remove blue ring, a bit hacky but simple
-            if (Creature* dummy = plr->FindNearestCreature(CREATURE_INVISIBLE_DUMMY, 20.0f, true))
-                if (DynamicObject* Dyn = dummy->GetDynObject(SPELL_RING_OF_BLUE_FLAMES))
-                    Dyn->RemoveFromWorld();
+            if (me->GetUInt32Value(GAMEOBJECT_FACTION) == 35)
+            {
+                //remove blue ring, a bit hacky but simple
+                if (Creature* dummy = plr->FindNearestCreature(CREATURE_INVISIBLE_DUMMY, 20.0f, true))
+                    if (DynamicObject* Dyn = dummy->GetDynObject(SPELL_RING_OF_BLUE_FLAMES))
+                        Dyn->RemoveFromWorld();
 
-            plr->CastSpell(plr, SPELL_POWER_OF_THE_BLUE_FLIGHT, true);
-            go->SetUInt32Value(GAMEOBJECT_FACTION, 0); //not usable anymore
-            go->Refresh();
+                plr->CastSpell(plr, SPELL_POWER_OF_THE_BLUE_FLIGHT, true);
+                me->SetUInt32Value(GAMEOBJECT_FACTION, 0); //not usable anymore
+                me->Refresh();
+            }
+
+            return true;
         }
+    };
 
-        return true;
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new OrbOfTheBlueFlightAI(go);
     }
 };
 
@@ -461,134 +474,136 @@ public:
             for (uint64 & OrbDummie : OrbDummies)
                 OrbDummie = 0;
         }
-            void Reset()
-            override {
-                for (uint64 & i : Orb)
-                {
-                    i = 0;
-                    for (uint64 & OrbDummie : OrbDummies)
-                        if(OrbDummie != 0)
-                        {
-                            //despawn already spawned dummies
-                            if(Creature* dummy = pInstance->instance->GetCreature(OrbDummie))
-                                dummy->DisappearAndDie();
-                            OrbDummie = 0;
-                        }
-                }
 
-                EmpowerCount = 0;
-                me->SetDisableGravity(true);
-                me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-                me->SetKeepActive(30 * MINUTE*IN_MILLISECONDS);
-                Searched = false;
-                me->SetVisibility(VISIBILITY_OFF);
-                me->SetReactState(REACT_PASSIVE);
-            }
-
-            void FindOrbs()
+        void Reset()
+        override {
+            for (uint64 & i : Orb)
             {
-                std::list<GameObject*> orbList;
-                AllOrbsInGrid check;
-                Trinity::GameObjectListSearcher<AllOrbsInGrid> searcher(me, orbList, check);
-                me->VisitNearbyGridObject(MAX_SEARCHER_DISTANCE, searcher);
-
-                if (orbList.empty())
-                    return;
-
-                uint8 i = 0;
-                for (auto itr = orbList.begin(); itr != orbList.end(); ++itr, ++i)
-                {
-                    Orb[i] = (*itr)->GetGUID();
-                    if (Unit* dummy = (*itr)->SummonCreature(CREATURE_INVISIBLE_DUMMY,(*itr)->GetPositionX(),(*itr)->GetPositionY(),(*itr)->GetPositionZ(),0,TEMPSUMMON_MANUAL_DESPAWN,0))
-                        OrbDummies[i] = dummy->GetGUID();
-                }
+                i = 0;
+                for (uint64 & OrbDummie : OrbDummies)
+                    if(OrbDummie != 0)
+                    {
+                        //despawn already spawned dummies
+                        if(Creature* dummy = pInstance->instance->GetCreature(OrbDummie))
+                            dummy->DisappearAndDie();
+                        OrbDummie = 0;
+                    }
             }
 
-            void ResetOrbs()
+            EmpowerCount = 0;
+            me->SetDisableGravity(true);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+            me->SetKeepActive(30 * MINUTE*IN_MILLISECONDS);
+            Searched = false;
+            me->SetVisible(false);
+            me->SetReactState(REACT_PASSIVE);
+        }
+
+        void FindOrbs()
+        {
+            std::list<GameObject*> orbList;
+            AllOrbsInGrid check;
+            Trinity::GameObjectListSearcher<AllOrbsInGrid> searcher(me, orbList, check);
+            Cell::VisitGridObjects(me, searcher, MAX_SEARCHER_DISTANCE);
+
+            if (orbList.empty())
+                return;
+
+            uint8 i = 0;
+            for (auto itr = orbList.begin(); itr != orbList.end(); ++itr, ++i)
+            {
+                Orb[i] = (*itr)->GetGUID();
+                if (Unit* dummy = (*itr)->SummonCreature(CREATURE_INVISIBLE_DUMMY,(*itr)->GetPositionX(),(*itr)->GetPositionY(),(*itr)->GetPositionZ(),0,TEMPSUMMON_MANUAL_DESPAWN,0))
+                    OrbDummies[i] = dummy->GetGUID();
+            }
+        }
+
+        void ResetOrbs()
+        {
+            for (uint8 i = 0; i < 4; ++i)
+            {
+                if(Unit* dummy = pInstance->instance->GetCreature(OrbDummies[i]))
+                    dummy->RemoveDynObject(SPELL_RING_OF_BLUE_FLAMES);
+
+                if(GameObject *orb = pInstance->instance->GetGameObject(Orb[i]))
+                    orb->SetUInt32Value(GAMEOBJECT_FACTION, 0);
+            }
+        }
+
+        void EmpowerOrb(uint8 i)
+        {
+            GameObject *orb = pInstance->instance->GetGameObject(Orb[i]);
+            if (!orb)
+                return;
+            if(Unit* dummy = pInstance->instance->GetCreature(OrbDummies[i]))
+            {
+                dummy->CastSpell(dummy,SPELL_VISUAL_MOONFIRE,true);
+                dummy->CastSpell(dummy, SPELL_RING_OF_BLUE_FLAMES,true);
+            }
+            orb->SetUInt32Value(GAMEOBJECT_FACTION, 35);
+            orb->SetKeepActive(true);
+            orb->Refresh();
+        }
+
+        void EmpowerOrb(bool all)
+        {
+            if (all)
             {
                 for (uint8 i = 0; i < 4; ++i)
-                {
-                    if(Unit* dummy = pInstance->instance->GetCreature(OrbDummies[i]))
-                        dummy->RemoveDynObject(SPELL_RING_OF_BLUE_FLAMES);
-
-                    if(GameObject *orb = pInstance->instance->GetGameObject(Orb[i]))
-                        orb->SetUInt32Value(GAMEOBJECT_FACTION, 0);
-                }
+                    EmpowerOrb(i);
             }
-
-            void EmpowerOrb(uint8 i)
+            else
             {
-                GameObject *orb = pInstance->instance->GetGameObject(Orb[i]);
-                if (!orb)
-                    return;
-                if(Unit* dummy = pInstance->instance->GetCreature(OrbDummies[i]))
-                {
-                    dummy->CastSpell(dummy,SPELL_VISUAL_MOONFIRE,true);
-                    dummy->CastSpell(dummy, SPELL_RING_OF_BLUE_FLAMES,true);
-                }
-                orb->SetUInt32Value(GAMEOBJECT_FACTION, 35);
-                orb->SetKeepActive(true);
-                orb->Refresh();
+                uint8 random = rand()%3;
+                EmpowerOrb(random);
             }
-
-            void EmpowerOrb(bool all)
-            {
-                if (all)
-                {
-                    for (uint8 i = 0; i < 4; ++i)
-                        EmpowerOrb(i);
-                }
-                else
-                {
-                    uint8 random = rand()%3;
-                    EmpowerOrb(random);
-                }
         
-                ++EmpowerCount;
+            ++EmpowerCount;
 
-                switch (EmpowerCount)
-                {
-                    case 1:
-                        Talk(SAY_KALEC_ORB_READY1);
-                        break;
-                    case 2:
-                        Talk(SAY_KALEC_ORB_READY2);
-                        break;
-                    case 3:
-                        Talk(SAY_KALEC_ORB_READY3);
-                        break;
-                    case 4:
-                        Talk(SAY_KALEC_ORB_READY4);
-                        break;
-                }
+            switch (EmpowerCount)
+            {
+                case 1:
+                    Talk(SAY_KALEC_ORB_READY1);
+                    break;
+                case 2:
+                    Talk(SAY_KALEC_ORB_READY2);
+                    break;
+                case 3:
+                    Talk(SAY_KALEC_ORB_READY3);
+                    break;
+                case 4:
+                    Talk(SAY_KALEC_ORB_READY4);
+                    break;
             }
+        }
 
-            void UpdateAI(uint32 const diff)
-            override {
-                if (!Searched)
-                {
-                    FindOrbs();
-                    Searched = true;
-                }
+        void UpdateAI(uint32 const diff)
+        override {
+            if (!Searched)
+            {
+                FindOrbs();
+                Searched = true;
             }
+        }
+
+        bool GossipHello(Player *player) override
+        {
+            player->SEND_GOSSIP_MENU_TEXTID(GOSSIP_KALEC_END, me->GetGUID());
+
+            return true;
+        }
             
-            InstanceScript* pInstance;
-        private:
-            uint64 Orb[4]; //orb gobjects
-            uint64 OrbDummies[4]; //Used for some visual effects only
+        InstanceScript* pInstance;
+    private:
+        uint64 Orb[4]; //orb gobjects
+        uint64 OrbDummies[4]; //Used for some visual effects only
    
-            uint8 EmpowerCount;
+        uint8 EmpowerCount;
 
-            bool Searched;
+        bool Searched;
     };
 
-    bool OnGossipHello(Player *player, Creature *_Creature) override
-    {
-        player->SEND_GOSSIP_MENU_TEXTID(GOSSIP_KALEC_END, _Creature->GetGUID());
-
-        return true;
-    }
 
     CreatureAI* GetAI(Creature* creature) const
     override {
@@ -602,7 +617,7 @@ class mob_kiljaeden_controller : public CreatureScript
 public:
     mob_kiljaeden_controller() : CreatureScript("mob_kiljaeden_controller") {}
     
-    class mob_kiljaeden_controllerAI : public CreatureAI, private DialogueHelper
+    class mob_kiljaeden_controllerAI : public CreatureAI
     {
         private:
             InstanceScript* pInstance;
@@ -622,10 +637,9 @@ public:
             uint32 combatCheckTimer;
             uint8 phase;
         public:
-            mob_kiljaeden_controllerAI(Creature* creature) : CreatureAI(creature), Summons(me), DialogueHelper(aOutroDialogue)
+            mob_kiljaeden_controllerAI(Creature* creature) : CreatureAI(creature), Summons(me)
             {
                 pInstance = ((InstanceScript*)creature->GetInstanceScript());
-                InitializeDialogueHelper(pInstance);
                 SetCombatMovementAllowed(false);
             }
 
@@ -742,9 +756,10 @@ public:
 
             void startDialogueText()
             {
-                StartNextDialogueText(POINT_KILJAEDEN_DIE);
+                //StartNextDialogueText(POINT_KILJAEDEN_DIE);
             }
 
+            /*
             void JustDidDialogueStep(int32 iEntry)
             override {
                 if (!pInstance)
@@ -763,7 +778,7 @@ public:
                     case POINT_TELEPORT_KALECGOS:
                         if (Creature* pKalec = pInstance->instance->GetCreature(pInstance->GetData64(DATA_KALECGOS_KJ)))
                         {
-                            pKalec->SetVisibility(VISIBILITY_ON);
+                            pKalec->SetVisible(true);
                             pKalec->CastSpell(pKalec, SPELL_KALEC_TELEPORT, true);
                             pKalec->SetDisableGravity(false);
                             pKalec->SendMovementFlagUpdate();
@@ -936,6 +951,7 @@ public:
                         break;
                 }
             }
+            */
 
             /*FIXME
             void summonedMovementInform(Creature* pSummoned, uint32 uiType, uint32 uiPointId)
@@ -1045,7 +1061,7 @@ public:
 
             void UpdateAI(uint32 const diff)
             override {
-                DialogueUpdate(diff);
+                //DialogueUpdate(diff);
 
                 events.Update(diff);
             
@@ -1110,7 +1126,7 @@ class boss_kiljaeden : public CreatureScript
 public:
     boss_kiljaeden() : CreatureScript("boss_kiljaeden") {}
 
-    class boss_kiljaedenAI : public CreatureAI, private DialogueHelper
+    class boss_kiljaedenAI : public CreatureAI
     {
         private:
             InstanceScript* pInstance;
@@ -1130,11 +1146,10 @@ public:
 
         public:
 
-        boss_kiljaedenAI(Creature* creature) : CreatureAI(creature), Summons(me), DialogueHelper(firstDialogue), bumpHelper(2000)
+        boss_kiljaedenAI(Creature* creature) : CreatureAI(creature), Summons(me), bumpHelper(2000)
         {
             SetCombatMovementAllowed(false);
             pInstance = ((InstanceScript*)creature->GetInstanceScript());
-            InitializeDialogueHelper(pInstance);
             me->SetDisableGravity(true);
             me->Relocate(KJLocation[0], KJLocation[1], KJLocation[2]);
             me->SendMovementFlagUpdate();
@@ -1282,7 +1297,7 @@ public:
 
             if (Creature *controller = pInstance->instance->GetCreature(pInstance->GetData64(DATA_KILJAEDEN_CONTROLLER)))
             {
-                controller->SetFaction(35);
+                controller->SetFaction(FACTION_FRIENDLY);
                 controller->RemoveAllAuras();
                 controller->DeleteThreatList();
                 controller->CombatStop();
@@ -1309,6 +1324,7 @@ public:
         }
         */
 
+        /*
         void JustDidDialogueStep(int32 iEntry)
         override {
             if (!pInstance)
@@ -1333,6 +1349,7 @@ public:
                     break;
             }
         }
+        */
 
         void bumpClosePlayers(const uint32 diff)
         {
@@ -1371,7 +1388,7 @@ public:
                 return;
             }
 
-            DialogueUpdate(diff);
+            //DialogueUpdate(diff);
 
             if (!UpdateVictim())
                 return;
@@ -1384,7 +1401,7 @@ public:
                 if (me->IsBelowHPPercent(80))
                 {
                     firstDialogueStep = true;
-                    StartNextDialogueText(SAY_KALEC_1);
+                    //StartNextDialogueText(SAY_KALEC_1);
                 }
             }
 
@@ -1392,9 +1409,9 @@ public:
             {
                 if (me->IsBelowHPPercent(50))
                 {
-                    SetNewArray(secondDialogue);
+                    //SetNewArray(secondDialogue);
                     secondDialogueStep = true;
-                    StartNextDialogueText(SAY_KALEC_2);
+                    //StartNextDialogueText(SAY_KALEC_2);
                 }
             }
 
@@ -1403,9 +1420,9 @@ public:
                 if (me->IsBelowHPPercent(25))
                 {
                     events.CancelEvent(EVENT_DARKNESS); //no darkness before phase changed
-                    SetNewArray(thirdDialogue);
+                    //SetNewArray(thirdDialogue);
                     thirdDialogueStep = true;
-                    StartNextDialogueText(SAY_KALEC_3);
+                    //StartNextDialogueText(SAY_KALEC_3);
                 }
             }
 
@@ -1433,7 +1450,7 @@ public:
                     if (Creature* kalec = pInstance->instance->GetCreature(pInstance->GetData64(DATA_KALECGOS_KJ)))
                     {
                         kalec->AI()->Talk(SAY_KALEC_JOIN);
-                        kalec->SetVisibility(VISIBILITY_ON);
+                        kalec->SetVisible(true);
                     }
                     break;
                 case EVENT_SOUL_FLAY:

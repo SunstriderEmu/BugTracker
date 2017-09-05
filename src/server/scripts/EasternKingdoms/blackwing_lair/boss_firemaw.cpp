@@ -27,69 +27,75 @@ EndScriptData */
 #define SPELL_WINGBUFFET        23339
 #define SPELL_FLAMEBUFFET       23341
 
-struct boss_firemawAI : public ScriptedAI
+class boss_firemaw : public CreatureScript
 {
-    boss_firemawAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_firemaw() : CreatureScript("boss_firemaw")
+    { }
 
-    uint32 ShadowFlame_Timer;
-    uint32 WingBuffet_Timer;
-    uint32 FlameBuffet_Timer;
-
-    void Reset()
-    override {
-        ShadowFlame_Timer = 30000;                          //These times are probably wrong
-        WingBuffet_Timer = 24000;
-        FlameBuffet_Timer = 5000;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-        DoZoneInCombat();
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim() )
-            return;
-
-        //ShadowFlame_Timer
-        if (ShadowFlame_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_SHADOWFLAME);
-            ShadowFlame_Timer = 15000 + rand()%3000;
-        }else ShadowFlame_Timer -= diff;
-
-        //WingBuffet_Timer
-        if (WingBuffet_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_WINGBUFFET);
-            if(me->GetThreat(me->GetVictim()))
-                DoModifyThreatPercent(me->GetVictim(),-75);
-
-            WingBuffet_Timer = 25000;
-        }else WingBuffet_Timer -= diff;
-
-        //FlameBuffet_Timer
-        if (FlameBuffet_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_FLAMEBUFFET);
+    class boss_firemawAI : public ScriptedAI
+    {
+        public:
+        boss_firemawAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 ShadowFlame_Timer;
+        uint32 WingBuffet_Timer;
+        uint32 FlameBuffet_Timer;
+    
+        void Reset()
+        override {
+            ShadowFlame_Timer = 30000;                          //These times are probably wrong
+            WingBuffet_Timer = 24000;
             FlameBuffet_Timer = 5000;
-        }else FlameBuffet_Timer -= diff;
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+            DoZoneInCombat();
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim() )
+                return;
+    
+            //ShadowFlame_Timer
+            if (ShadowFlame_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_SHADOWFLAME);
+                ShadowFlame_Timer = 15000 + rand()%3000;
+            }else ShadowFlame_Timer -= diff;
+    
+            //WingBuffet_Timer
+            if (WingBuffet_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_WINGBUFFET);
+                if(me->GetThreat(me->GetVictim()))
+                    DoModifyThreatPercent(me->GetVictim(),-75);
+    
+                WingBuffet_Timer = 25000;
+            }else WingBuffet_Timer -= diff;
+    
+            //FlameBuffet_Timer
+            if (FlameBuffet_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_FLAMEBUFFET);
+                FlameBuffet_Timer = 5000;
+            }else FlameBuffet_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_firemawAI(creature);
     }
 };
-CreatureAI* GetAI_boss_firemaw(Creature *_Creature)
-{
-    return new boss_firemawAI (_Creature);
-}
+
 
 void AddSC_boss_firemaw()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_firemaw";
-    newscript->GetAI = &GetAI_boss_firemaw;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_firemaw();
 }
 

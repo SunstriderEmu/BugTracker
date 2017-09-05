@@ -28,90 +28,96 @@ enum Spells
 #define SAY2                      -540
 
 
-struct boss_gluttonAI : public ScriptedAI
+
+class boss_glutton : public CreatureScript
 {
-    boss_gluttonAI(Creature *c) : ScriptedAI(c)
+public:
+    boss_glutton() : CreatureScript("boss_glutton")
+    { }
+
+    class boss_gluttonAI : public ScriptedAI
     {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-    }
-    
-    InstanceScript *pInstance;
-    uint32 eventTimer;
-    uint32 perc;
-    bool action1Reapeat;
-    bool action2Reapeat;
-
-    void Reset()
-    override {
-        eventTimer = 500;
-        perc = 0;
-        action1Reapeat = false;
-        action2Reapeat = false;
-        DoCast(me, SPELL_DISEASE_CLOUD);
-
-        if (pInstance && pInstance->GetData(DATA_GLUTTON_EVENT) != DONE)
-            pInstance->SetData(DATA_GLUTTON_EVENT, NOT_STARTED);
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-        if (pInstance)
-            pInstance->SetData(DATA_GLUTTON_EVENT, IN_PROGRESS);
-    }
-    
-    void JustDied(Unit *killer)
-    override {
-        if (pInstance)
-            pInstance->SetData(DATA_GLUTTON_EVENT, DONE);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim())
-            return;
-
-        if (eventTimer <= diff)
+        public:
+        boss_gluttonAI(Creature *c) : ScriptedAI(c)
         {
-            if(me->GetHealthPct() < 50.0f)
-            {
-                if (!action1Reapeat)
-                {
-                    action1Reapeat = true;
-                    me->InterruptNonMeleeSpells(false);
-                    DoCast(me, SPELL_FRENZY);
-                    DoScriptText(SAY1, me);
-                }
-            }
-            else if (perc <= 15)
-            {
-                if (!action2Reapeat)
-                {
-                    action2Reapeat = true;
-                    me->InterruptNonMeleeSpells(false);
-                    DoCast(me, SPELL_FRENZY);
-                    DoScriptText(SAY2, me);
-                }
-            }
-
-            eventTimer = 500;
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
         }
-        else
-            eventTimer -= diff;
+        
+        InstanceScript *pInstance;
+        uint32 eventTimer;
+        uint32 perc;
+        bool action1Reapeat;
+        bool action2Reapeat;
+    
+        void Reset()
+        override {
+            eventTimer = 500;
+            perc = 0;
+            action1Reapeat = false;
+            action2Reapeat = false;
+            DoCast(me, SPELL_DISEASE_CLOUD);
+    
+            if (pInstance && pInstance->GetData(DATA_GLUTTON_EVENT) != DONE)
+                pInstance->SetData(DATA_GLUTTON_EVENT, NOT_STARTED);
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+            if (pInstance)
+                pInstance->SetData(DATA_GLUTTON_EVENT, IN_PROGRESS);
+        }
+        
+        void JustDied(Unit *killer)
+        override {
+            if (pInstance)
+                pInstance->SetData(DATA_GLUTTON_EVENT, DONE);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim())
+                return;
+    
+            if (eventTimer <= diff)
+            {
+                if(me->GetHealthPct() < 50.0f)
+                {
+                    if (!action1Reapeat)
+                    {
+                        action1Reapeat = true;
+                        me->InterruptNonMeleeSpells(false);
+                        DoCast(me, SPELL_FRENZY);
+                        DoScriptText(SAY1, me);
+                    }
+                }
+                else if (perc <= 15)
+                {
+                    if (!action2Reapeat)
+                    {
+                        action2Reapeat = true;
+                        me->InterruptNonMeleeSpells(false);
+                        DoCast(me, SPELL_FRENZY);
+                        DoScriptText(SAY2, me);
+                    }
+                }
+    
+                eventTimer = 500;
+            }
+            else
+                eventTimer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_gluttonAI(creature);
     }
 };
 
-CreatureAI* GetAI_glutton(Creature *_Creature)
-{
-    return new boss_gluttonAI (_Creature);
-}
 
 void AddSC_boss_glutton()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_glutton";
-    newscript->GetAI = &GetAI_glutton;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_glutton();
 }

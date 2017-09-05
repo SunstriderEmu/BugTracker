@@ -279,8 +279,8 @@ class boss_kaelthas : public CreatureScript
 				if (summon->GetSpawnId() && phase == PHASE_ALL_ADVISORS)
 				{
 					for (SummonList::const_iterator i = summons.begin(); i != summons.end(); ++i)
-						if (Creature* summon = ObjectAccessor::GetCreature(*me, *i))
-							if (summon->GetSpawnId() && summon->IsAlive())
+						if (Creature* _summon = ObjectAccessor::GetCreature(*me, *i))
+							if (_summon->GetSpawnId() && _summon->IsAlive())
 								return;
 
 					events2.ScheduleEvent(EVENT_PREFIGHT_PHASE71, 2000);
@@ -710,7 +710,7 @@ class boss_kaelthas : public CreatureScript
         };
         CreatureAI* GetAI(Creature* creature) const override
         {
-            return GetInstanceAI<boss_kaelthasAI>(creature);
+            return GetTheEyeAI<boss_kaelthasAI>(creature);
         }
 };
 
@@ -1000,7 +1000,7 @@ class spell_kaelthas_nether_beam : public SpellScriptLoader
                         targetList.push_back(target);
                 }
 
-				Trinity::Containers::RandomResizeList(targetList, 5);
+				Trinity::Containers::RandomResize(targetList, 5);
 				for (std::list<Unit*>::const_iterator itr = targetList.begin(); itr != targetList.end(); ++itr)
 					GetCaster()->CastSpell(*itr, SPELL_NETHER_BEAM_DAMAGE, true);
             }

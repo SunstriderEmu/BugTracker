@@ -51,17 +51,27 @@ public:
     BridgeConsole() : GameObjectScript("go_bridge_console")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* go) override
+    struct BridgeConsoleAI : public GameObjectAI
     {
-        InstanceScript* pInstance = (InstanceScript*)go->GetInstanceScript();
+        BridgeConsoleAI(GameObject* obj) : GameObjectAI(obj), pInstance(obj->GetInstanceScript()) { }
 
-        if (!pInstance)
-            return false;
+        InstanceScript* pInstance;
 
-        if (pInstance)
-            pInstance->SetData(DATA_CONTROL_CONSOLE, DONE);
+        bool GossipHello(Player* player) override
+        {
+            if (!pInstance)
+                return false;
 
-        return true;
+            if (pInstance)
+                pInstance->SetData(DATA_CONTROL_CONSOLE, DONE);
+
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new BridgeConsoleAI(go);
     }
 };
 
@@ -227,7 +237,7 @@ public:
                     if (targetList.empty())
                         return;
 
-                    Trinity::Containers::RandomResizeList(targetList, 25);
+                    Trinity::Containers::RandomResize(targetList, 25);
                     std::list<Player*>::const_iterator i = targetList.begin();
 
                     if (i != targetList.end())
@@ -276,7 +286,7 @@ public:
                 uint32 rnd = urand(0, 100);
                 if (30 <= rnd)
                 {
-                    if (LurkerSubEvent == LURKER_NOT_STARTED)
+                    if (LurkerSubEvent == LURKER_NOT_STARTED && go->FindNearestGameObject(184956, 20.0f)) //184956 = "Strange Pool"
                     {
                         FishingTimer = 10000 + rand() % 15000;//random time before lurker emerges
                         LurkerSubEvent = LURKER_FISHING;

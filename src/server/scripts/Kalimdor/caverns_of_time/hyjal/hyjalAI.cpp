@@ -47,10 +47,10 @@ float SpawnPointSpecial[3][3]=
 // Locations for summoning waves in Alliance base
 float AllianceBase[4][3]=
 {
-    {4928.48,    -1526.38,    1326.83},
-    {4923.54,    -1514.29,    1327.98},
-    {4928.41,    -1510.35,    1327.99},
-    {4938.35,    -1521.00,    1326.69}
+    {4928.48f,    -1526.38f,    1326.83f},
+    {4923.54f,    -1514.29f,    1327.98f},
+    {4928.41f,    -1510.35f,    1327.99f},
+    {4938.35f,    -1521.00f,    1326.69f}
 };
 
 float JainaDummySpawn[2][4]=
@@ -794,19 +794,19 @@ void hyjalAI::UpdateAI(const uint32 diff)
             case JAINA:
                 if(pInstance && pInstance->GetData(DATA_ALLIANCE_RETREAT))
                 {
-                    me->SetVisibility(VISIBILITY_OFF);
+                    me->SetVisible(false);
                     HideNearPos(me->GetPositionX(), me->GetPositionY());
                     HideNearPos(5037.76, -1889.71);
                     for(auto & AllianceFirePo : AllianceFirePos)//summon fires
                         me->SummonGameObject(FLAMEOBJECT,Position(AllianceFirePo[0],AllianceFirePo[1],AllianceFirePo[2],AllianceFirePo[3]), G3D::Quat(AllianceFirePo[4],AllianceFirePo[5],AllianceFirePo[6],AllianceFirePo[7]),0);
 
                 }
-                else me->SetVisibility(VISIBILITY_ON);
+                else me->SetVisible(true);
                 break;
             case THRALL: //thrall
                 if(pInstance && pInstance->GetData(DATA_HORDE_RETREAT))
                 {
-                    me->SetVisibility(VISIBILITY_OFF);
+                    me->SetVisible(false);
                     HideNearPos(me->GetPositionX(), me->GetPositionY());
                     HideNearPos(5563, -2763.19);
                     HideNearPos(5542.2, -2629.36);
@@ -814,7 +814,7 @@ void hyjalAI::UpdateAI(const uint32 diff)
                         me->SummonGameObject(FLAMEOBJECT,Position(HordeFirePo[0],HordeFirePo[1],HordeFirePo[2],HordeFirePo[3]), G3D::Quat(HordeFirePo[4],HordeFirePo[5],HordeFirePo[6],HordeFirePo[7]),0);
 
                 }
-                else me->SetVisibility(VISIBILITY_ON);
+                else me->SetVisible(true);
                 break;
         }
     }
@@ -833,10 +833,10 @@ void hyjalAI::UpdateAI(const uint32 diff)
                 RespawnNearPos(5563, -2763.19);
                 RespawnNearPos(5542.2, -2629.36);
             }
-            me->SetVisibility(VISIBILITY_ON);
+            me->SetVisible(true);
         }else{
             RespawnTimer -= diff;
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
         }
         return;
     }
@@ -860,7 +860,7 @@ void hyjalAI::UpdateAI(const uint32 diff)
                     HideNearPos(5603.75, -2853.12);
                     break;
             }
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
         }else RetreatTimer -= diff;
     }
 
@@ -955,7 +955,7 @@ void hyjalAI::JustDied(Unit* killer)
 {
     if(IsDummy)return;
     me->Respawn();
-    me->SetVisibility(VISIBILITY_OFF);
+    me->SetVisible(false);
     RespawnTimer = 120000;
     Talk(DEATH);
     Summons.DespawnAll();//despawn all wave's summons
@@ -979,14 +979,14 @@ void hyjalAI::HideNearPos(float x, float y)
     std::list<Creature*> creatures;
     Trinity::AllFriendlyCreaturesInGrid creature_check(me);
     Trinity::CreatureListSearcher<Trinity::AllFriendlyCreaturesInGrid> creature_searcher(me, creatures, creature_check);
-    me->VisitNearbyGridObject(250.0f, creature_searcher);
+    Cell::VisitGridObjects(me, creature_searcher, 250.0f);
 
     if(!creatures.empty())
     {
         for(auto & creature : creatures)
         {
-            creature->SetVisibility(VISIBILITY_OFF);
-            creature->SetFaction(35);//make them friendly so mobs won't attack them
+            creature->SetVisible(false);
+            creature->SetFaction(FACTION_FRIENDLY);//make them friendly so mobs won't attack them
         }
     }
 }
@@ -994,7 +994,7 @@ void hyjalAI::RespawnNearPos(float x, float y)
 {
     Trinity::RespawnDo u_do;
     Trinity::WorldObjectWorker<Trinity::RespawnDo> worker(me, u_do);
-    me->VisitNearbyGridObject(250.0f, worker);
+    Cell::VisitGridObjects(me, worker, 250.0f);
 }
 void hyjalAI::WaypointReached(uint32 i)
 {
@@ -1028,7 +1028,7 @@ void hyjalAI::WaypointReached(uint32 i)
         std::list<Creature*> creatures;
         Trinity::AllFriendlyCreaturesInGrid creature_check(me);
         Trinity::CreatureListSearcher<Trinity::AllFriendlyCreaturesInGrid> creature_searcher(me, creatures, creature_check);
-        me->VisitNearbyGridObject(MAX_SEARCHER_DISTANCE, creature_searcher);
+        Cell::VisitGridObjects(me, creature_searcher, MAX_SEARCHER_DISTANCE);
 
         if(!creatures.empty())
         {
@@ -1060,7 +1060,7 @@ void hyjalAI::DoOverrun(uint32 faction, const uint32 diff)
             std::list<Creature*> creatures;
             Trinity::AllFriendlyCreaturesInGrid creature_check(me);
             Trinity::CreatureListSearcher<Trinity::AllFriendlyCreaturesInGrid> creature_searcher(me, creatures, creature_check);
-            me->VisitNearbyGridObject(MAX_SEARCHER_DISTANCE, creature_searcher);
+            Cell::VisitGridObjects(me, creature_searcher, MAX_SEARCHER_DISTANCE);
 
             if(!creatures.empty())
             {
@@ -1069,7 +1069,7 @@ void hyjalAI::DoOverrun(uint32 faction, const uint32 diff)
                     if(creature && creature->IsAlive())
                     {
                         creature->CastSpell(creature, SPELL_TELEPORT_VISUAL, true);
-                        creature->SetFaction(35);//make them friendly so mobs won't attack them
+                        creature->SetFaction(FACTION_FRIENDLY);//make them friendly so mobs won't attack them
                         creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     }
                 }

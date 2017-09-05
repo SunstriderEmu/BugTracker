@@ -27,73 +27,79 @@ EndScriptData */
 #define SPELL_IMMOLATE             20294                    // Old ID  was 15570
 #define SPELL_VEILOFSHADOW         17820
 
-struct boss_lordalexeibarovAI : public ScriptedAI
+class boss_lord_alexei_barov : public CreatureScript
 {
-    boss_lordalexeibarovAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_lord_alexei_barov() : CreatureScript("boss_lord_alexei_barov")
+    { }
 
-    uint32 Immolate_Timer;
-    uint32 VeilofShadow_Timer;
-
-    void Reset()
-    override {
-        Immolate_Timer = 7000;
-        VeilofShadow_Timer = 15000;
-
-        me->InitCreatureAddon(true);
-    }
-
-    void JustDied(Unit *killer)
-    override {
-        InstanceScript *pInstance = (me->GetInstanceScript()) ? ((InstanceScript*)me->GetInstanceScript()) : nullptr;
-        if(pInstance)
-        {
-            pInstance->SetData(DATA_LORDALEXEIBAROV_DEATH, 0);
-
-            if(pInstance->GetData(DATA_CANSPAWNGANDLING))
-                me->SummonCreature(1853, 180.73, -9.43856, 75.507, 1.61399, TEMPSUMMON_DEAD_DESPAWN, 0);
+    class boss_lordalexeibarovAI : public ScriptedAI
+    {
+        public:
+        boss_lordalexeibarovAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 Immolate_Timer;
+        uint32 VeilofShadow_Timer;
+    
+        void Reset()
+        override {
+            Immolate_Timer = 7000;
+            VeilofShadow_Timer = 15000;
+    
+            me->InitCreatureAddon(true);
         }
-    }
+    
+        void JustDied(Unit *killer)
+        override {
+            InstanceScript *pInstance = (me->GetInstanceScript()) ? ((InstanceScript*)me->GetInstanceScript()) : nullptr;
+            if(pInstance)
+            {
+                pInstance->SetData(DATA_LORDALEXEIBAROV_DEATH, 0);
+    
+                if(pInstance->GetData(DATA_CANSPAWNGANDLING))
+                    me->SummonCreature(1853, 180.73, -9.43856, 75.507, 1.61399, TEMPSUMMON_DEAD_DESPAWN, 0);
+            }
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim())
+                return;
+    
+            //Immolate_Timer
+            if (Immolate_Timer < diff)
+            {
+                Unit* target = nullptr;
+                target = SelectTarget(SELECT_TARGET_RANDOM,0);
+                if (target) DoCast(target,SPELL_IMMOLATE);
+    
+                Immolate_Timer = 12000;
+            }else Immolate_Timer -= diff;
+    
+            //VeilofShadow_Timer
+            if (VeilofShadow_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_VEILOFSHADOW);
+                VeilofShadow_Timer = 20000;
+            }else VeilofShadow_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-    void EnterCombat(Unit *who)
-    override {
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim())
-            return;
-
-        //Immolate_Timer
-        if (Immolate_Timer < diff)
-        {
-            Unit* target = nullptr;
-            target = SelectTarget(SELECT_TARGET_RANDOM,0);
-            if (target) DoCast(target,SPELL_IMMOLATE);
-
-            Immolate_Timer = 12000;
-        }else Immolate_Timer -= diff;
-
-        //VeilofShadow_Timer
-        if (VeilofShadow_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_VEILOFSHADOW);
-            VeilofShadow_Timer = 20000;
-        }else VeilofShadow_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_lordalexeibarovAI(creature);
     }
 };
-CreatureAI* GetAI_boss_lordalexeibarov(Creature *_Creature)
-{
-    return new boss_lordalexeibarovAI (_Creature);
-}
+
 
 void AddSC_boss_lordalexeibarov()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_lord_alexei_barov";
-    newscript->GetAI = &GetAI_boss_lordalexeibarov;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_lord_alexei_barov();
 }
 

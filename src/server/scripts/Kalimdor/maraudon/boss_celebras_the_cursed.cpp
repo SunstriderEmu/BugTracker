@@ -27,70 +27,76 @@ EndScriptData */
 #define SPELL_ENTANGLINGROOTS       12747
 #define SPELL_CORRUPT_FORCES        21968
 
-struct celebras_the_cursedAI : public ScriptedAI
+class celebras_the_cursed : public CreatureScript
 {
-    celebras_the_cursedAI(Creature *c) : ScriptedAI(c) {}
+public:
+    celebras_the_cursed() : CreatureScript("celebras_the_cursed")
+    { }
 
-    uint32 Wrath_Timer;
-    uint32 EntanglingRoots_Timer;
-    uint32 CorruptForces_Timer;
-
-    void Reset() override
+    class celebras_the_cursedAI : public ScriptedAI
     {
-        Wrath_Timer = 8000;
-        EntanglingRoots_Timer = 2000;
-        CorruptForces_Timer = 30000;
-    }
-
-    void JustDied(Unit* Killer) override
-    {
-        me->SummonCreature(13716, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 600000);
-    }
-
-    void UpdateAI(const uint32 diff) override
-    {
-        if (!UpdateVictim() )
-            return;
-
-        //Wrath
-        if (Wrath_Timer < diff)
+        public:
+        celebras_the_cursedAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 Wrath_Timer;
+        uint32 EntanglingRoots_Timer;
+        uint32 CorruptForces_Timer;
+    
+        void Reset() override
         {
-            Unit* target = nullptr;
-            target = SelectTarget(SELECT_TARGET_RANDOM,0);
-            if( target )
-                DoCast(target,SPELL_WRATH);
             Wrath_Timer = 8000;
-        }else Wrath_Timer -= diff;
-
-        //EntanglingRoots
-        if (EntanglingRoots_Timer < diff)
+            EntanglingRoots_Timer = 2000;
+            CorruptForces_Timer = 30000;
+        }
+    
+        void JustDied(Unit* Killer) override
         {
-            DoCast(me->GetVictim(),SPELL_ENTANGLINGROOTS);
-            EntanglingRoots_Timer = 20000;
-        }else EntanglingRoots_Timer -= diff;
-
-        //CorruptForces
-        if (CorruptForces_Timer < diff)
+            me->SummonCreature(13716, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 600000);
+        }
+    
+        void UpdateAI(const uint32 diff) override
         {
-            me->InterruptNonMeleeSpells(false);
-            DoCast(me,SPELL_CORRUPT_FORCES);
-            CorruptForces_Timer = 20000;
-        }else CorruptForces_Timer -= diff;
+            if (!UpdateVictim() )
+                return;
+    
+            //Wrath
+            if (Wrath_Timer < diff)
+            {
+                Unit* target = nullptr;
+                target = SelectTarget(SELECT_TARGET_RANDOM,0);
+                if( target )
+                    DoCast(target,SPELL_WRATH);
+                Wrath_Timer = 8000;
+            }else Wrath_Timer -= diff;
+    
+            //EntanglingRoots
+            if (EntanglingRoots_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_ENTANGLINGROOTS);
+                EntanglingRoots_Timer = 20000;
+            }else EntanglingRoots_Timer -= diff;
+    
+            //CorruptForces
+            if (CorruptForces_Timer < diff)
+            {
+                me->InterruptNonMeleeSpells(false);
+                DoCast(me,SPELL_CORRUPT_FORCES);
+                CorruptForces_Timer = 20000;
+            }else CorruptForces_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new celebras_the_cursedAI(creature);
     }
 };
-CreatureAI* GetAI_celebras_the_cursed(Creature *_Creature)
-{
-    return new celebras_the_cursedAI (_Creature);
-}
+
 
 void AddSC_boss_celebras_the_cursed()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="celebras_the_cursed";
-    newscript->GetAI = &GetAI_celebras_the_cursed;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new celebras_the_cursed();
 }
 

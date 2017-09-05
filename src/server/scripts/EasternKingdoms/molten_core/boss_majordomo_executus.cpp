@@ -71,30 +71,30 @@ struct Locations
 
 static Locations RoomCenter =
 {
-    736.55, -1175.83, -119.08, 0
+    736.55f, -1175.83f, -119.08f, 0.0f
 };
 
 static Locations CacheLocation =
 {
-    748.365, -1195.52, -118.145, 0
+    748.365f, -1195.52f, -118.145f, 0.0f
 };
 
 static Locations CaolLocation =
 {
-    736.663025, -1176.569946, -119.797997, 0
+    736.663025f, -1176.569946f, -119.797997f, 0.0f
 };
 
 
 static Locations GuardsLocations[] =
 {
-    { 757.638245, -1187.058594, -118.657173, 2.579740 },
-    { 753.697266, -1192.992554, -118.387291, 2.395171 },
-    { 747.905396, -1197.361450, -118.173851, 2.049596 },
-    { 741.920837, -1200.637817, -118.056541, 1.892516 },
-    { 759.999695, -1172.765747, -119.046082, 3.278744 },
-    { 757.849915, -1167.811523, -119.006889, 3.506510 },
-    { 755.279541, -1163.614624, -119.140846, 3.822240 },
-    { 752.244751, -1159.199585, -119.253311, 3.841875 }
+	{ 757.638245f, -1187.058594f, -118.657173f, 2.579740f },
+	{ 753.697266f, -1192.992554f, -118.387291f, 2.395171f },
+	{ 747.905396f, -1197.361450f, -118.173851f, 2.049596f },
+	{ 741.920837f, -1200.637817f, -118.056541f, 1.892516f },
+	{ 759.999695f, -1172.765747f, -119.046082f, 3.278744f },
+	{ 757.849915f, -1167.811523f, -119.006889f, 3.506510f },
+	{ 755.279541f, -1163.614624f, -119.140846f, 3.822240f },
+	{ 752.244751f, -1159.199585f, -119.253311f, 3.841875f },
 };
 
 enum DomoPhases
@@ -165,21 +165,21 @@ class Boss_Majordomo : public CreatureScript
                 switch (newPhase)
                 {
                     case NOT_VISIBLE:
-                        me->SetFaction(35);
-                        me->SetVisibility(VISIBILITY_OFF);
+                        me->SetFaction(FACTION_FRIENDLY);
+                        me->SetVisible(false);
                         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         break;
                     case VISIBLE:
                         DoScriptText(SAY_SPAWN, me);
                         summonGuards();
                         me->SetFaction(54);
-                        me->SetVisibility(VISIBILITY_ON);
+                        me->SetVisible(true);
                         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         break;
                     case DOWN:
                     {
                         Summons.DespawnAll();
-                        me->SetFaction(35);
+                        me->SetFaction(FACTION_FRIENDLY);
                         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         me->SetReactState(REACT_PASSIVE);
                         me->GetMotionMaster()->MoveTargetedHome();
@@ -201,8 +201,8 @@ class Boss_Majordomo : public CreatureScript
                         break;
                     }
                     case RAGNAGNA:
-                        me->SetFaction(35);
-                        me->SetVisibility(VISIBILITY_ON);
+                        me->SetFaction(FACTION_FRIENDLY);
+                        me->SetVisible(true);
                         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);  
                         me->SetSpeedRate(MOVE_WALK, 0.9);
@@ -348,42 +348,42 @@ class Boss_Majordomo : public CreatureScript
                 DoMeleeAttackIfReady();
             }
 
+            bool GossipHello(Player *player) override
+            {
+                if (_instance)
+                {
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_SUMMON_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+
+                    player->SEND_GOSSIP_MENU_TEXTID(TEXT_ID_SUMMON_1, me->GetGUID());
+                }
+
+                return true;
+            }
+
+            bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+            {
+                switch (action)
+                {
+                case GOSSIP_ACTION_INFO_DEF + 1:
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_SUMMON_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+                    player->SEND_GOSSIP_MENU_TEXTID(TEXT_ID_SUMMON_2, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF + 2:
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_SUMMON_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+                    player->SEND_GOSSIP_MENU_TEXTID(TEXT_ID_SUMMON_3, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF + 3:
+                    player->CLOSE_GOSSIP_MENU();
+                    me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+                    break;
+                }
+
+                return true;
+            }
+
         private:
             SummonList Summons;
     };
-
-    bool OnGossipHello(Player *player, Creature *_Creature) override
-    {
-        if (((Boss_Majordomo::Boss_MajordomoAI*)_Creature->AI())->_instance)
-        {
-            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_SUMMON_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-
-            player->SEND_GOSSIP_MENU_TEXTID(TEXT_ID_SUMMON_1, _Creature->GetGUID());
-        }
-
-        return true;
-    }
-
-    bool OnGossipSelect(Player* player, Creature* creature, uint32 sender, uint32 action) override
-    {
-        switch (action)
-        {
-        case GOSSIP_ACTION_INFO_DEF + 1:
-            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_SUMMON_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-            player->SEND_GOSSIP_MENU_TEXTID(TEXT_ID_SUMMON_2, creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 2:
-            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_SUMMON_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
-            player->SEND_GOSSIP_MENU_TEXTID(TEXT_ID_SUMMON_3, creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 3:
-            player->CLOSE_GOSSIP_MENU();
-            creature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-            break;
-        }
-
-        return true;
-    }
 
     CreatureAI* GetAI(Creature* creature) const
     override {
@@ -583,7 +583,7 @@ class Mob_Hot_Coal : public CreatureScript
             override {
                 events.RescheduleEvent(EV_COAL, 1000);
 
-                me->SetVisibility(VISIBILITY_OFF);
+                me->SetVisible(false);
             }
 
             void UpdateAI(uint32 const diff)

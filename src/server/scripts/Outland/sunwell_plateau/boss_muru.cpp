@@ -515,7 +515,7 @@ public:
             SentinelTimer = 31500;
 
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            me->SetVisibility(VISIBILITY_ON);
+            me->SetVisible(true);
 
             Summons.DespawnAll();
 
@@ -571,7 +571,7 @@ public:
 
         void EnterEvadeMode(EvadeReason why)
         override {
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
             RespawnTimer = 30000;
             me->SetReactState(REACT_PASSIVE);
             CreatureAI::EnterEvadeMode(why);
@@ -583,7 +583,7 @@ public:
             {
                 if (RespawnTimer <= diff)
                 {
-                    me->SetVisibility(VISIBILITY_ON);
+                    me->SetVisible(true);
                     me->SetReactState(REACT_AGGRESSIVE);
                     RespawnTimer = 0;
                 }
@@ -629,7 +629,7 @@ public:
                         PhaseTimer = 2000;
                         break;
                     case 4:
-                        me->SetVisibility(VISIBILITY_OFF);
+                        me->SetVisible(false);
                         Phase = 5;
                         PhaseTimer = 1000;
                         break;
@@ -688,14 +688,14 @@ public:
                     else
                     {
                         uint16 angleDegre = 0;
-                        for (auto & DarkFiend : DarkFiends)
+                        for (auto & darkFiend : DarkFiends)
                         {
                             float px, py;
                             float angle = angleDegre * (2*M_PI) / 360;
                             float rayon = 12.0f;
                             px = me->GetPositionX() + cos(angle) * rayon;
                             py = me->GetPositionY() + sin(angle) * rayon;
-                            me->SummonCreature(CREATURE_DARK_FIENDS, px, py, DarkFiend[0], DarkFiend[1], TEMPSUMMON_MANUAL_DESPAWN, 0);
+                            me->SummonCreature(CREATURE_DARK_FIENDS, px, py, darkFiend[0], darkFiend[1], TEMPSUMMON_MANUAL_DESPAWN, 0);
                             angleDegre = angleDegre + 45;
                         }
                         DarkFiend = false;

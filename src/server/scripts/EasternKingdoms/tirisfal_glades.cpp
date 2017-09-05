@@ -37,48 +37,59 @@ EndContentData */
 #define FACTION_FRIENDLY    68
 #define FACTION_HOSTILE     16
 
-struct npc_calvin_montagueAI : public ScriptedAI
+class npc_calvin_montague : public CreatureScript
 {
-    npc_calvin_montagueAI(Creature* c) : ScriptedAI(c) {}
+public:
+    npc_calvin_montague() : CreatureScript("npc_calvin_montague")
+    { }
 
-    void Reset()
-    override {
-        me->SetFaction(FACTION_FRIENDLY);
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
-    }
+    class npc_calvin_montagueAI : public ScriptedAI
+    {
+        public:
+        npc_calvin_montagueAI(Creature* c) : ScriptedAI(c) {}
+    
+        void Reset()
+        override {
+            me->SetFaction(FACTION_FRIENDLY);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
+        }
+    
+        void EnterCombat(Unit* who) override { }
+    
+        void JustDied(Unit* Killer)
+        override {
+            if( Killer->GetTypeId() == TYPEID_PLAYER )
+                if( (Killer->ToPlayer())->GetQuestStatus(QUEST_590) == QUEST_STATUS_INCOMPLETE )
+                    (Killer->ToPlayer())->AreaExploredOrEventHappens(QUEST_590);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim())
+                return;
+    
+            DoMeleeAttackIfReady();
+        }
 
-    void EnterCombat(Unit* who) override { }
+        virtual void QuestAccept(Player* player, Quest const* quest) override
+        {
+            if( quest->GetQuestId() == QUEST_590 )
+            {
+                me->SetFaction(FACTION_HOSTILE);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
+                ((npc_calvin_montague::npc_calvin_montagueAI*)me->AI())->AttackStart(player);
+            }
+        }
 
-    void JustDied(Unit* Killer)
-    override {
-        if( Killer->GetTypeId() == TYPEID_PLAYER )
-            if( (Killer->ToPlayer())->GetQuestStatus(QUEST_590) == QUEST_STATUS_INCOMPLETE )
-                (Killer->ToPlayer())->AreaExploredOrEventHappens(QUEST_590);
-    }
+    };
 
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim())
-            return;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_calvin_montagueAI(creature);
     }
 };
-CreatureAI* GetAI_npc_calvin_montague(Creature *_Creature)
-{
-    return new npc_calvin_montagueAI (_Creature);
-}
 
-bool QuestAccept_npc_calvin_montague(Player* player, Creature* creature, Quest const* quest)
-{
-    if( quest->GetQuestId() == QUEST_590 )
-    {
-        creature->SetFaction(FACTION_HOSTILE);
-        creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
-        ((npc_calvin_montagueAI*)creature->AI())->AttackStart(player);
-    }
-    return true;
-}
+
 
 /*######
 ## go_mausoleum_door
@@ -97,7 +108,7 @@ GameObject* SearchMausoleumGo(Unit *source, uint32 entry, float range)
     Trinity::NearestGameObjectEntryInObjectRangeCheck go_check(*source, entry, range);
     Trinity::GameObjectLastSearcher<Trinity::NearestGameObjectEntryInObjectRangeCheck> searcher(source, pGo, go_check);
 
-    source->VisitNearbyGridObject(range, searcher);
+    Cell::VisitGridObjects(source, searcher, range);
 
     return pGo;
 }
@@ -108,19 +119,29 @@ public:
     MausoleumDoor() : GameObjectScript("go_mausoleum_door")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct MausoleumDoorAI : public GameObjectAI
     {
-        if (player->GetQuestStatus(QUEST_ULAG) != QUEST_STATUS_INCOMPLETE)
-            return false;
+        MausoleumDoorAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        if (GameObject *trigger = SearchMausoleumGo(player, GO_TRIGGER, 30))
+        bool GossipHello(Player* player) override
         {
-            trigger->ResetDoorOrButton();
-            player->SummonCreature(C_ULAG, 2390.26, 336.47, 40.01, 2.26, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 300000);
+            if (player->GetQuestStatus(QUEST_ULAG) != QUEST_STATUS_INCOMPLETE)
+                return false;
+
+            if (GameObject *trigger = SearchMausoleumGo(player, GO_TRIGGER, 30))
+            {
+                trigger->ResetDoorOrButton();
+                player->SummonCreature(C_ULAG, 2390.26, 336.47, 40.01, 2.26, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 300000);
+                return false;
+            }
+
             return false;
         }
+    };
 
-        return false;
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new MausoleumDoorAI(go);
     }
 };
 
@@ -130,30 +151,35 @@ public:
     MausoleumTrigger() : GameObjectScript("go_mausoleum_trigger")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct MausoleumTriggerAI : public GameObjectAI
     {
-        if (player->GetQuestStatus(QUEST_ULAG) != QUEST_STATUS_INCOMPLETE)
-            return false;
+        MausoleumTriggerAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        if (GameObject *door = SearchMausoleumGo(player, GO_DOOR, 30))
+        bool GossipHello(Player* player) override
         {
-            _GO->UseDoorOrButton();
-            door->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND);
+            if (player->GetQuestStatus(QUEST_ULAG) != QUEST_STATUS_INCOMPLETE)
+                return false;
+
+            if (GameObject *door = SearchMausoleumGo(player, GO_DOOR, 30))
+            {
+                me->UseDoorOrButton();
+                door->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND);
+                return true;
+            }
             return true;
         }
-        return true;
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new MausoleumTriggerAI(go);
     }
 };
 
 void AddSC_tirisfal_glades()
 {
-    OLDScript *newscript;
 
-    newscript = new OLDScript;
-    newscript->Name="npc_calvin_montague";
-    newscript->GetAI = &GetAI_npc_calvin_montague;
-    newscript->OnQuestAccept = &QuestAccept_npc_calvin_montague;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_calvin_montague();
 
     new MausoleumDoor();
     new MausoleumTrigger();

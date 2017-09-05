@@ -29,51 +29,57 @@ EndScriptData */
 #define SAY_AGGRO                       "Release the hounds!"
 #define SOUND_AGGRO                     5841
 
-struct boss_houndmaster_lokseyAI : public ScriptedAI
+class boss_houndmaster_loksey : public CreatureScript
 {
-    boss_houndmaster_lokseyAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_houndmaster_loksey() : CreatureScript("boss_houndmaster_loksey")
+    { }
 
-    uint32 Enrage_Timer;
+    class boss_houndmaster_lokseyAI : public ScriptedAI
+    {
+        public:
+        boss_houndmaster_lokseyAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 Enrage_Timer;
+    
+        void Reset()
+        override {
+            Enrage_Timer = 6000000;
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+            me->Yell(SAY_AGGRO,LANG_UNIVERSAL,nullptr);
+            DoPlaySoundToSet(me,SOUND_AGGRO);
+    
+            DoCast(me,SPELL_SUMMONSCARLETHOUND);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim())
+                return;
+    
+            //If we are <10% hp cast healing spells at self and Mograine
+            if ( me->GetHealthPct() <= 10 && !me->IsNonMeleeSpellCast(false) && Enrage_Timer < diff)
+            {
+                DoCast(me,SPELL_ENRAGE);
+                Enrage_Timer = 900000;
+            }else Enrage_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-    void Reset()
-    override {
-        Enrage_Timer = 6000000;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-        me->Yell(SAY_AGGRO,LANG_UNIVERSAL,nullptr);
-        DoPlaySoundToSet(me,SOUND_AGGRO);
-
-        DoCast(me,SPELL_SUMMONSCARLETHOUND);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim())
-            return;
-
-        //If we are <10% hp cast healing spells at self and Mograine
-        if ( me->GetHealth()*100 / me->GetMaxHealth() <= 10 && !me->IsNonMeleeSpellCast(false) && Enrage_Timer < diff)
-        {
-            DoCast(me,SPELL_ENRAGE);
-            Enrage_Timer = 900000;
-        }else Enrage_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_houndmaster_lokseyAI(creature);
     }
 };
-CreatureAI* GetAI_boss_houndmaster_loksey(Creature *_Creature)
-{
-    return new boss_houndmaster_lokseyAI (_Creature);
-}
+
 
 void AddSC_boss_houndmaster_loksey()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_houndmaster_loksey";
-    newscript->GetAI = &GetAI_boss_houndmaster_loksey;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_houndmaster_loksey();
 }
 

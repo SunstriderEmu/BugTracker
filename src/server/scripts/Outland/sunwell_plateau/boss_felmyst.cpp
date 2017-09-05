@@ -287,7 +287,7 @@ public:
             {
                 if (Creature* brutallus = ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_BRUTALLUS))) {
                     if (!brutallus->HasFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE))
-                        brutallus->SetVisibility(VISIBILITY_OFF);
+                        brutallus->SetVisible(false);
                 }
             }
             inChaseOnFlight = true;

@@ -40,60 +40,86 @@ EndContentData */
 #define GOSSIP_DEMITRIAN6 "Pris par surprise ? Comment ?"
 #define GOSSIP_DEMITRIAN7 "Qu'a fait Ragnaros ensuite ?"
 
-bool GossipHello_npc_highlord_demitrian(Player *player, Creature *_Creature)
+class npc_highlord_demitrian : public CreatureScript
 {
-    if (_Creature->IsQuestGiver())
-        player->PrepareQuestMenu(_Creature->GetGUID());
+public:
+    npc_highlord_demitrian() : CreatureScript("npc_highlord_demitrian")
+    { }
 
-    if (player->GetQuestStatus(7785) == QUEST_STATUS_NONE &&
-        (player->HasItemCount(18563,1,false) || player->HasItemCount(18564,1,false)))
-        player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_DEMITRIAN1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
-
-    player->SEND_GOSSIP_MENU_TEXTID(6812, _Creature->GetGUID());
-        return true;
-}
-
-bool GossipSelect_npc_highlord_demitrian(Player *player, Creature *_Creature, uint32 sender, uint32 action)
-{
-    switch (action)
+    class npc_highlord_demitrianAI : public ScriptedAI
     {
-    case GOSSIP_ACTION_INFO_DEF:
-        player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_DEMITRIAN2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-        player->SEND_GOSSIP_MENU_TEXTID(6842, _Creature->GetGUID());
-        break;
-    case GOSSIP_ACTION_INFO_DEF+1:
-        player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_DEMITRIAN3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-        player->SEND_GOSSIP_MENU_TEXTID(6843, _Creature->GetGUID());
-        break;
-    case GOSSIP_ACTION_INFO_DEF+2:
-        player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_DEMITRIAN4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
-        player->SEND_GOSSIP_MENU_TEXTID(6844, _Creature->GetGUID());
-        break;
-    case GOSSIP_ACTION_INFO_DEF+3:
-        player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_DEMITRIAN5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
-        player->SEND_GOSSIP_MENU_TEXTID(6867, _Creature->GetGUID());
-        break;
-    case GOSSIP_ACTION_INFO_DEF+4:
-        player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_DEMITRIAN6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
-        player->SEND_GOSSIP_MENU_TEXTID(6868, _Creature->GetGUID());
-        break;
-    case GOSSIP_ACTION_INFO_DEF+5:
-        player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_DEMITRIAN7, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+6);
-        player->SEND_GOSSIP_MENU_TEXTID(6869, _Creature->GetGUID());
-        break;
-    case GOSSIP_ACTION_INFO_DEF+6:
-        player->SEND_GOSSIP_MENU_TEXTID(6870, _Creature->GetGUID());
+    public:
+        npc_highlord_demitrianAI(Creature* creature) : ScriptedAI(creature)
+        {}
 
-        ItemPosCountVec dest;
-        uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 19016, 1);
-        if (msg == EQUIP_ERR_OK) {
-            Item *item = player->StoreNewItem(dest, 19016, true);
-            player->SendNewItem(item, 1, true, false);
+
+        virtual bool GossipHello(Player* player) override
+        {
+            if (me->IsQuestGiver())
+                player->PrepareQuestMenu(me->GetGUID());
+
+            if (player->GetQuestStatus(7785) == QUEST_STATUS_NONE &&
+                (player->HasItemCount(18563,1,false) || player->HasItemCount(18564,1,false)))
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_DEMITRIAN1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+
+            player->SEND_GOSSIP_MENU_TEXTID(6812, me->GetGUID());
+                return true;
+
         }
-        break;
+
+
+        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        {
+            switch (action)
+            {
+            case GOSSIP_ACTION_INFO_DEF:
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_DEMITRIAN2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+                player->SEND_GOSSIP_MENU_TEXTID(6842, me->GetGUID());
+                break;
+            case GOSSIP_ACTION_INFO_DEF+1:
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_DEMITRIAN3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+                player->SEND_GOSSIP_MENU_TEXTID(6843, me->GetGUID());
+                break;
+            case GOSSIP_ACTION_INFO_DEF+2:
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_DEMITRIAN4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
+                player->SEND_GOSSIP_MENU_TEXTID(6844, me->GetGUID());
+                break;
+            case GOSSIP_ACTION_INFO_DEF+3:
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_DEMITRIAN5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
+                player->SEND_GOSSIP_MENU_TEXTID(6867, me->GetGUID());
+                break;
+            case GOSSIP_ACTION_INFO_DEF+4:
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_DEMITRIAN6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
+                player->SEND_GOSSIP_MENU_TEXTID(6868, me->GetGUID());
+                break;
+            case GOSSIP_ACTION_INFO_DEF+5:
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_DEMITRIAN7, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+6);
+                player->SEND_GOSSIP_MENU_TEXTID(6869, me->GetGUID());
+                break;
+            case GOSSIP_ACTION_INFO_DEF+6:
+                player->SEND_GOSSIP_MENU_TEXTID(6870, me->GetGUID());
+
+                ItemPosCountVec dest;
+                uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 19016, 1);
+                if (msg == EQUIP_ERR_OK) {
+                    Item *item = player->StoreNewItem(dest, 19016, true);
+                    player->SendNewItem(item, 1, true, false);
+                }
+                break;
+            }
+            return true;
+
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_highlord_demitrianAI(creature);
     }
-    return true;
-}
+};
+
+
 
 /*###
 ## npcs_rutgar_and_frankal
@@ -118,88 +144,114 @@ bool GossipSelect_npc_highlord_demitrian(Player *player, Creature *_Creature, ui
 #define TRIGGER_RUTGAR 15222
 #define TRIGGER_FRANKAL 15221
 
-bool GossipHello_npcs_rutgar_and_frankal(Player *player, Creature *_Creature)
+class npcs_rutgar_and_frankal : public CreatureScript
 {
-    if (_Creature->IsQuestGiver())
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+public:
+    npcs_rutgar_and_frankal() : CreatureScript("npcs_rutgar_and_frankal")
+    { }
 
-    if (player->GetQuestStatus(8304) == QUEST_STATUS_INCOMPLETE &&
-        _Creature->GetEntry() == 15170 &&
-        !player->GetReqKillOrCastCurrentCount(8304, TRIGGER_RUTGAR ))
-        player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
-
-    if (player->GetQuestStatus(8304) == QUEST_STATUS_INCOMPLETE &&
-        _Creature->GetEntry() == 15171 &&
-        player->GetReqKillOrCastCurrentCount(8304, TRIGGER_RUTGAR ))
-        player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+9);
-
-    player->SEND_GOSSIP_MENU_TEXTID(7754, _Creature->GetGUID());
-
-    return true;
-}
-
-bool GossipSelect_npcs_rutgar_and_frankal(Player *player, Creature *_Creature, uint32 sender, uint32 action )
-{
-    switch (action)
+    class npcs_rutgar_and_frankalAI : public ScriptedAI
     {
-        case GOSSIP_ACTION_INFO_DEF:
-            player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-            player->SEND_GOSSIP_MENU_TEXTID(7755, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 1:
-            player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-            player->SEND_GOSSIP_MENU_TEXTID(7756, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 2:
-            player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
-            player->SEND_GOSSIP_MENU_TEXTID(7757, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 3:
-            player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
-            player->SEND_GOSSIP_MENU_TEXTID(7758, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 4:
-            player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
-            player->SEND_GOSSIP_MENU_TEXTID(7759, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 5:
-            player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM7, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6);
-            player->SEND_GOSSIP_MENU_TEXTID(7760, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 6:
-            player->SEND_GOSSIP_MENU_TEXTID(7761, _Creature->GetGUID());
-                                                            //'kill' our trigger to update quest status
-            player->KilledMonsterCredit( TRIGGER_RUTGAR, _Creature->GetGUID() );
-            break;
+    public:
+        npcs_rutgar_and_frankalAI(Creature* creature) : ScriptedAI(creature)
+        {}
 
-        case GOSSIP_ACTION_INFO_DEF + 9:
-            player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM11, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 11);
-            player->SEND_GOSSIP_MENU_TEXTID(7762, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 10:
-            player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM12, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 11);
-            player->SEND_GOSSIP_MENU_TEXTID(7763, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 11:
-            player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM13, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 12);
-            player->SEND_GOSSIP_MENU_TEXTID(7764, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 12:
-            player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM14, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 13);
-            player->SEND_GOSSIP_MENU_TEXTID(7765, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 13:
-            player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM15, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 14);
-            player->SEND_GOSSIP_MENU_TEXTID(7766, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 14:
-            player->SEND_GOSSIP_MENU_TEXTID(7767, _Creature->GetGUID());
-                                                            //'kill' our trigger to update quest status
-            player->KilledMonsterCredit( TRIGGER_FRANKAL, _Creature->GetGUID() );
-            break;
+
+        virtual bool GossipHello(Player* player) override
+        {
+            if (me->IsQuestGiver())
+                player->PrepareQuestMenu( me->GetGUID() );
+
+            if (player->GetQuestStatus(8304) == QUEST_STATUS_INCOMPLETE &&
+                me->GetEntry() == 15170 &&
+                !player->GetReqKillOrCastCurrentCount(8304, TRIGGER_RUTGAR ))
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+
+            if (player->GetQuestStatus(8304) == QUEST_STATUS_INCOMPLETE &&
+                me->GetEntry() == 15171 &&
+                player->GetReqKillOrCastCurrentCount(8304, TRIGGER_RUTGAR ))
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+9);
+
+            player->SEND_GOSSIP_MENU_TEXTID(7754, me->GetGUID());
+
+            return true;
+
+        }
+
+
+        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        {
+            switch (action)
+            {
+                case GOSSIP_ACTION_INFO_DEF:
+                    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+                    player->SEND_GOSSIP_MENU_TEXTID(7755, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF + 1:
+                    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+                    player->SEND_GOSSIP_MENU_TEXTID(7756, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF + 2:
+                    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+                    player->SEND_GOSSIP_MENU_TEXTID(7757, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF + 3:
+                    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
+                    player->SEND_GOSSIP_MENU_TEXTID(7758, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF + 4:
+                    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
+                    player->SEND_GOSSIP_MENU_TEXTID(7759, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF + 5:
+                    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM7, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6);
+                    player->SEND_GOSSIP_MENU_TEXTID(7760, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF + 6:
+                    player->SEND_GOSSIP_MENU_TEXTID(7761, me->GetGUID());
+                                                                    //'kill' our trigger to update quest status
+                    player->KilledMonsterCredit( TRIGGER_RUTGAR, me->GetGUID() );
+                    break;
+
+                case GOSSIP_ACTION_INFO_DEF + 9:
+                    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM11, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 11);
+                    player->SEND_GOSSIP_MENU_TEXTID(7762, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF + 10:
+                    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM12, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 11);
+                    player->SEND_GOSSIP_MENU_TEXTID(7763, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF + 11:
+                    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM13, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 12);
+                    player->SEND_GOSSIP_MENU_TEXTID(7764, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF + 12:
+                    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM14, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 13);
+                    player->SEND_GOSSIP_MENU_TEXTID(7765, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF + 13:
+                    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM15, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 14);
+                    player->SEND_GOSSIP_MENU_TEXTID(7766, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF + 14:
+                    player->SEND_GOSSIP_MENU_TEXTID(7767, me->GetGUID());
+                                                                    //'kill' our trigger to update quest status
+                    player->KilledMonsterCredit( TRIGGER_FRANKAL, me->GetGUID() );
+                    break;
+            }
+            return true;
+
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npcs_rutgar_and_frankalAI(creature);
     }
-    return true;
-}
+};
+
+
 
 /*###
 ##
@@ -207,18 +259,9 @@ bool GossipSelect_npcs_rutgar_and_frankal(Player *player, Creature *_Creature, u
 
 void AddSC_silithus()
 {
-    OLDScript *newscript;
 
-    newscript = new OLDScript;
-    newscript->Name = "npc_highlord_demitrian";
-    newscript->OnGossipHello =  &GossipHello_npc_highlord_demitrian;
-    newscript->OnGossipSelect = &GossipSelect_npc_highlord_demitrian;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_highlord_demitrian();
 
-    newscript = new OLDScript;
-    newscript->Name="npcs_rutgar_and_frankal";
-    newscript->OnGossipHello =   &GossipHello_npcs_rutgar_and_frankal;
-    newscript->OnGossipSelect =  &GossipSelect_npcs_rutgar_and_frankal;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npcs_rutgar_and_frankal();
 }
 

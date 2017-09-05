@@ -92,12 +92,12 @@ uint32 RingBoss[]=
 
 float RingLocations[6][3]=
 {
-    {604.802673, -191.081985, -54.058590},                  // ring
-    {604.072998, -222.106918, -52.743759},                  // first gate
-    {621.400391, -214.499054, -52.814453},                  // hiding in corner
-    {601.300781, -198.556992, -53.950256},                  // ring
-    {631.818359, -180.548126, -52.654770},                  // second gate
-    {627.390381, -201.075974, -52.692917}                   // hiding in corner
+    {604.802673f, -191.081985f, -54.058590f},                  // ring
+    {604.072998f, -222.106918f, -52.743759f},                  // first gate
+    {621.400391f, -214.499054f, -52.814453f},                  // hiding in corner
+    {601.300781f, -198.556992f, -53.950256f},                  // ring
+    {631.818359f, -180.548126f, -52.654770f},                  // second gate
+    {627.390381f, -201.075974f, -52.692917f}                   // hiding in corner
 };
 
 class ATRingOfLaw : AreaTriggerScript
@@ -138,235 +138,239 @@ enum GrimstoneTexts
 };
 
 //TODO: implement quest part of event (different end boss)
-struct npc_grimstoneAI : public npc_escortAI
+
+class npc_grimstone : public CreatureScript
 {
-    npc_grimstoneAI(Creature *c) : npc_escortAI(c)
+public:
+    npc_grimstone() : CreatureScript("npc_grimstone")
+    { }
+
+    class npc_grimstoneAI : public npc_escortAI
     {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-        MobSpawnId = rand()%6;
-    }
-
-    InstanceScript* pInstance;
-
-    uint8 EventPhase;
-    uint32 Event_Timer;
-
-    uint8 MobSpawnId;
-    uint8 MobCount;
-    uint32 MobDeath_Timer;
-
-    uint64 RingMobGUID[4];
-    uint64 RingBossGUID;
-
-    bool CanWalk;
-
-    void Reset() override
-    {
-        me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-
-        EventPhase = 0;
-        Event_Timer = 1000;
-
-        MobCount = 0;
-        MobDeath_Timer = 0;
-
-        for(uint64 & i : RingMobGUID)
-            i = 0;
-
-        RingBossGUID = 0;
-
-        CanWalk = false;
-    }
-
-    void DoGate(uint32 id, uint32 state)
-    {
-        if (GameObject *go = GameObject::GetGameObject(*me,pInstance->GetData64(id)))
-            go->SetGoState(GOState(state));
-    }
-
-    //TODO: move them to center
-    void SummonRingMob()
-    {
-        if (Creature* tmp = me->SummonCreature(RingMob[MobSpawnId],608.960,-235.322,-53.907,1.857,TEMPSUMMON_DEAD_DESPAWN,0))
-            RingMobGUID[MobCount] = tmp->GetGUID();
-
-        ++MobCount;
-
-        if (MobCount == MAX_MOB_AMOUNT)
-            MobDeath_Timer = 2500;
-    }
-
-    //TODO: move them to center
-    void SummonRingBoss()
-    {
-        if (Creature* tmp = me->SummonCreature(RingBoss[rand()%6],644.300,-175.989,-53.739,3.418,TEMPSUMMON_DEAD_DESPAWN,0))
-            RingBossGUID = tmp->GetGUID();
-
-        MobDeath_Timer = 2500;
-    }
-
-    void WaypointReached(uint32 i) override
-    {
-        switch(i)
+        public:
+        npc_grimstoneAI(Creature *c) : npc_escortAI(c)
         {
-        case 0:
-            DoScriptText(-1000000, me);//2
-            CanWalk = false;
-            Event_Timer = 5000;
-            break;
-        case 1:
-            DoScriptText(-1000000, me);//4
-            CanWalk = false;
-            Event_Timer = 5000;
-            break;
-        case 2:
-            CanWalk = false;
-            break;
-        case 3:
-            DoScriptText(-1000000, me);//5
-            break;
-        case 4:
-            DoScriptText(-1000000, me);//6
-            CanWalk = false;
-            Event_Timer = 5000;
-            break;
-        case 5:
-            if (pInstance)
-            {
-                pInstance->SetData(TYPE_RING_OF_LAW,DONE);
-            }
-            break;
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
+            MobSpawnId = rand()%6;
         }
-    }
-
-    void EnterCombat(Unit*) override {}
-
-    void UpdateAI(const uint32 diff) override
-    {
-        if (!pInstance)
-            return;
-
-        if (MobDeath_Timer)
+    
+        InstanceScript* pInstance;
+    
+        uint8 EventPhase;
+        uint32 Event_Timer;
+    
+        uint8 MobSpawnId;
+        uint8 MobCount;
+        uint32 MobDeath_Timer;
+    
+        uint64 RingMobGUID[4];
+        uint64 RingBossGUID;
+    
+        bool CanWalk;
+    
+        void Reset() override
         {
-            if (MobDeath_Timer <= diff)
-            {
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+    
+            EventPhase = 0;
+            Event_Timer = 1000;
+    
+            MobCount = 0;
+            MobDeath_Timer = 0;
+    
+            for(uint64 & i : RingMobGUID)
+                i = 0;
+    
+            RingBossGUID = 0;
+    
+            CanWalk = false;
+        }
+    
+        void DoGate(uint32 id, uint32 state)
+        {
+            if (GameObject *go = GameObject::GetGameObject(*me,pInstance->GetData64(id)))
+                go->SetGoState(GOState(state));
+        }
+    
+        //TODO: move them to center
+        void SummonRingMob()
+        {
+            if (Creature* tmp = me->SummonCreature(RingMob[MobSpawnId],608.960,-235.322,-53.907,1.857,TEMPSUMMON_DEAD_DESPAWN,0))
+                RingMobGUID[MobCount] = tmp->GetGUID();
+    
+            ++MobCount;
+    
+            if (MobCount == MAX_MOB_AMOUNT)
                 MobDeath_Timer = 2500;
-
-                if (RingBossGUID)
+        }
+    
+        //TODO: move them to center
+        void SummonRingBoss()
+        {
+            if (Creature* tmp = me->SummonCreature(RingBoss[rand()%6],644.300,-175.989,-53.739,3.418,TEMPSUMMON_DEAD_DESPAWN,0))
+                RingBossGUID = tmp->GetGUID();
+    
+            MobDeath_Timer = 2500;
+        }
+    
+        void WaypointReached(uint32 i) override
+        {
+            switch(i)
+            {
+            case 0:
+                DoScriptText(-1000000, me);//2
+                CanWalk = false;
+                Event_Timer = 5000;
+                break;
+            case 1:
+                DoScriptText(-1000000, me);//4
+                CanWalk = false;
+                Event_Timer = 5000;
+                break;
+            case 2:
+                CanWalk = false;
+                break;
+            case 3:
+                DoScriptText(-1000000, me);//5
+                break;
+            case 4:
+                DoScriptText(-1000000, me);//6
+                CanWalk = false;
+                Event_Timer = 5000;
+                break;
+            case 5:
+                if (pInstance)
                 {
-                    Creature *boss = ObjectAccessor::GetCreature(*me,RingBossGUID);
-                    if (boss && !boss->IsAlive() && boss->IsDead())
-                    {
-                        RingBossGUID = 0;
-                        Event_Timer = 5000;
-                        MobDeath_Timer = 0;
-                        return;
-                    }
-                    return;
+                    pInstance->SetData(TYPE_RING_OF_LAW,DONE);
                 }
-
-                for(uint64 & i : RingMobGUID)
+                break;
+            }
+        }
+    
+        void EnterCombat(Unit*) override {}
+    
+        void UpdateAI(const uint32 diff) override
+        {
+            if (!pInstance)
+                return;
+    
+            if (MobDeath_Timer)
+            {
+                if (MobDeath_Timer <= diff)
                 {
-                    Creature *mob = ObjectAccessor::GetCreature(*me,i);
-                    if (mob && !mob->IsAlive() && mob->IsDead())
+                    MobDeath_Timer = 2500;
+    
+                    if (RingBossGUID)
                     {
-                        i = 0;
-                        --MobCount;
-
-                        //seems all are gone, so set timer to continue and discontinue this
-                        if (!MobCount)
+                        Creature *boss = ObjectAccessor::GetCreature(*me,RingBossGUID);
+                        if (boss && !boss->IsAlive() && boss->IsDead())
                         {
+                            RingBossGUID = 0;
                             Event_Timer = 5000;
                             MobDeath_Timer = 0;
+                            return;
+                        }
+                        return;
+                    }
+    
+                    for(uint64 & i : RingMobGUID)
+                    {
+                        Creature *mob = ObjectAccessor::GetCreature(*me,i);
+                        if (mob && !mob->IsAlive() && mob->IsDead())
+                        {
+                            i = 0;
+                            --MobCount;
+    
+                            //seems all are gone, so set timer to continue and discontinue this
+                            if (!MobCount)
+                            {
+                                Event_Timer = 5000;
+                                MobDeath_Timer = 0;
+                            }
                         }
                     }
-                }
-            }else MobDeath_Timer -= diff;
-        }
-
-        if (Event_Timer)
-        {
-            if (Event_Timer <= diff)
+                }else MobDeath_Timer -= diff;
+            }
+    
+            if (Event_Timer)
             {
-                switch(EventPhase)
+                if (Event_Timer <= diff)
                 {
-                case 0:
-                    DoScriptText(-1000000, me);//1
-                    DoGate(DATA_ARENA4,1);
-                    Start(false, false, false);
-                    CanWalk = true;
-                    Event_Timer = 0;
-                    break;
-                case 1:
-                    CanWalk = true;
-                    Event_Timer = 0;
-                    break;
-                case 2:
-                    Event_Timer = 2000;
-                    break;
-                case 3:
-                    DoGate(DATA_ARENA1,0);
-                    Event_Timer = 3000;
-                    break;
-                case 4:
-                    CanWalk = true;
-                    me->SetVisibility(VISIBILITY_OFF);
-                    SummonRingMob();
-                    Event_Timer = 8000;
-                    break;
-                case 5:
-                    SummonRingMob();
-                    SummonRingMob();
-                    Event_Timer = 8000;
-                    break;
-                case 6:
-                    SummonRingMob();
-                    Event_Timer = 0;
-                    break;
-                case 7:
-                    me->SetVisibility(VISIBILITY_ON);
-                    DoGate(DATA_ARENA1,1);
-                    DoScriptText(-1000000, me);//4
-                    CanWalk = true;
-                    Event_Timer = 0;
-                    break;
-                case 8:
-                    DoGate(DATA_ARENA2,0);
-                    Event_Timer = 5000;
-                    break;
-                case 9:
-                    me->SetVisibility(VISIBILITY_OFF);
-                    SummonRingBoss();
-                    Event_Timer = 0;
-                    break;
-                case 10:
-                    //if quest, complete
-                    DoGate(DATA_ARENA2,1);
-                    DoGate(DATA_ARENA3,0);
-                    DoGate(DATA_ARENA4,0);
-                    CanWalk = true;
-                    Event_Timer = 0;
-                    break;
-                }
-                ++EventPhase;
-            }else Event_Timer -= diff;
-        }
+                    switch(EventPhase)
+                    {
+                    case 0:
+                        DoScriptText(-1000000, me);//1
+                        DoGate(DATA_ARENA4,1);
+                        Start(false, false, false);
+                        CanWalk = true;
+                        Event_Timer = 0;
+                        break;
+                    case 1:
+                        CanWalk = true;
+                        Event_Timer = 0;
+                        break;
+                    case 2:
+                        Event_Timer = 2000;
+                        break;
+                    case 3:
+                        DoGate(DATA_ARENA1,0);
+                        Event_Timer = 3000;
+                        break;
+                    case 4:
+                        CanWalk = true;
+    					me->SetVisible(false);
+                        SummonRingMob();
+                        Event_Timer = 8000;
+                        break;
+                    case 5:
+                        SummonRingMob();
+                        SummonRingMob();
+                        Event_Timer = 8000;
+                        break;
+                    case 6:
+                        SummonRingMob();
+                        Event_Timer = 0;
+                        break;
+                    case 7:
+    					me->SetVisible(true);
+                        DoGate(DATA_ARENA1,1);
+                        DoScriptText(-1000000, me);//4
+                        CanWalk = true;
+                        Event_Timer = 0;
+                        break;
+                    case 8:
+                        DoGate(DATA_ARENA2,0);
+                        Event_Timer = 5000;
+                        break;
+                    case 9:
+    					me->SetVisible(false);
+                        SummonRingBoss();
+                        Event_Timer = 0;
+                        break;
+                    case 10:
+                        //if quest, complete
+                        DoGate(DATA_ARENA2,1);
+                        DoGate(DATA_ARENA3,0);
+                        DoGate(DATA_ARENA4,0);
+                        CanWalk = true;
+                        Event_Timer = 0;
+                        break;
+                    }
+                    ++EventPhase;
+                }else Event_Timer -= diff;
+            }
+    
+            if (CanWalk)
+                npc_escortAI::UpdateAI(diff);
+           }
+    };
 
-        if (CanWalk)
-            npc_escortAI::UpdateAI(diff);
-       }
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_grimstoneAI(creature);
+    }
 };
 
-CreatureAI* GetAI_npc_grimstone(Creature *_Creature)
-{
-    auto  Grimstone_AI = new npc_grimstoneAI(_Creature);
-
-    for(uint8 i = 0; i < 6; ++i)
-        Grimstone_AI->AddWaypoint(i, RingLocations[i][0], RingLocations[i][1], RingLocations[i][2]);
-
-    return (CreatureAI*)Grimstone_AI;
-
-}
 
 /*######
 ## mob_phalanx
@@ -379,63 +383,73 @@ enum PhalanxSpells
     SPELL_MIGHTYBLOW                                       = 14099
 };
 
-struct mob_phalanxAI : public ScriptedAI
+
+class mob_phalanx : public CreatureScript
 {
-    mob_phalanxAI(Creature *c) : ScriptedAI(c) {}
+public:
+    mob_phalanx() : CreatureScript("mob_phalanx")
+    { }
 
-    uint32 ThunderClap_Timer;
-    uint32 FireballVolley_Timer;
-    uint32 MightyBlow_Timer;
-
-    void Reset()
-    override {
-        ThunderClap_Timer = 12000;
-        FireballVolley_Timer =0;
-        MightyBlow_Timer = 15000;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        //Return since we have no target
-        if(!UpdateVictim() )
-            return;
-
-        //ThunderClap_Timer
-        if( ThunderClap_Timer < diff )
-        {
-            DoCast(me->GetVictim(),SPELL_THUNDERCLAP);
-            ThunderClap_Timer = 10000;
-        }else ThunderClap_Timer -= diff;
-
-        //FireballVolley_Timer
-        if( me->GetHealth()*100 / me->GetMaxHealth() < 51 )
-        {
-            if (FireballVolley_Timer < diff)
-            {
-                DoCast(me->GetVictim(),SPELL_FIREBALLVOLLEY);
-                FireballVolley_Timer = 15000;
-            }else FireballVolley_Timer -= diff;
+    class mob_phalanxAI : public ScriptedAI
+    {
+        public:
+        mob_phalanxAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 ThunderClap_Timer;
+        uint32 FireballVolley_Timer;
+        uint32 MightyBlow_Timer;
+    
+        void Reset()
+        override {
+            ThunderClap_Timer = 12000;
+            FireballVolley_Timer =0;
+            MightyBlow_Timer = 15000;
         }
+    
+        void EnterCombat(Unit *who)
+        override {
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            //Return since we have no target
+            if(!UpdateVictim() )
+                return;
+    
+            //ThunderClap_Timer
+            if( ThunderClap_Timer < diff )
+            {
+                DoCast(me->GetVictim(),SPELL_THUNDERCLAP);
+                ThunderClap_Timer = 10000;
+            }else ThunderClap_Timer -= diff;
+    
+            //FireballVolley_Timer
+    		if( me->GetHealthPct() < 51)
+            {
+                if (FireballVolley_Timer < diff)
+                {
+                    DoCast(me->GetVictim(),SPELL_FIREBALLVOLLEY);
+                    FireballVolley_Timer = 15000;
+                }else FireballVolley_Timer -= diff;
+            }
+    
+            //MightyBlow_Timer
+            if( MightyBlow_Timer < diff )
+            {
+                DoCast(me->GetVictim(),SPELL_MIGHTYBLOW);
+                MightyBlow_Timer = 10000;
+            }else MightyBlow_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        //MightyBlow_Timer
-        if( MightyBlow_Timer < diff )
-        {
-            DoCast(me->GetVictim(),SPELL_MIGHTYBLOW);
-            MightyBlow_Timer = 10000;
-        }else MightyBlow_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new mob_phalanxAI(creature);
     }
 };
 
-CreatureAI* GetAI_mob_phalanx(Creature *pCreature)
-{
-    return new mob_phalanxAI (pCreature);
-}
 
 /*######
 ## npc_kharan_mighthammer
@@ -458,72 +472,98 @@ enum KharamQuests
 #define GOSSIP_ITEM_KHARAN_9    "Indeed."
 #define GOSSIP_ITEM_KHARAN_10   "The door is open, Kharan. You are a free man."
 
-bool GossipHello_npc_kharan_mighthammer(Player *player, Creature *_Creature)
+class npc_kharan_mighthammer : public CreatureScript
 {
-    if( _Creature->IsQuestGiver() )
-        player->PrepareQuestMenu( _Creature->GetGUID() );
+public:
+    npc_kharan_mighthammer() : CreatureScript("npc_kharan_mighthammer")
+    { }
 
-    if( player->GetQuestStatus(QUEST_4001) == QUEST_STATUS_INCOMPLETE )
-         player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-
-    if( player->GetQuestStatus(4342) == QUEST_STATUS_INCOMPLETE )
-        player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
-
-    if (player->GetTeam() == TEAM_HORDE)
-        player->SEND_GOSSIP_MENU_TEXTID(2473, _Creature->GetGUID());
-    else
-        player->SEND_GOSSIP_MENU_TEXTID(2474, _Creature->GetGUID());
-
-    return true;
-}
-
-bool GossipSelect_npc_kharan_mighthammer(Player *player, Creature *_Creature, uint32 sender, uint32 action)
-{
-    switch (action)
+    class npc_kharan_mighthammerAI : public ScriptedAI
     {
-        case GOSSIP_ACTION_INFO_DEF+1:
-             player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-            player->SEND_GOSSIP_MENU_TEXTID(2475, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+2:
-            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
-            player->SEND_GOSSIP_MENU_TEXTID(2476, _Creature->GetGUID());
-            break;
+    public:
+        npc_kharan_mighthammerAI(Creature* creature) : ScriptedAI(creature)
+        {}
 
-        case GOSSIP_ACTION_INFO_DEF+3:
-            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
-            player->SEND_GOSSIP_MENU_TEXTID(2477, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+4:
-            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
-            player->SEND_GOSSIP_MENU_TEXTID(2478, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+5:
-             player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_7, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+6);
-            player->SEND_GOSSIP_MENU_TEXTID(2479, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+6:
-            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_8, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+7);
-            player->SEND_GOSSIP_MENU_TEXTID(2480, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+7:
-            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_9, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+8);
-            player->SEND_GOSSIP_MENU_TEXTID(2481, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+8:
-            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_10, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+9);
-            player->SEND_GOSSIP_MENU_TEXTID(2482, _Creature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+9:
-            player->CLOSE_GOSSIP_MENU();
-            if (player->GetTeam() == TEAM_HORDE)
-                player->AreaExploredOrEventHappens(QUEST_4001);
+
+        virtual bool GossipHello(Player* player) override
+        {
+            if( me->IsQuestGiver() )
+                player->PrepareQuestMenu( me->GetGUID() );
+
+            if( player->GetQuestStatus(QUEST_4001) == QUEST_STATUS_INCOMPLETE )
+                 player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+
+            if( player->GetQuestStatus(4342) == QUEST_STATUS_INCOMPLETE )
+                player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
+
+            if (player->GetTeam() == HORDE)
+                player->SEND_GOSSIP_MENU_TEXTID(2473, me->GetGUID());
             else
-                player->AreaExploredOrEventHappens(QUEST_4342);
-            break;
+                player->SEND_GOSSIP_MENU_TEXTID(2474, me->GetGUID());
+
+            return true;
+
+        }
+
+
+        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        {
+            switch (action)
+            {
+                case GOSSIP_ACTION_INFO_DEF+1:
+                     player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+                    player->SEND_GOSSIP_MENU_TEXTID(2475, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF+2:
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
+                    player->SEND_GOSSIP_MENU_TEXTID(2476, me->GetGUID());
+                    break;
+
+                case GOSSIP_ACTION_INFO_DEF+3:
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
+                    player->SEND_GOSSIP_MENU_TEXTID(2477, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF+4:
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
+                    player->SEND_GOSSIP_MENU_TEXTID(2478, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF+5:
+                     player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_7, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+6);
+                    player->SEND_GOSSIP_MENU_TEXTID(2479, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF+6:
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_8, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+7);
+                    player->SEND_GOSSIP_MENU_TEXTID(2480, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF+7:
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_9, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+8);
+                    player->SEND_GOSSIP_MENU_TEXTID(2481, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF+8:
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KHARAN_10, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+9);
+                    player->SEND_GOSSIP_MENU_TEXTID(2482, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF+9:
+                    player->CLOSE_GOSSIP_MENU();
+                    if (player->GetTeam() == HORDE)
+                        player->AreaExploredOrEventHappens(QUEST_4001);
+                    else
+                        player->AreaExploredOrEventHappens(QUEST_4342);
+                    break;
+            }
+            return true;
+
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_kharan_mighthammerAI(creature);
     }
-    return true;
-}
+};
+
+
 
 /*######
 ## npc_lokhtos_darkbargainer
@@ -549,41 +589,67 @@ enum LokhtosSpells
 #define GOSSIP_ITEM_SHOW_ACCESS     "Show me what I have access to, Lothos."
 #define GOSSIP_ITEM_GET_CONTRACT    "Get Thorium Brotherhood Contract"
 
-bool GossipHello_npc_lokhtos_darkbargainer(Player *pPlayer, Creature *pCreature)
+class npc_lokhtos_darkbargainer : public CreatureScript
 {
-    if (pCreature->IsQuestGiver())
-        pPlayer->PrepareQuestMenu( pCreature->GetGUID() );
+public:
+    npc_lokhtos_darkbargainer() : CreatureScript("npc_lokhtos_darkbargainer")
+    { }
 
-    if (pCreature->IsVendor() && pPlayer->GetReputationRank(59) >= REP_FRIENDLY)
-          pPlayer->ADD_GOSSIP_ITEM( 1, GOSSIP_ITEM_SHOW_ACCESS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
-
-    if (pPlayer->GetQuestRewardStatus(QUEST_A_BINDING_CONTRACT) != 1 &&
-        !pPlayer->HasItemCount(ITEM_THRORIUM_BROTHERHOOD_CONTRACT, 1, true) &&
-        pPlayer->HasItemCount(ITEM_SULFURON_INGOT, 1))
+    class npc_lokhtos_darkbargainerAI : public ScriptedAI
     {
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_GET_CONTRACT, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-    }
+    public:
+        npc_lokhtos_darkbargainerAI(Creature* creature) : ScriptedAI(creature)
+        {}
 
-    if (pPlayer->GetReputationRank(59) < REP_FRIENDLY)
-        pPlayer->SEND_GOSSIP_MENU_TEXTID(3673, pCreature->GetGUID());
-    else
-        pPlayer->SEND_GOSSIP_MENU_TEXTID(3677, pCreature->GetGUID());
 
-    return true;
-}
+        virtual bool GossipHello(Player* pPlayer) override
+        {
+            if (me->IsQuestGiver())
+                pPlayer->PrepareQuestMenu( me->GetGUID() );
 
-bool GossipSelect_npc_lokhtos_darkbargainer(Player *pPlayer, Creature *pCreature, uint32 sender, uint32 action )
-{
-    if (action == GOSSIP_ACTION_INFO_DEF + 1)
+            if (me->IsVendor() && pPlayer->GetReputationRank(59) >= REP_FRIENDLY)
+                  pPlayer->ADD_GOSSIP_ITEM( 1, GOSSIP_ITEM_SHOW_ACCESS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
+
+            if (pPlayer->GetQuestRewardStatus(QUEST_A_BINDING_CONTRACT) != 1 &&
+                !pPlayer->HasItemCount(ITEM_THRORIUM_BROTHERHOOD_CONTRACT, 1, true) &&
+                pPlayer->HasItemCount(ITEM_SULFURON_INGOT, 1))
+            {
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_GET_CONTRACT, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+            }
+
+            if (pPlayer->GetReputationRank(59) < REP_FRIENDLY)
+                pPlayer->SEND_GOSSIP_MENU_TEXTID(3673, me->GetGUID());
+            else
+                pPlayer->SEND_GOSSIP_MENU_TEXTID(3677, me->GetGUID());
+
+            return true;
+
+        }
+
+
+        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        {
+            if (action == GOSSIP_ACTION_INFO_DEF + 1)
+            {
+                pPlayer->CLOSE_GOSSIP_MENU();
+                pPlayer->CastSpell(pPlayer, SPELL_CREATE_THORIUM_BROTHERHOOD_CONTRACT_DND, false);
+            }
+            if (action == GOSSIP_ACTION_TRADE)
+                pPlayer->SEND_VENDORLIST( me->GetGUID() );
+
+            return true;
+
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
     {
-        pPlayer->CLOSE_GOSSIP_MENU();
-        pPlayer->CastSpell(pPlayer, SPELL_CREATE_THORIUM_BROTHERHOOD_CONTRACT_DND, false);
+        return new npc_lokhtos_darkbargainerAI(creature);
     }
-    if (action == GOSSIP_ACTION_TRADE)
-        pPlayer->SEND_VENDORLIST( pCreature->GetGUID() );
+};
 
-    return true;
-}
+
 
 /*######
 ## npc_dughal_stormwing
@@ -597,8 +663,8 @@ enum DughalQuests
 #define SAY_DUGHAL_FREE         "Thank you, $N! I'm free!!!"
 #define GOSSIP_DUGHAL           "You're free, Dughal! Get out of here!"
 
-InstanceScript *pInstance;
 /*
+InstanceScript *pInstance;
 struct npc_dughal_stormwingAI : public npc_escortAI
 {
     npc_dughal_stormwingAI(Creature *c) : npc_escortAI(c) {}
@@ -610,7 +676,7 @@ struct npc_dughal_stormwingAI : public npc_escortAI
         case 0:me->Say(SAY_DUGHAL_FREE, LANG_UNIVERSAL, PlayerGUID); break;
         case 1:pInstance->SetData(DATA_DUGHAL,ENCOUNTER_STATE_OBJECTIVE_COMPLETED);break;
         case 2:
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             pInstance->SetData(DATA_DUGHAL,ENCOUNTER_STATE_ENDED);
@@ -625,7 +691,7 @@ struct npc_dughal_stormwingAI : public npc_escortAI
     {
         if (IsBeingEscorted && killer == me)
         {
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             pInstance->SetData(DATA_DUGHAL,ENCOUNTER_STATE_ENDED);
@@ -637,13 +703,13 @@ struct npc_dughal_stormwingAI : public npc_escortAI
         if(pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_NOT_STARTED) return;
         if( (pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_IN_PROGRESS || pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_FAILED || pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_ENDED)&& pInstance->GetData(DATA_DUGHAL) == ENCOUNTER_STATE_ENDED )
         {
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
         else
         {
-            me->SetVisibility(VISIBILITY_ON);
+            me->SetVisible(true);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
@@ -742,7 +808,7 @@ struct npc_marshal_windsorAI : public npc_escortAI
             pInstance->SetData(DATA_GATE_SC,0);
             break;
         case 19:
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             me->SummonCreature(MOB_ENTRY_REGINALD_WINDSOR,403.61,-51.71,-63.92,3.600434,TEMPSUMMON_DEAD_DESPAWN ,0);
@@ -785,13 +851,13 @@ struct npc_marshal_windsorAI : public npc_escortAI
             }
         if( (pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_IN_PROGRESS || pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_FAILED || pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_ENDED)&& pInstance->GetData(DATA_SUPPLY_ROOM) == ENCOUNTER_STATE_ENDED )
         {
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
         else
         {
-            me->SetVisibility(VISIBILITY_ON);
+            me->SetVisible(true);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
@@ -1070,7 +1136,7 @@ struct npc_tobias_seecherAI : public npc_escortAI
     {
         if (IsBeingEscorted && killer == me)
         {
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             pInstance->SetData(DATA_TOBIAS,ENCOUNTER_STATE_ENDED);
@@ -1085,7 +1151,7 @@ struct npc_tobias_seecherAI : public npc_escortAI
         case 2:
             pInstance->SetData(DATA_TOBIAS,ENCOUNTER_STATE_OBJECTIVE_COMPLETED);break;
         case 4:
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             pInstance->SetData(DATA_TOBIAS,ENCOUNTER_STATE_ENDED);
@@ -1098,13 +1164,13 @@ struct npc_tobias_seecherAI : public npc_escortAI
         if(pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_NOT_STARTED) return;
         if( (pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_IN_PROGRESS || pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_FAILED || pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_ENDED)&& pInstance->GetData(DATA_TOBIAS) == ENCOUNTER_STATE_ENDED )
         {
-            me->SetVisibility(VISIBILITY_OFF);
+            me->SetVisible(false);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
         else
         {
-            me->SetVisibility(VISIBILITY_ON);
+            me->SetVisible(true);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
@@ -1169,14 +1235,14 @@ enum RocknotQuests
 
 float BarWpLocations[8][3]=
 {
-    {883.294861, -188.926300, -43.703655},
-    {872.763550, -185.605621, -43.703655},                  //b1
-    {867.923401, -188.006393, -43.703655},                  //b2
-    {863.295898, -190.795212, -43.703655},                  //b3
-    {856.139587, -194.652756, -43.703655},                  //b4
-    {851.878906, -196.928131, -43.703655},                  //b5
-    {877.035217, -187.048080, -43.703655},
-    {891.198000, -197.924000, -43.620400}                   //home
+    {883.294861f, -188.926300f, -43.703655f},
+    {872.763550f, -185.605621f, -43.703655f},                  //b1
+    {867.923401f, -188.006393f, -43.703655f},                  //b2
+    {863.295898f, -190.795212f, -43.703655f},                  //b3
+    {856.139587f, -194.652756f, -43.703655f},                  //b4
+    {851.878906f, -196.928131f, -43.703655f},                  //b5
+    {877.035217f, -187.048080f, -43.703655f},
+    {891.198000f, -197.924000f, -43.620400f}                   //home
 };
 
 uint32 BarWpWait[8]=
@@ -1191,137 +1257,142 @@ uint32 BarWpWait[8]=
     0
 };
 
-struct npc_rocknotAI : public npc_escortAI
+
+class npc_rocknot : public CreatureScript
 {
-    npc_rocknotAI(Creature *c) : npc_escortAI(c)
+public:
+    npc_rocknot() : CreatureScript("npc_rocknot")
+    { }
+
+    class npc_rocknotAI : public npc_escortAI
     {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-    }
+        public:
+        npc_rocknotAI(Creature *c) : npc_escortAI(c)
+        {
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
+        }
+    
+        InstanceScript* pInstance;
+    
+        uint32 BreakKeg_Timer;
+        uint32 BreakDoor_Timer;
+    
+        void Reset()
+        override {
+            if (HasEscortState(STATE_ESCORT_ESCORTING))
+                return;
+    
+            BreakKeg_Timer = 0;
+            BreakDoor_Timer = 0;
+        }
+    
+        void EnterCombat(Unit *who) override { }
+    
+        void DoGo(uint32 id, uint32 state)
+        {
+            if (GameObject *go = GameObject::GetGameObject(*me,pInstance->GetData64(id)))
+                go->SetGoState(GOState(state));
+        }
+    
+        void WaypointReached(uint32 i)
+        override {
+            if (!pInstance)
+                return;
+    
+            switch(i)
+            {
+            case 1:
+                me->HandleEmoteCommand(EMOTE_ONESHOT_KICK);
+                break;
+            case 2:
+                me->HandleEmoteCommand(EMOTE_ONESHOT_ATTACKUNARMED);
+                break;
+            case 3:
+                me->HandleEmoteCommand(EMOTE_ONESHOT_ATTACKUNARMED);
+                break;
+            case 4:
+                me->HandleEmoteCommand(EMOTE_ONESHOT_KICK);
+                break;
+            case 5:
+                me->HandleEmoteCommand(EMOTE_ONESHOT_KICK);
+                BreakKeg_Timer = 2000;
+                break;
+            }
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!pInstance)
+                return;
+    
+            if (BreakKeg_Timer)
+            {
+                if (BreakKeg_Timer <= diff)
+                {
+                    DoGo(DATA_GO_BAR_KEG,0);
+                    BreakKeg_Timer = 0;
+                    BreakDoor_Timer = 1000;
+                }else BreakKeg_Timer -= diff;
+            }
+    
+            if (BreakDoor_Timer)
+            {
+                if (BreakDoor_Timer <= diff)
+                {
+                    DoGo(DATA_GO_BAR_DOOR,2);
+                    DoGo(DATA_GO_BAR_KEG_TRAP,0);               //doesn't work very well, leaving code here for future
+                    //spell by trap has effect61, this indicate the bar go hostile
+    
+                    if (Unit *tmp = ObjectAccessor::GetUnit(*me,pInstance->GetData64(DATA_PHALANX)))
+                        tmp->SetFaction(FACTION_MONSTER);
+    
+                    //for later, this event(s) has alot more to it.
+                    //optionally, DONE can trigger bar to go hostile.
+                    pInstance->SetData(TYPE_BAR,DONE);
+    
+                    BreakDoor_Timer = 0;
+                }else BreakDoor_Timer -= diff;
+            }
+    
+            npc_escortAI::UpdateAI(diff);
+        }
 
-    InstanceScript* pInstance;
+        virtual void QuestReward(Player* pPlayer, Quest const* _Quest, uint32 item) override
+        {
+            InstanceScript* pInstance = ((InstanceScript*)me->GetInstanceScript());
 
-    uint32 BreakKeg_Timer;
-    uint32 BreakDoor_Timer;
+            if (!pInstance)
+                return;
 
-    void Reset()
-    override {
-        if (HasEscortState(STATE_ESCORT_ESCORTING))
-            return;
+            if (pInstance->GetData(TYPE_BAR) == DONE || pInstance->GetData(TYPE_BAR) == SPECIAL)
+                return;
 
-        BreakKeg_Timer = 0;
-        BreakDoor_Timer = 0;
-    }
+            if (_Quest->GetQuestId() == QUEST_ALE)
+            {
+                if (pInstance->GetData(TYPE_BAR) != IN_PROGRESS)
+                    pInstance->SetData(TYPE_BAR,IN_PROGRESS);
 
-    void EnterCombat(Unit *who) override { }
+                pInstance->SetData(TYPE_BAR,SPECIAL);
 
-    void DoGo(uint32 id, uint32 state)
+                //keep track of amount in instance script, returns SPECIAL if amount ok and event in progress
+                if (pInstance->GetData(TYPE_BAR) == SPECIAL)
+                {
+                    DoScriptText(SAY_GOT_BEER, me);
+                    me->CastSpell(me,SPELL_DRUNKEN_RAGE,false);
+                    ((npc_escortAI*)(me->AI()))->Start(false, false, false);
+                }
+            }
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
     {
-        if (GameObject *go = GameObject::GetGameObject(*me,pInstance->GetData64(id)))
-            go->SetGoState(GOState(state));
-    }
-
-    void WaypointReached(uint32 i)
-    override {
-        if (!pInstance)
-            return;
-
-        switch(i)
-        {
-        case 1:
-            me->HandleEmoteCommand(EMOTE_ONESHOT_KICK);
-            break;
-        case 2:
-            me->HandleEmoteCommand(EMOTE_ONESHOT_ATTACKUNARMED);
-            break;
-        case 3:
-            me->HandleEmoteCommand(EMOTE_ONESHOT_ATTACKUNARMED);
-            break;
-        case 4:
-            me->HandleEmoteCommand(EMOTE_ONESHOT_KICK);
-            break;
-        case 5:
-            me->HandleEmoteCommand(EMOTE_ONESHOT_KICK);
-            BreakKeg_Timer = 2000;
-            break;
-        }
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!pInstance)
-            return;
-
-        if (BreakKeg_Timer)
-        {
-            if (BreakKeg_Timer <= diff)
-            {
-                DoGo(DATA_GO_BAR_KEG,0);
-                BreakKeg_Timer = 0;
-                BreakDoor_Timer = 1000;
-            }else BreakKeg_Timer -= diff;
-        }
-
-        if (BreakDoor_Timer)
-        {
-            if (BreakDoor_Timer <= diff)
-            {
-                DoGo(DATA_GO_BAR_DOOR,2);
-                DoGo(DATA_GO_BAR_KEG_TRAP,0);               //doesn't work very well, leaving code here for future
-                //spell by trap has effect61, this indicate the bar go hostile
-
-                if (Unit *tmp = ObjectAccessor::GetUnit(*me,pInstance->GetData64(DATA_PHALANX)))
-                    tmp->SetFaction(14);
-
-                //for later, this event(s) has alot more to it.
-                //optionally, DONE can trigger bar to go hostile.
-                pInstance->SetData(TYPE_BAR,DONE);
-
-                BreakDoor_Timer = 0;
-            }else BreakDoor_Timer -= diff;
-        }
-
-        npc_escortAI::UpdateAI(diff);
+        return new npc_rocknotAI(creature);
     }
 };
 
-CreatureAI* GetAI_npc_rocknot(Creature *pCreature)
-{
-    auto  Rocknot_AI = new npc_rocknotAI(pCreature);
 
-    for(uint8 i = 0; i < 8; ++i)
-        Rocknot_AI->AddWaypoint(i, BarWpLocations[i][0], BarWpLocations[i][1], BarWpLocations[i][2], BarWpWait[i]);
-
-    return (CreatureAI*)Rocknot_AI;
-}
-
-bool ChooseReward_npc_rocknot(Player *pPlayer, Creature *pCreature, const Quest *_Quest, uint32 item)
-{
-    InstanceScript* pInstance = ((InstanceScript*)pCreature->GetInstanceScript());
-
-    if (!pInstance)
-        return true;
-
-    if (pInstance->GetData(TYPE_BAR) == DONE || pInstance->GetData(TYPE_BAR) == SPECIAL)
-        return true;
-
-    if (_Quest->GetQuestId() == QUEST_ALE)
-    {
-        if (pInstance->GetData(TYPE_BAR) != IN_PROGRESS)
-            pInstance->SetData(TYPE_BAR,IN_PROGRESS);
-
-        pInstance->SetData(TYPE_BAR,SPECIAL);
-
-        //keep track of amount in instance script, returns SPECIAL if amount ok and event in progress
-        if (pInstance->GetData(TYPE_BAR) == SPECIAL)
-        {
-            DoScriptText(SAY_GOT_BEER, pCreature);
-            pCreature->CastSpell(pCreature,SPELL_DRUNKEN_RAGE,false);
-            ((npc_escortAI*)(pCreature->AI()))->Start(false, false, false);
-        }
-    }
-
-    return true;
-}
 
 
 class DarkKeeperPortrait : public GameObjectScript
@@ -1330,13 +1401,23 @@ public:
     DarkKeeperPortrait() : GameObjectScript("go_dark_keeper_portrait")
     {}
 
-    bool OnGossipHello(Player* p, GameObject* go) override
+    struct DarkKeeperPortraitAI : public GameObjectAI
     {
-        uint32 keepers[6] = { 9437, 9438, 9439, 9441, 9442, 9443 };
-        if (Creature* keeper = p->SummonCreature(keepers[rand() % 6], p->GetPositionX(), p->GetPositionY(), p->GetPositionZ(), p->GetOrientation(), TEMPSUMMON_CORPSE_TIMED_DESPAWN, 40000))
-            keeper->AI()->AttackStart(p);
+        DarkKeeperPortraitAI(GameObject* obj) : GameObjectAI(obj) { }
 
-        return true;
+        bool GossipHello(Player* p) override
+        {
+            uint32 keepers[6] = { 9437, 9438, 9439, 9441, 9442, 9443 };
+            if (Creature* keeper = p->SummonCreature(keepers[rand() % 6], p->GetPositionX(), p->GetPositionY(), p->GetPositionZ(), p->GetOrientation(), TEMPSUMMON_CORPSE_TIMED_DESPAWN, 40000))
+                keeper->AI()->AttackStart(p);
+
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new DarkKeeperPortraitAI(go);
     }
 };
 
@@ -1375,116 +1456,124 @@ enum WindsorBrdData
     WINDSOR_SAY_END             = -1000799
 };
 
-struct npc_windsor_brdAI : public npc_escortAI
+
+class npc_windsor_brd : public CreatureScript
 {
-    npc_windsor_brdAI(Creature* c) : npc_escortAI(c) {}
-    
-    void Reset() override {}
-    
-    void EnterCombat(Unit* who) override {}
-    
-    void KilledUnit(Unit* who)
-    override {
-        switch (who->GetEntry()) {
-            case 9677:
-                DoScriptText(WINDSOR_KILLED_DINGER, me, nullptr);
-                break;
-            case 9680:
-                DoScriptText(WINDSOR_SAY_KILLED_CREST, me, nullptr);
-                break;
-        }
-    }
-    
-    void WaypointReached(uint32 i)
-    override {
-        Player* player = GetPlayerForEscort();
-        if (!player)
-            return;
+public:
+    npc_windsor_brd() : CreatureScript("npc_windsor_brd")
+    { }
 
-        switch(i)
-        {
-            case 5:
-                DoScriptText(WINDSOR_SAY_OPENDOOR, me, player);
-                SetEscortPaused(true);
-                break;
-            case 6:
-                DoScriptText(WINDSOR_SAY_ALMOST_THERE, me, player);
-                break;
-            case 9:
-            {
-                if (GameObject* door = me->FindNearestGameObject(170561, 10.0f))
-                    door->UseDoorOrButton();
-                DoScriptText(WINDSOR_SAY_ENTER, me, player);
-                break;
+    class npc_windsor_brdAI : public npc_escortAI
+    {
+        public:
+        npc_windsor_brdAI(Creature* c) : npc_escortAI(c) {}
+        
+        void Reset() override {}
+        
+        void EnterCombat(Unit* who) override {}
+        
+        void KilledUnit(Unit* who)
+        override {
+            switch (who->GetEntry()) {
+                case 9677:
+                    DoScriptText(WINDSOR_KILLED_DINGER, me, nullptr);
+                    break;
+                case 9680:
+                    DoScriptText(WINDSOR_SAY_KILLED_CREST, me, nullptr);
+                    break;
             }
-            case 10:
-                me->UpdateEntry(9682);
-                DoScriptText(WINDSOR_SAY_ROCK, me, player);
-                break;
-            case 11:
-                DoScriptText(WINDSOR_SAY_FIND_TOBIAS, me, nullptr);
-                break;
-            case 16:
-                DoScriptText(WINDSOR_SAY_OPEN_IT, me, nullptr);
-                SetEscortPaused(true);
-                break;
-            case 18:
-                DoScriptText(WINDSOR_OPEN_CAREFUL, me, nullptr);
-                SetEscortPaused(true);
-                break;
-            case 24:
-                DoScriptText(WINDSOR_SAY_OPEN_HURRY, me, nullptr);
-                SetEscortPaused(true);
-                break;
-            case 25:
-                DoScriptText(WINDSOR_SAY_OPEN_TOBIAS, me, nullptr);
-                SetEscortPaused(true);
-                break;
-            case 30:
-                DoScriptText(WINDSOR_SAY_MADE_IT, me, nullptr);
-                DoScriptText(WINDSOR_SAY_END, me, nullptr);
-                SetRun();
-                break;
-            case 31:
-                if (player->GetGroup())
-                    player->GroupEventHappens(QUEST_JAILBREAK, me);
-                else
-                    player->AreaExploredOrEventHappens(QUEST_JAILBREAK);
-
-                me->DisappearAndDie();
-                break;
         }
-    }
+        
+        void WaypointReached(uint32 i)
+        override {
+            Player* player = GetPlayerForEscort();
+            if (!player)
+                return;
     
-    void UpdateAI(uint32 const diff)
-    override {
-        npc_escortAI::UpdateAI(diff);
+            switch(i)
+            {
+                case 5:
+                    DoScriptText(WINDSOR_SAY_OPENDOOR, me, player);
+                    SetEscortPaused(true);
+                    break;
+                case 6:
+                    DoScriptText(WINDSOR_SAY_ALMOST_THERE, me, player);
+                    break;
+                case 9:
+                {
+                    if (GameObject* door = me->FindNearestGameObject(170561, 10.0f))
+                        door->UseDoorOrButton();
+                    DoScriptText(WINDSOR_SAY_ENTER, me, player);
+                    break;
+                }
+                case 10:
+                    me->UpdateEntry(9682);
+                    DoScriptText(WINDSOR_SAY_ROCK, me, player);
+                    break;
+                case 11:
+                    DoScriptText(WINDSOR_SAY_FIND_TOBIAS, me, nullptr);
+                    break;
+                case 16:
+                    DoScriptText(WINDSOR_SAY_OPEN_IT, me, nullptr);
+                    SetEscortPaused(true);
+                    break;
+                case 18:
+                    DoScriptText(WINDSOR_OPEN_CAREFUL, me, nullptr);
+                    SetEscortPaused(true);
+                    break;
+                case 24:
+                    DoScriptText(WINDSOR_SAY_OPEN_HURRY, me, nullptr);
+                    SetEscortPaused(true);
+                    break;
+                case 25:
+                    DoScriptText(WINDSOR_SAY_OPEN_TOBIAS, me, nullptr);
+                    SetEscortPaused(true);
+                    break;
+                case 30:
+                    DoScriptText(WINDSOR_SAY_MADE_IT, me, nullptr);
+                    DoScriptText(WINDSOR_SAY_END, me, nullptr);
+                    SetRun();
+                    break;
+                case 31:
+                    if (player->GetGroup())
+                        player->GroupEventHappens(QUEST_JAILBREAK, me);
+                    else
+                        player->AreaExploredOrEventHappens(QUEST_JAILBREAK);
+    
+                    me->DisappearAndDie();
+                    break;
+            }
+        }
         
-        if (!UpdateVictim())
-            return;
-        
-        DoMeleeAttackIfReady();
+        void UpdateAI(uint32 const diff)
+        override {
+            npc_escortAI::UpdateAI(diff);
+            
+            if (!UpdateVictim())
+                return;
+            
+            DoMeleeAttackIfReady();
+        }
+
+        virtual void QuestAccept(Player* player, Quest const* quest) override
+        {
+            if (quest->GetQuestId() == QUEST_JAILBREAK) {
+                DoScriptText(WINDSOR_SAY_START, me, nullptr);
+                me->SetFaction(11);
+
+                npc_escortAI::Start(true, true, false, player->GetGUID(), me->GetEntry());
+            }
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_windsor_brdAI(creature);
     }
 };
 
-CreatureAI* GetAI_npc_windsor_brd(Creature* creature)
-{
-    return new npc_windsor_brdAI(creature);
-}
 
-bool QuestAccept_npc_windsor_brd(Player* player, Creature* creature, const Quest* quest)
-{
-    if (quest->GetQuestId() == QUEST_JAILBREAK) {
-        if (npc_windsor_brdAI* escortAI = CAST_AI(npc_windsor_brdAI, creature->AI())) {
-            DoScriptText(WINDSOR_SAY_START, creature, nullptr);
-            creature->SetFaction(11);
-
-            escortAI->Start(true, true, false, player->GetGUID(), creature->GetEntry());
-        }
-    }
-
-    return true;
-}
 
 
 class WindsorJailbreakDoor : public GameObjectScript
@@ -1493,84 +1582,94 @@ public:
     WindsorJailbreakDoor() : GameObjectScript("windsor_jailbreak_door")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* go) override
+    struct WindsorJailbreakDoorAI : public GameObjectAI
     {
-        Creature* windsor = player->FindNearestCreature(9023, 30.0f, true);
-        if (!windsor)
-            windsor = player->FindNearestCreature(9682, 30.0f, true);
-        if (!windsor)
+        WindsorJailbreakDoorAI(GameObject* obj) : GameObjectAI(obj) { }
+
+        bool GossipHello(Player* player) override
+        {
+            Creature* windsor = player->FindNearestCreature(9023, 30.0f, true);
+            if (!windsor)
+                windsor = player->FindNearestCreature(9682, 30.0f, true);
+            if (!windsor)
+                return false;
+
+            switch (me->GetEntry()) {
+            case 170562:
+            {
+                if (Creature* dughal = player->FindNearestCreature(9022, 50.0f, true)) {
+                    DoScriptText(WINDSOR_SAY_DUGHAL, dughal, player);
+                    DoScriptText(WINDSOR_SAY_FREEPRISONER, windsor, nullptr);
+                    dughal->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
+                    dughal->GetMotionMaster()->MovePoint(0, 324.853241, -197.296951, -77.042488);
+                }
+
+                ((npc_escortAI*)windsor->AI())->SetEscortPaused(false);
+                break;
+            }
+            case 170568:
+            {
+                if (Creature* jaz = player->FindNearestCreature(9681, 50.0f, true)) {
+                    DoScriptText(WINDSOR_SAY_LEAVE_MARK, windsor, nullptr);
+                    jaz->SetFaction(FACTION_MONSTER);
+                    jaz->AI()->AttackStart(windsor);
+                    windsor->AI()->AttackStart(jaz);
+                }
+                if (Creature* ograbisi = player->FindNearestCreature(9677, 50.0f, true)) {
+                    ograbisi->SetFaction(FACTION_MONSTER);
+                    ograbisi->AI()->AttackStart(windsor);
+                }
+
+                ((npc_escortAI*)windsor->AI())->SetEscortPaused(false);
+                break;
+            }
+            case 170569:
+            {
+                if (Creature* dinger = player->FindNearestCreature(9678, 50.0f, true)) {
+                    DoScriptText(WINDSOR_SAY_DINGER, dinger, nullptr);
+                    dinger->SetFaction(FACTION_MONSTER);
+                    dinger->AI()->AttackStart(windsor);
+                    windsor->AI()->AttackStart(dinger);
+                    DoScriptText(WINDSOR_SAY_ATTACK_DINGER, windsor, nullptr);
+                }
+
+                ((npc_escortAI*)windsor->AI())->SetEscortPaused(false);
+                break;
+            }
+            case 170567:
+            {
+                if (Creature* crestKiller = player->FindNearestCreature(9680, 50.0f, true)) {
+                    DoScriptText(WINDSOR_SAY_CREST, crestKiller, nullptr);
+                    crestKiller->SetFaction(FACTION_MONSTER);
+                    crestKiller->AI()->AttackStart(windsor);
+                    windsor->AI()->AttackStart(crestKiller);
+                    DoScriptText(WINDSOR_ATTACK_CREST, windsor, nullptr);
+                }
+
+                ((npc_escortAI*)windsor->AI())->SetEscortPaused(false);
+                break;
+            }
+            case 170566:
+            {
+                if (Creature* tobias = player->FindNearestCreature(9679, 50.0f, true)) {
+                    DoScriptText(WINDSOR_SAY_TOBIAS_FREE, tobias, nullptr);
+                    tobias->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
+                    tobias->GetMotionMaster()->MovePoint(0, 625.452820, -241.325729, -82.321175);
+                    DoScriptText(WINDSOR_SAY_CONGRATS, windsor, player);
+                }
+
+                ((npc_escortAI*)windsor->AI())->SetEscortPaused(false);
+                break;
+            }
+            }
+
             return false;
-
-        switch (go->GetEntry()) {
-        case 170562:
-        {
-            if (Creature* dughal = player->FindNearestCreature(9022, 50.0f, true)) {
-                DoScriptText(WINDSOR_SAY_DUGHAL, dughal, player);
-                DoScriptText(WINDSOR_SAY_FREEPRISONER, windsor, nullptr);
-                dughal->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
-                dughal->GetMotionMaster()->MovePoint(0, 324.853241, -197.296951, -77.042488);
-            }
-
-            ((npc_escortAI*)windsor->AI())->SetEscortPaused(false);
-            break;
         }
-        case 170568:
-        {
-            if (Creature* jaz = player->FindNearestCreature(9681, 50.0f, true)) {
-                DoScriptText(WINDSOR_SAY_LEAVE_MARK, windsor, nullptr);
-                jaz->SetFaction(14);
-                jaz->AI()->AttackStart(windsor);
-                windsor->AI()->AttackStart(jaz);
-            }
-            if (Creature* ograbisi = player->FindNearestCreature(9677, 50.0f, true)) {
-                ograbisi->SetFaction(14);
-                ograbisi->AI()->AttackStart(windsor);
-            }
+    };
 
-            ((npc_escortAI*)windsor->AI())->SetEscortPaused(false);
-            break;
-        }
-        case 170569:
-        {
-            if (Creature* dinger = player->FindNearestCreature(9678, 50.0f, true)) {
-                DoScriptText(WINDSOR_SAY_DINGER, dinger, nullptr);
-                dinger->SetFaction(14);
-                dinger->AI()->AttackStart(windsor);
-                windsor->AI()->AttackStart(dinger);
-                DoScriptText(WINDSOR_SAY_ATTACK_DINGER, windsor, nullptr);
-            }
-
-            ((npc_escortAI*)windsor->AI())->SetEscortPaused(false);
-            break;
-        }
-        case 170567:
-        {
-            if (Creature* crestKiller = player->FindNearestCreature(9680, 50.0f, true)) {
-                DoScriptText(WINDSOR_SAY_CREST, crestKiller, nullptr);
-                crestKiller->SetFaction(14);
-                crestKiller->AI()->AttackStart(windsor);
-                windsor->AI()->AttackStart(crestKiller);
-                DoScriptText(WINDSOR_ATTACK_CREST, windsor, nullptr);
-            }
-
-            ((npc_escortAI*)windsor->AI())->SetEscortPaused(false);
-            break;
-        }
-        case 170566:
-        {
-            if (Creature* tobias = player->FindNearestCreature(9679, 50.0f, true)) {
-                DoScriptText(WINDSOR_SAY_TOBIAS_FREE, tobias, nullptr);
-                tobias->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
-                tobias->GetMotionMaster()->MovePoint(0, 625.452820, -241.325729, -82.321175);
-                DoScriptText(WINDSOR_SAY_CONGRATS, windsor, player);
-            }
-
-            ((npc_escortAI*)windsor->AI())->SetEscortPaused(false);
-            break;
-        }
-        }
-
-        return false;
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new WindsorJailbreakDoorAI(go);
     }
 };
 
@@ -1580,70 +1679,22 @@ public:
 
 void AddSC_blackrock_depths()
 {
-    OLDScript *newscript;
 
     new ATRingOfLaw();
 
-     newscript = new OLDScript;
-     newscript->Name = "npc_grimstone";
-     newscript->GetAI = &GetAI_npc_grimstone;
-     sScriptMgr->RegisterOLDScript(newscript);
+    new npc_grimstone();
 
-    newscript = new OLDScript;
-    newscript->Name="mob_phalanx";
-    newscript->GetAI = &GetAI_mob_phalanx;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new mob_phalanx();
 
-    newscript = new OLDScript;
-    newscript->Name="npc_kharan_mighthammer";
-    newscript->OnGossipHello =  &GossipHello_npc_kharan_mighthammer;
-    newscript->OnGossipSelect = &GossipSelect_npc_kharan_mighthammer;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_kharan_mighthammer();
 
-    newscript = new OLDScript;
-    newscript->Name="npc_lokhtos_darkbargainer";
-    newscript->OnGossipHello =  &GossipHello_npc_lokhtos_darkbargainer;
-    newscript->OnGossipSelect = &GossipSelect_npc_lokhtos_darkbargainer;
-    sScriptMgr->RegisterOLDScript(newscript);
-/*
-    newscript = new OLDScript;
-    newscript->Name="npc_dughal_stormwing";
-    newscript->OnGossipHello =  &GossipHello_npc_dughal_stormwing;
-    newscript->OnGossipSelect = &GossipSelect_npc_dughal_stormwing;
-    newscript->GetAI = &GetAI_npc_dughal_stormwing;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_lokhtos_darkbargainer();
 
-    newscript = new OLDScript;
-    newscript->Name="npc_tobias_seecher";
-    newscript->OnGossipHello =  &GossipHello_npc_tobias_seecher;
-    newscript->OnGossipSelect = &GossipSelect_npc_tobias_seecher;
-    newscript->GetAI = &GetAI_npc_tobias_seecher;
-    sScriptMgr->RegisterOLDScript(newscript);
-
-    newscript = new OLDScript;
-    newscript->Name="npc_marshal_windsor";
-    newscript->OnQuestAccept = &QuestAccept_npc_marshal_windsor;
-    newscript->GetAI = &GetAI_npc_marshal_windsor;
-    sScriptMgr->RegisterOLDScript(newscript);
-
-    newscript = new OLDScript;
-    newscript->Name="npc_marshal_reginald_windsor";
-    newscript->GetAI = &GetAI_npc_marshal_reginald_windsor;
-    sScriptMgr->RegisterOLDScript(newscript);*/
-
-    newscript = new OLDScript;
-    newscript->Name = "npc_rocknot";
-    newscript->GetAI = &GetAI_npc_rocknot;
-    newscript->OnQuestReward = &ChooseReward_npc_rocknot;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_rocknot();
 
     new DarkKeeperPortrait();
     
-    newscript = new OLDScript;
-    newscript->Name = "npc_windsor_brd";
-    newscript->GetAI = &GetAI_npc_windsor_brd;
-    newscript->OnQuestAccept = &QuestAccept_npc_windsor_brd;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_windsor_brd();
     
     new WindsorJailbreakDoor();
 }

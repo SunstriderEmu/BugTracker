@@ -38,92 +38,102 @@ EndScriptData */
 #define ENTRY_SCARLET_TRAINEE       6575
 #define ENTRY_SCARLET_MYRMIDON      4295
 
-struct boss_herodAI : public ScriptedAI
+
+class boss_herod : public CreatureScript
 {
-    boss_herodAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_herod() : CreatureScript("boss_herod")
+    { }
 
-    bool Enrage;
-
-    uint32 Cleave_Timer;
-    uint32 Whirlwind_Timer;
-
-
-    void Reset()
-    override {
-        Enrage = false;
-        Cleave_Timer = 12000;
-        Whirlwind_Timer = 60000;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-        DoScriptText(SAY_AGGRO, me);
-        DoCast(me,SPELL_RUSHINGCHARGE);
-    }
-
-     void KilledUnit(Unit *victim)
-     override {
-         DoScriptText(SAY_KILL, me);
-     }
-
-     void JustDied(Unit* killer)
-     override {
-         for(uint8 i = 0; i < 20; ++i)
-             me->SummonCreature(ENTRY_SCARLET_TRAINEE, 1939.18, -431.58, 17.09, 6.22, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
-     }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim())
-            return;
-
-        //If we are <30% hp goes Enraged
-        if (!Enrage && me->GetHealth()*100 / me->GetMaxHealth() <= 30 && !me->IsNonMeleeSpellCast(false))
-        {
-            DoScriptText(EMOTE_ENRAGE, me);
-            DoScriptText(SAY_ENRAGE, me);
-            DoCast(me,SPELL_FRENZY);
-            Enrage = true;
-        }
-
-        //Cleave_Timer
-        if (Cleave_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_CLEAVE);
+    class boss_herodAI : public ScriptedAI
+    {
+        public:
+        boss_herodAI(Creature *c) : ScriptedAI(c) {}
+    
+        bool Enrage;
+    
+        uint32 Cleave_Timer;
+        uint32 Whirlwind_Timer;
+    
+    
+        void Reset()
+        override {
+            Enrage = false;
             Cleave_Timer = 12000;
-        }else Cleave_Timer -= diff;
+            Whirlwind_Timer = 60000;
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+            DoScriptText(SAY_AGGRO, me);
+            DoCast(me,SPELL_RUSHINGCHARGE);
+        }
+    
+         void KilledUnit(Unit *victim)
+         override {
+             DoScriptText(SAY_KILL, me);
+         }
+    
+         void JustDied(Unit* killer)
+         override {
+             for(uint8 i = 0; i < 20; ++i)
+                 me->SummonCreature(ENTRY_SCARLET_TRAINEE, 1939.18, -431.58, 17.09, 6.22, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
+         }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim())
+                return;
+    
+            //If we are <30% hp goes Enraged
+            if (!Enrage && me->GetHealthPct() <= 30 && !me->IsNonMeleeSpellCast(false))
+            {
+                DoScriptText(EMOTE_ENRAGE, me);
+                DoScriptText(SAY_ENRAGE, me);
+                DoCast(me,SPELL_FRENZY);
+                Enrage = true;
+            }
+    
+            //Cleave_Timer
+            if (Cleave_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_CLEAVE);
+                Cleave_Timer = 12000;
+            }else Cleave_Timer -= diff;
+    
+            // Whirlwind_Timer
+            if (Whirlwind_Timer < diff)
+            {
+                DoScriptText(SAY_WHIRLWIND, me);
+                DoCast(me->GetVictim(),SPELL_WHIRLWIND);
+                Whirlwind_Timer = 30000;
+            }else Whirlwind_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        // Whirlwind_Timer
-        if (Whirlwind_Timer < diff)
-        {
-            DoScriptText(SAY_WHIRLWIND, me);
-            DoCast(me->GetVictim(),SPELL_WHIRLWIND);
-            Whirlwind_Timer = 30000;
-        }else Whirlwind_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_herodAI(creature);
     }
 };
 
-CreatureAI* GetAI_boss_herod(Creature *_Creature)
-{
-    return new boss_herodAI (_Creature);
-}
 
 float Location[12][3]=
 {
-    {1945.81, -431.54, 16.36},
-    {1946.21, -436.41, 16.36},
-    {1950.01, -444.11, 14.63},
-    {1956.08, -449.34, 13.12},
-    {1966.59, -450.55, 11.27},
-    {1976.09, -447.51, 11.27},
-    {1983.42, -435.85, 11.27},
-    {1978.17, -428.81, 11.27},
-    {1973.97, -422.08, 9.04},
-    {1963.84, -418.90, 6.17},
-    {1961.22, -422.74, 6.17},
-    {1964.80, -431.26, 6.17}
+    {1945.81f, -431.54f, 16.36f},
+    {1946.21f, -436.41f, 16.36f},
+    {1950.01f, -444.11f, 14.63f},
+    {1956.08f, -449.34f, 13.12f},
+    {1966.59f, -450.55f, 11.27f},
+    {1976.09f, -447.51f, 11.27f},
+    {1983.42f, -435.85f, 11.27f},
+    {1978.17f, -428.81f, 11.27f},
+    {1973.97f, -422.08f, 9.04f},
+    {1963.84f, -418.90f, 6.17f},
+    {1961.22f, -422.74f, 6.17f},
+    {1964.80f, -431.26f, 6.17f}
 };
 
 uint32 Wait[12][1]=
@@ -131,57 +141,55 @@ uint32 Wait[12][1]=
     {0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{600000}
 };
 
-struct mob_scarlet_traineeAI : public npc_escortAI
+
+class mob_scarlet_trainee : public CreatureScript
 {
-    mob_scarlet_traineeAI(Creature *c) : npc_escortAI(c) {}
+public:
+    mob_scarlet_trainee() : CreatureScript("mob_scarlet_trainee")
+    { }
 
-    uint32 Start_Timer;
-
-    void WaypointReached(uint32 i) override { }
-
-    void Reset()
-    override {
-        Start_Timer = urand(1500,4500);
-    }
-
-    void EnterCombat(Unit* who) override { }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (Start_Timer)
-        {
-            if (Start_Timer < diff)
-            {
-                Start(true,true,true);
-                Start_Timer = 0;
-            }else Start_Timer -= diff;
+    class mob_scarlet_traineeAI : public npc_escortAI
+    {
+        public:
+        mob_scarlet_traineeAI(Creature *c) : npc_escortAI(c) {}
+    
+        uint32 Start_Timer;
+    
+        void WaypointReached(uint32 i) override { }
+    
+        void Reset()
+        override {
+            Start_Timer = urand(1500,4500);
         }
+    
+        void EnterCombat(Unit* who) override { }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (Start_Timer)
+            {
+                if (Start_Timer < diff)
+                {
+                    Start(true,true,true);
+                    Start_Timer = 0;
+                }else Start_Timer -= diff;
+            }
+    
+            npc_escortAI::UpdateAI(diff);
+        }
+    };
 
-        npc_escortAI::UpdateAI(diff);
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new mob_scarlet_traineeAI(creature);
     }
 };
 
-CreatureAI* GetAI_mob_scarlet_trainee(Creature* _Creature)
-{
-    auto  thisAI = new mob_scarlet_traineeAI(_Creature);
-
-    for(uint32 i = 0; i < 12; ++i)
-        thisAI->AddWaypoint(i, Location[i][0], Location[i][1], Location[i][2], Wait[i][0]);
-
-    return ((CreatureAI*)thisAI);
-}
 
 void AddSC_boss_herod()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_herod";
-    newscript->GetAI = &GetAI_boss_herod;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_herod();
 
-    newscript = new OLDScript;
-    newscript->Name = "mob_scarlet_trainee";
-    newscript->GetAI = &GetAI_mob_scarlet_trainee;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new mob_scarlet_trainee();
 }
 

@@ -35,95 +35,101 @@ EndScriptData */
 #define SPELL_EXPLODING_BREAKER_H   40059
 #define SPELL_DOMINATION            30923
 
-struct boss_the_makerAI : public ScriptedAI
+
+class boss_the_maker : public CreatureScript
 {
-    boss_the_makerAI(Creature *c) : ScriptedAI(c) 
+public:
+    boss_the_maker() : CreatureScript("boss_the_maker")
+    { }
+
+    class boss_the_makerAI : public ScriptedAI
     {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-        HeroicMode = me->GetMap()->IsHeroic();
-    }
-
-    InstanceScript* pInstance;
-
-    uint32 ExplodingBreaker_Timer;
-    uint32 Domination_Timer;
-
-    bool HeroicMode;
-
-    void Reset()
-    override {
-        ExplodingBreaker_Timer = 9000;
-        Domination_Timer = 20000 + rand()%20000;
-        if (pInstance && me->IsAlive())
-            pInstance->SetData(DATA_MAKEREVENT, NOT_STARTED);
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-        switch(rand()%3)
+        public:
+        boss_the_makerAI(Creature *c) : ScriptedAI(c) 
         {
-            case 0: DoScriptText(SAY_AGGRO_1, me); break;
-            case 1: DoScriptText(SAY_AGGRO_2, me); break;
-            case 2: DoScriptText(SAY_AGGRO_3, me); break;
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
+            HeroicMode = me->GetMap()->IsHeroic();
         }
-        
-        if (pInstance)
-            pInstance->SetData(DATA_MAKEREVENT, IN_PROGRESS);
-    }
-
-    void KilledUnit(Unit* victim)
-    override {
-        switch(rand()%2)
-        {
-            case 0: DoScriptText(SAY_KILL_1, me); break;
-            case 1: DoScriptText(SAY_KILL_2, me); break;
+    
+        InstanceScript* pInstance;
+    
+        uint32 ExplodingBreaker_Timer;
+        uint32 Domination_Timer;
+    
+        bool HeroicMode;
+    
+        void Reset()
+        override {
+            ExplodingBreaker_Timer = 9000;
+            Domination_Timer = 20000 + rand()%20000;
+            if (pInstance && me->IsAlive())
+                pInstance->SetData(DATA_MAKEREVENT, NOT_STARTED);
         }
-    }
-
-    void JustDied(Unit* Killer)
-    override {
-        DoScriptText(SAY_DIE, me);
-        
-        if (pInstance)
-            pInstance->SetData(DATA_MAKEREVENT, DONE);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim())
-            return;
-
-        if (ExplodingBreaker_Timer <= diff)
-        {
-            if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM,0))
-                DoCast(pTarget,HeroicMode ? SPELL_EXPLODING_BREAKER_H : SPELL_EXPLODING_BREAKER);
-                ExplodingBreaker_Timer = 9000+rand()%2000;
+    
+        void EnterCombat(Unit *who)
+        override {
+            switch(rand()%3)
+            {
+                case 0: DoScriptText(SAY_AGGRO_1, me); break;
+                case 1: DoScriptText(SAY_AGGRO_2, me); break;
+                case 2: DoScriptText(SAY_AGGRO_3, me); break;
+            }
+            
+            if (pInstance)
+                pInstance->SetData(DATA_MAKEREVENT, IN_PROGRESS);
         }
-        else ExplodingBreaker_Timer -=diff;
-
-        if (Domination_Timer <= diff)
-        {
-            Unit *pTarget;
-            pTarget = SelectTarget(SELECT_TARGET_RANDOM,0);
-            DoCast(pTarget,SPELL_DOMINATION);
-            Domination_Timer = 40000;
+    
+        void KilledUnit(Unit* victim)
+        override {
+            switch(rand()%2)
+            {
+                case 0: DoScriptText(SAY_KILL_1, me); break;
+                case 1: DoScriptText(SAY_KILL_2, me); break;
+            }
         }
-        else Domination_Timer -=diff;
+    
+        void JustDied(Unit* Killer)
+        override {
+            DoScriptText(SAY_DIE, me);
+            
+            if (pInstance)
+                pInstance->SetData(DATA_MAKEREVENT, DONE);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim())
+                return;
+    
+            if (ExplodingBreaker_Timer <= diff)
+            {
+                if (Unit *pTarget = SelectTarget(SELECT_TARGET_RANDOM,0))
+                    DoCast(pTarget,HeroicMode ? SPELL_EXPLODING_BREAKER_H : SPELL_EXPLODING_BREAKER);
+                    ExplodingBreaker_Timer = 9000+rand()%2000;
+            }
+            else ExplodingBreaker_Timer -=diff;
+    
+            if (Domination_Timer <= diff)
+            {
+                Unit *pTarget;
+                pTarget = SelectTarget(SELECT_TARGET_RANDOM,0);
+                DoCast(pTarget,SPELL_DOMINATION);
+                Domination_Timer = 40000;
+            }
+            else Domination_Timer -=diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_the_makerAI(creature);
     }
 };
 
-CreatureAI* GetAI_boss_the_makerAI(Creature* pCreature)
-{
-    return new boss_the_makerAI (pCreature);
-}
 
 void AddSC_boss_the_maker()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_the_maker";
-    newscript->GetAI = &GetAI_boss_the_makerAI;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_the_maker();
 }

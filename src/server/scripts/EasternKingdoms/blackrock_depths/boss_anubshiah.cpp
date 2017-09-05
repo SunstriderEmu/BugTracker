@@ -32,84 +32,90 @@ enum Spells
     SPELL_ENVELOPINGWEB                                    = 15471
 };
 
-struct boss_anubshiahAI : public ScriptedAI
+class boss_anubshiah : public CreatureScript
 {
-    boss_anubshiahAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_anubshiah() : CreatureScript("boss_anubshiah")
+    { }
 
-    uint32 ShadowBolt_Timer;
-    uint32 CurseOfTongues_Timer;
-    uint32 CurseOfWeakness_Timer;
-    uint32 DemonArmor_Timer;
-    uint32 EnvelopingWeb_Timer;
-
-    void Reset() override
+    class boss_anubshiahAI : public ScriptedAI
     {
-        ShadowBolt_Timer = 7000;
-        CurseOfTongues_Timer = 24000;
-        CurseOfWeakness_Timer = 12000;
-        DemonArmor_Timer = 3000;
-        EnvelopingWeb_Timer = 16000;
-    }
-
-    void UpdateAI(const uint32 diff) override
-    {
-        //Return since we have no target
-        if (!UpdateVictim() )
-            return;
-
-        //ShadowBolt_Timer
-        if (ShadowBolt_Timer < diff)
+        public:
+        boss_anubshiahAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 ShadowBolt_Timer;
+        uint32 CurseOfTongues_Timer;
+        uint32 CurseOfWeakness_Timer;
+        uint32 DemonArmor_Timer;
+        uint32 EnvelopingWeb_Timer;
+    
+        void Reset() override
         {
-            DoCast(me->GetVictim(),SPELL_SHADOWBOLT);
             ShadowBolt_Timer = 7000;
-        }else ShadowBolt_Timer -= diff;
-
-        //CurseOfTongues_Timer
-        if (CurseOfTongues_Timer < diff)
+            CurseOfTongues_Timer = 24000;
+            CurseOfWeakness_Timer = 12000;
+            DemonArmor_Timer = 3000;
+            EnvelopingWeb_Timer = 16000;
+        }
+    
+        void UpdateAI(const uint32 diff) override
         {
-            Unit* target = nullptr;
-            target = SelectTarget(SELECT_TARGET_RANDOM,0);
-            if (target) DoCast(target,SPELL_CURSEOFTONGUES);
-            CurseOfTongues_Timer = 18000;
-        }else CurseOfTongues_Timer -= diff;
+            //Return since we have no target
+            if (!UpdateVictim() )
+                return;
+    
+            //ShadowBolt_Timer
+            if (ShadowBolt_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_SHADOWBOLT);
+                ShadowBolt_Timer = 7000;
+            }else ShadowBolt_Timer -= diff;
+    
+            //CurseOfTongues_Timer
+            if (CurseOfTongues_Timer < diff)
+            {
+                Unit* target = nullptr;
+                target = SelectTarget(SELECT_TARGET_RANDOM,0);
+                if (target) DoCast(target,SPELL_CURSEOFTONGUES);
+                CurseOfTongues_Timer = 18000;
+            }else CurseOfTongues_Timer -= diff;
+    
+            //CurseOfWeakness_Timer
+            if (CurseOfWeakness_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_CURSEOFWEAKNESS);
+                CurseOfWeakness_Timer = 45000;
+            }else CurseOfWeakness_Timer -= diff;
+    
+            //DemonArmor_Timer
+            if (DemonArmor_Timer < diff)
+            {
+                DoCast(me,SPELL_DEMONARMOR);
+                DemonArmor_Timer = 300000;
+            }else DemonArmor_Timer -= diff;
+    
+            //EnvelopingWeb_Timer
+            if (EnvelopingWeb_Timer < diff)
+            {
+                Unit* target = nullptr;
+                target = SelectTarget(SELECT_TARGET_RANDOM,0);
+                if (target) DoCast(target,SPELL_ENVELOPINGWEB);
+                EnvelopingWeb_Timer = 12000;
+            }else EnvelopingWeb_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        //CurseOfWeakness_Timer
-        if (CurseOfWeakness_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_CURSEOFWEAKNESS);
-            CurseOfWeakness_Timer = 45000;
-        }else CurseOfWeakness_Timer -= diff;
-
-        //DemonArmor_Timer
-        if (DemonArmor_Timer < diff)
-        {
-            DoCast(me,SPELL_DEMONARMOR);
-            DemonArmor_Timer = 300000;
-        }else DemonArmor_Timer -= diff;
-
-        //EnvelopingWeb_Timer
-        if (EnvelopingWeb_Timer < diff)
-        {
-            Unit* target = nullptr;
-            target = SelectTarget(SELECT_TARGET_RANDOM,0);
-            if (target) DoCast(target,SPELL_ENVELOPINGWEB);
-            EnvelopingWeb_Timer = 12000;
-        }else EnvelopingWeb_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_anubshiahAI(creature);
     }
 };
-CreatureAI* GetAI_boss_anubshiah(Creature *pCreature)
-{
-    return new boss_anubshiahAI (pCreature);
-}
+
 
 void AddSC_boss_anubshiah()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_anubshiah";
-    newscript->GetAI = &GetAI_boss_anubshiah;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_anubshiah();
 }
 

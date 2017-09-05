@@ -30,79 +30,85 @@ EndScriptData */
 #define SAY_AGGRO           "None may steal the secrets of the makers!"
 #define SOUND_AGGRO         5851
 
-struct boss_ironayaAI : public ScriptedAI
+
+class boss_ironaya : public CreatureScript
 {
-    boss_ironayaAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_ironaya() : CreatureScript("boss_ironaya")
+    { }
 
-    uint32 Arcing_Timer;
-    bool hasCastedWstomp;
-    bool hasCastedKnockaway;
-
-    void Reset()
-    override {
-        Arcing_Timer = 3000;
-        hasCastedKnockaway = false;
-        hasCastedWstomp = false;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-        me->Yell(SAY_AGGRO,LANG_UNIVERSAL,nullptr);
-        DoPlaySoundToSet(me,SOUND_AGGRO);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        //Return since we have no target
-        if (!UpdateVictim())
-            return;
-
-        //If we are <50% hp do knockaway ONCE
-        if (!hasCastedKnockaway && me->GetHealth()*2 < me->GetMaxHealth())
-        {
-            me->CastSpell(me->GetVictim(),SPELL_KNOCKAWAY, true);
-
-            // current aggro target is knocked away pick new target
-            Unit* Target = SelectTarget(SELECT_TARGET_TOPAGGRO, 0);
-
-            if (!Target || Target == me->GetVictim())
-                Target = SelectTarget(SELECT_TARGET_TOPAGGRO, 1);
-
-            if (Target)
-                me->TauntApply(Target);
-
-            //Shouldn't cast this agian
-            hasCastedKnockaway = true;
+    class boss_ironayaAI : public ScriptedAI
+    {
+        public:
+        boss_ironayaAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 Arcing_Timer;
+        bool hasCastedWstomp;
+        bool hasCastedKnockaway;
+    
+        void Reset()
+        override {
+            Arcing_Timer = 3000;
+            hasCastedKnockaway = false;
+            hasCastedWstomp = false;
         }
-
-        //Arcing_Timer
-        if (Arcing_Timer < diff)
-        {
-            DoCast(me,SPELL_ARCINGSMASH);
-            Arcing_Timer = 13000;
-        }else Arcing_Timer -= diff;
-
-        if (!hasCastedWstomp && me->GetHealth()*4 < me->GetMaxHealth())
-        {
-            DoCast(me,SPELL_WSTOMP);
-            hasCastedWstomp = true;
+    
+        void EnterCombat(Unit *who)
+        override {
+            me->Yell(SAY_AGGRO,LANG_UNIVERSAL,nullptr);
+            DoPlaySoundToSet(me,SOUND_AGGRO);
         }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            //Return since we have no target
+            if (!UpdateVictim())
+                return;
+    
+            //If we are <50% hp do knockaway ONCE
+            if (!hasCastedKnockaway && me->GetHealth()*2 < me->GetMaxHealth())
+            {
+                me->CastSpell(me->GetVictim(),SPELL_KNOCKAWAY, true);
+    
+                // current aggro target is knocked away pick new target
+                Unit* Target = SelectTarget(SELECT_TARGET_TOPAGGRO, 0);
+    
+                if (!Target || Target == me->GetVictim())
+                    Target = SelectTarget(SELECT_TARGET_TOPAGGRO, 1);
+    
+                if (Target)
+                    me->TauntApply(Target);
+    
+                //Shouldn't cast this agian
+                hasCastedKnockaway = true;
+            }
+    
+            //Arcing_Timer
+            if (Arcing_Timer < diff)
+            {
+                DoCast(me,SPELL_ARCINGSMASH);
+                Arcing_Timer = 13000;
+            }else Arcing_Timer -= diff;
+    
+            if (!hasCastedWstomp && me->GetHealth()*4 < me->GetMaxHealth())
+            {
+                DoCast(me,SPELL_WSTOMP);
+                hasCastedWstomp = true;
+            }
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_ironayaAI(creature);
     }
 };
 
-CreatureAI* GetAI_boss_ironaya(Creature *_Creature)
-{
-    return new boss_ironayaAI (_Creature);
-}
 
 void AddSC_boss_ironaya()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_ironaya";
-    newscript->GetAI = &GetAI_boss_ironaya;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_ironaya();
 }
 

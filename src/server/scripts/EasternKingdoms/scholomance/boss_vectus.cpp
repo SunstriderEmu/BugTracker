@@ -27,70 +27,76 @@ EndScriptData */
 #define SPELL_BLASTWAVE         13021
 #define SPELL_FRENZY            28371
 
-struct boss_vectusAI : public ScriptedAI
+class boss_vectus : public CreatureScript
 {
-    boss_vectusAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_vectus() : CreatureScript("boss_vectus")
+    { }
 
-    uint32 FireShield_Timer;
-    uint32 BlastWave_Timer;
-    uint32 Frenzy_Timer;
-
-    void Reset()
-    override {
-        FireShield_Timer = 2000;
-        BlastWave_Timer = 14000;
-        Frenzy_Timer = 0;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim())
-            return;
-
-        //FireShield_Timer
-        if (FireShield_Timer < diff)
-        {
-            DoCast(me, SPELL_FIRESHIELD);
-            FireShield_Timer = 90000;
-        }else FireShield_Timer -= diff;
-
-        //BlastWave_Timer
-        if (BlastWave_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_BLASTWAVE);
-            BlastWave_Timer = 12000;
-        }else BlastWave_Timer -= diff;
-
-        //Frenzy_Timer
-        if ( me->GetHealth()*100 / me->GetMaxHealth() < 25 )
-        {
-            if (Frenzy_Timer < diff)
-            {
-                DoCast(me,SPELL_FRENZY);
-                me->TextEmote("goes into a killing frenzy!",nullptr);
-
-                Frenzy_Timer = 24000;
-            }else Frenzy_Timer -= diff;
+    class boss_vectusAI : public ScriptedAI
+    {
+        public:
+        boss_vectusAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 FireShield_Timer;
+        uint32 BlastWave_Timer;
+        uint32 Frenzy_Timer;
+    
+        void Reset()
+        override {
+            FireShield_Timer = 2000;
+            BlastWave_Timer = 14000;
+            Frenzy_Timer = 0;
         }
+    
+        void EnterCombat(Unit *who)
+        override {
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim())
+                return;
+    
+            //FireShield_Timer
+            if (FireShield_Timer < diff)
+            {
+                DoCast(me, SPELL_FIRESHIELD);
+                FireShield_Timer = 90000;
+            }else FireShield_Timer -= diff;
+    
+            //BlastWave_Timer
+            if (BlastWave_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_BLASTWAVE);
+                BlastWave_Timer = 12000;
+            }else BlastWave_Timer -= diff;
+    
+            //Frenzy_Timer
+            if ( me->GetHealthPct() < 25 )
+            {
+                if (Frenzy_Timer < diff)
+                {
+                    DoCast(me,SPELL_FRENZY);
+                    me->TextEmote("goes into a killing frenzy!",nullptr);
+    
+                    Frenzy_Timer = 24000;
+                }else Frenzy_Timer -= diff;
+            }
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_vectusAI(creature);
     }
 };
-CreatureAI* GetAI_boss_vectus(Creature *_Creature)
-{
-    return new boss_vectusAI (_Creature);
-}
+
 
 void AddSC_boss_vectus()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_vectus";
-    newscript->GetAI = &GetAI_boss_vectus;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_vectus();
 }
 

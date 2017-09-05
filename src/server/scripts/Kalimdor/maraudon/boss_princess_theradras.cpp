@@ -28,82 +28,88 @@ EndScriptData */
 #define SPELL_THRASH                3391
 #define SPELL_REPULSIVEGAZE         21869
 
-struct boss_ptheradrasAI : public ScriptedAI
+class boss_princess_theradras : public CreatureScript
 {
-    boss_ptheradrasAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_princess_theradras() : CreatureScript("boss_princess_theradras")
+    { }
 
-    uint32 Dustfield_Timer;
-    uint32 Boulder_Timer;
-    uint32 Thrash_Timer;
-    uint32 RepulsiveGaze_Timer;
+    class boss_ptheradrasAI : public ScriptedAI
+    {
+        public:
+        boss_ptheradrasAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 Dustfield_Timer;
+        uint32 Boulder_Timer;
+        uint32 Thrash_Timer;
+        uint32 RepulsiveGaze_Timer;
+    
+        void Reset()
+        override {
+            Dustfield_Timer = 8000;
+            Boulder_Timer = 2000;
+            Thrash_Timer = 5000;
+            RepulsiveGaze_Timer = 23000;
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+        }
+    
+        void JustDied(Unit* Killer)
+        override {
+            me->SummonCreature(12238,28.067,61.875,-123.405,4.67,TEMPSUMMON_TIMED_DESPAWN,600000);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim() )
+                return;
+    
+            //Dustfield_Timer
+            if (Dustfield_Timer < diff)
+            {
+                DoCast(me,SPELL_DUSTFIELD);
+                Dustfield_Timer = 14000;
+            }else Dustfield_Timer -= diff;
+    
+            //Boulder_Timer
+            if (Boulder_Timer < diff)
+            {
+                Unit* target = nullptr;
+                target = SelectTarget(SELECT_TARGET_RANDOM,0);
+                if( target )
+                    DoCast(target,SPELL_BOULDER);
+                Boulder_Timer = 10000;
+            }else Boulder_Timer -= diff;
+    
+            //RepulsiveGaze_Timer
+            if (RepulsiveGaze_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_REPULSIVEGAZE);
+                RepulsiveGaze_Timer = 20000;
+            }else RepulsiveGaze_Timer -= diff;
+    
+            //Thrash_Timer
+            if (Thrash_Timer < diff)
+            {
+                DoCast(me,SPELL_THRASH);
+                Thrash_Timer = 18000;
+            }else Thrash_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-    void Reset()
-    override {
-        Dustfield_Timer = 8000;
-        Boulder_Timer = 2000;
-        Thrash_Timer = 5000;
-        RepulsiveGaze_Timer = 23000;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-    }
-
-    void JustDied(Unit* Killer)
-    override {
-        me->SummonCreature(12238,28.067,61.875,-123.405,4.67,TEMPSUMMON_TIMED_DESPAWN,600000);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim() )
-            return;
-
-        //Dustfield_Timer
-        if (Dustfield_Timer < diff)
-        {
-            DoCast(me,SPELL_DUSTFIELD);
-            Dustfield_Timer = 14000;
-        }else Dustfield_Timer -= diff;
-
-        //Boulder_Timer
-        if (Boulder_Timer < diff)
-        {
-            Unit* target = nullptr;
-            target = SelectTarget(SELECT_TARGET_RANDOM,0);
-            if( target )
-                DoCast(target,SPELL_BOULDER);
-            Boulder_Timer = 10000;
-        }else Boulder_Timer -= diff;
-
-        //RepulsiveGaze_Timer
-        if (RepulsiveGaze_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_REPULSIVEGAZE);
-            RepulsiveGaze_Timer = 20000;
-        }else RepulsiveGaze_Timer -= diff;
-
-        //Thrash_Timer
-        if (Thrash_Timer < diff)
-        {
-            DoCast(me,SPELL_THRASH);
-            Thrash_Timer = 18000;
-        }else Thrash_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_ptheradrasAI(creature);
     }
 };
-CreatureAI* GetAI_boss_ptheradras(Creature *_Creature)
-{
-    return new boss_ptheradrasAI (_Creature);
-}
+
 
 void AddSC_boss_ptheradras()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_princess_theradras";
-    newscript->GetAI = &GetAI_boss_ptheradras;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_princess_theradras();
 }
 

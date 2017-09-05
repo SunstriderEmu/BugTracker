@@ -41,117 +41,123 @@ enum eEnums
     SPELL_ATTRACTION            = 38540                       //Not Implemented (Heroic mode)
 };
 
-struct boss_chrono_lord_dejaAI : public ScriptedAI
+
+class boss_chrono_lord_deja : public CreatureScript
 {
-    boss_chrono_lord_dejaAI(Creature *c) : ScriptedAI(c)
+public:
+    boss_chrono_lord_deja() : CreatureScript("boss_chrono_lord_deja")
+    { }
+
+    class boss_chrono_lord_dejaAI : public ScriptedAI
     {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-        HeroicMode = me->GetMap()->IsHeroic();
-    }
-
-    InstanceScript *pInstance;
-    bool HeroicMode;
-
-    uint32 ArcaneBlast_Timer;
-    uint32 TimeLapse_Timer;
-    uint32 Attraction_Timer;
-    uint32 ArcaneDischarge_Timer;
-
-    void Reset() override
-    {
-        ArcaneBlast_Timer = 18000+rand()%5000;
-        TimeLapse_Timer = 10000+rand()%5000;
-        ArcaneDischarge_Timer = 20000+rand()%10000;
-        Attraction_Timer = 25000+rand()%10000;
-    }
-
-    void EnterCombat(Unit *who) override
-    {
-        DoScriptText(SAY_AGGRO, me);
-    }
-
-    void MoveInLineOfSight(Unit *who) override
-    {
-        //Despawn Time Keeper
-        if (who->GetTypeId() == TYPEID_UNIT && who->GetEntry() == C_TIME_KEEPER)
+        public:
+        boss_chrono_lord_dejaAI(Creature *c) : ScriptedAI(c)
         {
-            if (me->IsWithinDistInMap(who,20.0f))
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
+            HeroicMode = me->GetMap()->IsHeroic();
+        }
+    
+        InstanceScript *pInstance;
+        bool HeroicMode;
+    
+        uint32 ArcaneBlast_Timer;
+        uint32 TimeLapse_Timer;
+        uint32 Attraction_Timer;
+        uint32 ArcaneDischarge_Timer;
+    
+        void Reset() override
+        {
+            ArcaneBlast_Timer = 18000+rand()%5000;
+            TimeLapse_Timer = 10000+rand()%5000;
+            ArcaneDischarge_Timer = 20000+rand()%10000;
+            Attraction_Timer = 25000+rand()%10000;
+        }
+    
+        void EnterCombat(Unit *who) override
+        {
+            DoScriptText(SAY_AGGRO, me);
+        }
+    
+        void MoveInLineOfSight(Unit *who) override
+        {
+            //Despawn Time Keeper
+            if (who->GetTypeId() == TYPEID_UNIT && who->GetEntry() == C_TIME_KEEPER)
             {
-                DoScriptText(SAY_BANISH, me);
-                me->DealDamage(who, who->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                if (me->IsWithinDistInMap(who,20.0f))
+                {
+                    DoScriptText(SAY_BANISH, me);
+                    me->DealDamage(who, who->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                }
+            }
+    
+            ScriptedAI::MoveInLineOfSight(who);
+        }
+    
+        void KilledUnit(Unit *killer) override
+        {
+            DoScriptText(RAND(SAY_SLAY1,SAY_SLAY2), me);
+        }
+    
+        void JustDied(Unit *victim) override
+        {
+            DoScriptText(SAY_DEATH, me);
+    
+            if (pInstance) {
+                pInstance->SetData(DATA_DEJA, DONE);
+                pInstance->SetData(TYPE_RIFT,SPECIAL);
             }
         }
-
-        ScriptedAI::MoveInLineOfSight(who);
-    }
-
-    void KilledUnit(Unit *killer) override
-    {
-        DoScriptText(RAND(SAY_SLAY1,SAY_SLAY2), me);
-    }
-
-    void JustDied(Unit *victim) override
-    {
-        DoScriptText(SAY_DEATH, me);
-
-        if (pInstance) {
-            pInstance->SetData(DATA_DEJA, DONE);
-            pInstance->SetData(TYPE_RIFT,SPECIAL);
-        }
-    }
-
-    void UpdateAI(const uint32 diff) override
-    {
-        //Return since we have no target
-        if (!UpdateVictim() )
-            return;
-
-        //Arcane Blast
-        if (ArcaneBlast_Timer < diff)
+    
+        void UpdateAI(const uint32 diff) override
         {
-            DoCast(me->GetVictim(), HEROIC(SPELL_ARCANE_BLAST, H_SPELL_ARCANE_BLAST));
-            ArcaneBlast_Timer = 15000+rand()%10000;
-        }else ArcaneBlast_Timer -= diff;
-
-        //Arcane Discharge
-        if (ArcaneDischarge_Timer < diff)
-        {
-            Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0);
-            DoCast(target,HEROIC(SPELL_ARCANE_DISCHARGE, H_SPELL_ARCANE_DISCHARGE));
-            ArcaneDischarge_Timer = 20000+rand()%10000;
-        }else ArcaneDischarge_Timer -= diff;
-
-        //Time Lapse
-        if (TimeLapse_Timer < diff)
-        {
-            DoScriptText(SAY_BANISH, me);
-            DoCast(me, SPELL_TIME_LAPSE);
-            TimeLapse_Timer = 15000+rand()%10000;
-        }else TimeLapse_Timer -= diff;
-        
-        if (HeroicMode)
-        {
-            if (Attraction_Timer < diff)
+            //Return since we have no target
+            if (!UpdateVictim() )
+                return;
+    
+            //Arcane Blast
+            if (ArcaneBlast_Timer < diff)
             {
-                DoCast(me,SPELL_ATTRACTION);
-                Attraction_Timer = 25000+rand()%10000;
-            }else Attraction_Timer -= diff;
+                DoCast(me->GetVictim(), HEROIC(SPELL_ARCANE_BLAST, H_SPELL_ARCANE_BLAST));
+                ArcaneBlast_Timer = 15000+rand()%10000;
+            }else ArcaneBlast_Timer -= diff;
+    
+            //Arcane Discharge
+            if (ArcaneDischarge_Timer < diff)
+            {
+                Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0);
+                DoCast(target,HEROIC(SPELL_ARCANE_DISCHARGE, H_SPELL_ARCANE_DISCHARGE));
+                ArcaneDischarge_Timer = 20000+rand()%10000;
+            }else ArcaneDischarge_Timer -= diff;
+    
+            //Time Lapse
+            if (TimeLapse_Timer < diff)
+            {
+                DoScriptText(SAY_BANISH, me);
+                DoCast(me, SPELL_TIME_LAPSE);
+                TimeLapse_Timer = 15000+rand()%10000;
+            }else TimeLapse_Timer -= diff;
+            
+            if (HeroicMode)
+            {
+                if (Attraction_Timer < diff)
+                {
+                    DoCast(me,SPELL_ATTRACTION);
+                    Attraction_Timer = 25000+rand()%10000;
+                }else Attraction_Timer -= diff;
+            }
+    
+            DoMeleeAttackIfReady();
         }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_chrono_lord_dejaAI(creature);
     }
 };
 
-CreatureAI* GetAI_boss_chrono_lord_deja(Creature *pCreature)
-{
-    return new boss_chrono_lord_dejaAI (pCreature);
-}
 
 void AddSC_boss_chrono_lord_deja()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_chrono_lord_deja";
-    newscript->GetAI = &GetAI_boss_chrono_lord_deja;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_chrono_lord_deja();
 }

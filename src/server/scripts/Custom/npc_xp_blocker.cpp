@@ -33,48 +33,71 @@ EndContentData */
 
 #define BLOCK_XP_PRICE      100000       // 10 gold
 
-bool GossipHello_npc_xp_blocker(Player* pPlayer, Creature* pCreature) {
-    if (pPlayer->IsXpBlocked())
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_UNBLOCK_XP, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-    else
-        pPlayer->ADD_GOSSIP_ITEM_EXTENDED(0, GOSSIP_BLOCK_XP, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2, "Confirmer le bloquage d'expérience ?", BLOCK_XP_PRICE, false);
-        
-    pPlayer->SEND_GOSSIP_MENU_TEXTID(42, pCreature->GetGUID());
-    
-    return true;
-}
+class npc_xp_blocker : public CreatureScript
+{
+public:
+    npc_xp_blocker() : CreatureScript("npc_xp_blocker")
+    { }
 
-bool GossipSelect_npc_xp_blocker(Player* pPlayer, Creature* pCreature, uint32 sender, uint32 action) {
-    switch (action) {
-    case GOSSIP_ACTION_INFO_DEF+1:      // Unblock, free
-        pPlayer->SetXpBlocked(false);
-        pCreature->Whisper("Experience unfreezed.", LANG_UNIVERSAL, pPlayer);
-        pPlayer->SaveToDB();
-        break;
-    case GOSSIP_ACTION_INFO_DEF+2:      // Block, 10 gold
-        if (pPlayer->GetMoney() > BLOCK_XP_PRICE) {
-            pPlayer->SetXpBlocked(true);
-            pCreature->Whisper("Experience freezed.", LANG_UNIVERSAL, pPlayer);
-            pPlayer->ModifyMoney(-(int32)BLOCK_XP_PRICE);
-            pPlayer->SaveToDB();
+    class npc_xp_blockerAI : public ScriptedAI
+    {
+    public:
+        npc_xp_blockerAI(Creature* creature) : ScriptedAI(creature)
+        {}
+
+
+        virtual bool GossipHello(Player* pPlayer) override
+        {
+            if (pPlayer->IsXpBlocked())
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_UNBLOCK_XP, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+            else
+                pPlayer->ADD_GOSSIP_ITEM_EXTENDED(0, GOSSIP_BLOCK_XP, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2, "Confirmer le bloquage d'expérience ?", BLOCK_XP_PRICE, false);
+                
+            pPlayer->SEND_GOSSIP_MENU_TEXTID(42, me->GetGUID());
+            
+            return true;
+
         }
-        else
-            pCreature->Whisper("You do not have enough money.", LANG_UNIVERSAL, pPlayer);
-        break;
+
+
+        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        {
+            switch (action) {
+            case GOSSIP_ACTION_INFO_DEF+1:      // Unblock, free
+                pPlayer->SetXpBlocked(false);
+                me->Whisper("Experience unfreezed.", LANG_UNIVERSAL, pPlayer);
+                pPlayer->SaveToDB();
+                break;
+            case GOSSIP_ACTION_INFO_DEF+2:      // Block, 10 gold
+                if (pPlayer->GetMoney() > BLOCK_XP_PRICE) {
+                    pPlayer->SetXpBlocked(true);
+                    me->Whisper("Experience freezed.", LANG_UNIVERSAL, pPlayer);
+                    pPlayer->ModifyMoney(-(int32)BLOCK_XP_PRICE);
+                    pPlayer->SaveToDB();
+                }
+                else
+                    me->Whisper("You do not have enough money.", LANG_UNIVERSAL, pPlayer);
+                break;
+            }
+            
+            pPlayer->PlayerTalkClass->SendCloseGossip();
+            
+            return true;
+
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_xp_blockerAI(creature);
     }
-    
-    pPlayer->PlayerTalkClass->SendCloseGossip();
-    
-    return true;
-}
+};
+
+
 
 void AddSC_npc_xp_blocker()
 {
-    OLDScript* newscript;
     
-    newscript = new OLDScript;
-    newscript->Name = "npc_xp_blocker";
-    newscript->OnGossipHello = &GossipHello_npc_xp_blocker;
-    newscript->OnGossipSelect = &GossipSelect_npc_xp_blocker;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_xp_blocker();
 }

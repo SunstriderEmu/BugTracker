@@ -31,79 +31,85 @@ enum Spells
     SPELL_SHADOWSHIELD                                     = 22417
 };
 
-struct boss_high_interrogator_gerstahnAI : public ScriptedAI
+class boss_high_interrogator_gerstahn : public CreatureScript
 {
-    boss_high_interrogator_gerstahnAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_high_interrogator_gerstahn() : CreatureScript("boss_high_interrogator_gerstahn")
+    { }
 
-    uint32 ShadowWordPain_Timer;
-    uint32 ManaBurn_Timer;
-    uint32 PsychicScream_Timer;
-    uint32 ShadowShield_Timer;
+    class boss_high_interrogator_gerstahnAI : public ScriptedAI
+    {
+        public:
+        boss_high_interrogator_gerstahnAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 ShadowWordPain_Timer;
+        uint32 ManaBurn_Timer;
+        uint32 PsychicScream_Timer;
+        uint32 ShadowShield_Timer;
+    
+        void Reset()
+        override {
+            ShadowWordPain_Timer = 4000;
+            ManaBurn_Timer = 14000;
+            PsychicScream_Timer = 32000;
+            ShadowShield_Timer = 8000;
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            //Return since we have no target
+            if (!UpdateVictim() )
+                return;
+    
+            //ShadowWordPain_Timer
+            if (ShadowWordPain_Timer < diff)
+            {
+                Unit* target = nullptr;
+                target = SelectTarget(SELECT_TARGET_RANDOM,0);
+                if (target)DoCast(target,SPELL_SHADOWWORDPAIN);
+                ShadowWordPain_Timer = 7000;
+            }else ShadowWordPain_Timer -= diff;
+    
+            //ManaBurn_Timer
+            if (ManaBurn_Timer < diff)
+            {
+                Unit* target = nullptr;
+                target = SelectTarget(SELECT_TARGET_RANDOM,0);
+                if (target)DoCast(target,SPELL_MANABURN);
+                ManaBurn_Timer = 10000;
+            }else ManaBurn_Timer -= diff;
+    
+            //PsychicScream_Timer
+            if (PsychicScream_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_PSYCHICSCREAM);
+                PsychicScream_Timer = 30000;
+            }else PsychicScream_Timer -= diff;
+    
+            //ShadowShield_Timer
+            if (ShadowShield_Timer < diff)
+            {
+                DoCast(me,SPELL_SHADOWSHIELD);
+                ShadowShield_Timer = 25000;
+            }else ShadowShield_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-    void Reset()
-    override {
-        ShadowWordPain_Timer = 4000;
-        ManaBurn_Timer = 14000;
-        PsychicScream_Timer = 32000;
-        ShadowShield_Timer = 8000;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        //Return since we have no target
-        if (!UpdateVictim() )
-            return;
-
-        //ShadowWordPain_Timer
-        if (ShadowWordPain_Timer < diff)
-        {
-            Unit* target = nullptr;
-            target = SelectTarget(SELECT_TARGET_RANDOM,0);
-            if (target)DoCast(target,SPELL_SHADOWWORDPAIN);
-            ShadowWordPain_Timer = 7000;
-        }else ShadowWordPain_Timer -= diff;
-
-        //ManaBurn_Timer
-        if (ManaBurn_Timer < diff)
-        {
-            Unit* target = nullptr;
-            target = SelectTarget(SELECT_TARGET_RANDOM,0);
-            if (target)DoCast(target,SPELL_MANABURN);
-            ManaBurn_Timer = 10000;
-        }else ManaBurn_Timer -= diff;
-
-        //PsychicScream_Timer
-        if (PsychicScream_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_PSYCHICSCREAM);
-            PsychicScream_Timer = 30000;
-        }else PsychicScream_Timer -= diff;
-
-        //ShadowShield_Timer
-        if (ShadowShield_Timer < diff)
-        {
-            DoCast(me,SPELL_SHADOWSHIELD);
-            ShadowShield_Timer = 25000;
-        }else ShadowShield_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_high_interrogator_gerstahnAI(creature);
     }
 };
-CreatureAI* GetAI_boss_high_interrogator_gerstahn(Creature *pCreature)
-{
-    return new boss_high_interrogator_gerstahnAI (pCreature);
-}
+
 
 void AddSC_boss_high_interrogator_gerstahn()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_high_interrogator_gerstahn";
-    newscript->GetAI = &GetAI_boss_high_interrogator_gerstahn;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_high_interrogator_gerstahn();
 }
 

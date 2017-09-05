@@ -32,162 +32,172 @@ enum Texts
     SAY_ONAGGRO = -1801028
 };
 
-struct boss_azgalorAI : public hyjal_trashAI
+
+class boss_azgalor : public CreatureScript
 {
-    boss_azgalorAI(Creature *c) : hyjal_trashAI(c)
+public:
+    boss_azgalor() : CreatureScript("boss_azgalor")
+    { }
+
+    class boss_azgalorAI : public hyjal_trashAI
     {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-        go = false;
-        pos = 0;
-    }
-
-    uint32 RainTimer;
-    uint32 DoomTimer;
-    uint32 HowlTimer;
-    uint32 CleaveTimer;
-    uint32 EnrageTimer;
-
-    bool go;
-    uint32 pos;
-
-    void Reset() override
-    {
-        damageTaken = 0;
-        RainTimer = TIMER_RAIN_OF_FIRE_FIRST;
-        DoomTimer = TIMER_DOOM;
-        HowlTimer = TIMER_HOWL_OF_AZGALOR;
-        CleaveTimer = TIMER_CLEAVE;
-        EnrageTimer = TIMER_BERSERK;
-
-        if(pInstance && IsEvent)
-            pInstance->SetData(DATA_AZGALOREVENT, NOT_STARTED);
-    }
-
-    void EnterCombat(Unit *who) override
-    {
-        if(pInstance && IsEvent)
-            pInstance->SetData(DATA_AZGALOREVENT, IN_PROGRESS);
-
-        DoScriptText(SAY_ONAGGRO,me);
-    }
-
-    void KilledUnit(Unit *victim) override
-    {
-        DoScriptText(SAY_ONSLAY1 - rand()%3,me);
-    }
-
-    void WaypointReached(uint32 i) override
-    {
-        pos = i;
-        if (i == 7 && pInstance)
+        public:
+        boss_azgalorAI(Creature *c) : hyjal_trashAI(c)
         {
-            Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
-            if (target && target->IsAlive())
-                me->AddThreat(target,0.0);
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
+            go = false;
+            pos = 0;
         }
-    }
-
-    void JustDied(Unit *victim)
-    override {
-        hyjal_trashAI::JustDied(victim);
-        if(pInstance && IsEvent)
-            pInstance->SetData(DATA_AZGALOREVENT, DONE);
-
-        DoScriptText(SAY_ONDEATH,me);
-    }
-
-    bool HasTwoPlayersInFront()
-    {
-        uint8 playersInArc = 0;
-        std::list<HostileReference*> const& threatlist = me->getThreatManager().getThreatList();
-
-        for (auto itr : threatlist)
+    
+        uint32 RainTimer;
+        uint32 DoomTimer;
+        uint32 HowlTimer;
+        uint32 CleaveTimer;
+        uint32 EnrageTimer;
+    
+        bool go;
+        uint32 pos;
+    
+        void Reset() override
         {
-            Unit* unit = itr->getTarget();
-            if  (   unit->ToPlayer()
-                && me->GetDistance2d(unit) < 8.0f
-                && me->HasInArc(M_PI,unit)
-                )
-                playersInArc++;
-
-            if(playersInArc > 1)
-                return true;
+            damageTaken = 0;
+            RainTimer = TIMER_RAIN_OF_FIRE_FIRST;
+            DoomTimer = TIMER_DOOM;
+            HowlTimer = TIMER_HOWL_OF_AZGALOR;
+            CleaveTimer = TIMER_CLEAVE;
+            EnrageTimer = TIMER_BERSERK;
+    
+            if(pInstance && IsEvent)
+                pInstance->SetData(DATA_AZGALOREVENT, NOT_STARTED);
         }
-
-        return false;
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (IsEvent)
+    
+        void EnterCombat(Unit *who) override
         {
-            //Must update npc_escortAI
-            npc_escortAI::UpdateAI(diff);
-            if(!go)
+            if(pInstance && IsEvent)
+                pInstance->SetData(DATA_AZGALOREVENT, IN_PROGRESS);
+    
+            DoScriptText(SAY_ONAGGRO,me);
+        }
+    
+        void KilledUnit(Unit *victim) override
+        {
+            DoScriptText(SAY_ONSLAY1 - rand()%3,me);
+        }
+    
+        void WaypointReached(uint32 i) override
+        {
+            pos = i;
+            if (i == 7 && pInstance)
             {
-                go = true;
-                if(pInstance)
+                Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
+                if (target && target->IsAlive())
+                    me->AddThreat(target,0.0);
+            }
+        }
+    
+        void JustDied(Unit *victim)
+        override {
+            hyjal_trashAI::JustDied(victim);
+            if(pInstance && IsEvent)
+                pInstance->SetData(DATA_AZGALOREVENT, DONE);
+    
+            DoScriptText(SAY_ONDEATH,me);
+        }
+    
+        bool HasTwoPlayersInFront()
+        {
+            uint8 playersInArc = 0;
+            std::list<HostileReference*> const& threatlist = me->getThreatManager().getThreatList();
+    
+            for (auto itr : threatlist)
+            {
+                Unit* unit = itr->getTarget();
+                if  (   unit->ToPlayer()
+                    && me->GetDistance2d(unit) < 8.0f
+                    && me->HasInArc(M_PI,unit)
+                    )
+                    playersInArc++;
+    
+                if(playersInArc > 1)
+                    return true;
+            }
+    
+            return false;
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (IsEvent)
+            {
+                //Must update npc_escortAI
+                npc_escortAI::UpdateAI(diff);
+                if(!go)
                 {
-                    ((npc_escortAI*)(me->AI()))->AddWaypoint(0, 5492.91,    -2404.61,    1462.63);
-                    ((npc_escortAI*)(me->AI()))->AddWaypoint(1, 5531.76,    -2460.87,    1469.55);
-                    ((npc_escortAI*)(me->AI()))->AddWaypoint(2, 5554.58,    -2514.66,    1476.12);
-                    ((npc_escortAI*)(me->AI()))->AddWaypoint(3, 5554.16,    -2567.23,    1479.90);
-                    ((npc_escortAI*)(me->AI()))->AddWaypoint(4, 5540.67,    -2625.99,    1480.89);
-                    ((npc_escortAI*)(me->AI()))->AddWaypoint(5, 5508.16,    -2659.2,    1480.15);
-                    ((npc_escortAI*)(me->AI()))->AddWaypoint(6, 5489.62,    -2704.05,    1482.18);
-                    ((npc_escortAI*)(me->AI()))->AddWaypoint(7, 5457.04,    -2726.26,    1485.10);
-                    ((npc_escortAI*)(me->AI()))->Start(false, true, true);
-                    ((npc_escortAI*)(me->AI()))->SetDespawnAtEnd(false);
+                    go = true;
+                    if(pInstance)
+                    {
+                        ((npc_escortAI*)(me->AI()))->AddWaypoint(0, 5492.91,    -2404.61,    1462.63);
+                        ((npc_escortAI*)(me->AI()))->AddWaypoint(1, 5531.76,    -2460.87,    1469.55);
+                        ((npc_escortAI*)(me->AI()))->AddWaypoint(2, 5554.58,    -2514.66,    1476.12);
+                        ((npc_escortAI*)(me->AI()))->AddWaypoint(3, 5554.16,    -2567.23,    1479.90);
+                        ((npc_escortAI*)(me->AI()))->AddWaypoint(4, 5540.67,    -2625.99,    1480.89);
+                        ((npc_escortAI*)(me->AI()))->AddWaypoint(5, 5508.16,    -2659.2,    1480.15);
+                        ((npc_escortAI*)(me->AI()))->AddWaypoint(6, 5489.62,    -2704.05,    1482.18);
+                        ((npc_escortAI*)(me->AI()))->AddWaypoint(7, 5457.04,    -2726.26,    1485.10);
+                        ((npc_escortAI*)(me->AI()))->Start(false, true, true);
+                        ((npc_escortAI*)(me->AI()))->SetDespawnAtEnd(false);
+                    }
                 }
             }
-        }
-
-        //Return since we have no target
-        if (!UpdateVictim() )
-            return;
-
-        if(RainTimer < diff)
-        {
-            if(DoCast(SelectTarget(SELECT_TARGET_RANDOM,0,30,true), SPELL_RAIN_OF_FIRE) == SPELL_CAST_OK)
-                RainTimer = TIMER_RAIN_OF_FIRE;
-        }else RainTimer -= diff;
-
-        if(DoomTimer < diff)
-        {
-            if(DoCast(me, SPELL_DOOM) == SPELL_CAST_OK) //target is randomized in the spell itself
+    
+            //Return since we have no target
+            if (!UpdateVictim() )
+                return;
+    
+            if(RainTimer < diff)
             {
-                DoomTimer = TIMER_DOOM;
-                DoScriptText(SAY_DOOM1 - rand()%2,me);
-            }
-        }else DoomTimer -= diff;
+                if(DoCast(SelectTarget(SELECT_TARGET_RANDOM,0,30,true), SPELL_RAIN_OF_FIRE) == SPELL_CAST_OK)
+                    RainTimer = TIMER_RAIN_OF_FIRE;
+            }else RainTimer -= diff;
+    
+            if(DoomTimer < diff)
+            {
+                if(DoCast(me, SPELL_DOOM) == SPELL_CAST_OK) //target is randomized in the spell itself
+                {
+                    DoomTimer = TIMER_DOOM;
+                    DoScriptText(SAY_DOOM1 - rand()%2,me);
+                }
+            }else DoomTimer -= diff;
+    
+            if(HowlTimer < diff)
+            {
+                if(DoCast(me, SPELL_HOWL_OF_AZGALOR) == SPELL_CAST_OK)
+                    HowlTimer = TIMER_HOWL_OF_AZGALOR;
+            }else HowlTimer -= diff;
+    
+            if(CleaveTimer < diff)
+            {
+                if(HasTwoPlayersInFront())
+                    if(DoCast(me->GetVictim(), SPELL_CLEAVE) == SPELL_CAST_OK)
+                        CleaveTimer = TIMER_CLEAVE;
+            }else CleaveTimer -= diff;
+    
+            if(EnrageTimer < diff)
+            {
+                if(DoCast(me, SPELL_BERSERK, true) == SPELL_CAST_OK)
+                    EnrageTimer = TIMER_BERSERK;
+            }else EnrageTimer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        if(HowlTimer < diff)
-        {
-            if(DoCast(me, SPELL_HOWL_OF_AZGALOR) == SPELL_CAST_OK)
-                HowlTimer = TIMER_HOWL_OF_AZGALOR;
-        }else HowlTimer -= diff;
-
-        if(CleaveTimer < diff)
-        {
-            if(HasTwoPlayersInFront())
-                if(DoCast(me->GetVictim(), SPELL_CLEAVE) == SPELL_CAST_OK)
-                    CleaveTimer = TIMER_CLEAVE;
-        }else CleaveTimer -= diff;
-
-        if(EnrageTimer < diff)
-        {
-            if(DoCast(me, SPELL_BERSERK, true) == SPELL_CAST_OK)
-                EnrageTimer = TIMER_BERSERK;
-        }else EnrageTimer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_azgalorAI(creature);
     }
 };
 
-CreatureAI* GetAI_boss_azgalor(Creature *_Creature)
-{
-    return new boss_azgalorAI (_Creature);
-}
 
 enum DoomguardSpells
 {
@@ -196,106 +206,109 @@ enum DoomguardSpells
     SPELL_WARSTOMP     = 31408
 };
 
-struct mob_lesser_doomguardAI : public hyjal_trashAI
+
+class mob_lesser_doomguard : public CreatureScript
 {
-    mob_lesser_doomguardAI(Creature *c) : hyjal_trashAI(c)
+public:
+    mob_lesser_doomguard() : CreatureScript("mob_lesser_doomguard")
+    { }
+
+    class mob_lesser_doomguardAI : public hyjal_trashAI
     {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-        if(pInstance)
-            AzgalorGUID = pInstance->GetData64(DATA_AZGALOR);
-        else
-            AzgalorGUID = 0;
-    }
-
-    uint32 CrippleTimer;
-    uint32 WarstompTimer;
-    uint32 CheckTimer;
-    uint64 AzgalorGUID;
-    InstanceScript* pInstance;
-
-    void Reset() override
-    {
-        CrippleTimer = 50000;
-        WarstompTimer = 10000;
-        DoCast(me, SPELL_THRASH);
-        CheckTimer = 5000;
-    }
-
-    void KilledUnit(Unit *victim) override
-    {
-
-    }
-
-    void WaypointReached(uint32 i) override
-    {
-
-    }
-
-    void MoveInLineOfSight(Unit *who) override
-    {
-        if (me->GetDistance(who) <= 50 && !me->IsInCombat() && me->IsHostileTo(who))
+        public:
+        mob_lesser_doomguardAI(Creature *c) : hyjal_trashAI(c)
         {
-            me->AddThreat(who,0.0);
-            me->Attack(who,false);
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
+            if(pInstance)
+                AzgalorGUID = pInstance->GetData64(DATA_AZGALOR);
+            else
+                AzgalorGUID = 0;
         }
-    }
-
-    void JustDied(Unit *victim)
-    override {
-
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if(CheckTimer < diff)
+    
+        uint32 CrippleTimer;
+        uint32 WarstompTimer;
+        uint32 CheckTimer;
+        uint64 AzgalorGUID;
+        InstanceScript* pInstance;
+    
+        void Reset() override
         {
-            if(AzgalorGUID)
-            {
-                Creature* boss = ObjectAccessor::GetCreature((*me),AzgalorGUID);
-                if(!boss || boss->IsDead())
-                {
-                    me->DespawnOrUnsummon();
-                    return;
-                }
-            }
+            CrippleTimer = 50000;
+            WarstompTimer = 10000;
+            DoCast(me, SPELL_THRASH);
             CheckTimer = 5000;
-        }else CheckTimer -= diff;
-
-        //Return since we have no target
-        if (!UpdateVictim() )
-            return;
-
-        if(WarstompTimer < diff)
+        }
+    
+        void KilledUnit(Unit *victim) override
         {
-            DoCast(me, SPELL_WARSTOMP);
-            WarstompTimer = 10000+rand()%5000;
-        }else WarstompTimer -= diff;
-
-        if(CrippleTimer < diff)
+    
+        }
+    
+        void WaypointReached(uint32 i) override
         {
-            DoCast(SelectTarget(SELECT_TARGET_RANDOM,0,100,true), SPELL_CRIPPLE);
-            CrippleTimer = 25000+rand()%5000;
-        }else CrippleTimer -= diff;
+    
+        }
+    
+        void MoveInLineOfSight(Unit *who) override
+        {
+            if (me->GetDistance(who) <= 50 && !me->IsInCombat() && me->IsHostileTo(who))
+            {
+                me->AddThreat(who,0.0);
+                me->Attack(who,false);
+            }
+        }
+    
+        void JustDied(Unit *victim)
+        override {
+    
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if(CheckTimer < diff)
+            {
+                if(AzgalorGUID)
+                {
+                    Creature* boss = ObjectAccessor::GetCreature((*me),AzgalorGUID);
+                    if(!boss || boss->IsDead())
+                    {
+                        me->DespawnOrUnsummon();
+                        return;
+                    }
+                }
+                CheckTimer = 5000;
+            }else CheckTimer -= diff;
+    
+            //Return since we have no target
+            if (!UpdateVictim() )
+                return;
+    
+            if(WarstompTimer < diff)
+            {
+                DoCast(me, SPELL_WARSTOMP);
+                WarstompTimer = 10000+rand()%5000;
+            }else WarstompTimer -= diff;
+    
+            if(CrippleTimer < diff)
+            {
+                DoCast(SelectTarget(SELECT_TARGET_RANDOM,0,100,true), SPELL_CRIPPLE);
+                CrippleTimer = 25000+rand()%5000;
+            }else CrippleTimer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new mob_lesser_doomguardAI(creature);
     }
 };
 
-CreatureAI* GetAI_mob_lesser_doomguard(Creature *_Creature)
-{
-    return new mob_lesser_doomguardAI (_Creature);
-}
 
 void AddSC_boss_azgalor()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_azgalor";
-    newscript->GetAI = &GetAI_boss_azgalor;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_azgalor();
 
-    newscript = new OLDScript;
-    newscript->Name="mob_lesser_doomguard";
-    newscript->GetAI = &GetAI_mob_lesser_doomguard;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new mob_lesser_doomguard();
 }

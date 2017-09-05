@@ -35,80 +35,86 @@ EndScriptData */
 #define SOUND_HEALTH2                   5850
 #define SOUND_DEATH                     5848
 
-struct boss_interrogator_vishasAI : public ScriptedAI
+class boss_interrogator_vishas : public CreatureScript
 {
-    boss_interrogator_vishasAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_interrogator_vishas() : CreatureScript("boss_interrogator_vishas")
+    { }
 
-    uint32 Yell_Timer;
-    uint32 PowerWordShield_Timer;
-
-    void Reset()
-    override {
-        Yell_Timer = 6000000;
-        PowerWordShield_Timer = 60000;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-        me->Yell(SAY_AGGRO,LANG_UNIVERSAL,nullptr);
-        DoPlaySoundToSet(me,SOUND_AGGRO);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim())
-            return;
-
-        //If we are low on hp Do sayings
-        if ( me->GetHealth()*100 / me->GetMaxHealth() <= 60 && !me->IsNonMeleeSpellCast(false))
-        {
-            //Yell_Timer
-            if (Yell_Timer < diff)
-            {
-                me->Yell(SAY_HEALTH1,LANG_UNIVERSAL,nullptr);
-                DoPlaySoundToSet(me,SOUND_HEALTH1);
-                return;
-
-                //60 seconds until we should cast this agian
-                Yell_Timer = 60000;
-            }else Yell_Timer -= diff;
-        }
-
-        if ( me->GetHealth()*100 / me->GetMaxHealth() <= 30 && !me->IsNonMeleeSpellCast(false))
-        {
-            //Yell_Timer
-            if (Yell_Timer < diff)
-            {
-                me->Yell(SAY_HEALTH2,LANG_UNIVERSAL,nullptr);
-                DoPlaySoundToSet(me,SOUND_HEALTH2);
-                return;
-
-                //60 seconds until we should cast this agian
-                Yell_Timer = 6000000;
-            }else Yell_Timer -= diff;
-        }
-
-        //PowerWordShield_Timer
-        if (PowerWordShield_Timer < diff)
-        {
-            DoCast(me,SPELL_POWERWORDSHIELD);
+    class boss_interrogator_vishasAI : public ScriptedAI
+    {
+        public:
+        boss_interrogator_vishasAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 Yell_Timer;
+        uint32 PowerWordShield_Timer;
+    
+        void Reset()
+        override {
+            Yell_Timer = 6000000;
             PowerWordShield_Timer = 60000;
-        }else PowerWordShield_Timer -= diff;
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+            me->Yell(SAY_AGGRO,LANG_UNIVERSAL,nullptr);
+            DoPlaySoundToSet(me,SOUND_AGGRO);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim())
+                return;
+    
+            //If we are low on hp Do sayings
+            if ( me->GetHealthPct() <= 60 && !me->IsNonMeleeSpellCast(false))
+            {
+                //Yell_Timer
+                if (Yell_Timer < diff)
+                {
+                    me->Yell(SAY_HEALTH1,LANG_UNIVERSAL,nullptr);
+                    DoPlaySoundToSet(me,SOUND_HEALTH1);
+    
+                    //60 seconds until we should cast this agian
+                    Yell_Timer = 60000;
+    				return;
+                }else Yell_Timer -= diff;
+            }
+    
+            if ( me->GetHealthPct() <= 30 && !me->IsNonMeleeSpellCast(false))
+            {
+                //Yell_Timer
+                if (Yell_Timer < diff)
+                {
+                    me->Yell(SAY_HEALTH2,LANG_UNIVERSAL,nullptr);
+                    DoPlaySoundToSet(me,SOUND_HEALTH2);
+    
+                    //60 seconds until we should cast this agian
+                    Yell_Timer = 6000000;
+    				return;
+                }else Yell_Timer -= diff;
+            }
+    
+            //PowerWordShield_Timer
+            if (PowerWordShield_Timer < diff)
+            {
+                DoCast(me,SPELL_POWERWORDSHIELD);
+                PowerWordShield_Timer = 60000;
+            }else PowerWordShield_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_interrogator_vishasAI(creature);
     }
 };
-CreatureAI* GetAI_boss_interrogator_vishas(Creature *_Creature)
-{
-    return new boss_interrogator_vishasAI (_Creature);
-}
+
 
 void AddSC_boss_interrogator_vishas()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_interrogator_vishas";
-    newscript->GetAI = &GetAI_boss_interrogator_vishas;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_interrogator_vishas();
 }
 

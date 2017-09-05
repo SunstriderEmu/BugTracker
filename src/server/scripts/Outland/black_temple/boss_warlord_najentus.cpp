@@ -63,159 +63,174 @@ enum NajentusGobjects {
     GOBJECT_SPINE                  = 185584
 };
 
-struct boss_najentusAI : public ScriptedAI
+class boss_najentus : public CreatureScript
 {
-    boss_najentusAI(Creature *c) : ScriptedAI(c)
+public:
+    boss_najentus() : CreatureScript("boss_najentus")
+    { }
+
+    class boss_najentusAI : public ScriptedAI
     {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-    }
-
-    InstanceScript* pInstance;
-
-    uint32 NeedleSpineTimer;
-    uint32 EnrageTimer;
-    uint32 SpecialYellTimer;
-    uint32 TidalShieldTimer;
-    uint32 ImpalingSpineTimer;
-
-    uint64 SpineTargetGUID;
-
-    void Reset()
-    override {
-        EnrageTimer = TIMER_ENRAGE;
-        SpecialYellTimer = TIMER_SPECIAL_YELL_START;
-        TidalShieldTimer = TIMER_TIDAL_SHIELD;
-
-        NeedleSpineTimer = TIMER_NEEDLE_SPINE_START;
-        ImpalingSpineTimer = TIMER_IMPALING_SPINE;
-
-        SpineTargetGUID = 0;
-
-        if(pInstance && me->IsAlive())
-            pInstance->SetData(DATA_HIGHWARLORDNAJENTUSEVENT, NOT_STARTED);
-    }
-
-    void KilledUnit(Unit *victim)
-    override {
-        switch(rand()%2)
+        public:
+        boss_najentusAI(Creature *c) : ScriptedAI(c)
         {
-        case 0: DoScriptText(SAY_SLAY1, me); break;
-        case 1: DoScriptText(SAY_SLAY2, me); break;
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
         }
-    }
-
-    void JustDied(Unit *victim)
-    override {
-        if(pInstance)
-        {
-            DoSpawnCreature(CREATURE_INVISIBLE_ANNOUNCER,0,0,0,0, TEMPSUMMON_TIMED_DESPAWN, 30000);
-            pInstance->SetData(DATA_HIGHWARLORDNAJENTUSEVENT, DONE);
-        }
-
-        DoScriptText(SAY_DEATH, me);
-    }
-
-    bool hasShield()
-    {
-        return me->HasAuraEffect(SPELL_TIDAL_SHIELD, 0);
-    }
-
-    void SpellHit(Unit *caster, const SpellInfo *spell)
-    override {
-        if(spell->Id == SPELL_HURL_SPINE && hasShield())
-        {
-            me->RemoveAurasDueToSpell(SPELL_TIDAL_SHIELD);
-            me->CastSpell(me, SPELL_TIDAL_BURST, true);
-            NeedleSpineTimer = 10000;
-            ImpalingSpineTimer = TIMER_IMPALING_SPINE;
-        }
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-        if(pInstance)
-            pInstance->SetData(DATA_HIGHWARLORDNAJENTUSEVENT, IN_PROGRESS);
-
-        DoScriptText(SAY_AGGRO, me);
-        DoZoneInCombat();
-    }
-
-    bool RemoveImpalingSpine()
-    {
-        if(!SpineTargetGUID) return false;
-        Unit* target = ObjectAccessor::GetUnit(*me, SpineTargetGUID);
-        if(target && target->HasAuraEffect(SPELL_IMPALING_SPINE, 1))
-            target->RemoveAurasDueToSpell(SPELL_IMPALING_SPINE);
-        SpineTargetGUID=0;
-        return true;
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim())
-            return;
-
-        if(TidalShieldTimer < diff)
-        {
-            me->CastSpell(me, SPELL_TIDAL_SHIELD, true);
+    
+        InstanceScript* pInstance;
+    
+        uint32 NeedleSpineTimer;
+        uint32 EnrageTimer;
+        uint32 SpecialYellTimer;
+        uint32 TidalShieldTimer;
+        uint32 ImpalingSpineTimer;
+    
+        uint64 SpineTargetGUID;
+    
+        void Reset()
+        override {
+            EnrageTimer = TIMER_ENRAGE;
+            SpecialYellTimer = TIMER_SPECIAL_YELL_START;
             TidalShieldTimer = TIMER_TIDAL_SHIELD;
-        }else TidalShieldTimer -= diff;
-
-        DoMeleeAttackIfReady();
-
-        if(hasShield())
-            return;
-
-        if(!me->HasAuraEffect(SPELL_BERSERK, 0))
-        {
-            if(EnrageTimer < diff)
-            {
-                DoScriptText(SAY_ENRAGE2, me);
-                me->CastSpell(me, SPELL_BERSERK, true);
-            }else EnrageTimer -= diff;
+    
+            NeedleSpineTimer = TIMER_NEEDLE_SPINE_START;
+            ImpalingSpineTimer = TIMER_IMPALING_SPINE;
+    
+            SpineTargetGUID = 0;
+    
+            if(pInstance && me->IsAlive())
+                pInstance->SetData(DATA_HIGHWARLORDNAJENTUSEVENT, NOT_STARTED);
         }
-
-        if(NeedleSpineTimer < diff)
-        {
-            //me->CastSpell(me, SPELL_NEEDLE_SPINE, true);
-            std::list<Unit*> target;
-            SelectUnitList(target, 3, SELECT_TARGET_RANDOM, 80.0f, true);
-            for(auto & i : target)
-                me->CastSpell(i, SPELL_NEEDLE_SPINE2, true);
-            NeedleSpineTimer = TIMER_NEEDLE_SPINE;
-        }else NeedleSpineTimer -= diff;
-
-        if(SpecialYellTimer < diff)
-        {
+    
+        void KilledUnit(Unit *victim)
+        override {
             switch(rand()%2)
             {
-            case 0: DoScriptText(SAY_SPECIAL1, me); break;
-            case 1: DoScriptText(SAY_SPECIAL2, me); break;
+            case 0: DoScriptText(SAY_SLAY1, me); break;
+            case 1: DoScriptText(SAY_SLAY2, me); break;
             }
-            SpecialYellTimer = TIMER_SPECIAL_YELL;
-        }else SpecialYellTimer -= diff;
-
-        if(ImpalingSpineTimer < diff)
-        {
-            Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 80.0, true, true);
-            if(!target) target = me->GetVictim();
-            if(target)
+        }
+    
+        void JustDied(Unit *victim)
+        override {
+            if(pInstance)
             {
-                me->CastSpell(target, SPELL_IMPALING_SPINE, true);
-                SpineTargetGUID = target->GetGUID();
-                //must let target summon, otherwise you cannot click the spine
-                target->SummonGameObject(GOBJECT_SPINE, target->GetPosition(), G3D::Quat(), 30);
-
-                switch(rand()%2)
-                {
-                case 0: DoScriptText(SAY_NEEDLE1, me); break;
-                case 1: DoScriptText(SAY_NEEDLE2, me); break;
-                }
+                DoSpawnCreature(CREATURE_INVISIBLE_ANNOUNCER,0,0,0,0, TEMPSUMMON_TIMED_DESPAWN, 30000);
+                pInstance->SetData(DATA_HIGHWARLORDNAJENTUSEVENT, DONE);
+            }
+    
+            DoScriptText(SAY_DEATH, me);
+        }
+    
+        bool hasShield()
+        {
+            return me->HasAuraEffect(SPELL_TIDAL_SHIELD, 0);
+        }
+    
+        void SpellHit(Unit *caster, const SpellInfo *spell)
+        override {
+            if(spell->Id == SPELL_HURL_SPINE && hasShield())
+            {
+                me->RemoveAurasDueToSpell(SPELL_TIDAL_SHIELD);
+                me->CastSpell(me, SPELL_TIDAL_BURST, true);
+                NeedleSpineTimer = 10000;
                 ImpalingSpineTimer = TIMER_IMPALING_SPINE;
             }
-        }else ImpalingSpineTimer -= diff;
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+            if(pInstance)
+                pInstance->SetData(DATA_HIGHWARLORDNAJENTUSEVENT, IN_PROGRESS);
+    
+            DoScriptText(SAY_AGGRO, me);
+            DoZoneInCombat();
+        }
+    
+        bool RemoveImpalingSpine()
+        {
+            if(!SpineTargetGUID) return false;
+            Unit* target = ObjectAccessor::GetUnit(*me, SpineTargetGUID);
+            if(target && target->HasAuraEffect(SPELL_IMPALING_SPINE, 1))
+                target->RemoveAurasDueToSpell(SPELL_IMPALING_SPINE);
+            SpineTargetGUID=0;
+            return true;
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim())
+                return;
+    
+            if(TidalShieldTimer < diff)
+            {
+                me->CastSpell(me, SPELL_TIDAL_SHIELD, true);
+                TidalShieldTimer = TIMER_TIDAL_SHIELD;
+            }else TidalShieldTimer -= diff;
+    
+            DoMeleeAttackIfReady();
+    
+            if(hasShield())
+                return;
+    
+            if(!me->HasAuraEffect(SPELL_BERSERK, 0))
+            {
+                if(EnrageTimer < diff)
+                {
+                    DoScriptText(SAY_ENRAGE2, me);
+                    me->CastSpell(me, SPELL_BERSERK, true);
+                }else EnrageTimer -= diff;
+            }
+    
+            if(NeedleSpineTimer < diff)
+            {
+                //me->CastSpell(me, SPELL_NEEDLE_SPINE, true);
+                std::list<Unit*> target;
+                SelectUnitList(target, 3, SELECT_TARGET_RANDOM, 80.0f, true);
+                for(auto & i : target)
+                    me->CastSpell(i, SPELL_NEEDLE_SPINE2, true);
+                NeedleSpineTimer = TIMER_NEEDLE_SPINE;
+            }else NeedleSpineTimer -= diff;
+    
+            if(SpecialYellTimer < diff)
+            {
+                switch(rand()%2)
+                {
+                case 0: DoScriptText(SAY_SPECIAL1, me); break;
+                case 1: DoScriptText(SAY_SPECIAL2, me); break;
+                }
+                SpecialYellTimer = TIMER_SPECIAL_YELL;
+            }else SpecialYellTimer -= diff;
+    
+            if(ImpalingSpineTimer < diff)
+            {
+                Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 80.0, true, true);
+                if(!target) target = me->GetVictim();
+                if(target)
+                {
+                    me->CastSpell(target, SPELL_IMPALING_SPINE, true);
+                    SpineTargetGUID = target->GetGUID();
+                    //must let target summon, otherwise you cannot click the spine
+                    target->SummonGameObject(GOBJECT_SPINE, target->GetPosition(), G3D::Quat(), 30);
+    
+                    switch(rand()%2)
+                    {
+                    case 0: DoScriptText(SAY_NEEDLE1, me); break;
+                    case 1: DoScriptText(SAY_NEEDLE2, me); break;
+                    }
+                    ImpalingSpineTimer = TIMER_IMPALING_SPINE;
+                }
+            }else ImpalingSpineTimer -= diff;
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_najentusAI(creature);
     }
 };
+
+
 
 class NajentusSpine : public GameObjectScript
 {
@@ -223,34 +238,38 @@ public:
     NajentusSpine() : GameObjectScript("go_najentus_spine")
     {}
 
-    bool OnGossipHello(Player* player, GameObject* _GO) override
+    struct NajentusSpineAI : public GameObjectAI
     {
-        if (InstanceScript* pInstance = (InstanceScript*)_GO->GetInstanceScript())
-            if (Creature* Najentus = ObjectAccessor::GetCreature(*_GO, pInstance->GetData64(DATA_HIGHWARLORDNAJENTUS)))
-                if (((boss_najentusAI*)Najentus->AI())->RemoveImpalingSpine())
+        NajentusSpineAI(GameObject* obj) : GameObjectAI(obj), pInstance(obj->GetInstanceScript()) { }
+
+        InstanceScript* pInstance;
+
+        bool GossipHello(Player* player) override
+        {
+            if (!pInstance)
+                return true;
+
+            if (Creature* Najentus = ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_HIGHWARLORDNAJENTUS)))
+                if (((boss_najentus::boss_najentusAI*)Najentus->AI())->RemoveImpalingSpine())
                 {
                     player->CastSpell(player, SPELL_CREATE_NAJENTUS_SPINE, true);
-                    _GO->SetLootState(GO_NOT_READY);
-                    _GO->SetRespawnTime(604800); //one week respawn
-                    _GO->RemoveFromWorld();
+                    me->SetLootState(GO_NOT_READY);
+                    me->SetRespawnTime(604800); //one week respawn
+                    me->RemoveFromWorld();
                 }
-        return true;
+            return true;
+        }
+    };
+
+    GameObjectAI* GetAI(GameObject* go) const override
+    {
+        return new NajentusSpineAI(go);
     }
 };
 
-CreatureAI* GetAI_boss_najentus(Creature *_Creature)
-{
-    return new boss_najentusAI (_Creature);
-}
-
 void AddSC_boss_najentus()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_najentus";
-    newscript->GetAI = &GetAI_boss_najentus;
-    sScriptMgr->RegisterOLDScript(newscript);
-
+    new boss_najentus();
     new NajentusSpine();
 }
 

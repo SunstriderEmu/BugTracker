@@ -37,43 +37,49 @@ enum Yells
     SAY_DEATH       = -1509027
 };
 
-struct boss_ossirianAI : public ScriptedAI
+class boss_ossirian : public CreatureScript
 {
-    boss_ossirianAI(Creature *c) : ScriptedAI(c)
+public:
+    boss_ossirian() : CreatureScript("boss_ossirian")
+    { }
+
+    class boss_ossirianAI : public ScriptedAI
     {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-    }
-    
-    InstanceScript *pInstance;
-    
-    void Reset()
-    override {
-        if (pInstance)
-            pInstance->SetData(DATA_OSSIRIAN_EVENT, NOT_STARTED);
-    }
-    
-    void EnterCombat(Unit *who)
-    override {
-        if (pInstance)
-            pInstance->SetData(DATA_OSSIRIAN_EVENT, IN_PROGRESS);
-    }
-    
-    void JustDied(Unit *killer)
-    override {
-        if (pInstance)
-            pInstance->SetData(DATA_OSSIRIAN_EVENT, DONE);
+        public:
+        boss_ossirianAI(Creature *c) : ScriptedAI(c)
+        {
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
+        }
+        
+        InstanceScript *pInstance;
+        
+        void Reset()
+        override {
+            if (pInstance)
+                pInstance->SetData(DATA_OSSIRIAN_EVENT, NOT_STARTED);
+        }
+        
+        void EnterCombat(Unit *who)
+        override {
+            if (pInstance)
+                pInstance->SetData(DATA_OSSIRIAN_EVENT, IN_PROGRESS);
+        }
+        
+        void JustDied(Unit *killer)
+        override {
+            if (pInstance)
+                pInstance->SetData(DATA_OSSIRIAN_EVENT, DONE);
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_ossirianAI(creature);
     }
 };
-CreatureAI* GetAI_boss_ossirian(Creature* pCreature)
-{
-    return new boss_ossirianAI (pCreature);
-}
+
 
 void AddSC_boss_ossirian()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name = "boss_ossirian";
-    newscript->GetAI = &GetAI_boss_ossirian;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_ossirian();
 }

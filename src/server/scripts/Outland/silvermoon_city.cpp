@@ -38,99 +38,113 @@ EndContentData */
 #define SPELL_SHIMMERING_VESSEL         31225
 #define SPELL_REVIVE_SELF               32343
 
-struct npc_blood_knight_stillbladeAI : public ScriptedAI
+
+class npc_blood_knight_stillblade : public CreatureScript
 {
-    npc_blood_knight_stillbladeAI(Creature *c) : ScriptedAI(c) {}
+public:
+    npc_blood_knight_stillblade() : CreatureScript("npc_blood_knight_stillblade")
+    { }
 
-    uint32 lifeTimer;
-    bool spellHit;
-
-    void Reset()
-    override {
-        lifeTimer = 120000;
-        me->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 32);
-        me->SetUInt32Value(UNIT_FIELD_BYTES_1,7);   // lay down
-        spellHit = false;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-    }
-
-    void MoveInLineOfSight(Unit *who)
-    override {
-        return;
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!me->GetUInt32Value(UNIT_FIELD_BYTES_1))
-        {
-            if(lifeTimer < diff)
-                me->AI()->EnterEvadeMode();
-            else
-                lifeTimer -= diff;
+    class npc_blood_knight_stillbladeAI : public ScriptedAI
+    {
+        public:
+        npc_blood_knight_stillbladeAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 lifeTimer;
+        bool spellHit;
+    
+        void Reset()
+        override {
+            lifeTimer = 120000;
+            me->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 32);
+            me->SetUInt32Value(UNIT_FIELD_BYTES_1,7);   // lay down
+            spellHit = false;
         }
-    }
-
-    void SpellHit(Unit *Hitter, const SpellInfo *Spellkind)
-    override {
-        if((Spellkind->Id == SPELL_SHIMMERING_VESSEL) && !spellHit &&
-            (Hitter->GetTypeId() == TYPEID_PLAYER) && ((Hitter->ToPlayer())->IsActiveQuest(QUEST_REDEEMING_THE_DEAD)))
-        {
-            (Hitter->ToPlayer())->AreaExploredOrEventHappens(QUEST_REDEEMING_THE_DEAD);
-            DoCast(me,SPELL_REVIVE_SELF);
-            me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-            me->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 0);
-            //me->RemoveAllAuras();
-            DoScriptText(SAY_HEAL, me);
-            spellHit = true;
+    
+        void EnterCombat(Unit *who)
+        override {
         }
+    
+        void MoveInLineOfSight(Unit *who)
+        override {
+            return;
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!me->GetUInt32Value(UNIT_FIELD_BYTES_1))
+            {
+                if(lifeTimer < diff)
+                    me->AI()->EnterEvadeMode();
+                else
+                    lifeTimer -= diff;
+            }
+        }
+    
+        void SpellHit(Unit *Hitter, const SpellInfo *Spellkind)
+        override {
+            if((Spellkind->Id == SPELL_SHIMMERING_VESSEL) && !spellHit &&
+                (Hitter->GetTypeId() == TYPEID_PLAYER) && ((Hitter->ToPlayer())->IsActiveQuest(QUEST_REDEEMING_THE_DEAD)))
+            {
+                (Hitter->ToPlayer())->AreaExploredOrEventHappens(QUEST_REDEEMING_THE_DEAD);
+                DoCast(me,SPELL_REVIVE_SELF);
+                me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
+                me->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 0);
+                //me->RemoveAllAuras();
+                DoScriptText(SAY_HEAL, me);
+                spellHit = true;
+            }
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_blood_knight_stillbladeAI(creature);
     }
 };
 
-CreatureAI* GetAI_npc_blood_knight_stillblade(Creature *_Creature)
-{
-    return new npc_blood_knight_stillbladeAI (_Creature);
-}
 
 /*######
 ## npc_schweitzer
 ######*/
 
-struct npc_schweitzerAI : public ScriptedAI
+
+class npc_schweitzer : public CreatureScript
 {
-    npc_schweitzerAI(Creature* c) : ScriptedAI(c) {}
-    
-    void EnterCombat(Unit* pWho) override {}
-    
-    void MoveInLineOfSight(Unit* pWho)
-    override {
-        if (me->GetDistance(pWho) <= 5.0f && pWho->GetTypeId() == TYPEID_PLAYER) {
-            if (Pet* pet = pWho->ToPlayer()->GetMiniPet()) {
-                if (pWho->ToPlayer()->GetQuestStatus(11975) == QUEST_STATUS_INCOMPLETE && pet->GetEntry() == 22817)
-                    pWho->ToPlayer()->AreaExploredOrEventHappens(11975);
+public:
+    npc_schweitzer() : CreatureScript("npc_schweitzer")
+    { }
+
+    class npc_schweitzerAI : public ScriptedAI
+    {
+        public:
+        npc_schweitzerAI(Creature* c) : ScriptedAI(c) {}
+        
+        void EnterCombat(Unit* pWho) override {}
+        
+        void MoveInLineOfSight(Unit* pWho)
+        override {
+            if (me->GetDistance(pWho) <= 5.0f && pWho->GetTypeId() == TYPEID_PLAYER) {
+    			if(uint64 critter_guid = pWho->ToPlayer()->GetCritterGUID())
+    				if (Creature* pet = me->GetMap()->GetCreature(critter_guid)) {
+    					if (pWho->ToPlayer()->GetQuestStatus(11975) == QUEST_STATUS_INCOMPLETE && pet->GetEntry() == 22817)
+    						pWho->ToPlayer()->AreaExploredOrEventHappens(11975);
+    				}
             }
         }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_schweitzerAI(creature);
     }
 };
 
-CreatureAI* GetAI_npc_schweitzerAI(Creature* pCreature)
-{
-    return new npc_schweitzerAI(pCreature);
-}
 
 void AddSC_silvermoon_city()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="npc_blood_knight_stillblade";
-    newscript->GetAI = &GetAI_npc_blood_knight_stillblade;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_blood_knight_stillblade();
     
-    newscript = new OLDScript;
-    newscript->Name="npc_schweitzer";
-    newscript->GetAI = &GetAI_npc_schweitzerAI;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_schweitzer();
 }
 

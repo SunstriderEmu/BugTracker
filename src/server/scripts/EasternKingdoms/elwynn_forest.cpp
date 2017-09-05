@@ -33,71 +33,77 @@ EndContentData */
 
 #define SAY_HEAL -1000280
 
-struct npc_henze_faulkAI : public ScriptedAI
+
+class npc_henze_faulk : public CreatureScript
 {
-    uint32 lifeTimer;
-    bool spellHit;
+public:
+    npc_henze_faulk() : CreatureScript("npc_henze_faulk")
+    { }
 
-    npc_henze_faulkAI(Creature *c) : ScriptedAI(c) {}
-
-    void Reset()
-    override {
-        lifeTimer = 120000;
-        me->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 32);
-        me->SetUInt32Value(UNIT_FIELD_BYTES_1,7);   // lay down
-        spellHit = false;
-    }
-
-    void EnterCombat(Unit* pWho)
-    override {
-    }
-
-    void MoveInLineOfSight(Unit* pWho)
-    override {
-        return;
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!me->GetUInt32Value(UNIT_FIELD_BYTES_1))
-        {
-            if(lifeTimer < diff)
+    class npc_henze_faulkAI : public ScriptedAI
+    {
+        public:
+        uint32 lifeTimer;
+        bool spellHit;
+    
+        npc_henze_faulkAI(Creature *c) : ScriptedAI(c) {}
+    
+        void Reset()
+        override {
+            lifeTimer = 120000;
+            me->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 32);
+            me->SetUInt32Value(UNIT_FIELD_BYTES_1,7);   // lay down
+            spellHit = false;
+        }
+    
+        void EnterCombat(Unit* pWho)
+        override {
+        }
+    
+        void MoveInLineOfSight(Unit* pWho)
+        override {
+            return;
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!me->GetUInt32Value(UNIT_FIELD_BYTES_1))
             {
-                EnterEvadeMode();
-                return;
+                if(lifeTimer < diff)
+                {
+                    EnterEvadeMode();
+                    return;
+                }
+                else
+                    lifeTimer -= diff;
             }
-            else
-                lifeTimer -= diff;
         }
-    }
-
-    void SpellHit(Unit* pHitter, const SpellInfo* pSpellkind)
-    override {
-        if(pSpellkind->Id == 8593 && !spellHit)
-        {
-            DoCast(me,32343);
-            me->SetUInt32Value(UNIT_FIELD_BYTES_1,0);
-            me->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 0);
-            //me->RemoveAllAuras();
-            DoScriptText(SAY_HEAL, me);
-            spellHit = true;
+    
+        void SpellHit(Unit* pHitter, const SpellInfo* pSpellkind)
+        override {
+            if(pSpellkind->Id == 8593 && !spellHit)
+            {
+                DoCast(me,32343);
+                me->SetUInt32Value(UNIT_FIELD_BYTES_1,0);
+                me->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 0);
+                //me->RemoveAllAuras();
+                DoScriptText(SAY_HEAL, me);
+                spellHit = true;
+            }
         }
-    }
+    
+    };
 
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_henze_faulkAI(creature);
+    }
 };
 
-CreatureAI* GetAI_npc_henze_faulk(Creature* pCreature)
-{
-    return new npc_henze_faulkAI (pCreature);
-}
 
 void AddSC_elwynn_forest()
 {
-    OLDScript* newscript;
 
-    newscript = new OLDScript;
-    newscript->Name="npc_henze_faulk";
-    newscript->GetAI = &GetAI_npc_henze_faulk;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_henze_faulk();
 }
 

@@ -28,84 +28,90 @@ EndScriptData */
 #define SPELL_MASSIVEGEYSER          22421                  //Not working. Cause its a summon...
 #define SPELL_SLAM                   24326
 
-struct boss_gahzrankaAI : public ScriptedAI
+class boss_gahzranka : public CreatureScript
 {
-    boss_gahzrankaAI(Creature *c) : ScriptedAI(c)
+public:
+    boss_gahzranka() : CreatureScript("boss_gahzranka")
+    { }
+
+    class boss_gahzrankaAI : public ScriptedAI
     {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-    }
-    
-    uint32 Frostbreath_Timer;
-    uint32 MassiveGeyser_Timer;
-    uint32 Slam_Timer;
-    
-    InstanceScript *pInstance;
-
-    void Reset()
-    override {
-        if (pInstance && pInstance->GetData(DATA_GAHZRANKA) != DONE)
-            pInstance->SetData(DATA_GAHZRANKA, NOT_STARTED);
-            
-        Frostbreath_Timer = 8000;
-        MassiveGeyser_Timer = 25000;
-        Slam_Timer = 17000;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-        if (pInstance)
-            pInstance->SetData(DATA_GAHZRANKA, IN_PROGRESS);
-    }
-    
-    void JustDied(Unit *pKiller)
-    override {
-        if (pInstance)
-            pInstance->SetData(DATA_GAHZRANKA, DONE);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        //Return since we have no target
-        if (!UpdateVictim())
-            return;
-
-        //Frostbreath_Timer
-        if (Frostbreath_Timer < diff)
+        public:
+        boss_gahzrankaAI(Creature *c) : ScriptedAI(c)
         {
-            DoCast(me->GetVictim(),SPELL_FROSTBREATH);
-            Frostbreath_Timer = 7000 + rand()%4000;
-        }else Frostbreath_Timer -= diff;
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
+        }
+        
+        uint32 Frostbreath_Timer;
+        uint32 MassiveGeyser_Timer;
+        uint32 Slam_Timer;
+        
+        InstanceScript *pInstance;
+    
+        void Reset()
+        override {
+            if (pInstance && pInstance->GetData(DATA_GAHZRANKA) != DONE)
+                pInstance->SetData(DATA_GAHZRANKA, NOT_STARTED);
+                
+            Frostbreath_Timer = 8000;
+            MassiveGeyser_Timer = 25000;
+            Slam_Timer = 17000;
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+            if (pInstance)
+                pInstance->SetData(DATA_GAHZRANKA, IN_PROGRESS);
+        }
+        
+        void JustDied(Unit *pKiller)
+        override {
+            if (pInstance)
+                pInstance->SetData(DATA_GAHZRANKA, DONE);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            //Return since we have no target
+            if (!UpdateVictim())
+                return;
+    
+            //Frostbreath_Timer
+            if (Frostbreath_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_FROSTBREATH);
+                Frostbreath_Timer = 7000 + rand()%4000;
+            }else Frostbreath_Timer -= diff;
+    
+            //MassiveGeyser_Timer
+            if (MassiveGeyser_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_MASSIVEGEYSER);
+                DoResetThreat();
+    
+                MassiveGeyser_Timer = 22000 + rand()%10000;
+            }else MassiveGeyser_Timer -= diff;
+    
+            //Slam_Timer
+            if (Slam_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_SLAM);
+                Slam_Timer = 12000 + rand()%8000;
+            }else Slam_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        //MassiveGeyser_Timer
-        if (MassiveGeyser_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_MASSIVEGEYSER);
-            DoResetThreat();
-
-            MassiveGeyser_Timer = 22000 + rand()%10000;
-        }else MassiveGeyser_Timer -= diff;
-
-        //Slam_Timer
-        if (Slam_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_SLAM);
-            Slam_Timer = 12000 + rand()%8000;
-        }else Slam_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_gahzrankaAI(creature);
     }
 };
-CreatureAI* GetAI_boss_gahzranka(Creature *_Creature)
-{
-    return new boss_gahzrankaAI (_Creature);
-}
+
 
 void AddSC_boss_gahzranka()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_gahzranka";
-    newscript->GetAI = &GetAI_boss_gahzranka;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_gahzranka();
 }
 

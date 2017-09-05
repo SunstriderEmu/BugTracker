@@ -106,7 +106,7 @@ public:
 
             Trinity::AllCreaturesOfEntryInRange check(me, CREATURE_RIFT_MARKER, 75.0f);
             Trinity::CreatureListSearcher<Trinity::AllCreaturesOfEntryInRange> searcher(me, RiftList, check);
-            me->VisitNearbyGridObject(75.0f, searcher);
+            Cell::VisitGridObjects(me, searcher, 75.0f);
 
             for(auto itr : RiftList)
                 riftMarkers.push_back(itr->GetGUID());
@@ -181,7 +181,7 @@ public:
             case DATA_SOUL_SPAWN:
                 {
                 soulCount++;
-                Creature* soul = me->GetMap()->GetCreature(MAKE_NEW_GUID(data, CREATURE_ENSLAVED_SOUL, HIGHGUID_UNIT));
+                Creature* soul = me->GetMap()->GetCreature(MAKE_NEW_GUID(data, CREATURE_ENSLAVED_SOUL, HighGuid::Unit));
                 if (soul)
                 {
                     Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0,200.0f,true);
@@ -216,15 +216,16 @@ public:
                 return;
             }
             
-            Creature* essence;
+			Creature* essence = nullptr;
             if (essenceGUID != 0) {
                 essence = ObjectAccessor::GetCreature(*me, essenceGUID);
-                if (!essence) {
-                    EnterEvadeMode();
-                    return;
-                }
             }
-            
+
+			if (!essence) {
+				EnterEvadeMode();
+				return;
+			}
+
             if (timer <= diff) {
                 switch (step) {
                 case 0:
@@ -295,7 +296,7 @@ public:
                         essence->AI()->Talk(TALK_DESI_SAY_AFTER);
                     }
                     
-                    essence->SetVisibility(VISIBILITY_OFF);
+                    essence->SetVisible(false);
                     essence->SetDeathState(DEAD);
                     me->SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
                     essenceGUID = 0;

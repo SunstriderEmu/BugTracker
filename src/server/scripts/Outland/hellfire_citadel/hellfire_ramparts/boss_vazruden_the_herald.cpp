@@ -375,19 +375,19 @@ public:
             {
                 Creature *Nazan = me->GetMap()->GetCreature(NazanGUID);
                 Creature *Vazruden = me->GetMap()->GetCreature(VazrudenGUID);
-                if (Nazan || (Nazan = FindCreature(NPC_NAZAN, 500.0f, me))) 
+                if (Nazan || (Nazan = me->FindNearestCreature(NPC_NAZAN, 500.0f)) )
                 {
                     Nazan->DisappearAndDie();
                     NazanGUID = 0;
                 }
-                if (Vazruden || (Vazruden = FindCreature(NPC_VAZRUDEN, 500.0f, me))) 
+                if (Vazruden || (Vazruden = me->FindNearestCreature(NPC_VAZRUDEN, 500.0f)) )
                 {
                     Vazruden->DisappearAndDie();
                     VazrudenGUID = 0;
                 }
                 summoned = false;
                 me->ClearUnitState(UNIT_STATE_ROOT);
-                me->SetVisibility(VISIBILITY_ON);
+                me->SetVisible(true);
             }
         }
 
@@ -401,7 +401,7 @@ public:
                     NazanGUID = Nazan->GetGUID();
 
                 summoned = true;
-                me->SetVisibility(VISIBILITY_OFF);
+                me->SetVisible(false);
                 me->AddUnitState(UNIT_STATE_ROOT);
             }
         }
@@ -415,21 +415,21 @@ public:
             }
         }
 
-        void JustSummoned(Creature *summoned)
-            override {
-            if (!summoned) return;
+        void JustSummoned(Creature* _summoned) override {
+            if (!_summoned) 
+				return;
 
             Unit *victim = me->GetVictim();
-            if (summoned->GetEntry() == NPC_NAZAN) 
+            if (_summoned->GetEntry() == NPC_NAZAN)
             {
-                summoned->AI()->message(boss_nazan::MESSAGE_SET_VAZRUDEN_GUID, VazrudenGUID);
-                summoned->SetDisableGravity(true);
-                summoned->SetSpeedRate(MOVE_FLIGHT, 2.5);
+				_summoned->AI()->message(boss_nazan::MESSAGE_SET_VAZRUDEN_GUID, VazrudenGUID);
+				_summoned->SetDisableGravity(true);
+				_summoned->SetSpeedRate(MOVE_FLIGHT, 2.5);
                 if (victim)
-                    ((ScriptedAI*)summoned->AI())->AttackStart(victim, false);
+                    ((ScriptedAI*)_summoned->AI())->AttackStart(victim, false);
             }
             else if (victim)
-                summoned->AI()->AttackStart(victim);
+				_summoned->AI()->AttackStart(victim);
         }
 
         uint64 message(uint32 id, uint64 data) override
@@ -438,7 +438,7 @@ public:
             {
                 case MESSAGE_SENTRY_DIED:
                 {
-                    bool aliveSentry = me->FindCreatureInGrid(NPC_HELLFIRE_SENTRY, 150.0f, true);
+                    bool aliveSentry = me->FindNearestCreature(NPC_HELLFIRE_SENTRY, 150.0f, true);
                     if (!aliveSentry)
                         if (Unit* killer = me->GetMap()->GetPlayer(data))
                             AttackStart(killer);

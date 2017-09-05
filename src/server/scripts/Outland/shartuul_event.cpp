@@ -48,31 +48,37 @@
 #define LR_SHARTUUL             23230
 #define LR_SHARTUUL_VOICE       23063
 
-struct npc_lr_triggerAI : public ScriptedAI
+
+class npc_lr_trigger : public CreatureScript
 {
-    npc_lr_triggerAI(Creature *c) : ScriptedAI(c) {}
-    
-    void Reset()
-    override {
-        DoCast(me, 40380);
+public:
+    npc_lr_trigger() : CreatureScript("npc_lr_trigger")
+    { }
+
+    class npc_lr_triggerAI : public ScriptedAI
+    {
+        public:
+        npc_lr_triggerAI(Creature *c) : ScriptedAI(c) {}
         
-        me->ApplySpellImmune(0, IMMUNITY_ID, 40381, true);
+        void Reset()
+        override {
+            DoCast(me, 40380);
+            
+            me->ApplySpellImmune(0, IMMUNITY_ID, 40381, true);
+        }
+        
+        void EnterCombat(Unit *pWho) override {}
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_lr_triggerAI(creature);
     }
-    
-    void EnterCombat(Unit *pWho) override {}
 };
 
-CreatureAI *GetAI_npc_lr_trigger(Creature* pCreature)
-{
-    return new npc_lr_triggerAI(pCreature);
-}
 
 void AddSC_shartuul_event()
 {
-    OLDScript *newscript;
     
-    newscript = new OLDScript;
-    newscript->Name = "npc_lr_trigger";
-    newscript->GetAI = &GetAI_npc_lr_trigger;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_lr_trigger();
 }

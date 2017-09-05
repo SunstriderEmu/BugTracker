@@ -31,66 +31,72 @@ EndScriptData */
 #define ADD_1Z                  64.401443
 #define ADD_1O                  3.124724
 
-struct boss_halyconAI : public ScriptedAI
+class boss_halycon : public CreatureScript
 {
-    boss_halyconAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_halycon() : CreatureScript("boss_halycon")
+    { }
 
-    uint32 CrowdPummel_Timer;
-    uint32 MightyBlow_Timer;
-    bool Summoned;
-
-    void Reset()
-    override {
-        CrowdPummel_Timer = 8000;
-        MightyBlow_Timer = 14000;
-        Summoned = false;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        //Return since we have no target
-        if (!UpdateVictim() )
-            return;
-
-        //CrowdPummel_Timer
-        if (CrowdPummel_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_CROWDPUMMEL);
-            CrowdPummel_Timer = 14000;
-        }else CrowdPummel_Timer -= diff;
-
-        //MightyBlow_Timer
-        if (MightyBlow_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_MIGHTYBLOW);
-            MightyBlow_Timer = 10000;
-        }else MightyBlow_Timer -= diff;
-
-        //Summon Gizrul
-        if ( !Summoned && me->GetHealth()*100 / me->GetMaxHealth() < 25 )
-        {
-            me->SummonCreature(10268,ADD_1X,ADD_1Y,ADD_1Z,ADD_1O,TEMPSUMMON_TIMED_DESPAWN,300000);
-            Summoned = true;
+    class boss_halyconAI : public ScriptedAI
+    {
+        public:
+        boss_halyconAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 CrowdPummel_Timer;
+        uint32 MightyBlow_Timer;
+        bool Summoned;
+    
+        void Reset()
+        override {
+            CrowdPummel_Timer = 8000;
+            MightyBlow_Timer = 14000;
+            Summoned = false;
         }
+    
+        void EnterCombat(Unit *who)
+        override {
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            //Return since we have no target
+            if (!UpdateVictim() )
+                return;
+    
+            //CrowdPummel_Timer
+            if (CrowdPummel_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_CROWDPUMMEL);
+                CrowdPummel_Timer = 14000;
+            }else CrowdPummel_Timer -= diff;
+    
+            //MightyBlow_Timer
+            if (MightyBlow_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_MIGHTYBLOW);
+                MightyBlow_Timer = 10000;
+            }else MightyBlow_Timer -= diff;
+    
+            //Summon Gizrul
+            if ( !Summoned && me->GetHealthPct() < 25 )
+            {
+                me->SummonCreature(10268,ADD_1X,ADD_1Y,ADD_1Z,ADD_1O,TEMPSUMMON_TIMED_DESPAWN,300000);
+                Summoned = true;
+            }
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_halyconAI(creature);
     }
 };
-CreatureAI* GetAI_boss_halycon(Creature *_Creature)
-{
-    return new boss_halyconAI (_Creature);
-}
+
 
 void AddSC_boss_halycon()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_halycon";
-    newscript->GetAI = &GetAI_boss_halycon;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_halycon();
 }
 

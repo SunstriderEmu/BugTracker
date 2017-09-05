@@ -33,161 +33,167 @@ EndScriptData */
 
 #define ENTRY_SPORE_STRIDER        22299
 
-struct boss_the_black_stalkerAI : public ScriptedAI
+
+class boss_the_black_stalker : public CreatureScript
 {
-    boss_the_black_stalkerAI(Creature *c) : ScriptedAI(c)
+public:
+    boss_the_black_stalker() : CreatureScript("boss_the_black_stalker")
+    { }
+
+    class boss_the_black_stalkerAI : public ScriptedAI
     {
-        HeroicMode = me->GetMap()->IsHeroic();
-    }
-
-    bool HeroicMode;
-    uint32 SporeStriders_Timer;
-    uint32 Levitate_Timer;
-    uint32 ChainLightning_Timer;
-    uint32 StaticCharge_Timer;
-    uint64 LevitatedTarget;
-    uint32 LevitatedTarget_Timer;
-    bool InAir;
-    uint32 check_Timer;
-    std::list<uint64> Striders;
-
-    void Reset()
-    override {
-        Levitate_Timer = 12000;
-        ChainLightning_Timer = 6000;
-        StaticCharge_Timer = 10000;
-        SporeStriders_Timer = 10000+rand()%5000;
-        check_Timer = 5000;
-        LevitatedTarget = 0;
-        LevitatedTarget_Timer = 0;
-        Striders.clear();
-    }
-
-    void EnterCombat(Unit *who) override {}
-
-    void JustSummoned(Creature *summon)
-    override {
-        if(summon && summon->GetEntry() == ENTRY_SPORE_STRIDER)
+        public:
+        boss_the_black_stalkerAI(Creature *c) : ScriptedAI(c)
         {
-            Striders.push_back(summon->GetGUID());
-            if(Unit *target = SelectTarget(SELECT_TARGET_RANDOM,1))
-                summon->AI()->AttackStart(target);
-            else
-                if(me->GetVictim())
-                    summon->AI()->AttackStart(me->GetVictim());
+            HeroicMode = me->GetMap()->IsHeroic();
         }
-    }
-
-    void JustDied(Unit *who)
-    override {
-        for(uint64 & Strider : Striders)
-            if(Creature *strider = ObjectAccessor::GetCreature(*me, Strider))
-            {
-                strider->SetLootRecipient(nullptr);
-                strider->DespawnOrUnsummon();
-            }
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim())
-            return;
-
-        // Evade if too far
-        if(check_Timer < diff)
-        {
-            float x,y,z,o;
-            me->GetHomePosition(x,y,z,o);
-            if(me->GetDistance(x,y,z) > 60)
-            {
-                EnterEvadeMode();
-                return;
-            }
-            check_Timer = 1000;
-        }else check_Timer -= diff;
-
-        // Spore Striders
-        if(HeroicMode && SporeStriders_Timer < diff)
-        {
-            DoCast(me,SPELL_SUMMON_SPORE_STRIDER);
+    
+        bool HeroicMode;
+        uint32 SporeStriders_Timer;
+        uint32 Levitate_Timer;
+        uint32 ChainLightning_Timer;
+        uint32 StaticCharge_Timer;
+        uint64 LevitatedTarget;
+        uint32 LevitatedTarget_Timer;
+        bool InAir;
+        uint32 check_Timer;
+        std::list<uint64> Striders;
+    
+        void Reset()
+        override {
+            Levitate_Timer = 12000;
+            ChainLightning_Timer = 6000;
+            StaticCharge_Timer = 10000;
             SporeStriders_Timer = 10000+rand()%5000;
-        }else SporeStriders_Timer -= diff;
-
-        // Levitate
-        if(LevitatedTarget)
-        {
-            if(LevitatedTarget_Timer < diff)
+            check_Timer = 5000;
+            LevitatedTarget = 0;
+            LevitatedTarget_Timer = 0;
+            Striders.clear();
+        }
+    
+        void EnterCombat(Unit *who) override {}
+    
+        void JustSummoned(Creature *summon)
+        override {
+            if(summon && summon->GetEntry() == ENTRY_SPORE_STRIDER)
             {
-                if(Unit* target = (Unit*)ObjectAccessor::GetUnit(*me, LevitatedTarget))
+                Striders.push_back(summon->GetGUID());
+                if(Unit *target = SelectTarget(SELECT_TARGET_RANDOM,1))
+                    summon->AI()->AttackStart(target);
+                else
+                    if(me->GetVictim())
+                        summon->AI()->AttackStart(me->GetVictim());
+            }
+        }
+    
+        void JustDied(Unit *who)
+        override {
+            for(uint64 & Strider : Striders)
+                if(Creature *strider = ObjectAccessor::GetCreature(*me, Strider))
                 {
-                    if(!target->HasAuraEffect(SPELL_LEVITATE,0))
+                    strider->SetLootRecipient(nullptr);
+                    strider->DespawnOrUnsummon();
+                }
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim())
+                return;
+    
+            // Evade if too far
+            if(check_Timer < diff)
+            {
+                float x,y,z,o;
+                me->GetHomePosition(x,y,z,o);
+                if(me->GetDistance(x,y,z) > 60)
+                {
+                    EnterEvadeMode();
+                    return;
+                }
+                check_Timer = 1000;
+            }else check_Timer -= diff;
+    
+            // Spore Striders
+            if(HeroicMode && SporeStriders_Timer < diff)
+            {
+                DoCast(me,SPELL_SUMMON_SPORE_STRIDER);
+                SporeStriders_Timer = 10000+rand()%5000;
+            }else SporeStriders_Timer -= diff;
+    
+            // Levitate
+            if(LevitatedTarget)
+            {
+                if(LevitatedTarget_Timer < diff)
+                {
+                    if(Unit* target = (Unit*)ObjectAccessor::GetUnit(*me, LevitatedTarget))
                     {
-                        LevitatedTarget = 0;
-                        return;
-                    }
-                    if(InAir)
-                    {
-                        target->AddAura(SPELL_SUSPENSION, target);
-                        LevitatedTarget = 0;
+                        if(!target->HasAuraEffect(SPELL_LEVITATE,0))
+                        {
+                            LevitatedTarget = 0;
+                            return;
+                        }
+                        if(InAir)
+                        {
+                            target->AddAura(SPELL_SUSPENSION, target);
+                            LevitatedTarget = 0;
+                        }
+                        else
+                        {
+                            target->CastSpell(target, SPELL_MAGNETIC_PULL, true);
+                            InAir = true;
+                            LevitatedTarget_Timer = 1500;
+                        }
                     }
                     else
-                    {
-                        target->CastSpell(target, SPELL_MAGNETIC_PULL, true);
-                        InAir = true;
-                        LevitatedTarget_Timer = 1500;
+                        LevitatedTarget = 0;
+                }else LevitatedTarget_Timer -= diff;
+            }
+            if(Levitate_Timer < diff)
+            {
+                if(Unit *target = SelectTarget(SELECT_TARGET_RANDOM,1))
+                {
+                    DoCast(target, SPELL_LEVITATE);
+                    LevitatedTarget = target->GetGUID();
+                    LevitatedTarget_Timer = 2000;
+                    InAir = false;
+                }
+                Levitate_Timer = 12000+rand()%3000;
+            }else Levitate_Timer -= diff;
+    
+            // Chain Lightning
+            if(ChainLightning_Timer < diff)
+            {
+                if (Unit *target = SelectTarget(SELECT_TARGET_RANDOM,0)) {
+                    if (target->IsAlive()) {
+                        DoCast(target, SPELL_CHAIN_LIGHTNING);
+                        ChainLightning_Timer = 7000;
                     }
                 }
-                else
-                    LevitatedTarget = 0;
-            }else LevitatedTarget_Timer -= diff;
-        }
-        if(Levitate_Timer < diff)
-        {
-            if(Unit *target = SelectTarget(SELECT_TARGET_RANDOM,1))
+            }else ChainLightning_Timer -= diff;
+    
+            // Static Charge
+            if(StaticCharge_Timer < diff)
             {
-                DoCast(target, SPELL_LEVITATE);
-                LevitatedTarget = target->GetGUID();
-                LevitatedTarget_Timer = 2000;
-                InAir = false;
-            }
-            Levitate_Timer = 12000+rand()%3000;
-        }else Levitate_Timer -= diff;
+                if(Unit *target = SelectTarget(SELECT_TARGET_RANDOM,0,30,true))
+                    DoCast(target, SPELL_STATIC_CHARGE);
+                StaticCharge_Timer = 10000;
+            }else StaticCharge_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        // Chain Lightning
-        if(ChainLightning_Timer < diff)
-        {
-            if (Unit *target = SelectTarget(SELECT_TARGET_RANDOM,0)) {
-                if (target->IsAlive()) {
-                    DoCast(target, SPELL_CHAIN_LIGHTNING);
-                    ChainLightning_Timer = 7000;
-                }
-            }
-        }else ChainLightning_Timer -= diff;
-
-        // Static Charge
-        if(StaticCharge_Timer < diff)
-        {
-            if(Unit *target = SelectTarget(SELECT_TARGET_RANDOM,0,30,true))
-                DoCast(target, SPELL_STATIC_CHARGE);
-            StaticCharge_Timer = 10000;
-        }else StaticCharge_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_the_black_stalkerAI(creature);
     }
 };
 
-CreatureAI* GetAI_boss_the_black_stalker(Creature *_Creature)
-{
-    return new boss_the_black_stalkerAI (_Creature);
-}
 
 void AddSC_boss_the_black_stalker()
 {
-    OLDScript *newscript;
 
-    newscript = new OLDScript;
-    newscript->Name="boss_the_black_stalker";
-    newscript->GetAI = &GetAI_boss_the_black_stalker;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_the_black_stalker();
 }
 

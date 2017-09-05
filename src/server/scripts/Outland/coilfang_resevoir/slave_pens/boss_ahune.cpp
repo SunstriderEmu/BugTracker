@@ -87,7 +87,7 @@ public:
         
             if (Creature* ghost = me->SummonCreature(NPC_AHUNE_GHOST, -89.566528, -253.344315, -1.089609, 1.683741, TEMPSUMMON_MANUAL_DESPAWN, 0)) {
                 ghost->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                ghost->SetVisibility(VISIBILITY_OFF);
+                ghost->SetVisible(false);
             }
         }
 
@@ -185,7 +185,7 @@ public:
                 
                     if (Creature* ghost = me->FindNearestCreature(NPC_AHUNE_GHOST, 10.0f, true)) {
                         ghost->RemoveAurasDueToSpell(SPELL_AHUNE_GHOST_DISGUISE);
-                        ghost->SetVisibility(VISIBILITY_OFF);
+                        ghost->SetVisible(false);
                     }
                 
                     me->SummonCreature(NPC_AHUNITE_HAILSTONE, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation(), TEMPSUMMON_DEAD_DESPAWN, 0);
@@ -212,7 +212,7 @@ public:
                     
                     if (Creature* ghost = me->FindNearestCreature(NPC_AHUNE_GHOST, 10.0f, true)) {
                         ghost->AddAura(SPELL_AHUNE_GHOST_DISGUISE, ghost);
-                        ghost->SetVisibility(VISIBILITY_ON);
+                        ghost->SetVisible(true);
                     }
                     
                     phaseChangeTimer = 30000;
@@ -232,196 +232,216 @@ public:
     };
 };
 
-struct boss_frozen_coreAI : public ScriptedAI
-{
-    boss_frozen_coreAI(Creature* c) : ScriptedAI(c) 
-    {
-        SetCombatMovementAllowed(false);
-    }
-    
-    void Reset()
-    override {
-        me->SetReactState(REACT_PASSIVE);
-    }
-    
-    void EnterCombat(Unit* pWho) override {}
-    
-    void JustDied(Unit* pKiller)
-    override {
-        if (Creature* ahune = me->FindNearestCreature(NPC_AHUNE, 10.0f, true))
-            me->Kill(ahune);
 
-        pKiller->SummonGameObject(GO_AHUNE_ICE_CHEST, Position(-96.525841, -200.255798, -1.262261, 4.748316), G3D::Quat(), 86400);
-    }
+class boss_frozen_core : public CreatureScript
+{
+public:
+    boss_frozen_core() : CreatureScript("boss_frozen_core")
+    { }
+
+    class boss_frozen_coreAI : public ScriptedAI
+    {
+        public:
+        boss_frozen_coreAI(Creature* c) : ScriptedAI(c) 
+        {
+            SetCombatMovementAllowed(false);
+        }
+        
+        void Reset()
+        override {
+            me->SetReactState(REACT_PASSIVE);
+        }
+        
+        void EnterCombat(Unit* pWho) override {}
+        
+        void JustDied(Unit* pKiller)
+        override {
+            if (Creature* ahune = me->FindNearestCreature(NPC_AHUNE, 10.0f, true))
+                me->Kill(ahune);
     
-    void UpdateAI(uint32 const diff)
-    override {
-        if (!UpdateVictim())
-            return;
+            pKiller->SummonGameObject(GO_AHUNE_ICE_CHEST, Position(-96.525841, -200.255798, -1.262261, 4.748316), G3D::Quat(), 1 * DAY);
+        }
+        
+        void UpdateAI(uint32 const diff)
+        override {
+            if (!UpdateVictim())
+                return;
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_frozen_coreAI(creature);
     }
 };
 
-CreatureAI* GetAI_boss_frozen_core(Creature* pCreature)
-{
-    return new boss_frozen_coreAI(pCreature);
-}
 
 #define SPELL_PULVERIZE         2676
 #define SPELL_CHILLING_AURA     46885
 
-struct mob_ahunite_hailstoneAI : public ScriptedAI
+
+class mob_ahunite_hailstone : public CreatureScript
 {
-    mob_ahunite_hailstoneAI(Creature* c) : ScriptedAI(c)
+public:
+    mob_ahunite_hailstone() : CreatureScript("mob_ahunite_hailstone")
+    { }
+
+    class mob_ahunite_hailstoneAI : public ScriptedAI
     {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-    }
-    
-    uint32 pulverizeTimer;
-    
-    InstanceScript* pInstance;
-    
-    void Reset()
-    override {
-        me->AddAura(SPELL_CHILLING_AURA, me);
-        
-        pulverizeTimer = 3000;
-    }
-    
-    void EnterCombat(Unit* pWho) override {}
-    
-    void JustDied(Unit* pKiller)
-    override {
-        if (pInstance)
-            pInstance->RemoveAuraOnAllPlayers(SPELL_HAILSTONE_CHILL);
-    }
-    
-    void UpdateAI(uint32 const diff)
-    override {
-        if (!UpdateVictim())
-            return;
-
-        if (pulverizeTimer <= diff) {
-            DoCast(me->GetVictim(), SPELL_PULVERIZE);
-            
-            pulverizeTimer = 6000;
+        public:
+        mob_ahunite_hailstoneAI(Creature* c) : ScriptedAI(c)
+        {
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
         }
-        else
-            pulverizeTimer -= diff;
+        
+        uint32 pulverizeTimer;
+        
+        InstanceScript* pInstance;
+        
+        void Reset()
+        override {
+            me->AddAura(SPELL_CHILLING_AURA, me);
+            
+            pulverizeTimer = 3000;
+        }
+        
+        void EnterCombat(Unit* pWho) override {}
+        
+        void JustDied(Unit* pKiller)
+        override {
+            if (pInstance)
+                pInstance->RemoveAuraOnAllPlayers(SPELL_HAILSTONE_CHILL);
+        }
+        
+        void UpdateAI(uint32 const diff)
+        override {
+            if (!UpdateVictim())
+                return;
+    
+            if (pulverizeTimer <= diff) {
+                DoCast(me->GetVictim(), SPELL_PULVERIZE);
+                
+                pulverizeTimer = 6000;
+            }
+            else
+                pulverizeTimer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new mob_ahunite_hailstoneAI(creature);
     }
 };
 
-CreatureAI* GetAI_mob_ahunite_hailstoneAI(Creature* pCreature)
-{
-    return new mob_ahunite_hailstoneAI(pCreature);
-}
 
 #define SPELL_KNOCKBACK_DELAYER     46878
 
 #define GO_ICE_SPEAR                188077
 
-struct npc_ice_spear_bunnyAI : public ScriptedAI
-{
-    npc_ice_spear_bunnyAI(Creature* c) : ScriptedAI(c)
-    {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-        SetCombatMovementAllowed(false);
-    }
-    
-    uint32 spawnTimer;
-    uint32 activateTimer;
-    uint32 deathTimer;
-    
-    InstanceScript* pInstance;
-    
-    void Reset()
-    override {
-        me->SetReactState(REACT_PASSIVE);
-        DoCast(me, SPELL_KNOCKBACK_DELAYER);
-        
-        spawnTimer = 500;
-        activateTimer = 2500;
-        deathTimer = 99999;
-    }
-    
-    void EnterCombat(Unit* pWho) override {}
-    
 
-    void HandleIceSpear()
+class npc_ice_spear_bunny : public CreatureScript
+{
+public:
+    npc_ice_spear_bunny() : CreatureScript("npc_ice_spear_bunny")
+    { }
+
+    class npc_ice_spear_bunnyAI : public ScriptedAI
     {
-        auto players = me->getThreatManager().getThreatList();
-        for (auto itr : players)
+        public:
+        npc_ice_spear_bunnyAI(Creature* c) : ScriptedAI(c)
         {
-            if (Unit* plr = itr->getTarget())
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
+            SetCombatMovementAllowed(false);
+        }
+        
+        uint32 spawnTimer;
+        uint32 activateTimer;
+        uint32 deathTimer;
+        
+        InstanceScript* pInstance;
+        
+        void Reset()
+        override {
+            me->SetReactState(REACT_PASSIVE);
+            DoCast(me, SPELL_KNOCKBACK_DELAYER);
+            
+            spawnTimer = 500;
+            activateTimer = 2500;
+            deathTimer = 99999;
+        }
+        
+        void EnterCombat(Unit* pWho) override {}
+        
+    
+        void HandleIceSpear()
+        {
+            auto players = me->getThreatManager().getThreatList();
+            for (auto itr : players)
             {
-                if (plr->IsWithinMeleeRange(me) && plr->IsAttackableByAOE())
+                if (Unit* plr = itr->getTarget())
                 {
-                    plr->CastSpell(plr, SPELL_ICE_SPEAR, true);
+                    if (plr->IsWithinMeleeRange(me) && plr->IsAttackableByAOE())
+                    {
+                        plr->CastSpell(plr, SPELL_ICE_SPEAR, true);
+                    }
                 }
             }
         }
-    }
-    
-    void UpdateAI(uint32 const diff)
-    override {
-        if (spawnTimer <= diff) {
-            if (GameObject* go = me->SummonGameObject(GO_ICE_SPEAR, me->GetPosition(), G3D::Quat(), 86400))
-                go->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND);
+        
+        void UpdateAI(uint32 const diff)
+        override {
+            if (spawnTimer <= diff) {
+                if (GameObject* go = me->SummonGameObject(GO_ICE_SPEAR, me->GetPosition(), G3D::Quat(), 1 * DAY))
+                    go->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND);
+                    
+                spawnTimer = 99999;
+            }
+            else
+                spawnTimer -= diff;
                 
-            spawnTimer = 99999;
-        }
-        else
-            spawnTimer -= diff;
-            
-        if (activateTimer <= diff) {
-            if (GameObject* go = me->FindNearestGameObject(GO_ICE_SPEAR, 3.0f)) {
-                go->UseDoorOrButton();
-                HandleIceSpear();
-                activateTimer = 99999;
-                deathTimer = 1500;
+            if (activateTimer <= diff) {
+                if (GameObject* go = me->FindNearestGameObject(GO_ICE_SPEAR, 3.0f)) {
+                    go->UseDoorOrButton();
+                    HandleIceSpear();
+                    activateTimer = 99999;
+                    deathTimer = 1500;
+                }
             }
-        }
-        else
-            activateTimer -= diff;
-            
-        if (deathTimer <= diff) {
-            if (GameObject* go = me->FindNearestGameObject(GO_ICE_SPEAR, 3.0f)) {
-                go->SetLootState(GO_JUST_DEACTIVATED);
-                go->SetRespawnTime(86400);     // One day
-                me->DisappearAndDie();
+            else
+                activateTimer -= diff;
+                
+            if (deathTimer <= diff) {
+                if (GameObject* go = me->FindNearestGameObject(GO_ICE_SPEAR, 3.0f)) {
+                    go->SetLootState(GO_JUST_DEACTIVATED);
+                    go->SetRespawnTime(1 * DAY);
+                    me->DisappearAndDie();
+                }
+                
+                deathTimer = 99999;
             }
-            
-            deathTimer = 99999;
+            else
+                deathTimer -= diff;
         }
-        else
-            deathTimer -= diff;
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_ice_spear_bunnyAI(creature);
     }
 };
 
-CreatureAI* GetAI_npc_ice_spear_bunny(Creature* pCreature)
-{
-    return new npc_ice_spear_bunnyAI(pCreature);
-}
 
 void AddSC_boss_ahune()
 {
     new boss_ahune();
 
-    OLDScript* newscript;
     
-    newscript = new OLDScript;
-    newscript->Name = "boss_frozen_core";
-    newscript->GetAI = &GetAI_boss_frozen_core;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_frozen_core();
     
-    newscript = new OLDScript;
-    newscript->Name = "mob_ahunite_hailstone";
-    newscript->GetAI = &GetAI_mob_ahunite_hailstoneAI;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new mob_ahunite_hailstone();
     
-    newscript = new OLDScript;
-    newscript->Name = "npc_ice_spear_bunny";
-    newscript->GetAI = &GetAI_npc_ice_spear_bunny;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_ice_spear_bunny();
 }

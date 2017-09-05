@@ -28,75 +28,81 @@ EndScriptData */
 #define SPELL_CONFLIGURATION            16805
 #define SPELL_THUNDERCLAP               15548               //Not sure if right ID. 23931 would be a harder possibility.
 
-struct boss_drakkisathAI : public ScriptedAI
+class boss_drakkisath : public CreatureScript
 {
-    boss_drakkisathAI(Creature *c) : ScriptedAI(c) {}
+public:
+    boss_drakkisath() : CreatureScript("boss_drakkisath")
+    { }
 
-    uint32 FireNova_Timer;
-    uint32 Cleave_Timer;
-    uint32 Confliguration_Timer;
-    uint32 Thunderclap_Timer;
-
-    void Reset()
-    override {
-        FireNova_Timer = 6000;
-        Cleave_Timer = 8000;
-        Confliguration_Timer = 15000;
-        Thunderclap_Timer = 17000;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        //Return since we have no target
-        if (!UpdateVictim() )
-            return;
-
-        //FireNova_Timer
-        if (FireNova_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_FIRENOVA);
-            FireNova_Timer = 10000;
-        }else FireNova_Timer -= diff;
-
-        //Cleave_Timer
-        if (Cleave_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_CLEAVE);
+    class boss_drakkisathAI : public ScriptedAI
+    {
+        public:
+        boss_drakkisathAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 FireNova_Timer;
+        uint32 Cleave_Timer;
+        uint32 Confliguration_Timer;
+        uint32 Thunderclap_Timer;
+    
+        void Reset()
+        override {
+            FireNova_Timer = 6000;
             Cleave_Timer = 8000;
-        }else Cleave_Timer -= diff;
+            Confliguration_Timer = 15000;
+            Thunderclap_Timer = 17000;
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            //Return since we have no target
+            if (!UpdateVictim() )
+                return;
+    
+            //FireNova_Timer
+            if (FireNova_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_FIRENOVA);
+                FireNova_Timer = 10000;
+            }else FireNova_Timer -= diff;
+    
+            //Cleave_Timer
+            if (Cleave_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_CLEAVE);
+                Cleave_Timer = 8000;
+            }else Cleave_Timer -= diff;
+    
+            //Confliguration_Timer
+            if (Confliguration_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_CONFLIGURATION);
+                Confliguration_Timer = 18000;
+            }else Confliguration_Timer -= diff;
+    
+            //Thunderclap_Timer
+            if (Thunderclap_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_THUNDERCLAP);
+                Thunderclap_Timer = 20000;
+            }else Thunderclap_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        //Confliguration_Timer
-        if (Confliguration_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_CONFLIGURATION);
-            Confliguration_Timer = 18000;
-        }else Confliguration_Timer -= diff;
-
-        //Thunderclap_Timer
-        if (Thunderclap_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_THUNDERCLAP);
-            Thunderclap_Timer = 20000;
-        }else Thunderclap_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_drakkisathAI(creature);
     }
 };
-CreatureAI* GetAI_boss_drakkisath(Creature *_Creature)
-{
-    return new boss_drakkisathAI (_Creature);
-}
+
 
 void AddSC_boss_drakkisath()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_drakkisath";
-    newscript->GetAI = &GetAI_boss_drakkisath;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_drakkisath();
 }
 

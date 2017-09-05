@@ -50,226 +50,6 @@ EndScriptData */
 #define SPELL_BLESSINGOFPROTECTION3 10278
 #define SPELL_FLASHHEAL6            10916
 
-struct boss_scarlet_commander_mograineAI : public ScriptedAI
-{
-    boss_scarlet_commander_mograineAI(Creature *c) : ScriptedAI(c)
-    {
-        pInstance = (InstanceScript*)me->GetInstanceScript();
-        alternative = false;
-    }
-
-    InstanceScript* pInstance;
-    
-    uint64 ashbringerGUID;
-    uint64 fatherGUID;
-
-    uint32 Heal_Timer;
-    uint32 DivineShield2_Timer;
-    uint32 CrusaderStrike5_Timer;
-    uint32 HammerOfJustice3_Timer;
-    uint32 Consecration3_Timer;
-    uint32 BlessingOfWisdom_Timer;
-    uint32 BlessingOfProtection3_Timer;
-    uint32 eventTimer;
-    
-    uint8 step;
-    
-    bool alternative;
-
-    void Reset()
-    override {
-        alternative = false;
-        Heal_Timer = 80000;
-        DivineShield2_Timer = 60000;
-        CrusaderStrike5_Timer = 20000;
-        HammerOfJustice3_Timer = 80000;
-        Consecration3_Timer = 30000;
-        BlessingOfWisdom_Timer = 45000;
-        BlessingOfProtection3_Timer = 45000;
-        eventTimer = 0;
-        step = 0;
-        ashbringerGUID = 0;
-        fatherGUID = 0;
-        
-        if(pInstance)
-            pInstance->HandleGameObject(pInstance->GetData64(DATA_DOOR_WHITEMANE), false);
-
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-        DoScriptText(SAY_MO_AGGRO, me);
-        DoCast(me,SPELL_RETRIBUTIONAURA3);
-    }
-
-    void KilledUnit(Unit *victim)
-    override {
-        if (victim != me)
-            DoScriptText(SAY_MO_KILL, me);
-    }
-    
-    void SpellHit(Unit* caster, SpellInfo const* spell)
-    override {
-        if (spell->Id != 28441 || alternative)
-            return;
-
-        alternative = true;
-        eventTimer = 5000;
-        step = 1;
-        ashbringerGUID = caster->GetGUID();
-        me->SetOrientation(3.1142);
-        me->SendMovementFlagUpdate();
-        DoScriptText(SAY_ASH_1, me);
-        me->SetReactState(REACT_PASSIVE);
-        me->CombatStop();
-    }
-    
-    void JustDied(Unit *who)
-    override {
-        if(!pInstance)
-            return;
-            
-        pInstance->HandleGameObject(pInstance->GetData64(DATA_DOOR_WHITEMANE), true);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (alternative) {
-            me->SetReactState(REACT_PASSIVE);
-            if (eventTimer <= diff) {
-                switch (step) {
-                case 1:
-                    if (Player* ashbringer = ObjectAccessor::GetPlayer(*me, ashbringerGUID))
-                        DoScriptText(SAY_ASH_2, me, ashbringer);
-                        
-                    eventTimer = 5000;
-                    break;
-                case 2:
-                    if (Creature* father = me->SummonCreature(16440, 1113.977295, 1399.238403, 30.307175, 6.281954, TEMPSUMMON_MANUAL_DESPAWN, 0)) {
-                        fatherGUID = father->GetGUID();
-                        father->GetMotionMaster()->MovePoint(0, 1149.960205, 1398.409058, 32.250179, 6.261882 );
-                    }
-                    
-                    eventTimer = 18000;
-                    break;
-                case 3:
-                    if (Creature* father = ObjectAccessor::GetCreature(*me, fatherGUID))
-                        DoScriptText(SAY_ASH_3, father);
-                        
-                    eventTimer = 3000;
-                    break;
-                case 4:
-                    DoScriptText(SAY_ASH_4, me);
-                    eventTimer = 4000;
-                    break;
-                case 5:
-                    if (Creature* father = ObjectAccessor::GetCreature(*me, fatherGUID))
-                        DoScriptText(SAY_ASH_5, father);
-                        
-                    eventTimer = 8000;
-                    break;
-                case 6:
-                    DoScriptText(SAY_ASH_6, me);
-                    eventTimer = 2000;
-                    break;
-                case 7:
-                    if (Creature* father = ObjectAccessor::GetCreature(*me, fatherGUID))
-                        father->CastSpell(me, 28697, false); 
-                        
-                    eventTimer = 2000;
-                    break;
-                case 8:
-                    if (Creature* father = ObjectAccessor::GetCreature(*me, fatherGUID)) {
-                        DoScriptText(SAY_ASH_7, father);
-                        father->DisappearAndDie();
-                    }
-                    me->Kill(me);
-                    eventTimer = 0;
-                    alternative = false;
-                    break;
-                default:
-                    break;
-                }
-                
-                step++;
-            }
-            else
-                eventTimer -= diff;
-                
-            return;
-        }
-
-        if (!UpdateVictim())
-            return;
-
-        //If we are <50% hp cast Arcane Bubble and start casting SPECIAL Arcane Explosion
-        if (me->GetHealth()*100 / me->GetMaxHealth() <= 50 && !me->IsNonMeleeSpellCast(false))
-        {
-            //heal_Timer
-            if (Heal_Timer < diff)
-            {
-                //Switch between 2 different charge methods
-                switch (rand()%2)
-                {
-                    case 0:
-                        DoCast(me,SPELL_HOLYLIGHT6);
-                        break;
-                    case 1:
-                        DoCast(me,SPELL_FLASHHEAL6);
-                        break;
-                }
-                return;
-
-                //60 seconds until we should cast this agian
-                Heal_Timer = 60000;
-            }else Heal_Timer -= diff;
-        }
-
-        //DivineShield2_Timer
-        if (DivineShield2_Timer < diff)
-        {
-            DoCast(me,SPELL_DIVINESHIELD2);
-            DivineShield2_Timer = 60000;
-        }else DivineShield2_Timer -= diff;
-
-        //CrusaderStrike5_Timer
-        if (CrusaderStrike5_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_CRUSADERSTRIKE5);
-            CrusaderStrike5_Timer = 20000;
-        }else CrusaderStrike5_Timer -= diff;
-
-        //HammerOfJustice3_Timer
-        if (HammerOfJustice3_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_HAMMEROFJUSTICE3);
-            HammerOfJustice3_Timer = 30000;
-        }else HammerOfJustice3_Timer -= diff;
-
-        //Consecration3_Timer
-        if (Consecration3_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_CONSECRATION3);
-            Consecration3_Timer = 20000;
-        }else Consecration3_Timer -= diff;
-
-        //BlessingOfWisdom_Timer
-        if (BlessingOfWisdom_Timer < diff)
-        {
-            DoCast(me,SPELL_BLESSINGOFWISDOM);
-            BlessingOfWisdom_Timer = 45000;
-        }else BlessingOfWisdom_Timer -= diff;
-
-        //BlessingOfProtection3_Timer
-        if (BlessingOfProtection3_Timer < diff)
-        {
-            DoCast(me,SPELL_BLESSINGOFPROTECTION3);
-            BlessingOfProtection3_Timer = 50000;
-        }else BlessingOfProtection3_Timer -= diff;
-
-        DoMeleeAttackIfReady();
-    }
-};
 
 #define SPELL_DEEPSLEEP                 9256
 #define SPELL_SCARLETRESURRECTION       9232
@@ -285,154 +65,387 @@ struct boss_scarlet_commander_mograineAI : public ScriptedAI
 #define SPELL_RENEW                     6078
 #define SPELL_FLASHHEAL6                10916
 
-struct boss_high_inquisitor_whitemaneAI : public ScriptedAI
+
+class boss_scarlet_commander_mograine : public CreatureScript
 {
-    boss_high_inquisitor_whitemaneAI(Creature *c) : ScriptedAI(c)
+public:
+    boss_scarlet_commander_mograine() : CreatureScript("boss_scarlet_commander_mograine")
+    { }
+
+    class boss_scarlet_commander_mograineAI : public ScriptedAI
     {
-        pInstance = (InstanceScript*)me->GetInstanceScript();
-    }
-
-    InstanceScript* pInstance;
-
-    uint32 Healing_Timer;
-    uint32 Renew_Timer;
-    uint32 PowerWordShield_Timer;
-    uint32 CrusaderStrike_Timer;
-    uint32 HammerOfJustice_Timer;
-    uint32 HolySmite6_Timer;
-    uint32 HolyFire5_Timer;
-    uint32 MindBlast6_Timer;
-
-    void Reset()
-    override {
-        Healing_Timer = 0;
-        Renew_Timer= 0;
-        PowerWordShield_Timer = 2000;
-        CrusaderStrike_Timer = 12000;
-        HammerOfJustice_Timer = 18000;
-        HolySmite6_Timer = 10000;
-        HolyFire5_Timer = 20000;
-        MindBlast6_Timer = 6000;
-    }
-
-    void EnterCombat(Unit *who)
-    override {
-        DoScriptText(SAY_WH_INTRO, me);
-    }
-
-    void KilledUnit(Unit *victim)
-    override {
-        DoScriptText(SAY_WH_KILL, me);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim())
-            return;
-
-        /*
-        //This is going to be a routine to make the resurrection event...
-        if (me->isAlive && me->isAlive)
+        public:
+        boss_scarlet_commander_mograineAI(Creature *c) : ScriptedAI(c)
         {
-        me->Relocate(1163.113370,1398.856812,32.527786,3.171014);
-
-        DoScriptText(SAY_WH_RESSURECT, me);
-
-        DoCast(me->GetVictim(),SPELL_DEEPSLEEP);
-        DoCast(m-creature->GetGUID(51117),SPELL_SCARLETRESURRECTION)
+            pInstance = (InstanceScript*)me->GetInstanceScript();
+            alternative = false;
         }
-        */
-
-        //If we are <75% hp cast healing spells at self and Mograine
-        if (me->GetHealth()*100 / me->GetMaxHealth() <= 75 )
-        {
-            if (Healing_Timer < diff)
-            {
-                DoCast(me,SPELL_FLASHHEAL6);
+    
+        InstanceScript* pInstance;
+        
+        uint64 ashbringerGUID;
+        uint64 fatherGUID;
+    
+        uint32 Heal_Timer;
+        uint32 DivineShield2_Timer;
+        uint32 CrusaderStrike5_Timer;
+        uint32 HammerOfJustice3_Timer;
+        uint32 Consecration3_Timer;
+        uint32 BlessingOfWisdom_Timer;
+        uint32 BlessingOfProtection3_Timer;
+        uint32 eventTimer;
+        
+        uint8 step;
+        
+        bool alternative;
+    
+        void Reset()
+        override {
+            alternative = false;
+            Heal_Timer = 80000;
+            DivineShield2_Timer = 60000;
+            CrusaderStrike5_Timer = 20000;
+            HammerOfJustice3_Timer = 80000;
+            Consecration3_Timer = 30000;
+            BlessingOfWisdom_Timer = 45000;
+            BlessingOfProtection3_Timer = 45000;
+            eventTimer = 0;
+            step = 0;
+            ashbringerGUID = 0;
+            fatherGUID = 0;
+            
+            if(pInstance)
+                pInstance->HandleGameObject(pInstance->GetData64(DATA_DOOR_WHITEMANE), false);
+    
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+            DoScriptText(SAY_MO_AGGRO, me);
+            DoCast(me,SPELL_RETRIBUTIONAURA3);
+        }
+    
+        void KilledUnit(Unit *victim)
+        override {
+            if (victim != me)
+                DoScriptText(SAY_MO_KILL, me);
+        }
+        
+        void SpellHit(Unit* caster, SpellInfo const* spell)
+        override {
+            if (spell->Id != 28441 || alternative)
                 return;
-
-                //22-32 seconds until we should cast this agian
-                Healing_Timer = 22000 + rand()%10000;
-            }else Healing_Timer -= diff;
+    
+            alternative = true;
+            eventTimer = 5000;
+            step = 1;
+            ashbringerGUID = caster->GetGUID();
+            me->SetOrientation(3.1142);
+            me->SendMovementFlagUpdate();
+            DoScriptText(SAY_ASH_1, me);
+            me->SetReactState(REACT_PASSIVE);
+            me->CombatStop();
         }
-
-        if (me->GetHealth()*100 / me->GetMaxHealth() <= 30)
-        {
-            if (Renew_Timer < diff)
+        
+        void JustDied(Unit *who)
+        override {
+            if(!pInstance)
+                return;
+                
+            pInstance->HandleGameObject(pInstance->GetData64(DATA_DOOR_WHITEMANE), true);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (alternative) {
+                me->SetReactState(REACT_PASSIVE);
+                if (eventTimer <= diff) {
+                    switch (step) {
+                    case 1:
+                        if (Player* ashbringer = ObjectAccessor::GetPlayer(*me, ashbringerGUID))
+                            DoScriptText(SAY_ASH_2, me, ashbringer);
+                            
+                        eventTimer = 5000;
+                        break;
+                    case 2:
+                        if (Creature* father = me->SummonCreature(16440, 1113.977295, 1399.238403, 30.307175, 6.281954, TEMPSUMMON_MANUAL_DESPAWN, 0)) {
+                            fatherGUID = father->GetGUID();
+                            father->GetMotionMaster()->MovePoint(0, 1149.960205, 1398.409058, 32.250179, 6.261882 );
+                        }
+                        
+                        eventTimer = 18000;
+                        break;
+                    case 3:
+                        if (Creature* father = ObjectAccessor::GetCreature(*me, fatherGUID))
+                            DoScriptText(SAY_ASH_3, father);
+                            
+                        eventTimer = 3000;
+                        break;
+                    case 4:
+                        DoScriptText(SAY_ASH_4, me);
+                        eventTimer = 4000;
+                        break;
+                    case 5:
+                        if (Creature* father = ObjectAccessor::GetCreature(*me, fatherGUID))
+                            DoScriptText(SAY_ASH_5, father);
+                            
+                        eventTimer = 8000;
+                        break;
+                    case 6:
+                        DoScriptText(SAY_ASH_6, me);
+                        eventTimer = 2000;
+                        break;
+                    case 7:
+                        if (Creature* father = ObjectAccessor::GetCreature(*me, fatherGUID))
+                            father->CastSpell(me, 28697, false); 
+                            
+                        eventTimer = 2000;
+                        break;
+                    case 8:
+                        if (Creature* father = ObjectAccessor::GetCreature(*me, fatherGUID)) {
+                            DoScriptText(SAY_ASH_7, father);
+                            father->DisappearAndDie();
+                        }
+                        me->Kill(me);
+                        eventTimer = 0;
+                        alternative = false;
+                        break;
+                    default:
+                        break;
+                    }
+                    
+                    step++;
+                }
+                else
+                    eventTimer -= diff;
+                    
+                return;
+            }
+    
+            if (!UpdateVictim())
+                return;
+    
+            //If we are <50% hp cast Arcane Bubble and start casting SPECIAL Arcane Explosion
+            if (me->GetHealthPct() <= 50 && !me->IsNonMeleeSpellCast(false))
             {
-                DoCast(me,SPELL_RENEW);
-                Renew_Timer = 30000;
-            }else Renew_Timer -= diff;
+                //heal_Timer
+                if (Heal_Timer < diff)
+                {
+                    //Switch between 2 different charge methods
+                    switch (rand()%2)
+                    {
+                        case 0:
+                            DoCast(me,SPELL_HOLYLIGHT6);
+                            break;
+                        case 1:
+                            DoCast(me,SPELL_FLASHHEAL6);
+                            break;
+                    }
+    
+                    //60 seconds until we should cast this agian
+                    Heal_Timer = 60000;
+    				return;
+                }else Heal_Timer -= diff;
+            }
+    
+            //DivineShield2_Timer
+            if (DivineShield2_Timer < diff)
+            {
+                DoCast(me,SPELL_DIVINESHIELD2);
+                DivineShield2_Timer = 60000;
+            }else DivineShield2_Timer -= diff;
+    
+            //CrusaderStrike5_Timer
+            if (CrusaderStrike5_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_CRUSADERSTRIKE5);
+                CrusaderStrike5_Timer = 20000;
+            }else CrusaderStrike5_Timer -= diff;
+    
+            //HammerOfJustice3_Timer
+            if (HammerOfJustice3_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_HAMMEROFJUSTICE3);
+                HammerOfJustice3_Timer = 30000;
+            }else HammerOfJustice3_Timer -= diff;
+    
+            //Consecration3_Timer
+            if (Consecration3_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_CONSECRATION3);
+                Consecration3_Timer = 20000;
+            }else Consecration3_Timer -= diff;
+    
+            //BlessingOfWisdom_Timer
+            if (BlessingOfWisdom_Timer < diff)
+            {
+                DoCast(me,SPELL_BLESSINGOFWISDOM);
+                BlessingOfWisdom_Timer = 45000;
+            }else BlessingOfWisdom_Timer -= diff;
+    
+            //BlessingOfProtection3_Timer
+            if (BlessingOfProtection3_Timer < diff)
+            {
+                DoCast(me,SPELL_BLESSINGOFPROTECTION3);
+                BlessingOfProtection3_Timer = 50000;
+            }else BlessingOfProtection3_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
         }
+    };
 
-        //PowerWordShield_Timer
-        if (PowerWordShield_Timer < diff)
-        {
-            DoCast(me,SPELL_POWERWORDSHIELD);
-            PowerWordShield_Timer = 25000;
-        }else PowerWordShield_Timer -= diff;
-
-        //CrusaderStrike_Timer
-        if (CrusaderStrike_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_CRUSADERSTRIKE);
-            CrusaderStrike_Timer = 15000;
-        }else CrusaderStrike_Timer -= diff;
-
-        //HammerOfJustice_Timer
-        if (HammerOfJustice_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_HAMMEROFJUSTICE);
-            HammerOfJustice_Timer = 12000;
-        }else HammerOfJustice_Timer -= diff;
-
-        //HolySmite6_Timer
-        if (HolySmite6_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_HOLYSMITE6);
-            HolySmite6_Timer = 10000;
-        }else HolySmite6_Timer -= diff;
-
-        //HolyFire5_Timer
-        if (HolyFire5_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_HOLYFIRE5);
-            HolyFire5_Timer = 15000;
-        }else HolyFire5_Timer -= diff;
-
-        //MindBlast6_Timer
-        if (MindBlast6_Timer < diff)
-        {
-            DoCast(me->GetVictim(),SPELL_MINDBLAST6);
-            MindBlast6_Timer = 8000;
-        }else MindBlast6_Timer -= diff;
-
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_scarlet_commander_mograineAI(creature);
     }
 };
 
-CreatureAI* GetAI_boss_scarlet_commander_mograine(Creature *_Creature)
-{
-    return new boss_scarlet_commander_mograineAI (_Creature);
-}
 
-CreatureAI* GetAI_boss_high_inquisitor_whitemane(Creature *_Creature)
+class boss_high_inquisitor_whitemane : public CreatureScript
 {
-    return new boss_high_inquisitor_whitemaneAI (_Creature);
-}
+public:
+    boss_high_inquisitor_whitemane() : CreatureScript("boss_high_inquisitor_whitemane")
+    { }
+
+    class boss_high_inquisitor_whitemaneAI : public ScriptedAI
+    {
+        public:
+        boss_high_inquisitor_whitemaneAI(Creature *c) : ScriptedAI(c)
+        {
+            pInstance = (InstanceScript*)me->GetInstanceScript();
+        }
+    
+        InstanceScript* pInstance;
+    
+        uint32 Healing_Timer;
+        uint32 Renew_Timer;
+        uint32 PowerWordShield_Timer;
+        uint32 CrusaderStrike_Timer;
+        uint32 HammerOfJustice_Timer;
+        uint32 HolySmite6_Timer;
+        uint32 HolyFire5_Timer;
+        uint32 MindBlast6_Timer;
+    
+        void Reset()
+        override {
+            Healing_Timer = 0;
+            Renew_Timer= 0;
+            PowerWordShield_Timer = 2000;
+            CrusaderStrike_Timer = 12000;
+            HammerOfJustice_Timer = 18000;
+            HolySmite6_Timer = 10000;
+            HolyFire5_Timer = 20000;
+            MindBlast6_Timer = 6000;
+        }
+    
+        void EnterCombat(Unit *who)
+        override {
+            DoScriptText(SAY_WH_INTRO, me);
+        }
+    
+        void KilledUnit(Unit *victim)
+        override {
+            DoScriptText(SAY_WH_KILL, me);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim())
+                return;
+    
+            /*
+            //This is going to be a routine to make the resurrection event...
+            if (me->isAlive && me->isAlive)
+            {
+            me->Relocate(1163.113370,1398.856812,32.527786,3.171014);
+    
+            DoScriptText(SAY_WH_RESSURECT, me);
+    
+            DoCast(me->GetVictim(),SPELL_DEEPSLEEP);
+            DoCast(m-creature->GetGUID(51117),SPELL_SCARLETRESURRECTION)
+            }
+            */
+    
+            //If we are <75% hp cast healing spells at self and Mograine
+            if (me->GetHealthPct() <= 75 )
+            {
+                if (Healing_Timer < diff)
+                {
+                    DoCast(me,SPELL_FLASHHEAL6);
+    
+                    //22-32 seconds until we should cast this agian
+    				Healing_Timer = urand(22 * SECOND * IN_MILLISECONDS, 32 * SECOND * IN_MILLISECONDS);
+    				return;
+                }else Healing_Timer -= diff;
+            }
+    
+            if (me->GetHealthPct() <= 30)
+            {
+                if (Renew_Timer < diff)
+                {
+                    DoCast(me,SPELL_RENEW);
+                    Renew_Timer = 30000;
+                }else Renew_Timer -= diff;
+            }
+    
+            //PowerWordShield_Timer
+            if (PowerWordShield_Timer < diff)
+            {
+                DoCast(me,SPELL_POWERWORDSHIELD);
+                PowerWordShield_Timer = 25000;
+            }else PowerWordShield_Timer -= diff;
+    
+            //CrusaderStrike_Timer
+            if (CrusaderStrike_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_CRUSADERSTRIKE);
+                CrusaderStrike_Timer = 15000;
+            }else CrusaderStrike_Timer -= diff;
+    
+            //HammerOfJustice_Timer
+            if (HammerOfJustice_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_HAMMEROFJUSTICE);
+                HammerOfJustice_Timer = 12000;
+            }else HammerOfJustice_Timer -= diff;
+    
+            //HolySmite6_Timer
+            if (HolySmite6_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_HOLYSMITE6);
+                HolySmite6_Timer = 10000;
+            }else HolySmite6_Timer -= diff;
+    
+            //HolyFire5_Timer
+            if (HolyFire5_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_HOLYFIRE5);
+                HolyFire5_Timer = 15000;
+            }else HolyFire5_Timer -= diff;
+    
+            //MindBlast6_Timer
+            if (MindBlast6_Timer < diff)
+            {
+                DoCast(me->GetVictim(),SPELL_MINDBLAST6);
+                MindBlast6_Timer = 8000;
+            }else MindBlast6_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_high_inquisitor_whitemaneAI(creature);
+    }
+};
+
 
 void AddSC_boss_mograine_and_whitemane()
 {
-    OLDScript *newscript;
 
-    newscript = new OLDScript;
-    newscript->Name = "boss_scarlet_commander_mograine";
-    newscript->GetAI = &GetAI_boss_scarlet_commander_mograine;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_scarlet_commander_mograine();
 
-    newscript = new OLDScript;
-    newscript->Name = "boss_high_inquisitor_whitemane";
-    newscript->GetAI = &GetAI_boss_high_inquisitor_whitemane;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_high_inquisitor_whitemane();
 }
 

@@ -550,8 +550,8 @@ public:
         if (!player)
             return true;
 
-        if ((player->GetTeam() == TEAM_ALLIANCE && player->GetQuestStatus(QUEST_BLADESPIRE_A) == QUEST_STATUS_INCOMPLETE)
-            || (player->GetTeam() == TEAM_HORDE && player->GetQuestStatus(QUEST_BLADESPIRE_H) == QUEST_STATUS_INCOMPLETE))
+        if ((player->GetTeam() == ALLIANCE && player->GetQuestStatus(QUEST_BLADESPIRE_A) == QUEST_STATUS_INCOMPLETE)
+            || (player->GetTeam() == HORDE && player->GetQuestStatus(QUEST_BLADESPIRE_H) == QUEST_STATUS_INCOMPLETE))
             player->KilledMonsterCredit(BLOODMAUL_TRIGGER, player->GetGUID());
 
         return false;

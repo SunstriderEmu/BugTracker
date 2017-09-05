@@ -1,18 +1,3 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /* ScriptData
 SDName: Moonglade
@@ -42,56 +27,82 @@ EndContentData */
 #define GOSSIP_BP1 "Do you know where I can find Half Pendant of Aquatic Endurance?"
 #define GOSSIP_BP2 "I'd like to fly to Thunder Bluff."
 
-bool GossipHello_npc_bunthen_plainswind(Player* pPlayer, Creature* pCreature)
+class npc_bunthen_plainswind : public CreatureScript
 {
-    if(pPlayer->GetClass() != CLASS_DRUID)
-        pPlayer->SEND_GOSSIP_MENU_TEXTID(4916, pCreature->GetGUID());
-    else if(pPlayer->GetTeam() != TEAM_HORDE)
+public:
+    npc_bunthen_plainswind() : CreatureScript("npc_bunthen_plainswind")
+    { }
+
+    class npc_bunthen_plainswindAI : public ScriptedAI
     {
-        if(pPlayer->GetQuestStatus(272) == QUEST_STATUS_INCOMPLETE)
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_BP1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+    public:
+        npc_bunthen_plainswindAI(Creature* creature) : ScriptedAI(creature)
+        {}
 
-        pPlayer->SEND_GOSSIP_MENU_TEXTID(4917,pCreature->GetGUID());
-    }
-    else if(pPlayer->GetClass() == CLASS_DRUID && pPlayer->GetTeam() == TEAM_HORDE)
-    {
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_BP2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
-        if(pPlayer->GetQuestStatus(30) == QUEST_STATUS_INCOMPLETE)
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_BP1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
-
-        pPlayer->SEND_GOSSIP_MENU_TEXTID(4918, pCreature->GetGUID());
-    }
-    return true;
-}
-
-bool GossipSelect_npc_bunthen_plainswind(Player* pPlayer, Creature* pCreature, uint32 sender, uint32 action )
-{
-    switch(action)
-    {
-        case GOSSIP_ACTION_INFO_DEF + 1:
+        virtual bool GossipHello(Player* pPlayer) override
         {
-            pPlayer->CLOSE_GOSSIP_MENU();
-            if (pPlayer->GetClass() == CLASS_DRUID && pPlayer->GetTeam() == TEAM_HORDE)
+            if(pPlayer->GetClass() != CLASS_DRUID)
+                pPlayer->SEND_GOSSIP_MENU_TEXTID(4916, me->GetGUID());
+            else if(pPlayer->GetTeam() != HORDE)
             {
-                std::vector<uint32> nodes;
+                if(pPlayer->GetQuestStatus(272) == QUEST_STATUS_INCOMPLETE)
+                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_BP1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
 
-                nodes.resize(2);
-                nodes[0] = 63;                              // Nighthaven, Moonglade
-                nodes[1] = 22;                              // Thunder Bluff, Mulgore
-                pPlayer->ActivateTaxiPathTo(nodes);
+                pPlayer->SEND_GOSSIP_MENU_TEXTID(4917,me->GetGUID());
             }
-            break;
+            else if(pPlayer->GetClass() == CLASS_DRUID && pPlayer->GetTeam() == HORDE)
+            {
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_BP2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+
+                if(pPlayer->GetQuestStatus(30) == QUEST_STATUS_INCOMPLETE)
+                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_BP1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+
+                pPlayer->SEND_GOSSIP_MENU_TEXTID(4918, me->GetGUID());
+            }
+            return true;
+
         }
-        case GOSSIP_ACTION_INFO_DEF + 2:
-            pPlayer->SEND_GOSSIP_MENU_TEXTID(5373, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 3:
-            pPlayer->SEND_GOSSIP_MENU_TEXTID(5376, pCreature->GetGUID());
-            break;
+
+
+        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        {
+            switch(action)
+            {
+                case GOSSIP_ACTION_INFO_DEF + 1:
+                {
+                    pPlayer->CLOSE_GOSSIP_MENU();
+                    if (pPlayer->GetClass() == CLASS_DRUID && pPlayer->GetTeam() == HORDE)
+                    {
+                        std::vector<uint32> nodes;
+
+                        nodes.resize(2);
+                        nodes[0] = 63;                              // Nighthaven, Moonglade
+                        nodes[1] = 22;                              // Thunder Bluff, Mulgore
+                        pPlayer->ActivateTaxiPathTo(nodes);
+                    }
+                    break;
+                }
+                case GOSSIP_ACTION_INFO_DEF + 2:
+                    pPlayer->SEND_GOSSIP_MENU_TEXTID(5373, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF + 3:
+                    pPlayer->SEND_GOSSIP_MENU_TEXTID(5376, me->GetGUID());
+                    break;
+            }
+            return true;
+
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_bunthen_plainswindAI(creature);
     }
-    return true;
-}
+};
+
+
 
 /*######
 ## npc_great_bear_spirit
@@ -102,47 +113,73 @@ bool GossipSelect_npc_bunthen_plainswind(Player* pPlayer, Creature* pCreature, u
 #define GOSSIP_BEAR3 "I seek to understand the importance of strength of the heart."
 #define GOSSIP_BEAR4 "I have heard your words, Great Bear Spirit, and I understand. I now seek your blessings to fully learn the way of the Claw."
 
-bool GossipHello_npc_great_bear_spirit(Player* pPlayer, Creature* pCreature)
+class npc_great_bear_spirit : public CreatureScript
 {
-    //ally or horde quest
-    if (pPlayer->GetQuestStatus(5929) == QUEST_STATUS_INCOMPLETE || pPlayer->GetQuestStatus(5930) == QUEST_STATUS_INCOMPLETE)
-    {
-        pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_BEAR1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
-        pPlayer->SEND_GOSSIP_MENU_TEXTID(4719, pCreature->GetGUID());
-    }
-    else
-        pPlayer->SEND_GOSSIP_MENU_TEXTID(4718, pCreature->GetGUID());
+public:
+    npc_great_bear_spirit() : CreatureScript("npc_great_bear_spirit")
+    { }
 
-    return true;
-}
-
-bool GossipSelect_npc_great_bear_spirit(Player* pPlayer, Creature* pCreature, uint32 sender, uint32 action )
-{
-    switch (action)
+    class npc_great_bear_spiritAI : public ScriptedAI
     {
-        case GOSSIP_ACTION_INFO_DEF:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_BEAR2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-            pPlayer->SEND_GOSSIP_MENU_TEXTID(4721, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 1:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_BEAR3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-            pPlayer->SEND_GOSSIP_MENU_TEXTID(4733, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 2:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_BEAR4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
-            pPlayer->SEND_GOSSIP_MENU_TEXTID(4734, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 3:
-            pPlayer->SEND_GOSSIP_MENU_TEXTID(4735, pCreature->GetGUID());
-            if (pPlayer->GetQuestStatus(5929) == QUEST_STATUS_INCOMPLETE)
-                pPlayer->AreaExploredOrEventHappens(5929);
-            if (pPlayer->GetQuestStatus(5930) == QUEST_STATUS_INCOMPLETE)
-                pPlayer->AreaExploredOrEventHappens(5930);
-            break;
+    public:
+        npc_great_bear_spiritAI(Creature* creature) : ScriptedAI(creature)
+        {}
+
+
+        virtual bool GossipHello(Player* pPlayer) override
+        {
+            //ally or horde quest
+            if (pPlayer->GetQuestStatus(5929) == QUEST_STATUS_INCOMPLETE || pPlayer->GetQuestStatus(5930) == QUEST_STATUS_INCOMPLETE)
+            {
+                pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_BEAR1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+                pPlayer->SEND_GOSSIP_MENU_TEXTID(4719, me->GetGUID());
+            }
+            else
+                pPlayer->SEND_GOSSIP_MENU_TEXTID(4718, me->GetGUID());
+
+            return true;
+
+        }
+
+
+        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        {
+            switch (action)
+            {
+                case GOSSIP_ACTION_INFO_DEF:
+                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_BEAR2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+                    pPlayer->SEND_GOSSIP_MENU_TEXTID(4721, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF + 1:
+                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_BEAR3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+                    pPlayer->SEND_GOSSIP_MENU_TEXTID(4733, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF + 2:
+                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_BEAR4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+                    pPlayer->SEND_GOSSIP_MENU_TEXTID(4734, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF + 3:
+                    pPlayer->SEND_GOSSIP_MENU_TEXTID(4735, me->GetGUID());
+                    if (pPlayer->GetQuestStatus(5929) == QUEST_STATUS_INCOMPLETE)
+                        pPlayer->AreaExploredOrEventHappens(5929);
+                    if (pPlayer->GetQuestStatus(5930) == QUEST_STATUS_INCOMPLETE)
+                        pPlayer->AreaExploredOrEventHappens(5930);
+                    break;
+            }
+            
+            return true;
+
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_great_bear_spiritAI(creature);
     }
-    
-    return true;
-}
+};
+
+
 
 /*######
 ## npc_silva_filnaveth
@@ -151,58 +188,84 @@ bool GossipSelect_npc_great_bear_spirit(Player* pPlayer, Creature* pCreature, ui
 #define GOSSIP_SF1 "Do you know where I can find Half Pendant of Aquatic Agility?"
 #define GOSSIP_SF2 "I'd like to fly to Rut'theran Village."
 
-bool GossipHello_npc_silva_filnaveth(Player* pPlayer, Creature* pCreature)
+class npc_silva_filnaveth : public CreatureScript
 {
-    if (pPlayer->GetClass() != CLASS_DRUID)
-        pPlayer->SEND_GOSSIP_MENU_TEXTID(4913, pCreature->GetGUID());
-    else if (pPlayer->GetTeam() != TEAM_ALLIANCE)
+public:
+    npc_silva_filnaveth() : CreatureScript("npc_silva_filnaveth")
+    { }
+
+    class npc_silva_filnavethAI : public ScriptedAI
     {
-        if (pPlayer->GetQuestStatus(30) == QUEST_STATUS_INCOMPLETE)
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SF1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+    public:
+        npc_silva_filnavethAI(Creature* creature) : ScriptedAI(creature)
+        {}
 
-        pPlayer->SEND_GOSSIP_MENU_TEXTID(4915, pCreature->GetGUID());
-    }
-    else if (pPlayer->GetClass() == CLASS_DRUID && pPlayer->GetTeam() == TEAM_ALLIANCE)
-    {
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SF2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
-        if (pPlayer->GetQuestStatus(272) == QUEST_STATUS_INCOMPLETE)
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SF1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
-
-        pPlayer->SEND_GOSSIP_MENU_TEXTID(4914, pCreature->GetGUID());
-    }
-    
-    return true;
-}
-
-bool GossipSelect_npc_silva_filnaveth(Player* pPlayer, Creature* pCreature, uint32 sender, uint32 action )
-{
-    switch(action)
-    {
-        case GOSSIP_ACTION_INFO_DEF + 1:
+        virtual bool GossipHello(Player* pPlayer) override
         {
-            pPlayer->CLOSE_GOSSIP_MENU();
-            if (pPlayer->GetClass() == CLASS_DRUID && pPlayer->GetTeam() == TEAM_ALLIANCE)
+            if (pPlayer->GetClass() != CLASS_DRUID)
+                pPlayer->SEND_GOSSIP_MENU_TEXTID(4913, me->GetGUID());
+            else if (pPlayer->GetTeam() != ALLIANCE)
             {
-                std::vector<uint32> nodes;
+                if (pPlayer->GetQuestStatus(30) == QUEST_STATUS_INCOMPLETE)
+                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SF1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
 
-                nodes.resize(2);
-                nodes[0] = 62;                              // Nighthaven, Moonglade
-                nodes[1] = 27;                              // Rut'theran Village, Teldrassil
-                pPlayer->ActivateTaxiPathTo(nodes);
+                pPlayer->SEND_GOSSIP_MENU_TEXTID(4915, me->GetGUID());
             }
-            break;
+            else if (pPlayer->GetClass() == CLASS_DRUID && pPlayer->GetTeam() == ALLIANCE)
+            {
+                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SF2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+
+                if (pPlayer->GetQuestStatus(272) == QUEST_STATUS_INCOMPLETE)
+                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SF1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+
+                pPlayer->SEND_GOSSIP_MENU_TEXTID(4914, me->GetGUID());
+            }
+            
+            return true;
+
         }
-        case GOSSIP_ACTION_INFO_DEF + 2:
-            pPlayer->SEND_GOSSIP_MENU_TEXTID(5374, pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF + 3:
-            pPlayer->SEND_GOSSIP_MENU_TEXTID(5375, pCreature->GetGUID());
-            break;
+
+
+        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        {
+            switch(action)
+            {
+                case GOSSIP_ACTION_INFO_DEF + 1:
+                {
+                    pPlayer->CLOSE_GOSSIP_MENU();
+                    if (pPlayer->GetClass() == CLASS_DRUID && pPlayer->GetTeam() == ALLIANCE)
+                    {
+                        std::vector<uint32> nodes;
+
+                        nodes.resize(2);
+                        nodes[0] = 62;                              // Nighthaven, Moonglade
+                        nodes[1] = 27;                              // Rut'theran Village, Teldrassil
+                        pPlayer->ActivateTaxiPathTo(nodes);
+                    }
+                    break;
+                }
+                case GOSSIP_ACTION_INFO_DEF + 2:
+                    pPlayer->SEND_GOSSIP_MENU_TEXTID(5374, me->GetGUID());
+                    break;
+                case GOSSIP_ACTION_INFO_DEF + 3:
+                    pPlayer->SEND_GOSSIP_MENU_TEXTID(5375, me->GetGUID());
+                    break;
+            }
+            
+            return true;
+
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_silva_filnavethAI(creature);
     }
-    
-    return true;
-}
+};
+
+
 
 /*######
 ## npc_clintar_spirit
@@ -210,48 +273,48 @@ bool GossipSelect_npc_silva_filnaveth(Player* pPlayer, Creature* pCreature, uint
 
 float Clintar_spirit_WP[41][5] =
 {
- //pos_x   pos_y    pos_z    orien waitTime
-{7465.28, -3115.46, 439.327, 0.83, 4000},
-{7476.49, -3101,    443.457, 0.89, 0},
-{7486.57, -3085.59, 439.478, 1.07, 0},
-{7472.19, -3085.06, 443.142, 3.07, 0},
-{7456.92, -3085.91, 438.862, 3.24, 0},
-{7446.68, -3083.43, 438.245, 2.40, 0},
-{7446.17, -3080.21, 439.826, 1.10, 6000},
-{7452.41, -3085.8,  438.984, 5.78, 0},
-{7469.11, -3084.94, 443.048, 6.25, 0},
-{7483.79, -3085.44, 439.607, 6.25, 0},
-{7491.14, -3090.96, 439.983, 5.44, 0},
-{7497.62, -3098.22, 436.854, 5.44, 0},
-{7498.72, -3113.41, 434.596, 4.84, 0},
-{7500.06, -3122.51, 434.749, 5.17, 0},
-{7504.96, -3131.53, 434.475, 4.74, 0},
-{7504.31, -3133.53, 435.693, 3.84, 6000},
-{7504.55, -3133.27, 435.476, 0.68, 15000},
-{7501.99, -3126.01, 434.93,  1.83, 0},
-{7490.76, -3114.97, 434.431, 2.51, 0},
-{7479.64, -3105.51, 431.123, 1.83, 0},
-{7474.63, -3086.59, 428.994, 1.83, 2000},
-{7472.96, -3074.18, 427.566, 1.57, 0},
-{7472.25, -3063,    428.268, 1.55, 0},
-{7473.46, -3054.22, 427.588, 0.36, 0},
-{7475.08, -3053.6,  428.653, 0.36, 6000},
-{7474.66, -3053.56, 428.433, 3.19, 4000},
-{7471.81, -3058.84, 427.073, 4.29, 0},
-{7472.16, -3064.91, 427.772, 4.95, 0},
-{7471.56, -3085.36, 428.924, 4.72, 0},
-{7473.56, -3093.48, 429.294, 5.04, 0},
-{7478.94, -3104.29, 430.638, 5.23, 0},
-{7484.46, -3109.61, 432.769, 5.79, 0},
-{7490.23, -3111.08, 434.431, 0.02, 0},
-{7496.29, -3108,    434.783, 1.15, 0},
-{7497.46, -3100.66, 436.191, 1.50, 0},
-{7495.64, -3093.39, 438.349, 2.10, 0},
-{7492.44, -3086.01, 440.267, 1.38, 0},
-{7498.26, -3076.44, 440.808, 0.71, 0},
-{7506.4,  -3067.35, 443.64,  0.77, 0},
-{7518.37, -3057.42, 445.584, 0.74, 0},
-{7517.51, -3056.3,  444.568, 2.49, 4500}
+//		pos_x     pos_y      pos_z     orien  waitTime
+	{ 7465.28f, -3115.46f, 439.327f, 0.83f, 4000 },
+	{ 7476.49f, -3101.00f, 443.457f, 0.89f, 0 },
+	{ 7486.57f, -3085.59f, 439.478f, 1.07f, 0 },
+	{ 7472.19f, -3085.06f, 443.142f, 3.07f, 0 },
+	{ 7456.92f, -3085.91f, 438.862f, 3.24f, 0 },
+	{ 7446.68f, -3083.43f, 438.245f, 2.40f, 0 },
+	{ 7446.17f, -3080.21f, 439.826f, 1.10f, 6000 },
+	{ 7452.41f, -3085.80f, 438.984f, 5.78f, 0 },
+	{ 7469.11f, -3084.94f, 443.048f, 6.25f, 0 },
+	{ 7483.79f, -3085.44f, 439.607f, 6.25f, 0 },
+	{ 7491.14f, -3090.96f, 439.983f, 5.44f, 0 },
+	{ 7497.62f, -3098.22f, 436.854f, 5.44f, 0 },
+	{ 7498.72f, -3113.41f, 434.596f, 4.84f, 0 },
+	{ 7500.06f, -3122.51f, 434.749f, 5.17f, 0 },
+	{ 7504.96f, -3131.53f, 434.475f, 4.74f, 0 },
+	{ 7504.31f, -3133.53f, 435.693f, 3.84f, 6000 },
+	{ 7504.55f, -3133.27f, 435.476f, 0.68f, 15000 },
+	{ 7501.99f, -3126.01f, 434.930f, 1.83f, 0 },
+	{ 7490.76f, -3114.97f, 434.431f, 2.51f, 0 },
+	{ 7479.64f, -3105.51f, 431.123f, 1.83f, 0 },
+	{ 7474.63f, -3086.59f, 428.994f, 1.83f, 2000 },
+	{ 7472.96f, -3074.18f, 427.566f, 1.57f, 0 },
+	{ 7472.25f, -3063.00f, 428.268f, 1.55f, 0 },
+	{ 7473.46f, -3054.22f, 427.588f, 0.36f, 0 },
+	{ 7475.08f, -3053.60f, 428.653f, 0.36f, 6000 },
+	{ 7474.66f, -3053.56f, 428.433f, 3.19f, 4000 },
+	{ 7471.81f, -3058.84f, 427.073f, 4.29f, 0 },
+	{ 7472.16f, -3064.91f, 427.772f, 4.95f, 0 },
+	{ 7471.56f, -3085.36f, 428.924f, 4.72f, 0 },
+	{ 7473.56f, -3093.48f, 429.294f, 5.04f, 0 },
+	{ 7478.94f, -3104.29f, 430.638f, 5.23f, 0 },
+	{ 7484.46f, -3109.61f, 432.769f, 5.79f, 0 },
+	{ 7490.23f, -3111.08f, 434.431f, 0.02f, 0 },
+	{ 7496.29f, -3108.00f, 434.783f, 1.15f, 0 },
+	{ 7497.46f, -3100.66f, 436.191f, 1.50f, 0 },
+	{ 7495.64f, -3093.39f, 438.349f, 2.10f, 0 },
+	{ 7492.44f, -3086.01f, 440.267f, 1.38f, 0 },
+	{ 7498.26f, -3076.44f, 440.808f, 0.71f, 0 },
+	{ 7506.40f, -3067.35f, 443.640f, 0.77f, 0 },
+	{ 7518.37f, -3057.42f, 445.584f, 0.74f, 0 },
+	{ 7517.51f, -3056.30f, 444.568f, 2.49f, 4500 }
 };
 
 enum eClintarSpirit
@@ -275,262 +338,272 @@ CLINTAR_SPIRIT_SAY_GET_FINAL        = -1000292
 #define CLINTAR_SPIRIT_SUMMON_Z             438.9842
 #define CLINTAR_SPIRIT_SUMMON_O             0.8594
 
-struct npc_clintar_spiritAI : public npc_escortAI
+
+class npc_clintar_spirit : public CreatureScript
 {
 public:
-    npc_clintar_spiritAI(Creature *c) : npc_escortAI(c) {}
+    npc_clintar_spirit() : CreatureScript("npc_clintar_spirit")
+    { }
 
-    uint32 Step;
-    uint32 CurrWP;
-    uint32 Event_Timer;
-    uint32 checkPlayer_Timer;
-
-    uint64 PlayerGUID;
-
-    bool Event_onWait;
-
-    void Reset()
-    override {
-        if(!PlayerGUID)
-        {
-            Step = 0;
-            CurrWP = 0;
-            Event_Timer = 0;
-            PlayerGUID = 0;
-            checkPlayer_Timer = 1000;
-            Event_onWait = false;
-        }
-    }
-
-    void JustDied(Unit* pKiller)
-    override {
-        if(!PlayerGUID)
-            return;
-
-        Player* player = (ObjectAccessor::GetUnit((*me), PlayerGUID))->ToPlayer();
-        if(player && player->GetQuestStatus(10965) == QUEST_STATUS_INCOMPLETE)
-        {
-            player->FailQuest(10965);
-            PlayerGUID = 0;
-            Reset();
-        }
-    }
-
-    void EnterEvadeMode(EvadeReason why)
-    override {
-        Player* player = (ObjectAccessor::GetUnit((*me), PlayerGUID))->ToPlayer();
-        if(player && player->IsInCombat() && player->GetAttackerForHelper())
-        {
-            AttackStart(player->GetAttackerForHelper());
-            return;
-        }
-        
-        npc_escortAI::EnterEvadeMode(why);
-    }
-
-    void EnterCombat(Unit* pWho)
-    override {
-        uint32 rnd = rand()%2;
-        switch(rnd)
-        {
-            case 0: DoScriptText(CLINTAR_SPIRIT_SAY_UNDER_ATTACK_1, me, pWho); break;
-            case 1: DoScriptText(CLINTAR_SPIRIT_SAY_UNDER_ATTACK_2, me, pWho); break;
-        }
-    }
-
-    void StartEvent(Player* pPlayer)
+    class npc_clintar_spiritAI : public npc_escortAI
     {
-        if(!pPlayer)
-            return;
-            
-        if(pPlayer->GetQuestStatus(10965) == QUEST_STATUS_INCOMPLETE)
-        {
-            for(uint8 i = 0; i < 41; ++i)
+        public:
+    public:
+        npc_clintar_spiritAI(Creature *c) : npc_escortAI(c) {}
+    
+        uint32 Step;
+        uint32 CurrWP;
+        uint32 Event_Timer;
+        uint32 checkPlayer_Timer;
+    
+        uint64 PlayerGUID;
+    
+        bool Event_onWait;
+    
+        void Reset()
+        override {
+            if(!PlayerGUID)
             {
-                AddWaypoint(i, Clintar_spirit_WP[i][0], Clintar_spirit_WP[i][1], Clintar_spirit_WP[i][2], (uint32)Clintar_spirit_WP[i][4]);
+                Step = 0;
+                CurrWP = 0;
+                Event_Timer = 0;
+                PlayerGUID = 0;
+                checkPlayer_Timer = 1000;
+                Event_onWait = false;
             }
-            PlayerGUID = pPlayer->GetGUID();
-            Start(true, true, false, PlayerGUID);
         }
-        return;
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        npc_escortAI::UpdateAI(diff);
-
-        if(!PlayerGUID)
-        {
-            me->SetDeathState(JUST_DIED);
-            return;
+    
+        void JustDied(Unit* pKiller)
+        override {
+            if(!PlayerGUID)
+                return;
+    
+            Player* player = (ObjectAccessor::GetUnit((*me), PlayerGUID))->ToPlayer();
+            if(player && player->GetQuestStatus(10965) == QUEST_STATUS_INCOMPLETE)
+            {
+                player->FailQuest(10965);
+                PlayerGUID = 0;
+                Reset();
+            }
         }
-
-        if(!me->IsInCombat() && !Event_onWait && checkPlayer_Timer < diff)
-        {
+    
+        void EnterEvadeMode(EvadeReason why)
+        override {
             Player* player = (ObjectAccessor::GetUnit((*me), PlayerGUID))->ToPlayer();
             if(player && player->IsInCombat() && player->GetAttackerForHelper())
+            {
                 AttackStart(player->GetAttackerForHelper());
-            checkPlayer_Timer = 1000;
-        } else if(!me->IsInCombat() && !Event_onWait) checkPlayer_Timer -= diff;
-
-        if(Event_onWait && Event_Timer < diff)
+                return;
+            }
+            
+            npc_escortAI::EnterEvadeMode(why);
+        }
+    
+        void EnterCombat(Unit* pWho)
+        override {
+            uint32 rnd = rand()%2;
+            switch(rnd)
+            {
+                case 0: DoScriptText(CLINTAR_SPIRIT_SAY_UNDER_ATTACK_1, me, pWho); break;
+                case 1: DoScriptText(CLINTAR_SPIRIT_SAY_UNDER_ATTACK_2, me, pWho); break;
+            }
+        }
+    
+        void StartEvent(Player* pPlayer)
         {
-
-            Player* player = (ObjectAccessor::GetUnit((*me), PlayerGUID))->ToPlayer();
-            if(!player || (player && player->GetQuestStatus(10965) == QUEST_STATUS_NONE))
+            if(!pPlayer)
+                return;
+                
+            if(pPlayer->GetQuestStatus(10965) == QUEST_STATUS_INCOMPLETE)
+            {
+                for(uint8 i = 0; i < 41; ++i)
+                {
+                    AddWaypoint(i, Clintar_spirit_WP[i][0], Clintar_spirit_WP[i][1], Clintar_spirit_WP[i][2], (uint32)Clintar_spirit_WP[i][4]);
+                }
+                PlayerGUID = pPlayer->GetGUID();
+                Start(true, true, false, PlayerGUID);
+            }
+            return;
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            npc_escortAI::UpdateAI(diff);
+    
+            if(!PlayerGUID)
             {
                 me->SetDeathState(JUST_DIED);
                 return;
             }
-
-            switch(CurrWP)
+    
+            if(!me->IsInCombat() && !Event_onWait && checkPlayer_Timer < diff)
             {
-                case 0:
-                    switch(Step)
-                    {
-                        case 0:
-                            me->old_Say(CLINTAR_SPIRIT_SAY_START, 0, PlayerGUID);
-                            Event_Timer = 8000;
-                            Step = 1;
-                            break;
-                        case 1:
-                            Event_onWait = false;
-                            break;
-                    }
-                    break;
-                case 6:
-                    switch(Step)
-                    {
-                        case 0:
-                            me->SetUInt32Value(UNIT_NPC_EMOTESTATE, 133);
-                            Event_Timer = 5000;
-                            Step = 1;
-                            break;
-                        case 1:
-                            me->SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
-                            DoScriptText(CLINTAR_SPIRIT_SAY_GET_ONE, me, player);
-                            Event_onWait = false;
-                            break;
-                    }
-                    break;
-                case 15:
-                    switch(Step)
-                    {
-                        case 0:
-                            me->SetUInt32Value(UNIT_NPC_EMOTESTATE, 133);
-                            Event_Timer = 5000;
-                            Step = 1;
-                            break;
-                        case 1:
-                            me->SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
-                            Event_onWait = false;
-                            break;
-                    }
-                    break;
-                case 16:
-                    switch(Step)
-                    {
-                        case 0:
-                            DoScriptText(CLINTAR_SPIRIT_SAY_GET_TWO, me, player);
-                            Event_Timer = 15000;
-                            Step = 1;
-                            break;
-                        case 1:
-                            Event_onWait = false;
-                            break;
-                    }
-                    break;
-                case 20:
-                    switch(Step)
-                    {
-                        case 0:
-                            {
-                            Creature *mob = me->SummonCreature(ASPECT_RAVEN, ASPECT_RAVEN_SUMMON_X, ASPECT_RAVEN_SUMMON_Y, ASPECT_RAVEN_SUMMON_Z, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 2000);
-                            if(mob)
-                            {
-                                mob->AddThreat(me,10000.0f);
-                                mob->AI()->AttackStart(me);
-                            }
-                            Event_Timer = 2000;
-                            Step = 1;
-                            break;
-                            }
-                        case 1:
-                            Event_onWait = false;
-                            break;
-                    }
-                    break;
-                case 24:
-                    switch(Step)
-                    {
-                        case 0:
-                            me->SetUInt32Value(UNIT_NPC_EMOTESTATE, 133);
-                            Event_Timer = 5000;
-                            Step = 1;
-                            break;
-                        case 1:
-                            me->SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
-                            Event_onWait = false;
-                            break;
-                    }
-                    break;
-                case 25:
-                    switch(Step)
-                    {
-                        case 0:
-                            DoScriptText(CLINTAR_SPIRIT_SAY_GET_THREE, me, player);
-                            Event_Timer = 4000;
-                            Step = 1;
-                            break;
-                        case 1:
-                            Event_onWait = false;
-                            break;
-                    }
-                    break;
-                case 40:
-                    switch(Step)
-                    {
-                        case 0:
-                            me->SetUInt32Value(UNIT_NPC_EMOTESTATE, 2);
-                            DoScriptText(CLINTAR_SPIRIT_SAY_GET_FINAL, me, player);
-                            player->CompleteQuest(10965);
-                            Event_Timer = 1500;
-                            Step = 1;
-                            break;
-                        case 1:
-                            me->SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
-                            Event_Timer = 3000;
-                            Step = 2;
-                            break;
-                        case 2:
-                            player->TalkedToCreature(me->GetEntry(), me->GetGUID());
-                            PlayerGUID = 0;
-                            Reset();
-                            me->SetDeathState(JUST_DIED);
-                            break;
-                    }
-                    break;
-                default:
-                    Event_onWait = false;
-                    break;
-            }
+                Player* player = (ObjectAccessor::GetUnit((*me), PlayerGUID))->ToPlayer();
+                if(player && player->IsInCombat() && player->GetAttackerForHelper())
+                    AttackStart(player->GetAttackerForHelper());
+                checkPlayer_Timer = 1000;
+            } else if(!me->IsInCombat() && !Event_onWait) checkPlayer_Timer -= diff;
+    
+            if(Event_onWait && Event_Timer < diff)
+            {
+    
+                Player* player = (ObjectAccessor::GetUnit((*me), PlayerGUID))->ToPlayer();
+                if(!player || (player && player->GetQuestStatus(10965) == QUEST_STATUS_NONE))
+                {
+                    me->SetDeathState(JUST_DIED);
+                    return;
+                }
+    
+                switch(CurrWP)
+                {
+                    case 0:
+                        switch(Step)
+                        {
+                            case 0:
+                                me->old_Say(CLINTAR_SPIRIT_SAY_START, 0, PlayerGUID);
+                                Event_Timer = 8000;
+                                Step = 1;
+                                break;
+                            case 1:
+                                Event_onWait = false;
+                                break;
+                        }
+                        break;
+                    case 6:
+                        switch(Step)
+                        {
+                            case 0:
+                                me->SetUInt32Value(UNIT_NPC_EMOTESTATE, 133);
+                                Event_Timer = 5000;
+                                Step = 1;
+                                break;
+                            case 1:
+                                me->SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
+                                DoScriptText(CLINTAR_SPIRIT_SAY_GET_ONE, me, player);
+                                Event_onWait = false;
+                                break;
+                        }
+                        break;
+                    case 15:
+                        switch(Step)
+                        {
+                            case 0:
+                                me->SetUInt32Value(UNIT_NPC_EMOTESTATE, 133);
+                                Event_Timer = 5000;
+                                Step = 1;
+                                break;
+                            case 1:
+                                me->SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
+                                Event_onWait = false;
+                                break;
+                        }
+                        break;
+                    case 16:
+                        switch(Step)
+                        {
+                            case 0:
+                                DoScriptText(CLINTAR_SPIRIT_SAY_GET_TWO, me, player);
+                                Event_Timer = 15000;
+                                Step = 1;
+                                break;
+                            case 1:
+                                Event_onWait = false;
+                                break;
+                        }
+                        break;
+                    case 20:
+                        switch(Step)
+                        {
+                            case 0:
+                                {
+                                Creature *mob = me->SummonCreature(ASPECT_RAVEN, ASPECT_RAVEN_SUMMON_X, ASPECT_RAVEN_SUMMON_Y, ASPECT_RAVEN_SUMMON_Z, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 2000);
+                                if(mob)
+                                {
+                                    mob->AddThreat(me,10000.0f);
+                                    mob->AI()->AttackStart(me);
+                                }
+                                Event_Timer = 2000;
+                                Step = 1;
+                                break;
+                                }
+                            case 1:
+                                Event_onWait = false;
+                                break;
+                        }
+                        break;
+                    case 24:
+                        switch(Step)
+                        {
+                            case 0:
+                                me->SetUInt32Value(UNIT_NPC_EMOTESTATE, 133);
+                                Event_Timer = 5000;
+                                Step = 1;
+                                break;
+                            case 1:
+                                me->SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
+                                Event_onWait = false;
+                                break;
+                        }
+                        break;
+                    case 25:
+                        switch(Step)
+                        {
+                            case 0:
+                                DoScriptText(CLINTAR_SPIRIT_SAY_GET_THREE, me, player);
+                                Event_Timer = 4000;
+                                Step = 1;
+                                break;
+                            case 1:
+                                Event_onWait = false;
+                                break;
+                        }
+                        break;
+                    case 40:
+                        switch(Step)
+                        {
+                            case 0:
+                                me->SetUInt32Value(UNIT_NPC_EMOTESTATE, 2);
+                                DoScriptText(CLINTAR_SPIRIT_SAY_GET_FINAL, me, player);
+                                player->CompleteQuest(10965);
+                                Event_Timer = 1500;
+                                Step = 1;
+                                break;
+                            case 1:
+                                me->SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
+                                Event_Timer = 3000;
+                                Step = 2;
+                                break;
+                            case 2:
+                                player->TalkedToCreature(me->GetEntry(), me->GetGUID());
+                                PlayerGUID = 0;
+                                Reset();
+                                me->SetDeathState(JUST_DIED);
+                                break;
+                        }
+                        break;
+                    default:
+                        Event_onWait = false;
+                        break;
+                }
+    
+            } else if(Event_onWait) Event_Timer -= diff;
+        }
+    
+        void WaypointReached(uint32 id)
+        override {
+            CurrWP = id;
+            Event_Timer = 0;
+            Step = 0;
+            Event_onWait = true;
+        }
+    };
 
-        } else if(Event_onWait) Event_Timer -= diff;
-    }
-
-    void WaypointReached(uint32 id)
-    override {
-        CurrWP = id;
-        Event_Timer = 0;
-        Step = 0;
-        Event_onWait = true;
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_clintar_spiritAI(creature);
     }
 };
 
-CreatureAI* GetAI_npc_clintar_spirit(Creature* pCreature)
-{
-    return new npc_clintar_spiritAI(pCreature);
-}
 
 /*####
 # npc_clintar_dreamwalker
@@ -538,17 +611,37 @@ CreatureAI* GetAI_npc_clintar_spirit(Creature* pCreature)
 
 #define CLINTAR_SPIRIT 22916
 
-bool QuestAccept_npc_clintar_dreamwalker(Player* pPlayer, Creature* pCreature, Quest const* pQuest )
+class npc_clintar_dreamwalker : public CreatureScript
 {
-    if (pQuest->GetQuestId() == 10965)
+public:
+    npc_clintar_dreamwalker() : CreatureScript("npc_clintar_dreamwalker")
+    { }
+
+    class npc_clintar_dreamwalkerAI : public ScriptedAI
     {
-        Creature* clintar_spirit = pCreature->SummonCreature(CLINTAR_SPIRIT, CLINTAR_SPIRIT_SUMMON_X, CLINTAR_SPIRIT_SUMMON_Y, CLINTAR_SPIRIT_SUMMON_Z, CLINTAR_SPIRIT_SUMMON_O, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 100000);
-        if(clintar_spirit)
-            CAST_AI(npc_clintar_spiritAI, (clintar_spirit->AI()))->StartEvent(pPlayer);
+    public:
+        npc_clintar_dreamwalkerAI(Creature* creature) : ScriptedAI(creature)
+        {}
+
+
+        virtual void QuestAccept(Player* pPlayer, Quest const* pQuest) override
+        {
+            if (pQuest->GetQuestId() == 10965)
+            {
+                Creature* clintar_spirit = me->SummonCreature(CLINTAR_SPIRIT, CLINTAR_SPIRIT_SUMMON_X, CLINTAR_SPIRIT_SUMMON_Y, CLINTAR_SPIRIT_SUMMON_Z, CLINTAR_SPIRIT_SUMMON_O, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 100000);
+                if(clintar_spirit)
+                    CAST_AI(npc_clintar_spirit::npc_clintar_spiritAI, (clintar_spirit->AI()))->StartEvent(pPlayer);
+            }
+        }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_clintar_dreamwalkerAI(creature);
     }
-    
-    return true;
-}
+};
+
 
 /*####
 # npc_keeper_remulos
@@ -639,32 +732,32 @@ struct Locations {
 
 static Locations RemulosWP[] =
 {
-    { 7817.186523, -2304.227539, 455.941071, 4.804095 }, // walk wp 1 (cross)
-    { 7925.188477, -2312.769043, 471.415039, 6.254246 }, // walk wp 2 (before turn)
-    { 7942.157227, -2321.153076, 476.773834, 5.792509 }, // walk wp 3 (after turn)
-    { 7957.152344, -2373.932373, 486.453094, 4.794063 }, // walk wp 4 (before house)
-    { 7965.914551, -2491.798340, 487.759705, 4.844883 }, // walk wp 5 (after house)
-    { 7972.112305, -2517.210449, 487.689850, 4.824812 }, // walk wp 6 (before bridge)
-    { 7975.595703, -2551.107422, 490.081543, 4.839223 }, // walk wp 7 (after bridge)
-    { 7945.702637, -2573.971191, 489.783569, 4.252142 }, // walk wp 8 (after bridge 2)
-    { 7951.856934, -2595.572998, 489.919556, 4.447841 }, // walk wp 9 (before platform)
-    { 7948.349609, -2610.257080, 492.345001, 4.477947 }, // walk wp 10 (on platform)
-    { 7926.278320, -2633.262451, 492.530151, 3.842072 }, // invocation of eranikus
-    { 7948.349609, -2610.257080, 492.345001, 1.395251 }, // walk wp 12 (on platform)
-    { 7951.856934, -2595.572998, 489.919556, 1.395251 }, // walk wp 13 (before platform)
-    { 7945.702637, -2573.971191, 489.783569, 2.750073 }, // walk wp 14 (after bridge 2)
-    { 7898.774414, -2566.517334, 487.833344, 3.216603 }, // walk wp 15 (after bridge 3)
-    { 7836.721680, -2571.058350, 489.286804, 3.216603 }, // house
-    { 7844.209961, -2570.704346, 489.285278, 0.129769 }, // house, waiting for combat
-    { 7877.886719, -2565.909424, 486.946411, 0.043205 }, // in front of house
+    { 7817.186523f, -2304.227539f, 455.941071f, 4.804095f }, // walk wp 1 (cross)
+    { 7925.188477f, -2312.769043f, 471.415039f, 6.254246f }, // walk wp 2 (before turn)
+    { 7942.157227f, -2321.153076f, 476.773834f, 5.792509f }, // walk wp 3 (after turn)
+    { 7957.152344f, -2373.932373f, 486.453094f, 4.794063f }, // walk wp 4 (before house)
+    { 7965.914551f, -2491.798340f, 487.759705f, 4.844883f }, // walk wp 5 (after house)
+    { 7972.112305f, -2517.210449f, 487.689850f, 4.824812f }, // walk wp 6 (before bridge)
+    { 7975.595703f, -2551.107422f, 490.081543f, 4.839223f }, // walk wp 7 (after bridge)
+    { 7945.702637f, -2573.971191f, 489.783569f, 4.252142f }, // walk wp 8 (after bridge 2)
+    { 7951.856934f, -2595.572998f, 489.919556f, 4.447841f }, // walk wp 9 (before platform)
+    { 7948.349609f, -2610.257080f, 492.345001f, 4.477947f }, // walk wp 10 (on platform)
+    { 7926.278320f, -2633.262451f, 492.530151f, 3.842072f }, // invocation of eranikus
+    { 7948.349609f, -2610.257080f, 492.345001f, 1.395251f }, // walk wp 12 (on platform)
+    { 7951.856934f, -2595.572998f, 489.919556f, 1.395251f }, // walk wp 13 (before platform)
+    { 7945.702637f, -2573.971191f, 489.783569f, 2.750073f }, // walk wp 14 (after bridge 2)
+    { 7898.774414f, -2566.517334f, 487.833344f, 3.216603f }, // walk wp 15 (after bridge 3)
+    { 7836.721680f, -2571.058350f, 489.286804f, 3.216603f }, // house
+    { 7844.209961f, -2570.704346f, 489.285278f, 0.129769f }, // house, waiting for combat
+    { 7877.886719f, -2565.909424f, 486.946411f, 0.043205f }, // in front of house
 };
 
 static Locations EranikusWP[] =
 {
-    { 7863.083984, -2682.686035, 469.532166, 0.642453 }, // spawn
-    { 7941.503906, -2576.785889, 501.884308, 2.918067 }, // hover 1
-    { 7930.495605, -2574.283447, 501.884308, 2.835252 }, // hover 2
-    { 7919.830566, -2570.955811, 489.375031, 2.918945 }, // landing
+    { 7863.083984f, -2682.686035f, 469.532166f, 0.642453f }, // spawn
+    { 7941.503906f, -2576.785889f, 501.884308f, 2.918067f }, // hover 1
+    { 7930.495605f, -2574.283447f, 501.884308f, 2.835252f }, // hover 2
+    { 7919.830566f, -2570.955811f, 489.375031f, 2.918945f }, // landing
 };
 
 /*static Locations TyrandeWP[] =
@@ -674,14 +767,14 @@ static Locations EranikusWP[] =
 
 static Locations PriestessSP[] =
 {
-    { 7814.898926, -2301.132812, 456.282923, 0 },
-    { 7813.714355, -2305.572510, 455.794922, 0 },
-    { 7812.495605, -2298.683594, 456.128387, 0 },
-    { 7811.326172, -2302.086670, 455.870941, 0 },
-    { 7810.257812, -2306.418213, 455.531525, 0 },
-    { 7809.302246, -2299.352539, 455.838287, 0 },
-    { 7808.051270, -2303.647461, 455.473450, 0 },
-    { 7806.024902, -2300.486084, 455.584351, 0 },
+    { 7814.898926f, -2301.132812f, 456.282923f, 0.0f },
+    { 7813.714355f, -2305.572510f, 455.794922f, 0.0f },
+    { 7812.495605f, -2298.683594f, 456.128387f, 0.0f },
+    { 7811.326172f, -2302.086670f, 455.870941f, 0.0f },
+    { 7810.257812f, -2306.418213f, 455.531525f, 0.0f },
+    { 7809.302246f, -2299.352539f, 455.838287f, 0.0f },
+    { 7808.051270f, -2303.647461f, 455.473450f, 0.0f },
+    { 7806.024902f, -2300.486084f, 455.584351f, 0.0f },
 };
 
 static Locations AddsSP[] =
@@ -725,631 +818,648 @@ enum EventRemulos
     EVENT_COUNT,
 };
 
-struct npc_keeper_remulosAI : public ScriptedAI
+
+class npc_keeper_remulos : public CreatureScript
 {
-    npc_keeper_remulosAI(Creature *c) : ScriptedAI(c) {}
+public:
+    npc_keeper_remulos() : CreatureScript("npc_keeper_remulos")
+    { }
 
-    bool EventRunning;
-    uint64 HolderGUID;
-    PhaseRemulos Phase;
-    EventRemulos Event;
-
-    bool newWP;
-    uint32 WPId;
-    uint32 TalkId;
-    uint32 Timer[EVENT_COUNT];
-
-    uint32 WaveId;
-    uint32 KilledNightmares;
-
-    uint64 EranikusGUID;
-    uint64 RedeemedGUID;
-    uint64 TyrandeGUID;
-
-    uint64 PriestessGUIDs[8];
-
-    bool canBeRedeemed;
-
-    void Reset()
-    override {
-        EventRunning = false;
-        HolderGUID = 0;
-        Phase = PHASE_NULL;
-        Event = EVENT_NULL;
-
-        WPId = 0;
-        newWP = false;
-        TalkId = 0;
-
-        WaveId = 0;
-        KilledNightmares = 0;
-
-        EranikusGUID = 0;
-        RedeemedGUID = 0;
-        TyrandeGUID = 0;
-
-        for (uint32 & i : Timer)
-            i = 0;
-        for (uint64 & PriestessGUID : PriestessGUIDs)
-            PriestessGUID = 0;
-
-        canBeRedeemed = false;
-
-        me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
-        me->AddUnitMovementFlag(MOVEMENTFLAG_WALKING);
-        me->SetReactState(REACT_DEFENSIVE);
-    }
-
-    void EnterCombat(Unit*) override {}
-
-    void DespawnAll()
+    class npc_keeper_remulosAI : public ScriptedAI
     {
-        Creature* c;
-        c = ObjectAccessor::GetCreature(*me, EranikusGUID);
-        if (c)
-        {
-            c->DisappearAndDie();
-            ((TemporarySummon*)c)->UnSummon();
+        public:
+        npc_keeper_remulosAI(Creature *c) : ScriptedAI(c) {}
+    
+        bool EventRunning;
+        uint64 HolderGUID;
+        PhaseRemulos Phase;
+        EventRemulos Event;
+    
+        bool newWP;
+        uint32 WPId;
+        uint32 TalkId;
+        uint32 Timer[EVENT_COUNT];
+    
+        uint32 WaveId;
+        uint32 KilledNightmares;
+    
+        uint64 EranikusGUID;
+        uint64 RedeemedGUID;
+        uint64 TyrandeGUID;
+    
+        uint64 PriestessGUIDs[8];
+    
+        bool canBeRedeemed;
+    
+        void Reset()
+        override {
+            EventRunning = false;
+            HolderGUID = 0;
+            Phase = PHASE_NULL;
+            Event = EVENT_NULL;
+    
+            WPId = 0;
+            newWP = false;
+            TalkId = 0;
+    
+            WaveId = 0;
+            KilledNightmares = 0;
+    
+            EranikusGUID = 0;
+            RedeemedGUID = 0;
+            TyrandeGUID = 0;
+    
+            for (uint32 & i : Timer)
+                i = 0;
+            for (uint64 & PriestessGUID : PriestessGUIDs)
+                PriestessGUID = 0;
+    
+            canBeRedeemed = false;
+    
+            me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
+            me->AddUnitMovementFlag(MOVEMENTFLAG_WALKING);
+            me->SetReactState(REACT_DEFENSIVE);
         }
-        c = ObjectAccessor::GetCreature(*me, RedeemedGUID);
-        if (c)
-            c->DisappearAndDie();
-        c = ObjectAccessor::GetCreature(*me, TyrandeGUID);
-        if (c)
-            c->DisappearAndDie();
-        for (uint64 PriestessGUID : PriestessGUIDs)
+    
+        void EnterCombat(Unit*) override {}
+    
+        void DespawnAll()
         {
-            c = ObjectAccessor::GetCreature(*me, PriestessGUID);
+            Creature* c;
+            c = ObjectAccessor::GetCreature(*me, EranikusGUID);
+            if (c)
+            {
+                c->DisappearAndDie();
+                ((TempSummon*)c)->UnSummon();
+            }
+            c = ObjectAccessor::GetCreature(*me, RedeemedGUID);
             if (c)
                 c->DisappearAndDie();
-        }
-
-        float x, y, z, o;
-        me->GetHomePosition(x, y, z, o);
-        me->DestroyForNearbyPlayers();
-        me->GetMap()->CreatureRelocation(me, x, y, z, o);
-
-        if (me->IsAlive())
-            me->SetHealth(me->GetMaxHealth());
-        else
-            me->Respawn();
-
-        Reset();
-    }
-
-    void JustDied(Unit*)
-    override {
-        EventFailed();
-        DespawnAll();
-    }
-
-    void NightKilled()
-    {
-        KilledNightmares++;
-    }
-
-    void EnterEvadeMode(EvadeReason /* why */)
-    override {
-        me->InterruptNonMeleeSpells(true);
-        me->RemoveAllAuras();
-        me->DeleteThreatList();
-        me->CombatStop(true);
-    }
-
-    void Talk(uint32 id)
-    {
-        Timer[EVENT_TALK_OVER] = Convs[id].timer;
-        TalkId = id;
-
-        Creature* creature = nullptr;
-        if (Convs[id].creature == REMULOS)
-            creature = me;
-        else if (Convs[id].creature == ERANIKUS)
-            creature = ObjectAccessor::GetCreature(*me, EranikusGUID);
-        else if (Convs[id].creature == REDEEMED)
-            creature = ObjectAccessor::GetCreature(*me, RedeemedGUID);
-        else if (Convs[id].creature == TYRANDE)
-            creature = ObjectAccessor::GetCreature(*me, TyrandeGUID);
-
-        if (creature)
-        {
-            if (Convs[id].emote)
-                creature->HandleEmoteCommand(Convs[id].emote);
-            if (Convs[id].text)
-            {
-                if (Convs[id].type == CHAT_TYPE_SAY)
-                    creature->Say(Convs[id].text, LANG_UNIVERSAL); // XXX a bit ugly, we should add a field in the struct for that
-                else if (Convs[id].type == CHAT_TYPE_YELL)
-                    creature->Yell(Convs[id].text, LANG_UNIVERSAL, nullptr);
-                else if (Convs[id].type == CHAT_TYPE_TEXT_EMOTE)
-                    creature->TextEmote(Convs[id].text, nullptr, false);
-                else if (Convs[id].type == CHAT_TYPE_SERVER_EMOTE)
-                    creature->ServerEmote(Convs[id].text, false);
-            }
-        }
-    }
-
-    void StartEvent(uint64 guid)
-    {
-        if (me->GetZoneId() != 493)
-            return;
-
-        HolderGUID = guid;
-        EventRunning = true;
-
-        me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
-        me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
-
-        Talk(43);
-    }
-
-    void EventFailed()
-    {
-        if (Phase == PHASE_EVENT_FAILED)
-            return;
-        EnterPhase(PHASE_EVENT_FAILED);
-    }
-
-    void NextWave()
-    {
-        WaveId++;
-        Timer[EVENT_WAVE] = 0;
-
-        for (auto & i : AddsSP)
-        {
-            Creature* cre = me->SummonCreature(NIGHTMARE, i.x, i.y, i.z, i.o, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 120000);
-            if (cre)
-                cre->SetKeepActive(true);
-//            cre->AddThreat(me, 0.1f);
-//            cre->AI()->AttackStart(me);
-        }
-
-        if (WaveId < 3)
-            Timer[EVENT_WAVE] = 30000;
-    }
-
-    void TyrandeComes(bool ready)
-    {
-        if (!ready)
-        {
-            Talk(20);
-            return;
-        }
-
-        Creature* c, *tyr, *era;
-
-        tyr = ObjectAccessor::GetCreature(*me, TyrandeGUID);
-        era = ObjectAccessor::GetCreature(*me, EranikusGUID);
-
-        if (!tyr || !era)
-            return;
-
-        tyr->SetInFront(era);
-        tyr->SendMovementFlagUpdate();
-
-        for (uint64 PriestessGUID : PriestessGUIDs)
-        {
-            c = ObjectAccessor::GetCreature(*me, PriestessGUID);
-            if (!c)
-                continue;
-            c->SetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID, 0);
-            c->SetInFront(era);
-            c->SendMovementFlagUpdate();
-            c->AI()->EnterCombat(era);
-        }
-        canBeRedeemed = true;
-        Talk(21);
-    }
-
-    void EnterPhase(PhaseRemulos phase)
-    {
-        Phase = phase;
-
-        switch (phase)
-        {
-        case PHASE_INVOCATION:
-            DoCast(me, CONJURE_DREAM_RIFT);
-            Timer[EVENT_INVOCATION] = 8000;
-            break;
-        case PHASE_COMBAT1:
-            me->SetReactState(REACT_AGGRESSIVE);
-            NextWave();
-            Talk(16);
-            break;
-        case PHASE_COMBAT2:
-            Talk(18);
-            break;
-        case PHASE_EVENT_FAILED:
-        {
-            Timer[EVENT_FAILURE] = 300000;
-            Player* player = ObjectAccessor::GetPlayer(*me, HolderGUID);
-            if (player)
-                player->FailQuest(8736);
-            break;
-        }
-        default:
-            break;
-        }
-    }
-
-    PhaseRemulos GetPhase()
-    {
-        return Phase;
-    }
-
-    void HandleTalkSequence()
-    {
-        switch(TalkId)
-        {
-        case 0:
-            EnterPhase(PHASE_TALK);
-            break;
-        case 1:
-            // goto nighthaven
-            me->GetMotionMaster()->MovePoint(1, RemulosWP[0].x, RemulosWP[0].y, RemulosWP[0].z);
-            EnterPhase(PHASE_WALK);
-            break;
-        case 4:
-            // start invocation
-            EnterPhase(PHASE_INVOCATION);
-            break;
-        case 5:
-            EnterPhase(PHASE_TALK);
-            break;
-        case 13:
-        {
-            // goto house
-            Creature* eranikus = ObjectAccessor::GetCreature(*me, EranikusGUID);
-            if (eranikus)
-                eranikus->GetMotionMaster()->MovePoint(1, EranikusWP[1].x, EranikusWP[1].y, EranikusWP[1].z);
-            me->GetMotionMaster()->MovePoint(12, RemulosWP[11].x, RemulosWP[11].y, RemulosWP[11].z);
-            EnterPhase(PHASE_WALK);
-            break;
-        }
-        case 15:
-            // spawn adds
-            EnterPhase(PHASE_COMBAT1);
-            break;
-        case 16:
-            // remulos engages
-            me->GetMotionMaster()->MovePoint(0, RemulosWP[17].x, RemulosWP[17].y, RemulosWP[17].z);
-            Talk(38);
-            break;
-        case 18:
-        {
-            // eranikus engages
-            Creature* eranikus = ObjectAccessor::GetCreature(*me, EranikusGUID);
-            if (eranikus)
-                eranikus->GetMotionMaster()->MovePoint(3, EranikusWP[3].x, EranikusWP[3].y, EranikusWP[3].z);
-            Timer[EVENT_TYRANDE_SPAWN] = 40000;
-            break;
-        }
-        case 20:
-            // tyrande comes
-            break;
-        case 21:
-        case 22:
-        case 23:
-        case 24:
-        {
-            Talk(TalkId+1);
-            Creature *tyrande = ObjectAccessor::GetCreature(*me, TyrandeGUID);
-            if (TalkId == 24 && tyrande)
-                tyrande->SetStandState(UNIT_STAND_STATE_KNEEL);
-/*            if (TalkId == 21 && tyrande)
-                tyrande->CastSpell(tyrande, 14751, true);*/
-            break;
-        }
-        case 27:
-        {
-            Creature* eranikus = ObjectAccessor::GetCreature(*me, EranikusGUID);
-            if (eranikus)
-            {
-                uint32 health = eranikus->GetHealth();
-                eranikus->AI()->EnterEvadeMode();
-                eranikus->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                eranikus->SetFaction(35);
-                eranikus->SetHealth(health);
-            }
-            break;
-        }
-        case 28:
-        {
-            Creature* eranikus = ObjectAccessor::GetCreature(*me, EranikusGUID);
-            if (eranikus)
-            {
-                eranikus->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
-                eranikus->SetFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FEIGN_DEATH);
-            }
-            break;
-        }
-        case 30:
-        {
-            // despawn eranikus and spawn redeemed
-            float x, y, z, o;
-
-            Creature* eranikus = ObjectAccessor::GetCreature(*me, EranikusGUID);
-            if (eranikus)
-            {
-                eranikus->GetPosition(x, y, z, o);
-                eranikus->DisappearAndDie();
-                ((TemporarySummon*)eranikus)->UnSummon();
-            }
-
-            Creature* redeemed = me->SummonCreature(REDEEMED, x, y, z, o, TEMPSUMMON_DEAD_DESPAWN, 0);
-            if (redeemed)
-            {
-                RedeemedGUID = redeemed->GetGUID();
-                redeemed->SetHealth((redeemed->GetMaxHealth() / 100.0f) * 20.0f);
-                Creature* tyrande = ObjectAccessor::GetCreature(*me, TyrandeGUID);
-                if (tyrande)
-                    redeemed->GetMotionMaster()->MoveChase(tyrande, CONTACT_DISTANCE, 0);
-            }
-
-            EnterPhase(PHASE_REDEMPTION);
-            Talk(40);
-            break;
-        }
-        case 31:
-            EnterPhase(PHASE_TALK);
-            break;
-        case 34:
-        {
-            Creature* tyrande = ObjectAccessor::GetCreature(*me, TyrandeGUID);
-            if (tyrande)
-                tyrande->SetStandState(UNIT_STAND_STATE_STAND);
-            break;
-        }
-        case 36:
-        {
-            // despawn redeemed and tyrande and mark quest as completed
-            Creature *redeemed, *tyrande, *cre;
-            Player *player;
-
-            redeemed = ObjectAccessor::GetCreature(*me, RedeemedGUID);
-            tyrande = ObjectAccessor::GetCreature(*me, TyrandeGUID);
-            if (redeemed)
-                redeemed->DisappearAndDie();
-
+            c = ObjectAccessor::GetCreature(*me, TyrandeGUID);
+            if (c)
+                c->DisappearAndDie();
             for (uint64 PriestessGUID : PriestessGUIDs)
             {
-                cre = ObjectAccessor::GetCreature(*me, PriestessGUID);
-                if (cre)
-                    cre->DisappearAndDie();
+                c = ObjectAccessor::GetCreature(*me, PriestessGUID);
+                if (c)
+                    c->DisappearAndDie();
             }
-            if (tyrande)
-                tyrande->DisappearAndDie();
-
-            player = ObjectAccessor::GetPlayer(*me, HolderGUID);
-            if (player)
-                player->GroupEventHappens(8736, me);
-
-            EnterPhase(PHASE_REDEMPTION);
-            Talk(41);
-            break;
-        }
-        case 37:
-        {
-            // despawn remulos and stop event
+    
             float x, y, z, o;
-            Reset();
-            me->DestroyForNearbyPlayers();
             me->GetHomePosition(x, y, z, o);
+            me->DestroyForNearbyPlayers();
             me->GetMap()->CreatureRelocation(me, x, y, z, o);
-            me->SetHealth(me->GetMaxHealth());
-            break;
+    
+            if (me->IsAlive())
+                me->SetHealth(me->GetMaxHealth());
+            else
+                me->Respawn();
+    
+            Reset();
         }
-        case 38:
-            Talk(17);
-            break;
-        case 39:
-            Talk(19);
-            break;
-        case 40:
+    
+        void JustDied(Unit*)
+        override {
+            EventFailed();
+            DespawnAll();
+        }
+    
+        void NightKilled()
         {
-/*            Creature* redeemed = ObjectAccessor::GetCreature(*me, RedeemedGUID);
-            Creature* tyrande = ObjectAccessor::GetCreature(*me, TyrandeGUID);
-            if (redeemed && tyrande)
+            KilledNightmares++;
+        }
+    
+        void EnterEvadeMode(EvadeReason /* why */)
+        override {
+            me->InterruptNonMeleeSpells(true);
+            me->RemoveAllAuras();
+            me->DeleteThreatList();
+            me->CombatStop(true);
+        }
+    
+        void Talk(uint32 id)
+        {
+            Timer[EVENT_TALK_OVER] = Convs[id].timer;
+            TalkId = id;
+    
+            Creature* creature = nullptr;
+            if (Convs[id].creature == REMULOS)
+                creature = me;
+            else if (Convs[id].creature == ERANIKUS)
+                creature = ObjectAccessor::GetCreature(*me, EranikusGUID);
+            else if (Convs[id].creature == REDEEMED)
+                creature = ObjectAccessor::GetCreature(*me, RedeemedGUID);
+            else if (Convs[id].creature == TYRANDE)
+                creature = ObjectAccessor::GetCreature(*me, TyrandeGUID);
+    
+            if (creature)
             {
-                redeemed->SetInFront(tyrande);
-                redeemed->SendMovementFlagUpdate();
-            }*/
-            Talk(31);
-            break;
-        }
-        case 41:
-            Talk(37);
-            break;
-        case 42:
-            Talk(5);
-            break;
-        case 43:
-            Talk(0);
-            break;
-        default:
-            break;
-        }
-
-        if (Phase == PHASE_TALK)
-            Talk(++TalkId);
-    }
-
-    void MovementInform(uint32 type, uint32 id)
-    override {
-        if (type != POINT_MOTION_TYPE)
-            return;
-
-        if (id == 0)
-            return;
-
-        switch(id)
-        {
-        case 6:
-            me->AddUnitState(UNIT_STATE_IGNORE_PATHFINDING);
-            break;
-        case 7:
-            me->ClearUnitState(UNIT_STATE_IGNORE_PATHFINDING);
-            break;
-        case 11:
-            EnterPhase(PHASE_TALK);
-            Talk(2);
-            break;
-        case 17:
-            EnterPhase(PHASE_TALK);
-            Talk(14);
-            break;
-        default:
-            break;
-        }
-
-        if (id <= 10 || (id >= 12 && id <= 16))
-        {
-            WPId = id;
-            newWP = true;
-        }
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!EventRunning)
-            return;
-
-        Event = EVENT_NULL;
-
-        if (Phase == PHASE_COMBAT1 && KilledNightmares >= 25)
-            Event = EVENT_NIGHTMARES_KILLED;
-
-        if (Phase == PHASE_COMBAT2 && canBeRedeemed)
-        {
-            Creature* eranikus = ObjectAccessor::GetCreature(*me, EranikusGUID);
-            if (eranikus && eranikus->IsBelowHPPercent(20))
-                Event = EVENT_ERANIKUS_REDEEMED;
-        }
-
-        if (newWP)
-        {
-            Event = EVENT_WAYPOINT;
-            newWP = false;
-        }
-
-        for (uint32 i = 1; i <= EVENT_COUNT; i++)
-        {
-            if (Timer[i])
-            {
-                if (Timer[i] <= diff)
+                if (Convs[id].emote)
+                    creature->HandleEmoteCommand(Convs[id].emote);
+                if (Convs[id].text)
                 {
-                    if (!Event)
-                        Event = (EventRemulos)i;
-                }
-                else 
-                {
-                    Timer[i] -= diff;
+                    if (Convs[id].type == CHAT_TYPE_SAY)
+                        creature->Say(Convs[id].text, LANG_UNIVERSAL); // XXX a bit ugly, we should add a field in the struct for that
+                    else if (Convs[id].type == CHAT_TYPE_YELL)
+                        creature->Yell(Convs[id].text, LANG_UNIVERSAL, nullptr);
+                    else if (Convs[id].type == CHAT_TYPE_TEXT_EMOTE)
+                        creature->TextEmote(Convs[id].text, nullptr, false);
+                    else if (Convs[id].type == CHAT_TYPE_SERVER_EMOTE)
+                        creature->ServerEmote(Convs[id].text, false);
                 }
             }
         }
-
-        if (Phase == PHASE_EVENT_FAILED && Event != EVENT_FAILURE)
-            return;
-
-        switch (Event)
+    
+        void StartEvent(uint64 guid)
         {
-        case EVENT_TALK_OVER:
-            Timer[EVENT_TALK_OVER] = 0;
-            HandleTalkSequence();
-            break;
-        case EVENT_WAYPOINT:
-            me->GetMotionMaster()->MovePoint(WPId+1, RemulosWP[WPId].x, RemulosWP[WPId].y, RemulosWP[WPId].z);
-            break;
-        case EVENT_INVOCATION:
-        {
-            Timer[EVENT_INVOCATION] = 0;
-            Creature* cre = me->SummonCreature(ERANIKUS, EranikusWP[0].x, EranikusWP[0].y, EranikusWP[0].z, EranikusWP[0].o, TEMPSUMMON_DEAD_DESPAWN, 0);
-            if (cre)
-            {
-                cre->SetKeepActive(true);
-                cre->AddUnitState(UNIT_STATE_IGNORE_PATHFINDING);
-                EranikusGUID = cre->GetGUID();
-            }
-            Talk(42);
-            break;
+            if (me->GetZoneId() != 493)
+                return;
+    
+            HolderGUID = guid;
+            EventRunning = true;
+    
+            me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
+            me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
+    
+            Talk(43);
         }
-        case EVENT_WAVE:
+    
+        void EventFailed()
+        {
+            if (Phase == PHASE_EVENT_FAILED)
+                return;
+            EnterPhase(PHASE_EVENT_FAILED);
+        }
+    
+        void NextWave()
+        {
+            WaveId++;
             Timer[EVENT_WAVE] = 0;
-            NextWave();
-            break;
-        case EVENT_NIGHTMARES_KILLED:
-            EnterPhase(PHASE_COMBAT2);
-            break;
-        case EVENT_TYRANDE_SPAWN:
-        {
-            Timer[EVENT_TYRANDE_SPAWN] = 0;
-            Creature *cre, *tyr;
-            tyr = me->SummonCreature(TYRANDE, RemulosWP[0].x, RemulosWP[0].y, RemulosWP[0].z, 0, TEMPSUMMON_DEAD_DESPAWN, 0);
-            if (tyr)
+    
+            for (auto & i : AddsSP)
             {
-                tyr->SetKeepActive(true);
-                TyrandeGUID = tyr->GetGUID();
+                Creature* cre = me->SummonCreature(NIGHTMARE, i.x, i.y, i.z, i.o, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 120000);
+                if (cre)
+                    cre->SetKeepActive(true);
+    //            cre->AddThreat(me, 0.1f);
+    //            cre->AI()->AttackStart(me);
             }
-            for (int i = 0; i < 8; i++)
+    
+            if (WaveId < 3)
+                Timer[EVENT_WAVE] = 30000;
+        }
+    
+        void TyrandeComes(bool ready)
+        {
+            if (!ready)
             {
-                cre = me->SummonCreature(PRIESTESS, PriestessSP[i].x, PriestessSP[i].y, PriestessSP[i].z, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 120000);
+                Talk(20);
+                return;
+            }
+    
+            Creature* c, *tyr, *era;
+    
+            tyr = ObjectAccessor::GetCreature(*me, TyrandeGUID);
+            era = ObjectAccessor::GetCreature(*me, EranikusGUID);
+    
+            if (!tyr || !era)
+                return;
+    
+            tyr->SetInFront(era);
+            tyr->SendMovementFlagUpdate();
+    
+            for (uint64 PriestessGUID : PriestessGUIDs)
+            {
+                c = ObjectAccessor::GetCreature(*me, PriestessGUID);
+                if (!c)
+                    continue;
+                c->SetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID, 0);
+                c->SetInFront(era);
+                c->SendMovementFlagUpdate();
+                c->AI()->EnterCombat(era);
+            }
+            canBeRedeemed = true;
+            Talk(21);
+        }
+    
+        void EnterPhase(PhaseRemulos phase)
+        {
+            Phase = phase;
+    
+            switch (phase)
+            {
+            case PHASE_INVOCATION:
+                DoCast(me, CONJURE_DREAM_RIFT);
+                Timer[EVENT_INVOCATION] = 8000;
+                break;
+            case PHASE_COMBAT1:
+                me->SetReactState(REACT_AGGRESSIVE);
+                NextWave();
+                Talk(16);
+                break;
+            case PHASE_COMBAT2:
+                Talk(18);
+                break;
+            case PHASE_EVENT_FAILED:
+            {
+                Timer[EVENT_FAILURE] = 300000;
+                Player* player = ObjectAccessor::GetPlayer(*me, HolderGUID);
+                if (player)
+                    player->FailQuest(8736);
+                break;
+            }
+            default:
+                break;
+            }
+        }
+    
+        PhaseRemulos GetPhase()
+        {
+            return Phase;
+        }
+    
+        void HandleTalkSequence()
+        {
+            switch(TalkId)
+            {
+            case 0:
+                EnterPhase(PHASE_TALK);
+                break;
+            case 1:
+                // goto nighthaven
+                me->GetMotionMaster()->MovePoint(1, RemulosWP[0].x, RemulosWP[0].y, RemulosWP[0].z);
+                EnterPhase(PHASE_WALK);
+                break;
+            case 4:
+                // start invocation
+                EnterPhase(PHASE_INVOCATION);
+                break;
+            case 5:
+                EnterPhase(PHASE_TALK);
+                break;
+            case 13:
+            {
+                // goto house
+                Creature* eranikus = ObjectAccessor::GetCreature(*me, EranikusGUID);
+                if (eranikus)
+                    eranikus->GetMotionMaster()->MovePoint(1, EranikusWP[1].x, EranikusWP[1].y, EranikusWP[1].z);
+                me->GetMotionMaster()->MovePoint(12, RemulosWP[11].x, RemulosWP[11].y, RemulosWP[11].z);
+                EnterPhase(PHASE_WALK);
+                break;
+            }
+            case 15:
+                // spawn adds
+                EnterPhase(PHASE_COMBAT1);
+                break;
+            case 16:
+                // remulos engages
+                me->GetMotionMaster()->MovePoint(0, RemulosWP[17].x, RemulosWP[17].y, RemulosWP[17].z);
+                Talk(38);
+                break;
+            case 18:
+            {
+                // eranikus engages
+                Creature* eranikus = ObjectAccessor::GetCreature(*me, EranikusGUID);
+                if (eranikus)
+                    eranikus->GetMotionMaster()->MovePoint(3, EranikusWP[3].x, EranikusWP[3].y, EranikusWP[3].z);
+                Timer[EVENT_TYRANDE_SPAWN] = 40000;
+                break;
+            }
+            case 20:
+                // tyrande comes
+                break;
+            case 21:
+            case 22:
+            case 23:
+            case 24:
+            {
+                Talk(TalkId+1);
+                Creature *tyrande = ObjectAccessor::GetCreature(*me, TyrandeGUID);
+                if (TalkId == 24 && tyrande)
+                    tyrande->SetStandState(UNIT_STAND_STATE_KNEEL);
+    /*            if (TalkId == 21 && tyrande)
+                    tyrande->CastSpell(tyrande, 14751, true);*/
+                break;
+            }
+            case 27:
+            {
+                Creature* eranikus = ObjectAccessor::GetCreature(*me, EranikusGUID);
+                if (eranikus)
+                {
+                    uint32 health = eranikus->GetHealth();
+                    eranikus->AI()->EnterEvadeMode();
+                    eranikus->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                    eranikus->SetFaction(FACTION_FRIENDLY);
+                    eranikus->SetHealth(health);
+                }
+                break;
+            }
+            case 28:
+            {
+                Creature* eranikus = ObjectAccessor::GetCreature(*me, EranikusGUID);
+                if (eranikus)
+                {
+                    eranikus->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
+                    eranikus->SetFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FEIGN_DEATH);
+                }
+                break;
+            }
+            case 30:
+            {
+                // despawn eranikus and spawn redeemed
+                float x, y, z, o;
+    
+                Creature* eranikus = ObjectAccessor::GetCreature(*me, EranikusGUID);
+                if (eranikus)
+                {
+                    eranikus->GetPosition(x, y, z, o);
+                    eranikus->DisappearAndDie();
+                    ((TempSummon*)eranikus)->UnSummon();
+    			}
+    			else {
+    				//else set to last position (dunno if this is correct, this is a quickfix
+    				x = EranikusWP[3].x;
+    				y = EranikusWP[3].y;
+    				z = EranikusWP[3].z;
+    				o = 0.0f;
+    			}
+    
+                Creature* redeemed = me->SummonCreature(REDEEMED, x, y, z, o, TEMPSUMMON_DEAD_DESPAWN, 0);
+                if (redeemed)
+                {
+                    RedeemedGUID = redeemed->GetGUID();
+                    redeemed->SetHealth((redeemed->GetMaxHealth() / 100.0f) * 20.0f);
+                    Creature* tyrande = ObjectAccessor::GetCreature(*me, TyrandeGUID);
+                    if (tyrande)
+                        redeemed->GetMotionMaster()->MoveChase(tyrande, CONTACT_DISTANCE, 0);
+                }
+    
+                EnterPhase(PHASE_REDEMPTION);
+                Talk(40);
+                break;
+            }
+            case 31:
+                EnterPhase(PHASE_TALK);
+                break;
+            case 34:
+            {
+                Creature* tyrande = ObjectAccessor::GetCreature(*me, TyrandeGUID);
+                if (tyrande)
+                    tyrande->SetStandState(UNIT_STAND_STATE_STAND);
+                break;
+            }
+            case 36:
+            {
+                // despawn redeemed and tyrande and mark quest as completed
+                Creature *redeemed, *tyrande, *cre;
+                Player *player;
+    
+                redeemed = ObjectAccessor::GetCreature(*me, RedeemedGUID);
+                tyrande = ObjectAccessor::GetCreature(*me, TyrandeGUID);
+                if (redeemed)
+                    redeemed->DisappearAndDie();
+    
+                for (uint64 PriestessGUID : PriestessGUIDs)
+                {
+                    cre = ObjectAccessor::GetCreature(*me, PriestessGUID);
+                    if (cre)
+                        cre->DisappearAndDie();
+                }
+                if (tyrande)
+                    tyrande->DisappearAndDie();
+    
+                player = ObjectAccessor::GetPlayer(*me, HolderGUID);
+                if (player)
+                    player->GroupEventHappens(8736, me);
+    
+                EnterPhase(PHASE_REDEMPTION);
+                Talk(41);
+                break;
+            }
+            case 37:
+            {
+                // despawn remulos and stop event
+                float x, y, z, o;
+                Reset();
+                me->DestroyForNearbyPlayers();
+                me->GetHomePosition(x, y, z, o);
+                me->GetMap()->CreatureRelocation(me, x, y, z, o);
+                me->SetHealth(me->GetMaxHealth());
+                break;
+            }
+            case 38:
+                Talk(17);
+                break;
+            case 39:
+                Talk(19);
+                break;
+            case 40:
+            {
+    /*            Creature* redeemed = ObjectAccessor::GetCreature(*me, RedeemedGUID);
+                Creature* tyrande = ObjectAccessor::GetCreature(*me, TyrandeGUID);
+                if (redeemed && tyrande)
+                {
+                    redeemed->SetInFront(tyrande);
+                    redeemed->SendMovementFlagUpdate();
+                }*/
+                Talk(31);
+                break;
+            }
+            case 41:
+                Talk(37);
+                break;
+            case 42:
+                Talk(5);
+                break;
+            case 43:
+                Talk(0);
+                break;
+            default:
+                break;
+            }
+    
+            if (Phase == PHASE_TALK)
+                Talk(++TalkId);
+        }
+    
+        void MovementInform(uint32 type, uint32 id)
+        override {
+            if (type != POINT_MOTION_TYPE)
+                return;
+    
+            if (id == 0)
+                return;
+    
+            switch(id)
+            {
+            case 6:
+                me->AddUnitState(UNIT_STATE_IGNORE_PATHFINDING);
+                break;
+            case 7:
+                me->ClearUnitState(UNIT_STATE_IGNORE_PATHFINDING);
+                break;
+            case 11:
+                EnterPhase(PHASE_TALK);
+                Talk(2);
+                break;
+            case 17:
+                EnterPhase(PHASE_TALK);
+                Talk(14);
+                break;
+            default:
+                break;
+            }
+    
+            if (id <= 10 || (id >= 12 && id <= 16))
+            {
+                WPId = id;
+                newWP = true;
+            }
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!EventRunning)
+                return;
+    
+            Event = EVENT_NULL;
+    
+            if (Phase == PHASE_COMBAT1 && KilledNightmares >= 25)
+                Event = EVENT_NIGHTMARES_KILLED;
+    
+            if (Phase == PHASE_COMBAT2 && canBeRedeemed)
+            {
+                Creature* eranikus = ObjectAccessor::GetCreature(*me, EranikusGUID);
+                if (eranikus && eranikus->IsBelowHPPercent(20))
+                    Event = EVENT_ERANIKUS_REDEEMED;
+            }
+    
+            if (newWP)
+            {
+                Event = EVENT_WAYPOINT;
+                newWP = false;
+            }
+    
+            for (uint32 i = 1; i <= EVENT_COUNT; i++)
+            {
+                if (Timer[i])
+                {
+                    if (Timer[i] <= diff)
+                    {
+                        if (!Event)
+                            Event = (EventRemulos)i;
+                    }
+                    else 
+                    {
+                        Timer[i] -= diff;
+                    }
+                }
+            }
+    
+            if (Phase == PHASE_EVENT_FAILED && Event != EVENT_FAILURE)
+                return;
+    
+            switch (Event)
+            {
+            case EVENT_TALK_OVER:
+                Timer[EVENT_TALK_OVER] = 0;
+                HandleTalkSequence();
+                break;
+            case EVENT_WAYPOINT:
+                me->GetMotionMaster()->MovePoint(WPId+1, RemulosWP[WPId].x, RemulosWP[WPId].y, RemulosWP[WPId].z);
+                break;
+            case EVENT_INVOCATION:
+            {
+                Timer[EVENT_INVOCATION] = 0;
+                Creature* cre = me->SummonCreature(ERANIKUS, EranikusWP[0].x, EranikusWP[0].y, EranikusWP[0].z, EranikusWP[0].o, TEMPSUMMON_DEAD_DESPAWN, 0);
                 if (cre)
                 {
                     cre->SetKeepActive(true);
-                    PriestessGUIDs[i] = cre->GetGUID();
                     cre->AddUnitState(UNIT_STATE_IGNORE_PATHFINDING);
-                    cre->SetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID, 9695);
-                    cre->GetMotionMaster()->MoveFollow(tyr, PET_FOLLOW_DIST, cre->GetFollowAngle());
+                    EranikusGUID = cre->GetGUID();
                 }
+                Talk(42);
+                break;
             }
-            if (tyr)
+            case EVENT_WAVE:
+                Timer[EVENT_WAVE] = 0;
+                NextWave();
+                break;
+            case EVENT_NIGHTMARES_KILLED:
+                EnterPhase(PHASE_COMBAT2);
+                break;
+            case EVENT_TYRANDE_SPAWN:
             {
-                tyr->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
-                tyr->GetMotionMaster()->MovePoint(2, RemulosWP[1].x, RemulosWP[1].y, RemulosWP[1].z);
+                Timer[EVENT_TYRANDE_SPAWN] = 0;
+                Creature *cre, *tyr;
+                tyr = me->SummonCreature(TYRANDE, RemulosWP[0].x, RemulosWP[0].y, RemulosWP[0].z, 0, TEMPSUMMON_DEAD_DESPAWN, 0);
+                if (tyr)
+                {
+                    tyr->SetKeepActive(true);
+                    TyrandeGUID = tyr->GetGUID();
+                }
+                for (int i = 0; i < 8; i++)
+                {
+                    cre = me->SummonCreature(PRIESTESS, PriestessSP[i].x, PriestessSP[i].y, PriestessSP[i].z, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 120000);
+                    if (cre)
+                    {
+                        cre->SetKeepActive(true);
+                        PriestessGUIDs[i] = cre->GetGUID();
+                        cre->AddUnitState(UNIT_STATE_IGNORE_PATHFINDING);
+                        cre->SetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID, 9695);
+                        cre->GetMotionMaster()->MoveFollow(tyr, PET_FOLLOW_DIST, cre->GetFollowAngle());
+                    }
+                }
+                if (tyr)
+                {
+                    tyr->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
+                    tyr->GetMotionMaster()->MovePoint(2, RemulosWP[1].x, RemulosWP[1].y, RemulosWP[1].z);
+                }
+                break;
             }
-            break;
-        }
-        case EVENT_ERANIKUS_REDEEMED:
-        {
-            EnterPhase(PHASE_TALK);
-            if (Timer[EVENT_TALK_OVER])
+            case EVENT_ERANIKUS_REDEEMED:
             {
-                if (TalkId < 24)
-                    Talk(24);
-            } else
-                Talk(26);
-            break;
-        }
-        case EVENT_FAILURE:
-            DespawnAll();
-            break;
-        default:
-            break;
+                EnterPhase(PHASE_TALK);
+                if (Timer[EVENT_TALK_OVER])
+                {
+                    if (TalkId < 24)
+                        Talk(24);
+                } else
+                    Talk(26);
+                break;
+            }
+            case EVENT_FAILURE:
+                DespawnAll();
+                break;
+            default:
+                break;
+            }
+    
+            if (Phase == PHASE_COMBAT1 || Phase == PHASE_COMBAT2)
+            {
+                if (!UpdateVictim(false))
+                    return;
+                DoMeleeAttackIfReady();
+            }
         }
 
-        if (Phase == PHASE_COMBAT1 || Phase == PHASE_COMBAT2)
+        virtual void QuestAccept(Player* pPlayer, Quest const* pQuest) override
         {
-            if (!UpdateVictim(false))
-                return;
-            DoMeleeAttackIfReady();
+            if (pQuest->GetQuestId() == 8736)
+            {
+                CAST_AI(npc_keeper_remulos::npc_keeper_remulosAI, (me->AI()))->StartEvent(pPlayer->GetGUID());
+            }
         }
+
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_keeper_remulosAI(creature);
     }
 };
 
-bool QuestAccept_npc_keeper_remulos(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
-{
-    if (pQuest->GetQuestId() == 8736)
-    {
-        CAST_AI(npc_keeper_remulosAI, (pCreature->AI()))->StartEvent(pPlayer->GetGUID());
-    }
 
-    return true;
-}
-
-CreatureAI* GetAI_npc_keeper_remulos(Creature* pCreature)
-{
-    return new npc_keeper_remulosAI(pCreature);
-}
 
 /*####
 # npc_nightmare_phantasm
@@ -1359,78 +1469,88 @@ CreatureAI* GetAI_npc_keeper_remulos(Creature* pCreature)
 #define NIGHT_SHADOW_BOLT_VOLLEY 17228
 #define AURA_OF_FEAR 26641
 
-struct npc_nightmare_phantasmAI : public ScriptedAI
+
+class npc_nightmare_phantasm : public CreatureScript
 {
-    npc_nightmare_phantasmAI(Creature *c) : ScriptedAI(c) {}
+public:
+    npc_nightmare_phantasm() : CreatureScript("npc_nightmare_phantasm")
+    { }
 
-    uint32 Bolt_Timer;
-    uint32 Fear_Timer;
-
-    void Reset()
-    override {
-        Bolt_Timer = 3000 + urand(0, 3)*IN_MILLISECONDS;
-        Fear_Timer = 15000 + urand(0, 3)*IN_MILLISECONDS;
-    }
-
-    void EnterCombat(Unit*) override {}
-
-    void MoveInLineOfSight(Unit*) override {}
-
-    void KilledUnit(Unit*)
-    override {
-        DoCast(me, SWELL_OF_SOULS);
-    }
-
-    void JustDied(Unit*)
-    override {
-        Creature* c = FindCreature(REMULOS, 500, me)->ToCreature();
-        if (c)
-            CAST_AI(npc_keeper_remulosAI, (c->AI()))->NightKilled();
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!me->IsInCombat()) {
-            Creature* c = FindCreature(REMULOS, 500, me)->ToCreature();
-            if (c)
-                AttackStart(c);
-            else
-                UpdateVictim(false);
-            return;
-        }
-
-        Unit* target = SelectTarget(SELECT_TARGET_TOPAGGRO, 0, 500, false);
-        if (!me->GetVictim())
-        {
-            AttackStart(target);
-            return;
-        }
-
-        if (!UpdateVictim(false))
-            return;
-
-        if (Bolt_Timer <= diff)
-        {
-            DoCast(me->GetVictim(), NIGHT_SHADOW_BOLT_VOLLEY);
-            Bolt_Timer = 5000 + urand(0, 3)*IN_MILLISECONDS;
-        } else
-            Bolt_Timer -= diff;
-
-        if (Fear_Timer <= diff)
-        {
-            DoCast(me->GetVictim(), AURA_OF_FEAR);
+    class npc_nightmare_phantasmAI : public ScriptedAI
+    {
+        public:
+        npc_nightmare_phantasmAI(Creature *c) : ScriptedAI(c) {}
+    
+        uint32 Bolt_Timer;
+        uint32 Fear_Timer;
+    
+        void Reset()
+        override {
+            Bolt_Timer = 3000 + urand(0, 3)*IN_MILLISECONDS;
             Fear_Timer = 15000 + urand(0, 3)*IN_MILLISECONDS;
-        } else
-            Fear_Timer -= diff;
+        }
+    
+        void EnterCombat(Unit*) override {}
+    
+        void MoveInLineOfSight(Unit*) override {}
+    
+        void KilledUnit(Unit*)
+        override {
+            DoCast(me, SWELL_OF_SOULS);
+        }
+    
+        void JustDied(Unit*)
+        override {
+            Creature* c = me->FindNearestCreature(REMULOS, 500);
+            if (c)
+                CAST_AI(npc_keeper_remulos::npc_keeper_remulosAI, (c->AI()))->NightKilled();
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!me->IsInCombat()) {
+                Creature* c = me->FindNearestCreature(REMULOS, 500);
+                if (c)
+                    AttackStart(c);
+                else
+                    UpdateVictim(false);
+                return;
+            }
+    
+            Unit* target = SelectTarget(SELECT_TARGET_TOPAGGRO, 0, 500, false);
+            if (!me->GetVictim())
+            {
+                AttackStart(target);
+                return;
+            }
+    
+            if (!UpdateVictim(false))
+                return;
+    
+            if (Bolt_Timer <= diff)
+            {
+                DoCast(me->GetVictim(), NIGHT_SHADOW_BOLT_VOLLEY);
+                Bolt_Timer = 5000 + urand(0, 3)*IN_MILLISECONDS;
+            } else
+                Bolt_Timer -= diff;
+    
+            if (Fear_Timer <= diff)
+            {
+                DoCast(me->GetVictim(), AURA_OF_FEAR);
+                Fear_Timer = 15000 + urand(0, 3)*IN_MILLISECONDS;
+            } else
+                Fear_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_nightmare_phantasmAI(creature);
     }
 };
 
-CreatureAI* GetAI_npc_nightmare_phantasm(Creature* pCreature)
-{
-    return new npc_nightmare_phantasmAI(pCreature);
-}
 
 /*####
 # npc_eranikus_tyrant_of_the_dream
@@ -1440,278 +1560,308 @@ CreatureAI* GetAI_npc_nightmare_phantasm(Creature* pCreature)
 #define NOXIOUS_BREATH          24818
 #define ERA_SHADOW_BOLT_VOLLEY  25586
 
-struct npc_eranikus_tyrant_of_the_dreamAI : public ScriptedAI
+
+class npc_eranikus_tyrant_of_the_dream : public CreatureScript
 {
-    npc_eranikus_tyrant_of_the_dreamAI(Creature* c) : ScriptedAI(c) {}
+public:
+    npc_eranikus_tyrant_of_the_dream() : CreatureScript("npc_eranikus_tyrant_of_the_dream")
+    { }
 
-    bool combatPhase;
-    bool newWP;
-
-    uint32 Acid_Timer;
-    uint32 Noxious_Timer;
-    uint32 Bolt_Timer;
-
-    void Reset()
-    override {
-        combatPhase = false;
-        newWP = false;
-
-        Acid_Timer = 15000;
-        Noxious_Timer = 10000;
-        Bolt_Timer = 25000;
-    }
-
-    void EnterCombat(Unit*) override {}
-
-    void JustDied(Unit*)
-    override {
-        Creature* c = FindCreature(REMULOS, 500, me)->ToCreature();
-        if (c)
-            CAST_AI(npc_keeper_remulosAI, (c->AI()))->EventFailed();
-    }
-
-    void MoveInLineOfSight(Unit*) override {}
-
-    void EnterEvadeMode(EvadeReason /* why */)
-    override {
-        combatPhase = false;
-        me->InterruptNonMeleeSpells(true);
-        me->RemoveAllAuras();
-        me->DeleteThreatList();
-        me->CombatStop(true);
-    }
-
-    void MovementInform(uint32 type, uint32 id)
-    override {
-        if (type != POINT_MOTION_TYPE)
-            return;
-
-        if (id == 0)
-            return;
-
-        switch(id)
-        {
-        case 1:
-//            newWP = true;
-            break;
-        case 2:
-            me->SetDisableGravity(true);
-            break;
-        case 3:
-        {
-            me->SetDisableGravity(false);
-//            me->SetOrientation(EranikusWP[3].o);
-            me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-            combatPhase = true;
-            me->SendMovementFlagUpdate();
-            break;
-        }
-        default:
-            break;
-        }
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (newWP)
-        {
+    class npc_eranikus_tyrant_of_the_dreamAI : public ScriptedAI
+    {
+        public:
+        npc_eranikus_tyrant_of_the_dreamAI(Creature* c) : ScriptedAI(c) {}
+    
+        bool combatPhase;
+        bool newWP;
+    
+        uint32 Acid_Timer;
+        uint32 Noxious_Timer;
+        uint32 Bolt_Timer;
+    
+        void Reset()
+        override {
+            combatPhase = false;
             newWP = false;
-            me->GetMotionMaster()->MovePoint(2, EranikusWP[2].x, EranikusWP[2].y, EranikusWP[2].z);
-        }
-
-        if (!combatPhase)
-            return;
-
-        if (!me->IsInCombat())
-        {
-            Creature* c = FindCreature(REMULOS, 500, me)->ToCreature();
-            if (c)
-                AttackStart(c);
-            else
-                UpdateVictim(false);
-            return;
-        }
-
-        if (!UpdateVictim(false))
-            return;
-
-        if (Bolt_Timer <= diff)
-        {
-            DoCast(me->GetVictim(), ERA_SHADOW_BOLT_VOLLEY);
-            Bolt_Timer = 25000;
-        } else
-            Bolt_Timer -= diff;
-
-        if (Acid_Timer <= diff)
-        {
-            DoCast(me->GetVictim(), ACID_BREATH);
+    
             Acid_Timer = 15000;
-        } else
-            Acid_Timer -= diff;
-
-        if (Noxious_Timer <= diff)
-        {
-            DoCast(me->GetVictim(), NOXIOUS_BREATH);
             Noxious_Timer = 10000;
-        } else
-            Noxious_Timer -= diff;
+            Bolt_Timer = 25000;
+        }
+    
+        void EnterCombat(Unit*) override {}
+    
+        void JustDied(Unit*)
+        override {
+            Creature* c = me->FindNearestCreature(REMULOS, 500);
+            if (c)
+                CAST_AI(npc_keeper_remulos::npc_keeper_remulosAI, (c->AI()))->EventFailed();
+        }
+    
+        void MoveInLineOfSight(Unit*) override {}
+    
+        void EnterEvadeMode(EvadeReason /* why */)
+        override {
+            combatPhase = false;
+            me->InterruptNonMeleeSpells(true);
+            me->RemoveAllAuras();
+            me->DeleteThreatList();
+            me->CombatStop(true);
+        }
+    
+        void MovementInform(uint32 type, uint32 id)
+        override {
+            if (type != POINT_MOTION_TYPE)
+                return;
+    
+            if (id == 0)
+                return;
+    
+            switch(id)
+            {
+            case 1:
+    //            newWP = true;
+                break;
+            case 2:
+                me->SetDisableGravity(true);
+                break;
+            case 3:
+            {
+                me->SetDisableGravity(false);
+    //            me->SetOrientation(EranikusWP[3].o);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                combatPhase = true;
+                me->SendMovementFlagUpdate();
+                break;
+            }
+            default:
+                break;
+            }
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (newWP)
+            {
+                newWP = false;
+                me->GetMotionMaster()->MovePoint(2, EranikusWP[2].x, EranikusWP[2].y, EranikusWP[2].z);
+            }
+    
+            if (!combatPhase)
+                return;
+    
+            if (!me->IsInCombat())
+            {
+                Creature* c = me->FindNearestCreature(REMULOS, 500);
+                if (c)
+                    AttackStart(c);
+                else
+                    UpdateVictim(false);
+                return;
+            }
+    
+            if (!UpdateVictim(false))
+                return;
+    
+            if (Bolt_Timer <= diff)
+            {
+                DoCast(me->GetVictim(), ERA_SHADOW_BOLT_VOLLEY);
+                Bolt_Timer = 25000;
+            } else
+                Bolt_Timer -= diff;
+    
+            if (Acid_Timer <= diff)
+            {
+                DoCast(me->GetVictim(), ACID_BREATH);
+                Acid_Timer = 15000;
+            } else
+                Acid_Timer -= diff;
+    
+            if (Noxious_Timer <= diff)
+            {
+                DoCast(me->GetVictim(), NOXIOUS_BREATH);
+                Noxious_Timer = 10000;
+            } else
+                Noxious_Timer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_eranikus_tyrant_of_the_dreamAI(creature);
     }
 };
 
-CreatureAI* GetAI_npc_eranikus_tyrant_of_the_dream(Creature* pCreature)
-{
-    return new npc_eranikus_tyrant_of_the_dreamAI(pCreature);
-}
 
 #define MASS_HEALING    25839
 
-struct npc_tyrandeAI : public ScriptedAI
+
+class npc_tyrande : public CreatureScript
 {
-    npc_tyrandeAI(Creature* c) : ScriptedAI(c) {}
+public:
+    npc_tyrande() : CreatureScript("npc_tyrande")
+    { }
 
-    bool newWP;
-    uint32 WPId;
-
-    uint32 Heal_Timer;
-
-    void Reset()
-    override {
-        newWP = false;
-        WPId = 0;
-
-        Heal_Timer = 3000;
-    }
-
-    void EnterCombat(Unit*) override {}
-
-    void JustDied(Unit*)
-    override {
-        Creature* c = FindCreature(REMULOS, 500, me)->ToCreature();
-        if (c)
-            CAST_AI(npc_keeper_remulosAI, (c->AI()))->EventFailed();
-    }
-
-    void MoveInLineOfSight(Unit*) override {}
-
-    void MovementInform(uint32 type, uint32 id)
-    override {
-        if (type != POINT_MOTION_TYPE)
-            return;
-
-        if (id == 0)
-            return;
-
-        if (id >= 2 && id <= 7)
-        {
-            newWP = true;
-            WPId = id;
-        }
-
-        switch(id)
-        {
-        case 6:
-            me->AddUnitState(UNIT_STATE_IGNORE_PATHFINDING);
-            break;
-        case 7:
-            me->ClearUnitState(UNIT_STATE_IGNORE_PATHFINDING);
-            break;
-        case 8:
-            newWP = true;
-            WPId = 14;
-            break;
-        case 15:
-        {
-            newWP = true;
-            WPId = 17;
-            Creature* remulos = FindCreature(REMULOS, 500, me)->ToCreature();
-            if (remulos)
-                CAST_AI(npc_keeper_remulosAI, (remulos->AI()))->TyrandeComes(false);
-            break;
-        }
-        case 18:
-        {
-            Creature* remulos = FindCreature(REMULOS, 500, me)->ToCreature();
-            if (remulos)
-                CAST_AI(npc_keeper_remulosAI, (remulos->AI()))->TyrandeComes(true);
-            break;
-        }
-        default:
-            break;
-        }
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (newWP)
-        {
+    class npc_tyrandeAI : public ScriptedAI
+    {
+        public:
+        npc_tyrandeAI(Creature* c) : ScriptedAI(c) {}
+    
+        bool newWP;
+        uint32 WPId;
+    
+        uint32 Heal_Timer;
+    
+        void Reset()
+        override {
             newWP = false;
-            me->GetMotionMaster()->MovePoint(WPId+1, RemulosWP[WPId].x, RemulosWP[WPId].y, RemulosWP[WPId].z);
+            WPId = 0;
+    
+            Heal_Timer = 3000;
         }
+    
+        void EnterCombat(Unit*) override {}
+    
+        void JustDied(Unit*)
+        override {
+            Creature* c = me->FindNearestCreature(REMULOS, 500);
+            if (c)
+                CAST_AI(npc_keeper_remulos::npc_keeper_remulosAI, (c->AI()))->EventFailed();
+        }
+    
+        void MoveInLineOfSight(Unit*) override {}
+    
+        void MovementInform(uint32 type, uint32 id)
+        override {
+            if (type != POINT_MOTION_TYPE)
+                return;
+    
+            if (id == 0)
+                return;
+    
+            if (id >= 2 && id <= 7)
+            {
+                newWP = true;
+                WPId = id;
+            }
+    
+            switch(id)
+            {
+            case 6:
+                me->AddUnitState(UNIT_STATE_IGNORE_PATHFINDING);
+                break;
+            case 7:
+                me->ClearUnitState(UNIT_STATE_IGNORE_PATHFINDING);
+                break;
+            case 8:
+                newWP = true;
+                WPId = 14;
+                break;
+            case 15:
+            {
+                newWP = true;
+                WPId = 17;
+                Creature* remulos = me->FindNearestCreature(REMULOS, 500);
+                if (remulos)
+                    CAST_AI(npc_keeper_remulos::npc_keeper_remulosAI, (remulos->AI()))->TyrandeComes(false);
+                break;
+            }
+            case 18:
+            {
+                Creature* remulos = me->FindNearestCreature(REMULOS, 500);
+                if (remulos)
+                    CAST_AI(npc_keeper_remulos::npc_keeper_remulosAI, (remulos->AI()))->TyrandeComes(true);
+                break;
+            }
+            default:
+                break;
+            }
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (newWP)
+            {
+                newWP = false;
+                me->GetMotionMaster()->MovePoint(WPId+1, RemulosWP[WPId].x, RemulosWP[WPId].y, RemulosWP[WPId].z);
+            }
+    
+            if (!me->IsStandState())
+                return;
+    
+            Creature* remulos = me->FindNearestCreature(REMULOS, 500);
+            if (remulos && CAST_AI(npc_keeper_remulos::npc_keeper_remulosAI, (remulos->AI()))->GetPhase() != PHASE_COMBAT2)
+                return;
+    
+            if (Heal_Timer <= diff)
+            {
+                DoCast(me, MASS_HEALING);
+                Heal_Timer = 20000;
+            } else
+                Heal_Timer -= diff;
+        }
+    };
 
-        if (!me->IsStandState())
-            return;
-
-        Creature* remulos = FindCreature(REMULOS, 500, me)->ToCreature();
-        if (remulos && CAST_AI(npc_keeper_remulosAI, (remulos->AI()))->GetPhase() != PHASE_COMBAT2)
-            return;
-
-        if (Heal_Timer <= diff)
-        {
-            DoCast(me, MASS_HEALING);
-            Heal_Timer = 20000;
-        } else
-            Heal_Timer -= diff;
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_tyrandeAI(creature);
     }
 };
 
-CreatureAI* GetAI_npc_tyrande(Creature* pCreature)
+
+
+class npc_priestess_of_the_moon : public CreatureScript
 {
-    return new npc_tyrandeAI(pCreature);
-}
+public:
+    npc_priestess_of_the_moon() : CreatureScript("npc_priestess_of_the_moon")
+    { }
 
-struct npc_priestess_of_the_moonAI : public ScriptedAI
-{
-    npc_priestess_of_the_moonAI(Creature* c) : ScriptedAI(c) {}
-
-    uint32 Shoot_Timer;
-
-    void Reset()
-    override {
-        Shoot_Timer = 3000;
-    }
-
-    void MoveInLineOfSight(Unit*) override {}
-
-    void EnterCombat(Unit* unit)
-    override {
-        if (unit->GetGUIDMid() == ERANIKUS)
-        {
-            me->SetReactState(REACT_AGGRESSIVE);
-            AttackStart(unit, false);
-        }
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (!UpdateVictim(false))
-            return;
-
-        if (Shoot_Timer <= diff)
-        {
-            int bp0 = 1100;
-            me->CastCustomSpell(me->GetVictim(), 37770, &bp0, nullptr, nullptr, false);
+    class npc_priestess_of_the_moonAI : public ScriptedAI
+    {
+        public:
+        npc_priestess_of_the_moonAI(Creature* c) : ScriptedAI(c) {}
+    
+        uint32 Shoot_Timer;
+    
+        void Reset()
+        override {
             Shoot_Timer = 3000;
-        } else
-            Shoot_Timer -= diff;
+        }
+    
+        void MoveInLineOfSight(Unit*) override {}
+    
+        void EnterCombat(Unit* unit)
+        override {
+            if (unit->GetGUIDMid() == ERANIKUS)
+            {
+                me->SetReactState(REACT_AGGRESSIVE);
+                AttackStart(unit, false);
+            }
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (!UpdateVictim(false))
+                return;
+    
+            if (Shoot_Timer <= diff)
+            {
+                int bp0 = 1100;
+                me->CastCustomSpell(me->GetVictim(), 37770, &bp0, nullptr, nullptr, false);
+                Shoot_Timer = 3000;
+            } else
+                Shoot_Timer -= diff;
+        }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_priestess_of_the_moonAI(creature);
     }
 };
 
-CreatureAI* GetAI_npc_priestess_of_the_moon(Creature* pCreature)
-{
-    return new npc_priestess_of_the_moonAI(pCreature);
-}
 
 /*####
 # AddSC
@@ -1719,60 +1869,25 @@ CreatureAI* GetAI_npc_priestess_of_the_moon(Creature* pCreature)
 
 void AddSC_moonglade()
 {
-    OLDScript* newscript;
 
-    newscript = new OLDScript;
-    newscript->Name="npc_bunthen_plainswind";
-    newscript->OnGossipHello =  &GossipHello_npc_bunthen_plainswind;
-    newscript->OnGossipSelect = &GossipSelect_npc_bunthen_plainswind;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_bunthen_plainswind();
 
-    newscript = new OLDScript;
-    newscript->Name="npc_great_bear_spirit";
-    newscript->OnGossipHello =  &GossipHello_npc_great_bear_spirit;
-    newscript->OnGossipSelect = &GossipSelect_npc_great_bear_spirit;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_great_bear_spirit();
 
-    newscript = new OLDScript;
-    newscript->Name="npc_silva_filnaveth";
-    newscript->OnGossipHello =  &GossipHello_npc_silva_filnaveth;
-    newscript->OnGossipSelect = &GossipSelect_npc_silva_filnaveth;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_silva_filnaveth();
 
-    newscript = new OLDScript;
-    newscript->Name="npc_clintar_dreamwalker";
-    newscript->OnQuestAccept = &QuestAccept_npc_clintar_dreamwalker;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_clintar_dreamwalker();
 
-    newscript = new OLDScript;
-    newscript->Name="npc_clintar_spirit";
-    newscript->GetAI = &GetAI_npc_clintar_spirit;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_clintar_spirit();
 
-    newscript = new OLDScript;
-    newscript->Name="npc_keeper_remulos";
-    newscript->OnQuestAccept = &QuestAccept_npc_keeper_remulos;
-    newscript->GetAI = &GetAI_npc_keeper_remulos;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_keeper_remulos();
 
-    newscript = new OLDScript;
-    newscript->Name="npc_nightmare_phantasm";
-    newscript->GetAI = &GetAI_npc_nightmare_phantasm;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_nightmare_phantasm();
 
-    newscript = new OLDScript;
-    newscript->Name="npc_eranikus_tyrant_of_the_dream";
-    newscript->GetAI = &GetAI_npc_eranikus_tyrant_of_the_dream;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_eranikus_tyrant_of_the_dream();
 
-    newscript = new OLDScript;
-    newscript->Name="npc_tyrande";
-    newscript->GetAI = &GetAI_npc_tyrande;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_tyrande();
 
-    newscript = new OLDScript;
-    newscript->Name="npc_priestess_of_the_moon";
-    newscript->GetAI = &GetAI_npc_priestess_of_the_moon;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new npc_priestess_of_the_moon();
 }
 

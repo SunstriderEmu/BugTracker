@@ -161,8 +161,8 @@ class Boss_Lurker_Below : public CreatureScript
                         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                         me->SetFlag(UNIT_NPC_EMOTESTATE, EMOTE_STATE_SUBMERGED);
                         me->CastSpell(me, SPELL_SUBMERGE);
-                        me->SetVisibility(VISIBILITY_OFF);
-                        me->SetFaction(35);
+                        me->SetVisible(false);
+                        me->SetFaction(FACTION_FRIENDLY);
                         me->SetReactState(REACT_PASSIVE);
                         break;
                     case EMERGED:
@@ -219,7 +219,7 @@ class Boss_Lurker_Below : public CreatureScript
                                 case 0:
                                     if (_instance)
                                         _instance->SendScriptInTestNoLootMessageToAll();
-                                    me->SetVisibility(VISIBILITY_ON);
+                                    me->SetVisible(true);
                                     introState = 1;
                                     introPhaseTimer = 500;
                                     break;
@@ -255,13 +255,16 @@ class Boss_Lurker_Below : public CreatureScript
                     return;
                 }
 
-                if (!UpdateVictim())
+                if (!me->GetVictim())
+                {
+                    EnterEvadeMode();
                     return;
+                }
 
                 switch (phase)
                 {
                     case EMERGED:
-                        if (!UpdateVictim())
+                        if (!UpdateVictim(false)) //false to avoid boss reseting when all targets are out of range
                             return;
 
                         if (spoutTimer < diff)

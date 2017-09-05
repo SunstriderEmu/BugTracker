@@ -56,18 +56,18 @@ enum {
 
 float WhispPos[12][3] =
 {
-    {5437.736816, -3433.736328, 1570.067749},
-    {5547.231934, -3370.547607, 1580.132568},
-    {5718.386230, -3339.741943, 1594.261230},
-    {5623.342285, -3380.486328, 1584.710083},
-    {5746.506348, -3439.762695, 1595.568726},
-    {5729.705078, -3498.496338, 1599.565308},
-    {5670.690918, -3543.238281, 1592.051514},
-    {5650.103027, -3595.190918, 1602.952881},
-    {5603.528809, -3577.025879, 1583.101318},
-    {5504.924316, -3627.164062, 1573.354614},
-    {5450.262207, -3482.258545, 1562.047974},
-    {5521.988281, -3536.018311, 1562.865112},
+	{ 5437.736816f, -3433.736328f, 1570.067749f },
+	{ 5547.231934f, -3370.547607f, 1580.132568f },
+	{ 5718.386230f, -3339.741943f, 1594.261230f },
+	{ 5623.342285f, -3380.486328f, 1584.710083f },
+	{ 5746.506348f, -3439.762695f, 1595.568726f },
+	{ 5729.705078f, -3498.496338f, 1599.565308f },
+	{ 5670.690918f, -3543.238281f, 1592.051514f },
+	{ 5650.103027f, -3595.190918f, 1602.952881f },
+	{ 5603.528809f, -3577.025879f, 1583.101318f },
+	{ 5504.924316f, -3627.164062f, 1573.354614f },
+	{ 5450.262207f, -3482.258545f, 1562.047974f },
+	{ 5521.988281f, -3536.018311f, 1562.865112f },
 };
 
 #define NORDRASSIL_X        5503.713
@@ -592,13 +592,13 @@ public:
             if (!me->IsInCombat()) {
                 if (_checkTimer <= diff) {
                     // Visibility check
-                    if ((_instance->GetData(DATA_AZGALOREVENT) < DONE) && ((me->GetVisibility() != VISIBILITY_OFF) || (me->GetFaction() != 35))) {
-                        me->SetVisibility(VISIBILITY_OFF);
-                        me->SetFaction(35);
+                    if ((_instance->GetData(DATA_AZGALOREVENT) < DONE) && ((me->IsVisible()) || (me->GetFaction() != 35))) {
+                        me->SetVisible(false);
+                        me->SetFaction(FACTION_FRIENDLY);
                     }
-                    else if ((_instance->GetData(DATA_AZGALOREVENT) >= DONE) && ((me->GetVisibility() != VISIBILITY_ON) || (me->GetFaction() == 35))) {
+                    else if ((_instance->GetData(DATA_AZGALOREVENT) >= DONE) && (!me->IsVisible() || (me->GetFaction() == 35))) {
                         me->SetFaction(1720);
-                        me->SetVisibility(VISIBILITY_ON);
+                        me->SetVisible(true);
                     }
                     
                     // Refresh channeling visual
@@ -721,7 +721,7 @@ public:
                         break;
                     }
                         
-                    Trinity::Containers::RandomResizeList(unleashSpells, 1);
+                    Trinity::Containers::RandomResize(unleashSpells, 1);
                     me->CastSpell(me->GetVictim(), unleashSpells.front(), true);
                     
                     events.RescheduleEvent(EV_UNLEASH_SOULCHARGE, urand(2000, 10000));
@@ -760,7 +760,7 @@ public:
         bool _canUseFingerOfDeath()
         {
             Unit* victim = me->GetVictim();
-            if (victim && me->IsWithinDistInMap(victim, me->GetAttackDistance(victim)))
+            if (victim && me->IsWithinDistInMap(victim, me->GetAggroRange(victim)))
                 return false;
                 
             if (victim && victim->IsAlive()) {
@@ -791,7 +791,7 @@ public:
             targets.sort(TargetDistanceOrder(me));
             Unit* target = targets.front();
             if (target) {
-                if (!me->IsWithinDistInMap(target, me->GetAttackDistance(target)) && std::fabs(me->GetPositionZ() - target->GetPositionZ()) < 5.0f)
+                if (!me->IsWithinDistInMap(target, me->GetAggroRange(target)) && std::fabs(me->GetPositionZ() - target->GetPositionZ()) < 5.0f)
                     return true; // Cast Finger of Death
                 else // This target is closest, he is our new tank
                     me->AddThreat(target, me->GetThreat(me->GetVictim()));

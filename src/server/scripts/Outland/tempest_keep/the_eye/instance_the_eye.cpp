@@ -11,7 +11,7 @@ DoorData const doorData[] =
 class instance_the_eye : public InstanceMapScript
 {
 public:
-    instance_the_eye() : InstanceMapScript("instance_the_eye", 550) { }
+    instance_the_eye() : InstanceMapScript(TheEyeScriptName, 550) { }
 
     InstanceScript* GetInstanceScript(InstanceMap* map) const override
     {

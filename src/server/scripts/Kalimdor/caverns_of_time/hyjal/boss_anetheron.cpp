@@ -34,135 +34,145 @@ enum Texts {
     SAY_ONAGGRO = -1801020
 };
 
-struct boss_anetheronAI : public hyjal_trashAI
+
+class boss_anetheron : public CreatureScript
 {
-    boss_anetheronAI(Creature *c) : hyjal_trashAI(c)
+public:
+    boss_anetheron() : CreatureScript("boss_anetheron")
+    { }
+
+    class boss_anetheronAI : public hyjal_trashAI
     {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-        go = false;
-        pos = 0;
-    }
-
-    uint32 SwarmTimer;
-    uint32 SleepTimer;
-    uint32 InfernoTimer;
-    bool go;
-    uint32 pos;
-
-    void Reset()
-    override {
-        damageTaken = 0;
-        SwarmTimer = TIMER_CARRION_SWARM_FIRST;
-        SleepTimer = TIMER_SLEEP;
-        InfernoTimer = TIMER_INFERNO_START;
-
-        DoCast(me, SPELL_VAMPIRIC_AURA,true);
-
-        if(pInstance && IsEvent)
-            pInstance->SetData(DATA_ANETHERONEVENT, NOT_STARTED);
-    }
-
-    void EnterCombat(Unit *who) override
-    {
-        if(pInstance && IsEvent)
-            pInstance->SetData(DATA_ANETHERONEVENT, IN_PROGRESS);
-
-        DoScriptText(SAY_ONAGGRO,me);
-    }
-
-    void KilledUnit(Unit *victim)
-    override {
-        DoScriptText(SAY_ONSLAY1 - rand()%3,me);
-    }
-
-    void WaypointReached(uint32 i)
-    override {
-        pos = i;
-        if (i == 7 && pInstance)
+        public:
+        boss_anetheronAI(Creature *c) : hyjal_trashAI(c)
         {
-            Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
-            if (target && target->IsAlive())
-                me->AddThreat(target,0.0);
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
+            go = false;
+            pos = 0;
         }
-    }
-
-    void JustDied(Unit *victim)
-    override {
-        hyjal_trashAI::JustDied(victim);
-        if(pInstance && IsEvent)
-            pInstance->SetData(DATA_ANETHERONEVENT, DONE);
-
-        DoScriptText(SAY_ONDEATH,me);
-    }
-
-    void UpdateAI(const uint32 diff)
-    override {
-        if (IsEvent)
+    
+        uint32 SwarmTimer;
+        uint32 SleepTimer;
+        uint32 InfernoTimer;
+        bool go;
+        uint32 pos;
+    
+        void Reset()
+        override {
+            damageTaken = 0;
+            SwarmTimer = TIMER_CARRION_SWARM_FIRST;
+            SleepTimer = TIMER_SLEEP;
+            InfernoTimer = TIMER_INFERNO_START;
+    
+            DoCast(me, SPELL_VAMPIRIC_AURA,true);
+    
+            if(pInstance && IsEvent)
+                pInstance->SetData(DATA_ANETHERONEVENT, NOT_STARTED);
+        }
+    
+        void EnterCombat(Unit *who) override
         {
-            //Must update npc_escortAI
-            npc_escortAI::UpdateAI(diff);
-            if(!go)
+            if(pInstance && IsEvent)
+                pInstance->SetData(DATA_ANETHERONEVENT, IN_PROGRESS);
+    
+            DoScriptText(SAY_ONAGGRO,me);
+        }
+    
+        void KilledUnit(Unit *victim)
+        override {
+            DoScriptText(SAY_ONSLAY1 - rand()%3,me);
+        }
+    
+        void WaypointReached(uint32 i)
+        override {
+            pos = i;
+            if (i == 7 && pInstance)
             {
-                go = true;
-                if(pInstance)
+                Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
+                if (target && target->IsAlive())
+                    me->AddThreat(target,0.0);
+            }
+        }
+    
+        void JustDied(Unit *victim)
+        override {
+            hyjal_trashAI::JustDied(victim);
+            if(pInstance && IsEvent)
+                pInstance->SetData(DATA_ANETHERONEVENT, DONE);
+    
+            DoScriptText(SAY_ONDEATH,me);
+        }
+    
+        void UpdateAI(const uint32 diff)
+        override {
+            if (IsEvent)
+            {
+                //Must update npc_escortAI
+                npc_escortAI::UpdateAI(diff);
+                if(!go)
                 {
-                    ((npc_escortAI*)(me->AI()))->AddWaypoint(0, 4896.08,    -1576.35,    1333.65);
-                    ((npc_escortAI*)(me->AI()))->AddWaypoint(1, 4898.68,    -1615.02,    1329.48);
-                    ((npc_escortAI*)(me->AI()))->AddWaypoint(2, 4907.12,    -1667.08,    1321.00);
-                    ((npc_escortAI*)(me->AI()))->AddWaypoint(3, 4963.18,    -1699.35,    1340.51);
-                    ((npc_escortAI*)(me->AI()))->AddWaypoint(4, 4989.16,    -1716.67,    1335.74);
-                    ((npc_escortAI*)(me->AI()))->AddWaypoint(5, 5026.27,    -1736.89,    1323.02);
-                    ((npc_escortAI*)(me->AI()))->AddWaypoint(6, 5037.77,    -1770.56,    1324.36);
-                    ((npc_escortAI*)(me->AI()))->AddWaypoint(7, 5067.23,    -1789.95,    1321.17);
-                    ((npc_escortAI*)(me->AI()))->Start(false, true, true);
-                    ((npc_escortAI*)(me->AI()))->SetDespawnAtEnd(false);
+                    go = true;
+                    if(pInstance)
+                    {
+                        ((npc_escortAI*)(me->AI()))->AddWaypoint(0, 4896.08,    -1576.35,    1333.65);
+                        ((npc_escortAI*)(me->AI()))->AddWaypoint(1, 4898.68,    -1615.02,    1329.48);
+                        ((npc_escortAI*)(me->AI()))->AddWaypoint(2, 4907.12,    -1667.08,    1321.00);
+                        ((npc_escortAI*)(me->AI()))->AddWaypoint(3, 4963.18,    -1699.35,    1340.51);
+                        ((npc_escortAI*)(me->AI()))->AddWaypoint(4, 4989.16,    -1716.67,    1335.74);
+                        ((npc_escortAI*)(me->AI()))->AddWaypoint(5, 5026.27,    -1736.89,    1323.02);
+                        ((npc_escortAI*)(me->AI()))->AddWaypoint(6, 5037.77,    -1770.56,    1324.36);
+                        ((npc_escortAI*)(me->AI()))->AddWaypoint(7, 5067.23,    -1789.95,    1321.17);
+                        ((npc_escortAI*)(me->AI()))->Start(false, true, true);
+                        ((npc_escortAI*)(me->AI()))->SetDespawnAtEnd(false);
+                    }
                 }
             }
-        }
-
-        //Return since we have no target
-        if (!UpdateVictim() )
-            return;
-
-        if(SwarmTimer < diff)
-        {
-            Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0,100,true);
-            if(target && DoCast(target,SPELL_CARRION_SWARM) == SPELL_CAST_OK)
-            {
-                SwarmTimer = TIMER_CARRION_SWARM;
-                DoScriptText(SAY_SWARM1 - rand()%2,me);
-            }
-        }else SwarmTimer -= diff;
-
-        if(SleepTimer < diff)
-        {
-            for(uint8 i=0;i<3;++i)
+    
+            //Return since we have no target
+            if (!UpdateVictim() )
+                return;
+    
+            if(SwarmTimer < diff)
             {
                 Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0,100,true);
-                if(target)
-                    target->CastSpell(target,SPELL_SLEEP,true);
-            }
-            SleepTimer = TIMER_SLEEP;
-            DoScriptText(SAY_SLEEP1 - rand()%2,me);
-        }else SleepTimer -= diff;
-
-        if(InfernoTimer < diff)
-        {
-            if(DoCast(SelectTarget(SELECT_TARGET_RANDOM,0,100,true), SPELL_INFERNO) == SPELL_CAST_OK)
+                if(target && DoCast(target,SPELL_CARRION_SWARM) == SPELL_CAST_OK)
+                {
+                    SwarmTimer = TIMER_CARRION_SWARM;
+                    DoScriptText(SAY_SWARM1 - rand()%2,me);
+                }
+            }else SwarmTimer -= diff;
+    
+            if(SleepTimer < diff)
             {
-                InfernoTimer = TIMER_INFERNO;
-                DoScriptText(SAY_INFERNO1 - rand()%2,me);
-            }
-        }else InfernoTimer -= diff;
+                for(uint8 i=0;i<3;++i)
+                {
+                    Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0,100,true);
+                    if(target)
+                        target->CastSpell(target,SPELL_SLEEP,true);
+                }
+                SleepTimer = TIMER_SLEEP;
+                DoScriptText(SAY_SLEEP1 - rand()%2,me);
+            }else SleepTimer -= diff;
+    
+            if(InfernoTimer < diff)
+            {
+                if(DoCast(SelectTarget(SELECT_TARGET_RANDOM,0,100,true), SPELL_INFERNO) == SPELL_CAST_OK)
+                {
+                    InfernoTimer = TIMER_INFERNO;
+                    DoScriptText(SAY_INFERNO1 - rand()%2,me);
+                }
+            }else InfernoTimer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new boss_anetheronAI(creature);
     }
 };
 
-CreatureAI* GetAI_boss_anetheron(Creature *_Creature)
-{
-    return new boss_anetheronAI (_Creature);
-}
 
 enum InfernoSpells
 {
@@ -175,91 +185,94 @@ enum InfernoTimers
     TIMER_IMMOLATION     = 2000
 };
 
-struct mob_towering_infernalAI : public ScriptedAI
+
+class mob_towering_infernal : public CreatureScript
 {
-    mob_towering_infernalAI(Creature *c) : ScriptedAI(c)
+public:
+    mob_towering_infernal() : CreatureScript("mob_towering_infernal")
+    { }
+
+    class mob_towering_infernalAI : public ScriptedAI
     {
-        pInstance = ((InstanceScript*)c->GetInstanceScript());
-        if(pInstance)
-            AnetheronGUID = pInstance->GetData64(DATA_ANETHERON);
-    }
-
-    uint32 ImmolationTimer;
-    uint32 CheckTimer;
-    uint64 AnetheronGUID;
-    InstanceScript* pInstance;
-
-    void Reset() override
-    {
-        DoCast(me, SPELL_INFERNO_EFFECT);
-        ImmolationTimer = TIMER_IMMOLATION;
-        CheckTimer = 5000;
-    }
-
-    void KilledUnit(Unit *victim) override
-    {
-
-    }
-
-    void JustDied(Unit *victim) override
-    {
-
-    }
-
-    void MoveInLineOfSight(Unit *who) override
-    {
-        if (me->GetDistance(who) <= 50 && !me->IsInCombat() && me->IsHostileTo(who))
+        public:
+        mob_towering_infernalAI(Creature *c) : ScriptedAI(c)
         {
-            me->AddThreat(who,0.0);
-            me->Attack(who,false);
+            pInstance = ((InstanceScript*)c->GetInstanceScript());
+            if(pInstance)
+                AnetheronGUID = pInstance->GetData64(DATA_ANETHERON);
         }
-    }
-
-    void UpdateAI(const uint32 diff) override
-    {
-        if(CheckTimer < diff)
+    
+        uint32 ImmolationTimer;
+        uint32 CheckTimer;
+        uint64 AnetheronGUID;
+        InstanceScript* pInstance;
+    
+        void Reset() override
         {
-            if(AnetheronGUID)
-            {
-                Creature* boss = ObjectAccessor::GetCreature((*me),AnetheronGUID);
-                if(!boss || (boss && boss->IsDead()))
-                {
-                    me->DespawnOrUnsummon();
-                    return;
-                }
-            }
-            CheckTimer = 5000;
-        }else CheckTimer -= diff;
-
-        //Return since we have no target
-        if (!UpdateVictim())
-            return;
-
-        if(ImmolationTimer < diff)
-        {
-            DoCast(me, SPELL_IMMOLATION);
+            DoCast(me, SPELL_INFERNO_EFFECT);
             ImmolationTimer = TIMER_IMMOLATION;
-        }else ImmolationTimer -= diff;
+            CheckTimer = 5000;
+        }
+    
+        void KilledUnit(Unit *victim) override
+        {
+    
+        }
+    
+        void JustDied(Unit *victim) override
+        {
+    
+        }
+    
+        void MoveInLineOfSight(Unit *who) override
+        {
+            if (me->GetDistance(who) <= 50 && !me->IsInCombat() && me->IsHostileTo(who))
+            {
+                me->AddThreat(who,0.0);
+                me->Attack(who,false);
+            }
+        }
+    
+        void UpdateAI(const uint32 diff) override
+        {
+            if(CheckTimer < diff)
+            {
+                if(AnetheronGUID)
+                {
+                    Creature* boss = ObjectAccessor::GetCreature((*me),AnetheronGUID);
+                    if(!boss || (boss && boss->IsDead()))
+                    {
+                        me->DespawnOrUnsummon();
+                        return;
+                    }
+                }
+                CheckTimer = 5000;
+            }else CheckTimer -= diff;
+    
+            //Return since we have no target
+            if (!UpdateVictim())
+                return;
+    
+            if(ImmolationTimer < diff)
+            {
+                DoCast(me, SPELL_IMMOLATION);
+                ImmolationTimer = TIMER_IMMOLATION;
+            }else ImmolationTimer -= diff;
+    
+            DoMeleeAttackIfReady();
+        }
+    };
 
-        DoMeleeAttackIfReady();
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new mob_towering_infernalAI(creature);
     }
 };
 
-CreatureAI* GetAI_mob_towering_infernal(Creature *_Creature)
-{
-    return new mob_towering_infernalAI (_Creature);
-}
 
 void AddSC_boss_anetheron()
 {
-    OLDScript *newscript;
-    newscript = new OLDScript;
-    newscript->Name="boss_anetheron";
-    newscript->GetAI = &GetAI_boss_anetheron;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new boss_anetheron();
 
-    newscript = new OLDScript;
-    newscript->Name="mob_towering_infernal";
-    newscript->GetAI = &GetAI_mob_towering_infernal;
-    sScriptMgr->RegisterOLDScript(newscript);
+    new mob_towering_infernal();
 }
