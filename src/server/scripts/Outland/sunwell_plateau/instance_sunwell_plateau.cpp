@@ -197,7 +197,7 @@ public:
             return nullptr;
         }
 
-        void OnCreatureCreate(Creature* pCreature) 
+        void OnCreatureCreate(Creature* pCreature) override 
         {
             switch (pCreature->GetEntry())
             {
