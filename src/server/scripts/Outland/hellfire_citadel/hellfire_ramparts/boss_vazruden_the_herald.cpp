@@ -216,9 +216,10 @@ public:
             {
                 Creature *Vazruden = me->GetMap()->GetCreature(VazrudenGUID);
                 bool VazrudenBelow40percent = !Vazruden || Vazruden->GetHealthPct() <= 40.0f;
-                if (VazrudenBelow40percent)
-                    events.RescheduleEvent(EVENT_START_DESCENDING, 1, 0, PHASE_FLIGHT);
-                else
+				if (VazrudenBelow40percent) {
+					events.RescheduleEvent(EVENT_START_DESCENDING, 1, 0, PHASE_FLIGHT);
+					events.CancelEvent(EVENT_VAZRUDEN_HEALTH_CHECK);
+				} else
                     events.RescheduleEvent(EVENT_VAZRUDEN_HEALTH_CHECK, 2000, 0, PHASE_FLIGHT);
 
                 break;
