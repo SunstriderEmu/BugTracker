@@ -4,6 +4,10 @@ boss_nazan: the dragon
 boss_vazruden: the boss on foot
 mob_hellfire_sentry: sentries before the boss, pull the boss when both are down
 
+Infos:
+- nazan descends when vazruden reach 40% heath, or if he reach 30% himself
+- nazan descends on a timer ? This script had this but is commented for now since I couldn't find any source for it
+
 TODO:
 nazan animation when casting firewall is wrong whenever he's stationary flying. What I tried so far: Tweaking movement flags, tried every unknown cast flags. In the meanwhile, I'll make it so that Nazan is never stationary.
 */
@@ -67,7 +71,7 @@ public:
             EVENT_BELLOWING_ROAR,
             EVENT_START_DESCENDING,
             EVENT_ENTER_LAND_PHASE, //this exists just as a security
-            EVENT_VAZRUDEN_HEALTH_CHECK,
+			EVENT_HEALTH_CHECKS,
         };
 
         enum NazanPhases
@@ -116,8 +120,8 @@ public:
                 lastWaypoint = 1;
                 events.RescheduleEvent(EVENT_FIREBALL, 3000);
                 events.RescheduleEvent(EVENT_SWITCH_SIDE, 1, 0, PHASE_FLIGHT);
-                events.RescheduleEvent(EVENT_START_DESCENDING, 45 * SECOND * IN_MILLISECONDS, 0, PHASE_FLIGHT);
-                events.RescheduleEvent(EVENT_VAZRUDEN_HEALTH_CHECK, 2000, 0, PHASE_FLIGHT);
+                //Disabled, can't find any source saying this? events.RescheduleEvent(EVENT_START_DESCENDING, 45 * SECOND * IN_MILLISECONDS, 0, PHASE_FLIGHT);
+                events.RescheduleEvent(EVENT_HEALTH_CHECKS, 2000, 0, PHASE_FLIGHT);
                 break;
             case PHASE_DESCENDING:
                 me->GetMotionMaster()->Clear();
@@ -212,15 +216,16 @@ public:
                 SetPhase(PHASE_LAND);
                 events.CancelEvent(EVENT_ENTER_LAND_PHASE);
                 break;
-            case EVENT_VAZRUDEN_HEALTH_CHECK:
+            case EVENT_HEALTH_CHECKS:
             {
                 Creature *Vazruden = me->GetMap()->GetCreature(VazrudenGUID);
                 bool VazrudenBelow40percent = !Vazruden || Vazruden->GetHealthPct() <= 40.0f;
-				if (VazrudenBelow40percent) {
+				bool NazanBelow20percent = me->GetHealthPct() <= 30.0f;
+				if (VazrudenBelow40percent || NazanBelow20percent) {
 					events.RescheduleEvent(EVENT_START_DESCENDING, 1, 0, PHASE_FLIGHT);
-					events.CancelEvent(EVENT_VAZRUDEN_HEALTH_CHECK);
+					events.CancelEvent(EVENT_HEALTH_CHECKS);
 				} else
-                    events.RescheduleEvent(EVENT_VAZRUDEN_HEALTH_CHECK, 2000, 0, PHASE_FLIGHT);
+                    events.RescheduleEvent(EVENT_HEALTH_CHECKS, 2000, 0, PHASE_FLIGHT);
 
                 break;
             }
