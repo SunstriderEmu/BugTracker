@@ -68,12 +68,10 @@ public:
 
         virtual bool GossipHello(Player* player) override
         {
-            InstanceScript* localpInstance = ((InstanceScript*)me->GetInstanceScript());
-
-            if (!localpInstance)
+            if (!pInstance)
                 return false;
 
-            if (localpInstance->GetData(TYPE_FREE_NPC) != DONE && localpInstance->GetData(TYPE_RETHILGORE) == DONE)
+            if (pInstance->GetData(TYPE_FREE_NPC) != DONE && pInstance->GetData(TYPE_RETHILGORE) == DONE)
                 player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM_DOOR, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
             SEND_PREPARED_GOSSIP_MENU(player, me);
