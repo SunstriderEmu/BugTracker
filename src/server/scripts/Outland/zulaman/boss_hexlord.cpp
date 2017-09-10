@@ -99,7 +99,7 @@ EndScriptData */
 #define POS_Y                   921.2795
 #define POS_Z                   33.8883
 
-static float Pos_X[4] = {112.8827, 107.8827, 122.8827, 127.8827};
+static float Pos_X[4] = {112.8827f, 107.8827f, 122.8827f, 127.8827f };
 
 static uint32 AddEntryList[8]=
 {

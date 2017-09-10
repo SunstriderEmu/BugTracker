@@ -395,11 +395,11 @@ public:
         }
 
 
-        virtual void QuestAccept(Player* player, Quest const* quest) override
+        virtual void QuestAccept(Player* playerLocal, Quest const* quest) override
         {
             if (quest->GetQuestId() == 1173) {
                 me->SetFaction(FACTION_UNFRIENDLY);
-                me->AI()->AttackStart(player);
+                me->AI()->AttackStart(playerLocal);
             }
         }
 

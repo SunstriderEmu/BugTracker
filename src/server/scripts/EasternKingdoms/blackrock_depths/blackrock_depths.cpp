@@ -1359,8 +1359,6 @@ public:
 
         virtual void QuestReward(Player* pPlayer, Quest const* _Quest, uint32 item) override
         {
-            InstanceScript* pInstance = ((InstanceScript*)me->GetInstanceScript());
-
             if (!pInstance)
                 return;
 

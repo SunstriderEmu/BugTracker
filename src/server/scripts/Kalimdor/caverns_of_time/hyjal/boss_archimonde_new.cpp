@@ -293,7 +293,7 @@ public:
                     {
                         _CurrentAngle = GetCurrentAngle();
 
-                        float AngularDifference;
+                        float AngularDifference = 0;
                         if (_Archimonde->GetDistance(_CurrentX, _CurrentY, _CurrentZ) < 70)
                         {
                             //if I already got a target, got to check if it's still valid.

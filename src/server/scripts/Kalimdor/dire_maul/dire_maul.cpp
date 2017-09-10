@@ -63,7 +63,7 @@ public:
 
         virtual bool GossipHello(Player* pPlayer) override
         {
-            if (InstanceScript *pInstance = ((InstanceScript*)pPlayer->GetInstanceScript())) {
+            if (pInstance) {
                 if (pInstance->GetData(DATA_ZEVRIM_THORNHOOF) == DONE) {
                     pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "[PH] Ouvre la porte !", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
                     pPlayer->SEND_GOSSIP_MENU_TEXTID(2601, me->GetGUID());

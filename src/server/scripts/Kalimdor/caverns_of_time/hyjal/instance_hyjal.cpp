@@ -226,9 +226,9 @@ public:
                             {
                                 if (i.GetSource())
                                 {
-                                    WorldPacket data;
-                                    ChatHandler::BuildChatPacket(data, CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, archimonde, i.GetSource(), yell);
-                                    i.GetSource()->GetSession()->SendPacket(&data);
+                                    WorldPacket dataLocal;
+                                    ChatHandler::BuildChatPacket(dataLocal, CHAT_MSG_MONSTER_YELL, LANG_UNIVERSAL, archimonde, i.GetSource(), yell);
+                                    i.GetSource()->GetSession()->SendPacket(&dataLocal);
 
                                     WorldPacket data2(SMSG_PLAY_SOUND, 4);
                                     data2 << 10986;

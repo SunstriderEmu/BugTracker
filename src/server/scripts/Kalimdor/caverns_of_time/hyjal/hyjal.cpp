@@ -100,7 +100,7 @@ public:
                 Debug = !Debug;
                 break;
             case GOSSIP_ACTION_INFO_DEF + 4:
-                if (InstanceScript *pInstance = ((InstanceScript*)me->GetInstanceScript()))
+                if (pInstance)
                     pInstance->SetData(DATA_AZGALOREVENT, DONE);
                 break;
             }

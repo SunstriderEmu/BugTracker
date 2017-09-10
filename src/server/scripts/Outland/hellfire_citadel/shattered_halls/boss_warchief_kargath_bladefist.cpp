@@ -13,9 +13,9 @@
 #define MOB_SHARPSHOOTER_GUARD          17622
 #define MOB_REAVER_GUARD                17623
 
-float AssassEntrance[3] = {275.136,-84.29,2.3}; // y +-8
-float AssassExit[3] = {184.233,-84.29,2.3}; // y +-8
-float AddsEntrance[3] = {306.036,-84.29,1.93};
+float AssassEntrance[3] = {275.136f,-84.29f,2.3f}; // y +-8
+float AssassExit[3] = {184.233f,-84.29f,2.3f}; // y +-8
+float AddsEntrance[3] = {306.036f,-84.29f,1.93f};
 
 #define SOUND_AGGRO1                    10323
 #define SAY_AGGRO1                      "Ours is the true Horde! The only Horde!"

@@ -70,12 +70,12 @@ EndScriptData */
 /** Locations **/
 float KaelLocations[6][2]=
 {
-    {148.744659, 181.377426},//center
-    {140.823883, 195.403046},//phoenixpos1
-    {156.574188, 195.650482},//phoenixpos2
-    {149.813, 160.917},//spherepos1
-    {167.223, 173.594},//spherepos2
-    {130.68, 173.007},//spherepos3
+    {148.744659f, 181.377426f},//center
+    {140.823883f, 195.403046f},//phoenixpos1
+    {156.574188f, 195.650482f},//phoenixpos2
+    {149.813f, 160.917f},//spherepos1
+    {167.223f, 173.594f},//spherepos2
+    {130.68f, 173.007f},//spherepos3
 };
 #define LOCATION_Z      -16.727455
 

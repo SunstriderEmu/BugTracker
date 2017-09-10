@@ -565,7 +565,7 @@ public:
                     break;
                 case GOSSIP_ACTION_INFO_DEF+22:
                     player->CLOSE_GOSSIP_MENU();
-                    if (InstanceScript* pInstance = ((InstanceScript*)me->GetInstanceScript()))
+                    if (pInstance)
                     {
                         //are 5 minutes expected? go template may have data to despawn when used at quest
                         pInstance->DoRespawnGameObject(pInstance->GetData64(DATA_GO_CHALICE),MINUTE*5);
@@ -759,7 +759,6 @@ public:
                     me->SetFaction(FACTION_HOSTILE);
                     me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                     me->AI()->AttackStart(player);
-                    InstanceScript* pInstance = ((InstanceScript*)me->GetInstanceScript());
                     if (pInstance)
                         pInstance->SetData64(DATA_EVENSTARTER,player->GetGUID());
                     break;

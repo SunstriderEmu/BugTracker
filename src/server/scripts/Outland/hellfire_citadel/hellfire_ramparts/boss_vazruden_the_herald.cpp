@@ -14,13 +14,13 @@ nazan animation when casting firewall is wrong whenever he's stationary flying. 
 
 #include "def_hellfire_ramparts.h"
 
-#define SPELL_FIREBALL              (HeroicMode?36920:34653)
-#define SPELL_CONE_OF_FIRE          (HeroicMode?36921:30926)
-#define SPELL_SUMMON_LIQUID_FIRE    (HeroicMode?30928:23971)
-#define SPELL_BELLOWING_ROAR        39427
-#define SPELL_REVENGE               (HeroicMode?40392:19130)
-#define SPELL_KIDNEY_SHOT           30621
-#define SPELL_FIRE_NOVA_VISUAL      19823
+#define SPELL_FIREBALL              (uint32) (HeroicMode?36920:34653)
+#define SPELL_CONE_OF_FIRE          (uint32) (HeroicMode?36921:30926)
+#define SPELL_SUMMON_LIQUID_FIRE    (uint32) (HeroicMode?30928:23971)
+#define SPELL_BELLOWING_ROAR        (uint32) 39427
+#define SPELL_REVENGE               (uint32) (HeroicMode?40392:19130)
+#define SPELL_KIDNEY_SHOT           (uint32) 30621
+#define SPELL_FIRE_NOVA_VISUAL      (uint32) 19823
 
 #define SAY_INTRO               -1543017
 #define SAY_WIPE                -1543018

@@ -25,45 +25,45 @@ struct Location
 // Around akama
 static Location ChannelerLocations[]=
 {
-    {463.161, 401.220, 3.142, 118.540},
-    {457.378, 391.228, 2.106, 118.540},
-    {446.012, 391.228, 1.072, 118.540},
-    {439.534, 401.227, 0.000, 118.540},
-    {446.012, 411.212, 5.211, 118.540},
-    {457.378, 411.212, 4.177, 118.540}
+    {463.161f, 401.220f, 3.142f, 118.540f},
+    {457.378f, 391.228f, 2.106f, 118.540f},
+    {446.012f, 391.228f, 1.072f, 118.540f},
+    {439.534f, 401.227f, 0.000f, 118.540f},
+    {446.012f, 411.212f, 5.211f, 118.540f},
+    {457.378f, 411.212f, 4.177f, 118.540f}
 };
 
 static Location spawnLocations[]=
 {
-    {498.653, 461.728, 0.000, 113.538}, // East alcove (left facing shade)
-    {498.505, 339.619, 0.000, 113.538}  // West alcove (right facing shade)
+    {498.653f, 461.728f, 0.000f, 113.538f}, // East alcove (left facing shade)
+    {498.505f, 339.619f, 0.000f, 113.538f}  // West alcove (right facing shade)
 };
 
 static Location AkamaWP[]=
 {
     // intro event
-    {515.32,  400.793, M_PI,  112.784},
+    {515.32f,  400.793f, M_PI,  112.784f},
     // outro event
-    {482.35,  401.163, 0.000, 112.784},
-    {469.35,  400.880, 0.000, 118.540}
+    {482.35f,  401.163f, 0.000f, 112.784f},
+    {469.35f,  400.880f, 0.000f, 118.540f}
 };
 
 // Brokens summoning coords
 static Location BrokenCoords[]=
 {
-    {541.376, 401.440, M_PI,  112.784}, // The place where akama channels
-    {534.130, 352.395, 2.164, 112.784}, // Behind a 'pillar' which is behind the east alcove
-    {499.621, 341.535, 1.653, 112.784}, // East Alcove
-    {499.151, 461.036, 4.771, 112.784}, // West Alcove
+    {541.376f, 401.440f, M_PI  ,  112.784f}, // The place where akama channels
+    {534.130f, 352.395f, 2.164f,        112.784f}, // Behind a 'pillar' which is behind the east alcove
+    {499.621f, 341.535f, 1.653f,        112.784f}, // East Alcove
+    {499.151f, 461.036f, 4.771f,        112.784f}, // West Alcove
 };
 
 // Brokens target points
 static Location BrokenWP[]=
 {
-    {492.492, 400.745, 3.122, 112.784},
-    {494.336, 382.222, 2.676, 112.784},
-    {489.556, 373.507, 2.416, 112.784},
-    {491.136, 427.869, 3.520, 112.784},
+    {492.492f, 400.745f, 3.122f, 112.784f},
+    {494.336f, 382.222f, 2.676f, 112.784f},
+    {489.556f, 373.507f, 2.416f, 112.784f},
+    {491.136f, 427.869f, 3.520f, 112.784f},
 };
 
 enum AkamaSpells {

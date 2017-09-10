@@ -380,7 +380,6 @@ public:
         virtual bool GossipHello(Player* player) override
         {
             // Check for death of Moroes.
-            InstanceScript* pInstance = ((InstanceScript*)me->GetInstanceScript());
             if (pInstance && (pInstance->GetData(DATA_OPERA_EVENT) < DONE))
             {
                 if(pInstance->GetData(DATA_MOROES_EVENT) >= DONE)

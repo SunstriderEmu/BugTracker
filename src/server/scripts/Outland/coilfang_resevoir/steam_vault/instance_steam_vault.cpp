@@ -50,8 +50,6 @@ public:
 
         bool GossipHello(Player* player) override
         {
-            InstanceScript* pInstance = (InstanceScript*)me->GetInstanceScript();
-
             if (!pInstance)
                 return false;
 

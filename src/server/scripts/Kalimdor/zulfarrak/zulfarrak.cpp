@@ -380,7 +380,7 @@ public:
 
         virtual bool GossipHello(Player* player) override
         {
-            if (InstanceScript* pInstance = ((InstanceScript*)me->GetInstanceScript())) {
+            if (pInstance) {
                 switch (pInstance->GetData(EVENT_PYRAMID))
                 {
                 case PYRAMID_KILLED_ALL_TROLLS:

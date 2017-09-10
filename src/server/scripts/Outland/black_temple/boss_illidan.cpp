@@ -286,54 +286,54 @@ struct Locations
 
 static Locations HoverPosition[]=
 {
-    {657, 340, 355},
-    {657, 275, 355},
-    {705, 275, 355},
-    {705, 340, 355}
+    {657.0f, 340.0f, 355.0f},
+    {657.0f, 275.0f, 355.0f},
+    {705.0f, 275.0f, 355.0f},
+    {705.0f, 340.0f, 355.0f}
 };
 
 static Locations GlaivePosition[]=
 {
-    {678.059998, 285.220001, 354.325012},
-    {676.226013, 325.230988, 354.319000},
-    {677.792297, 288.365387, 354.143616},
-    {676.655762, 321.935272, 354.135986}
+    {678.059998f, 285.220001f, 354.325012f},
+    {676.226013f, 325.230988f, 354.319000f},
+    {677.792297f, 288.365387f, 354.143616f},
+    {676.655762f, 321.935272f, 354.135986f}
 };
 
 static Locations EyeBlast[]=
 {
-    {640.187500, 304.764313, 354},
-    {713.145081, 305.173889, 354}
+    {640.187500f, 304.764313f, 354.0f},
+    {713.145081f, 305.173889f, 354.0f}
 };
 
 static Locations AkamaWPCouncil[]=
 {
-    {612.28, 305.63, 271.8}, //behind the council door
-    {660.89, 305.57, 271.69}, //talk spot
-    {755.77, 304.29, 312.18}, //second talk spot (in front of the doors)
+    {612.28f, 305.63f, 271.80f}, //behind the council door
+    {660.89f, 305.57f, 271.69f}, //talk spot
+    {755.77f, 304.29f, 312.18f}, //second talk spot (in front of the doors)
 };
 
 static Locations AkamaWP[]=
 {
-    {770.01, 304.50, 312.29}, // Bottom of the first stairs, at the doors
-    {780.66, 304.50, 319.74}, // Top of the first stairs
-    {788.08, 285.88, 322.49}, // Bottom of the second stairs (right from the entrance)
-    {784.33, 262.27, 341.46}, // Top of the second stairs
-    {780.72, 257.71, 341.58}, // Bottom of the third stairs
-    {762.89, 245.76, 353.65}, // Top of the third stairs
-    {750.08, 237.49, 353.01}, // Before the door-thingy
-    {742.85, 270.06, 353.00}, // Somewhere further
-    {732.69, 305.13, 353.00}, // In front of Illidan - (8)
-    {738.11, 365.44, 353.00}, // in front of the door-thingy (the other one!)
-    {792.18, 366.62, 341.42}, // Down the first flight of stairs
-    {796.84, 304.89, 319.76}, // Down the second flight of stairs
-    {782.01, 304.55, 319.76}  // Final location - back at the initial gates. This is where he will fight the minions! (12)
+    {770.01f, 304.50f, 312.29f}, // Bottom of the first stairs, at the doors
+    {780.66f, 304.50f, 319.74f}, // Top of the first stairs
+    {788.08f, 285.88f, 322.49f}, // Bottom of the second stairs (right from the entrance)
+    {784.33f, 262.27f, 341.46f}, // Top of the second stairs
+    {780.72f, 257.71f, 341.58f}, // Bottom of the third stairs
+    {762.89f, 245.76f, 353.65f}, // Top of the third stairs
+    {750.08f, 237.49f, 353.01f}, // Before the door-thingy
+    {742.85f, 270.06f, 353.00f}, // Somewhere further
+    {732.69f, 305.13f, 353.00f}, // In front of Illidan - (8)
+    {738.11f, 365.44f, 353.00f}, // in front of the door-thingy (the other one!)
+    {792.18f, 366.62f, 341.42f}, // Down the first flight of stairs
+    {796.84f, 304.89f, 319.76f}, // Down the second flight of stairs
+    {782.01f, 304.55f, 319.76f}  // Final location - back at the initial gates. This is where he will fight the minions! (12)
 };
 // 755.762, 304.0747, 312.1769 -- This is where Akama should be spawned
 static Locations SpiritSpawns[]=
 {
-    {755.5426, 309.9156, 312.2129},
-    {755.5426, 298.7923, 312.0834}
+    {755.5426f, 309.9156f, 312.2129f},
+    {755.5426f, 298.7923f, 312.0834f}
 };
 
 struct Animation // For the demon transformation

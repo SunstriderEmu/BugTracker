@@ -89,21 +89,21 @@ enum PhaseFelmyst
 #define ORIENTATION_LEFT    4.7984
 #define ORIENTATION_RIGHT   1.3033
 
-static float flightMobLeft[] = {1468.380005, 730.267029, 60.083302};
-static float flightMobRight[] = {1458.170044, 501.295013, 60.083302};
+static float flightMobLeft[] = {1468.380005f, 730.267029f, 60.083302f};
+static float flightMobRight[] = {1458.170044f, 501.295013f, 60.083302f};
 
-static float lefts[3][3] = { {1446.540039, 702.570007, 52.083302},    //south
-                             {1469.939941, 704.239014, 52.083302},    //middle
-                             {1494.760010, 705.000000, 52.083302}, }; //north
+static float lefts[3][3] = { {1446.540039f, 702.570007f, 52.083302f},    //south
+                             {1469.939941f, 704.239014f, 52.083302f},    //middle
+                             {1494.760010f, 705.000000f, 52.083302f}, }; //north
 
-static float rights[3][3] = { {1441.640015, 520.520020, 52.083302},   //south
-                              {1467.219971, 516.318970, 52.083302},   //middle
-                              {1492.819946, 515.668030, 52.083302}, };//north
+static float rights[3][3] = { {1441.640015f, 520.520020f, 52.083302f},   //south
+                              {1467.219971f, 516.318970f, 52.083302f},   //middle
+                              {1492.819946f, 515.668030f, 52.083302f}, };//north
 
-static float prepareLandingLoc[2][3] = {  {1482.709961, 649.406006, 21.081100},
-                                          {1491.119995, 553.672974, 24.921900}  };
+static float prepareLandingLoc[2][3] = {  {1482.709961f, 649.406006f, 21.081100f},
+                                          {1491.119995f, 553.672974f, 24.921900f}  };
 
-static float kalecPos[] = { 1501.253174, 764.737061, 117.972687, 4.626863 };
+static float kalecPos[] = { 1501.253174f, 764.737061f, 117.972687f, 4.626863f };
 
 #define NON_COMBAT_PATH 25038
 

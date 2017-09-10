@@ -611,7 +611,6 @@ public:
 
         virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
         {
-            InstanceScript* pInstance = ((InstanceScript*)me->GetInstanceScript());
             switch( action )
             {
                 case GOSSIP_ACTION_INFO_DEF+1:
@@ -715,7 +714,6 @@ public:
 
         virtual bool GossipHello(Player* player) override
         {
-            InstanceScript* pInstance = ((InstanceScript*)me->GetInstanceScript());
             if( pInstance && pInstance->GetData(TYPE_THRALL_PART3) == DONE && pInstance->GetData(TYPE_THRALL_PART4) == NOT_STARTED)
             {
                 player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM_EPOCH1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
@@ -728,7 +726,9 @@ public:
 
         virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
         {
-            InstanceScript* pInstance = ((InstanceScript*)me->GetInstanceScript());
+            if (!pInstance)
+                return false;
+
             if( action == GOSSIP_ACTION_INFO_DEF+1 )
             {
                 player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM_EPOCH2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
@@ -740,8 +740,7 @@ public:
 
                 if( pInstance->GetData(TYPE_THRALL_EVENT) == IN_PROGRESS )
                 {
-                    if(pInstance)
-                        pInstance->SetData(TYPE_THRALL_PART4,IN_PROGRESS);
+                    pInstance->SetData(TYPE_THRALL_PART4,IN_PROGRESS);
                     if(pInstance->GetData64(DATA_EPOCH) == 0)
                          me->SummonCreature(ENTRY_EPOCH,2639.13,698.55,65.43,4.59,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,120000);
 

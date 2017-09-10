@@ -141,8 +141,8 @@ public:
 
         virtual bool GossipHello(Player* pPlayer) override
         {
-            uint8 step = ((boss_pusillin::boss_pusillinAI*)me->AI())->GetStep();
-            switch (step) {
+            uint8 stepSwitch = ((boss_pusillin::boss_pusillinAI*)me->AI())->GetStep();
+            switch (stepSwitch) {
             case 0:
                 pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_TEMP, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
                 pPlayer->SEND_GOSSIP_MENU_TEXTID(2601, me->GetGUID());

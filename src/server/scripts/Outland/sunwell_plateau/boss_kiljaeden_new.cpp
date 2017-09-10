@@ -204,7 +204,7 @@ float OrbLocations[4][5] =
 };
  */
 
-float KJLocation[4] = { 1698.930, 628.264, 28.400, 3.7 };
+float KJLocation[4] = { 1698.930f, 628.264f, 28.400f, 3.7f };
 
 struct Speech
 {
@@ -406,8 +406,8 @@ static const EventLocations SoldierLocations[] =
 
 static const EventLocations SoldierMiddle[] =
 {
-    {1718.604f, 608.202f, 28.05f, 1.090}, // first
-    {1679.347f, 648.365f, 28.05f, 0.368}, // second
+    {1718.604f, 608.202f, 28.05f, 1.090f}, // first
+    {1679.347f, 648.365f, 28.05f, 0.368f}, // second
 };
 
 class AllOrbsInGrid

@@ -920,8 +920,6 @@ public:
 
         virtual bool GossipHello(Player* player) override
         {
-            InstanceScript* pInstance = ((InstanceScript*)me->GetInstanceScript());
-            
             if (!pInstance)
                 return true;
                 
@@ -951,8 +949,6 @@ public:
 
         virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
         {
-            InstanceScript* pInstance = ((InstanceScript*)me->GetInstanceScript());
-            
             if (!pInstance)
                 return true;
                 
@@ -1291,7 +1287,6 @@ public:
             if (player->HasAuraEffect(SPELL_RECENTLY_INGAME))
                 return true;
 
-            InstanceScript* pInstance = ((InstanceScript*)me->GetInstanceScript());
             if (!pInstance)
                 return true;
 
@@ -1366,7 +1361,6 @@ public:
                 player->CastSpell(me, SPELL_POSSESS_CHESSPIECE, false);
                 player->TeleportTo(532, playerTeleportPosition[0], playerTeleportPosition[1], playerTeleportPosition[2], playerTeleportPosition[3]);
 
-                InstanceScript* pInstance = ((InstanceScript*)me->GetInstanceScript());
                 if (!pInstance)
                     return true;
 
