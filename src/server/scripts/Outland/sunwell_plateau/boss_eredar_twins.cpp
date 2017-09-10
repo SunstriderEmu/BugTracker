@@ -520,21 +520,21 @@ public:
     
         uint32 IntroStep(uint32 step)
         {
-            if(!pInstance) return -1;
+            if(!pInstance) return 0; // Should return
             Creature* Sacrolash = ObjectAccessor::GetCreature(*me,pInstance->GetData64(DATA_SACROLASH));
-            if(!Sacrolash) return -1;
+            if(!Sacrolash) return 0;
             switch (step)
             {
             case 0  : return 0;
-            case 1  : DoScriptText(YELL_INTRO_SAC_1, Sacrolash);  return 1000;
-            case 2  : DoScriptText(YELL_INTRO_ALY_2, me); return 1000;
-            case 3  : DoScriptText(YELL_INTRO_SAC_3, Sacrolash);  return 2000;
-            case 4  : DoScriptText(YELL_INTRO_ALY_4, me); return 1000;
-            case 5  : DoScriptText(YELL_INTRO_SAC_5, Sacrolash);  return 2000;
-            case 6  : DoScriptText(YELL_INTRO_ALY_6, me); return 1000;
-            case 7  : DoScriptText(YELL_INTRO_SAC_7, Sacrolash);  return 3000;
-            case 8  : DoScriptText(YELL_INTRO_ALY_8, me); return 900000;
-            default : return 10000;
+            case 1  : DoScriptText(YELL_INTRO_SAC_1, Sacrolash);  return (uint32) 1000;
+            case 2  : DoScriptText(YELL_INTRO_ALY_2, me); return (uint32) 1000;
+            case 3  : DoScriptText(YELL_INTRO_SAC_3, Sacrolash);  return (uint32) 2000;
+            case 4  : DoScriptText(YELL_INTRO_ALY_4, me); return (uint32) 1000;
+            case 5  : DoScriptText(YELL_INTRO_SAC_5, Sacrolash);  return (uint32) 2000;
+            case 6  : DoScriptText(YELL_INTRO_ALY_6, me); return (uint32) 1000;
+            case 7  : DoScriptText(YELL_INTRO_SAC_7, Sacrolash);  return (uint32) 3000;
+            case 8  : DoScriptText(YELL_INTRO_ALY_8, me); return (uint32) 900000;
+            default : return (uint32) 10000;
             }
         }
     
