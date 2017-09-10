@@ -53,7 +53,7 @@ public:
                 if (BuffTimer < diff )
                 {
                     //Find a spell that targets friendly and applies an aura (these are generally buffs)
-                    SpellInfo const *info = SelectSpell(me, 0xFFFFFFF, 0xFFFFFFF, SELECT_TARGET_ANY_FRIEND, 0, 0, 0, 0, SELECT_EFFECT_AURA);
+                    SpellInfo const *info = SelectSpell(me, 0xFFFFFFF, MECHANIC_NONE, SELECT_TARGET_ANY_FRIEND, 0, 0, 0, 0, SELECT_EFFECT_AURA);
     
                     if (info && !GlobalCooldown)
                     {
@@ -85,13 +85,13 @@ public:
     
                     //Select a healing spell if less than 30% hp
     				if (me->GetHealthPct() < 30)
-                        info = SelectSpell(me, 0xFFFFFFF, 0xFFFFFFF, SELECT_TARGET_ANY_FRIEND, 0, 0, 0, 0, SELECT_EFFECT_HEALING);
+                        info = SelectSpell(me, 0xFFFFFFF, MECHANIC_NONE, SELECT_TARGET_ANY_FRIEND, 0, 0, 0, 0, SELECT_EFFECT_HEALING);
     
                     //No healing spell available, select a hostile spell
                     if (info) 
     					Healing = true;
                     else 
-    					info = SelectSpell(me->GetVictim(), 0xFFFFFFF, 0xFFFFFFF, SELECT_TARGET_ANY_ENEMY, 0, 0, 0, 0, SELECT_EFFECT_DONTCARE);
+    					info = SelectSpell(me->GetVictim(), 0xFFFFFFF, MECHANIC_NONE, SELECT_TARGET_ANY_ENEMY, 0, 0, 0, 0, SELECT_EFFECT_DONTCARE);
     
                     //50% chance if elite or higher, 20% chance if not, to replace our white hit with a spell
                     if (info && (rand() % (me->GetCreatureTemplate()->rank > 1 ? 2 : 5) == 0) && !GlobalCooldown)
@@ -120,13 +120,13 @@ public:
     
                     //Select a healing spell if less than 30% hp ONLY 33% of the time
                     if (me->GetHealthPct() < 30 && rand() % 3 == 0)
-                        info = SelectSpell(me, 0xFFFFFFF, 0xFFFFFFF, SELECT_TARGET_ANY_FRIEND, 0, 0, 0, 0, SELECT_EFFECT_HEALING);
+                        info = SelectSpell(me, 0xFFFFFFF, MECHANIC_NONE, SELECT_TARGET_ANY_FRIEND, 0, 0, 0, 0, SELECT_EFFECT_HEALING);
     
                     //No healing spell available, See if we can cast a ranged spell (Range must be greater than ATTACK_DISTANCE)
                     if (info) 
     					Healing = true;
     
-                    else info = SelectSpell(me->GetVictim(), 0xFFFFFFF, 0xFFFFFFF, SELECT_TARGET_ANY_ENEMY, 0, 0, NOMINAL_MELEE_RANGE, 0, SELECT_EFFECT_DONTCARE);
+                    else info = SelectSpell(me->GetVictim(), 0xFFFFFFF, MECHANIC_NONE, SELECT_TARGET_ANY_ENEMY, 0, 0, NOMINAL_MELEE_RANGE, 0, SELECT_EFFECT_DONTCARE);
     
                     //Found a spell, check if we arn't on cooldown
                     if (info && !GlobalCooldown)
