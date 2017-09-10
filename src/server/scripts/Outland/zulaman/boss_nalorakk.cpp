@@ -100,14 +100,14 @@ public:
     class boss_nalorakkAI : public ScriptedAI
     {
         public:
-        boss_nalorakkAI(Creature *c) : ScriptedAI(c)
+        boss_nalorakkAI(Creature* c) : ScriptedAI(c)
         {
             MoveEvent = true;
             MovePhase = 0;
             pInstance = ((InstanceScript*)c->GetInstanceScript());
         }
     
-        InstanceScript *pInstance;
+        InstanceScript* pInstance;
     
         uint32 BrutalSwipe_Timer;
         uint32 Mangle_Timer;
@@ -125,9 +125,12 @@ public:
         bool inMove;
         uint32 MovePhase;
         uint32 waitTimer;
+
+		bool isBlizzLike;
     
         void Reset()
         override {
+			isBlizzLike = true;
             if(MoveEvent)
             {
                 me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -196,7 +199,25 @@ public:
                 ScriptedAI::AttackStart(who);
         }
     
-        void MoveInLineOfSight(Unit *who)
+
+		virtual void ReceiveEmote(Player* pPlayer, uint32 textEmote) override
+		{
+			switch (textEmote)
+			{
+			case TEXTEMOTE_TRAIN: // /train
+				if(isBlizzLike)
+				{
+					isBlizzLike = false;
+					me->Say("OMFG ITS NOT BLIZZLIKE!");
+					me->HandleEmoteCommand(EMOTE_ONESHOT_BATTLE_ROAR);
+				}
+				break;
+			default:
+				break;
+			}
+		}
+
+        void MoveInLineOfSight(Unit* who)
         override {
             if(!MoveEvent)
             {
@@ -269,7 +290,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit *who)
+        void EnterCombat(Unit* who)
         override {
             if(pInstance)
                 pInstance->SetData(DATA_NALORAKKEVENT, IN_PROGRESS);
@@ -429,7 +450,7 @@ public:
                     DoPlaySoundToSet(me, SOUND_YELL_SURGE);
                     if(SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(SPELL_SURGE))
                     {
-                        Unit *target = SelectTarget(SELECT_TARGET_RANDOM, 0, spellInfo->GetMaxRange(), true, true);
+                        Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, spellInfo->GetMaxRange(), true, true);
                         if(target)
                             DoCast(target, SPELL_SURGE);
                     }
