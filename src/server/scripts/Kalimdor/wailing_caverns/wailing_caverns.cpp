@@ -96,7 +96,7 @@ public:
         uint32 eventTimer;
         uint32 currentEvent;
         uint32 eventProgress;
-        InstanceScript *pInstance;
+        InstanceScript* pInstance;
     
         void WaypointReached(uint32 i)
         override {
@@ -345,20 +345,19 @@ public:
 
         virtual bool GossipHello(Player* pPlayer) override
         {
-            
-            if (InstanceScript *localpInstance = me->GetInstanceScript())
+            if (pInstance)
             {
                 me->CastSpell(pPlayer, SPELL_MARK_OF_THE_WILD_RANK_2, true);
-                if ((localpInstance->GetData(TYPE_LORD_COBRAHN) == DONE) && (localpInstance->GetData(TYPE_LORD_PYTHAS) == DONE) &&
-                    (localpInstance->GetData(TYPE_LADY_ANACONDRA) == DONE) && (localpInstance->GetData(TYPE_LORD_SERPENTIS) == DONE))
+                if ((pInstance->GetData(TYPE_LORD_COBRAHN) == DONE) && (pInstance->GetData(TYPE_LORD_PYTHAS) == DONE) &&
+                    (pInstance->GetData(TYPE_LADY_ANACONDRA) == DONE) && (pInstance->GetData(TYPE_LORD_SERPENTIS) == DONE))
                 {
                     pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_NARALEX, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
                     pPlayer->SEND_GOSSIP_MENU_TEXTID(GOSSIP_ID_START_2, me->GetGUID());
 
-                    if (!localpInstance->GetData(TYPE_NARALEX_YELLED))
+                    if (!pInstance->GetData(TYPE_NARALEX_YELLED))
                     {
                         DoScriptText(SAY_AT_LAST, me);
-                        localpInstance->SetData(TYPE_NARALEX_YELLED, 1);
+						pInstance->SetData(TYPE_NARALEX_YELLED, 1);
                     }
                 }
                 else
@@ -376,8 +375,8 @@ public:
             if (uiAction == GOSSIP_ACTION_INFO_DEF + 1)
             {
                 pPlayer->CLOSE_GOSSIP_MENU();
-                if (InstanceScript *localpInstance = me->GetInstanceScript())
-                    localpInstance->SetData(TYPE_NARALEX_EVENT, IN_PROGRESS);
+                if (pInstance)
+					pInstance->SetData(TYPE_NARALEX_EVENT, IN_PROGRESS);
 
                 DoScriptText(SAY_MAKE_PREPARATIONS, me);
 

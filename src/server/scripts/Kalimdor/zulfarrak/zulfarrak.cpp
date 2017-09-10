@@ -174,12 +174,12 @@ public:
 
         virtual bool GossipHello(Player* player) override
         {
-            if (InstanceScript* localpInstance = me->GetInstanceScript()) {
-                if (localpInstance->GetData(EVENT_PYRAMID) == PYRAMID_KILLED_ALL_TROLLS) {
+            if (pInstance) {
+                if (pInstance->GetData(EVENT_PYRAMID) == PYRAMID_KILLED_ALL_TROLLS) {
                     player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_BLY, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
                     player->SEND_GOSSIP_MENU_TEXTID(BLY_GOSSIP_DONE, me->GetGUID());
                 }
-                else if (localpInstance->GetData(EVENT_PYRAMID) == PYRAMID_NOT_STARTED)
+                else if (pInstance->GetData(EVENT_PYRAMID) == PYRAMID_NOT_STARTED)
                     player->SEND_GOSSIP_MENU_TEXTID(BLY_GOSSIP_CAGED, me->GetGUID());
                 else
                     player->SEND_GOSSIP_MENU_TEXTID(BLY_GOSSIP_FIGHTING, me->GetGUID());
