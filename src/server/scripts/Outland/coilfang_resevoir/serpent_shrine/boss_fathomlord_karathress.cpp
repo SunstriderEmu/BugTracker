@@ -287,7 +287,7 @@ public:
             if ((me->GetHealthPct()) <= 75 && !BlessingOfTides)
             {
                 BlessingOfTides = true;
-    			bool continueTriggering = false;
+                bool continueTriggering = false;
                 Creature* Advisor;
                 for(uint8 i = 0; i < 4; ++i)
                     if(Advisors[i])
@@ -445,7 +445,7 @@ public:
             {
                 pet = true;
                 //uint32 spell_id;
-    			uint32 pet_id = 0;
+                uint32 pet_id = 0;
                 switch( rand()%2 )
                 {
                 case 0:
@@ -742,7 +742,7 @@ public:
     
         Unit* selectAdvisorUnit()
         {
-    		Unit* pUnit = nullptr;
+            Unit* pUnit = nullptr;
             if(pInstance)
             {
                 switch(rand()%4)
@@ -761,9 +761,9 @@ public:
                     break;
                 }
             } else 
-    			pUnit = me;
+                pUnit = me;
     
-    			return pUnit;
+                return pUnit;
             }
     };
 

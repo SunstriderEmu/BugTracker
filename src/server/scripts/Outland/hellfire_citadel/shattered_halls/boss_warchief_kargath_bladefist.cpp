@@ -115,7 +115,7 @@ public:
                 case MOB_HEARTHEN_GUARD:
                 case MOB_SHARPSHOOTER_GUARD:
                 case MOB_REAVER_GUARD:
-    				_summoned->AI()->AttackStart(SelectTarget(SELECT_TARGET_RANDOM,0));
+                    _summoned->AI()->AttackStart(SelectTarget(SELECT_TARGET_RANDOM,0));
                     adds.push_back(_summoned->GetGUID());
                     break;
                 case MOB_SHATTERED_ASSASSIN:

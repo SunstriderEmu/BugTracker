@@ -244,7 +244,7 @@ public:
     
                     //60 seconds until we should cast this agian
                     Heal_Timer = 60000;
-    				return;
+                    return;
                 }else Heal_Timer -= diff;
             }
     
@@ -374,8 +374,8 @@ public:
                     DoCast(me,SPELL_FLASHHEAL6);
     
                     //22-32 seconds until we should cast this agian
-    				Healing_Timer = urand(22 * SECOND * IN_MILLISECONDS, 32 * SECOND * IN_MILLISECONDS);
-    				return;
+                    Healing_Timer = urand(22 * SECOND * IN_MILLISECONDS, 32 * SECOND * IN_MILLISECONDS);
+                    return;
                 }else Healing_Timer -= diff;
             }
     

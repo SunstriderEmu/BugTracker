@@ -18,7 +18,7 @@ public:
         virtual bool GossipHello(Player* pPlayer) override
         {
             //pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Téléportez-moi dans la zone PvP.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
-	pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Teleport me in PvP Zone.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Teleport me in PvP Zone.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
             pPlayer->SEND_GOSSIP_MENU_TEXTID(GOSSIP_MENU,me->GetGUID());
 
@@ -29,9 +29,9 @@ public:
 
         virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
         {
-            	float x = {}, y = {}, z = {}, o = {};
+                float x = {}, y = {}, z = {}, o = {};
                 uint32 map = 0;
-            	bool loaded = false;
+                bool loaded = false;
             
                 QueryResult query = WorldDatabase.PQuery("SELECT position_x, position_y, position_z, orientation, map FROM game_tele WHERE name = 'duelzone'");
                 if (query) {
@@ -43,15 +43,15 @@ public:
                         z = fields[2].GetFloat();
                         o = fields[3].GetFloat();
                         map = fields[4].GetUInt32();
-            			loaded = true;
+                        loaded = true;
                     }
-            	}
+                }
             
-            	if(!loaded)
-            	{
-            		TC_LOG_ERROR("scripts", "GossipSelect_npc_teleporter_pvpzone: Could not get duelzone coordinates from DB");
-            		return true;
-            	}
+                if(!loaded)
+                {
+                    TC_LOG_ERROR("scripts", "GossipSelect_npc_teleporter_pvpzone: Could not get duelzone coordinates from DB");
+                    return true;
+                }
                 
                 if (action == GOSSIP_ACTION_INFO_DEF)
                 {

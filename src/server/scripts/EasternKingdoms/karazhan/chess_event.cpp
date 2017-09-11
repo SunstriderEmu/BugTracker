@@ -568,9 +568,9 @@ public:
             bool res = false;
             bool foundOld = false;
             bool foundNew = false;
-    		uint8 oldCol = 8, oldRow = 8;
-    		uint8 newCol = {};
-    		uint8 newRow = {};
+            uint8 oldCol = 8, oldRow = 8;
+            uint8 newCol = {};
+            uint8 newRow = {};
             for (uint8 row = 0; row < 8; row++) {
                 for (uint8 col = 0; col < 8; col++) {
                     BoardCell* cell = board[row][col];
@@ -711,7 +711,7 @@ public:
             switch (orientation) { // Here we shouldn't be facing the edges, check in the 4 first if statements
             case ORI_SE:
             {
-    			int randomCol = {};
+                int randomCol = {};
                 switch (rand()%3) {
                 case 0:
                     randomCol = pieceCol-1;
@@ -736,7 +736,7 @@ public:
             }
             case ORI_SW:
             {
-    			int randomRow = {};
+                int randomRow = {};
                 switch (rand()%3) {
                 case 0:
                     randomRow = pieceRow-1;
@@ -761,7 +761,7 @@ public:
             }
             case ORI_NW:
             {
-    			int randomCol = {};
+                int randomCol = {};
                 switch (rand()%3) {
                 case 0:
                     randomCol = pieceCol-1;
@@ -786,7 +786,7 @@ public:
             }
             case ORI_NE:
             {
-    			int randomRow = {};
+                int randomRow = {};
                 switch (rand()%3) {
                 case 0:
                     randomRow = pieceRow-1;

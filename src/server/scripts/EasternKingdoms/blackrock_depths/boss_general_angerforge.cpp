@@ -138,7 +138,7 @@ public:
             }else Cleave_Timer -= diff;
     
             //Adds_Timer
-    		if (me->GetHealthPct() < 21 )
+            if (me->GetHealthPct() < 21 )
             {
                 if (Adds_Timer < diff)
                 {
@@ -152,7 +152,7 @@ public:
             }
     
             //Summon Medics
-    		if (me->GetHealthPct() < 21 )
+            if (me->GetHealthPct() < 21 )
             {
                 SummonMedics(me->GetVictim());
                 SummonMedics(me->GetVictim());

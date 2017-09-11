@@ -266,7 +266,7 @@ public:
     
         float Portal_Y(float x, float radius)
         {
-    		float z = 0.0f;
+            float z = 0.0f;
     
             switch(rand()%2)
             {

@@ -98,9 +98,9 @@ public:
         {
             switch (identifier)
             {
-            case GO_BRIDGE_WINDOW:		            return BridgeWindowGUID;
-            case GO_KAEL_STATUE_RIGHT:	            return KaelStateRightGUID;
-            case GO_KAEL_STATUE_LEFT:	            return KaelStateLeftGUID;
+            case GO_BRIDGE_WINDOW:                    return BridgeWindowGUID;
+            case GO_KAEL_STATUE_RIGHT:                return KaelStateRightGUID;
+            case GO_KAEL_STATUE_LEFT:                return KaelStateLeftGUID;
             case DATA_KAEL_ADVISOR1:                return ThaladredTheDarkener;
             case DATA_KAEL_ADVISOR2:                return LordSanguinar;
             case DATA_KAEL_ADVISOR3:                return GrandAstromancerCapernian;

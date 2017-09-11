@@ -182,10 +182,10 @@ public:
     bool HandleTrigger(Player* player, uint32 questId, uint32 childId)
     {
         if (player->GetQuestStatus(questId) == QUEST_STATUS_INCOMPLETE) {
-			if (uint64 critter_guid = player->GetCritterGUID())
-				if (Creature* pet = player->GetMap()->GetCreature(critter_guid)) {
-					if (pet->GetEntry() == childId)
-						player->AreaExploredOrEventHappens(questId);
+            if (uint64 critter_guid = player->GetCritterGUID())
+                if (Creature* pet = player->GetMap()->GetCreature(critter_guid)) {
+                    if (pet->GetEntry() == childId)
+                        player->AreaExploredOrEventHappens(questId);
             }
         }
         return true;
@@ -267,12 +267,12 @@ public:
     {
         if (player->GetQuestStatus(10951) == QUEST_STATUS_INCOMPLETE || player->GetQuestStatus(10952) == QUEST_STATUS_INCOMPLETE) {
 
-			if (uint64 critter_guid = player->GetCritterGUID())
-				if (Creature* pet = player->GetMap()->GetCreature(critter_guid)) {
-					if (pet->GetEntry() == 22817)
-						player->AreaExploredOrEventHappens(10951); // Horde
-					else if (pet->GetEntry() == 22818)
-						player->AreaExploredOrEventHappens(10952); // Alliance
+            if (uint64 critter_guid = player->GetCritterGUID())
+                if (Creature* pet = player->GetMap()->GetCreature(critter_guid)) {
+                    if (pet->GetEntry() == 22817)
+                        player->AreaExploredOrEventHappens(10951); // Horde
+                    else if (pet->GetEntry() == 22818)
+                        player->AreaExploredOrEventHappens(10952); // Alliance
             }
         }
 

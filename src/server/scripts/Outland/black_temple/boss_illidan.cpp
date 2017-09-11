@@ -1041,7 +1041,7 @@ public:
     
         void EnterCombat(Unit *who)
         override {
-    		if (!me->IsVisible())
+            if (!me->IsVisible())
                 me->CombatStop();
         }
     
@@ -1122,10 +1122,10 @@ public:
     
                     
             float x, y, z;
-    		if (GETGO(Gate, GateGUID))
-    			Gate->GetPosition(x, y, z);
-    		else
-    			return;
+            if (GETGO(Gate, GateGUID))
+                Gate->GetPosition(x, y, z);
+            else
+                return;
     
             if(Creature* Channel = me->SummonCreature(ILLIDAN_DOOR_TRIGGER, x, y, z+5, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 360000))
             {
@@ -1274,8 +1274,8 @@ public:
     
         void HandleChannelSequence()
         {
-    		Unit* Channel = nullptr;
-    		Unit* Spirit[2] = { nullptr };
+            Unit* Channel = nullptr;
+            Unit* Spirit[2] = { nullptr };
     
             if(ChannelCount <= 10)
             {

@@ -823,11 +823,11 @@ public:
         void MoveInLineOfSight(Unit* pWho)
         override {
             if (me->GetDistance(pWho) <= 10.0f && pWho->GetTypeId() == TYPEID_PLAYER) {
-    			if (uint64 critter_guid = pWho->ToPlayer()->GetCritterGUID())
-    				if (Creature* pet = pWho->GetMap()->GetCreature(critter_guid)) {
-    					if (pWho->ToPlayer()->GetQuestStatus(10950) == QUEST_STATUS_INCOMPLETE && pet->GetEntry() == 22818)
-    						pWho->ToPlayer()->AreaExploredOrEventHappens(10950);
-    				}
+                if (uint64 critter_guid = pWho->ToPlayer()->GetCritterGUID())
+                    if (Creature* pet = pWho->GetMap()->GetCreature(critter_guid)) {
+                        if (pWho->ToPlayer()->GetQuestStatus(10950) == QUEST_STATUS_INCOMPLETE && pet->GetEntry() == 22818)
+                            pWho->ToPlayer()->AreaExploredOrEventHappens(10950);
+                    }
             }
         }
     };

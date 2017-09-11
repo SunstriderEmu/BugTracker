@@ -110,12 +110,12 @@ public:
                     {
                     case 1:
                         //weegli doesn't fight - he goes & blows up the door
-    					if (pInstance)
-    					{
-    						if (Creature* weegli = pInstance->instance->GetCreature(pInstance->GetData64(ENTRY_WEEGLI))) {
-    							weegli->AI()->DoAction(BLY_INITIATED);
-    						}
-    					}
+                        if (pInstance)
+                        {
+                            if (Creature* weegli = pInstance->instance->GetCreature(pInstance->GetData64(ENTRY_WEEGLI))) {
+                                weegli->AI()->DoAction(BLY_INITIATED);
+                            }
+                        }
                         DoScriptText(SAY_1,me);
                         Text_Timer = 5000;
                         break;
@@ -128,7 +128,7 @@ public:
                         switchFactionIfAlive(ENTRY_RAVEN);
                         switchFactionIfAlive(ENTRY_ORO);
                         switchFactionIfAlive(ENTRY_MURTA);
-    					break;
+                        break;
                     }
                     postGossipStep++;
                 } else Text_Timer -= diff;
@@ -158,8 +158,8 @@ public:
         }
         
         void switchFactionIfAlive(uint32 entry) {
-    	    if (!pInstance)
-     		    return;
+            if (!pInstance)
+                 return;
     
            if (Creature* crew = pInstance->instance->GetCreature(pInstance->GetData64(entry))) {
                if (crew->IsAlive()) {

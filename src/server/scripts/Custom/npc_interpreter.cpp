@@ -51,6 +51,6 @@ public:
  
 void AddSC_npc_interpreter()
 {
-	
+    
     new npc_interpreter();
 }

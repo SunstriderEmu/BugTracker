@@ -514,7 +514,7 @@ public:
         virtual bool GossipHello(Player* player) override
         {
             player->ADD_GOSSIP_ITEM_TEXTID(0, CALLIARD_GOSSIP_ITEM_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-	
+    
             player->SEND_GOSSIP_MENU_TEXTID(CALLIARD_TEXT_HELLO,me->GetGUID());
 
             return true;
@@ -925,7 +925,7 @@ public:
     
             healtarget = nullptr;
             tohealingroup = 0;
-    		mostlowhp = uint32(-1);
+            mostlowhp = uint32(-1);
             
             //Selection de la/les cibles du heal
             Map *map = me->GetMap();

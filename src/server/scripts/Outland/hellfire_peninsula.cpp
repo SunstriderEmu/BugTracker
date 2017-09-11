@@ -1051,7 +1051,7 @@ public:
             float fAngle;
             switch (uiButtressCount)
             {
-    			default:
+                default:
                 case 1: fAngle = 0.0f; break;
                 case 2: fAngle = 4.6f; break;
                 case 3: fAngle = 1.5f; break;
@@ -1947,502 +1947,502 @@ This invisible controller handle the demons paths and respawns for the Dark Port
 class FelSoldier : public CreatureScript
 {
 public:
-	FelSoldier() : CreatureScript("fel_soldier") {}
+    FelSoldier() : CreatureScript("fel_soldier") {}
 
-	class FelSoldierAI : public CreatureAI
-	{
-	public:
-		FelSoldierAI(Creature* creature) : CreatureAI(creature)
-		{}
-	};
+    class FelSoldierAI : public CreatureAI
+    {
+    public:
+        FelSoldierAI(Creature* creature) : CreatureAI(creature)
+        {}
+    };
 
-	CreatureAI* GetAI(Creature* creature) const
-		override
-	{
-		return new FelSoldierAI(creature);
-	}
+    CreatureAI* GetAI(Creature* creature) const
+        override
+    {
+        return new FelSoldierAI(creature);
+    }
 };
 
 
 class DarkPortalEventDemonAI : public ScriptedAI
 {
 public:
-	bool reachedHome;
-	uint32 lastPathNodeID;
+    bool reachedHome;
+    uint32 lastPathNodeID;
 
-	DarkPortalEventDemonAI(Creature* creature) : ScriptedAI(creature) 
-	{
-		reachedHome = false;
-		lastPathNodeID = 0;
-	}
-						
-	enum Message
-	{
-		SET_PATH_ID,         //message: uint64 with pathID on the first 32 bits, lastNodeID on the 32 next.
-		HAS_REACHED_HOME,    //returns 0 or 1
-	};
-	
-	uint64 message(uint32 id, uint64 data) override
-	{
-		switch (id)
-		{
-			case SET_PATH_ID:
-			{
-				uint32 pathID = data & 0xFFFFFFFF;
-				uint32 lastPointID = (data & 0xFFFFFFFF00000000) >> 32;
+    DarkPortalEventDemonAI(Creature* creature) : ScriptedAI(creature) 
+    {
+        reachedHome = false;
+        lastPathNodeID = 0;
+    }
+                        
+    enum Message
+    {
+        SET_PATH_ID,         //message: uint64 with pathID on the first 32 bits, lastNodeID on the 32 next.
+        HAS_REACHED_HOME,    //returns 0 or 1
+    };
+    
+    uint64 message(uint32 id, uint64 data) override
+    {
+        switch (id)
+        {
+            case SET_PATH_ID:
+            {
+                uint32 pathID = data & 0xFFFFFFFF;
+                uint32 lastPointID = (data & 0xFFFFFFFF00000000) >> 32;
 
-				if (pathID == 0 || lastPointID == 0)
-				{
-					TC_LOG_ERROR("scripts", "DarkPortalEventDemonAI received null pathID (%u) or lastPathNodeID (%u)", pathID, lastPathNodeID);
-					return 0;
-				}
+                if (pathID == 0 || lastPointID == 0)
+                {
+                    TC_LOG_ERROR("scripts", "DarkPortalEventDemonAI received null pathID (%u) or lastPathNodeID (%u)", pathID, lastPathNodeID);
+                    return 0;
+                }
 
-				reachedHome = false;
-				me->GetMotionMaster()->MovePath(pathID);
-				lastPathNodeID = lastPointID;
+                reachedHome = false;
+                me->GetMotionMaster()->MovePath(pathID);
+                lastPathNodeID = lastPointID;
 
-				//set path type as WP_PATH_TYPE_ONCE
-				MovementGenerator* movGen = me->GetMotionMaster()->GetMotionSlot(MOTION_SLOT_ACTIVE);
-				if (WaypointMovementGenerator<Creature>* wpMovGen = dynamic_cast<WaypointMovementGenerator<Creature>*>(movGen))
-				{
-					wpMovGen->SetPathType(WaypointPathType::WP_PATH_TYPE_ONCE);
-				}
-				else {
-					TC_LOG_ERROR("scripts", "DarkPortalEventDemonAI, cannot set path type to WP_PATH_TYPE_ONCE.");
-				}
-				break;
-			}
-			case HAS_REACHED_HOME:
-			{
-				return reachedHome;
-				break;
-			}
-		}
-		return 0;
-	}
+                //set path type as WP_PATH_TYPE_ONCE
+                MovementGenerator* movGen = me->GetMotionMaster()->GetMotionSlot(MOTION_SLOT_ACTIVE);
+                if (WaypointMovementGenerator<Creature>* wpMovGen = dynamic_cast<WaypointMovementGenerator<Creature>*>(movGen))
+                {
+                    wpMovGen->SetPathType(WaypointPathType::WP_PATH_TYPE_ONCE);
+                }
+                else {
+                    TC_LOG_ERROR("scripts", "DarkPortalEventDemonAI, cannot set path type to WP_PATH_TYPE_ONCE.");
+                }
+                break;
+            }
+            case HAS_REACHED_HOME:
+            {
+                return reachedHome;
+                break;
+            }
+        }
+        return 0;
+    }
 
-	void JustReachedHome() override
-	{
-		reachedHome = true;
-	}
+    void JustReachedHome() override
+    {
+        reachedHome = true;
+    }
 
-	void MovementInform(uint32 motionType, uint32 nodeID) override
-	{
-		if (motionType == WAYPOINT_MOTION_TYPE && nodeID == lastPathNodeID)
-		{
-			//we've arrived at our path end, lets break formation and go to our designed place
-			if (me->GetFormation() && me->GetFormation()->getLeader() == me)
-				sCreatureGroupMgr->BreakFormation(me);
+    void MovementInform(uint32 motionType, uint32 nodeID) override
+    {
+        if (motionType == WAYPOINT_MOTION_TYPE && nodeID == lastPathNodeID)
+        {
+            //we've arrived at our path end, lets break formation and go to our designed place
+            if (me->GetFormation() && me->GetFormation()->getLeader() == me)
+                sCreatureGroupMgr->BreakFormation(me);
 
-			me->GetMotionMaster()->MoveTargetedHome();
+            me->GetMotionMaster()->MoveTargetedHome();
 
-		}
-	}
+        }
+    }
 
-	void Reset() override
-	{
+    void Reset() override
+    {
 
-	}
+    }
 
-	void UpdateAI(const uint32 diff)
-		override
-	{
-		//todo: this check on timer ?
-		if (!reachedHome
-			&& me->GetMotionMaster()->GetMotionSlotType(MOTION_SLOT_ACTIVE) != WAYPOINT_MOTION_TYPE 
-			&& me->GetMotionMaster()->GetMotionSlotType(MOTION_SLOT_ACTIVE) != HOME_MOTION_TYPE 
-			&& !me->IsInCombat())
-		{
-			me->GetMotionMaster()->MoveTargetedHome();
-		}
-	}
+    void UpdateAI(const uint32 diff)
+        override
+    {
+        //todo: this check on timer ?
+        if (!reachedHome
+            && me->GetMotionMaster()->GetMotionSlotType(MOTION_SLOT_ACTIVE) != WAYPOINT_MOTION_TYPE 
+            && me->GetMotionMaster()->GetMotionSlotType(MOTION_SLOT_ACTIVE) != HOME_MOTION_TYPE 
+            && !me->IsInCombat())
+        {
+            me->GetMotionMaster()->MoveTargetedHome();
+        }
+    }
 };
 
 
 class DarkPortalEventPitLord : public CreatureScript
 {
 public:
-	DarkPortalEventPitLord() : CreatureScript("dark_portal_event_pit_lord") {}
+    DarkPortalEventPitLord() : CreatureScript("dark_portal_event_pit_lord") {}
 
-	class DarkPortalEventPitLordAI : public DarkPortalEventDemonAI
-	{
-	public:
-		DarkPortalEventPitLordAI(Creature* creature) : DarkPortalEventDemonAI(creature) {}
+    class DarkPortalEventPitLordAI : public DarkPortalEventDemonAI
+    {
+    public:
+        DarkPortalEventPitLordAI(Creature* creature) : DarkPortalEventDemonAI(creature) {}
 
-		void UpdateAI(const uint32 diff)
-			override
-		{
-			DarkPortalEventDemonAI::UpdateAI(diff);
+        void UpdateAI(const uint32 diff)
+            override
+        {
+            DarkPortalEventDemonAI::UpdateAI(diff);
 
-			DoMeleeAttackIfReady();
-		}
+            DoMeleeAttackIfReady();
+        }
 
-	};
+    };
 
-	CreatureAI* GetAI(Creature* creature) const
-		override
-	{
-		return new DarkPortalEventPitLordAI(creature);
-	}
+    CreatureAI* GetAI(Creature* creature) const
+        override
+    {
+        return new DarkPortalEventPitLordAI(creature);
+    }
 };
 
 class DarkPortalEventFelSoldier : public CreatureScript
 {
 public:
-	DarkPortalEventFelSoldier() : CreatureScript("dark_portal_event_fel_soldier") {}
+    DarkPortalEventFelSoldier() : CreatureScript("dark_portal_event_fel_soldier") {}
 
-	class DarkPortalEventFelSoldierAI : public DarkPortalEventDemonAI
-	{
-	public:
-		DarkPortalEventFelSoldierAI(Creature* creature) : DarkPortalEventDemonAI(creature) {}
+    class DarkPortalEventFelSoldierAI : public DarkPortalEventDemonAI
+    {
+    public:
+        DarkPortalEventFelSoldierAI(Creature* creature) : DarkPortalEventDemonAI(creature) {}
 
-		void UpdateAI(const uint32 diff)
-			override
-		{
-			DarkPortalEventDemonAI::UpdateAI(diff);
+        void UpdateAI(const uint32 diff)
+            override
+        {
+            DarkPortalEventDemonAI::UpdateAI(diff);
 
-			DoMeleeAttackIfReady();
-		}
-	};
+            DoMeleeAttackIfReady();
+        }
+    };
 
-	CreatureAI* GetAI(Creature* creature) const
-		override
-	{
-		return new DarkPortalEventFelSoldierAI(creature);
-	}
+    CreatureAI* GetAI(Creature* creature) const
+        override
+    {
+        return new DarkPortalEventFelSoldierAI(creature);
+    }
 };
 
 class DarkPortalEventWrathMaster : public CreatureScript
 {
 public:
-	DarkPortalEventWrathMaster() : CreatureScript("dark_portal_event_wrath_master") {}
+    DarkPortalEventWrathMaster() : CreatureScript("dark_portal_event_wrath_master") {}
 
-	class DarkPortalEventWrathMasterAI : public DarkPortalEventDemonAI
-	{
-	public:
-		DarkPortalEventWrathMasterAI(Creature* creature) : DarkPortalEventDemonAI(creature) {}
+    class DarkPortalEventWrathMasterAI : public DarkPortalEventDemonAI
+    {
+    public:
+        DarkPortalEventWrathMasterAI(Creature* creature) : DarkPortalEventDemonAI(creature) {}
 
-		void UpdateAI(const uint32 diff)
-			override
-		{
-			DarkPortalEventDemonAI::UpdateAI(diff);
+        void UpdateAI(const uint32 diff)
+            override
+        {
+            DarkPortalEventDemonAI::UpdateAI(diff);
 
-			DoMeleeAttackIfReady();
-		}
-	};
+            DoMeleeAttackIfReady();
+        }
+    };
 
-	CreatureAI* GetAI(Creature* creature) const
-		override
-	{
-		return new DarkPortalEventWrathMasterAI(creature);
-	}
+    CreatureAI* GetAI(Creature* creature) const
+        override
+    {
+        return new DarkPortalEventWrathMasterAI(creature);
+    }
 };
 
 class DarkPortalEventController : public CreatureScript
 {
 public:
-	DarkPortalEventController() : CreatureScript("dark_portal_event_controller") {}
+    DarkPortalEventController() : CreatureScript("dark_portal_event_controller") {}
 
-	static uint32 const DEMON_COMMON_PATH = 12949601;
+    static uint32 const DEMON_COMMON_PATH = 12949601;
 
-	struct DemonSummonInfo
-	{
-		Position const pos;
-		uint32 const npcId;
-		uint64 guid;
-		bool dead;
-	};
-	
-	enum DemonsControllerEvent
-	{
-		EVENT_CHECK_DEADS = 1,
-		EVENT_SEND_SIEGE_BREAKERS, //infernos
-		EVENT_SEND_ATTACK_WAVE,
-	};
+    struct DemonSummonInfo
+    {
+        Position const pos;
+        uint32 const npcId;
+        uint64 guid;
+        bool dead;
+    };
+    
+    enum DemonsControllerEvent
+    {
+        EVENT_CHECK_DEADS = 1,
+        EVENT_SEND_SIEGE_BREAKERS, //infernos
+        EVENT_SEND_ATTACK_WAVE,
+    };
 
-	static uint32 const SUMMON_WAVE_SIZE = 5;
-	static uint32 const ATTACK_WAVE_SIZE = 5;
-	static uint32 const SPELL_SUMMON_INFERNALS = 33393;
+    static uint32 const SUMMON_WAVE_SIZE = 5;
+    static uint32 const ATTACK_WAVE_SIZE = 5;
+    static uint32 const SPELL_SUMMON_INFERNALS = 33393;
 
-	class DarkPortalEventControllerAI : public ScriptedAI
-	{
-	public:
-		DarkPortalEventControllerAI(Creature* creature) : ScriptedAI(creature) 
-		{
+    class DarkPortalEventControllerAI : public ScriptedAI
+    {
+    public:
+        DarkPortalEventControllerAI(Creature* creature) : ScriptedAI(creature) 
+        {
             uint32 pathId = DarkPortalEventController::DEMON_COMMON_PATH;
-			auto path = sWaypointMgr->GetPath(pathId);
-			if (!path->empty())
-				LAST_POINT = path->back()->id;
+            auto path = sWaypointMgr->GetPath(pathId);
+            if (!path->empty())
+                LAST_POINT = path->back()->id;
 
-			if (LAST_POINT == 0)
-			{
-				TC_LOG_ERROR("scripts", "DarkPortalEventControllerAI couldnt get last point for path %u", pathId);
-				LAST_POINT = 1; //maybe we can recover from this, consider second point as last point
-			}
-		}
+            if (LAST_POINT == 0)
+            {
+                TC_LOG_ERROR("scripts", "DarkPortalEventControllerAI couldnt get last point for path %u", pathId);
+                LAST_POINT = 1; //maybe we can recover from this, consider second point as last point
+            }
+        }
 
-		uint32 LAST_POINT = 0;
+        uint32 LAST_POINT = 0;
 
-		Position const teleporter1Pos =  { -145.65f, 1510.66f, 33.47f };
-		Position const teleporter2Pos =  { -303.70f, 1525.00f, 37.88f };
-		Position const pitlordSpawnPos = { -210.12f, 1574.15f, 28.8f };
-		Position const attackPos =       { -252.23f, 1094.34f, 41.67f }; //point demons will try to get to when attacking
+        Position const teleporter1Pos =  { -145.65f, 1510.66f, 33.47f };
+        Position const teleporter2Pos =  { -303.70f, 1525.00f, 37.88f };
+        Position const pitlordSpawnPos = { -210.12f, 1574.15f, 28.8f };
+        Position const attackPos =       { -252.23f, 1094.34f, 41.67f }; //point demons will try to get to when attacking
 
-		// 18944 : fel soldier
-		// 19005 : wrath master
-		std::vector<DemonSummonInfo> demonSummons
-		{
-			{ Position(-198.475, 1152.46, 41.5387, 4.649050), 18944, 0, false },
-			{ Position(-204.212, 1163.39, 42.7747, 4.649050), 18944, 0, false },
-			{ Position(-209.724, 1153.05, 41.5781, 4.649050), 18944, 0, false },
-			{ Position(-209.911, 1171.92, 42.4926, 4.649050), 18944, 0, false },
-			{ Position(-215.193, 1164.25, 42.3766, 4.649050), 18944, 0, false },
-			{ Position(-220.91, 1172.25, 41.6198, 4.649050), 18944, 0, false },
-			{ Position(-231.111, 1172.32, 41.5725, 4.649050), 19005, 0, false },
-			{ Position(-241.049, 1150.11, 41.651, 4.649050), 18944, 0, false },
-			{ Position(-250.012, 1150.5, 41.651, 4.649050), 18944, 0, false },
-			{ Position(-259.584, 1150.61, 41.651, 4.649050), 18944, 0, false },
-			{ Position(-267.838, 1170.1, 41.6599, 4.649050), 19005, 0, false },
-			{ Position(-278.802, 1169.95, 41.7551, 4.649050), 18944, 0, false },
-			{ Position(-283.887, 1162.71, 41.2736, 4.649050), 18944, 0, false },
-			{ Position(-289.163, 1155.73, 41.2988, 4.649050), 18944, 0, false },
-			{ Position(-290.59, 1170.37, 41.7875, 4.649050), 18944, 0, false },
-			{ Position(-295.487, 1162.31, 41.0212, 4.649050), 18944, 0, false },
-			{ Position(-300.381, 1155.92, 41.223, 4.649050), 18944, 0, false },
-		};
-		
-		DemonSummonInfo pitlordInfo = { Position(-248.82f, 1176.17f, 41.6652f, 4.69f), 18945, 0, false };
+        // 18944 : fel soldier
+        // 19005 : wrath master
+        std::vector<DemonSummonInfo> demonSummons
+        {
+            { Position(-198.475, 1152.46, 41.5387, 4.649050), 18944, 0, false },
+            { Position(-204.212, 1163.39, 42.7747, 4.649050), 18944, 0, false },
+            { Position(-209.724, 1153.05, 41.5781, 4.649050), 18944, 0, false },
+            { Position(-209.911, 1171.92, 42.4926, 4.649050), 18944, 0, false },
+            { Position(-215.193, 1164.25, 42.3766, 4.649050), 18944, 0, false },
+            { Position(-220.91, 1172.25, 41.6198, 4.649050), 18944, 0, false },
+            { Position(-231.111, 1172.32, 41.5725, 4.649050), 19005, 0, false },
+            { Position(-241.049, 1150.11, 41.651, 4.649050), 18944, 0, false },
+            { Position(-250.012, 1150.5, 41.651, 4.649050), 18944, 0, false },
+            { Position(-259.584, 1150.61, 41.651, 4.649050), 18944, 0, false },
+            { Position(-267.838, 1170.1, 41.6599, 4.649050), 19005, 0, false },
+            { Position(-278.802, 1169.95, 41.7551, 4.649050), 18944, 0, false },
+            { Position(-283.887, 1162.71, 41.2736, 4.649050), 18944, 0, false },
+            { Position(-289.163, 1155.73, 41.2988, 4.649050), 18944, 0, false },
+            { Position(-290.59, 1170.37, 41.7875, 4.649050), 18944, 0, false },
+            { Position(-295.487, 1162.31, 41.0212, 4.649050), 18944, 0, false },
+            { Position(-300.381, 1155.92, 41.223, 4.649050), 18944, 0, false },
+        };
+        
+        DemonSummonInfo pitlordInfo = { Position(-248.82f, 1176.17f, 41.6652f, 4.69f), 18945, 0, false };
 
-		EventMap events;
+        EventMap events;
 
-		uint32 GetDeadDemonsCount()
-		{
-			for (auto & demonSummon : demonSummons)
-				UpdateDemonDeadState(demonSummon);
+        uint32 GetDeadDemonsCount()
+        {
+            for (auto & demonSummon : demonSummons)
+                UpdateDemonDeadState(demonSummon);
 
-			uint32 count = 0;
-			for (auto & demonSummon : demonSummons)
-				if (demonSummon.dead)
-					count++;
+            uint32 count = 0;
+            for (auto & demonSummon : demonSummons)
+                if (demonSummon.dead)
+                    count++;
 
-			return count;
-		}
+            return count;
+        }
 
-		void RemoveDemon(DemonSummonInfo& summonInfo)
-		{
-			if (summonInfo.guid)
-			{
-				if (Creature* c = me->GetMap()->GetCreature(summonInfo.guid))
-					c->DisappearAndDie();
+        void RemoveDemon(DemonSummonInfo& summonInfo)
+        {
+            if (summonInfo.guid)
+            {
+                if (Creature* c = me->GetMap()->GetCreature(summonInfo.guid))
+                    c->DisappearAndDie();
 
-				summonInfo.guid = 0;
-				summonInfo.dead = true;
-			}
-		}
+                summonInfo.guid = 0;
+                summonInfo.dead = true;
+            }
+        }
 
-		Creature* SpawnDemon(DemonSummonInfo& summonInfo, Position const* pos = nullptr)
-		{
-			Position const& summonPos = pos ? *pos : summonInfo.pos;
-			if (Creature* c = me->SummonCreature(summonInfo.npcId, summonPos, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30 * SECOND * IN_MILLISECONDS))
-			{
-				c->SetKeepActiveTimer(3 * MINUTE * IN_MILLISECONDS); //force active for a while so that creatures can get to their position
-				c->SetHomePosition(summonInfo.pos);
-				summonInfo.guid = c->GetGUID();
-				summonInfo.dead = false;
-				return c;
-			}
-			return nullptr;
-		}
+        Creature* SpawnDemon(DemonSummonInfo& summonInfo, Position const* pos = nullptr)
+        {
+            Position const& summonPos = pos ? *pos : summonInfo.pos;
+            if (Creature* c = me->SummonCreature(summonInfo.npcId, summonPos, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30 * SECOND * IN_MILLISECONDS))
+            {
+                c->SetKeepActiveTimer(3 * MINUTE * IN_MILLISECONDS); //force active for a while so that creatures can get to their position
+                c->SetHomePosition(summonInfo.pos);
+                summonInfo.guid = c->GetGUID();
+                summonInfo.dead = false;
+                return c;
+            }
+            return nullptr;
+        }
 
-		void InitDemons()
-		{
-			//remove demons already present
-			for (auto & demonSummon : demonSummons)
-				RemoveDemon(demonSummon);
+        void InitDemons()
+        {
+            //remove demons already present
+            for (auto & demonSummon : demonSummons)
+                RemoveDemon(demonSummon);
 
-			RemoveDemon(pitlordInfo);
+            RemoveDemon(pitlordInfo);
 
-			//summon new ones
-			for (auto & demonSummon : demonSummons)
-				SpawnDemon(demonSummon);
-				
-			SpawnDemon(pitlordInfo);
-		}
+            //summon new ones
+            for (auto & demonSummon : demonSummons)
+                SpawnDemon(demonSummon);
+                
+            SpawnDemon(pitlordInfo);
+        }
 
-		void SummonDemonFormation(std::vector<DemonSummonInfo*>& info)
-		{
-			Position const& summonPos = (rand() % 2) ? teleporter1Pos : teleporter2Pos;
-			std::vector<Creature*> justSummoned;
-			for (auto itr : info)
-			{
-				if (Creature* c = SpawnDemon(*itr, &summonPos))
-					justSummoned.push_back(c);
-			}
+        void SummonDemonFormation(std::vector<DemonSummonInfo*>& info)
+        {
+            Position const& summonPos = (rand() % 2) ? teleporter1Pos : teleporter2Pos;
+            std::vector<Creature*> justSummoned;
+            for (auto itr : info)
+            {
+                if (Creature* c = SpawnDemon(*itr, &summonPos))
+                    justSummoned.push_back(c);
+            }
 
-			if (justSummoned.size() < 2)
-			{
-				TC_LOG_ERROR("scripts", "DarkPortalEventControllerAI::SummonDemonFormation could not find enough demons to compose a formation");
-				return;
-			}
+            if (justSummoned.size() < 2)
+            {
+                TC_LOG_ERROR("scripts", "DarkPortalEventControllerAI::SummonDemonFormation could not find enough demons to compose a formation");
+                return;
+            }
 
-			Creature* leader = justSummoned[0];
-			sCreatureGroupMgr->AddCreatureToGroup(leader->GetGUIDLow(), leader);
-			//spawn other in wedge formation
-			for (uint8 i = 1; i < justSummoned.size(); i++)
-			{
-				Creature* member = justSummoned[i];
-				MemberPosition pos;
-				pos.follow_dist = i == 1 ? 6.0f : 6.0f * ((i-1) / 2 + 1);
-				pos.follow_angle = i % 2 ? 2.1f : 4.2f; //a little behind, to the left or to the right
-				sCreatureGroupMgr->AddCreatureToGroup(leader->GetGUIDLow(), member, &pos);
-			}
+            Creature* leader = justSummoned[0];
+            sCreatureGroupMgr->AddCreatureToGroup(leader->GetGUIDLow(), leader);
+            //spawn other in wedge formation
+            for (uint8 i = 1; i < justSummoned.size(); i++)
+            {
+                Creature* member = justSummoned[i];
+                MemberPosition pos;
+                pos.follow_dist = i == 1 ? 6.0f : 6.0f * ((i-1) / 2 + 1);
+                pos.follow_angle = i % 2 ? 2.1f : 4.2f; //a little behind, to the left or to the right
+                sCreatureGroupMgr->AddCreatureToGroup(leader->GetGUIDLow(), member, &pos);
+            }
 
-			uint64 message = DarkPortalEventController::DEMON_COMMON_PATH;
-			message += uint64(LAST_POINT) << 32; //see DarkPortalEventDemonAI::SET_PATH_ID comment
-			leader->AI()->message(DarkPortalEventDemonAI::SET_PATH_ID, message);
-		}
+            uint64 message = DarkPortalEventController::DEMON_COMMON_PATH;
+            message += uint64(LAST_POINT) << 32; //see DarkPortalEventDemonAI::SET_PATH_ID comment
+            leader->AI()->message(DarkPortalEventDemonAI::SET_PATH_ID, message);
+        }
 
-		//summon up to 5 demons from the demon teleporter
-		void SummonDemonWave()
-		{
-			std::vector<DemonSummonInfo*> toSummon;
-			for (auto & demonSummon : demonSummons)
-			{
-				if (demonSummon.dead)
-					toSummon.push_back(&demonSummon);
+        //summon up to 5 demons from the demon teleporter
+        void SummonDemonWave()
+        {
+            std::vector<DemonSummonInfo*> toSummon;
+            for (auto & demonSummon : demonSummons)
+            {
+                if (demonSummon.dead)
+                    toSummon.push_back(&demonSummon);
 
-				if (toSummon.size() >= SUMMON_WAVE_SIZE)
-					break;
-			}
+                if (toSummon.size() >= SUMMON_WAVE_SIZE)
+                    break;
+            }
 
-			//not enough demons to summon, abort
-			if (toSummon.size() < SUMMON_WAVE_SIZE)
-				return;
+            //not enough demons to summon, abort
+            if (toSummon.size() < SUMMON_WAVE_SIZE)
+                return;
 
-			SummonDemonFormation(toSummon);
-		}
+            SummonDemonFormation(toSummon);
+        }
 
-		void SummonPitlord()
-		{
-			if (Creature* c = me->SummonCreature(pitlordInfo.npcId, pitlordSpawnPos, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30 * SECOND * IN_MILLISECONDS))
-			{
-				pitlordInfo.guid = c->GetGUID();
-				pitlordInfo.dead = false;
-			}
-		}
+        void SummonPitlord()
+        {
+            if (Creature* c = me->SummonCreature(pitlordInfo.npcId, pitlordSpawnPos, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30 * SECOND * IN_MILLISECONDS))
+            {
+                pitlordInfo.guid = c->GetGUID();
+                pitlordInfo.dead = false;
+            }
+        }
 
-		Creature* GetPitLord()
-		{
-			return me->GetMap()->GetCreature(pitlordInfo.guid);
-		}
+        Creature* GetPitLord()
+        {
+            return me->GetMap()->GetCreature(pitlordInfo.guid);
+        }
 
-		/*
-		Wowhead:	Every minute or so, the Pit Commander at the Dark Portal will cast a spell, making two huge meteors hit the ground near the stairs, and out of the meteors comes 2 of these mobs. 
-					If you're hit by the large AoE blast that comes as they hit the ground, you take roughly 3500 damage. Their attack hits everything in front of it, which can be very annoying 
-					if you're trying to get past them, but it only hits for about 500 damage each swing.
-		*/
-		void SummonSiegeBreakers()
-		{
-			Creature* pitLord = GetPitLord();
-			if (!pitLord)
-				return;
+        /*
+        Wowhead:    Every minute or so, the Pit Commander at the Dark Portal will cast a spell, making two huge meteors hit the ground near the stairs, and out of the meteors comes 2 of these mobs. 
+                    If you're hit by the large AoE blast that comes as they hit the ground, you take roughly 3500 damage. Their attack hits everything in front of it, which can be very annoying 
+                    if you're trying to get past them, but it only hits for about 500 damage each swing.
+        */
+        void SummonSiegeBreakers()
+        {
+            Creature* pitLord = GetPitLord();
+            if (!pitLord)
+                return;
 
-			pitLord->CastSpell(pitLord, SPELL_SUMMON_INFERNALS, false);
-			//spell script in its own class below
-		}
+            pitLord->CastSpell(pitLord, SPELL_SUMMON_INFERNALS, false);
+            //spell script in its own class below
+        }
 
-		void SendAttackWave()
-		{
-			std::vector<Creature*> attackWave;
+        void SendAttackWave()
+        {
+            std::vector<Creature*> attackWave;
 
-			//get creatures
-			for (auto & demonSummon : demonSummons)
-			{
-				if (demonSummon.dead)
-					continue;
+            //get creatures
+            for (auto & demonSummon : demonSummons)
+            {
+                if (demonSummon.dead)
+                    continue;
 
-				Creature* c = me->GetMap()->GetCreature(demonSummon.guid);
-				if (!c)
-					continue;
+                Creature* c = me->GetMap()->GetCreature(demonSummon.guid);
+                if (!c)
+                    continue;
 
-				if (c->AI()->message(DarkPortalEventDemonAI::HAS_REACHED_HOME, 0) == 0)
-					continue;
+                if (c->AI()->message(DarkPortalEventDemonAI::HAS_REACHED_HOME, 0) == 0)
+                    continue;
 
-				attackWave.push_back(c);
+                attackWave.push_back(c);
 
-				if (attackWave.size() >= ATTACK_WAVE_SIZE)
-					break;
-			}
+                if (attackWave.size() >= ATTACK_WAVE_SIZE)
+                    break;
+            }
 
-			//send them
-			for (auto itr : attackWave)
-			{
-				itr->GetMotionMaster()->MovePoint(0, attackPos);
-			}
+            //send them
+            for (auto itr : attackWave)
+            {
+                itr->GetMotionMaster()->MovePoint(0, attackPos);
+            }
 
-			Creature* pitLord = GetPitLord();
-			if(pitLord)
-				pitLord->HandleEmoteCommand(EMOTE_ONESHOT_POINT);
-		}
+            Creature* pitLord = GetPitLord();
+            if(pitLord)
+                pitLord->HandleEmoteCommand(EMOTE_ONESHOT_POINT);
+        }
 
-		void Reset() override
-		{
-			InitDemons();
+        void Reset() override
+        {
+            InitDemons();
 
-			events.Reset();
-			events.ScheduleEvent(EVENT_CHECK_DEADS, 1000);
-			events.ScheduleEvent(EVENT_SEND_ATTACK_WAVE, 1000);
-			events.ScheduleEvent(EVENT_SEND_SIEGE_BREAKERS, 30000);
-		}
+            events.Reset();
+            events.ScheduleEvent(EVENT_CHECK_DEADS, 1000);
+            events.ScheduleEvent(EVENT_SEND_ATTACK_WAVE, 1000);
+            events.ScheduleEvent(EVENT_SEND_SIEGE_BREAKERS, 30000);
+        }
 
-		//update demon death state, set to dead if not found
-		void UpdateDemonDeadState(DemonSummonInfo& info)
-		{
-			if (Creature* c = me->GetMap()->GetCreature(info.guid))
-				info.dead = !c->IsAlive();
-			else
-				info.dead = true;
-		}
+        //update demon death state, set to dead if not found
+        void UpdateDemonDeadState(DemonSummonInfo& info)
+        {
+            if (Creature* c = me->GetMap()->GetCreature(info.guid))
+                info.dead = !c->IsAlive();
+            else
+                info.dead = true;
+        }
 
-		bool IsPitLordDead()
-		{
-			UpdateDemonDeadState(pitlordInfo);
-			return pitlordInfo.dead;
-		}
+        bool IsPitLordDead()
+        {
+            UpdateDemonDeadState(pitlordInfo);
+            return pitlordInfo.dead;
+        }
 
-		void UpdateAI(const uint32 diff)
-			override 
-		{
-			events.Update(diff);
+        void UpdateAI(const uint32 diff)
+            override 
+        {
+            events.Update(diff);
 
-			switch (events.ExecuteEvent())
-			{
-			case EVENT_CHECK_DEADS:
-				if (GetDeadDemonsCount() >= 5)
-					SummonDemonWave();
+            switch (events.ExecuteEvent())
+            {
+            case EVENT_CHECK_DEADS:
+                if (GetDeadDemonsCount() >= 5)
+                    SummonDemonWave();
 
-				if (IsPitLordDead())
-					SummonPitlord();
+                if (IsPitLordDead())
+                    SummonPitlord();
 
-				events.RescheduleEvent(EVENT_CHECK_DEADS, 1 * MINUTE * IN_MILLISECONDS);
-				break;
-			case EVENT_SEND_SIEGE_BREAKERS:
-				SummonSiegeBreakers();
-				events.RescheduleEvent(EVENT_SEND_SIEGE_BREAKERS, 90 * SECOND * IN_MILLISECONDS);
-				break;
-			case EVENT_SEND_ATTACK_WAVE:
-				SendAttackWave();
-				events.RescheduleEvent(EVENT_SEND_ATTACK_WAVE, 90 * SECOND * IN_MILLISECONDS);
-				break;
-			}
-		}
-	};
+                events.RescheduleEvent(EVENT_CHECK_DEADS, 1 * MINUTE * IN_MILLISECONDS);
+                break;
+            case EVENT_SEND_SIEGE_BREAKERS:
+                SummonSiegeBreakers();
+                events.RescheduleEvent(EVENT_SEND_SIEGE_BREAKERS, 90 * SECOND * IN_MILLISECONDS);
+                break;
+            case EVENT_SEND_ATTACK_WAVE:
+                SendAttackWave();
+                events.RescheduleEvent(EVENT_SEND_ATTACK_WAVE, 90 * SECOND * IN_MILLISECONDS);
+                break;
+            }
+        }
+    };
 
-	CreatureAI* GetAI(Creature* creature) const
-		override 
-	{
-		return new DarkPortalEventControllerAI(creature);
-	}
+    CreatureAI* GetAI(Creature* creature) const
+        override 
+    {
+        return new DarkPortalEventControllerAI(creature);
+    }
 };
 
 /*
@@ -2456,83 +2456,83 @@ Main spell: 33393, will cast 32148 x 2 (infernal missiles) to defenders, from ne
 class spell_summon_infernals : public SpellScriptLoader
 {
 public:
-	spell_summon_infernals() : SpellScriptLoader("spell_summon_infernals") { }
-	
-	class spell_summon_infernals_SpellScript : public SpellScript
-	{
-		PrepareSpellScript(spell_summon_infernals_SpellScript);
+    spell_summon_infernals() : SpellScriptLoader("spell_summon_infernals") { }
+    
+    class spell_summon_infernals_SpellScript : public SpellScript
+    {
+        PrepareSpellScript(spell_summon_infernals_SpellScript);
 
-		// missile spell
-		static uint32 const SPELL_INFERNAL_MISSILE = 32148;
-		// starting point
-		static uint32 const NPC_INFERNAL_RELAY = 19215;
-		// missile target
-		Position const infernalTargets = { -252.23f, 1094.34f, 41.67f };
-		static uint32 const INFERNAL_COUNT = 2;
+        // missile spell
+        static uint32 const SPELL_INFERNAL_MISSILE = 32148;
+        // starting point
+        static uint32 const NPC_INFERNAL_RELAY = 19215;
+        // missile target
+        Position const infernalTargets = { -252.23f, 1094.34f, 41.67f };
+        static uint32 const INFERNAL_COUNT = 2;
 
-		void CastInfernalMissiles()
-		{
-			std::list<Creature*> relaysList;
+        void CastInfernalMissiles()
+        {
+            std::list<Creature*> relaysList;
             GetCaster()->GetCreatureListWithEntryInGrid(relaysList, NPC_INFERNAL_RELAY, 100.0f);
-			
-			std::vector<Creature*> relaysVector { std::begin(relaysList), std::end(relaysList) };
+            
+            std::vector<Creature*> relaysVector { std::begin(relaysList), std::end(relaysList) };
 
-			if (relaysVector.empty())
-				return;
+            if (relaysVector.empty())
+                return;
 
-			for (uint8 i = 0; i < INFERNAL_COUNT; i++)
-			{
-				//randomize target a bit
-				float x, y, z;
-				GetCaster()->GetRandomPoint(infernalTargets, 10.0f, x, y, z);
+            for (uint8 i = 0; i < INFERNAL_COUNT; i++)
+            {
+                //randomize target a bit
+                float x, y, z;
+                GetCaster()->GetRandomPoint(infernalTargets, 10.0f, x, y, z);
 
-				//each infernal from a different relay
-				Creature* relay = relaysVector[i % relaysVector.size()];
-				relay->CastSpell(x, y, z, SPELL_INFERNAL_MISSILE, true);
-			}
-		}
+                //each infernal from a different relay
+                Creature* relay = relaysVector[i % relaysVector.size()];
+                relay->CastSpell(x, y, z, SPELL_INFERNAL_MISSILE, true);
+            }
+        }
 
-		void Register() override
-		{
-			OnCast += SpellCastFn(spell_summon_infernals_SpellScript::CastInfernalMissiles);
-		}
-	};
+        void Register() override
+        {
+            OnCast += SpellCastFn(spell_summon_infernals_SpellScript::CastInfernalMissiles);
+        }
+    };
 
-	SpellScript* GetSpellScript() const override
-	{
-		return new spell_summon_infernals_SpellScript();
-	}
+    SpellScript* GetSpellScript() const override
+    {
+        return new spell_summon_infernals_SpellScript();
+    }
 };
 
 //spell 32148
 class spell_infernal_missile : public SpellScriptLoader
 {
 public:
-	spell_infernal_missile() : SpellScriptLoader("spell_infernal_missile") { }
+    spell_infernal_missile() : SpellScriptLoader("spell_infernal_missile") { }
 
-	class spell_infernal_missile_SpellScript : public SpellScript
-	{
-		PrepareSpellScript(spell_infernal_missile_SpellScript);
+    class spell_infernal_missile_SpellScript : public SpellScript
+    {
+        PrepareSpellScript(spell_infernal_missile_SpellScript);
 
-		Position const infernalTargets = { -252.23f, 1094.34f, 41.67f };
-		static uint32 const NPC_SIEGE_BREAKER = 18946;
+        Position const infernalTargets = { -252.23f, 1094.34f, 41.67f };
+        static uint32 const NPC_SIEGE_BREAKER = 18946;
 
-		void HandleHit(SpellEffIndex i)
-		{
-			//should be two ? // for (uint8 i : { 0, 1 })
-				GetCaster()->SummonCreature(NPC_SIEGE_BREAKER, *(GetExplTargetDest()), TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30 * SECOND * IN_MILLISECONDS);
-		}
+        void HandleHit(SpellEffIndex i)
+        {
+            //should be two ? // for (uint8 i : { 0, 1 })
+                GetCaster()->SummonCreature(NPC_SIEGE_BREAKER, *(GetExplTargetDest()), TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30 * SECOND * IN_MILLISECONDS);
+        }
 
-		void Register() override
-		{
-			OnEffectHit += SpellEffectFn(spell_infernal_missile_SpellScript::HandleHit, EFFECT_0, SPELL_EFFECT_DUMMY);
-		}
-	};
+        void Register() override
+        {
+            OnEffectHit += SpellEffectFn(spell_infernal_missile_SpellScript::HandleHit, EFFECT_0, SPELL_EFFECT_DUMMY);
+        }
+    };
 
-	SpellScript* GetSpellScript() const override
-	{
-		return new spell_infernal_missile_SpellScript();
-	}
+    SpellScript* GetSpellScript() const override
+    {
+        return new spell_infernal_missile_SpellScript();
+    }
 };
 
 /*######
@@ -2580,10 +2580,10 @@ void AddSC_hellfire_peninsula()
 
     new npc_foul_purge();
 
-	new DarkPortalEventController();
-	new spell_summon_infernals();
-	new spell_infernal_missile();
-	new DarkPortalEventWrathMaster();
-	new DarkPortalEventFelSoldier();
-	new DarkPortalEventPitLord();
+    new DarkPortalEventController();
+    new spell_summon_infernals();
+    new spell_infernal_missile();
+    new DarkPortalEventWrathMaster();
+    new DarkPortalEventFelSoldier();
+    new DarkPortalEventPitLord();
 }

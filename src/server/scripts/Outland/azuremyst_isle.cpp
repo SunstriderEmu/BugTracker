@@ -662,9 +662,9 @@ public:
 
 enum eNestlewoodOwlkin
 {
-	INOCULATION_CHANNEL		= 29528,
-	INOCULATION_EMOTE		= 0,
-	INOCULATED_OWLKIN		= 16534
+    INOCULATION_CHANNEL        = 29528,
+    INOCULATION_EMOTE        = 0,
+    INOCULATED_OWLKIN        = 16534
 };
 
 
@@ -680,13 +680,13 @@ public:
         mob_nestlewood_owlkinAI(Creature *c) : ScriptedAI(c) {}
     
         uint32 ChannelTimer;
-    	uint64 PlayerGUID;
+        uint64 PlayerGUID;
         bool Channeled;
         bool Hitted;
     
         void Reset()
         override {
-    		PlayerGUID = 0;
+            PlayerGUID = 0;
             ChannelTimer = 0;
             Channeled = false;
             Hitted = false;
@@ -701,7 +701,7 @@ public:
             {
                 ChannelTimer = 3000;
                 Hitted = true;
-    			PlayerGUID = caster->GetGUID();
+                PlayerGUID = caster->GetGUID();
             }
         }
     
@@ -709,15 +709,15 @@ public:
         override {
             if(ChannelTimer < diff && !Channeled && Hitted)
             {
-    			Channeled = true;
-    			me->UpdateEntry(INOCULATED_OWLKIN);
-    			me->SetRespawnRadius(10.0f); 
-    			me->DespawnOrUnsummon(10 * SECOND * IN_MILLISECONDS);
-    			Talk(INOCULATION_EMOTE);
+                Channeled = true;
+                me->UpdateEntry(INOCULATED_OWLKIN);
+                me->SetRespawnRadius(10.0f); 
+                me->DespawnOrUnsummon(10 * SECOND * IN_MILLISECONDS);
+                Talk(INOCULATION_EMOTE);
     
-    			if(Player* channeler = me->GetMap()->GetPlayer(PlayerGUID))
-    				channeler->CastedCreatureOrGO(INOCULATED_OWLKIN, me->GetGUID(), INOCULATION_CHANNEL);
-    	
+                if(Player* channeler = me->GetMap()->GetPlayer(PlayerGUID))
+                    channeler->CastedCreatureOrGO(INOCULATED_OWLKIN, me->GetGUID(), INOCULATION_CHANNEL);
+        
             }else ChannelTimer -= diff;
     
             DoMeleeAttackIfReady();
@@ -943,11 +943,11 @@ public:
         void MoveInLineOfSight(Unit* pWho)
         override {
             if (me->GetDistance(pWho) <= 15.0f && pWho->GetTypeId() == TYPEID_PLAYER) {
-    			if (uint64 critter_guid = pWho->ToPlayer()->GetCritterGUID())
-    				if (Creature* pet = pWho->GetMap()->GetCreature(critter_guid)) {
-    					if (pWho->ToPlayer()->GetQuestStatus(10956) == QUEST_STATUS_INCOMPLETE && pet->GetEntry() == 22818)
-    						pWho->ToPlayer()->AreaExploredOrEventHappens(10956);
-    				}
+                if (uint64 critter_guid = pWho->ToPlayer()->GetCritterGUID())
+                    if (Creature* pet = pWho->GetMap()->GetCreature(critter_guid)) {
+                        if (pWho->ToPlayer()->GetQuestStatus(10956) == QUEST_STATUS_INCOMPLETE && pet->GetEntry() == 22818)
+                            pWho->ToPlayer()->AreaExploredOrEventHappens(10956);
+                    }
             }
         }
     };

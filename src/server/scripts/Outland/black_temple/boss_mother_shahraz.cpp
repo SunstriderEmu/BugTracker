@@ -105,7 +105,7 @@ public:
             CurrentBeam = rand()%4;                                    // 0 - Sinister, 1 - Vile, 2 - Wicked, 3 - Sinful
             BeamCount = 0;
             FatalAttractionTimer = TIMER_FATAL_ATTRACTION_FIRST;
-    		FatalAttractionExplodeTimer = uint32(-1);
+            FatalAttractionExplodeTimer = uint32(-1);
             ShriekTimer = TIMER_SILENCING_SHRIEK;
             SaberTimer = TIMER_SABER_LASH;
             RandomYellTimer = TIMER_RANDOM_YELL;
@@ -297,8 +297,8 @@ public:
                 }
     
                 checkFatalAttractionDistance = true;
-    			if (clear)
-    				FatalAttractionExplodeTimer = uint32(-1);
+                if (clear)
+                    FatalAttractionExplodeTimer = uint32(-1);
                 else
                     FatalAttractionExplodeTimer = 1000;
     

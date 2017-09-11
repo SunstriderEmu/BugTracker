@@ -237,7 +237,7 @@ public:
                 {
                     if (MarkOfCorruption_Count <= 5)
                     {
-    					uint32 mark_spell = 0;
+                        uint32 mark_spell = 0;
     
                         switch(MarkOfCorruption_Count)
                         {
@@ -304,7 +304,7 @@ public:
                 {
                     if (MarkOfHydross_Count <= 5)
                     {
-    					uint32 mark_spell = 0;
+                        uint32 mark_spell = 0;
     
                         switch(MarkOfHydross_Count)
                         {

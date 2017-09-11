@@ -363,7 +363,7 @@ public:
             ConfoundingblowTimer = 25000;
             ShadowimageTimer = 5000 + rand()%5000;
             ConflagOrShadowNovaTimer = 30000;
-    		
+            
             // Alythess spells
             me->ApplySpellImmune(0, IMMUNITY_ID, 45230, true);
             me->ApplySpellImmune(0, IMMUNITY_ID, 45348, true);
@@ -481,7 +481,7 @@ public:
             FlamesearTimer = 15000;
             ConflagOrShadowNovaTimer = 15000;
             IntroYellTimer = 0;
-    		
+            
             // Sacrolash spells
             me->ApplySpellImmune(0, IMMUNITY_ID, 45347, true);
             me->ApplySpellImmune(0, IMMUNITY_ID, 45248, true);

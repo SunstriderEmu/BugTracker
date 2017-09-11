@@ -71,7 +71,7 @@ public:
             EVENT_BELLOWING_ROAR,
             EVENT_START_DESCENDING,
             EVENT_ENTER_LAND_PHASE, //this exists just as a security
-			EVENT_HEALTH_CHECKS,
+            EVENT_HEALTH_CHECKS,
         };
 
         enum NazanPhases
@@ -100,15 +100,15 @@ public:
 
         void MovementInform(uint32 type, uint32 id) override
         {
-			if (type == POINT_MOTION_TYPE)
-			{
-				if (id == MOVINFORM_CENTER)
-					events.RescheduleEvent(EVENT_ENTER_LAND_PHASE, 1);
-				else {
-					if (id == MOVINFORM_FLIGHT)
-						events.RescheduleEvent(EVENT_SWITCH_SIDE, 1, 0, PHASE_FLIGHT);
-				}
-			}
+            if (type == POINT_MOTION_TYPE)
+            {
+                if (id == MOVINFORM_CENTER)
+                    events.RescheduleEvent(EVENT_ENTER_LAND_PHASE, 1);
+                else {
+                    if (id == MOVINFORM_FLIGHT)
+                        events.RescheduleEvent(EVENT_SWITCH_SIDE, 1, 0, PHASE_FLIGHT);
+                }
+            }
         }
 
         void SetPhase(NazanPhases phase)
@@ -220,11 +220,11 @@ public:
             {
                 Creature *Vazruden = me->GetMap()->GetCreature(VazrudenGUID);
                 bool VazrudenBelow40percent = !Vazruden || Vazruden->GetHealthPct() <= 40.0f;
-				bool NazanBelow20percent = me->GetHealthPct() <= 30.0f;
-				if (VazrudenBelow40percent || NazanBelow20percent) {
-					events.RescheduleEvent(EVENT_START_DESCENDING, 1, 0, PHASE_FLIGHT);
-					events.CancelEvent(EVENT_HEALTH_CHECKS);
-				} else
+                bool NazanBelow20percent = me->GetHealthPct() <= 30.0f;
+                if (VazrudenBelow40percent || NazanBelow20percent) {
+                    events.RescheduleEvent(EVENT_START_DESCENDING, 1, 0, PHASE_FLIGHT);
+                    events.CancelEvent(EVENT_HEALTH_CHECKS);
+                } else
                     events.RescheduleEvent(EVENT_HEALTH_CHECKS, 2000, 0, PHASE_FLIGHT);
 
                 break;
@@ -423,19 +423,19 @@ public:
 
         void JustSummoned(Creature* _summoned) override {
             if (!_summoned) 
-				return;
+                return;
 
             Unit *victim = me->GetVictim();
             if (_summoned->GetEntry() == NPC_NAZAN)
             {
-				_summoned->AI()->message(boss_nazan::MESSAGE_SET_VAZRUDEN_GUID, VazrudenGUID);
-				_summoned->SetDisableGravity(true);
-				_summoned->SetSpeedRate(MOVE_FLIGHT, 2.5);
+                _summoned->AI()->message(boss_nazan::MESSAGE_SET_VAZRUDEN_GUID, VazrudenGUID);
+                _summoned->SetDisableGravity(true);
+                _summoned->SetSpeedRate(MOVE_FLIGHT, 2.5);
                 if (victim)
                     ((ScriptedAI*)_summoned->AI())->AttackStart(victim, false);
             }
             else if (victim)
-				_summoned->AI()->AttackStart(victim);
+                _summoned->AI()->AttackStart(victim);
         }
 
         uint64 message(uint32 id, uint64 data) override

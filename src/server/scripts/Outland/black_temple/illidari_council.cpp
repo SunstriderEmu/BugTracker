@@ -547,7 +547,7 @@ public:
             SealTimer = TIMER_SEAL_FIRST;
             AuraTimer = TIMER_AURA_FIRST;
             BlessingTimer = TIMER_BLESSING;
-    		JudgeTimer = uint32(-1);
+            JudgeTimer = uint32(-1);
             lastAura = rand()%2;
             lastBlessing = rand()%2;
             lastSeal = rand()%2;
@@ -593,20 +593,20 @@ public:
             else
                 spellid = SPELL_CHROMATIC_AURA;
     
-    		bool success = true;
+            bool success = true;
     
             for(uint64 i : Council)
             {
-    			SpellCastResult result = SPELL_CAST_OK;
+                SpellCastResult result = SPELL_CAST_OK;
                 Unit* pUnit = ObjectAccessor::GetUnit((*me), i);
-    			if (pUnit)
-    				result = SpellCastResult(pUnit->CastSpell(pUnit, spellid, true, nullptr, nullptr, me->GetGUID()));
+                if (pUnit)
+                    result = SpellCastResult(pUnit->CastSpell(pUnit, spellid, true, nullptr, nullptr, me->GetGUID()));
     
-    			success = success && result == SPELL_CAST_OK;
+                success = success && result == SPELL_CAST_OK;
             }
     
-    		if(success)
-    			lastAura = !lastAura;
+            if(success)
+                lastAura = !lastAura;
     
             return true;
         }
@@ -635,7 +635,7 @@ public:
             {
                 if(DoCast(me->GetVictim(),SPELL_JUDGEMENT) == SPELL_CAST_OK)
                 {
-    				JudgeTimer = uint32(-1);
+                    JudgeTimer = uint32(-1);
                     SealTimer = 2200; //just after finishing casting judgement (2s cast)
                 }
             } else JudgeTimer -= diff;
@@ -670,7 +670,7 @@ public:
                 if(DoCast(me,spellid) == SPELL_CAST_OK)
                 {
                     lastSeal = !lastSeal;
-    				SealTimer = uint32(-1);
+                    SealTimer = uint32(-1);
                     JudgeTimer = TIMER_JUDGEMENT;
                 }
             } else SealTimer -= diff;
@@ -814,7 +814,7 @@ public:
             changeTargetTimer = 0;
             VanishTimer = TIMER_VANISH_FIRST;
             VanishTimeLeft = TIMER_VANISH_DURATION;
-    		EnvenomTimer = uint32(-1);
+            EnvenomTimer = uint32(-1);
     
             HasVanished = false;
             me->SetVisible(true);
@@ -836,7 +836,7 @@ public:
         //try to exclude the mage tank
         Unit* GetPoisonTarget()
         {
-    		ScriptedAI* zerevorAI = nullptr;
+            ScriptedAI* zerevorAI = nullptr;
             Creature* zerevor = ObjectAccessor::GetCreature(*me, Council[1]);
             if(zerevor)
                 zerevorAI = static_cast<ScriptedAI*>(zerevor->AI());

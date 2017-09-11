@@ -20,5 +20,5 @@ void AddMiscScripts()
     AddSC_npc_innkeeper();
     AddSC_npc_professions();
     AddSC_npcs_special();
-	AddSC_generic_creature();
+    AddSC_generic_creature();
 }

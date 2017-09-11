@@ -344,9 +344,9 @@ static float m_afFirstNagaCoord[3][3]=
 
 static float m_afSecondNagaCoord[3][3] =
 {
-	{3609.925537f, 1168.759521f, -1.168f},                      // witch
-	{3645.652100f, 1139.425415f,  1.322f},                      // priest
-	{3583.602051f, 1128.405762f,  2.347f},                      // myrmidon
+    {3609.925537f, 1168.759521f, -1.168f},                      // witch
+    {3645.652100f, 1139.425415f,  1.322f},                      // priest
+    {3583.602051f, 1128.405762f,  2.347f},                      // myrmidon
 };
 
 static float m_fVorshaCoord[]={3633.056885f, 1172.924072f, -5.388f};

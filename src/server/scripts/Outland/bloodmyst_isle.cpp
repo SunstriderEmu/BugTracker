@@ -54,7 +54,7 @@ public:
     
         void JustDied(Unit* pKiller)
         override {
-    		uint32 spawnCreatureID = {};
+            uint32 spawnCreatureID = {};
     
             switch(rand()%3)
             {

@@ -520,8 +520,8 @@ public:
             switch(step)
             {
             case 0:
-    		{ 
-    			me->SetInFront(player);
+            { 
+                me->SetInFront(player);
                 Unit* Creepjack = me->FindNearestCreature(NPC_CREEPJACK, 20);
                 if(Creepjack)
                     Creepjack->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
@@ -529,8 +529,8 @@ public:
                 if(Malone)
                     Malone->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
                 me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-    			return 2000;
-    		}
+                return 2000;
+            }
             case 1: DoScriptText(SAY_1, me, player); return 3000;
             case 2: DoScriptText(SAY_2, me, player); return 5000;
             case 3: DoScriptText(SAY_3, me, player); return 2000;
@@ -753,27 +753,27 @@ public:
                     player->ADD_GOSSIP_ITEM_DB(0, GOSSIP_ITEM_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
                     player->SEND_GOSSIP_MENU_TEXTID(TEXT_MENU1,me->GetGUID());
                     break;
-            	case GOSSIP_ACTION_INFO_DEF+2:
+                case GOSSIP_ACTION_INFO_DEF+2:
                     player->ADD_GOSSIP_ITEM_DB(0, GOSSIP_ITEM_3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
                     player->SEND_GOSSIP_MENU_TEXTID(TEXT_MENU2,me->GetGUID());
                     break;
-            	case GOSSIP_ACTION_INFO_DEF+3:
+                case GOSSIP_ACTION_INFO_DEF+3:
                     player->ADD_GOSSIP_ITEM_DB(0, GOSSIP_ITEM_4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
                     player->SEND_GOSSIP_MENU_TEXTID(TEXT_MENU3,me->GetGUID());
                     break;
-            	case GOSSIP_ACTION_INFO_DEF+4:
+                case GOSSIP_ACTION_INFO_DEF+4:
                     player->ADD_GOSSIP_ITEM_DB(0, GOSSIP_ITEM_5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+5);
                     player->SEND_GOSSIP_MENU_TEXTID(TEXT_MENU4,me->GetGUID());
                     break;
-            	case GOSSIP_ACTION_INFO_DEF+5:
+                case GOSSIP_ACTION_INFO_DEF+5:
                     player->ADD_GOSSIP_ITEM_DB(0, GOSSIP_ITEM_6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+6);
                     player->SEND_GOSSIP_MENU_TEXTID(TEXT_MENU5,me->GetGUID());
                     break;
-            	case GOSSIP_ACTION_INFO_DEF+6:
+                case GOSSIP_ACTION_INFO_DEF+6:
                     player->ADD_GOSSIP_ITEM_DB(0, GOSSIP_ITEM_7, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+7);
                     player->SEND_GOSSIP_MENU_TEXTID(TEXT_MENU6,me->GetGUID());
                     break;
-            	case GOSSIP_ACTION_INFO_DEF+7:
+                case GOSSIP_ACTION_INFO_DEF+7:
                     GossipHello(player);
                     break;
             }

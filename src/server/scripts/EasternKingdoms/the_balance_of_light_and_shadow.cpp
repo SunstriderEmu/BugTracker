@@ -406,7 +406,7 @@ public:
                     Arrow_Timer = 2700;
                     DoCast(target, SPELL_ARROW, false);
                     if (rand() % 10 == 0) 
-    					target->CastSpell(target, SPELL_DEATHSDOOR, true);
+                        target->CastSpell(target, SPELL_DEATHSDOOR, true);
                 }
                 else {
                     Unit* uTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 60.0f, false);

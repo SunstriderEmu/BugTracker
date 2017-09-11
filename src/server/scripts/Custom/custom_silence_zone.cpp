@@ -23,7 +23,7 @@ public:
         public:
         npc_zonedesilenceAI(Creature *c) : ScriptedAI(c)
         {
-    		me->SetVisible(false);
+            me->SetVisible(false);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             SetCombatMovementAllowed(false);
         }

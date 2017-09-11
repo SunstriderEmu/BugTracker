@@ -77,7 +77,7 @@ public:
     
                     //60 seconds until we should cast this agian
                     Yell_Timer = 60000;
-    				return;
+                    return;
                 }else Yell_Timer -= diff;
             }
     
@@ -91,7 +91,7 @@ public:
     
                     //60 seconds until we should cast this agian
                     Yell_Timer = 6000000;
-    				return;
+                    return;
                 }else Yell_Timer -= diff;
             }
     

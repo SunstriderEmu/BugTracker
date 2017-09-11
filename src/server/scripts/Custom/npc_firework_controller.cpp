@@ -80,7 +80,7 @@ public:
         void Reset() override {
             me->GetPosition(gridStartX,gridStartY,gridZ);
             me->SetReactState(REACT_PASSIVE);
-    		me->SetVisible(false);
+            me->SetVisible(false);
             me->SetDisableGravity(true);
     
             eventStarted = false;
@@ -148,7 +148,7 @@ public:
                 if(GameObject* gob = me->SummonGameObject(event->spellorGobId,Position(x,y,z,event->ori), G3D::Quat(event->morphX,event->morphY,0,0),0))
                 {
                     gob->SetFloatValue(OBJECT_FIELD_SCALE_X, event->size);
-    				Map* map = me->GetMap();
+                    Map* map = me->GetMap();
                     map->RemoveFromMap(gob,false); 
                     map->AddToMap(gob);
                     gob->Delete(); //this trigger explosion

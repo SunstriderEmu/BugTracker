@@ -206,7 +206,7 @@ public:
                     me->RemoveAurasDueToSpell(CurrentVurln_Spell);
     
                 //Cast new random vurlnabilty on self
-    			uint32 spell = {};
+                uint32 spell = {};
                 switch (rand()%5)
                 {
                     case 0: spell = SPELL_FIRE_VULNERABILITY; break;

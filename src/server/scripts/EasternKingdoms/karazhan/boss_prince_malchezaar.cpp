@@ -695,7 +695,7 @@ public:
     
         void SummonInfernal()
         {
-    		Creature* malch = nullptr;
+            Creature* malch = nullptr;
             float posX,posY,posZ;
             InfernalPoint* point = nullptr;
             if(me->GetMapId() != 532)
@@ -705,7 +705,7 @@ public:
             else
             {
                 if(!pInstance) 
-    				return;
+                    return;
                 malch = ObjectAccessor::GetCreature(*me,pInstance->GetData64(DATA_MALCHEZAAR));
                 if(!malch)
                 {

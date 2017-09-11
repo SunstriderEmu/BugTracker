@@ -64,7 +64,7 @@ public:
                     DoCast(me->GetVictim(),SPELL_SOULSIPHON);
     
                     SoulSiphon_Timer = 20000;
-    				return;
+                    return;
                 }else SoulSiphon_Timer -= diff;
             }
     

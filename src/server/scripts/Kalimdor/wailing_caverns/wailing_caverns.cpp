@@ -357,7 +357,7 @@ public:
                     if (!pInstance->GetData(TYPE_NARALEX_YELLED))
                     {
                         DoScriptText(SAY_AT_LAST, me);
-						pInstance->SetData(TYPE_NARALEX_YELLED, 1);
+                        pInstance->SetData(TYPE_NARALEX_YELLED, 1);
                     }
                 }
                 else
@@ -376,7 +376,7 @@ public:
             {
                 pPlayer->CLOSE_GOSSIP_MENU();
                 if (pInstance)
-					pInstance->SetData(TYPE_NARALEX_EVENT, IN_PROGRESS);
+                    pInstance->SetData(TYPE_NARALEX_EVENT, IN_PROGRESS);
 
                 DoScriptText(SAY_MAKE_PREPARATIONS, me);
 

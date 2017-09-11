@@ -82,7 +82,7 @@ public:
 
         virtual bool GossipSelect(Player* player, uint32 , uint32 type) override
         {
-            	//TODO... make this use copy paste code from core, we should call the right functions
+                //TODO... make this use copy paste code from core, we should call the right functions
                 if(player->GetPet() || player->GetTemporaryUnsummonedPetNumber())
                 {
                     me->Whisper("Abandon your current pet first.", LANG_UNIVERSAL, player);
@@ -117,7 +117,7 @@ public:
                 pet->InitPetCreateSpells();
                 pet->SetHealth(pet->GetMaxHealth());
             
-            	me->GetMap()->AddToMap(pet->ToCreature());
+                me->GetMap()->AddToMap(pet->ToCreature());
             
                 // visual effect for levelup
                 pet->SetUInt32Value(UNIT_FIELD_LEVEL,player->GetLevel());

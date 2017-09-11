@@ -126,11 +126,11 @@ public:
         uint32 MovePhase;
         uint32 waitTimer;
 
-		bool isBlizzLike;
+        bool isBlizzLike;
     
         void Reset()
         override {
-			isBlizzLike = true;
+            isBlizzLike = true;
             if(MoveEvent)
             {
                 me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -200,22 +200,22 @@ public:
         }
     
 
-		virtual void ReceiveEmote(Player* pPlayer, uint32 textEmote) override
-		{
-			switch (textEmote)
-			{
-			case TEXTEMOTE_TRAIN: // /train
-				if(isBlizzLike)
-				{
-					isBlizzLike = false;
-					me->Say("OMFG ITS NOT BLIZZLIKE!");
-					me->HandleEmoteCommand(EMOTE_ONESHOT_BATTLE_ROAR);
-				}
-				break;
-			default:
-				break;
-			}
-		}
+        virtual void ReceiveEmote(Player* pPlayer, uint32 textEmote) override
+        {
+            switch (textEmote)
+            {
+            case TEXTEMOTE_TRAIN: // /train
+                if(isBlizzLike)
+                {
+                    isBlizzLike = false;
+                    me->Say("OMFG ITS NOT BLIZZLIKE!");
+                    me->HandleEmoteCommand(EMOTE_ONESHOT_BATTLE_ROAR);
+                }
+                break;
+            default:
+                break;
+            }
+        }
 
         void MoveInLineOfSight(Unit* who)
         override {

@@ -216,15 +216,15 @@ public:
                 return;
             }
             
-			Creature* essence = nullptr;
+            Creature* essence = nullptr;
             if (essenceGUID != 0) {
                 essence = ObjectAccessor::GetCreature(*me, essenceGUID);
             }
 
-			if (!essence) {
-				EnterEvadeMode();
-				return;
-			}
+            if (!essence) {
+                EnterEvadeMode();
+                return;
+            }
 
             if (timer <= diff) {
                 switch (step) {

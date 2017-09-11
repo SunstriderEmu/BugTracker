@@ -264,8 +264,8 @@ public:
                         Walk_Pos_Y = ADDY_RIGHT_NEAR;
                         Walk_Pos_Z = ADDZ_RIGHT_NEAR;
                         break;
-    				default:
-    					return; //will never happen but will silence compiler warning
+                    default:
+                        return; //will never happen but will silence compiler warning
                 }
                 pUnit->MonsterMoveWithSpeed(Walk_Pos_X, Walk_Pos_Y, Walk_Pos_Z, 0);
             }
@@ -411,8 +411,8 @@ public:
                                 Walk_Pos_Y = WALKY_RIGHT_NEAR;
                                 Walk_Pos_Z = WALKZ_RIGHT_NEAR;
                                 break;
-    						default:
-    							return; //will never happen but will silence compiler warning
+                            default:
+                                return; //will never happen but will silence compiler warning
                         }
                     
                         if (pUnit)
