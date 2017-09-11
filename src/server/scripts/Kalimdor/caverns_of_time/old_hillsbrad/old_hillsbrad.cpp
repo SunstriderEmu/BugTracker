@@ -583,7 +583,6 @@ public:
                 player->SendPreparedQuest(me->GetGUID());
             }
 
-            InstanceScript* pInstance = ((InstanceScript*)me->GetInstanceScript());
             if( pInstance )
             {
                 if (pInstance->GetData(TYPE_BARREL_DIVERSION) == DONE && !pInstance->GetData(TYPE_THRALL_EVENT))

@@ -138,11 +138,11 @@ float VeinPos[14][8]=//spawn points of the ancient gem veins
 
 float AllianceOverrunGargPos[5][4]=//gargoyle spawn points in the alliance overrun
 {
-    {5279.94, -2049.68, 1311.38, 0},//garg1
-    {5289.15, -2219.06, 1291.12, 0},//garg2
-    {5202.07, -2136.10, 1305.07, 2.8},//garg3
-    {5071.52, -2425.63, 1454.48, 5.54},//garg4
-    {5120.65, -2467.92, 1463.93, 2.54}//garg5
+    {5279.94f, -2049.68f, 1311.38f, 0.0f},//garg1
+    {5289.15f, -2219.06f, 1291.12f, 0.0f},//garg2
+    {5202.07f, -2136.10f, 1305.07f, 2.8f},//garg3
+    {5071.52f, -2425.63f, 1454.48f, 5.54f},//garg4
+    {5120.65f, -2467.92f, 1463.93f, 2.54f}//garg5
 };
 
 float AllianceFirePos[92][8]=//spawn points for the fire visuals (GO) in the alliance base
