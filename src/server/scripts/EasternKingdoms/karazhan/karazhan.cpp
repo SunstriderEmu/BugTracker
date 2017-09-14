@@ -865,15 +865,6 @@ public:
 /*######
 ## woefulhealer
 ######*/
-
-#define TIMER_GLOBALWAIT             2000 + rand() % 3000
-#define MAXMANA                      10000
-#define SPELL_FLASHHEAL              25235
-#define VALUE_FLASHHEAL              1200   //estimation du heal
-#define SPELL_PRAYEROFHEALING        25308
-#define VALUE_PRAYEROFHEALING        1300
-
- 
  
 class woefulhealer : public CreatureScript
 {
@@ -881,24 +872,33 @@ public:
     woefulhealer() : CreatureScript("woefulhealer")
     { }
 
+    enum woefulhealer_defines
+    {
+        TIMER_GLOBALWAIT_MIN       =  2000,
+        TIMER_GLOBALWAIT_MAX       =  5000,
+        MAXMANA                    =  10000,
+        SPELL_FLASHHEAL            =  25235,
+        VALUE_FLASHHEAL            =  1200,  
+        SPELL_PRAYEROFHEALING      =  25308,
+        VALUE_PRAYEROFHEALING      =  1300,
+    };
+
     class woefulhealerAI : public ScriptedAI
     {
         public:
         woefulhealerAI(Creature *c) : ScriptedAI(c) {}
         
         bool flagsset;
-        Unit* owner;
-        Unit* healtarget;
-        uint16 waittimer;
-        uint8 tohealingroup;
-        uint32 mostlowhp;
+        Player* owner; //may be null
+        uint16 wait_timer; //Time between two heals
         
         void Reset()
         override {
-            owner = me->GetCharmerOrOwner();
-            me->GetMotionMaster()->MoveFollow(owner, 0.8,210);
+            owner = me->GetCharmerOrOwner() ? nullptr : me->GetCharmerOrOwner()->ToPlayer();
+            if(owner)
+                me->GetMotionMaster()->MoveFollow(owner, 0.8f, 210.0f);
             me->SetReactState(REACT_PASSIVE);
-            waittimer = TIMER_GLOBALWAIT;
+            wait_timer = urand(TIMER_GLOBALWAIT_MIN, TIMER_GLOBALWAIT_MAX);
             flagsset = false;
         }
         
@@ -912,53 +912,52 @@ public:
                 me->SetPower(POWER_MANA, MAXMANA);
                 me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 flagsset = true;
-            } //Fonctionnent pas dans le reset, une autre maniere de faire plus propre?
+            } //does not seem to work in reset... how to fix this?
                 
-            if ( !me->IsAlive() || me->IsNonMeleeSpellCast(false))
+            if ( !me->IsAlive() || me->IsNonMeleeSpellCast(false) )
                 return;
         
-            if (waittimer > diff)
+            if (wait_timer > diff)
             {
-                waittimer -= diff;
+                wait_timer -= diff;
                 return;    
             }
+            //Reset timer before next heal
+            wait_timer = urand(TIMER_GLOBALWAIT_MIN, TIMER_GLOBALWAIT_MAX);
     
-            healtarget = nullptr;
-            tohealingroup = 0;
-            mostlowhp = uint32(-1);
+            Unit* single_heal_target = nullptr;
+            uint8 players_needing_aoe_heal = 0;
+            uint32 lowest_hp = 0;
             
-            //Selection de la/les cibles du heal
-            Map *map = me->GetMap();
-            Map::PlayerList const& PlayerList = map->GetPlayers();
-            
-            for(const auto & i : PlayerList)
+            //Select heal target(s)
+            for(const auto& i : me->GetMap()->GetPlayers())
             {
                 if (Player* i_pl = i.GetSource())
                 {
-                    if (i_pl->IsAlive() && i_pl->GetDistance(me) < 40 
-                    && (i_pl->GetMaxHealth() - i_pl->GetHealth() > VALUE_PRAYEROFHEALING))
+                    // select players close enough and with enough health deficit
+                    if (i_pl->IsAlive() && i_pl->GetDistance(me) < 40.0f
+                        && ((i_pl->GetMaxHealth() - i_pl->GetHealth()) > VALUE_PRAYEROFHEALING)) // VALUE_FLASHHEAL and VALUE_PRAYEROFHEALING are about the same... let's only use one to simplify the logic
                     {
-                        if (mostlowhp > i_pl->GetHealth())
+                        if (!lowest_hp || lowest_hp > i_pl->GetHealth())
                         {
-                            healtarget = i_pl;
-                            mostlowhp = i_pl->GetHealth();
+                            single_heal_target = i_pl;
+                            lowest_hp = i_pl->GetHealth();
                         }
-                        if (((Player*) i_pl)->IsInSameGroupWith((Player*) owner))
-                            tohealingroup++;
+                        if (owner && i_pl->IsInSameGroupWith(owner))
+                            players_needing_aoe_heal++;
                     }
                 }
             }
                 
-            if (!healtarget)
+            if (!single_heal_target)
                 return;
                 
-            // Cast
-            if (tohealingroup >= 3)
+            // Cast 
+            if (players_needing_aoe_heal >= 3)
                 DoCast(me, SPELL_PRAYEROFHEALING);
             else
-                DoCast(healtarget, SPELL_FLASHHEAL);        
+                DoCast(single_heal_target, SPELL_FLASHHEAL);
                 
-            waittimer = TIMER_GLOBALWAIT;
         }
     };
 
@@ -999,7 +998,7 @@ public:
     
         void EnterCombat(Unit* who) 
         override {
-            DoCast(me,ANOMALY_SPELL_MANA_SHIELD,true);
+            DoCast(me, ANOMALY_SPELL_MANA_SHIELD, true);
             castedShield = true;
         }
     
@@ -1040,21 +1039,13 @@ public:
 
 void AddSC_karazhan()
 {
-
     new npc_barnes();
-
     new npc_image_of_medivh();
-    
     new npc_archmage_leryda();
-    
     new SealedTome();
-    
     new woefulhealer();
-    
     new npc_arcane_anomaly();
-
     new npc_hastings();
-
     new npc_calliard();
 }
 
