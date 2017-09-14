@@ -1017,14 +1017,14 @@ public:
     
             if(blinkTimer < diff)
             {
-                if(DoCast(me,ANOMALY_SPELL_BLINK) == SPELL_CAST_OK)
-                    blinkTimer = 10000 + rand()%5000;
+                if (DoCast(me, ANOMALY_SPELL_BLINK) == SPELL_CAST_OK)
+                    blinkTimer = urand(10 * SECOND*IN_MILLISECONDS, 15 * SECOND*IN_MILLISECONDS);
             } else blinkTimer -= diff;
     
             if(volleyTimer < diff)
             {
-                if(DoCast(me,ANOMALY_SPELL_ARCANE_VOLLEY) == SPELL_CAST_OK)
-                    volleyTimer = 20000 + rand()%5000;
+                if (DoCast(me, ANOMALY_SPELL_ARCANE_VOLLEY) == SPELL_CAST_OK)
+                    volleyTimer = urand(20 * SECOND*IN_MILLISECONDS, 25 * SECOND*IN_MILLISECONDS);
             } else volleyTimer -= diff;
     
             DoMeleeAttackIfReady();

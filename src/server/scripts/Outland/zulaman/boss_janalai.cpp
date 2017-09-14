@@ -704,13 +704,9 @@ public:
 void AddSC_boss_janalai()
 {
     new boss_janalai();
-
     new mob_janalai_firebomb();
-
     new mob_janalai_hatcher();
-
     new mob_janalai_hatchling();
-
     new mob_janalai_egg();
 }
 
