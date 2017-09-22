@@ -87,9 +87,9 @@ std::string GetGamesStringData(Battleground *arena)
 
         for (auto itr = begin; itr != end; itr++)
         {
-            if (Player* player = ObjectAccessor::FindPlayer(itr->guid))
+            if (Player* player = ObjectAccessor::FindPlayer(itr->Guid))
             {
-                if (arena->IsPlayerInBattleground(itr->guid))
+                if (arena->IsPlayerInBattleground(itr->Guid))
                 {
                     //data += GetClassNameById(itr->Class);
                     data += "FIXME GetGamesStringData";
@@ -127,8 +127,9 @@ uint64 GetFirstPlayerGuid(Battleground *arena)
 
 void ShowPage(Player *player, uint32 page, ArenaType type)
 {
-    uint16 nbArenas  = 0;
     bool haveNextPage = false;
+    /* Repair me
+    uint16 nbArenas  = 0;
 
     for (uint8 i = BATTLEGROUND_AV; i <= BATTLEGROUND_RL; ++i)
     {
@@ -160,6 +161,7 @@ void ShowPage(Player *player, uint32 page, ArenaType type)
             }
         }
     }
+    */
 
     switch (type)
     {
@@ -274,14 +276,14 @@ void spectate(Player* player, uint64 targetGuid, Creature *mobArena)
 
         // all's well, set bg id
         // when porting out from the bg, it will be reset to 0
-        player->SetBattlegroundId(target->GetBattlegroundId());
+        player->SetBattlegroundId(target->GetBattlegroundId(), target->GetBattlegroundTypeId());
         // search for two teams
         Battleground *bGround = target->GetBattleground();
         if (!bGround)
             return;
 
         // remember current position as entry point for return at bg end teleportation
-        player->SetBattlegroundEntryPoint(player->GetMapId(), player->GetPositionX(), player->GetPositionY(), player->GetPositionZ(), player->GetOrientation());
+        player->SetBattlegroundEntryPoint();
 
         if (bGround->isRated())
         {
