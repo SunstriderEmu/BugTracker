@@ -843,7 +843,7 @@ class spell_kaelthas_mind_control : public SpellScriptLoader
 
             void Register() override
             {
-                OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_kaelthas_mind_control_SpellScript::SelectTarget, EFFECT_ALL, TARGET_UNIT_SRC_AREA_ENEMY);
+                OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_kaelthas_mind_control_SpellScript::SelectTarget, (SpellEffIndex) EFFECT_ALL, TARGET_UNIT_SRC_AREA_ENEMY);
             }
         };
 
