@@ -31,8 +31,9 @@ public:
             return true;
         }
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if(action == GOSSIP_ACTION_INFO_DEF+2)
             {
                 me->Say("Normal select, guess you're not interested.", LANG_UNIVERSAL, nullptr);
@@ -41,8 +42,10 @@ public:
             return true;
         }
 
-        virtual bool GossipSelectCode(Player* player, uint32 sender, uint32 action, const char* sCode) override
+        virtual bool GossipSelectCode(Player* player, uint32 menuId, uint32 gossipListId, const char* sCode) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
             if(sender == GOSSIP_SENDER_MAIN)
             {
                 if(action == GOSSIP_ACTION_INFO_DEF+1)

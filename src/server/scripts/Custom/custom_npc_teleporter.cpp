@@ -46,16 +46,17 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF)
             {
-                if (pPlayer->HasLevelInRangeForTeleport() || pPlayer->IsGameMaster()) {
+                if (player->HasLevelInRangeForTeleport() || player->IsGameMaster()) {
                     uint32 destEntry;
                     if(me->GetCreatureTemplate()->Entry == NPC_TELEPORTER_ENTRY)
-                        destEntry = pPlayer->GetTeam() == HORDE ? NPC_ARRIVAL_HORDE_1 : NPC_ARRIVAL_ALLY_1; //depends on player's team
+                        destEntry = player->GetTeam() == HORDE ? NPC_ARRIVAL_HORDE_1 : NPC_ARRIVAL_ALLY_1; //depends on player's team
                     else
-                        destEntry = pPlayer->GetTeam() == HORDE ? NPC_ARRIVAL_HORDE_2 : NPC_ARRIVAL_ALLY_2;
+                        destEntry = player->GetTeam() == HORDE ? NPC_ARRIVAL_HORDE_2 : NPC_ARRIVAL_ALLY_2;
                     
                     //get coordinates of target in DB
                     QueryResult result = WorldDatabase.PQuery("SELECT map, position_x, position_y, position_z, orientation FROM creature WHERE id = %u LIMIT 1", destEntry);
@@ -76,23 +77,23 @@ public:
                     
                         Trinity::NormalizeMapCoord(destX);
                     
-                        pPlayer->TeleportTo(mapId, destX, destY, destZ, destO);
+                        player->TeleportTo(mapId, destX, destY, destZ, destO);
                     }
                     else
                     {
-                        me->Whisper("Error: No destination", LANG_UNIVERSAL, pPlayer);
-                        pPlayer->PlayerTalkClass->SendCloseGossip();
+                        me->Whisper("Error: No destination", LANG_UNIVERSAL, player);
+                        player->PlayerTalkClass->SendCloseGossip();
                         return false;
                     }
                 }
                 else {
-                    me->Whisper("Your level is not in the correct range.", LANG_UNIVERSAL, pPlayer);
-                    pPlayer->PlayerTalkClass->SendCloseGossip();
+                    me->Whisper("Your level is not in the correct range.", LANG_UNIVERSAL, player);
+                    player->PlayerTalkClass->SendCloseGossip();
                     return false;
                 }
             }
             
-            if (action == GOSSIP_ACTION_INFO_DEF+1 && pPlayer->IsGameMaster()) //double check
+            if (action == GOSSIP_ACTION_INFO_DEF+1 && player->IsGameMaster()) //double check
             {
                 uint32 destEntry1, destEntry2;
                 if(me->GetCreatureTemplate()->Entry == NPC_TELEPORTER_ENTRY)
@@ -108,8 +109,8 @@ public:
                 
                 if (!result)
                 {
-                    me->Whisper("No destination NPC found.", LANG_UNIVERSAL, pPlayer);
-                    pPlayer->PlayerTalkClass->SendCloseGossip();
+                    me->Whisper("No destination NPC found.", LANG_UNIVERSAL, player);
+                    player->PlayerTalkClass->SendCloseGossip();
                     return false;
                 }
                 else
@@ -118,14 +119,13 @@ public:
                     {
                         Field *fields = result->Fetch();
                         std::string guid = fields[0].GetString();
-                        me->Whisper(guid.c_str(), LANG_UNIVERSAL, pPlayer);
+                        me->Whisper(guid.c_str(), LANG_UNIVERSAL, player);
                     }while (result->NextRow());
 
-                    pPlayer->PlayerTalkClass->SendCloseGossip();
+                    player->PlayerTalkClass->SendCloseGossip();
                 }
             }
             return true;
-
         }
 
     };

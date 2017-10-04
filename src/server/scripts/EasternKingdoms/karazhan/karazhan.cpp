@@ -400,8 +400,9 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch(action)
             {
                 case GOSSIP_ACTION_INFO_DEF+1:
@@ -463,8 +464,9 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch (action)
             {
                 case GOSSIP_ACTION_INFO_DEF+1:     
@@ -522,10 +524,11 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if(action == GOSSIP_ACTION_INFO_DEF + 1)
-                player->SEND_GOSSIP_MENU_TEXTID(CALLIARD_TEXT_MENU1,me->GetGUID());
+                player->SEND_GOSSIP_MENU_TEXTID(CALLIARD_TEXT_MENU1, me->GetGUID());
 
             return true;
 
@@ -791,12 +794,12 @@ public:
             SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
             
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             uint32 itemId = 0;
             switch (action) {
             case GOSSIP_ACTION_INFO_DEF+1:
@@ -814,17 +817,16 @@ public:
             }
             
             ItemPosCountVec dest;
-            uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemId, 1);
+            uint8 msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemId, 1);
             if (msg == EQUIP_ERR_OK)
             {
-                Item* item = pPlayer->StoreNewItem( dest, itemId, true);
-                pPlayer->SendNewItem(item, 1, true, false);
+                Item* item = player->StoreNewItem( dest, itemId, true);
+                player->SendNewItem(item, 1, true, false);
             }
             
-            pPlayer->CLOSE_GOSSIP_MENU();
+            player->CLOSE_GOSSIP_MENU();
             
             return true;
-
         }
 
     };

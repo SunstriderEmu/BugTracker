@@ -68,8 +68,9 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if(action == GOSSIP_ACTION_INFO_DEF)
             {
                 player->CLOSE_GOSSIP_MENU();
@@ -298,8 +299,9 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch (action)
             {
                 case GOSSIP_ACTION_INFO_DEF:

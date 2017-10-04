@@ -43,8 +43,9 @@ public:
             return true;
         }
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch(action)
             {
             case ACTION_GO:
@@ -65,8 +66,9 @@ public:
             return true;
         }
 
-        virtual bool GossipSelectCode(Player* player, uint32 sender, uint32 action, const char* Code) override
+        virtual bool GossipSelectCode(Player* player, uint32 sender, uint32 gossipListId, const char* Code) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch(action)
             {
             case ACTION_SPEED:

@@ -68,8 +68,9 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch (action)
             {
             case GOSSIP_ACTION_INFO_DEF:
@@ -175,12 +176,12 @@ public:
             player->SEND_GOSSIP_MENU_TEXTID(7754, me->GetGUID());
 
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch (action)
             {
                 case GOSSIP_ACTION_INFO_DEF:
@@ -209,10 +210,9 @@ public:
                     break;
                 case GOSSIP_ACTION_INFO_DEF + 6:
                     player->SEND_GOSSIP_MENU_TEXTID(7761, me->GetGUID());
-                                                                    //'kill' our trigger to update quest status
+                    //'kill' our trigger to update quest status
                     player->KilledMonsterCredit( TRIGGER_RUTGAR, me->GetGUID() );
                     break;
-
                 case GOSSIP_ACTION_INFO_DEF + 9:
                     player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM11, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 11);
                     player->SEND_GOSSIP_MENU_TEXTID(7762, me->GetGUID());
@@ -240,7 +240,6 @@ public:
                     break;
             }
             return true;
-
         }
 
     };

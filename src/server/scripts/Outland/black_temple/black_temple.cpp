@@ -62,8 +62,9 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             player->CLOSE_GOSSIP_MENU();
             if(action == GOSSIP_ACTION_INFO_DEF + 1) {
                 player->InterruptNonMeleeSpells(false);
@@ -118,8 +119,9 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if(action == GOSSIP_ACTION_INFO_DEF + 1)
                 player->CLOSE_GOSSIP_MENU();
 

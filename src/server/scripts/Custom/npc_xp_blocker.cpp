@@ -60,27 +60,28 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch (action) {
             case GOSSIP_ACTION_INFO_DEF+1:      // Unblock, free
-                pPlayer->SetXpBlocked(false);
-                me->Whisper("Experience unfreezed.", LANG_UNIVERSAL, pPlayer);
-                pPlayer->SaveToDB();
+                player->SetXpBlocked(false);
+                me->Whisper("Experience unfreezed.", LANG_UNIVERSAL, player);
+                player->SaveToDB();
                 break;
             case GOSSIP_ACTION_INFO_DEF+2:      // Block, 10 gold
-                if (pPlayer->GetMoney() > BLOCK_XP_PRICE) {
-                    pPlayer->SetXpBlocked(true);
-                    me->Whisper("Experience freezed.", LANG_UNIVERSAL, pPlayer);
-                    pPlayer->ModifyMoney(-(int32)BLOCK_XP_PRICE);
-                    pPlayer->SaveToDB();
+                if (player->GetMoney() > BLOCK_XP_PRICE) {
+                    player->SetXpBlocked(true);
+                    me->Whisper("Experience freezed.", LANG_UNIVERSAL, player);
+                    player->ModifyMoney(-(int32)BLOCK_XP_PRICE);
+                    player->SaveToDB();
                 }
                 else
-                    me->Whisper("You do not have enough money.", LANG_UNIVERSAL, pPlayer);
+                    me->Whisper("You do not have enough money.", LANG_UNIVERSAL, player);
                 break;
             }
             
-            pPlayer->PlayerTalkClass->SendCloseGossip();
+            player->PlayerTalkClass->SendCloseGossip();
             
             return true;
 

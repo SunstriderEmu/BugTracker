@@ -38,28 +38,28 @@ public:
             pPlayer->SEND_GOSSIP_MENU_TEXTID(43, me->GetGUID());
 
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch (action) {
             case GOSSIP_ACTION_INFO_DEF:
                 // Check not already registered and check 30d played
-                if (pPlayer->GetTotalAccountPlayedTime() > 1728000 || pPlayer->GetSession()->GetSecurity() > 0) {
-                    uint32 playerAccountId = pPlayer->GetSession()->GetAccountId();
-                    QueryResult result = CharacterDatabase.PQuery("SELECT * FROM lottery WHERE accountid = %u OR ip = '%s'", playerAccountId, pPlayer->GetSession()->GetRemoteAddress().c_str());
+                if (player->GetTotalAccountPlayedTime() > 1728000 || player->GetSession()->GetSecurity() > 0) {
+                    uint32 playerAccountId = player->GetSession()->GetAccountId();
+                    QueryResult result = CharacterDatabase.PQuery("SELECT * FROM lottery WHERE accountid = %u OR ip = '%s'", playerAccountId, player->GetSession()->GetRemoteAddress().c_str());
                     if (!result) {
-                        CharacterDatabase.PExecute("INSERT INTO lottery VALUES (%u, %u, %I64u, %u, '%s')", pPlayer->GetGUIDLow(), playerAccountId, time(nullptr), pPlayer->GetTeam(), pPlayer->GetSession()->GetRemoteAddress().c_str());
-                        pPlayer->SEND_GOSSIP_MENU_TEXTID(44, me->GetGUID());
+                        CharacterDatabase.PExecute("INSERT INTO lottery VALUES (%u, %u, %I64u, %u, '%s')", player->GetGUIDLow(), playerAccountId, time(nullptr), player->GetTeam(), player->GetSession()->GetRemoteAddress().c_str());
+                        player->SEND_GOSSIP_MENU_TEXTID(44, me->GetGUID());
                     }
                     else {
-                        pPlayer->SEND_GOSSIP_MENU_TEXTID(45, me->GetGUID());
+                        player->SEND_GOSSIP_MENU_TEXTID(45, me->GetGUID());
                     }
                 }
                 else {
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(46, me->GetGUID());
+                    player->SEND_GOSSIP_MENU_TEXTID(46, me->GetGUID());
                 }
                 break;
             case GOSSIP_ACTION_INFO_DEF+1:
@@ -90,7 +90,6 @@ public:
             }
             
             return true;
-
         }
 
     };

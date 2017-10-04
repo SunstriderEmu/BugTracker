@@ -70,40 +70,40 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch (action)
             {
                 case GOSSIP_ACTION_INFO_DEF+1:
-                    pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_MP1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(1833, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_MP1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+                    player->SEND_GOSSIP_MENU_TEXTID(1833, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+2:
-                    pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_MP2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(1834, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_MP2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+                    player->SEND_GOSSIP_MENU_TEXTID(1834, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+3:
-                    pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_MP3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(1835, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_MP3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
+                    player->SEND_GOSSIP_MENU_TEXTID(1835, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+4:
-                    pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_MP4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(1836, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_MP4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
+                    player->SEND_GOSSIP_MENU_TEXTID(1836, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+5:
-                    pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_MP5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(1837, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_MP5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6);
+                    player->SEND_GOSSIP_MENU_TEXTID(1837, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+6:
-                    pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_MP6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 7);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(1838, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_MP6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 7);
+                    player->SEND_GOSSIP_MENU_TEXTID(1838, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+7:
-                    pPlayer->CLOSE_GOSSIP_MENU();
+                    player->CLOSE_GOSSIP_MENU();
                     break;
             }
             return true;
-
         }
 
     };

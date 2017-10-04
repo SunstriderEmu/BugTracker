@@ -121,8 +121,10 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_azuremyst(player, me, action); break;
@@ -318,8 +320,10 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_bluffwatcher(player, me, action); break;
@@ -549,8 +553,10 @@ public:
 
         }
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_darnassus(player, me, action); break;
@@ -755,8 +761,10 @@ public:
 
         }
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_dunmorogh(player, me, action); break;
@@ -934,8 +942,10 @@ public:
 
         }
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_durotar(player, me, action); break;
@@ -1112,8 +1122,10 @@ public:
 
         }
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_elwynnforest(player, me, action); break;
@@ -1297,8 +1309,10 @@ public:
 
         }
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_eversong(player, me, action); break;
@@ -1480,8 +1494,10 @@ public:
 
         }
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_exodar(player, me, action); break;
@@ -1728,8 +1744,10 @@ public:
 
         }
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_ironforge(player, me, action); break;
@@ -1963,8 +1981,10 @@ public:
 
         }
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_mulgore(player, me, action); break;
@@ -2126,8 +2146,10 @@ public:
 
         }
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 /*menuId*/, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_orgrimmar(player, me, action); break;
@@ -2225,9 +2247,9 @@ public:
             }
         }
 
-        void SendBattleMasterMenu_guard_orgrimmar(Player *player, Creature *_Creature, uint32 action)
+        void SendBattleMasterMenu_guard_orgrimmar(Player *player, Creature *_Creature, uint32 gossipListId)
         {
-            switch (action)
+            switch (gossipListId)
             {
             case GOSSIP_ACTION_INFO_DEF + 1:                    //AV
                 player->SEND_POI(1983.92, -4794.2, 6, 6, 0, "Hall des Braves");
@@ -2377,8 +2399,10 @@ public:
 
         }
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:              SendDefaultMenu_guard_shattrath(player, me, action); break;
@@ -2690,8 +2714,10 @@ public:
 
         }
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_shattrath_aldor(player, me, action); break;
@@ -2889,8 +2915,10 @@ public:
 
         }
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_shattrath_scryer(player, me, action); break;
@@ -3038,8 +3066,10 @@ public:
 
         }
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:                SendDefaultMenu_guard_silvermoon(player, me, action); break;
@@ -3318,8 +3348,10 @@ public:
 
         }
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_stormwind(player, me, action); break;
@@ -3572,8 +3604,10 @@ public:
 
         }
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_teldrassil(player, me, action); break;
@@ -3729,8 +3763,10 @@ public:
 
         }
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_tirisfal(player, me, action); break;
@@ -3903,8 +3939,10 @@ public:
 
         }
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_undercity(player, me, action); break;

@@ -27,7 +27,7 @@ public:
         }
 
 
-        virtual bool GossipSelectCode(Player* player, uint32 sender, uint32 action, const char* Code) override
+        virtual bool GossipSelectCode(Player* player, uint32 menuId, uint32 gossipListId, const char* Code) override
         {
             std::stringstream text;
             text << player->GetName() << " dit : " << Code;

@@ -270,17 +270,16 @@ public:
             SEND_DEFAULT_GOSSIP_MENU(player, me);
 
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if( action == GOSSIP_ACTION_TRADE )
                 player->SEND_VENDORLIST( me->GetGUID() );
 
             return true;
-
         }
 
     };
@@ -330,8 +329,9 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if( action == GOSSIP_ACTION_INFO_DEF + 1 )
                 player->CastSpell(player,34891,true);               //(Flight through Caverns)
 
@@ -396,8 +396,9 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch (action)
             {
                 case GOSSIP_ACTION_INFO_DEF:
@@ -655,12 +656,13 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF+1) {
-                pPlayer->LearnSpell(SPELL_ULTRASAFE_TELE, false);
+                player->LearnSpell(SPELL_ULTRASAFE_TELE, false);
                 
-                pPlayer->CLOSE_GOSSIP_MENU();
+                player->CLOSE_GOSSIP_MENU();
             }
             return true;
 

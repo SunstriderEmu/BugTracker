@@ -27,48 +27,49 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
-                float x = {}, y = {}, z = {}, o = {};
-                uint32 map = 0;
-                bool loaded = false;
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+
+            float x = {}, y = {}, z = {}, o = {};
+            uint32 map = 0;
+            bool loaded = false;
             
-                QueryResult query = WorldDatabase.PQuery("SELECT position_x, position_y, position_z, orientation, map FROM game_tele WHERE name = 'duelzone'");
-                if (query) {
-                    Field* fields = query->Fetch();
-                    if(fields)
-                    {
-                        x = fields[0].GetFloat();
-                        y = fields[1].GetFloat();
-                        z = fields[2].GetFloat();
-                        o = fields[3].GetFloat();
-                        map = fields[4].GetUInt32();
-                        loaded = true;
-                    }
-                }
-            
-                if(!loaded)
+            QueryResult query = WorldDatabase.PQuery("SELECT position_x, position_y, position_z, orientation, map FROM game_tele WHERE name = 'duelzone'");
+            if (query) {
+                Field* fields = query->Fetch();
+                if(fields)
                 {
-                    TC_LOG_ERROR("scripts", "GossipSelect_npc_teleporter_pvpzone: Could not get duelzone coordinates from DB");
-                    return true;
+                    x = fields[0].GetFloat();
+                    y = fields[1].GetFloat();
+                    z = fields[2].GetFloat();
+                    o = fields[3].GetFloat();
+                    map = fields[4].GetUInt32();
+                    loaded = true;
                 }
+            }
+            
+            if(!loaded)
+            {
+                TC_LOG_ERROR("scripts", "GossipSelect_npc_teleporter_pvpzone: Could not get duelzone coordinates from DB");
+                return true;
+            }
                 
-                if (action == GOSSIP_ACTION_INFO_DEF)
+            if (action == GOSSIP_ACTION_INFO_DEF)
+            {
+                if(!map) //return to default values
                 {
-                    if(!map) //return to default values
-                    {
-                        if(pPlayer->GetTeam() == HORDE)
-                            pPlayer->TeleportTo(PVPZONE_ARRIVAL_HORDE);
-                        else
-                            pPlayer->TeleportTo(PVPZONE_ARRIVAL_ALLIANCE);
-                    } else {
-                        pPlayer->TeleportTo(map,x,y,z,o);
-                    }
-                    pPlayer->PlayerTalkClass->SendCloseGossip();
-                    return true;
+                    if(player->GetTeam() == HORDE)
+                        player->TeleportTo(PVPZONE_ARRIVAL_HORDE);
+                    else
+                        player->TeleportTo(PVPZONE_ARRIVAL_ALLIANCE);
+                } else {
+                    player->TeleportTo(map,x,y,z,o);
                 }
-                return false;
-            
+                player->PlayerTalkClass->SendCloseGossip();
+                return true;
+            }
+            return false;
         }
 
     };

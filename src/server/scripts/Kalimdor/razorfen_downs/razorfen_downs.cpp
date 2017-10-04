@@ -51,21 +51,20 @@ public:
             pPlayer->SEND_GOSSIP_MENU_TEXTID(3377, me->GetGUID());
             
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF+1)
-                pPlayer->LearnSpell(13028, false);
+                player->LearnSpell(13028, false);
             else if (action == GOSSIP_ACTION_INFO_DEF+2)
-                pPlayer->LearnSpell(3451, false);
+                player->LearnSpell(3451, false);
                 
-            pPlayer->CLOSE_GOSSIP_MENU();
+            player->CLOSE_GOSSIP_MENU();
             
             return true;
-
         }
 
     };

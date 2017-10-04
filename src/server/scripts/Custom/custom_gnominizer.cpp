@@ -18,35 +18,32 @@ public:
         {}
 
 
-        virtual bool GossipHello(Player* pPlayer) override
+        virtual bool GossipHello(Player* player) override
         {
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Se transformer en gnome mâle.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Se transformer en gnome femelle.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Se transformer en gnome mâle.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Se transformer en gnome femelle.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
 
-            pPlayer->SEND_GOSSIP_MENU_TEXTID(907, me->GetGUID());
+            player->SEND_GOSSIP_MENU_TEXTID(907, me->GetGUID());
 
             return true;
-
         }
 
-
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch(action)
             {
             case GOSSIP_ACTION_INFO_DEF:
-                pPlayer->AddAura(SPELL_ILLUSION_GNOME_MALE,pPlayer);
+                player->AddAura(SPELL_ILLUSION_GNOME_MALE, player);
                 break;
             case GOSSIP_ACTION_INFO_DEF + 1:
-                pPlayer->AddAura(SPELL_ILLUSION_GNOME_FEMALE,pPlayer);
+                player->AddAura(SPELL_ILLUSION_GNOME_FEMALE, player);
                 break;
             }
             
-            pPlayer->PlayerTalkClass->SendCloseGossip();
+            player->PlayerTalkClass->SendCloseGossip();
             return true;
-
         }
-
     };
 
     CreatureAI* GetAI(Creature* creature) const override

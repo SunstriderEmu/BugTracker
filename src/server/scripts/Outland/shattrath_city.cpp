@@ -103,8 +103,9 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if( action == GOSSIP_ACTION_INFO_DEF+1 )
             {
                 player->CLOSE_GOSSIP_MENU();
@@ -265,8 +266,9 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if( action == GOSSIP_ACTION_TRADE )
                 player->SEND_VENDORLIST( me->GetGUID() );
 
@@ -311,8 +313,9 @@ public:
             return true;
         }
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if( action == GOSSIP_ACTION_INFO_DEF+1 )
                 player->CastSpell(player,37778,false);
 
@@ -629,8 +632,9 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF+1)
             {
                 ((npc_dirty_larry::npc_dirty_larryAI*)me->AI())->Reset();
@@ -684,8 +688,9 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if(action == GOSSIP_ACTION_INFO_DEF+1)
                 player->SEND_GOSSIP_MENU_TEXTID(9458, me->GetGUID());
             else if(action == GOSSIP_ACTION_INFO_DEF+2)
@@ -745,8 +750,9 @@ public:
             return true;
         }
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch (action)
             {
                 case GOSSIP_ACTION_INFO_DEF+1:

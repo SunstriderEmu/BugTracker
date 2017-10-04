@@ -138,39 +138,40 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             //TODO translate
             switch (action)
             {
                 case GOSSIP_ACTION_INFO_DEF+1:
-                    pPlayer->CLOSE_GOSSIP_MENU();
-                    pPlayer->AreaExploredOrEventHappens(2744);
+                    player->CLOSE_GOSSIP_MENU();
+                    player->AreaExploredOrEventHappens(2744);
                     break;
 
                 case GOSSIP_ACTION_INFO_DEF+2:
-                    pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, "Continuez", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 21);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(1813, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, "Continuez", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 21);
+                    player->SEND_GOSSIP_MENU_TEXTID(1813, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+21:
-                    pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, "Je ne comprends pas", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 22);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(1814, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, "Je ne comprends pas", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 22);
+                    player->SEND_GOSSIP_MENU_TEXTID(1814, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+22:
-                    pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, "En effet", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 23);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(1815, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, "En effet", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 23);
+                    player->SEND_GOSSIP_MENU_TEXTID(1815, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+23:
-                    pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, "Je ferai ceci avec ou sans votre aide, Loramus", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 24);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(1816, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, "Je ferai ceci avec ou sans votre aide, Loramus", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 24);
+                    player->SEND_GOSSIP_MENU_TEXTID(1816, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+24:
-                    pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, "Oui", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 25);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(1817, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, "Oui", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 25);
+                    player->SEND_GOSSIP_MENU_TEXTID(1817, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+25:
-                    pPlayer->CLOSE_GOSSIP_MENU();
-                    pPlayer->AreaExploredOrEventHappens(3141);
+                    player->CLOSE_GOSSIP_MENU();
+                    player->AreaExploredOrEventHappens(3141);
                     break;
             }
             return true;
@@ -447,28 +448,27 @@ public:
         }
     
 
-        virtual bool GossipHello(Player* pPlayer) override
+        virtual bool GossipHello(Player* player) override
         {
-            if(pPlayer->GetQuestStatus(10994) != QUEST_STATUS_INCOMPLETE)
+            if(player->GetQuestStatus(10994) != QUEST_STATUS_INCOMPLETE)
                 return true;
-            pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_GET_MOONSTONE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-            pPlayer->SEND_GOSSIP_MENU_TEXTID(10811,me->GetGUID());
+            player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_GET_MOONSTONE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+            player->SEND_GOSSIP_MENU_TEXTID(10811, me->GetGUID());
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
-            if (action == GOSSIP_ACTION_INFO_DEF + 1 && pPlayer->GetQuestStatus(10994) == QUEST_STATUS_INCOMPLETE)
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            if (action == GOSSIP_ACTION_INFO_DEF + 1 && player->GetQuestStatus(10994) == QUEST_STATUS_INCOMPLETE)
             {
-                pPlayer->CLOSE_GOSSIP_MENU();
-                me->CastSpell(pPlayer, SPELL_GIVE_SOUTHFURY_MOONSTONE, true);
+                player->CLOSE_GOSSIP_MENU();
+                me->CastSpell(player, SPELL_GIVE_SOUTHFURY_MOONSTONE, true);
                 ((mob_rizzle_sprysprocket::mob_rizzle_sprysprocketAI*)me->AI())->Must_Die_Timer = 3000;
                 ((mob_rizzle_sprysprocket::mob_rizzle_sprysprocketAI*)me->AI())->Must_Die = true;
             }
             return true;
-
         }
 
     };

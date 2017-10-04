@@ -370,11 +370,12 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 uiSender, uint32 uiAction) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
-            if (uiAction == GOSSIP_ACTION_INFO_DEF + 1)
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            if (action == GOSSIP_ACTION_INFO_DEF + 1)
             {
-                pPlayer->CLOSE_GOSSIP_MENU();
+                player->CLOSE_GOSSIP_MENU();
                 if (pInstance)
                     pInstance->SetData(TYPE_NARALEX_EVENT, IN_PROGRESS);
 
@@ -384,7 +385,7 @@ public:
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                 me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
-                CAST_AI(npc_escortAI, (me->AI()))->Start(true, true, false, pPlayer->GetGUID(), me->GetEntry());
+                CAST_AI(npc_escortAI, (me->AI()))->Start(true, true, false, player->GetGUID(), me->GetEntry());
                 CAST_AI(npc_escortAI, (me->AI()))->SetDespawnAtFar(false);
                 CAST_AI(npc_escortAI, (me->AI()))->SetDespawnAtEnd(false);
             }

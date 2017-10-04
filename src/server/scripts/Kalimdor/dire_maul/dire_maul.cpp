@@ -71,20 +71,19 @@ public:
                 }
             }
             return false;
-
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF) {
-                pPlayer->CLOSE_GOSSIP_MENU();
+                player->CLOSE_GOSSIP_MENU();
                 me->SetSpeedRate(MOVE_WALK, 3);
                 me->GetMotionMaster()->MovePath(14241); //this path is PATH_TYPE_ONCE
                 return true;
             }
             return false;
-
         }
 
     };

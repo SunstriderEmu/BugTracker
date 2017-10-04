@@ -61,24 +61,23 @@ public:
 
             SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF+1)
             {
-                pPlayer->CLOSE_GOSSIP_MENU();
-                pPlayer->CastSpell(pPlayer, 45071, true);               //TaxiPath 779
+                player->CLOSE_GOSSIP_MENU();
+                player->CastSpell(player, 45071, true);               //TaxiPath 779
             }
             if (action == GOSSIP_ACTION_INFO_DEF+2)
             {
-                pPlayer->CLOSE_GOSSIP_MENU();
-                pPlayer->CastSpell(pPlayer, 45113, true);               //TaxiPath 784
+                player->CLOSE_GOSSIP_MENU();
+                player->CastSpell(player, 45113, true);               //TaxiPath 784
             }
             return true;
-
         }
 
     };
@@ -190,12 +189,13 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF+1)
             {
-                pPlayer->CLOSE_GOSSIP_MENU();
-                pPlayer->CastSpell(pPlayer, 45353, true);               //TaxiPath 788
+                player->CLOSE_GOSSIP_MENU();
+                player->CastSpell(player, 45353, true);               //TaxiPath 788
             }
             return true;
 

@@ -46,12 +46,12 @@ public:
 
             player->SEND_GOSSIP_MENU_TEXTID(4513, me->GetGUID());
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch (action)
             {
                 case GOSSIP_ACTION_INFO_DEF+1:
@@ -64,7 +64,6 @@ public:
                     break;
             }
             return true;
-
         }
 
     };
@@ -406,8 +405,9 @@ public:
             return true;
         }
 
-        bool GossipSelect(Player *player, uint32 sender, uint32 action) override
+        bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch (action)
             {
             case GOSSIP_ACTION_INFO_DEF + 1:
@@ -502,19 +502,18 @@ public:
 
             SEND_PREPARED_GOSSIP_MENU(player, me);
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF + 1)
                 player->AreaExploredOrEventHappens(4941);
                 
             player->CLOSE_GOSSIP_MENU();
                 
             return true;
-
         }
 
 

@@ -98,10 +98,11 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_TRADE)
-                pPlayer->SEND_VENDORLIST(me->GetGUID());
+                player->SEND_VENDORLIST(me->GetGUID());
             return true;
 
         }
@@ -194,29 +195,29 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch (action)
             {
                 case GOSSIP_ACTION_INFO_DEF+1:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Thank you, Tirion.  What of your identity?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(4493, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Thank you, Tirion.  What of your identity?", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+                    player->SEND_GOSSIP_MENU_TEXTID(4493, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+2:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "That is terrible.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(4494, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "That is terrible.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+                    player->SEND_GOSSIP_MENU_TEXTID(4494, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+3:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "I will, Tirion.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(4495, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "I will, Tirion.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
+                    player->SEND_GOSSIP_MENU_TEXTID(4495, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+4:
-                    pPlayer->CLOSE_GOSSIP_MENU();
-                    pPlayer->AreaExploredOrEventHappens(5742);
+                    player->CLOSE_GOSSIP_MENU();
+                    player->AreaExploredOrEventHappens(5742);
                     break;
             }
             return true;
-
         }
 
     };

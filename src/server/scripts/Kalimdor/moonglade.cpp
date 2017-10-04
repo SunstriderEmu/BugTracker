@@ -61,37 +61,35 @@ public:
                 pPlayer->SEND_GOSSIP_MENU_TEXTID(4918, me->GetGUID());
             }
             return true;
-
         }
 
-
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch(action)
             {
                 case GOSSIP_ACTION_INFO_DEF + 1:
                 {
-                    pPlayer->CLOSE_GOSSIP_MENU();
-                    if (pPlayer->GetClass() == CLASS_DRUID && pPlayer->GetTeam() == HORDE)
+                    player->CLOSE_GOSSIP_MENU();
+                    if (player->GetClass() == CLASS_DRUID && player->GetTeam() == HORDE)
                     {
                         std::vector<uint32> nodes;
 
                         nodes.resize(2);
                         nodes[0] = 63;                              // Nighthaven, Moonglade
                         nodes[1] = 22;                              // Thunder Bluff, Mulgore
-                        pPlayer->ActivateTaxiPathTo(nodes);
+                        player->ActivateTaxiPathTo(nodes);
                     }
                     break;
                 }
                 case GOSSIP_ACTION_INFO_DEF + 2:
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(5373, me->GetGUID());
+                    player->SEND_GOSSIP_MENU_TEXTID(5373, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF + 3:
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(5376, me->GetGUID());
+                    player->SEND_GOSSIP_MENU_TEXTID(5376, me->GetGUID());
                     break;
             }
             return true;
-
         }
 
     };
@@ -138,37 +136,36 @@ public:
                 pPlayer->SEND_GOSSIP_MENU_TEXTID(4718, me->GetGUID());
 
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch (action)
             {
                 case GOSSIP_ACTION_INFO_DEF:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_BEAR2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(4721, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_BEAR2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+                    player->SEND_GOSSIP_MENU_TEXTID(4721, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF + 1:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_BEAR3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(4733, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_BEAR3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+                    player->SEND_GOSSIP_MENU_TEXTID(4733, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF + 2:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_BEAR4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(4734, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_BEAR4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+                    player->SEND_GOSSIP_MENU_TEXTID(4734, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF + 3:
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(4735, me->GetGUID());
-                    if (pPlayer->GetQuestStatus(5929) == QUEST_STATUS_INCOMPLETE)
-                        pPlayer->AreaExploredOrEventHappens(5929);
-                    if (pPlayer->GetQuestStatus(5930) == QUEST_STATUS_INCOMPLETE)
-                        pPlayer->AreaExploredOrEventHappens(5930);
+                    player->SEND_GOSSIP_MENU_TEXTID(4735, me->GetGUID());
+                    if (player->GetQuestStatus(5929) == QUEST_STATUS_INCOMPLETE)
+                        player->AreaExploredOrEventHappens(5929);
+                    if (player->GetQuestStatus(5930) == QUEST_STATUS_INCOMPLETE)
+                        player->AreaExploredOrEventHappens(5930);
                     break;
             }
             
             return true;
-
         }
 
     };
@@ -223,38 +220,37 @@ public:
             }
             
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch(action)
             {
                 case GOSSIP_ACTION_INFO_DEF + 1:
                 {
-                    pPlayer->CLOSE_GOSSIP_MENU();
-                    if (pPlayer->GetClass() == CLASS_DRUID && pPlayer->GetTeam() == ALLIANCE)
+                    player->CLOSE_GOSSIP_MENU();
+                    if (player->GetClass() == CLASS_DRUID && player->GetTeam() == ALLIANCE)
                     {
                         std::vector<uint32> nodes;
 
                         nodes.resize(2);
                         nodes[0] = 62;                              // Nighthaven, Moonglade
                         nodes[1] = 27;                              // Rut'theran Village, Teldrassil
-                        pPlayer->ActivateTaxiPathTo(nodes);
+                        player->ActivateTaxiPathTo(nodes);
                     }
                     break;
                 }
                 case GOSSIP_ACTION_INFO_DEF + 2:
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(5374, me->GetGUID());
+                    player->SEND_GOSSIP_MENU_TEXTID(5374, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF + 3:
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(5375, me->GetGUID());
+                    player->SEND_GOSSIP_MENU_TEXTID(5375, me->GetGUID());
                     break;
             }
             
             return true;
-
         }
 
     };

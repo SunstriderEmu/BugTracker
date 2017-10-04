@@ -1489,7 +1489,7 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
             if(((npc_akama_illidan::npc_akama_illidanAI*)me->AI())->Phase == PHASE_READY)
                 ((npc_akama_illidan::npc_akama_illidanAI*)me->AI())->EnterPhase(PHASE_WALK); //walk to illidan and start fight

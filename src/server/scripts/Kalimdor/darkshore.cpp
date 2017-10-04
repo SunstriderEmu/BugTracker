@@ -241,32 +241,31 @@ public:
             }
         }
 
-        virtual bool GossipHello(Player* pPlayer) override
+        virtual bool GossipHello(Player* player) override
         {
-            if (pPlayer->GetQuestStatus(QUEST_GYROMAST_REV) == QUEST_STATUS_INCOMPLETE)
-                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_INSERT_KEY, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+            if (player->GetQuestStatus(QUEST_GYROMAST_REV) == QUEST_STATUS_INCOMPLETE)
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_INSERT_KEY, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-            SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
+            SEND_PREPARED_GOSSIP_MENU(player, me);
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 uiSender, uint32 uiAction) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
-            if (uiAction == GOSSIP_ACTION_INFO_DEF+1)
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            if (action == GOSSIP_ACTION_INFO_DEF+1)
             {
-                pPlayer->CLOSE_GOSSIP_MENU();
+                player->CLOSE_GOSSIP_MENU();
 
                 if (npc_threshwackonatorAI* pThreshAI = CAST_AI(npc_threshwackonator::npc_threshwackonatorAI, me->AI()))
                 {
                     DoScriptText(EMOTE_START, me);
-                    pThreshAI->StartFollow(pPlayer);
+                    pThreshAI->StartFollow(player);
                 }
             }
 
             return true;
-
         }
 
     };

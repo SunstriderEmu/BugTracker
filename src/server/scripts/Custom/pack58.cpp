@@ -42,15 +42,16 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch(action)
             {
-            case GOSSIP_ACTION_INFO_DEF+1: //alliance
-                player->TeleportTo(0, -8921.09, -119.16, 82.0, 6.0); //Northshire
+            case GOSSIP_ACTION_INFO_DEF+1: // Alliance
+                player->TeleportTo(0, -8921.09, -119.16, 82.0, 6.0); // Northshire
                 break;
-            case GOSSIP_ACTION_INFO_DEF+2: //horde
-                player->TeleportTo(1, -618.52, -4251.67, 38.72, 0); //Valley of Trials
+            case GOSSIP_ACTION_INFO_DEF+2: // Horde
+                player->TeleportTo(1, -618.52, -4251.67, 38.72, 0); // Valley of Trials
                 break;
             }       
 
@@ -175,8 +176,9 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF+1)
                 (me->AI())->message(MESSAGE_START_DUEL,player->GetGUID());
                 

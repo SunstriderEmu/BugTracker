@@ -60,17 +60,16 @@ public:
             pPlayer->SEND_GOSSIP_MENU_TEXTID(522, me->GetGUID());
 
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF)
-                pPlayer->SEND_GOSSIP_MENU_TEXTID(523, me->GetGUID());
+                player->SEND_GOSSIP_MENU_TEXTID(523, me->GetGUID());
 
             return true;
-
         }
 
     };

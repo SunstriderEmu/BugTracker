@@ -279,21 +279,20 @@ public:
 
             SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if( action == GOSSIP_ACTION_INFO_DEF )
             {
-                pPlayer->CLOSE_GOSSIP_MENU();
+                player->CLOSE_GOSSIP_MENU();
                 me->SetFaction(FACTION_MONSTER);
-                DoScriptText(ATTACK_YELL, me, pPlayer);
-                ((npc_engineer_spark_overgrind::npc_engineer_spark_overgrindAI*)me->AI())->AttackStart(pPlayer);
+                DoScriptText(ATTACK_YELL, me, player);
+                ((npc_engineer_spark_overgrind::npc_engineer_spark_overgrindAI*)me->AI())->AttackStart(player);
             }
             return true;
-
         }
 
     };
@@ -482,26 +481,25 @@ public:
             SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
 
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF)
             {
-                pPlayer->CLOSE_GOSSIP_MENU();
-                pPlayer->CastSpell(pPlayer,32474,true);               //apparently correct spell, possible not correct place to cast, or correct caster
+                player->CLOSE_GOSSIP_MENU();
+                player->CastSpell(player, 32474, true);               //apparently correct spell, possible not correct place to cast, or correct caster
 
                 std::vector<uint32> nodes;
 
                 nodes.resize(2);
                 nodes[0] = 92;                                      //from susurrus
                 nodes[1] = 91;                                      //end at exodar
-                pPlayer->ActivateTaxiPathTo(nodes/*,11686*/);            //TaxiPath 506. Using invisible model, possible Trinity must allow 0(from dbc) for cases like this.
+                player->ActivateTaxiPathTo(nodes/*,11686*/);            //TaxiPath 506. Using invisible model, possible Trinity must allow 0(from dbc) for cases like this.
             }
             return true;
-
         }
 
     };

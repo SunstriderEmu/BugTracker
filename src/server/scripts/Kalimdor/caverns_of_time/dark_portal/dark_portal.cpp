@@ -440,12 +440,13 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF+1)
             {
-                pPlayer->CLOSE_GOSSIP_MENU();
-                me->CastSpell(pPlayer,SPELL_CHRONO_BEACON,false);
+                player->CLOSE_GOSSIP_MENU();
+                me->CastSpell(player,SPELL_CHRONO_BEACON,false);
             }
             return true;
 

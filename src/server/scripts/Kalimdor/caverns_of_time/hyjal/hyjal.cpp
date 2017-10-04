@@ -79,8 +79,9 @@ public:
             return true;
         }
 
-        bool GossipSelect(Player *player, uint32 sender, uint32 action) override
+        bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch (action)
             {
             case GOSSIP_ACTION_INFO_DEF + 1:
@@ -177,8 +178,9 @@ public:
             return true;
         }
 
-        bool GossipSelect(Player *player, uint32 sender, uint32 action) override
+        bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             DeSpawnVeins();//despawn the alliance veins
             switch (action)
             {
@@ -247,8 +249,9 @@ public:
             return true;
         }
 
-        bool GossipSelect(Player *player, uint32 sender, uint32 action) override
+        bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF)
             {
                 ItemPosCountVec dest;

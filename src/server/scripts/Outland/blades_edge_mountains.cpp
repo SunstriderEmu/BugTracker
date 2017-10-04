@@ -346,19 +346,18 @@ public:
             pPlayer->SEND_GOSSIP_MENU_TEXTID(10532, me->GetGUID());
 
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF+1)
             {
-                pPlayer->SEND_GOSSIP_MENU_TEXTID(10533, me->GetGUID());
-                pPlayer->AreaExploredOrEventHappens(10682);
+                player->SEND_GOSSIP_MENU_TEXTID(10533, me->GetGUID());
+                player->AreaExploredOrEventHappens(10682);
             }
             return true;
-
         }
 
     };
@@ -400,25 +399,23 @@ public:
             pPlayer->SEND_GOSSIP_MENU_TEXTID(10794, me->GetGUID());
 
             return true;
-
         }
 
-
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch (action)
             {
                 case GOSSIP_ACTION_INFO_DEF+1:
-                    pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_SSTE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(10795, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_SSTE, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+                    player->SEND_GOSSIP_MENU_TEXTID(10795, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+2:
-                    pPlayer->TalkedToCreature(me->GetEntry(), me->GetGUID());
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(10796, me->GetGUID());
+                    player->TalkedToCreature(me->GetEntry(), me->GetGUID());
+                    player->SEND_GOSSIP_MENU_TEXTID(10796, me->GetGUID());
                     break;
             }
             return true;
-
         }
 
     };
@@ -461,25 +458,23 @@ public:
             SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
 
             return true;
-
         }
 
-
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF+1)
             {
-                pPlayer->CLOSE_GOSSIP_MENU();
+                player->CLOSE_GOSSIP_MENU();
 
                 std::vector<uint32> nodes;
 
                 nodes.resize(2);
                 nodes[0] = 172;                                     //from ogri'la
                 nodes[1] = 171;                                     //end at skettis
-                pPlayer->ActivateTaxiPathTo(nodes);                  //TaxiPath 706
+                player->ActivateTaxiPathTo(nodes);                  //TaxiPath 706
             }
             return true;
-
         }
 
     };
@@ -1225,15 +1220,16 @@ public:
             return false;
         }
 
-        bool GossipSelect(Player* pPlayer, uint32 uiSender, uint32 uiAction) override
+        bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
-            if (uiAction == GOSSIP_ACTION_INFO_DEF) {
-                // Summon trigger that will handle the event
-                if (GameObject *gDecharger = pPlayer->FindNearestGameObject(GO_RELIC_DECHARGER, 5.0f))
-                    pPlayer->SummonCreature(NPC_SIMON_BUNNY, gDecharger->GetPositionX(), gDecharger->GetPositionY(), gDecharger->GetPositionZ() + 5, pPlayer->GetOrientation(), TEMPSUMMON_MANUAL_DESPAWN, 0);
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            if (action == GOSSIP_ACTION_INFO_DEF) {
+                // Summon trigger that will player the event
+                if (GameObject *gDecharger = player->FindNearestGameObject(GO_RELIC_DECHARGER, 5.0f))
+                    player->SummonCreature(NPC_SIMON_BUNNY, gDecharger->GetPositionX(), gDecharger->GetPositionY(), gDecharger->GetPositionZ() + 5, player->GetOrientation(), TEMPSUMMON_MANUAL_DESPAWN, 0);
             }
 
-            pPlayer->CLOSE_GOSSIP_MENU();
+            player->CLOSE_GOSSIP_MENU();
 
             return true;
         }
@@ -1681,15 +1677,16 @@ public:
             return false;
         }
 
-        bool GossipSelect(Player* pPlayer, uint32 uiSender, uint32 uiAction) override
+        bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
-            if (uiAction == GOSSIP_ACTION_INFO_DEF) {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            if (action == GOSSIP_ACTION_INFO_DEF) {
                 // Summon trigger that will handle the event
-                if (GameObject *gDecharger = pPlayer->FindNearestGameObject(GO_APEXIS_DECHARGER, 5.0f))
-                    pPlayer->SummonCreature(NPC_SIMON_BUNNY_LARGE, gDecharger->GetPositionX(), gDecharger->GetPositionY(), gDecharger->GetPositionZ() + 8, pPlayer->GetOrientation(), TEMPSUMMON_MANUAL_DESPAWN, 0);
+                if (GameObject *gDecharger = player->FindNearestGameObject(GO_APEXIS_DECHARGER, 5.0f))
+                    player->SummonCreature(NPC_SIMON_BUNNY_LARGE, gDecharger->GetPositionX(), gDecharger->GetPositionY(), gDecharger->GetPositionZ() + 8, player->GetOrientation(), TEMPSUMMON_MANUAL_DESPAWN, 0);
             }
 
-            pPlayer->CLOSE_GOSSIP_MENU();
+            player->CLOSE_GOSSIP_MENU();
 
             return true;
         }
@@ -3110,8 +3107,9 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             player->CLOSE_GOSSIP_MENU();
             if (action == GOSSIP_ACTION_INFO_DEF) {
                 player->CastSpell(player, 37958, true);

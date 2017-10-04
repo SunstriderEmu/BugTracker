@@ -153,17 +153,18 @@ public:
             player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HOSTAGE1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
             SEND_PREPARED_GOSSIP_MENU(player, me);
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if(action == GOSSIP_ACTION_INFO_DEF + 1)
                 player->CLOSE_GOSSIP_MENU();
 
             if(!me->HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP))
                 return true;
+
             me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
             InstanceScript* pInstance = ((InstanceScript*)me->GetInstanceScript());
@@ -194,9 +195,7 @@ public:
                 }*/
             }
             return true;
-
         }
-
     };
 
     CreatureAI* GetAI(Creature* creature) const override
@@ -327,14 +326,14 @@ public:
             SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
             
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF+1) {
-                pPlayer->PlayerTalkClass->SendCloseGossip();
+                player->PlayerTalkClass->SendCloseGossip();
                 if (GameObject* pGo = me->FindNearestGameObject(GONG_ENTRY, 15.0f)) {
                     pGo->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_LOCKED);
                     me->SetFacingTo(5.7499);
@@ -346,13 +345,12 @@ public:
                     
                 return true;
             }
-            else if (action == GOSSIP_ACTION_INFO_DEF+2 && pPlayer->IsGameMaster()) {
-                pPlayer->PlayerTalkClass->SendCloseGossip();
+            else if (action == GOSSIP_ACTION_INFO_DEF+2 && player->IsGameMaster()) {
+                player->PlayerTalkClass->SendCloseGossip();
                 CAST_AI(npc_harrison_jones::npc_harrison_jonesAI, (me->AI()))->OpenDoorAndStartTimer();
             }
             
             return false;
-
         }
 
     };

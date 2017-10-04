@@ -214,30 +214,29 @@ public:
         {}
 
 
-        virtual bool GossipHello(Player* pPlayer) override
+        virtual bool GossipHello(Player* player) override
         {
             if (me->IsQuestGiver())
-                pPlayer->PrepareQuestMenu( me->GetGUID() );
+                player->PrepareQuestMenu( me->GetGUID() );
 
-            if( pPlayer->GetQuestStatus(558) == QUEST_STATUS_INCOMPLETE )
-                pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM_JAINA, GOSSIP_SENDER_MAIN, GOSSIP_SENDER_INFO );
+            if(player->GetQuestStatus(558) == QUEST_STATUS_INCOMPLETE )
+                player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_ITEM_JAINA, GOSSIP_SENDER_MAIN, GOSSIP_SENDER_INFO );
 
-            SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
+            SEND_PREPARED_GOSSIP_MENU(player, me);
 
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_SENDER_INFO)
             {
-                pPlayer->SEND_GOSSIP_MENU_TEXTID(7012, me->GetGUID());
-                pPlayer->CastSpell(pPlayer, 23122, false);
+                player->SEND_GOSSIP_MENU_TEXTID(7012, me->GetGUID());
+                player->CastSpell(player, 23122, false);
             }
             return true;
-
         }
 
     };
@@ -281,17 +280,16 @@ public:
                 pPlayer->SEND_GOSSIP_MENU_TEXTID(7638, me->GetGUID());
 
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_TRADE)
-                pPlayer->SEND_VENDORLIST(me->GetGUID());
+                player->SEND_VENDORLIST(me->GetGUID());
 
             return true;
-
         }
 
     };
@@ -375,31 +373,30 @@ public:
             SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
             
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* _player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = _player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF+1)
             {
                 me->Say("We'll see about this!", LANG_UNIVERSAL, nullptr);
                 me->SetFaction(FACTION_UNFRIENDLY);
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
-                me->AI()->AttackStart(pPlayer);
+                me->AI()->AttackStart(_player);
             }
             
             return true;
-
         }
 
 
-        virtual void QuestAccept(Player* playerLocal, Quest const* quest) override
+        virtual void QuestAccept(Player* _player, Quest const* quest) override
         {
             if (quest->GetQuestId() == 1173) {
                 me->SetFaction(FACTION_UNFRIENDLY);
-                me->AI()->AttackStart(playerLocal);
+                me->AI()->AttackStart(_player);
             }
         }
 
@@ -652,8 +649,9 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             player->CLOSE_GOSSIP_MENU();
 
             if (action == GOSSIP_ACTION_INFO_DEF) {

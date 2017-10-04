@@ -203,41 +203,40 @@ public:
             DoMeleeAttackIfReady();
         }
 
-        virtual bool GossipHello(Player* pPlayer) override
+        virtual bool GossipHello(Player* player) override
         {
-            if (pPlayer->GetQuestStatus(9918) == QUEST_STATUS_INCOMPLETE)
-                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HL, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+            if (player->GetQuestStatus(9918) == QUEST_STATUS_INCOMPLETE)
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HL, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
-            pPlayer->SEND_GOSSIP_MENU_TEXTID(9352, me->GetGUID());
+            player->SEND_GOSSIP_MENU_TEXTID(9352, me->GetGUID());
 
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch (action)
             {
                 case GOSSIP_ACTION_INFO_DEF:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SL1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(9353, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SL1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+                    player->SEND_GOSSIP_MENU_TEXTID(9353, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+1:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SL2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(9354, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SL2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+                    player->SEND_GOSSIP_MENU_TEXTID(9354, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+2:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SL3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(9355, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SL3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+                    player->SEND_GOSSIP_MENU_TEXTID(9355, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+3:
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(9356, me->GetGUID());
-                    pPlayer->TalkedToCreature(18354, me->GetGUID());
+                    player->SEND_GOSSIP_MENU_TEXTID(9356, me->GetGUID());
+                    player->TalkedToCreature(18354, me->GetGUID());
                     break;
             }
             return true;
-
         }
 
     };
@@ -338,55 +337,54 @@ public:
             pPlayer->SEND_GOSSIP_MENU_TEXTID(9419, me->GetGUID());
 
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch (action)
             {
                 case GOSSIP_ACTION_INFO_DEF+10:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SATS1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 11);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(9420, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SATS1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 11);
+                    player->SEND_GOSSIP_MENU_TEXTID(9420, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+11:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SATS2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 12);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(9421, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SATS2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 12);
+                    player->SEND_GOSSIP_MENU_TEXTID(9421, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+12:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SATS3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 13);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(9422, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SATS3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 13);
+                    player->SEND_GOSSIP_MENU_TEXTID(9422, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+13:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SATS4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 14);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(9423, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SATS4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 14);
+                    player->SEND_GOSSIP_MENU_TEXTID(9423, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+14:
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(9424, me->GetGUID());
+                    player->SEND_GOSSIP_MENU_TEXTID(9424, me->GetGUID());
                     break;
 
                 case GOSSIP_ACTION_INFO_DEF+20:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SATS5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 21);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(9427, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SATS5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 21);
+                    player->SEND_GOSSIP_MENU_TEXTID(9427, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+21:
-                    pPlayer->CLOSE_GOSSIP_MENU();
-                    pPlayer->AreaExploredOrEventHappens(9991);
+                    player->CLOSE_GOSSIP_MENU();
+                    player->AreaExploredOrEventHappens(9991);
                     break;
 
                 case GOSSIP_ACTION_INFO_DEF+30:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SATS6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 31);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(384, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SATS6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 31);
+                    player->SEND_GOSSIP_MENU_TEXTID(384, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+31:
-                    pPlayer->CLOSE_GOSSIP_MENU();
-                    pPlayer->AreaExploredOrEventHappens(10646);
+                    player->CLOSE_GOSSIP_MENU();
+                    player->AreaExploredOrEventHappens(10646);
                     break;
             }
             
             return true;
-
         }
 
 
@@ -470,71 +468,70 @@ public:
                 SEND_DEFAULT_GOSSIP_MENU(pPlayer, me);
 
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch (action)
             {
                 case GOSSIP_ACTION_INFO_DEF + 1:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SGG1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-                    SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SGG1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+                    SEND_PREPARED_GOSSIP_MENU(player, me);
                     break;
                 case GOSSIP_ACTION_INFO_DEF + 2:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SGG2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
-                    SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SGG2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+                    SEND_PREPARED_GOSSIP_MENU(player, me);
                     break;
                 case GOSSIP_ACTION_INFO_DEF + 3:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SGG3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
-                    SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SGG3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
+                    SEND_PREPARED_GOSSIP_MENU(player, me);
                     break;
                 case GOSSIP_ACTION_INFO_DEF + 4:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SGG4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
-                    SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SGG4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
+                    SEND_PREPARED_GOSSIP_MENU(player, me);
                     break;
                 case GOSSIP_ACTION_INFO_DEF + 5:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SGG5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6);
-                    SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SGG5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6);
+                    SEND_PREPARED_GOSSIP_MENU(player, me);
                     break;
                 case GOSSIP_ACTION_INFO_DEF + 6:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SGG6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 7);
-                    SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SGG6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 7);
+                    SEND_PREPARED_GOSSIP_MENU(player, me);
                     break;
                 case GOSSIP_ACTION_INFO_DEF + 7:
-                    pPlayer->AreaExploredOrEventHappens(10044);
-                    pPlayer->CLOSE_GOSSIP_MENU();
+                    player->AreaExploredOrEventHappens(10044);
+                    player->CLOSE_GOSSIP_MENU();
                     break;
 
                 case GOSSIP_ACTION_INFO_DEF + 10:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SGG7, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 11);
-                    SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SGG7, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 11);
+                    SEND_PREPARED_GOSSIP_MENU(player, me);
                     break;
                 case GOSSIP_ACTION_INFO_DEF + 11:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SGG8, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 12);
-                    SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SGG8, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 12);
+                    SEND_PREPARED_GOSSIP_MENU(player, me);
                     break;
                 case GOSSIP_ACTION_INFO_DEF + 12:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SGG9, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 13);
-                    SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SGG9, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 13);
+                    SEND_PREPARED_GOSSIP_MENU(player, me);
                     break;
                 case GOSSIP_ACTION_INFO_DEF + 13:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SGG10, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 14);
-                    SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SGG10, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 14);
+                    SEND_PREPARED_GOSSIP_MENU(player, me);
                     break;
                 case GOSSIP_ACTION_INFO_DEF + 14:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SGG11, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 15);
-                    SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SGG11, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 15);
+                    SEND_PREPARED_GOSSIP_MENU(player, me);
                     break;
                 case GOSSIP_ACTION_INFO_DEF + 15:
-                    pPlayer->AreaExploredOrEventHappens(10172);
-                    pPlayer->CLOSE_GOSSIP_MENU();
+                    player->AreaExploredOrEventHappens(10172);
+                    player->CLOSE_GOSSIP_MENU();
                     break;
             }
             
             return true;
-
         }
 
     };
@@ -584,52 +581,51 @@ public:
             pPlayer->SEND_GOSSIP_MENU_TEXTID(9361, me->GetGUID());
 
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch (action)
             {
                 case GOSSIP_ACTION_INFO_DEF:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SLB1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(9362, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SLB1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+                    player->SEND_GOSSIP_MENU_TEXTID(9362, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+1:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SLB2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(9363, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SLB2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+                    player->SEND_GOSSIP_MENU_TEXTID(9363, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+2:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SLB3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(9364, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SLB3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+                    player->SEND_GOSSIP_MENU_TEXTID(9364, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+3:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SLB4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(9365, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SLB4, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
+                    player->SEND_GOSSIP_MENU_TEXTID(9365, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+4:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SLB5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(9366, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SLB5, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5);
+                    player->SEND_GOSSIP_MENU_TEXTID(9366, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+5:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SLB6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(9367, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SLB6, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6);
+                    player->SEND_GOSSIP_MENU_TEXTID(9367, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+6:
-                    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SLB7, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 7);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(9368, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_SLB7, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 7);
+                    player->SEND_GOSSIP_MENU_TEXTID(9368, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+7:
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(9369, me->GetGUID());
-                    if (pPlayer->GetQuestStatus(10107) == QUEST_STATUS_INCOMPLETE)
-                        pPlayer->AreaExploredOrEventHappens(10107);
-                    if (pPlayer->GetQuestStatus(10108) == QUEST_STATUS_INCOMPLETE)
-                        pPlayer->AreaExploredOrEventHappens(10108);
+                    player->SEND_GOSSIP_MENU_TEXTID(9369, me->GetGUID());
+                    if (player->GetQuestStatus(10107) == QUEST_STATUS_INCOMPLETE)
+                        player->AreaExploredOrEventHappens(10107);
+                    if (player->GetQuestStatus(10108) == QUEST_STATUS_INCOMPLETE)
+                        player->AreaExploredOrEventHappens(10108);
                     break;
             }
             return true;
-
         }
 
     };

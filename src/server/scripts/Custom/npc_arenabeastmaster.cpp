@@ -80,59 +80,61 @@ public:
 
         }
 
-        virtual bool GossipSelect(Player* player, uint32 , uint32 type) override
+        virtual bool GossipSelect(Player* player, uint32 , uint32 gossipListId) override
         {
-                //TODO... make this use copy paste code from core, we should call the right functions
-                if(player->GetPet() || player->GetTemporaryUnsummonedPetNumber())
-                {
-                    me->Whisper("Abandon your current pet first.", LANG_UNIVERSAL, player);
-                    player->PlayerTalkClass->SendCloseGossip();
-                    return true;
-                }
-            
-                Pet* pet = new Pet(player, HUNTER_PET);
-                if(!pet)
-                    return false;
-            
-                if(!pet->CreateBaseAtCreatureEntry(getPetTypeEntry(type), me))
-                {
-                    delete pet;
-                    return false;
-                }
-            
-                pet->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, player->GetFaction());
-                pet->SetUInt64Value(UNIT_FIELD_SUMMONEDBY, player->GetGUID());
-                pet->SetUInt64Value(UNIT_FIELD_CREATEDBY, player->GetGUID());
-            
-                if(!pet->InitStatsForLevel(player->GetLevel()))
-                {
-                    delete pet;
-                    return false;
-                }
-            
-                pet->SetUInt32Value(UNIT_FIELD_LEVEL,player->GetLevel()-1);
-                pet->GetCharmInfo()->SetPetNumber(sObjectMgr->GeneratePetNumber(), true);
-                pet->AIM_Initialize();
-            
-                pet->InitPetCreateSpells();
-                pet->SetHealth(pet->GetMaxHealth());
-            
-                me->GetMap()->AddToMap(pet->ToCreature());
-            
-                // visual effect for levelup
-                pet->SetUInt32Value(UNIT_FIELD_LEVEL,player->GetLevel());
-            
-                player->SetMinion(pet, true);
-                pet->SavePetToDB(PET_SAVE_AS_CURRENT);
-                player->PetSpellInitialize();
-                 
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+
+            //TODO... make this use copy paste code from core, we should call the right functions
+            if(player->GetPet() || player->GetTemporaryUnsummonedPetNumber())
+            {
+                me->Whisper("Abandon your current pet first.", LANG_UNIVERSAL, player);
                 player->PlayerTalkClass->SendCloseGossip();
-                    
-                pet->SetLoyaltyLevel(BEST_FRIEND);
-                pet->SetPower(POWER_HAPPINESS,1050000); //maxed
-                pet->SetTP(player->GetLevel()*(pet->GetLoyaltyLevel()-1) - pet->GetDispTP()); //350 when best friend at lvl 70
-            
                 return true;
+            }
+            
+            Pet* pet = new Pet(player, HUNTER_PET);
+            if(!pet)
+                return false;
+            
+            if(!pet->CreateBaseAtCreatureEntry(getPetTypeEntry(action), me))
+            {
+                delete pet;
+                return false;
+            }
+            
+            pet->SetUInt32Value(UNIT_FIELD_FACTIONTEMPLATE, player->GetFaction());
+            pet->SetUInt64Value(UNIT_FIELD_SUMMONEDBY, player->GetGUID());
+            pet->SetUInt64Value(UNIT_FIELD_CREATEDBY, player->GetGUID());
+            
+            if(!pet->InitStatsForLevel(player->GetLevel()))
+            {
+                delete pet;
+                return false;
+            }
+            
+            pet->SetUInt32Value(UNIT_FIELD_LEVEL,player->GetLevel()-1);
+            pet->GetCharmInfo()->SetPetNumber(sObjectMgr->GeneratePetNumber(), true);
+            pet->AIM_Initialize();
+            
+            pet->InitPetCreateSpells();
+            pet->SetHealth(pet->GetMaxHealth());
+            
+            me->GetMap()->AddToMap(pet->ToCreature());
+            
+            // visual effect for levelup
+            pet->SetUInt32Value(UNIT_FIELD_LEVEL,player->GetLevel());
+            
+            player->SetMinion(pet, true);
+            pet->SavePetToDB(PET_SAVE_AS_CURRENT);
+            player->PetSpellInitialize();
+                 
+            player->PlayerTalkClass->SendCloseGossip();
+                    
+            pet->SetLoyaltyLevel(BEST_FRIEND);
+            pet->SetPower(POWER_HAPPINESS,1050000); //maxed
+            pet->SetTP(player->GetLevel()*(pet->GetLoyaltyLevel()-1) - pet->GetDispTP()); //350 when best friend at lvl 70
+            
+            return true;
             
         }
 

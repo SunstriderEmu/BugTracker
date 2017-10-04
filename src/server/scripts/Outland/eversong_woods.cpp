@@ -120,26 +120,24 @@ public:
 
             pPlayer->SEND_GOSSIP_MENU_TEXTID(8239, me->GetGUID());
             return true;
-
         }
 
-
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch(action)
             {
                 case GOSSIP_ACTION_INFO_DEF+1:
-                    pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_SELECT, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
-                    pPlayer->SEND_GOSSIP_MENU_TEXTID(8240, me->GetGUID());
+                    player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_SELECT, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+                    player->SEND_GOSSIP_MENU_TEXTID(8240, me->GetGUID());
                     break;
                 case GOSSIP_ACTION_INFO_DEF+2:
-                    pPlayer->CLOSE_GOSSIP_MENU();
+                    player->CLOSE_GOSSIP_MENU();
                     if (npc_escortAI* pEscortAI = CAST_AI(npc_prospector_anvilward::npc_prospector_anvilwardAI, (me->AI())))
-                        pEscortAI->Start(true, true, false, pPlayer->GetGUID(), me->GetEntry());
+                        pEscortAI->Start(true, true, false, player->GetGUID(), me->GetEntry());
                     break;
             }
             return true;
-
         }
 
     };

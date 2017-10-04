@@ -205,24 +205,23 @@ public:
             SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
 
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF + 1)
             {
-                pPlayer->CLOSE_GOSSIP_MENU();
-                pPlayer->CastSpell(pPlayer, 33768, true);               //TaxiPath 585 (Gateways Murket and Shaadraz)
+                player->CLOSE_GOSSIP_MENU();
+                player->CastSpell(player, 33768, true);               //TaxiPath 585 (Gateways Murket and Shaadraz)
             }
             if (action == GOSSIP_ACTION_INFO_DEF + 2)
             {
-                pPlayer->CLOSE_GOSSIP_MENU();
-                pPlayer->CastSpell(pPlayer, 35069, true);               //TaxiPath 612 (Taxi - Hellfire Peninsula - Expedition Point to Shatter Point)
+                player->CLOSE_GOSSIP_MENU();
+                player->CastSpell(player, 35069, true);               //TaxiPath 612 (Taxi - Hellfire Peninsula - Expedition Point to Shatter Point)
             }
             return true;
-
         }
 
     };
@@ -271,24 +270,23 @@ public:
             SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
 
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF + 1)
             {
-                pPlayer->CLOSE_GOSSIP_MENU();
-                pPlayer->CastSpell(pPlayer, 33899, true);               //TaxiPath 589 (Aerial Assault Flight (Alliance))
+                player->CLOSE_GOSSIP_MENU();
+                player->CastSpell(player, 33899, true);               //TaxiPath 589 (Aerial Assault Flight (Alliance))
             }
             if (action == GOSSIP_ACTION_INFO_DEF + 2)
             {
-                pPlayer->CLOSE_GOSSIP_MENU();
-                pPlayer->CastSpell(pPlayer, 35065, true);               //TaxiPath 607 (Taxi - Hellfire Peninsula - Shatter Point to Beach Head)
+                player->CLOSE_GOSSIP_MENU();
+                player->CastSpell(player, 35065, true);               //TaxiPath 607 (Taxi - Hellfire Peninsula - Shatter Point to Beach Head)
             }
             return true;
-
         }
 
     };
@@ -333,20 +331,18 @@ public:
 
             SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
             return true;
-
         }
 
-
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF+1)
             {
-                pPlayer->CLOSE_GOSSIP_MENU();
+                player->CLOSE_GOSSIP_MENU();
                 //TaxiPath 609 (3.x.x)
-                pPlayer->CastSpell(pPlayer, SPELL_TAXI_TO_SHATTERP, true);
+                player->CastSpell(player, SPELL_TAXI_TO_SHATTERP, true);
             }
             return true;
-
         }
 
     };
@@ -400,29 +396,28 @@ public:
             SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
 
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch(action)
             {
             case GOSSIP_ACTION_INFO_DEF + 1:
-                pPlayer->CLOSE_GOSSIP_MENU();
-                pPlayer->CastSpell(pPlayer,33659,true);               //TaxiPath 584 (Gateways Murket and Shaadraz)
+                player->CLOSE_GOSSIP_MENU();
+                player->CastSpell(player,33659,true);               //TaxiPath 584 (Gateways Murket and Shaadraz)
                 break;
             case GOSSIP_ACTION_INFO_DEF + 2:
-                pPlayer->CLOSE_GOSSIP_MENU();
-                pPlayer->CastSpell(pPlayer,33825,true);               //TaxiPath 587 (Aerial Assault Flight (Horde))
+                player->CLOSE_GOSSIP_MENU();
+                player->CastSpell(player,33825,true);               //TaxiPath 587 (Aerial Assault Flight (Horde))
                 break;
             case GOSSIP_ACTION_INFO_DEF + 3:
-                pPlayer->CLOSE_GOSSIP_MENU();
-                pPlayer->CastSpell(pPlayer,34578,true);               //TaxiPath 604 (Taxi - Reaver's Fall to Spinebreaker Ridge)
+                player->CLOSE_GOSSIP_MENU();
+                player->CastSpell(player,34578,true);               //TaxiPath 604 (Taxi - Reaver's Fall to Spinebreaker Ridge)
                 break;
             }
-                return true;
-
+            return true;
         }
 
     };
@@ -1174,20 +1169,19 @@ public:
             pPlayer->SEND_GOSSIP_MENU_TEXTID(GOSSIP_TEXTID_PROTECT, me->GetGUID());
 
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 uiSender, uint32 uiAction) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
-            if (uiAction == GOSSIP_ACTION_INFO_DEF + 1)
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            if (action == GOSSIP_ACTION_INFO_DEF + 1)
             {
-                pPlayer->CLOSE_GOSSIP_MENU();
-                me->CastSpell(pPlayer, SPELL_DEMONIAC_VISITATION, false);
+                player->CLOSE_GOSSIP_MENU();
+                me->CastSpell(player, SPELL_DEMONIAC_VISITATION, false);
             }
 
             return true;
-
         }
 
     };
@@ -1754,20 +1748,19 @@ public:
             SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
 
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 uiSender, uint32 uiAction) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
-            if (uiAction == GOSSIP_ACTION_INFO_DEF+1)
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            if (action == GOSSIP_ACTION_INFO_DEF+1)
             {
                 ((npc_anchorite_barada::npc_anchorite_baradaAI*)me->AI())->Exorcim = true;
-                pPlayer->CLOSE_GOSSIP_MENU();
+                player->CLOSE_GOSSIP_MENU();
             }
 
             return true;
-
         }
 
     };

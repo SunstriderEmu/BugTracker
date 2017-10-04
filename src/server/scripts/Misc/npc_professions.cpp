@@ -399,8 +399,10 @@ public:
 
         }
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
             switch(sender)
             {
                 case GOSSIP_SENDER_MAIN:    SendActionMenu_npc_prof_alchemy(player, me, action); break;
@@ -639,8 +641,10 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
             switch(sender)
             {
                 case GOSSIP_SENDER_MAIN:    SendActionMenu_npc_prof_blacksmith(player, me, action); break;
@@ -955,8 +959,10 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
             switch(sender)
             {
                 case GOSSIP_SENDER_MAIN:    SendActionMenu_npc_prof_leather(player, me, action); break;
@@ -1165,8 +1171,10 @@ public:
         }
 
 
-        virtual bool GossipSelect(Player* player, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
             switch(sender)
             {
                 case GOSSIP_SENDER_MAIN:    SendActionMenu_npc_prof_tailor(player, me, action); break;

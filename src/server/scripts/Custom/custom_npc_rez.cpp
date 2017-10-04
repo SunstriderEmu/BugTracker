@@ -30,22 +30,21 @@ public:
             
             pPlayer->SEND_GOSSIP_MENU_TEXTID(907, me->GetGUID());
             return true;
-
         }
 
 
-        virtual bool GossipSelect(Player* pPlayer, uint32 sender, uint32 action) override
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF+1) {
-                pPlayer->ResurrectPlayer(1.0f);
-                pPlayer->SpawnCorpseBones();
-                pPlayer->PlayerTalkClass->SendCloseGossip();
+                player->ResurrectPlayer(1.0f);
+                player->SpawnCorpseBones();
+                player->PlayerTalkClass->SendCloseGossip();
                 
                 return true;
             }
             
             return false;
-
         }
 
     };
