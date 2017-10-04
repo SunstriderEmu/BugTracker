@@ -169,7 +169,6 @@ public:
 
         }
 
-
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
@@ -198,11 +197,10 @@ public:
                 // TODO: start fight
                 break;
             }
+            player->CLOSE_GOSSIP_MENU();
             
             return true;
-
         }
-
     };
 
     CreatureAI* GetAI(Creature* creature) const override

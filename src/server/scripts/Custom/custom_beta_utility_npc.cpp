@@ -60,7 +60,7 @@ public:
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
-            player->PlayerTalkClass->ClearMenus();
+            ClearGossipMenuFor(player);
             switch (sender)
             {
             case MENU_EQUIPMENT:

@@ -68,9 +68,7 @@ public:
             SEND_PREPARED_GOSSIP_MENU(player, me);
 
             return true;
-
         }
-
 
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
@@ -134,9 +132,7 @@ public:
                 player->TalkedToCreature(me->GetEntry(), me->GetGUID());
             }
             return true;
-
         }
-
     };
 
     CreatureAI* GetAI(Creature* creature) const override
@@ -267,12 +263,11 @@ public:
             player->SEND_GOSSIP_MENU_TEXTID(9226,me->GetGUID());
 
             return true;
-
         }
-
 
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            ClearGossipMenuFor(player);
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch (action)
             {
@@ -302,9 +297,7 @@ public:
                 }
             }
             return true;
-
         }
-
     };
 
     CreatureAI* GetAI(Creature* creature) const override

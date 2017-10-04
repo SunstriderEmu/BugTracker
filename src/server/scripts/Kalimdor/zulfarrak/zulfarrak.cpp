@@ -194,16 +194,15 @@ public:
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF+1) {
-                player->CLOSE_GOSSIP_MENU();
                 CAST_AI(npc_sergeant_bly::npc_sergeant_blyAI,me->AI())->gossipPlayerGUID = player->GetGUID();
                 CAST_AI(npc_sergeant_bly::npc_sergeant_blyAI,me->AI())->DoAction(0);
             }
             else if (action == GOSSIP_ACTION_INFO_DEF+2) {
-                player->CLOSE_GOSSIP_MENU();
                 CAST_AI(npc_sergeant_bly::npc_sergeant_blyAI,me->AI())->gossipPlayerGUID = player->GetGUID();
                 CAST_AI(npc_sergeant_bly::npc_sergeant_blyAI,me->AI())->DoAction(0);
             }
 
+            player->CLOSE_GOSSIP_MENU();
             return true;
 
         }

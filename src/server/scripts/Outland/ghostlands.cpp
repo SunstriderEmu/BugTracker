@@ -56,10 +56,8 @@ public:
                 pPlayer->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_H_BKD, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
             SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
-
             return true;
         }
-
 
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
@@ -71,12 +69,11 @@ public:
                 if (msg == EQUIP_ERR_OK)
                 {
                     player->StoreNewItem( dest, 24226, 1, true);
-                    player->PlayerTalkClass->ClearMenus();
+                    ClearGossipMenuFor(player);
                 }
             }
             return true;
         }
-
     };
 
     CreatureAI* GetAI(Creature* creature) const override
@@ -176,6 +173,7 @@ public:
 
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            ClearGossipMenuFor(player);
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_TRADE)
                 player->SEND_VENDORLIST(me->GetGUID());

@@ -710,9 +710,7 @@ public:
             SEND_PREPARED_GOSSIP_MENU(player, me);
 
             return true;
-
         }
-
 
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
@@ -729,9 +727,7 @@ public:
                 player->ActivateTaxiPathTo(nodes);                  //TaxiPath 627 (possibly 627+628(152->153->154->155) )
             }
             return true;
-
         }
-
     };
 
     CreatureAI* GetAI(Creature* creature) const override
@@ -777,9 +773,7 @@ public:
             SEND_PREPARED_GOSSIP_MENU(player, me);
 
             return true;
-
         }
-
 
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
@@ -791,7 +785,6 @@ public:
             }
 
             return true;
-
         }
 
 
@@ -843,12 +836,11 @@ public:
             SEND_PREPARED_GOSSIP_MENU(player, me);
 
             return true;
-
         }
-
 
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            ClearGossipMenuFor(player);
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF)
             {
@@ -856,9 +848,7 @@ public:
                 player->CastSpell(player,34905,true);               //TaxiPath 606
             }
             return true;
-
         }
-
     };
 
     CreatureAI* GetAI(Creature* creature) const override

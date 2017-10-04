@@ -256,6 +256,7 @@ public:
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
+            ClearGossipMenuFor(player);
             if (sender == GOSSIP_SENDER_MAIN)
                 SendDefaultMenu_custom_example(player, me, action);
 

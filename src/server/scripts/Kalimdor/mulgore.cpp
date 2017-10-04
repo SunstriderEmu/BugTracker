@@ -66,6 +66,7 @@ public:
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            ClearGossipMenuFor(player);
             if (action == GOSSIP_ACTION_INFO_DEF)
                 player->SEND_GOSSIP_MENU_TEXTID(523, me->GetGUID());
 

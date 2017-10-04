@@ -765,6 +765,7 @@ public:
 
                 me->SetDeathState(JUST_DIED);
             }
+            player->CLOSE_GOSSIP_MENU();
 
             return true;
 

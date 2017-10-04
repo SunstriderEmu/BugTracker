@@ -27,19 +27,17 @@ public:
         npc_lotteryAI(Creature* creature) : ScriptedAI(creature)
         {}
 
-
-        virtual bool GossipHello(Player* pPlayer) override
+        virtual bool GossipHello(Player* player) override
         {
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Je m'inscris à la loterie.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Je m'inscris à la loterie.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
             
-            if (pPlayer->IsGameMaster())
-                pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Lancer le tirage au sort", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+            if (player->IsGameMaster())
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Lancer le tirage au sort", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
                 
-            pPlayer->SEND_GOSSIP_MENU_TEXTID(43, me->GetGUID());
+            player->SEND_GOSSIP_MENU_TEXTID(43, me->GetGUID());
 
             return true;
         }
-
 
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
@@ -63,13 +61,16 @@ public:
                 }
                 break;
             case GOSSIP_ACTION_INFO_DEF+1:
+                if (!player->IsGameMaster())
+                    return true;
+
                 uint32 winner;
                 QueryResult result = CharacterDatabase.PQuery("SELECT DISTINCT guid FROM lottery ORDER BY RAND() LIMIT 10", HORDE);
                 if (!result)
                     break;
                     
                 std::ostringstream oss;
-                std::string winner_str;
+                std::string winner_str = "<>";
                 
                 uint32 num = 1;
                     
@@ -91,7 +92,6 @@ public:
             
             return true;
         }
-
     };
 
     CreatureAI* GetAI(Creature* creature) const override

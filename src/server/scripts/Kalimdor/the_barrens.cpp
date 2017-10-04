@@ -65,7 +65,9 @@ public:
 
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            ClearGossipMenuFor(player);
             if(action == GOSSIP_ACTION_INFO_DEF +1)
             {
                 player->SEND_GOSSIP_MENU_TEXTID(3558, me->GetGUID());
@@ -226,6 +228,7 @@ public:
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            ClearGossipMenuFor(player);
             if(action == GOSSIP_ACTION_INFO_DEF)
             {
                 player->SEND_GOSSIP_MENU_TEXTID(2013, me->GetGUID());
@@ -1014,20 +1017,19 @@ public:
             SEND_PREPARED_GOSSIP_MENU(player, me);
             
             return true;
-
         }
-
 
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF)
+            {
                 ((npc_regthar_deathgate::npc_regthar_deathgateAI*)me->AI())->StartEvent(player->GetGUID());
+                player->CLOSE_GOSSIP_MENU();
+            }
                 
             return true;
-
         }
-
 
         virtual void QuestAccept(Player* player, Quest const* quest) override
         {

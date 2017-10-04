@@ -333,7 +333,6 @@ public:
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF+1) {
-                player->PlayerTalkClass->SendCloseGossip();
                 if (GameObject* pGo = me->FindNearestGameObject(GONG_ENTRY, 15.0f)) {
                     pGo->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_LOCKED);
                     me->SetFacingTo(5.7499);
@@ -346,9 +345,9 @@ public:
                 return true;
             }
             else if (action == GOSSIP_ACTION_INFO_DEF+2 && player->IsGameMaster()) {
-                player->PlayerTalkClass->SendCloseGossip();
                 CAST_AI(npc_harrison_jones::npc_harrison_jonesAI, (me->AI()))->OpenDoorAndStartTimer();
             }
+            player->PlayerTalkClass->SendCloseGossip();
             
             return false;
         }

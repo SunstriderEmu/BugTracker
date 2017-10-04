@@ -231,6 +231,7 @@ public:
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            ClearGossipMenuFor(player);
             if (action == GOSSIP_SENDER_INFO)
             {
                 player->SEND_GOSSIP_MENU_TEXTID(7012, me->GetGUID());
@@ -286,6 +287,7 @@ public:
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            ClearGossipMenuFor(player);
             if (action == GOSSIP_ACTION_TRADE)
                 player->SEND_VENDORLIST(me->GetGUID());
 
@@ -386,6 +388,8 @@ public:
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                 me->AI()->AttackStart(_player);
+                player->CLOSE_GOSSIP_MENU();
+
             }
             
             return true;

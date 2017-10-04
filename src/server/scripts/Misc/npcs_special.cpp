@@ -805,10 +805,10 @@ public:
             return true;
         }
 
-
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            ClearGossipMenuFor(player);
             if (action == GOSSIP_ACTION_TRADE)
                 player->SEND_VENDORLIST( me->GetGUID() );
 
@@ -868,6 +868,7 @@ public:
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            ClearGossipMenuFor(player);
             switch( action )
             {
                 case GOSSIP_ACTION_INFO_DEF+1:
@@ -952,6 +953,7 @@ public:
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
+            ClearGossipMenuFor(player);
             switch(sender)
             {
                 case GOSSIP_SENDER_MAIN:

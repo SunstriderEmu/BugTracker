@@ -966,13 +966,12 @@ public:
 
             player->SEND_GOSSIP_MENU_TEXTID(TEXT_HELLO,me->GetGUID());
             return true;
-
         }
-
 
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            ClearGossipMenuFor(player);
             switch (action)
             {
                 case GOSSIP_ACTION_INFO_DEF+1:
@@ -993,7 +992,6 @@ public:
             }
 
             return true;
-
         }
 
     };
@@ -1044,6 +1042,7 @@ public:
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            ClearGossipMenuFor(player);
             switch (action) {
             case GOSSIP_ACTION_INFO_DEF + 1:
                 player->TeleportTo(580, 1703.977051, 928.625610, 53.077671, 4.748818);

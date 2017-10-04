@@ -73,21 +73,18 @@ public:
             return true;
         }
 
-
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF+1)
             {
-                player->CLOSE_GOSSIP_MENU();
                 me->CastSpell(player,6766,false);
-
             }
             if (action == GOSSIP_ACTION_INFO_DEF+2)
             {
-                player->CLOSE_GOSSIP_MENU();
                 player->AreaExploredOrEventHappens(6627);
             }
+            player->CLOSE_GOSSIP_MENU();
             return true;
         }
 

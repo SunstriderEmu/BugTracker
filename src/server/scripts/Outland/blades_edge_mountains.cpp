@@ -404,6 +404,7 @@ public:
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            ClearGossipMenuFor(player);
             switch (action)
             {
                 case GOSSIP_ACTION_INFO_DEF+1:
@@ -1687,7 +1688,6 @@ public:
             }
 
             player->CLOSE_GOSSIP_MENU();
-
             return true;
         }
     };
@@ -3103,9 +3103,7 @@ public:
             SEND_PREPARED_GOSSIP_MENU(player, me);
 
             return true;
-
         }
-
 
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
@@ -3125,7 +3123,6 @@ public:
             }
 
             return true;
-
         }
 
     };

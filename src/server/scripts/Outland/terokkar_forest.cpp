@@ -376,6 +376,7 @@ public:
 
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
+            ClearGossipMenuFor(player);
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if( action == GOSSIP_ACTION_INFO_DEF )
             {
@@ -390,9 +391,7 @@ public:
                 ((npc_floon::npc_floonAI*)me->AI())->AttackStart(player);
             }
             return true;
-
         }
-
     };
 
     CreatureAI* GetAI(Creature* creature) const override
@@ -882,9 +881,7 @@ public:
             SEND_PREPARED_GOSSIP_MENU(player, me);
             
             return true;
-
         }
-
 
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
@@ -898,11 +895,8 @@ public:
             }
             
             player->CLOSE_GOSSIP_MENU();
-
             return true;
-
         }
-
     };
 
     CreatureAI* GetAI(Creature* creature) const override

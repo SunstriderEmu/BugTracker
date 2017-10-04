@@ -125,6 +125,7 @@ public:
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
+            ClearGossipMenuFor(player);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_azuremyst(player, me, action); break;
@@ -324,6 +325,7 @@ public:
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
+            ClearGossipMenuFor(player);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_bluffwatcher(player, me, action); break;
@@ -557,6 +559,7 @@ public:
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
+            ClearGossipMenuFor(player);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_darnassus(player, me, action); break;
@@ -765,6 +768,7 @@ public:
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
+            ClearGossipMenuFor(player);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_dunmorogh(player, me, action); break;
@@ -946,6 +950,7 @@ public:
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
+            ClearGossipMenuFor(player);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_durotar(player, me, action); break;
@@ -1126,6 +1131,7 @@ public:
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
+            ClearGossipMenuFor(player);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_elwynnforest(player, me, action); break;
@@ -1313,6 +1319,7 @@ public:
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
+            ClearGossipMenuFor(player);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_eversong(player, me, action); break;
@@ -1498,6 +1505,7 @@ public:
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
+            ClearGossipMenuFor(player);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_exodar(player, me, action); break;
@@ -1748,6 +1756,7 @@ public:
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
+            ClearGossipMenuFor(player);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_ironforge(player, me, action); break;
@@ -1985,6 +1994,7 @@ public:
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
+            ClearGossipMenuFor(player);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_mulgore(player, me, action); break;
@@ -2150,6 +2160,7 @@ public:
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
+            ClearGossipMenuFor(player);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_orgrimmar(player, me, action); break;
@@ -2403,6 +2414,7 @@ public:
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
+            ClearGossipMenuFor(player);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:              SendDefaultMenu_guard_shattrath(player, me, action); break;
@@ -2718,6 +2730,7 @@ public:
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
+            ClearGossipMenuFor(player);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_shattrath_aldor(player, me, action); break;
@@ -2919,6 +2932,7 @@ public:
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
+            ClearGossipMenuFor(player);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_shattrath_scryer(player, me, action); break;
@@ -3070,6 +3084,7 @@ public:
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
+            ClearGossipMenuFor(player);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:                SendDefaultMenu_guard_silvermoon(player, me, action); break;
@@ -3352,6 +3367,7 @@ public:
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
+            ClearGossipMenuFor(player);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_stormwind(player, me, action); break;
@@ -3608,6 +3624,7 @@ public:
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
+            ClearGossipMenuFor(player);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_teldrassil(player, me, action); break;
@@ -3767,6 +3784,7 @@ public:
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
+            ClearGossipMenuFor(player);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_tirisfal(player, me, action); break;
@@ -3943,6 +3961,7 @@ public:
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
+            ClearGossipMenuFor(player);
             switch (sender)
             {
                 case GOSSIP_SENDER_MAIN:            SendDefaultMenu_guard_undercity(player, me, action); break;

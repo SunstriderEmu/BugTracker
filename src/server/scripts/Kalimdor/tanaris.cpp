@@ -272,16 +272,15 @@ public:
             return true;
         }
 
-
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            ClearGossipMenuFor(player);
             if( action == GOSSIP_ACTION_TRADE )
                 player->SEND_VENDORLIST( me->GetGUID() );
 
             return true;
         }
-
     };
 
     CreatureAI* GetAI(Creature* creature) const override
@@ -392,13 +391,12 @@ public:
             player->SEND_GOSSIP_MENU_TEXTID(1674, me->GetGUID());
 
             return true;
-
         }
-
 
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            ClearGossipMenuFor(player);
             switch (action)
             {
                 case GOSSIP_ACTION_INFO_DEF:
@@ -427,9 +425,7 @@ public:
                     break;
             }
             return true;
-
         }
-
     };
 
     CreatureAI* GetAI(Creature* creature) const override

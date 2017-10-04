@@ -78,9 +78,7 @@ public:
             player->TalkedToCreature(me->GetEntry(),me->GetGUID());
             SEND_PREPARED_GOSSIP_MENU(player, me);
             return true;
-
         }
-
 
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
@@ -133,9 +131,7 @@ public:
                 return true;                                        // prevent Trinity core handling
             }
             return false;                                           // the player didn't select "trick or treat" or cheated, normal core handling
-
         }
-
     };
 
     CreatureAI* GetAI(Creature* creature) const override

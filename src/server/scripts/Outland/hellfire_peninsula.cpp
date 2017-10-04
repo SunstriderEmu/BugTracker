@@ -213,14 +213,13 @@ public:
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF + 1)
             {
-                player->CLOSE_GOSSIP_MENU();
                 player->CastSpell(player, 33768, true);               //TaxiPath 585 (Gateways Murket and Shaadraz)
             }
             if (action == GOSSIP_ACTION_INFO_DEF + 2)
             {
-                player->CLOSE_GOSSIP_MENU();
                 player->CastSpell(player, 35069, true);               //TaxiPath 612 (Taxi - Hellfire Peninsula - Expedition Point to Shatter Point)
             }
+            player->CLOSE_GOSSIP_MENU();
             return true;
         }
 
@@ -278,14 +277,13 @@ public:
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF + 1)
             {
-                player->CLOSE_GOSSIP_MENU();
                 player->CastSpell(player, 33899, true);               //TaxiPath 589 (Aerial Assault Flight (Alliance))
             }
             if (action == GOSSIP_ACTION_INFO_DEF + 2)
             {
-                player->CLOSE_GOSSIP_MENU();
                 player->CastSpell(player, 35065, true);               //TaxiPath 607 (Taxi - Hellfire Peninsula - Shatter Point to Beach Head)
             }
+            player->CLOSE_GOSSIP_MENU();
             return true;
         }
 
@@ -405,18 +403,16 @@ public:
             switch(action)
             {
             case GOSSIP_ACTION_INFO_DEF + 1:
-                player->CLOSE_GOSSIP_MENU();
                 player->CastSpell(player,33659,true);               //TaxiPath 584 (Gateways Murket and Shaadraz)
                 break;
             case GOSSIP_ACTION_INFO_DEF + 2:
-                player->CLOSE_GOSSIP_MENU();
                 player->CastSpell(player,33825,true);               //TaxiPath 587 (Aerial Assault Flight (Horde))
                 break;
             case GOSSIP_ACTION_INFO_DEF + 3:
-                player->CLOSE_GOSSIP_MENU();
                 player->CastSpell(player,34578,true);               //TaxiPath 604 (Taxi - Reaver's Fall to Spinebreaker Ridge)
                 break;
             }
+            player->CLOSE_GOSSIP_MENU();
             return true;
         }
 
