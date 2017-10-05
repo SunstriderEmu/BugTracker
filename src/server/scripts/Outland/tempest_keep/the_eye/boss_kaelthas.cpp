@@ -527,7 +527,7 @@ public:
     
             if(pInstance && Phase)
             {
-                if(pInstance->GetData(DATA_KAELTHASEVENT) == IN_PROGRESS && me->getThreatManager().getThreatList().empty())
+                if(pInstance->GetData(DATA_KAELTHASEVENT) == IN_PROGRESS && me->GetThreatManager().getThreatList().empty())
                 {
                     EnterEvadeMode();
                     return;
@@ -837,7 +837,7 @@ public:
     
                         if (MindControl_Timer < diff)
                         {
-                            if (me->getThreatManager().getThreatList().size() >= 2)
+                            if (me->GetThreatManager().getThreatList().size() >= 2)
                             for (uint32 i = 0; i < 3; i++)
                             {
     
@@ -934,7 +934,7 @@ public:
                         //GravityLapse_Timer
                         if(GravityLapse_Timer < diff)
                         {
-                            std::list<HostileReference*>::iterator i = me->getThreatManager().getThreatList().begin();
+                            std::list<HostileReference*>::iterator i = me->GetThreatManager().getThreatList().begin();
                             switch(GravityLapse_Phase)
                             {
                                 case 0:
@@ -942,7 +942,7 @@ public:
                                     me->GetMotionMaster()->MoveIdle();
                                     DoTeleportTo(GRAVITY_X, GRAVITY_Y, GRAVITY_Z);
                                     // 1) Kael'thas will portal the whole raid right into his body
-                                    for (i = me->getThreatManager().getThreatList().begin(); i!= me->getThreatManager().getThreatList().end();)
+                                    for (i = me->GetThreatManager().getThreatList().begin(); i!= me->GetThreatManager().getThreatList().end();)
                                     {
                                         Unit* pUnit = ObjectAccessor::GetUnit((*me), (*i)->getUnitGuid());
                                         ++i;
@@ -967,7 +967,7 @@ public:
                                     }
     
                                     // 2) At that point he will put a Gravity Lapse debuff on everyone
-                                    for (i = me->getThreatManager().getThreatList().begin(); i!= me->getThreatManager().getThreatList().end();)
+                                    for (i = me->GetThreatManager().getThreatList().begin(); i!= me->GetThreatManager().getThreatList().end();)
                                     {
                                         Unit* pUnit = ObjectAccessor::GetUnit((*me), (*i)->getUnitGuid());
                                         ++i;
@@ -1002,7 +1002,7 @@ public:
     
                                 case 3:
                                     //Remove flight
-                                    for (i = me->getThreatManager().getThreatList().begin(); i!= me->getThreatManager().getThreatList().end();)
+                                    for (i = me->GetThreatManager().getThreatList().begin(); i!= me->GetThreatManager().getThreatList().end();)
                                     {
                                         Unit* pUnit = ObjectAccessor::GetUnit((*me), (*i)->getUnitGuid());
                                         ++i;
@@ -1338,7 +1338,7 @@ public:
             {
                 bool InMeleeRange = false;
                 Unit *target = NULL;
-                std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
+                std::list<HostileReference*>& m_threatlist = me->GetThreatManager().getThreatList();
                 for (std::list<HostileReference*>::iterator i = m_threatlist.begin(); i!= m_threatlist.end();++i)
                 {
                     Unit* pUnit = ObjectAccessor::GetUnit((*me), (*i)->getUnitGuid());
@@ -1567,7 +1567,7 @@ public:
                 if(pInstance)//check for boss reset
                 {
                     Creature* Kael = ObjectAccessor::GetCreature((*me), pInstance->GetData64(DATA_KAELTHAS));
-                    if (Kael && Kael->getThreatManager().getThreatList().empty())
+                    if (Kael && Kael->GetThreatManager().getThreatList().empty())
                     {
                         egg = false;
                         me->DealDamage(me, me->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);

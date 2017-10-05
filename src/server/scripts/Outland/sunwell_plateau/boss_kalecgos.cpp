@@ -371,7 +371,7 @@ public:
         
         void DeleteFromThreatList(uint64 TargetGUID)
         {
-            for(auto & itr : me->getThreatManager().getThreatList())
+            for(auto & itr : me->GetThreatManager().getThreatList())
             {
                 if(itr->getUnitGuid() == TargetGUID)
                 {
@@ -525,7 +525,7 @@ public:
         
         void DeleteFromThreatList(uint64 TargetGUID)
         {
-            for(auto & itr : me->getThreatManager().getThreatList())
+            for(auto & itr : me->GetThreatManager().getThreatList())
             {
                 if(itr->getUnitGuid() == TargetGUID)
                 {
@@ -610,7 +610,7 @@ public:
             {
                 if (( me->GetVictim()->HasAuraEffect(AURA_SPECTRAL_EXHAUSTION)) && (me->GetVictim()->GetTypeId() == TYPEID_PLAYER))
                 {
-                    for(auto & itr : me->getThreatManager().getThreatList())
+                    for(auto & itr : me->GetThreatManager().getThreatList())
                     {
                         if((itr->getUnitGuid()) ==  (me->GetVictim()->GetGUID()))
                         {

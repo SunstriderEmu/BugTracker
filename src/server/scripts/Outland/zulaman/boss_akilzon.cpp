@@ -392,7 +392,7 @@ public:
                 TargetGUID = target->GetGUID();
                 me->CastSpell(target, SPELL_STATIC_DISRUPTION, false);
                 /*Unit *target = NULL;
-                std::list<HostileReference *> t_list = me->getThreatManager().getThreatList();
+                std::list<HostileReference *> t_list = me->GetThreatManager().getThreatList();
                 for(std::list<HostileReference *>::iterator itr = t_list.begin(); itr!= t_list.end(); ++itr) {
                     target = ObjectAccessor::GetUnit(*me, (*itr)->getUnitGuid());
                     if (target && (target->GetTypeId() == TYPEID_PLAYER || ((Creature*)target)->IsPet()) && !((Creature*)target)->IsTotem() && target->GetDistance2d(me) <= 12 && target != me->GetVictim())

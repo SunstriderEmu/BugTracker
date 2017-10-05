@@ -294,7 +294,7 @@ public:
                     Unit *victim = nullptr;
                     victim = ObjectAccessor::GetUnit(*me, pInstance->GetData64(DATA_LEOTHERAS_EVENT_STARTER));
                     if(victim)
-                        me->getThreatManager().addThreat(victim, 1);
+                        me->GetThreatManager().addThreat(victim, 1);
                     StartEvent();
                 }
             }
@@ -507,7 +507,7 @@ public:
                 //Summon Inner Demon
                 if(InnerDemons_Timer < diff)
                 {
-                    std::list<HostileReference *>& ThreatList = me->getThreatManager().getThreatList();
+                    std::list<HostileReference *>& ThreatList = me->GetThreatManager().getThreatList();
                     std::vector<Unit *> TargetList;
                     for(auto & itr : ThreatList)
                     {

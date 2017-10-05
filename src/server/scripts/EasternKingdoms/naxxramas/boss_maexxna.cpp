@@ -144,7 +144,7 @@ public:
     
         void DoCastWebWrap()
         {
-            std::list<HostileReference *> t_list = me->getThreatManager().getThreatList();
+            std::list<HostileReference *> t_list = me->GetThreatManager().getThreatList();
             std::vector<Unit *> targets;
     
             //This spell doesn't work if we only have 1 player on threat list

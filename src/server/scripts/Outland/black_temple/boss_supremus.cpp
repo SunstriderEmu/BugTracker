@@ -125,7 +125,7 @@ public:
             uint32 maxhealthfound = 0;
             Player* target = nullptr;
     
-            auto& m_threatlist = me->getThreatManager().getThreatList();
+            auto& m_threatlist = me->GetThreatManager().getThreatList();
             for (auto i : m_threatlist)
             {
                 if(!IS_PLAYER_GUID(i->getUnitGuid()))

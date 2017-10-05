@@ -99,9 +99,9 @@ public:
                 uint32 MostHP = 0;
                 Unit* pMostHPTarget = nullptr;
                 Unit* pTemp = nullptr;
-                auto i = me->getThreatManager().getThreatList().begin();
+                auto i = me->GetThreatManager().getThreatList().begin();
     
-                for (i = me->getThreatManager().getThreatList().begin(); i!=me->getThreatManager().getThreatList().end();)
+                for (i = me->GetThreatManager().getThreatList().begin(); i!=me->GetThreatManager().getThreatList().end();)
                 {
                     pTemp = ObjectAccessor::GetUnit((*me),(*i)->getUnitGuid());
                     ++i;

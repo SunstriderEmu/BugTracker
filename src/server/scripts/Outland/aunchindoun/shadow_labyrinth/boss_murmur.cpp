@@ -126,7 +126,7 @@ public:
                 // Thundering Storm
                 if(ThunderingStorm_Timer < diff)
                 {
-                    std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
+                    std::list<HostileReference*>& m_threatlist = me->GetThreatManager().getThreatList();
                     for(auto & i : m_threatlist)
                         if(Unit* target = ObjectAccessor::GetUnit((*me),i->getUnitGuid()))
                             if(target->IsAlive() && me->GetDistance2d(target) > 35)
@@ -149,7 +149,7 @@ public:
                 return;
             if(!me->IsWithinMeleeRange(me->GetVictim()))
             {
-                std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
+                std::list<HostileReference*>& m_threatlist = me->GetThreatManager().getThreatList();
                 for(auto & i : m_threatlist)
                     if(Unit* target = ObjectAccessor::GetUnit((*me),i->getUnitGuid()))
                         if(target->IsAlive() && me->IsWithinMeleeRange(target))

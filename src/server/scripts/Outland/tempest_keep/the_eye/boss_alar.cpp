@@ -295,7 +295,7 @@ public:
     
             if(Phase1)
             {
-                if(me->getThreatManager().getThreatList().empty())
+                if(me->GetThreatManager().getThreatList().empty())
                 {
                     EnterEvadeMode();
                     return;

@@ -501,7 +501,7 @@ public:
 
         void DeleteFromThreatList(uint64 TargetGUID)
         {
-            for (auto & itr : me->getThreatManager().getThreatList())
+            for (auto & itr : me->GetThreatManager().getThreatList())
             {
                 if (itr->getUnitGuid() == TargetGUID)
                 {
@@ -705,7 +705,7 @@ public:
             if (me->GetVictim() && (me->GetVictim()->GetEntry() == AKAMA || me->GetVictim()->GetEntry() == MAIEV_SHADOWSONG))
             {
                 //Reset if no other targets
-                if (me->getThreatManager().getThreatList().size() == 1)
+                if (me->GetThreatManager().getThreatList().size() == 1)
                 {
                     EnterEvadeMode();
                     return;
@@ -1061,7 +1061,7 @@ public:
     
         void KillAllElites()
         {
-            std::list<HostileReference*>& threatList = me->getThreatManager().getThreatList();
+            std::list<HostileReference*>& threatList = me->GetThreatManager().getThreatList();
             std::vector<Unit*> eliteList;
             for(auto & itr : threatList)
             {

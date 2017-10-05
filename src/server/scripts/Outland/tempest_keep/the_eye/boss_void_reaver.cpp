@@ -97,7 +97,7 @@ public:
                     //cast Pounding on ALL the players in ThreatList that are <= 18 yards from Void Reaver
                     //I hope it won't cause freezes...
                     Unit *target = nullptr;
-                    std::list<HostileReference *> t_list = me->getThreatManager().getThreatList();
+                    std::list<HostileReference *> t_list = me->GetThreatManager().getThreatList();
                     for(auto & itr : t_list)
                     {
                         target = ObjectAccessor::GetUnit(*me, itr->getUnitGuid());
@@ -124,7 +124,7 @@ public:
                 //if (!me->IsNonMeleeSpellCast(false))
                 //{
                     Unit *target = nullptr;
-                    std::list<HostileReference *> t_list = me->getThreatManager().getThreatList();
+                    std::list<HostileReference *> t_list = me->GetThreatManager().getThreatList();
                     std::vector<Unit *> target_list;
                     for(auto & itr : t_list)
                     {

@@ -160,7 +160,7 @@ struct EredarTwin : public ScriptedAI
     //return true if any players in threatlist outside the room
     bool CheckPlayersForFireblast()
     {
-        std::list<HostileReference*>& threatlist = me->getThreatManager().getThreatList();
+        std::list<HostileReference*>& threatlist = me->GetThreatManager().getThreatList();
         for (auto itr : threatlist)
             if (itr->getTarget()->GetDistance(1816.406250, 625.544495, 33.403782) >= 50.0f)
                 return true;
@@ -208,7 +208,7 @@ struct EredarTwin : public ScriptedAI
                         (Sister->ToCreature())->Respawn();
                     else {
                         if(Sister->GetVictim())
-                            me->getThreatManager().addThreat(Sister->GetVictim(),0.0f);
+                            me->GetThreatManager().addThreat(Sister->GetVictim(),0.0f);
                     }
                 }
             }
@@ -311,7 +311,7 @@ struct EredarTwin : public ScriptedAI
     // Select a random target from top5 threat in sister threat list, except her tank and ours
     Unit* SelectConflagOrNovaTarget(Creature* sister)
     {
-        std::list<HostileReference*>& threatlist = sister->getThreatManager().getThreatList();
+        std::list<HostileReference*>& threatlist = sister->GetThreatManager().getThreatList();
 
         std::list<Unit*> targetList;
         for (std::list<HostileReference*>::const_iterator itr = threatlist.begin(); itr != threatlist.end(); ++itr)

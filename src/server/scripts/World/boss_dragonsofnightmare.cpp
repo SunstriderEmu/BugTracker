@@ -128,7 +128,7 @@ struct DragonOfNightmareAI_template : public ScriptedAI
     void checkIfSomeoneAffectedByMarkOfNatureOrIsTooFar()
     {
         //récupération de la liste d'aggro
-        std::list<HostileReference*>& threatList = me->getThreatManager().getThreatList();
+        std::list<HostileReference*>& threatList = me->GetThreatManager().getThreatList();
             if (threatList.empty())
                 return;
         // On prends les cibles intéressante (unit et vivantes))
@@ -466,7 +466,7 @@ public:
         void CastShadowSpirit()
         {
             //récupération de la liste d'aggro de Lethon
-            std::list<HostileReference*>& threatList = me->getThreatManager().getThreatList();
+            std::list<HostileReference*>& threatList = me->GetThreatManager().getThreatList();
                 if (threatList.empty())
                     return;
             // On prends les cibles intéressante (unit et vivantes : Lethon n'est pas nécrophile tention!)

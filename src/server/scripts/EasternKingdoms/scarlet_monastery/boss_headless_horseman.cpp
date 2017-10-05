@@ -656,10 +656,10 @@ public:
                 caster->GetMotionMaster()->MoveFollow(me, 6, rand()%6);
                 //DoResetThreat();//not sure if need
                 std::list<HostileReference*>::iterator itr;
-                for (itr = caster->getThreatManager().getThreatList().begin(); itr != caster->getThreatManager().getThreatList().end(); ++itr) {
+                for (itr = caster->GetThreatManager().getThreatList().begin(); itr != caster->GetThreatManager().getThreatList().end(); ++itr) {
                     Unit* pUnit = ObjectAccessor::GetUnit((*me), (*itr)->getUnitGuid());
                     if (pUnit && pUnit->IsAlive() && pUnit != caster)
-                        me->AddThreat(pUnit, caster->getThreatManager().getThreat(pUnit));
+                        me->AddThreat(pUnit, caster->GetThreatManager().getThreat(pUnit));
                 }
             }
         }

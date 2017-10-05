@@ -228,8 +228,8 @@ public:
                     {
                         TargetInRange = 0;
     
-                        auto i = me->getThreatManager().getThreatList().begin();
-                        for(; i != me->getThreatManager().getThreatList().end(); ++i)
+                        auto i = me->GetThreatManager().getThreatList().begin();
+                        for(; i != me->GetThreatManager().getThreatList().end(); ++i)
                         {
                             Unit* pUnit = ObjectAccessor::GetUnit(*me, (*i)->getUnitGuid());
                             if(pUnit && me->IsWithinMeleeRange(pUnit))

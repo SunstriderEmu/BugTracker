@@ -354,7 +354,7 @@ public:
      
         void DoGroundRupture()
         {
-            std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
+            std::list<HostileReference*>& m_threatlist = me->GetThreatManager().getThreatList();
             auto i = m_threatlist.begin();
             for (i = m_threatlist.begin(); i!= m_threatlist.end();++i)
             {
@@ -374,7 +374,7 @@ public:
             {
                 Unit* target = nullptr;
                 float MaxThreat = 0;
-                std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
+                std::list<HostileReference*>& m_threatlist = me->GetThreatManager().getThreatList();
                 auto i = m_threatlist.begin();
                 for (i = m_threatlist.begin(); i!= m_threatlist.end();++i)
                 {

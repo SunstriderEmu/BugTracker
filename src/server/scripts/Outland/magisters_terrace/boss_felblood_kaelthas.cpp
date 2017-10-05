@@ -253,7 +253,7 @@ public:
             if(!SummonedUnit)
                 return;
     
-            std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
+            std::list<HostileReference*>& m_threatlist = me->GetThreatManager().getThreatList();
             auto i = m_threatlist.begin();
             for(i = m_threatlist.begin(); i != m_threatlist.end(); i++)
             {

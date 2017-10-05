@@ -211,7 +211,7 @@ public:
             if (phase == PHASE_NONE)
                 return;
                 
-            if (me->getThreatManager().getThreatList().empty()) {
+            if (me->GetThreatManager().getThreatList().empty()) {
                 EnterEvadeMode();
                 return;
             }

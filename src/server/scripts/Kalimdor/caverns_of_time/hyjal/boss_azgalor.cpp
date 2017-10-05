@@ -107,7 +107,7 @@ public:
         bool HasTwoPlayersInFront()
         {
             uint8 playersInArc = 0;
-            std::list<HostileReference*> const& threatlist = me->getThreatManager().getThreatList();
+            std::list<HostileReference*> const& threatlist = me->GetThreatManager().getThreatList();
     
             for (auto itr : threatlist)
             {

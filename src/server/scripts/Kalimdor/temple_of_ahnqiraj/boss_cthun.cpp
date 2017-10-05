@@ -659,8 +659,8 @@ public:
                         //Place all units in threat list on outside of stomach
                         Stomach_Map.clear();
     
-                        auto i = me->getThreatManager().getThreatList().begin();
-                        for (; i != me->getThreatManager().getThreatList().end(); ++i)
+                        auto i = me->GetThreatManager().getThreatList().begin();
+                        for (; i != me->GetThreatManager().getThreatList().end(); ++i)
                         {
                             //Outside stomach
                             Stomach_Map[(*i)->getUnitGuid()] = false;

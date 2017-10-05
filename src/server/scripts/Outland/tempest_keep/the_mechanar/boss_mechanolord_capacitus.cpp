@@ -153,7 +153,7 @@ public:
         void SetPolarityOnPlayers()
         {
             Unit* target = nullptr;
-            std::list<HostileReference *> t_list = me->getThreatManager().getThreatList();
+            std::list<HostileReference *> t_list = me->GetThreatManager().getThreatList();
             for(auto & itr : t_list)
             {
                 target = ObjectAccessor::GetUnit(*me, itr->getUnitGuid());

@@ -991,7 +991,7 @@ class spell_kaelthas_nether_beam : public SpellScriptLoader
             {
                 PreventHitEffect(effIndex);
                                    
-                ThreatContainer::StorageType const & ThreatList = GetCaster()-> getThreatManager().getThreatList();
+                ThreatContainer::StorageType const & ThreatList = GetCaster()-> GetThreatManager().getThreatList();
                 std::list<Unit*> targetList;
                 for (auto itr : ThreatList)
                 {

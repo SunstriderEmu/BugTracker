@@ -240,7 +240,7 @@ public:
             //Affliction_Timer
             if (Affliction_Timer < diff)
             {
-                std::list<HostileReference*> threatlist = me->getThreatManager().getThreatList();
+                std::list<HostileReference*> threatlist = me->GetThreatManager().getThreatList();
                 for (auto & i : threatlist)
                 {
                     Unit* pUnit = nullptr;

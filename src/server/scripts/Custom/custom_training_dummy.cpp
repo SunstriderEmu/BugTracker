@@ -41,7 +41,7 @@ public:
             {
                 char w[50];
                 //TODO translate "Threat against you:
-                snprintf(w, 50, "Menace envers vous : %f", me->getThreatManager().getThreat(player));
+                snprintf(w, 50, "Menace envers vous : %f", me->GetThreatManager().getThreat(player));
                 me->Whisper(w, LANG_UNIVERSAL, player);
             }
         }

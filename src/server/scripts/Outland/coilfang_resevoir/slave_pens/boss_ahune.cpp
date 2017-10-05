@@ -129,7 +129,7 @@ public:
     
         void HandleColdSlap()
         {
-            auto players = me->getThreatManager().getThreatList();
+            auto players = me->GetThreatManager().getThreatList();
             for(auto itr : players) 
             {
                 if (Unit* plr = itr->getTarget()) 
@@ -378,7 +378,7 @@ public:
     
         void HandleIceSpear()
         {
-            auto players = me->getThreatManager().getThreatList();
+            auto players = me->GetThreatManager().getThreatList();
             for (auto itr : players)
             {
                 if (Unit* plr = itr->getTarget())

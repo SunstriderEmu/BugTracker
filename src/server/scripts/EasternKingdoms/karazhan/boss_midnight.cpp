@@ -320,7 +320,7 @@ public:
                 if(ChargeTimer < diff)
                 {
                     Unit *target = nullptr;
-                    std::list<HostileReference *> t_list = me->getThreatManager().getThreatList();
+                    std::list<HostileReference *> t_list = me->GetThreatManager().getThreatList();
                     std::vector<Unit *> target_list;
                     for(auto & itr : t_list)
                     {

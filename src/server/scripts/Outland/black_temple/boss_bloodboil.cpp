@@ -276,7 +276,7 @@ public:
                 }else FelGeyserTimer -= diff;
     
                 if(me->GetVictim() && me->GetVictim()->IsImmunedToDamage(SPELL_SCHOOL_MASK_ALL))
-                    me->getThreatManager().modifyThreatPercent(me->GetVictim(),-100);
+                    me->GetThreatManager().modifyThreatPercent(me->GetVictim(),-100);
             }
     
             if(PhaseChangeTimer < diff)

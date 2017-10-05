@@ -121,7 +121,7 @@ public:
             {
                 DoCast(me, SPELL_INCITE_CHAOS);
     
-                std::list<HostileReference *> t_list = me->getThreatManager().getThreatList();
+                std::list<HostileReference *> t_list = me->GetThreatManager().getThreatList();
                 for(auto & itr : t_list)
                 {
                     Unit* target = ObjectAccessor::GetUnit(*me, itr->getUnitGuid());

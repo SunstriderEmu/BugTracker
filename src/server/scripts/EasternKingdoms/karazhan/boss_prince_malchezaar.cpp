@@ -410,7 +410,7 @@ public:
             if(!info)
                 return;
     
-            std::list<HostileReference *> t_list = me->getThreatManager().getThreatList();
+            std::list<HostileReference *> t_list = me->GetThreatManager().getThreatList();
             std::vector<Unit *> targets;
     
             if(!t_list.size())
@@ -584,8 +584,8 @@ public:
                                 float threat = 1000000.0f;
                                 if(axe->GetVictim() && me->GetThreat(axe->GetVictim()))
                                 {
-                                    threat = axe->getThreatManager().getThreat(axe->GetVictim());
-                                    axe->getThreatManager().modifyThreatPercent(axe->GetVictim(), -100);
+                                    threat = axe->GetThreatManager().getThreat(axe->GetVictim());
+                                    axe->GetThreatManager().modifyThreatPercent(axe->GetVictim(), -100);
                                 }
                                 if(target)
                                     axe->AddThreat(target, threat);

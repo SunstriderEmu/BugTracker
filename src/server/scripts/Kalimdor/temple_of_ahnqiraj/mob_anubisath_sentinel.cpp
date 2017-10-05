@@ -293,7 +293,7 @@ public:
             if (id == MESSAGE_GET_HATED_MANA_USER)
             {
                 std::list<HostileReference*>::iterator i;
-                for (i = me->getThreatManager().getThreatList().begin(); i != me->getThreatManager().getThreatList().end(); ++i)
+                for (i = me->GetThreatManager().getThreatList().begin(); i != me->GetThreatManager().getThreatList().end(); ++i)
                 {
                     Unit* pUnit = ObjectAccessor::GetUnit((*me), (*i)->getUnitGuid());
                     if (pUnit->GetPowerType() == POWER_MANA)

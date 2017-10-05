@@ -265,7 +265,7 @@ struct boss_twinemperorsAI : public ScriptedAI
                 if(nearu)
                 {
                     AttackStart(nearu);
-                    me->getThreatManager().addThreat(nearu, 10000);
+                    me->GetThreatManager().addThreat(nearu, 10000);
                 }
                 return true;
             }
@@ -440,7 +440,7 @@ public:
         void CastSpellOnBug(Creature *target)
         override {
             target->SetFaction(FACTION_MONSTER);
-            ((CreatureAI*)target->AI())->AttackStart(me->getThreatManager().getHostilTarget());
+            ((CreatureAI*)target->AI())->AttackStart(me->GetThreatManager().getHostilTarget());
             SpellInfo *spell = (SpellInfo *)sSpellMgr->GetSpellInfo(SPELL_MUTATE_BUG);
             for (int i=0; i<3; i++)
             {

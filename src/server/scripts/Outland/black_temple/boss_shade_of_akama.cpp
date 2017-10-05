@@ -346,7 +346,7 @@ public:
             if(!akama)
                 return;
     
-            for(auto itr : me->getThreatManager().getThreatList())
+            for(auto itr : me->GetThreatManager().getThreatList())
             {
                 Player* p = ObjectAccessor::GetPlayer(*me,itr->getUnitGuid());
                 if(p)

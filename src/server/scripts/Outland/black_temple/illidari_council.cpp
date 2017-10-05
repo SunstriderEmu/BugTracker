@@ -318,7 +318,7 @@ public:
                             //me->SummonCreature(AKAMAID,746.466980f,304.394989f,311.90208f,6.272870f,TEMPSUMMON_DEAD_DESPAWN,0);
                         }
                         DoZoneInCombat(); //be sure to have all players in threat list
-                        for (auto itr : me->getThreatManager().getThreatList())
+                        for (auto itr : me->GetThreatManager().getThreatList())
                         {
                             Player* p = ObjectAccessor::GetPlayer(*me, itr->getUnitGuid());
                             if (p)

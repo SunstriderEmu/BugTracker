@@ -280,7 +280,7 @@ class Boss_Ragnaros : public CreatureScript
                 {
                     Unit* target = nullptr;
                     float MaxThreat = 0;
-                    std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
+                    std::list<HostileReference*>& m_threatlist = me->GetThreatManager().getThreatList();
                     for (auto & i : m_threatlist)
                     {
                         Unit* pUnit = ObjectAccessor::GetUnit((*me), i->getUnitGuid());
@@ -441,7 +441,7 @@ class Boss_Ragnaros : public CreatureScript
                             if (!me->IsNonMeleeSpellCast(false))
                             {
                                 std::vector<Unit*> ValidTargets;
-                                std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
+                                std::list<HostileReference*>& m_threatlist = me->GetThreatManager().getThreatList();
                                 for (auto & i : m_threatlist)
                                 {
                                     Unit* pTarget = ObjectAccessor::GetUnit(*me,i->getUnitGuid());
@@ -577,7 +577,7 @@ class Son_Of_Flame : public CreatureScript
 
             void DoAoEManaburn()
             {
-                std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
+                std::list<HostileReference*>& m_threatlist = me->GetThreatManager().getThreatList();
                 auto i = m_threatlist.begin();
                 for (i = m_threatlist.begin(); i!= m_threatlist.end();++i)
                 {

@@ -139,7 +139,7 @@ public:
                         case 0:
                         {
                             //Begin the whole ordeal
-                            std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
+                            std::list<HostileReference*>& m_threatlist = me->GetThreatManager().getThreatList();
     
                             std::vector<Unit*> knockback_targets;
     
@@ -175,7 +175,7 @@ public:
                         case 1:
                         {
                             //Players are going to get stoned
-                            std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
+                            std::list<HostileReference*>& m_threatlist = me->GetThreatManager().getThreatList();
     
                             for(auto & itr : m_threatlist)
                             {
@@ -206,7 +206,7 @@ public:
                         case 3:
                         {
                             //Shatter takes effect
-                            std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
+                            std::list<HostileReference*>& m_threatlist = me->GetThreatManager().getThreatList();
     
                             for(auto & itr : m_threatlist)
                             {

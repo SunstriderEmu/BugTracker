@@ -773,7 +773,7 @@ public:
                     return false;
             }
             
-            std::list<HostileReference*>& threatList = me->getThreatManager().getThreatList();
+            std::list<HostileReference*>& threatList = me->GetThreatManager().getThreatList();
             if (threatList.empty())
                 return false;
                 

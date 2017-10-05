@@ -290,7 +290,7 @@ public:
             Map::PlayerList const &PlayerList = me->GetMap()->GetPlayers();
             if (PlayerList.isEmpty())
                 return false;
-            for(auto & itr : me->getThreatManager().getThreatList())
+            for(auto & itr : me->GetThreatManager().getThreatList())
             {
                 for(const auto & i : PlayerList)
                 {
@@ -351,7 +351,7 @@ public:
         {
             if(!unit) return;
     
-            std::list<HostileReference*>& m_threatlist = me->getThreatManager().getThreatList();
+            std::list<HostileReference*>& m_threatlist = me->GetThreatManager().getThreatList();
             auto i = m_threatlist.begin();
             for(i = m_threatlist.begin(); i != m_threatlist.end(); i++)
             {
@@ -665,7 +665,7 @@ public:
         {
             if (!unit) return;
 
-            std::list<HostileReference*>& m_threatlist = unit->getThreatManager().getThreatList();
+            std::list<HostileReference*>& m_threatlist = unit->GetThreatManager().getThreatList();
             auto i = m_threatlist.begin();
             for (i = m_threatlist.begin(); i != m_threatlist.end(); i++)
             {
@@ -673,7 +673,7 @@ public:
                 if (pUnit && pUnit->IsAlive())
                 {
                     if (pUnit->GetDisplayId() != 21300 && !pUnit->HasAuraEffect(40282, 0)) {
-                        float threat = unit->getThreatManager().getThreat(pUnit);
+                        float threat = unit->GetThreatManager().getThreat(pUnit);
                         me->AddThreat(pUnit, threat + 5000000.0f);
                     }
                 }
