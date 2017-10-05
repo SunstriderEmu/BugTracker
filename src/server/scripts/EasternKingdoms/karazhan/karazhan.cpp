@@ -973,18 +973,19 @@ public:
 };
 
 
-#define ANOMALY_SPELL_MANA_SHIELD 29880
-#define ANOMALY_SPELL_BLINK 29883
-#define ANOMALY_SPELL_ARCANE_VOLLEY 29885
-#define ANOMALY_SPELL_LOOSE_MANA 29882
-#define BLINK_DISTANCE 30.0f
-
-
 class npc_arcane_anomaly : public CreatureScript
 {
 public:
     npc_arcane_anomaly() : CreatureScript("npc_arcane_anomaly")
     { }
+
+    enum Spells
+    {
+        ANOMALY_SPELL_MANA_SHIELD       = 29880,
+        ANOMALY_SPELL_BLINK             = 29883, //Spell with a dummy effect NYI
+        ANOMALY_SPELL_ARCANE_VOLLEY     = 29885,
+        ANOMALY_SPELL_LOOSE_MANA        = 29882,
+    };
 
     class npc_arcane_anomalyAI : public ScriptedAI
     {
@@ -1027,9 +1028,8 @@ public:
     
             if(blinkTimer < diff)
             {
-                if(me->GetVictim() && me->GetDistance(me->GetVictim()) > BLINK_DISTANCE)
-                    if (DoCast(me, ANOMALY_SPELL_BLINK) == SPELL_CAST_OK)
-                        blinkTimer = urand(10 * SECOND*IN_MILLISECONDS, 15 * SECOND*IN_MILLISECONDS);
+                if (DoCast(me, ANOMALY_SPELL_BLINK) == SPELL_CAST_OK)
+                    blinkTimer = urand(10 * SECOND*IN_MILLISECONDS, 15 * SECOND*IN_MILLISECONDS);
             } else blinkTimer -= diff;
     
             if(volleyTimer < diff)
