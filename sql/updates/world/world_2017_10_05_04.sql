@@ -1,5 +1,21 @@
 -- Ships members
 
+-- Crewman Rusthammer
+	-- Link creature to first menu and ensure gossip is enabled
+	UPDATE creature_template SET gossip_menu_id = 22831, npcflag = npcflag | 0x1 WHERE entry = 25071;
+	-- Menu 22831
+	DELETE FROM gossip_text WHERE ID = 1871917;
+	INSERT INTO gossip_text (ID, comment, text0_0, text0_1) VALUES (1871917, '','<Grumbles>  I guess those mountains came out of nowhere...  All five times!', '');
+	DELETE FROM gossip_menu WHERE entry = 22831;
+	INSERT INTO gossip_menu (entry, text_id) VALUES (22831, 1871917);
+
+-- Crewman Quickfix
+	-- Link creature to first menu and ensure gossip is enabled
+	UPDATE creature_template SET gossip_menu_id = 22832, npcflag = npcflag | 0x1 WHERE entry = 25072;
+	-- Menu 22832
+	DELETE FROM gossip_menu WHERE entry = 22832;
+	INSERT INTO gossip_menu (entry, text_id) VALUES (22832, 1871917);
+
 -- Squibby Overspeck
 	-- Link creature to first menu and ensure gossip is enabled
 	UPDATE creature_template SET gossip_menu_id = 22829, npcflag = npcflag | 0x1 WHERE entry = 12137;
@@ -9,6 +25,13 @@
 	DELETE FROM gossip_menu WHERE entry = 22829;
 	INSERT INTO gossip_menu (entry, text_id) VALUES (22829, 1871913);
 	INSERT INTO gossip_menu_option (menu_id, id, option_icon, option_text, OptionBroadcastTextID, option_id, npc_option_npcflag, action_menu_id, action_poi_id, box_coded, box_money, box_text, BoxBroadcastTextID) VALUES (22829, "0","0", "Where is the zeppelin now?","22086","1","1",22832,"0","0","0","","0");
+
+-- Crewman Sparkfly
+	-- Link creature to first menu and ensure gossip is enabled
+	UPDATE creature_template SET gossip_menu_id = 22833, npcflag = npcflag | 0x1 WHERE entry = 25074;
+	-- Menu 22833
+	DELETE FROM gossip_menu WHERE entry = 22833;
+	INSERT INTO gossip_menu (entry, text_id) VALUES (22833, 1871917);
 
 -- Nez'raz
 	-- Link creature to first menu and ensure gossip is enabled
@@ -73,29 +96,6 @@
 		INSERT INTO gossip_text (ID, comment, text0_0, text0_1) VALUES (1871915, '','', 'If you like excitement, our captain\'s the best!  I love this job!');
 		DELETE FROM gossip_menu WHERE entry = 22830;
 		INSERT INTO gossip_menu (entry, text_id) VALUES (22830, 1871915);
-	
--- Crewman Rusthammer
-		-- Link creature to first menu and ensure gossip is enabled
-		UPDATE creature_template SET gossip_menu_id = 22831, npcflag = npcflag | 0x1 WHERE entry = 25071;
-		-- Menu 22831
-		DELETE FROM gossip_text WHERE ID = 1871917;
-		INSERT INTO gossip_text (ID, comment, text0_0, text0_1) VALUES (1871917, '','<Grumbles>  I guess those mountains came out of nowhere...  All five times!', '');
-		DELETE FROM gossip_menu WHERE entry = 22831;
-		INSERT INTO gossip_menu (entry, text_id) VALUES (22831, 1871917);
-	
--- Crewman Quickfix
-		-- Link creature to first menu and ensure gossip is enabled
-		UPDATE creature_template SET gossip_menu_id = 22832, npcflag = npcflag | 0x1 WHERE entry = 25072;
-		-- Menu 22832
-		DELETE FROM gossip_menu WHERE entry = 22832;
-		INSERT INTO gossip_menu (entry, text_id) VALUES (22832, 1871917);
-		
--- Crewman Sparkfly
-	-- Link creature to first menu and ensure gossip is enabled
-	UPDATE creature_template SET gossip_menu_id = 22833, npcflag = npcflag | 0x1 WHERE entry = 25074;
-	-- Menu 22833
-	DELETE FROM gossip_menu WHERE entry = 22833;
-	INSERT INTO gossip_menu (entry, text_id) VALUES (22833, 1871917);
 
 -- Navigator Fairweather
 	-- Link creature to first menu and ensure gossip is enabled
