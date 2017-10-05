@@ -2,8 +2,8 @@
 SET @GUID := 311398;
 DELETE FROM `creature` WHERE `guid`=@GUID;
 DELETE FROM `creature` WHERE `id`=14429;
-INSERT INTO `creature` (`guid`, `id`, `map`, `zoneId`, `areaId`, `spawnMask`, `phaseMask`, `modelid`, `equipment_id`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `spawndist`, `currentwaypoint`, `curhealth`, `curmana`, `MovementType`, `npcflag`, `unit_flags`, `dynamicflags`, `ScriptName`, `VerifiedBuild`) VALUES
-(@GUID,14429,1,0,0,1,1,0,0,9132.61,1651.7,1322.14,4.25837,7200,0,0,222,0,2,0,0,0,'',0);
+INSERT INTO `creature` (`guid`, `id`, `map`, `spawnMask`, `modelid`, `equipment_id`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `spawndist`, `currentwaypoint`, `curhealth`, `curmana`, `MovementType`, `ScriptName`) VALUES
+(@GUID,14429,1,1,0,0,9132.61,1651.7,1322.14,4.25837,7200,0,0,222,0,2,'');
 
 DELETE FROM `creature_addon` WHERE `guid`=@GUID;
 INSERT INTO `creature_addon` (`guid`, `path_id`, `mount`, `bytes1`, `bytes2`, `emote`, `auras`) VALUES
