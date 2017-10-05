@@ -1,3 +1,5 @@
+ALTER TABLE `creature_text` CHANGE COLUMN IF EXISTS `entry` `CreatureID` MEDIUMINT(8) UNSIGNED NOT NULL;
+
 -- 
 -- Gnarlpine Ursa
 UPDATE `creature_template` SET `AIName`="SmartAI" WHERE `entry`=2006;
