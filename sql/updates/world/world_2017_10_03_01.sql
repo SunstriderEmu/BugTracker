@@ -1191,12 +1191,14 @@ INSERT IGNORE INTO smart_scripts (entryorguid, source_type, id, link, event_type
   (@ENTRY, 0, 21, 0, 61, 4, 100, 1, 0, 0, 0, 0, 124, 91604, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Cho&#039;Rush the Observer - On AI Initialize - Load Equipment #91604 (No Repeat)(Phase 3)'),
   (@ENTRY, 0, 25, 0, 0, 4, 100, 0, 12000, 15000, 40000, 50000, 11, 17139, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Cho&#039;Rush the Observer - In Combat - Cast "<a href="http://wowhead.com/spell=17139">Power Word: Shield</a>" (Phase 3)'),
   (@ENTRY, 0, 26, 0, 0, 4, 100, 0, 9000, 11000, 19000, 24000, 11, 22884, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Cho&#039;Rush the Observer - In Combat - Cast "<a href="http://wowhead.com/spell=22884">Psychic Scream</a>" (Phase 3)');
+DELETE FROM creature_equip_template WHERE entry IN (91604,91605,91606);
 INSERT INTO creature_equip_template (entry, id, equipmodel1, equipmodel2, equipmodel3, equipinfo1, equipinfo2, equipinfo3, equipslot1, equipslot2, equipslot3) VALUES
   (91604,	0,	21968,	0,	0,	2562,	0,	0,	17,	0,	0), # Priest
   (91605,	0,	21723,	0,	0,	2562,	0,	0,	17,	0,	0), # Mage
   (91606,	0,	24016,	0,	0,	2562,	0,	0,	17,	0,	0); # Chaman
 
 # SmartAIMgr: Entry 14467 SourceType 0 Event 0 Action 1 using non-existent Text id 0, skipped.
+DELETE FROM creature_text WHERE entry = 14467;
 INSERT INTO creature_text (entry, groupid, id, text, type, language, probability, emote, duration, sound, BroadcastTextId, TextRange, comment) VALUES
   (14467,	0,	0,	'Kroshius live? Kroshius crush!',	14,	0,	100,	0,	0,	0,	0,	0,	'Kroshius');
 
