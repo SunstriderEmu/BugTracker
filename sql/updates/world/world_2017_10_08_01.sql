@@ -490,7 +490,7 @@ INSERT IGNORE INTO smart_scripts (entryorguid, source_type, id, link, event_type
   (@ENTRY, 0, 3, 0, 4, 0, 100, 0, 0, 0, 0, 0, 64, 1, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 'Slaag - On Aggro - Store Targetlist 1 '),
   (@ENTRY, 0, 4, 0, 0, 0, 100, 0, 15000, 20000, 25000, 35000, 11, 41981, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Slaag - In Combat - Cast "<a href="http://wowhead.com/spell=41981">Dust Field</a>" ');
 DELETE FROM conditions WHERE SourceTypeOrReferenceId = 22 AND SourceGroup = 4 AND SourceEntry = @ENTRY AND ConditionTypeOrReference = 9 AND ConditionValue1 = 10997;
-INSERT INTO conditions (SourceTypeOrReferenceId, SourceGroup, SourceEntry, SourceId, ElseGroup, ConditionTypeOrReference, ConditionTarget, ConditionValue1, ConditionValue2, ConditionValue3, NegativeCondition, ErrorType, ErrorTextId, ScriptName, Comment)
+REPLACE INTO conditions (SourceTypeOrReferenceId, SourceGroup, SourceEntry, SourceId, ElseGroup, ConditionTypeOrReference, ConditionTarget, ConditionValue1, ConditionValue2, ConditionValue3, NegativeCondition, ErrorType, ErrorTextId, ScriptName, Comment)
   VALUES (22, 3, @ENTRY, 0, 0, 9, 0, 10997, 0, 0, 0, 0, 0, '', NULL);
 
 # SmartAIMgr: Entry 22444 SourceType 0 Event 3 Action 12 creature summon: There is a summon spell for creature entry 22454 (SpellId: 39206, effect: 0)
