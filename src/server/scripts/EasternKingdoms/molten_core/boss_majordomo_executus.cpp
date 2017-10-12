@@ -528,7 +528,7 @@ class Mob_FlameWalker_Elite : public CreatureScript
                         me->CastSpell(me, SPELL_SEPARATION_ANXIETY, true);
 
                     if (Creature* domo = _instance->instance->GetCreature(_instance->GetData64(DATA_MAJORDOMO)))
-                        domo->AddThreat(me->GetVictim(), 0);
+                        domo->GetThreatManager().AddThreat(me->GetVictim(), 0);
                 }
             
                 events.Update(diff);

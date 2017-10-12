@@ -272,7 +272,7 @@ public:
                     if(p[i])
                     {
                         //remove invalid targets (gm, dead, etc)
-                        if(me->CanAttack(p[i],true) != CAN_ATTACK_RESULT_OK)
+                        if(me->CanCreatureAttack(p[i],true) != CAN_ATTACK_RESULT_OK)
                         {
                             AttractionTargetGUID[i] = 0;
                             p[i]->RemoveAurasDueToSpell(SPELL_ATTRACTION_VIS);

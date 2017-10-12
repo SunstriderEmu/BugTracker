@@ -131,7 +131,7 @@ public:
                 if(!IS_PLAYER_GUID(i->getUnitGuid()))
                     continue;
     
-                me->AddThreat(nullptr,0);
+                me->GetThreatManager().AddThreat(nullptr,0);
                 Player* p = me->GetMap()->GetPlayer(i->getUnitGuid());
                 if(p && me->IsWithinMeleeRange(p))
                 {
@@ -154,7 +154,7 @@ public:
                     me->CastSpell(me->GetVictim(),SPELL_CHARGE,false);
                             
                 DoResetThreat();
-                me->AddThreat(target, 5000000.0f);
+                me->GetThreatManager().AddThreat(target, 5000000.0f);
                 DoScriptText(EMOTE_NEW_TARGET, me);
                 SwitchTargetTimer = TIMER_SWITCH_TARGET;
             }

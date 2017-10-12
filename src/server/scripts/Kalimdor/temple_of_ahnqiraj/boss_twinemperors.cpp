@@ -295,7 +295,7 @@ struct boss_twinemperorsAI : public ScriptedAI
         if (!who || me->GetVictim())
             return;
 
-        if (me->CanAttack(who) == CAN_ATTACK_RESULT_OK && who->isInAccessiblePlaceFor(me) && me->IsHostileTo(who))
+        if (me->CanCreatureAttack(who) == CAN_ATTACK_RESULT_OK && who->isInAccessiblePlaceFor(me) && me->IsHostileTo(who))
         {
             float attackRadius = me->GetAggroRange(who);
             if (attackRadius < PULL_RANGE)
@@ -614,13 +614,13 @@ public:
             if (!who)
                 return;
     
-            if (me->CanAttack(who) == CAN_ATTACK_RESULT_OK)
+            if (me->CanCreatureAttack(who) == CAN_ATTACK_RESULT_OK)
             {
                 // VL doesn't melee
                 if ( me->Attack(who, false) )
                 {
                     me->GetMotionMaster()->MoveChase(who, VEKLOR_DIST, 0);
-                    me->AddThreat(who, 0.0f);
+                    me->GetThreatManager().AddThreat(who, 0.0f);
                 }
             }
         }

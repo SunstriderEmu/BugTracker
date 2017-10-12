@@ -93,7 +93,7 @@ public:
         void JustSummoned(Creature* summoned)
         override {
             if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0))
-                summoned->AddThreat(target,0.0f);
+                summoned->GetThreatManager().AddThreat(target,0.0f);
         }
     
         void JustDied(Unit* Killer)

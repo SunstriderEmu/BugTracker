@@ -362,7 +362,7 @@ public:
 
         void MoveInLineOfSight(Unit *who)
             override {
-            if (!who || Creaturetype != 1 || me->CanAttack(who) != CAN_ATTACK_RESULT_OK)
+            if (!who || Creaturetype != 1 || me->CanCreatureAttack(who) != CAN_ATTACK_RESULT_OK)
                 return;
 
             if (me->GetDistance2d(who) < 0.1 && !who->HasAuraEffect(SPELL_SQUASH_SOUL, 0))
@@ -659,7 +659,7 @@ public:
                 for (itr = caster->GetThreatManager().getThreatList().begin(); itr != caster->GetThreatManager().getThreatList().end(); ++itr) {
                     Unit* pUnit = ObjectAccessor::GetUnit((*me), (*itr)->getUnitGuid());
                     if (pUnit && pUnit->IsAlive() && pUnit != caster)
-                        me->AddThreat(pUnit, caster->GetThreatManager().getThreat(pUnit));
+                        me->GetThreatManager().AddThreat(pUnit, caster->GetThreatManager().getThreat(pUnit));
                 }
             }
         }
@@ -908,10 +908,10 @@ public:
     
         void MoveInLineOfSight(Unit* who)
         override {
-            if (!who || me->CanAttack(who) != CAN_ATTACK_RESULT_OK || !me->IsHostileTo(who) || me->GetVictim())
+            if (!who || me->CanCreatureAttack(who) != CAN_ATTACK_RESULT_OK || !me->IsHostileTo(who) || me->GetVictim())
                 return;
     
-            me->AddThreat(who, 0.0f);
+            me->GetThreatManager().AddThreat(who, 0.0f);
             if(sprouted)
                 AttackStart(who);
         }

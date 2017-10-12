@@ -117,7 +117,7 @@ public:
             case MESSAGE_STOP_DUEL:
                 me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 me->SetFaction(originalFaction);
-                me->DeleteThreatList();
+                me->GetThreatManager().ClearAllThreat();
                 me->CombatStop();
                 me->GetMotionMaster()->MoveTargetedHome();
                 if(Player* player = ObjectAccessor::GetPlayer(*me, PlayerGUID))

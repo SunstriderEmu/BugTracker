@@ -388,7 +388,7 @@ public:
                     Unit *target = SelectTarget(SELECT_TARGET_RANDOM, 0);
                     if (target && target->GetTypeId() == TYPEID_PLAYER) // only on players.
                     {
-                        me->AddThreat(target, 5000000.0f);
+                        me->GetThreatManager().AddThreat(target, 5000000.0f);
                         AttackStart(target);
                     }
                 }

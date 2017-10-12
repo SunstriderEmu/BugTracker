@@ -327,7 +327,7 @@ public:
             if (!who || me->GetVictim())
                 return;
     
-            if (me->CanAttack(who) == CAN_ATTACK_RESULT_OK && who->isInAccessiblePlaceFor(me) && me->IsHostileTo(who))
+            if (me->CanCreatureAttack(who) == CAN_ATTACK_RESULT_OK && who->isInAccessiblePlaceFor(me) && me->IsHostileTo(who))
             {
                 //no attack radius check - it attacks the first target that moves in his los
                 //who->RemoveAurasByType(SPELL_AURA_MOD_STEALTH);

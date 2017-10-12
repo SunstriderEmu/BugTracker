@@ -353,7 +353,7 @@ public:
                 if (soldier->IsAlive() && !soldier->IsInCombat())
                 {
                     soldier->SetInCombatWith(Jaina->GetVictim());
-                    soldier->AddThreat(Jaina->GetVictim(), 0.0f);
+                    soldier->GetThreatManager().AddThreat(Jaina->GetVictim(), 0.0f);
                 }
             }
         }

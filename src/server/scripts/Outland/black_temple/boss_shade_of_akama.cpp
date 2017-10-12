@@ -174,7 +174,7 @@ public:
             // InCombat stays true -- TODO: InCombat variable has been removed, this is probably broken
             waitingForReset = true;
             me->RemoveAllAurasExcept(SPELL_VERTEX_SHADE_BLACK);
-            me->DeleteThreatList();
+            me->GetThreatManager().ClearAllThreat();
             me->CombatStop();
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->GetMotionMaster()->MoveTargetedHome();
@@ -283,14 +283,14 @@ public:
                         if(target) 
                         {
                             spawn->AI()->AttackStart(target);
-                            spawn->AddThreat(target, 500.0f);
+                            spawn->GetThreatManager().AddThreat(target, 500.0f);
                         }
                         if(Creature* akama = me->GetMap()->GetCreature(akamaGUID))
                         {
                             if(!spawn->GetVictim()) //attack him if we haven't found any player to attack
                                 spawn->AI()->AttackStart(target);
     
-                            spawn->AddThreat(akama,1.0f); //else still put him in threatlist to attack him in case of wipe
+                            spawn->GetThreatManager().AddThreat(akama,1.0f); //else still put him in threatlist to attack him in case of wipe
                         }
                     }
                 }
@@ -328,7 +328,7 @@ public:
                     akama->GetPosition(x,y,z);
                     Defender->GetMotionMaster()->MovePoint(0, x, y, z);
                     Defender->AI()->AttackStart(akama);
-                    Defender->AddThreat(akama, 500.0f);
+                    Defender->GetThreatManager().AddThreat(akama, 500.0f);
                 }
             }
         }
@@ -749,8 +749,8 @@ public:
                     DoZoneInCombat(shade);
                     AttackStart(shade,false);
                     shade->AI()->AttackStart(me);
-                    me->AddThreat(shade, 10000000.0f);
-                    shade->AddThreat(me, 10000000.0f);
+                    me->GetThreatManager().AddThreat(shade, 10000000.0f);
+                    shade->GetThreatManager().AddThreat(me, 10000000.0f);
                     DoCast(shade, SPELL_AKAMA_SOUL_CHANNEL);
                 } else { Reset(); return; }
                 introProgress++;

@@ -186,7 +186,7 @@ public:
                     {
                         me->InterruptNonMeleeSpells(true);
                         me->RemoveAllAuras();
-                        me->DeleteThreatList();
+                        me->GetThreatManager().ClearAllThreat();
                         me->CombatStop();
                         Reset();
                     }

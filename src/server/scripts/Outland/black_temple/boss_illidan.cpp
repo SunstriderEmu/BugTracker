@@ -484,7 +484,7 @@ public:
                 damage = 0;
             }
             if (done_by->GetGUID() == MaievGUID)
-                done_by->AddThreat(me, -(3 * (float)damage) / 4); // do not let maiev tank him
+                done_by->GetThreatManager().AddThreat(me, -(3 * (float)damage) / 4); // do not let maiev tank him
         }
 
         void SpellHit(Unit *caster, const SpellInfo *spell)
@@ -1035,7 +1035,7 @@ public:
         {
             me->InterruptNonMeleeSpells(true);
             me->RemoveAllAuras();
-            me->DeleteThreatList();
+            me->GetThreatManager().ClearAllThreat();
             me->CombatStop(true);
         }
     
@@ -1584,7 +1584,7 @@ void boss_illidan_stormrage::boss_illidan_stormrageAI::HandleTalkSequence()
         {
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE + UNIT_FLAG_NOT_SELECTABLE);
             DoResetThreat();
-            me->AddThreat(Akama, -9999999.0f);
+            me->GetThreatManager().AddThreat(Akama, -9999999.0f);
             ((npc_akama_illidan::npc_akama_illidanAI*)Akama->AI())->EnterPhase(PHASE_FIGHT_ILLIDAN);
             EnterPhase(PHASE_NORMAL);
         }
@@ -1607,9 +1607,9 @@ void boss_illidan_stormrage::boss_illidan_stormrageAI::HandleTalkSequence()
         {
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE + UNIT_FLAG_NOT_SELECTABLE);
             Maiev->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE + UNIT_FLAG_NOT_SELECTABLE);
-            Maiev->AddThreat(me, 10000000.0f); // Have Maiev add a lot of threat on us so that players don't pull her off if they damage her via AOE
+            Maiev->GetThreatManager().AddThreat(me, 10000000.0f); // Have Maiev add a lot of threat on us so that players don't pull her off if they damage her via AOE
             Maiev->AI()->AttackStart(me); // Force Maiev to attack us.
-            me->AddThreat(Maiev, -9999999.0f); //do not allow her to tank
+            me->GetThreatManager().AddThreat(Maiev, -9999999.0f); //do not allow her to tank
             EnterPhase(PHASE_NORMAL_MAIEV);
         }break;
     case 16:
@@ -2045,7 +2045,7 @@ public:
             Unit* target = SelectTarget(SELECT_TARGET_FARTHEST, 0, 200, false);
             if(target && (!me->IsWithinCombatRange(target, FLAME_CHARGE_DISTANCE)))
             {
-                me->AddThreat(target, 5000000.0f);
+                me->GetThreatManager().AddThreat(target, 5000000.0f);
                 AttackStart(target);
                 DoCast(target, SPELL_CHARGE);
                 //me->TextEmote("pose son regard sur %n !", target); //"sets its gaze on $N!"
@@ -2065,7 +2065,7 @@ public:
                     Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0);
                     if(target && target->IsAlive())
                     {
-                        me->AddThreat(me->GetVictim(), 5000000.0f);
+                        me->GetThreatManager().AddThreat(me->GetVictim(), 5000000.0f);
                         AttackStart(me->GetVictim());
                     }
                 }
@@ -2257,7 +2257,7 @@ public:
         {
             if(Unit *target = SelectTarget(SELECT_TARGET_RANDOM, 0, 999, true)) // only on players.
             {
-                me->AddThreat(target, 5000000.0f);
+                me->GetThreatManager().AddThreat(target, 5000000.0f);
                 me->AI()->AttackStart(target);
             }
         }

@@ -260,7 +260,7 @@ public:
                 Unit* pUnit = ObjectAccessor::GetUnit((*me), (*i)->getUnitGuid());
                 if(pUnit && pUnit->IsAlive())
                 {
-                    SummonedUnit->AddThreat(pUnit, 0.1f);
+                    SummonedUnit->GetThreatManager().AddThreat(pUnit, 0.1f);
                 }
             }
         }
@@ -270,7 +270,7 @@ public:
             RemoveGravityLapse();
             me->InterruptNonMeleeSpells(true);
             me->RemoveAllAuras();
-            me->DeleteThreatList();
+            me->GetThreatManager().ClearAllThreat();
             me->CombatStop();
             me->InitCreatureAddon();
     
@@ -405,13 +405,13 @@ public:
                             Unit *target = SelectTarget(SELECT_TARGET_RANDOM,1);
                             if(target)
                             {
-                                Phoenix->AddThreat(target,1000);
+                                Phoenix->GetThreatManager().AddThreat(target,1000);
                                 Phoenix->Attack(target,true);
                                 Phoenix->GetMotionMaster()->MoveChase(target);
                             }
                             else
                             {
-                                Phoenix->AddThreat(me->GetVictim(),1000);
+                                Phoenix->GetThreatManager().AddThreat(me->GetVictim(),1000);
                                 Phoenix->Attack(me->GetVictim(),true);
                                 Phoenix->GetMotionMaster()->MoveChase(me->GetVictim());
                             }
@@ -503,7 +503,7 @@ public:
                                         Unit *target = SelectTarget(SELECT_TARGET_BOTTOMAGGRO,i);
                                         if(target)
                                         {
-                                            Orb->AddThreat(target,1000);
+                                            Orb->GetThreatManager().AddThreat(target,1000);
                                             Orb->Attack(target,true);
                                             Orb->GetMotionMaster()->MoveChase(target);
                                         }
@@ -512,7 +512,7 @@ public:
                                             Unit *ntarget = SelectTarget(SELECT_TARGET_RANDOM,0);
                                             if(ntarget)
                                             {
-                                                Orb->AddThreat(ntarget,1000);
+                                                Orb->GetThreatManager().AddThreat(ntarget,1000);
                                                 Orb->Attack(ntarget,true);
                                                 Orb->GetMotionMaster()->MoveChase(ntarget);
                                             }
@@ -584,7 +584,7 @@ public:
         {
             if(!target)
                 return;
-            me->AddThreat(target,100000);
+            me->GetThreatManager().AddThreat(target,100000);
             me->GetMotionMaster()->MoveChase(target);
             me->Attack(target,true);
         }
@@ -752,7 +752,7 @@ public:
                     Unit *boss = ObjectAccessor::GetUnit((*me),pInstance->GetData64(DATA_KAEL));
                     if (boss && boss->GetVictim())
                     {
-                        bird->AddThreat(boss->GetVictim(),100);
+                        bird->GetThreatManager().AddThreat(boss->GetVictim(),100);
                         bird->Attack(boss->GetVictim(),true);
                         bird->GetMotionMaster()->MoveChase(boss->GetVictim());
                     }

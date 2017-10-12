@@ -309,7 +309,7 @@ public:
                     pTarget = me;
     
                 pSummoned->SetFaction(168);
-                pSummoned->AddThreat(pTarget, 32.0f);
+                pSummoned->GetThreatManager().AddThreat(pTarget, 32.0f);
                 (pSummoned->ToCreature())->AI()->AttackStart(pTarget);
             }
         }

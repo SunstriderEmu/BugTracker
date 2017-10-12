@@ -88,7 +88,7 @@ public:
             me->SetFaction(FACTION_FRIENDLY);
             me->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_SIT);
             me->RemoveAllAuras();
-            me->DeleteThreatList();
+            me->GetThreatManager().ClearAllThreat();
             me->CombatStop();
             UnkorUnfriendly_Timer = 60000;
         }

@@ -394,12 +394,12 @@ public:
                     {
                         if (pBoss->GetEntry() == C_AEONUS)
                         {
-                            pBoss->AddThreat(pMedivh, 0.1f);
+                            pBoss->GetThreatManager().AddThreat(pMedivh, 0.1f);
                             pBoss->AI()->AttackStart(pMedivh);
                         }
                         else
                         {
-                            pBoss->AddThreat(pTemp, 0.1f);
+                            pBoss->GetThreatManager().AddThreat(pTemp, 0.1f);
                             pTemp->CastSpell(pBoss, SPELL_RIFT_CHANNEL, false);
                             pBoss->AI()->AttackStart(pMedivh);
                         }

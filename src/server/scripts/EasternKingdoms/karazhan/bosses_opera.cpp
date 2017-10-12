@@ -857,7 +857,7 @@ public:
                         if(TempThreat)
                             DoModifyThreatPercent(target, -100);
                         HoodGUID = target->GetGUID();
-                        me->AddThreat(target, 1000000.0f);
+                        me->GetThreatManager().AddThreat(target, 1000000.0f);
                         ChaseTimer = 20000;
                         IsChasing = true;
                         me->SetFullTauntImmunity(true);
@@ -873,7 +873,7 @@ public:
                         HoodGUID = 0;
                         if(me->GetThreat(target))
                             DoModifyThreatPercent(target, -100);
-                        me->AddThreat(target, TempThreat);
+                        me->GetThreatManager().AddThreat(target, TempThreat);
                         TempThreat = 0;
                     }
     
@@ -1175,7 +1175,7 @@ public:
                 Creature* Julianne = (ObjectAccessor::GetCreature((*me), JulianneGUID));
                 if(Julianne && Julianne->GetVictim())
                 {
-                    me->AddThreat(Julianne->GetVictim(), 1.0f);
+                    me->GetThreatManager().AddThreat(Julianne->GetVictim(), 1.0f);
                     AttackStart(Julianne->GetVictim());
                 }
             }
@@ -1285,7 +1285,7 @@ void boss_julianne::boss_julianneAI::UpdateAI(const uint32 diff)
                 if (me->GetVictim())
                 {
                     Romulo->AI()->AttackStart(me->GetVictim());
-                    Romulo->AddThreat(me->GetVictim(), 50.0f);
+                    Romulo->GetThreatManager().AddThreat(me->GetVictim(), 50.0f);
                 }
                 DoZoneInCombat(Romulo);
             }

@@ -376,7 +376,7 @@ public:
                 {
                     DoYellForThreat();
                     DoResetThreat();
-                    me->AddThreat(target, 0.0f);
+                    me->GetThreatManager().AddThreat(target, 0.0f);
                 }
                 ResetThreat_Timer = 35000+rand()%10000;
             }else ResetThreat_Timer -= diff;

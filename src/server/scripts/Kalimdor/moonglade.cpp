@@ -518,7 +518,7 @@ public:
                                 Creature *mob = me->SummonCreature(ASPECT_RAVEN, ASPECT_RAVEN_SUMMON_X, ASPECT_RAVEN_SUMMON_Y, ASPECT_RAVEN_SUMMON_Z, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 2000);
                                 if(mob)
                                 {
-                                    mob->AddThreat(me,10000.0f);
+                                    mob->GetThreatManager().AddThreat(me,10000.0f);
                                     mob->AI()->AttackStart(me);
                                 }
                                 Event_Timer = 2000;
@@ -932,7 +932,7 @@ public:
         override {
             me->InterruptNonMeleeSpells(true);
             me->RemoveAllAuras();
-            me->DeleteThreatList();
+            me->GetThreatManager().ClearAllThreat();
             me->CombatStop(true);
         }
     
@@ -1604,7 +1604,7 @@ public:
             combatPhase = false;
             me->InterruptNonMeleeSpells(true);
             me->RemoveAllAuras();
-            me->DeleteThreatList();
+            me->GetThreatManager().ClearAllThreat();
             me->CombatStop(true);
         }
     

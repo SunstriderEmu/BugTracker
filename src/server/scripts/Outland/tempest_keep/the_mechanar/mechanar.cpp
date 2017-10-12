@@ -176,7 +176,7 @@ public:
         void MoveInLineOfSight2(Unit *who)
         override {
             if(!who->IsHostileTo(me)
-               || me->CanAttack(who) != CAN_ATTACK_RESULT_OK)
+               || me->CanCreatureAttack(who) != CAN_ATTACK_RESULT_OK)
                 return;
     
             if(phase == PHASE_WAITING_FOR_PULL)

@@ -250,7 +250,7 @@ public:
     
             if (me->Attack(pWho, false))
             {
-                me->AddThreat(pWho, 0.0f);
+                me->GetThreatManager().AddThreat(pWho, 0.0f);
                 me->SetInCombatWith(pWho);
                 pWho->SetInCombatWith(me);
     

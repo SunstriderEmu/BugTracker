@@ -116,7 +116,7 @@ public:
                 if (Creature* archimonde = _instance->instance->GetCreature(_instance->GetData64(DATA_ARCHIMONDE)))
                 {
                     AttackStart(archimonde);
-                    me->AddThreat(archimonde, 1000000.0f);
+                    me->GetThreatManager().AddThreat(archimonde, 1000000.0f);
                     aggro = true;
                 }
             }
@@ -794,7 +794,7 @@ public:
                 if (!me->IsWithinDistInMap(target, me->GetAggroRange(target)) && std::fabs(me->GetPositionZ() - target->GetPositionZ()) < 5.0f)
                     return true; // Cast Finger of Death
                 else // This target is closest, he is our new tank
-                    me->AddThreat(target, me->GetThreat(me->GetVictim()));
+                    me->GetThreatManager().AddThreat(target, me->GetThreat(me->GetVictim()));
             }
 
             return false;

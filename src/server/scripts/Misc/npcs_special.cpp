@@ -1273,7 +1273,7 @@ public:
             if (!me->IsPet() || !Owner)
                 return;
     
-            if( !me->GetVictim() && me->CanAttack(who) == CAN_ATTACK_RESULT_OK && ( me->IsHostileTo( who )) && who->isInAccessiblePlaceFor(me) && Owner->IsHostileTo(who))//don't attack not-pvp-flaged
+            if( !me->GetVictim() && me->CanCreatureAttack(who) == CAN_ATTACK_RESULT_OK && ( me->IsHostileTo( who )) && who->isInAccessiblePlaceFor(me) && Owner->IsHostileTo(who))//don't attack not-pvp-flaged
             {
                 if (me->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
                     return;

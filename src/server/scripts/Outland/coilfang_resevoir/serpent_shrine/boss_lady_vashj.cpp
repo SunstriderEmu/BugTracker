@@ -297,7 +297,7 @@ public:
             if (!who || me->GetVictim())
                 return;
 
-            if (me->CanAttack(who) == CAN_ATTACK_RESULT_OK && who->isInAccessiblePlaceFor(me) && me->IsHostileTo(who))
+            if (me->CanCreatureAttack(who) == CAN_ATTACK_RESULT_OK && who->isInAccessiblePlaceFor(me) && me->IsHostileTo(who))
             {
                 float attackRadius = me->GetAggroRange(who);
                 if (me->IsWithinDistInMap(who, attackRadius) && me->GetDistanceZ(who) <= CREATURE_Z_ATTACK_RANGE && me->IsWithinLOSInMap(who))
@@ -935,7 +935,7 @@ public:
     
         void EnterCombat(Unit *who)
         override {
-            me->AddThreat(who, 0.1f);
+            me->GetThreatManager().AddThreat(who, 0.1f);
         }
     
         void UpdateAI(const uint32 diff)

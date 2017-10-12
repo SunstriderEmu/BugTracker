@@ -142,7 +142,7 @@ public:
                         OrbitalStrike_Timer = urand(20000, 25000);
                         orbitarStrikeTargetGUID = playerTarget->GetGUID();
                         //not sure how this is done blizzlike. Tanks always seems to loose aggro whenever he get bumped
-                        me->ModifyThreatPct(playerTarget, -100);
+                        DoModifyThreatPercent(playerTarget, -100);
                         CanPullBack = true;
                     }
                 }

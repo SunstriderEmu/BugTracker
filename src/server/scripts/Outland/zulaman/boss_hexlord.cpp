@@ -614,12 +614,12 @@ public:
             if (!who)
                 return;
     
-            if (me->CanAttack(who) == CAN_ATTACK_RESULT_OK)
+            if (me->CanCreatureAttack(who) == CAN_ATTACK_RESULT_OK)
             {
                 if(me->Attack(who, false))
                 {
                     me->GetMotionMaster()->MoveChase(who, 20);
-                    me->AddThreat(who, 0.0f);
+                    me->GetThreatManager().AddThreat(who, 0.0f);
                 }
             }
         }
@@ -705,12 +705,12 @@ public:
             if (!who)
                 return;
     
-            if (me->CanAttack(who) == CAN_ATTACK_RESULT_OK)
+            if (me->CanCreatureAttack(who) == CAN_ATTACK_RESULT_OK)
             {
                 if(me->Attack(who, false))
                 {
                     me->GetMotionMaster()->MoveChase(who, 20);
-                    me->AddThreat(who, 0.0f);
+                    me->GetThreatManager().AddThreat(who, 0.0f);
                 }
             }
         }
@@ -854,12 +854,12 @@ public:
             if (!who)
                 return;
     
-            if (me->CanAttack(who) == CAN_ATTACK_RESULT_OK)
+            if (me->CanCreatureAttack(who) == CAN_ATTACK_RESULT_OK)
             {
                 if(me->Attack(who, false))
                 {
                     me->GetMotionMaster()->MoveChase(who, 20);
-                    me->AddThreat(who, 0.0f);
+                    me->GetThreatManager().AddThreat(who, 0.0f);
                 }
             }
         }

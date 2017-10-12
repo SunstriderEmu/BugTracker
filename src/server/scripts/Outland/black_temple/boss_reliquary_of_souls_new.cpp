@@ -143,7 +143,7 @@ public:
         void EnterCombat(Unit* victim)
         override {
             if(riftMarkers.size() == 0) findRifts();
-            me->AddThreat(victim, 10000.0f);
+            me->GetThreatManager().AddThreat(victim, 10000.0f);
             DoZoneInCombat();
             
             if (instance)
@@ -188,7 +188,7 @@ public:
                     if(target)
                     {
                         soul->AI()->AttackStart(target);
-                        soul->AddThreat(target, 1500.0f);
+                        soul->GetThreatManager().AddThreat(target, 1500.0f);
                     }
                 }
                 }
@@ -265,7 +265,7 @@ public:
                     }
                     if (essence->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE)) {
                         //mergeThreatList(essence);
-                        essence->DeleteThreatList();
+                        essence->GetThreatManager().ClearAllThreat();
                         essence->SetReactState(REACT_PASSIVE);
                         essence->GetMotionMaster()->MoveFollow(me, 0, 0);
                     }
@@ -282,7 +282,7 @@ public:
                     }
                     else { // Really necessary?
                         //mergeThreatList(essence);
-                        essence->DeleteThreatList();
+                        essence->GetThreatManager().ClearAllThreat();
                         essence->SetReactState(REACT_PASSIVE);
                         essence->GetMotionMaster()->MoveFollow(me, 0, 0);
                         return;
@@ -432,7 +432,7 @@ public:
                     if (target) {
                         target->CastSpell(me, SPELL_FIXATE_TAUNT, true);
                         DoResetThreat();
-                        me->AddThreat(target, 1000000.0f);
+                        me->GetThreatManager().AddThreat(target, 1000000.0f);
                         
                         if ((rand() % 16) == 0)
                             Talk(TALK_SUFF_SAY_AGGRO);

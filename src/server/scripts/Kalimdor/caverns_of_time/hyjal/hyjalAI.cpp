@@ -419,7 +419,7 @@ void hyjalAI::EnterEvadeMode(EvadeReason /* why */)
     me->InterruptNonMeleeSpells(true);
     if(me->GetEntry() != JAINA)
         me->RemoveAllAuras();
-    me->DeleteThreatList();
+    me->GetThreatManager().ClearAllThreat();
     me->CombatStop();
     me->InitCreatureAddon(true);
 

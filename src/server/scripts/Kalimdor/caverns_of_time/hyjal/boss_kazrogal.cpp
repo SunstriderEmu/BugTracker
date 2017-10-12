@@ -87,7 +87,7 @@ public:
             {
                 Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
                 if (target && target->IsAlive())
-                    me->AddThreat(target,0.0);
+                    me->GetThreatManager().AddThreat(target,0.0);
             }
         }
     

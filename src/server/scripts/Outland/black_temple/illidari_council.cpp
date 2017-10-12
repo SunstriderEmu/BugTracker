@@ -889,7 +889,7 @@ public:
                     me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                     Unit* currentTarget = me->GetVictim();
                     DoResetThreat();
-                    me->AddThreat(currentTarget, 1200.0f);
+                    me->GetThreatManager().AddThreat(currentTarget, 1200.0f);
                     DoCast(me,SPELL_VANISH_STUN);
                     return;
                 }else VanishTimeLeft -= diff;
@@ -899,7 +899,7 @@ public:
                      if(Unit* newTarget = GetPoisonTarget())
                      {
                          DoResetThreat();
-                         me->AddThreat(newTarget, 999000.0f);
+                         me->GetThreatManager().AddThreat(newTarget, 999000.0f);
                          AttackStart(newTarget);
                          EnvenomTimer = 4800;
                          appliedPoisonTarget = newTarget->GetGUID();

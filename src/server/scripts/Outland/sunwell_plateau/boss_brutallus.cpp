@@ -401,7 +401,7 @@ public:
         }
     
         void MoveInLineOfSight(Unit *who) override {
-            if (me->CanAttack(who) != CAN_ATTACK_RESULT_OK || !me->IsHostileTo(who))
+            if (me->CanCreatureAttack(who) != CAN_ATTACK_RESULT_OK || !me->IsHostileTo(who))
                 return;
     
             if (pInstance && Intro)

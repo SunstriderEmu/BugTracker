@@ -420,7 +420,7 @@ public:
                     summon = DoSpawnCreature(MOB_SHADOW_IMAGE, 0, 0, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, lifeTime);
                     if(summon && target) {
                         summon->AI()->AttackStart(target);
-                        summon->AddThreat(target, 50000.0f);
+                        summon->GetThreatManager().AddThreat(target, 50000.0f);
                     }
                 }
                 ShadowimageTimer = lifeTime;
@@ -496,7 +496,7 @@ public:
             if (!who || me->GetVictim())
                 return;
     
-            if (me->CanAttack(who) == CAN_ATTACK_RESULT_OK && who->isInAccessiblePlaceFor(me) && me->IsHostileTo(who)) {
+            if (me->CanCreatureAttack(who) == CAN_ATTACK_RESULT_OK && who->isInAccessiblePlaceFor(me) && me->IsHostileTo(who)) {
     
                 //float attackRadius = me->GetAggroRange(who);
                 if (me->IsWithinDistInMap(who, 45.0f) && me->GetDistanceZ(who) <= CREATURE_Z_ATTACK_RANGE && me->IsWithinLOSInMap(who))
@@ -673,7 +673,7 @@ public:
                         Unit* target = ((ScriptedAI*)sacrolash->AI())->SelectTarget(SELECT_TARGET_RANDOM, 0, 60.0f, true);
                         if (target) {
                             AttackStart(target);
-                            me->AddThreat(target, 500000.0f);
+                            me->GetThreatManager().AddThreat(target, 500000.0f);
                         }
                     }
                     

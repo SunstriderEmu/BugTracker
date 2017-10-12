@@ -463,7 +463,7 @@ public:
                 {
                     Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
                     if (target && target->IsAlive())
-                        me->AddThreat(target,0.0);
+                        me->GetThreatManager().AddThreat(target,0.0);
                 }
             }
         }
@@ -504,7 +504,7 @@ public:
                         {
                             Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
                             if (target && target->IsAlive())
-                                me->AddThreat(target,0.0);
+                                me->GetThreatManager().AddThreat(target,0.0);
                         }else if (pInstance->GetData(DATA_ALLIANCE_RETREAT) && pInstance->GetData(DATA_HORDE_RETREAT)){
                             //do overrun
                         }
@@ -591,11 +591,11 @@ public:
                 {
                     Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
                     if (target && target->IsAlive())
-                        me->AddThreat(target,0.0);
+                        me->GetThreatManager().AddThreat(target,0.0);
                 }else{
                     Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
                     if (target && target->IsAlive())
-                        me->AddThreat(target,0.0);
+                        me->GetThreatManager().AddThreat(target,0.0);
                 }
             }
             if (i == LastOverronPos && IsOverrun)
@@ -697,11 +697,11 @@ public:
                 {
                     Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
                     if (target && target->IsAlive())
-                        me->AddThreat(target,0.0);
+                        me->GetThreatManager().AddThreat(target,0.0);
                 }else{
                     Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
                     if (target && target->IsAlive())
-                        me->AddThreat(target,0.0);
+                        me->GetThreatManager().AddThreat(target,0.0);
                 }
             }
             if (i == LastOverronPos && IsOverrun)
@@ -807,11 +807,11 @@ public:
                 {
                     Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
                     if (target && target->IsAlive())
-                        me->AddThreat(target,0.0);
+                        me->GetThreatManager().AddThreat(target,0.0);
                 }else{
                     Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
                     if (target && target->IsAlive())
-                        me->AddThreat(target,0.0);
+                        me->GetThreatManager().AddThreat(target,0.0);
                 }
             }
         }
@@ -930,11 +930,11 @@ public:
                 {
                     Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
                     if (target && target->IsAlive())
-                        me->AddThreat(target,0.0);
+                        me->GetThreatManager().AddThreat(target,0.0);
                 }else{
                     Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
                     if (target && target->IsAlive())
-                        me->AddThreat(target,0.0);
+                        me->GetThreatManager().AddThreat(target,0.0);
                 }
             }
         }
@@ -1035,11 +1035,11 @@ public:
                 {
                     Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
                     if (target && target->IsAlive())
-                        me->AddThreat(target,0.0);
+                        me->GetThreatManager().AddThreat(target,0.0);
                 }else{
                     Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
                     if (target && target->IsAlive())
-                        me->AddThreat(target,0.0);
+                        me->GetThreatManager().AddThreat(target,0.0);
                 }
             }
         }
@@ -1131,11 +1131,11 @@ public:
                 {
                     Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
                     if (target && target->IsAlive())
-                        me->AddThreat(target,0.0);
+                        me->GetThreatManager().AddThreat(target,0.0);
                 }else{
                     Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
                     if (target && target->IsAlive())
-                        me->AddThreat(target,0.0);
+                        me->GetThreatManager().AddThreat(target,0.0);
                 }
             }
         }
@@ -1230,7 +1230,7 @@ public:
                 Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
                 if (target && target->IsAlive())
                 {
-                    me->AddThreat(target,0.0);
+                    me->GetThreatManager().AddThreat(target,0.0);
                     DoCast(target,SPELL_FROST_BREATH,true);
                 }
             }
@@ -1361,7 +1361,7 @@ public:
                 Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
                 if (target && target->IsAlive())
                 {
-                    me->AddThreat(target,0.0);
+                    me->GetThreatManager().AddThreat(target,0.0);
                     DoCast(target,SPELL_GARGOYLE_STRIKE,true);
                 }
             }

@@ -482,7 +482,7 @@ public:
                         if (pCreature)
                         {
                             pCreature->AddUnitState(UNIT_STATE_IGNORE_PATHFINDING);
-                            pCreature->AddThreat(me->GetVictim(), 1.0f);
+                            pCreature->GetThreatManager().AddThreat(me->GetVictim(), 1.0f);
                             pCreature->AI()->AttackStart(me->GetVictim());
                             BirdGUID = pCreature->GetGUID();
                         }

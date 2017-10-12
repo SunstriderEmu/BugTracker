@@ -199,7 +199,7 @@ public:
                 {
                     target = SelectTarget(SELECT_TARGET_RANDOM,0);
                     if (target)
-                        SummonedSpores->AddThreat(target,1.0f);
+                        SummonedSpores->GetThreatManager().AddThreat(target,1.0f);
                 }
     
                 Summon_Timer = 28000;

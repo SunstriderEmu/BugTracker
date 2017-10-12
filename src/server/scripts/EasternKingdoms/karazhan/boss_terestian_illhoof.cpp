@@ -100,7 +100,7 @@ public:
     
             Creature* Terestian = (ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_TERESTIAN)));
             if(Terestian && !Terestian->GetVictim())
-                Terestian->AddThreat(who, 1.0f);
+                Terestian->GetThreatManager().AddThreat(who, 1.0f);
         }
     
         void JustDied(Unit* Killer)
@@ -304,7 +304,7 @@ public:
                 // Put Kil'rek in combat against our target so players don't skip him
                 Creature* Kilrek = (ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_KILREK)));
                 if(Kilrek && !Kilrek->GetVictim())
-                    Kilrek->AddThreat(who, 1.0f);
+                    Kilrek->GetThreatManager().AddThreat(who, 1.0f);
     
                 pInstance->SetData(DATA_TERESTIAN_EVENT, IN_PROGRESS);
             }else ERROR_INST_DATA(me);
@@ -417,7 +417,7 @@ public:
                 Creature* Imp = me->SummonCreature(CREATURE_FIENDISHIMP, PortalLocations[random][0], PortalLocations[random][1], PORTAL_Z, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 15000);
                 if(Imp)
                 {
-                    Imp->AddThreat(me->GetVictim(), 1.0f);
+                    Imp->GetThreatManager().AddThreat(me->GetVictim(), 1.0f);
                     Imp->AI()->AttackStart(SelectTarget(SELECT_TARGET_RANDOM, 1));
                 }
                 SummonTimer = 5000;

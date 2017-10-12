@@ -261,7 +261,7 @@ public:
                 Unit* Myrmidon = me->FindNearestCreature(DM, 70);
                 if(Myrmidon)
                 {
-                    me->AddThreat(Myrmidon, 100000.0f);
+                    me->GetThreatManager().AddThreat(Myrmidon, 100000.0f);
                     AttackStart(Myrmidon);
                 }
             }

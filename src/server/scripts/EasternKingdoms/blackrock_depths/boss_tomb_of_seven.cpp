@@ -653,7 +653,7 @@ public:
         void EnterEvadeMode(EvadeReason /* why */)
         override {
             me->RemoveAllAuras();
-            me->DeleteThreatList();
+            me->GetThreatManager().ClearAllThreat();
             me->CombatStop(true);
             me->InitCreatureAddon();
             if (me->IsAlive())

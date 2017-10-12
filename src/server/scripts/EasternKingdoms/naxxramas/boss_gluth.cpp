@@ -157,7 +157,7 @@ public:
                 {
                     target = SelectTarget(SELECT_TARGET_RANDOM,0);
                     if (target)
-                        SummonedZombies->AddThreat(target,1.0f);
+                        SummonedZombies->GetThreatManager().AddThreat(target,1.0f);
                 }
     
                 Summon_Timer = 28000;

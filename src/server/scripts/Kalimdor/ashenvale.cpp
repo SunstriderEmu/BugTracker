@@ -390,7 +390,7 @@ public:
         void EnterEvadeMode(EvadeReason /* why */)
         override {
             me->RemoveAllAuras();
-            me->DeleteThreatList();
+            me->GetThreatManager().ClearAllThreat();
             me->CombatStop();
             me->SetLootRecipient(nullptr);
         }

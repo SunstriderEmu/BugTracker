@@ -337,7 +337,7 @@ public:
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
             me->SetHealth(me->GetMaxHealth());
             me->CombatStop();
-            me->DeleteThreatList();
+            me->GetThreatManager().ClearAllThreat();
         }
         
         void EnterCombat(Unit* pWho) override {}

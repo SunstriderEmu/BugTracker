@@ -549,7 +549,7 @@ public:
                             if(target)
                             {
                                 axe->AI()->AttackStart(target);
-                                axe->AddThreat(target, 10000000.0f);
+                                axe->GetThreatManager().AddThreat(target, 10000000.0f);
                             }
                         }
                     }
@@ -588,7 +588,7 @@ public:
                                     axe->GetThreatManager().modifyThreatPercent(axe->GetVictim(), -100);
                                 }
                                 if(target)
-                                    axe->AddThreat(target, threat);
+                                    axe->GetThreatManager().AddThreat(target, threat);
                             }
                         }
                     }

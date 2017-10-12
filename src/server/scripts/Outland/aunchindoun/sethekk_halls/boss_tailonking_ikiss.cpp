@@ -78,7 +78,7 @@ public:
     
         void MoveInLineOfSight(Unit *who)
         override {
-            if( !me->GetVictim() && me->CanAttack(who) == CAN_ATTACK_RESULT_OK && ( me->IsHostileTo( who )) && who->isInAccessiblePlaceFor(me) )
+            if( !me->GetVictim() && me->CanCreatureAttack(who) == CAN_ATTACK_RESULT_OK && ( me->IsHostileTo( who )) && who->isInAccessiblePlaceFor(me) )
             {
                 if(!Intro && me->IsWithinDistInMap(who, 100))
                 {

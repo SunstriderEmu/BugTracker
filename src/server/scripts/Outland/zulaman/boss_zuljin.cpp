@@ -345,7 +345,7 @@ public:
                     Unit* clawRageTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 80.0, true, true);
                     if (clawRageTarget) {
                         clawRageTargetGUID = clawRageTarget->GetGUID();
-                        me->AddThreat(clawRageTarget, 1000000); // 1.000.000 threat should be enough
+                        me->GetThreatManager().AddThreat(clawRageTarget, 1000000); // 1.000.000 threat should be enough
                         me->SetSpeedRate(MOVE_RUN, 1.2f);
                         events.RescheduleEvent(EV_REINIT_SPEED, 2000, 0, PHASE_LYNX);
                         me->CastSpell(clawRageTarget, SPELL_CLAW_RAGE_CHARGE);
@@ -361,7 +361,7 @@ public:
                 }
                 case EV_CLAW_RAGE_RESET: // reset clawRageTargetGUID, remove threat, disable EV_CLAW_RAGE_RESET event
                     if (Unit* clawRageTarget = ObjectAccessor::GetUnit(*me, clawRageTargetGUID))
-                        me->AddThreat(clawRageTarget, -1000000);
+                        me->GetThreatManager().AddThreat(clawRageTarget, -1000000);
 
                     clawRageTargetGUID = 0;
                     events.CancelEvent(EV_CLAW_RAGE_RESET);

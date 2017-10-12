@@ -333,7 +333,7 @@ public:
             {
                 if (Unit *temp = ObjectAccessor::GetUnit(*me,pInstance->GetData64(DATA_MEDIVH)))
                 {
-                    Summon->AddThreat(temp,0.0f);
+                    Summon->GetThreatManager().AddThreat(temp,0.0f);
                     (Summon->ToCreature())->AI()->AttackStart(temp); //force them to attack Medivh
                 }
             }

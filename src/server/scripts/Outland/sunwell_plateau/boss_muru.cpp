@@ -214,7 +214,7 @@ public:
                         if (Victim)
                         {
                             AttackStart(Victim);
-                            me->AddThreat(Victim, 1000000.0f);
+                            me->GetThreatManager().AddThreat(Victim, 1000000.0f);
                         }
                         else
                         {
@@ -222,7 +222,7 @@ public:
                             if (Victim)
                             {
                                 AttackStart(Victim);
-                                me->AddThreat(Victim, 1000000.0f);
+                                me->GetThreatManager().AddThreat(Victim, 1000000.0f);
                             }
                         }
                         phaseTimer = 300;

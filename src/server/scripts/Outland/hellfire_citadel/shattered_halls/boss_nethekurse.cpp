@@ -194,7 +194,7 @@ public:
     
             if (me->Attack(who, true))
             {
-                me->AddThreat(who, 0.0f);
+                me->GetThreatManager().AddThreat(who, 0.0f);
     
                 if (Phase) 
                     DoStartNoMovement(who);
@@ -212,7 +212,7 @@ public:
     
         void MoveInLineOfSight(Unit *who)
         override {
-            if (!me->GetVictim() && me->CanAttack(who) == CAN_ATTACK_RESULT_OK && ( me->IsHostileTo( who )) && who->isInAccessiblePlaceFor(me) )
+            if (!me->GetVictim() && me->CanCreatureAttack(who) == CAN_ATTACK_RESULT_OK && ( me->IsHostileTo( who )) && who->isInAccessiblePlaceFor(me) )
             {
                 if (!IntroOnce && me->IsWithinDistInMap(who, 75))
                 {
@@ -457,7 +457,7 @@ public:
                 me->SetDeathState(JUST_DIED);
                 me->SetHealth(0);
                 me->CombatStop();
-                me->DeleteThreatList();
+                me->GetThreatManager().ClearAllThreat();
             }else Stop_Timer -= diff;
         }
     };

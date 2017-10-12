@@ -290,7 +290,7 @@ public:
         void DoUglyHack()
         {
             me->RemoveAllAuras();
-            me->DeleteThreatList();
+            me->GetThreatManager().ClearAllThreat();
             me->CombatStop();
         }
     

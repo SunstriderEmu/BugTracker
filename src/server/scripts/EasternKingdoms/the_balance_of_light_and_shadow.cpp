@@ -202,7 +202,7 @@ public:
     
                         for (uint64 & Summon : Summons) {
                             if (Creature* BadGuy = ObjectAccessor::GetCreature((*me), Summon))
-                                BadGuy->AddThreat(Peasant, 0);
+                                BadGuy->GetThreatManager().AddThreat(Peasant, 0);
                         }
                     }
                 }
@@ -235,7 +235,7 @@ public:
                     Creature* BadGuy = me->SummonCreature(CREATURE_FOOTSOLDIER, FootSoldiersPositions[i].x, FootSoldiersPositions[i].y, FootSoldiersPositions[i].z, 0, TEMPSUMMON_TIMED_DESPAWN, 60000);
                     if (BadGuy) {
                         Summons.Summon(BadGuy);
-                        BadGuy->AddThreat(MyLittlePriest, 0);
+                        BadGuy->GetThreatManager().AddThreat(MyLittlePriest, 0);
                         BadGuy->AI()->AttackStart(MyLittlePriest);
                     }
                 }

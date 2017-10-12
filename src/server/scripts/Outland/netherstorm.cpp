@@ -970,7 +970,7 @@ public:
                     {
                         DrainedPhaseHunter->SetLevel(Level); // set the summoned mob's data
                         DrainedPhaseHunter->SetHealth(Health);
-                        DrainedPhaseHunter->AddThreat(target, 10000.0f);
+                        DrainedPhaseHunter->GetThreatManager().AddThreat(target, 10000.0f);
                         DrainedPhaseHunter->AI()->AttackStart(target);
                     }
                 }

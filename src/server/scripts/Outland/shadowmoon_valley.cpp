@@ -245,7 +245,7 @@ public:
     
                 if(Dragonmaw)
                 {
-                    me->AddThreat(Dragonmaw, 100000.0f);
+                    me->GetThreatManager().AddThreat(Dragonmaw, 100000.0f);
                     AttackStart(Dragonmaw);
                 }
     
@@ -1740,7 +1740,7 @@ public:
                 if(Player* AggroTarget = (ObjectAccessor::GetPlayer(*me, AggroTargetGUID)))
                 {
                     me->SetUInt64Value(UNIT_FIELD_TARGET, AggroTarget->GetGUID());
-                    me->AddThreat(AggroTarget, 1);
+                    me->GetThreatManager().AddThreat(AggroTarget, 1);
                     me->HandleEmoteCommand(EMOTE_ONESHOT_POINT);
                 }
                 break;

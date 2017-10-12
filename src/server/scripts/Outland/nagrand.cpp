@@ -148,7 +148,7 @@ public:
                     (pDoneBy)->ToPlayer()->AttackStop();
                     me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     me->RemoveAllAuras();
-                    me->DeleteThreatList();
+                    me->GetThreatManager().ClearAllThreat();
                     me->CombatStop();
                     me->SetFaction(1080);               //friendly
                     me->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_SIT);
@@ -761,7 +761,7 @@ public:
                     {
                         if(!fleeing)
                         {
-                            me->DeleteThreatList();
+                            me->GetThreatManager().ClearAllThreat();
                             me->GetMotionMaster()->MoveFleeing(player);
                             fleeing = true;
                         }

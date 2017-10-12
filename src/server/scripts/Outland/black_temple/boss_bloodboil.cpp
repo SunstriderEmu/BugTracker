@@ -194,7 +194,7 @@ public:
                 if(me->GetThreat(pUnit))
                     DoModifyThreatPercent(pUnit, -100);
                 if(TargetThreat)
-                    me->AddThreat(pUnit, TargetThreat);
+                    me->GetThreatManager().AddThreat(pUnit, TargetThreat);
             }
         }
     
@@ -206,7 +206,7 @@ public:
             if (!Phase1 && me->GetVictim()->GetGUID() != TargetGUID)
             {
                 Unit* target = ObjectAccessor::GetUnit((*me), TargetGUID);
-                if (target && me->CanAttack(target) == CAN_ATTACK_RESULT_OK)
+                if (target && me->CanCreatureAttack(target) == CAN_ATTACK_RESULT_OK)
                     AttackStart(target);
             }
                 
@@ -284,7 +284,7 @@ public:
                 if(Phase1)
                 {
                     Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 50000, true);
-                    if(target && me->CanAttack(target) == CAN_ATTACK_RESULT_OK)
+                    if(target && me->CanCreatureAttack(target) == CAN_ATTACK_RESULT_OK)
                     {
                         Phase1 = false;
     
@@ -292,7 +292,7 @@ public:
                         TargetGUID = target->GetGUID();
                         /*if(me->GetThreat(target))
                             DoModifyThreatPercent(target, -100);*/
-                        me->AddThreat(target, 50000000.0f);
+                        me->GetThreatManager().AddThreat(target, 50000000.0f);
                         target->CastSpell(me, SPELL_TAUNT_GURTOGG, true);
                         me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
                         me->ApplySpellImmune(0, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);

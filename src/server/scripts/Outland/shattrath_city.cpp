@@ -573,7 +573,7 @@ public:
                 me->SetFaction(1194);
                 Done = true;
                 DoScriptText(SAY_GIVEUP, me, nullptr);
-                me->DeleteThreatList();
+                me->GetThreatManager().ClearAllThreat();
                 me->CombatStop();
                 me->GetMotionMaster()->MoveTargetedHome();
                 Player* player = ObjectAccessor::GetPlayer(*me, PlayerGUID);

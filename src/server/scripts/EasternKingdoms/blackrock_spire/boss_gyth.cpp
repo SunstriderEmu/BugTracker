@@ -95,7 +95,7 @@ public:
             {
                 Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0);
                 if (target)
-                    Summoned->AddThreat(target, 1.0f);
+                    Summoned->GetThreatManager().AddThreat(target, 1.0f);
             }
         }
     

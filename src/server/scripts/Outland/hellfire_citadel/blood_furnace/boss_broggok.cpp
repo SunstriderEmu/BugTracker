@@ -85,7 +85,7 @@ public:
         void EnterEvadeMode(EvadeReason /* why */) override
         {
             me->RemoveAllAuras();
-            me->DeleteThreatList();
+            me->GetThreatManager().ClearAllThreat();
             me->CombatStop(true);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             Reset();
@@ -205,7 +205,7 @@ public:
             if (pInstance)
                 pInstance->SetData(DATA_BROGGOKEVENT, FAIL);
     
-            me->DeleteThreatList();
+            me->GetThreatManager().ClearAllThreat();
             me->CombatStop(true);
             me->GetMotionMaster()->MoveTargetedHome();
             Reset();
@@ -292,7 +292,7 @@ public:
             if (pInstance)
                 pInstance->SetData(DATA_BROGGOKEVENT, FAIL);
     
-            me->DeleteThreatList();
+            me->GetThreatManager().ClearAllThreat();
             me->CombatStop(true);
             me->GetMotionMaster()->MoveTargetedHome();
             Reset();

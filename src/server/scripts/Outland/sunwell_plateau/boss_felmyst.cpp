@@ -829,7 +829,7 @@ public:
 
             if(Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
             {
-                me->AddThreat(target,500.0f);
+                me->GetThreatManager().AddThreat(target,500.0f);
                 AttackStart(target);
             }
             me->CastSpell((Unit*)nullptr, SPELL_DEAD_PASSIVE, true);

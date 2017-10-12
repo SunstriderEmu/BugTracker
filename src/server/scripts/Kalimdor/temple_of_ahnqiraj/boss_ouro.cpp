@@ -340,7 +340,7 @@ public:
                     if (Bug)
                     {
                         Summons.Summon(Bug);
-                        Bug->AddThreat(target, 1000000.0);
+                        Bug->GetThreatManager().AddThreat(target, 1000000.0);
                     }
                 }
             }
@@ -451,7 +451,7 @@ public:
         }
         void MoveInLineOfSight(Unit *who)
         override {
-            me->AddThreat(who,0.0);
+            me->GetThreatManager().AddThreat(who,0.0);
         }
     };
 

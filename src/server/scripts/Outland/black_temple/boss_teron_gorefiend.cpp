@@ -249,7 +249,7 @@ public:
         override {
             if(!who || (!who->IsAlive())) return;
     
-            if(me->CanAttack(who) == CAN_ATTACK_RESULT_OK && who->isInAccessiblePlaceFor(me) && me->IsHostileTo(who))
+            if(me->CanCreatureAttack(who) == CAN_ATTACK_RESULT_OK && who->isInAccessiblePlaceFor(me) && me->IsHostileTo(who))
             {
                 /*if (me->IsWithinDistInMap(who, attackRadius) && me->GetDistanceZ(who) <= CREATURE_Z_ATTACK_RANGE && me->IsWithinLOSInMap(who))
                 {
@@ -359,7 +359,7 @@ public:
                 if(pUnit && pUnit->IsAlive())
                 {
                     float threat = me->GetThreat(pUnit);
-                    unit->AddThreat(pUnit, threat + 5000000.0f);
+                    unit->GetThreatManager().AddThreat(pUnit, threat + 5000000.0f);
                 }
             }
         }
@@ -674,7 +674,7 @@ public:
                 {
                     if (pUnit->GetDisplayId() != 21300 && !pUnit->HasAuraEffect(40282, 0)) {
                         float threat = unit->GetThreatManager().getThreat(pUnit);
-                        me->AddThreat(pUnit, threat + 5000000.0f);
+                        me->GetThreatManager().AddThreat(pUnit, threat + 5000000.0f);
                     }
                 }
             }

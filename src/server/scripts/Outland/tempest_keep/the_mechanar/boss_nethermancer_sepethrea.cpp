@@ -115,7 +115,7 @@ public:
             if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0))
             {
                 summoned->AI()->AttackStart(target);
-                summoned->AddThreat(target,999999.0f);
+                summoned->GetThreatManager().AddThreat(target,999999.0f);
             }
         }
     

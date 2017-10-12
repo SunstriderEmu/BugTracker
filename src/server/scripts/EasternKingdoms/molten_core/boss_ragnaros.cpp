@@ -224,7 +224,7 @@ class Boss_Ragnaros : public CreatureScript
                         if(target)
                         {
                             summoned->AI()->AttackStart(target);
-                            summoned->AddThreat(target, 4000.0);
+                            summoned->GetThreatManager().AddThreat(target, 4000.0);
                         }
                     }
                     summoned->SetOwnerGUID(me->GetGUID());

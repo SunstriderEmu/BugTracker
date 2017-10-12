@@ -1299,7 +1299,7 @@ public:
             {
                 controller->SetFaction(FACTION_FRIENDLY);
                 controller->RemoveAllAuras();
-                controller->DeleteThreatList();
+                controller->GetThreatManager().ClearAllThreat();
                 controller->CombatStop();
                 ((mob_kiljaeden_controller::mob_kiljaeden_controllerAI*)controller->AI())->startDialogueText();
             }
@@ -1807,7 +1807,7 @@ public:
                                 if (Unit *unit = SelectTarget(SELECT_TARGET_NEAREST, 0, 100.0f, false))
                                 {
                                     AttackStart(unit);
-                                    me->AddThreat(unit, 10000000.0f);
+                                    me->GetThreatManager().AddThreat(unit, 10000000.0f);
                                     events.CancelEvent(EVENT_STUN);
                                 }
                             }

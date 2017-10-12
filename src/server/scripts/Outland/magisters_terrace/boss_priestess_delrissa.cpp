@@ -577,7 +577,7 @@ public:
         override {
             for(auto & Add : Adds)
                 if(Unit* pAdd = ObjectAccessor::GetUnit(*me, Add->guid))
-                    pAdd->AddThreat(who, 1.0f);
+                    pAdd->GetThreatManager().AddThreat(who, 1.0f);
                     
             boss_priestess_guestAI::EnterCombat(who);
         }
@@ -597,7 +597,7 @@ public:
                 Vanish_Timer = 30000;
                 Wait_Timer = 10000;
                 DoResetThreat();
-                me->AddThreat(SelectTarget(SELECT_TARGET_RANDOM, 0), 1000.0f);
+                me->GetThreatManager().AddThreat(SelectTarget(SELECT_TARGET_RANDOM, 0), 1000.0f);
             }else Vanish_Timer -= diff;
     
             if(InVanish)
@@ -681,7 +681,7 @@ public:
         override {
             for(auto & Add : Adds)
                 if(Unit* pAdd = ObjectAccessor::GetUnit(*me, Add->guid))
-                    pAdd->AddThreat(who, 1.0f);
+                    pAdd->GetThreatManager().AddThreat(who, 1.0f);
                     
             boss_priestess_guestAI::EnterCombat(who);
         }
@@ -775,7 +775,7 @@ public:
         override {
             for(auto & Add : Adds)
                 if(Unit* pAdd = ObjectAccessor::GetUnit(*me, Add->guid))
-                    pAdd->AddThreat(who, 1.0f);
+                    pAdd->GetThreatManager().AddThreat(who, 1.0f);
                     
             boss_priestess_guestAI::EnterCombat(who);
         }
@@ -853,7 +853,7 @@ public:
         override {
             for(auto & Add : Adds)
                 if(Unit* pAdd = ObjectAccessor::GetUnit(*me, Add->guid))
-                    pAdd->AddThreat(who, 1.0f);
+                    pAdd->GetThreatManager().AddThreat(who, 1.0f);
                     
             boss_priestess_guestAI::EnterCombat(who);
         }
@@ -983,7 +983,7 @@ public:
             
             for(auto & Add : Adds)
                 if(Unit* pAdd = ObjectAccessor::GetUnit(*me, Add->guid))
-                    pAdd->AddThreat(who, 1.0f);
+                    pAdd->GetThreatManager().AddThreat(who, 1.0f);
                     
             boss_priestess_guestAI::EnterCombat(who);
         }
@@ -1101,7 +1101,7 @@ public:
         override {
             for(auto & Add : Adds)
                 if(Unit* pAdd = ObjectAccessor::GetUnit(*me, Add->guid))
-                    pAdd->AddThreat(who, 1.0f);
+                    pAdd->GetThreatManager().AddThreat(who, 1.0f);
                     
             boss_priestess_guestAI::EnterCombat(who);
         }
@@ -1227,7 +1227,7 @@ public:
         override {
             for(auto & Add : Adds)
                 if(Unit* pAdd = ObjectAccessor::GetUnit(*me, Add->guid))
-                    pAdd->AddThreat(who, 1.0f);
+                    pAdd->GetThreatManager().AddThreat(who, 1.0f);
                     
             boss_priestess_guestAI::EnterCombat(who);
         }
@@ -1319,7 +1319,7 @@ public:
         override {
             for(auto & Add : Adds)
                 if(Unit* pAdd = ObjectAccessor::GetUnit(*me, Add->guid))
-                    pAdd->AddThreat(who, 1.0f);
+                    pAdd->GetThreatManager().AddThreat(who, 1.0f);
                     
             boss_priestess_guestAI::EnterCombat(who);
         }

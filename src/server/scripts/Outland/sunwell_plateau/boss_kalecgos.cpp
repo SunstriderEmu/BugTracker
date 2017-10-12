@@ -357,7 +357,7 @@ public:
                 me->SetDisableGravity(true);
                 me->GetMotionMaster()->Clear();
                 me->GetMotionMaster()->MovePoint(1,FLY_X,FLY_Y,FLY_Z);
-                me->DeleteThreatList();
+                me->GetThreatManager().ClearAllThreat();
                 TalkTimer = 600000;
                 break;
             case 3:
@@ -452,7 +452,7 @@ public:
             {
                 KalecGUID = Kalec->GetGUID();
                 me->CombatStart(Kalec);
-                me->AddThreat(Kalec, 100.0f);
+                me->GetThreatManager().AddThreat(Kalec, 100.0f);
             }
             DoScriptText(SAY_SATH_AGGRO, me);
         }
@@ -667,7 +667,7 @@ void boss_kalecgos::boss_kalecgosAI::UpdateAI(const uint32 diff)
                 me->RemoveAurasDueToSpell(SPELL_ENRAGE);
             me->SetHealth(me->GetMaxHealth());
             me->RemoveAllAuras();
-            me->DeleteThreatList();
+            me->GetThreatManager().ClearAllThreat();
             me->CombatStop();
             GameObject *Door = GameObject::GetGameObject(*me, ForceFieldGUID);
             if (Door) Door->UseDoorOrButton();
