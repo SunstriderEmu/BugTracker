@@ -875,7 +875,7 @@ public:
                     i->SetFaction(me->GetFaction());
                     Unit* target=SelectTarget(SELECT_TARGET_RANDOM,0);
                     i->AI()->AttackStart(target); // Si true ils ne se déplacent po :(
-                    i->AddThreat(target,10000.0f);
+                    i->GetThreatManager().AddThreat(target,10000.0f);
                     
                 }
             }
@@ -1097,7 +1097,7 @@ public:
                         Druid=((mob_dementeddruids::npc_dementeddruidsAI*)DruidCreature->AI());
                         Druid->Ysondre=me;
                         Druid->AttackStart(Target);
-                        DruidCreature->AddThreat(Target,6000.0f);
+                        DruidCreature->GetThreatManager().AddThreat(Target,6000.0f);
                     }
                 }
             }
