@@ -514,7 +514,7 @@ DELETE FROM smart_scripts WHERE entryorguid = @ENTRY AND source_type = 0;
 INSERT IGNORE INTO smart_scripts (entryorguid, source_type, id, link, event_type, event_phase_mask, event_chance, event_flags, event_param1, event_param2, event_param3, event_param4, action_type, action_param1, action_param2, action_param3, action_param4, action_param5, action_param6, target_type, target_flags, target_param1, target_param2, target_param3, target_x, target_y, target_z, target_o, comment) VALUES
   (@ENTRY, 0, 0, 1, 54, 0, 100, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 21, 0, 30, 0, 0, 0, 0, 0, 0, 'Fel Spirit - On Just Summoned - Say Line 0 '),
   (@ENTRY, 0, 1, 0, 61, 0, 100, 0, 0, 0, 0, 0, 49, 0, 0, 0, 0, 0, 0, 21, 0, 30, 0, 0, 0, 0, 0, 0, 'Fel Spirit - On Just Summoned - Start Attacking '),
-  (@ENTRY, 0, 2, 0, 1, 0, 100, 0, 0, 0, 0, 0, 41, 30000, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Fel Spirit - Out of Combat - Despawn In 30000ms ');
+  (@ENTRY, 0, 2, 0, 1, 0, 100, 1, 0, 0, 0, 0, 41, 30000, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Fel Spirit - Out of Combat - Despawn In 30000ms ');
 
 # SmartAIMgr: EntryOrGuid 23162 using event(3) has invalid action type (0), skipped.
 -- NPC 23162
@@ -567,7 +567,7 @@ SET @ENTRY = 23438;
 UPDATE creature_template SET AIName='SmartAI', ScriptName='' WHERE entry = @ENTRY;
 DELETE FROM smart_scripts WHERE entryorguid = @ENTRY AND source_type = 0;
 INSERT IGNORE INTO smart_scripts (entryorguid, source_type, id, link, event_type, event_phase_mask, event_chance, event_flags, event_param1, event_param2, event_param3, event_param4, action_type, action_param1, action_param2, action_param3, action_param4, action_param5, action_param6, target_type, target_flags, target_param1, target_param2, target_param3, target_x, target_y, target_z, target_o, comment) VALUES
-  (@ENTRY, 0, 0, 1, 54, 0, 100, 0, 0, 0, 0, 0, 33, 23438, 0, 0, 0, 0, 0, 23, 0, 0, 0, 0, 0, 0, 0, 0, 'Nether Ray Feed Credit - On Just Summoned - Quest Credit "<a href="http://wowhead.com/quest=23438">Nether Ray Feed Credit</a>" '),
+  (@ENTRY, 0, 0, 1, 54, 0, 100, 0, 0, 0, 0, 0, 11, 41427, 0, 0, 0, 0, 0, 23, 0, 0, 0, 0, 0, 0, 0, 0, 'Nether Ray Feed Credit - On Just Summoned - Quest Credit "<a href="http://wowhead.com/quest=23438">Nether Ray Feed Credit</a>" '),
   (@ENTRY, 0, 1, 2, 61, 0, 100, 0, 0, 0, 0, 0, 45, 0, 1, 0, 0, 0, 0, 19, 4, 23439, 10, 0, 0, 0, 0, 0, 'Nether Ray Feed Credit - On Just Summoned - Set Data 0 1 '),
   (@ENTRY, 0, 2, 0, 61, 0, 100, 0, 0, 0, 0, 0, 41, 1000, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Nether Ray Feed Credit - On Just Summoned - Despawn In 1000ms ');
 
