@@ -855,6 +855,13 @@ INSERT INTO broadcast_text (ID, Language, MaleText, FemaleText, EmoteID0, EmoteI
   (18678,	0,	'3...',	'',	0,	0,	0,	0,	0,	0,	0,	0,	1,	18019),
   (18680,	0,	'2...',	'',	0,	0,	0,	0,	0,	0,	0,	0,	1,	18019),
   (18681,	0,	'1...',	'',	0,	0,	0,	0,	0,	0,	0,	0,	1,	18019);
+DELETE FROM creature_text WHERE CreatureID = 20767;
+INSERT INTO creature_text (CreatureID, groupid, id, text, type, language, probability, emote, duration, sound, comment, BroadcastTextId, TextRange) VALUES
+  (20767,	0,	0,	'5...',	41,	0,	100,	0,	0,	0,	'Mana Bomb Explosion Trigger - ',	18676,	1),
+  (20767,	1,	0,	'4...',	41,	0,	100,	0,	0,	0,	'Mana Bomb Explosion Trigger - ',	18677,	1),
+  (20767,	2,	0,	'3...',	41,	0,	100,	0,	0,	0,	'Mana Bomb Explosion Trigger - ',	18678,	1),
+  (20767,	3,	0,	'2...',	41,	0,	100,	0,	0,	0,	'Mana Bomb Explosion Trigger - ',	18680,	1),
+  (20767,	4,	0,	'1...',	41,	0,	100,	0,	0,	0,	'Mana Bomb Explosion Trigger - ',	18681,	1);
 DELETE FROM event_scripts WHERE id = 13470;
 INSERT INTO event_scripts (id, delay, command, datalong, datalong2, dataint, x, y, z, o) VALUES
   (13470,	0,	10,	21039,	2000,	0,	-2345.05,	3235.15,	2.98429,	0),
