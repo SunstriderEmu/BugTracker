@@ -26,7 +26,6 @@ npc_aeranas
 go_haaleshi_altar
 npc_wing_commander_dabiree
 npc_gryphoneer_windbellow
-npc_wing_commander_brack
 npc_wounded_blood_elf
 npc_fel_guard_hound
 npc_anchorite_relic
@@ -348,79 +347,6 @@ public:
     CreatureAI* GetAI(Creature* creature) const override
     {
         return new npc_gryphoneer_leafbeardAI(creature);
-    }
-};
-
-
-
-/*######
-## npc_wing_commander_brack
-######*/
-
-#define GOSSIP_ITEM1_BRA "Fly me to Murketh and Shaadraz Gateways"
-#define GOSSIP_ITEM2_BRA "Fly me to The Abyssal Shelf"
-#define GOSSIP_ITEM3_BRA "Fly me to Spinebreaker Post"
-
-class npc_wing_commander_brack : public CreatureScript
-{
-public:
-    npc_wing_commander_brack() : CreatureScript("npc_wing_commander_brack")
-    { }
-
-   class npc_wing_commander_brackAI : public ScriptedAI
-   {
-   public:
-        npc_wing_commander_brackAI(Creature* creature) : ScriptedAI(creature)
-        {}
-
-
-        virtual bool GossipHello(Player* pPlayer) override
-        {
-            if (me->IsQuestGiver())
-                pPlayer->PrepareQuestMenu( me->GetGUID() );
-
-            //Mission: The Murketh and Shaadraz Gateways
-            if (pPlayer->GetQuestStatus(10129) == QUEST_STATUS_INCOMPLETE)
-                pPlayer->ADD_GOSSIP_ITEM(2, GOSSIP_ITEM1_BRA, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-
-            //Mission: The Abyssal Shelf || Return to the Abyssal Shelf
-            if (pPlayer->GetQuestStatus(10162) == QUEST_STATUS_INCOMPLETE || pPlayer->GetQuestStatus(10347) == QUEST_STATUS_INCOMPLETE)
-                pPlayer->ADD_GOSSIP_ITEM(2, GOSSIP_ITEM2_BRA, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-
-            //Spinebreaker Post
-            if (pPlayer->GetQuestStatus(10242) == QUEST_STATUS_COMPLETE && !pPlayer->GetQuestRewardStatus(10242))
-                pPlayer->ADD_GOSSIP_ITEM(2, GOSSIP_ITEM3_BRA, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
-
-            SEND_PREPARED_GOSSIP_MENU(pPlayer, me);
-
-            return true;
-        }
-
-
-        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
-        {
-            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
-            switch(action)
-            {
-            case GOSSIP_ACTION_INFO_DEF + 1:
-                player->CastSpell(player,33659,true);               //TaxiPath 584 (Gateways Murket and Shaadraz)
-                break;
-            case GOSSIP_ACTION_INFO_DEF + 2:
-                player->CastSpell(player,33825,true);               //TaxiPath 587 (Aerial Assault Flight (Horde))
-                break;
-            case GOSSIP_ACTION_INFO_DEF + 3:
-                player->CastSpell(player,34578,true);               //TaxiPath 604 (Taxi - Reaver's Fall to Spinebreaker Ridge)
-                break;
-            }
-            player->CLOSE_GOSSIP_MENU();
-            return true;
-        }
-
-    };
-
-    CreatureAI* GetAI(Creature* creature) const override
-    {
-        return new npc_wing_commander_brackAI(creature);
     }
 };
 
@@ -2540,8 +2466,6 @@ void AddSC_hellfire_peninsula()
     new npc_gryphoneer_leafbeard();
 
     new npc_gryphoneer_windbellow();
-
-    new npc_wing_commander_brack();
 
     new npc_wounded_blood_elf();
     
