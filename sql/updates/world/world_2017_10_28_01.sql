@@ -1,0 +1,2 @@
+ALTER TABLE battleground_template ADD COLUMN IF NOT EXISTS StartMaxDist FLOAT NOT NULL;
+ALTER TABLE battleground_template ADD COLUMN IF NOT EXISTS ScriptName VARCHAR(64) DEFAULT '' NOT NULL;
