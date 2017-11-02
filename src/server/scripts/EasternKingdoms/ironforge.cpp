@@ -25,7 +25,7 @@ EndScriptData */
 npc_royal_historian_archesonus
 EndContentData */
 
-
+#include "TaskScheduler.h"
 
 /*######
 ## npc_royal_historian_archesonus
@@ -120,6 +120,59 @@ public:
         npc_magni_bronzebeardAI(Creature* creature) : ScriptedAI(creature)
         {}
 
+        EventMap events;
+
+        enum Spells
+        {
+            SPELL_AVATAR = 19135,
+            SPELL_KNOCK_AWAY = 20686,
+            SPELL_STORM_BOLT = 20685,
+        };
+        enum events 
+        {
+            EV_AVATAR = 1,
+            EV_KNOCK_AWAY = 2,
+            EV_STORM_BOLT = 3,
+        };
+
+        void EnterCombat(Unit* victim) override 
+        {
+            me->PlayDirectSound(5896);
+        }
+
+        void Reset() override 
+        {
+            events.RescheduleEvent(EV_AVATAR, urand(5000, 7000));
+            events.RescheduleEvent(EV_KNOCK_AWAY, urand(8000, 10000));
+            events.RescheduleEvent(EV_STORM_BOLT, urand(12000, 15000));
+        }
+
+        void UpdateAI(const uint32 diff) override 
+        {
+            if (!UpdateVictim())
+                return;
+
+            events.Update(diff);
+            switch (events.GetEvent())
+            {
+            case 0:
+                break;
+            case EV_AVATAR:
+                if (me->CastSpell(me, SPELL_AVATAR) == SPELL_CAST_OK)
+                    events.RescheduleEvent(EV_AVATAR, urand(25000, 30000));
+                break;
+            case EV_KNOCK_AWAY:
+                if (me->CastSpell(me->GetVictim(), SPELL_KNOCK_AWAY) == SPELL_CAST_OK)
+                    events.RescheduleEvent(EV_KNOCK_AWAY, urand(20000, 30000));
+                break;
+            case EV_STORM_BOLT:
+                Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0);
+                if (target && me->CastSpell(target, SPELL_STORM_BOLT) == SPELL_CAST_OK)
+                    events.RescheduleEvent(EV_STORM_BOLT, urand(15000,20000));
+                break;
+            }
+            DoMeleeAttackIfReady();
+        }
 
         virtual void QuestReward(Player* pPlayer, Quest const* pQuest, uint32 /*opt*/) override
         {
