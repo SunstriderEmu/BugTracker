@@ -99,4 +99,5 @@ INSERT INTO `spell_target_position` (`ID`, `target_map`, `target_position_x`, `t
 UPDATE creature_template SET DamageModifier = 35 WHERE entry IN (2784, 7937, 7999, 10540, 16800, 16802, 17468, 29611);
 UPDATE creature_template SET DamageModifier = 5 WHERE entry IN (1284, 3516, 16801, 4968);
 
+-- Fixed Kor'kron Elite hp
 UPDATE creature_template SET exp = 0 WHERE entry = 14304;
