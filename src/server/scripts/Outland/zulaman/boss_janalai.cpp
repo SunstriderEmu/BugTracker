@@ -228,27 +228,7 @@ public:
     
         bool HatchAllEggs(uint32 action) //1: reset, 2: isHatching all
         {
-            std::list<Creature*> templist;
-            float x, y, z;
-            me->GetPosition(x, y, z);
-    
-            {
-                Trinity::AllCreaturesOfEntryInRange check(me, MOB_EGG, 100);
-                Trinity::CreatureListSearcher<Trinity::AllCreaturesOfEntryInRange> searcher(me, templist, check);
-                Cell::VisitGridObjects(me, searcher, MAX_SEARCHER_DISTANCE);
-            }
-    
-            //error_log("Eggs %d at middle", templist.size());
-            if(!templist.size())
-                return false;
-    
-            for(auto & i : templist)
-            {
-                if(action == 1)
-                   i->SetDisplayId(10056);
-                else if(action == 2 &&i->GetDisplayId() != 11686)
-                   i->CastSpell(i, SPELL_HATCH_EGG, false);
-            }
+            me->CastSpell(me, SPELL_HATCH_EGG, true);
             return true;
         }
     
@@ -512,28 +492,29 @@ public:
     
         bool HatchEggs(uint32 num)
         {
+            me->CastSpell(me, SPELL_HATCH_EGG, true);
             std::list<Creature*> templist;
             float x, y, z;
             me->GetPosition(x, y, z);
-    
+
             {
                 Trinity::AllCreaturesOfEntryInRange check(me, 23817, 50);
                 Trinity::CreatureListSearcher<Trinity::AllCreaturesOfEntryInRange> searcher(me, templist, check);
                 Cell::VisitAllObjects(me, searcher, MAX_SEARCHER_DISTANCE);
             }
-    
+
             //error_log("Eggs %d at %d", templist.size(), side);
-    
-            for(auto i = templist.begin(); i != templist.end() && num > 0; ++i)
+
+            for (auto i = templist.begin(); i != templist.end() && num > 0; ++i)
             {
-                if((*i)->GetDisplayId() != 11686)
+                if ((*i)->GetDisplayId() != 11686)
                 {
-                   (*i)->CastSpell(*i, SPELL_HATCH_EGG, false);
+                    (*i)->AI()->message(0, 0); //send whatever, hatch egg
                     num--;
                 }
             }
-    
-            if(num)
+
+            if (num)
                 return false;   // no more templist
             else
                 return true;
@@ -636,8 +617,6 @@ public:
             me->SetUnitMovementFlags(MOVEMENTFLAG_DISABLE_GRAVITY);
         }
     
-        void EnterCombat(Unit *who) override {/*DoZoneInCombat();*/}
-    
         void UpdateAI(const uint32 diff)
         override {
             if(!pInstance || !(pInstance->GetData(DATA_JANALAIEVENT) == IN_PROGRESS))
@@ -683,14 +662,26 @@ public:
         void AttackStart(Unit* who) override {}
         void MoveInLineOfSight(Unit* who) override {}
         void UpdateAI(const uint32 diff) override {}
-    
-        void SpellHit(Unit *caster, const SpellInfo *spell)
-        override {
-            if(spell->Id == SPELL_HATCH_EGG)
+
+        void Hatch()
+        {
+            if (me->GetDisplayId() != 11686)
             {
                 DoSpawnCreature(MOB_HATCHLING, 0, 0, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 60000);
                 me->SetDisplayId(11686);
             }
+        }
+
+        virtual uint64 message(uint32 id, uint64 data) 
+        { 
+            Hatch();
+            return 0;
+        }
+
+        void SpellHit(Unit *caster, const SpellInfo *spell)
+        override {
+            if (spell->Id == SPELL_HATCH_EGG)
+                Hatch();
         }
     };
 
