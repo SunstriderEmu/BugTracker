@@ -1605,13 +1605,13 @@ INSERT IGNORE INTO smart_scripts (entryorguid, source_type, id, link, event_type
   (@ENTRY*100+1, 9, 103, 0, 0, 0, 100, 0, 0, 0, 0, 0, 41, 15000, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Dreghood Slave - In Combat - Despawn In 15000ms '),
   (@ENTRY*100+1, 9, 104, 0, 0, 0, 100, 0, 1000, 1000, 0, 0, 53, 1, 17799, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 'Dreghood Slave - In Combat - Start Waypoint 17799 ');
 DELETE FROM waypoints WHERE entry = @ENTRY;
-INSERT INTO waypoints (id, entry, pointid, position_x, position_y, position_z, point_comment) VALUES
-  (22848,	@ENTRY,	1,	-201.368,	-260.752,	-7.9662,	'Dreghood Slave'),
-  (22849,	@ENTRY,	2,	-166.711,	-282.765,	-8.21684,	'Dreghood Slave'),
-  (22850,	@ENTRY,	3,	-152.487,	-306.501,	-7.26032,	'Dreghood Slave'),
-  (22851,	@ENTRY,	4,	-115.478,	-326.205,	-7.40693,	'Dreghood Slave'),
-  (22852,	@ENTRY,	5,	-93.8913,	-306.697,	-7.7673,	'Dreghood Slave'),
-  (22853,	@ENTRY,	6,	-89.8772,	-266.64,	-9.55369,	'Dreghood Slave');
+INSERT INTO waypoints (entry, pointid, position_x, position_y, position_z, point_comment) VALUES
+  (@ENTRY,	1,	-201.368,	-260.752,	-7.9662,	'Dreghood Slave'),
+  (@ENTRY,	2,	-166.711,	-282.765,	-8.21684,	'Dreghood Slave'),
+  (@ENTRY,	3,	-152.487,	-306.501,	-7.26032,	'Dreghood Slave'),
+  (@ENTRY,	4,	-115.478,	-326.205,	-7.40693,	'Dreghood Slave'),
+  (@ENTRY,	5,	-93.8913,	-306.697,	-7.7673,	'Dreghood Slave'),
+  (@ENTRY,	6,	-89.8772,	-266.64,	-9.55369,	'Dreghood Slave');
 DELETE FROM creature_text WHERE entry = @ENTRY;
 INSERT IGNORE INTO creature_text (entry, groupid, id, text, type, language, probability, emote, sound, comment) VALUES
   (@ENTRY, 0, 0, "I spit on the corpse of these filthy naga.", 12, 0, 100, 0, 0, "Dreghood Slave - Free"),
