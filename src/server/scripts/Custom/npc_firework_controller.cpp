@@ -26,8 +26,16 @@ enum Firework
     GOB_ROCKET_RED = 180851,
     GOB_ROCKET_BLUE = 180854,
     GOB_ROCKET_GREEN = 180855,
+    //no purple for some reason...
     GOB_ROCKET_WHITE = 180857,
     GOB_ROCKET_YELLOW = 180858,
+    //there are more spells with BIG variation, such as 180862
+    GOB_ROCKET_RED_BIG = 180860,
+    GOB_ROCKET_BLUE_BIG = 180861,
+    GOB_ROCKET_GREEN_BIG = 180862,
+    GOB_ROCKET_PURPLE_BIG = 180863,
+    GOB_ROCKET_WHITE_BIG = 180864,
+    GOB_ROCKET_YELLOW_BIG = 180865,
 };
 
 struct FireworkEvent {
@@ -150,6 +158,7 @@ public:
                     gob->SetFloatValue(OBJECT_FIELD_SCALE_X, event->size);
                     Map* map = me->GetMap();
                     map->RemoveFromMap(gob,false); 
+                    gob->SetMap(map);
                     map->AddToMap(gob);
                     gob->Delete(); //this trigger explosion
                 }
