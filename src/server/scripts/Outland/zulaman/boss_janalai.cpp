@@ -672,7 +672,7 @@ public:
             }
         }
 
-        virtual uint64 message(uint32 id, uint64 data) 
+        virtual uint64 message(uint32 id, uint64 data) override 
         { 
             Hatch();
             return 0;
