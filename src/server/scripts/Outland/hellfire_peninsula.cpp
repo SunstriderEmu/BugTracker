@@ -1989,7 +1989,8 @@ public:
         {
             DarkPortalEventDemonAI::UpdateAI(diff);
 
-            DoMeleeAttackIfReady();
+            if (!UpdateVictim())
+                DoMeleeAttackIfReady();
         }
 
     };
@@ -2016,7 +2017,8 @@ public:
         {
             DarkPortalEventDemonAI::UpdateAI(diff);
 
-            DoMeleeAttackIfReady();
+            if(!UpdateVictim())
+                DoMeleeAttackIfReady();
         }
     };
 
@@ -2042,7 +2044,8 @@ public:
         {
             DarkPortalEventDemonAI::UpdateAI(diff);
 
-            DoMeleeAttackIfReady();
+            if (!UpdateVictim())
+                DoMeleeAttackIfReady();
         }
     };
 
