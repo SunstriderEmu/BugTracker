@@ -179,7 +179,7 @@ public:
             
         bool completed;    
         
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             Player* player = GetPlayerForEscort();
             switch (i)
@@ -261,7 +261,7 @@ public:
             
         bool completed;    
         
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             Player* player = GetPlayerForEscort();
             switch (i)

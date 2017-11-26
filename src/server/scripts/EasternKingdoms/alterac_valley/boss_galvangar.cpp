@@ -78,7 +78,7 @@ public:
             DoScriptText(YELL_AGGRO, me);
         }
     
-        void JustRespawned()
+        void JustAppeared()
         override {
             Reset();
         }

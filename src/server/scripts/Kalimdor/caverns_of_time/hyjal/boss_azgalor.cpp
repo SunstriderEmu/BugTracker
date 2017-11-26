@@ -84,7 +84,7 @@ public:
             DoScriptText(SAY_ONSLAY1 - rand()%3,me);
         }
     
-        void WaypointReached(uint32 i) override
+        void WaypointReached(uint32 i, uint32 pathID) override
         {
             pos = i;
             if (i == 7 && pInstance)
@@ -231,6 +231,8 @@ public:
         uint64 AzgalorGUID;
         InstanceScript* pInstance;
     
+        void WaypointReached(uint32, uint32) override {} //must be implemented because we inherit from npc_escortAI
+
         void Reset() override
         {
             CrippleTimer = 50000;
@@ -238,17 +240,7 @@ public:
             DoCast(me, SPELL_THRASH);
             CheckTimer = 5000;
         }
-    
-        void KilledUnit(Unit *victim) override
-        {
-    
-        }
-    
-        void WaypointReached(uint32 i) override
-        {
-    
-        }
-    
+        
         void MoveInLineOfSight(Unit *who) override
         {
             if (me->GetDistance(who) <= 50 && !me->IsInCombat() && me->IsHostileTo(who))
@@ -256,11 +248,6 @@ public:
                 me->GetThreatManager().AddThreat(who,0.0);
                 me->Attack(who,false);
             }
-        }
-    
-        void JustDied(Unit *victim)
-        override {
-    
         }
     
         void UpdateAI(const uint32 diff)

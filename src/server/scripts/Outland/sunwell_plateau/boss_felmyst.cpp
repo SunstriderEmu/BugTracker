@@ -241,7 +241,7 @@ public:
                     setPhase(PHASE_PULL);
                     break;
                 case PHASE_PULL:
-                    me->GetMotionMaster()->MovePath(NON_COMBAT_PATH);
+                    me->GetMotionMaster()->MovePath(NON_COMBAT_PATH, true, true); //use smoothSpline system
                     break;
                 case PHASE_GROUND:
                     flightPhaseTimer = 60000;

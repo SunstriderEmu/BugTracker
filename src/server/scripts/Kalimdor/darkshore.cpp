@@ -318,7 +318,7 @@ public:
         public:
         npc_prospector_remtravelAI(Creature* pCreature) : npc_escortAI(pCreature) {}
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             Player* pPlayer = GetPlayerForEscort();
     

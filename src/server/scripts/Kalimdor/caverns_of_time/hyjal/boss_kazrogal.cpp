@@ -80,7 +80,7 @@ public:
             DoScriptText(SAY_ONSLAY1 - rand()%3,me);
         }
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             pos = i;
             if (i == 7 && pInstance)

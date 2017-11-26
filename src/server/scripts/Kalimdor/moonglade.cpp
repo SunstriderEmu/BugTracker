@@ -588,7 +588,7 @@ public:
             } else if(Event_onWait) Event_Timer -= diff;
         }
     
-        void WaypointReached(uint32 id)
+        void WaypointReached(uint32 id, uint32 pathID)
         override {
             CurrWP = id;
             Event_Timer = 0;

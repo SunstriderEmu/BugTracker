@@ -56,7 +56,7 @@ public:
         bool IsWalking;
         bool complete;
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             Player* player = GetPlayerForEscort();
     
@@ -190,7 +190,7 @@ public:
         
         void EnterCombat(Unit* who) override {}
     
-        void WaypointReached(uint32 uiPoint)
+        void WaypointReached(uint32 uiPoint, uint32 pathID)
         override {
             Player* pPlayer = GetPlayerForEscort();
     

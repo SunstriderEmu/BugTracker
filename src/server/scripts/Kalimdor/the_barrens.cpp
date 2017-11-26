@@ -123,7 +123,7 @@ public:
     
         void Reset() override { }
     
-        void WaypointReached(uint32 uiPointId)
+        void WaypointReached(uint32 uiPointId, uint32 pathID)
         override {
             Player* pPlayer = GetPlayerForEscort();
     
@@ -635,7 +635,7 @@ public:
         
         void EnterCombat(Unit* pWho) override {}
     
-        void WaypointReached(uint32 uiPointId)
+        void WaypointReached(uint32 uiPointId, uint32 pathID)
         override {
             Player* pPlayer = GetPlayerForEscort();
     
@@ -1091,7 +1091,7 @@ public:
             }
         }
         
-        void WaypointReached(uint32 id)
+        void WaypointReached(uint32 id, uint32 pathID)
         override {
             switch (id) {
             case 0:

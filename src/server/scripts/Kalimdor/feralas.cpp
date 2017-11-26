@@ -121,7 +121,7 @@ public:
         public:
         npc_oox22feAI(Creature* pCreature) : npc_escortAI(pCreature) { }
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             switch (i)
             {

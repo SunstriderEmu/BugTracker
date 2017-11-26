@@ -90,7 +90,7 @@ public:
             DoScriptText(YELL_AGGRO, me);
         }
     
-        void JustRespawned() override
+        void JustAppeared() override
         {
             Reset();
             switch (rand()%1) 

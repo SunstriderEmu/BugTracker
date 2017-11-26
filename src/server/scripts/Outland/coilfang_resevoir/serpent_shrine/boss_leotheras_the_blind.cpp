@@ -721,7 +721,7 @@ public:
                 pInstance->SetData64(DATA_LEOTHERAS_EVENT_STARTER, who->GetGUID());
         }
     
-        void JustRespawned()
+        void JustAppeared()
         override {
             AddedBanish = false;
             Reset();

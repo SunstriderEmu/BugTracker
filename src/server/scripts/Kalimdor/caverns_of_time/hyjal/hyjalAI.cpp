@@ -996,7 +996,8 @@ void hyjalAI::RespawnNearPos(float x, float y)
     Trinity::WorldObjectWorker<Trinity::RespawnDo> worker(me, u_do);
     Cell::VisitGridObjects(me, worker, 250.0f);
 }
-void hyjalAI::WaypointReached(uint32 i)
+
+void hyjalAI::WaypointReached(uint32 i, uint32 pathID)
 {
     if(i == 1 || (i == 0 && me->GetEntry() == THRALL))
     {

@@ -81,7 +81,7 @@ public:
         npc_prospector_anvilwardAI(Creature *c) : npc_escortAI(c) {}
     
         // Pure Virtual Functions
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             Player* player = GetPlayerForEscort();
     

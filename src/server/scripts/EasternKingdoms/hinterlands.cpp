@@ -64,7 +64,7 @@ public:
     
         void Reset() override {}
     
-        void WaypointReached(uint32 uiPointId)
+        void WaypointReached(uint32 uiPointId, uint32 pathID)
         override {
             Player* pPlayer = GetPlayerForEscort();
             if (!pPlayer)
@@ -192,12 +192,12 @@ public:
             m_uiPostEventTimer = 3000;
         }
     
-        void JustRespawned()
+        void JustAppeared()
         override {
             m_bIsByOutrunner = false;
             m_iSpawnId = 0;
     
-            npc_escortAI::JustRespawned();
+            npc_escortAI::JustAppeared();
         }
     
         void EnterCombat(Unit* pWho)
@@ -241,7 +241,7 @@ public:
             pSummoned->GetMotionMaster()->MovePoint(0, m_afAmbushMoveTo[m_iSpawnId].m_fX, m_afAmbushMoveTo[m_iSpawnId].m_fY, m_afAmbushMoveTo[m_iSpawnId].m_fZ);
         }
     
-        void WaypointReached(uint32 uiPointId)
+        void WaypointReached(uint32 uiPointId, uint32 pathID)
         override {
             Player* pPlayer = GetPlayerForEscort();
     

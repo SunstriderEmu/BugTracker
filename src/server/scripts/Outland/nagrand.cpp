@@ -865,7 +865,7 @@ public:
             DoCast(me, SPELL_EARTHBIND_TOTEM, false);
         }
     
-        void WaypointReached(uint32 uiPointId)
+        void WaypointReached(uint32 uiPointId, uint32 pathID)
         override {
             switch(uiPointId)
             {
@@ -1187,7 +1187,7 @@ public:
             }
         }
     
-        void WaypointReached(uint32 PointId)
+        void WaypointReached(uint32 PointId, uint32 pathID)
         override {
             switch(PointId)
             {

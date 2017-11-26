@@ -599,7 +599,7 @@ public:
     
         bool completed;
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             Player* pPlayer = GetPlayerForEscort();
             if (!pPlayer)
@@ -787,7 +787,7 @@ public:
         uint32 step;
         uint32 timer;
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             Player* pPlayer = GetPlayerForEscort();
             if (!pPlayer)

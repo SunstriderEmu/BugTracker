@@ -174,7 +174,7 @@ public:
         public:
         npc_custodian_of_timeAI(Creature *c) : npc_escortAI(c) {}
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             Player *pPlayer = GetPlayerForEscort();
             if( !pPlayer )
@@ -468,7 +468,7 @@ public:
         
         bool complete;
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             Player* player = GetPlayerForEscort();
     

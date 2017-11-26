@@ -53,7 +53,7 @@ public:
     
         InstanceScript *pInstance;
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             if( pInstance && i == 6)
             {

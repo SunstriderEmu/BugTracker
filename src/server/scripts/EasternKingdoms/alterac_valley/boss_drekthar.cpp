@@ -91,7 +91,7 @@ public:
             DoScriptText(YELL_AGGRO, me);
         }
     
-        void JustRespawned() override {
+        void JustAppeared() override {
             Reset();
             DoScriptText(YELL_RESPAWN, me);
         }

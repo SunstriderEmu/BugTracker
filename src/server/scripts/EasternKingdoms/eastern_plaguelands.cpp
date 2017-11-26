@@ -278,7 +278,7 @@ public:
         
         void EnterCombat(Unit *pWho) override {}
         
-        void WaypointReached(uint32 uiPointId)
+        void WaypointReached(uint32 uiPointId, uint32 pathID)
         override {
             Player* pPlayer = GetPlayerForEscort();
     

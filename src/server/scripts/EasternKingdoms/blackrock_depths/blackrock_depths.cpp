@@ -213,7 +213,7 @@ public:
             MobDeath_Timer = 2500;
         }
     
-        void WaypointReached(uint32 i) override
+        void WaypointReached(uint32 i, uint32 pathID) override
         {
             switch(i)
             {
@@ -1300,7 +1300,7 @@ public:
                 go->SetGoState(GOState(state));
         }
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             if (!pInstance)
                 return;
@@ -1488,7 +1488,7 @@ public:
             }
         }
         
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             Player* player = GetPlayerForEscort();
             if (!player)

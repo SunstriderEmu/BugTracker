@@ -70,7 +70,7 @@ public:
         uint32 Thunderclap_Timer;
         bool Completed;
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             Player* player = GetPlayerForEscort();
     
@@ -221,7 +221,7 @@ public:
     
         void EnterCombat(Unit*) override {}
     
-        void WaypointReached(uint32 i) override
+        void WaypointReached(uint32 i, uint32 pathID) override
         {
             Player* player = GetPlayerForEscort();
     
@@ -395,7 +395,7 @@ public:
             me->SetLootRecipient(nullptr);
         }
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             Player* pPlayer = GetPlayerForEscort();
             if (pPlayer)
@@ -698,7 +698,7 @@ public:
                 summon->AI()->AttackStart(me);
         }
         
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             //Player* player = GetPlayerForEscort();
     

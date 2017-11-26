@@ -140,7 +140,7 @@ public:
         public:
         npc_deathstalker_erlandAI(Creature *c) : npc_escortAI(c) {}
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             Player* player = GetPlayerForEscort();
     
@@ -285,7 +285,7 @@ public:
             --KillCount;
         }
         
-        void JustRespawned() override
+        void JustAppeared() override
         {
             me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
         }

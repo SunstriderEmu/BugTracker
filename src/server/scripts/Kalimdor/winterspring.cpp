@@ -383,7 +383,7 @@ public:
             return me->FindNearestGameObject(GOB_FIRE, 10.0f);
         }
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             Player* pPlayer = GetPlayerForEscort();
             if (!pPlayer)
@@ -426,7 +426,7 @@ public:
             
         }
         
-        void JustRespawned()
+        void JustAppeared()
         override {
             completed = false;
             step = 0;

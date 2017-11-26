@@ -292,7 +292,7 @@ public:
             me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);   // Prevent restarting the timer I don't know how...
             me->RemoveAurasDueToSpell(45225);
             
-            me->GetMotionMaster()->MovePath(24358); //this path is PATH_TYPE_ONCE
+            me->GetMotionMaster()->MovePath(24358, false); //this path is PATH_TYPE_ONCE
             suicideTimer = 14000;
         }
         

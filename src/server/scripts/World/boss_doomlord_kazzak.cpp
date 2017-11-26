@@ -76,7 +76,7 @@ public:
             Twisted_Reflection_Timer = 33000;                   // Timer may be incorrect
         }
     
-        void JustRespawned()
+        void JustAppeared()
         override {
             DoScriptText(SAY_INTRO, me);
         }

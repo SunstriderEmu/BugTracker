@@ -66,7 +66,7 @@ public:
         
         void EnterCombat(Unit *pWho) override {}
     
-        void WaypointReached(uint32 uiI)
+        void WaypointReached(uint32 uiI, uint32 pathID)
         override {
             Player* pPlayer = GetPlayerForEscort();
     

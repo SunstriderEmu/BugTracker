@@ -380,7 +380,7 @@ public:
         public:
         npc_wounded_blood_elfAI(Creature *c) : npc_escortAI(c) {}
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             Player* player = GetPlayerForEscort();
     
@@ -726,7 +726,7 @@ public:
             npc_escortAI::MoveInLineOfSight(pWho);
         }
     
-        void WaypointReached(uint32 uiPointId)
+        void WaypointReached(uint32 uiPointId, uint32 pathID)
         override {
             switch(uiPointId)
             {
@@ -1973,7 +1973,6 @@ public:
     }
 };
 
-
 class DarkPortalEventPitLord : public CreatureScript
 {
 public:
@@ -1990,7 +1989,9 @@ public:
             DarkPortalEventDemonAI::UpdateAI(diff);
 
             if (!UpdateVictim())
-                DoMeleeAttackIfReady();
+                return;
+
+            DoMeleeAttackIfReady();
         }
 
     };
@@ -2017,8 +2018,10 @@ public:
         {
             DarkPortalEventDemonAI::UpdateAI(diff);
 
-            if(!UpdateVictim())
-                DoMeleeAttackIfReady();
+            if (!UpdateVictim())
+                return;
+
+            DoMeleeAttackIfReady();
         }
     };
 
@@ -2045,7 +2048,9 @@ public:
             DarkPortalEventDemonAI::UpdateAI(diff);
 
             if (!UpdateVictim())
-                DoMeleeAttackIfReady();
+                return;
+
+            DoMeleeAttackIfReady();
         }
     };
 
@@ -2089,8 +2094,8 @@ public:
         {
             uint32 pathId = DarkPortalEventController::DEMON_COMMON_PATH;
             auto path = sWaypointMgr->GetPath(pathId);
-            if (!path->empty())
-                LAST_POINT = path->back()->id;
+            if (!path->nodes.empty())
+                LAST_POINT = path->nodes.back().id;
 
             if (LAST_POINT == 0)
             {

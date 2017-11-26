@@ -283,7 +283,7 @@ public:
         bool LowHp;
         bool HadMount;
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             if (!pInstance)
                 return;
@@ -456,7 +456,6 @@ public:
             }
         }
     
-    
         void Reset()
         override {
             LowHp = false;
@@ -486,22 +485,26 @@ public:
                 }
             }
         }
+
         void StartWP()
         {
             me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
             IsOnHold = false;
         }
+
         void DoMount()
         {
             me->Mount(SKARLOC_MOUNT_MODEL);
             me->SetSpeedRate(MOVE_RUN,SPEED_MOUNT);
             me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
         }
+
         void DoDismount()
         {
             me->Dismount();
             me->SetSpeedRate(MOVE_RUN,SPEED_RUN);
         }
+
         void EnterCombat(Unit* who)
         override {
             switch(rand()%4)
@@ -544,6 +547,7 @@ public:
             case 2: DoScriptText(SAY_TH_RANDOM_KILL3, me); break;
             }
         }
+
         void JustDied(Unit *slayer)
         override {
             if (pInstance)
@@ -697,7 +701,7 @@ public:
     
         InstanceScript *pInstance;
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             switch( i )
             {

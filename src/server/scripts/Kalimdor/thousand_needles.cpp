@@ -56,7 +56,7 @@ public:
         public:
     npc_swiftmountainAI(Creature *c) : npc_escortAI(c) {}
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             Player* player = GetPlayerForEscort();
     
@@ -358,7 +358,7 @@ public:
         
         void EnterCombat(Unit *pWho) override {}
     
-        void WaypointReached(uint32 uiPointId)
+        void WaypointReached(uint32 uiPointId, uint32 pathID)
         override {
             switch(uiPointId)
             {
@@ -449,7 +449,7 @@ public:
         
         void EnterCombat(Unit *pWho) override {}
     
-        void WaypointReached(uint32 uiPointId)
+        void WaypointReached(uint32 uiPointId, uint32 pathID)
         override {
             switch(uiPointId)
             {

@@ -1022,7 +1022,7 @@ public:
             }
         }
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             Player* player = GetPlayerForEscort();
     
@@ -1126,12 +1126,12 @@ public:
         void Reset()
         override {
             bTake=false;
-            uiTakeTimer=3000;
+            uiTakeTimer = 3000;
         }
         
         void EnterCombat(Unit *pWho) override {}
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             Player* pPlayer = GetPlayerForEscort();
             if (!pPlayer)
@@ -1504,7 +1504,7 @@ public:
             }
         }
     
-        void WaypointReached(uint32 uiPointId)
+        void WaypointReached(uint32 uiPointId, uint32 pathID)
         override {
             switch(uiPointId)
             {

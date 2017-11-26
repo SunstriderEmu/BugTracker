@@ -380,7 +380,7 @@ public:
         npc_magwinAI(Creature *c) : npc_escortAI(c) {}
     
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             Player* player = GetPlayerForEscort();
     

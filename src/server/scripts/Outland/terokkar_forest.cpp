@@ -491,7 +491,7 @@ public:
             
         }
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             Player* player = GetPlayerForEscort();
     
@@ -524,7 +524,7 @@ public:
             }
         }
     
-        void JustRespawned()
+        void JustAppeared()
         override {
             Completed = false;
             me->SetFaction(1660);
@@ -1078,7 +1078,7 @@ public:
             }
         }
         
-        void WaypointReached(uint32 id)
+        void WaypointReached(uint32 id, uint32 pathID)
         override {
             Player* player = ObjectAccessor::GetPlayer(*me, playerGUID);
             if (!player)
@@ -1345,7 +1345,7 @@ public:
                 DoScriptText(SAY_SKYGUARD_PRISONER_CONTINUE, me);
         }
         
-        void WaypointReached(uint32 id)
+        void WaypointReached(uint32 id, uint32 pathID)
         override {
             Player* player = GetPlayerForEscort();
             if (!player)

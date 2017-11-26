@@ -141,7 +141,7 @@ uint32 Wait[12][1]=
     {0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{0},{600000}
 };
 
-
+/* Probably not working... */
 class mob_scarlet_trainee : public CreatureScript
 {
 public:
@@ -155,13 +155,13 @@ public:
     
         uint32 Start_Timer;
     
-        void WaypointReached(uint32 i) override { }
-    
         void Reset()
         override {
             Start_Timer = urand(1500,4500);
         }
-    
+
+        void WaypointReached(uint32, uint32) override {} //must be implemented because we inherit from npc_escortAI
+
         void EnterCombat(Unit* who) override { }
     
         void UpdateAI(const uint32 diff)
@@ -172,7 +172,7 @@ public:
                 {
                     Start(true,true,true);
                     Start_Timer = 0;
-                }else Start_Timer -= diff;
+                } else Start_Timer -= diff;
             }
     
             npc_escortAI::UpdateAI(diff);
@@ -189,7 +189,6 @@ public:
 void AddSC_boss_herod()
 {
     new boss_herod();
-
     new mob_scarlet_trainee();
 }
 

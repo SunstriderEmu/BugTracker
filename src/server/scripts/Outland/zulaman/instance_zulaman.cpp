@@ -424,7 +424,7 @@ public:
                             warriorsList.push_back(pWarrior);
                             pWarrior->SetKeepActive(true);
                             pWarrior->SetSpeedRate(MOVE_WALK, 3);
-                            pWarrior->GetMotionMaster()->MovePath(24225); //this path is PATH_TYPE_ONCE
+                            pWarrior->GetMotionMaster()->MovePath(24225, false); //this path is PATH_TYPE_ONCE
                         }
                     }
                     GauntletWarriorsTimer = 110000;
@@ -437,7 +437,7 @@ public:
                             eaglesList.push_back(pEagle);
                             pEagle->SetKeepActive(true);
                             pEagle->SetSpeedRate(MOVE_WALK, 3);
-                            pEagle->GetMotionMaster()->MovePath(24159); //this path is PATH_TYPE_ONCE
+                            pEagle->GetMotionMaster()->MovePath(24159, false); //this path is PATH_TYPE_ONCE
                         }
                     }
                     GauntletEaglesTimer = 90000;

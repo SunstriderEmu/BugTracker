@@ -328,7 +328,7 @@ public:
                 me->InterruptNonMeleeSpells(true);
         }
         
-        void JustRespawned()
+        void JustAppeared()
         override {
             Creature* kelidan = me->FindNearestCreature(ENTRY_KELIDAN, 50.0f, true);
             if (!kelidan)

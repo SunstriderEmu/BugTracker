@@ -61,7 +61,7 @@ public:
             ResetTimer                = 5000;
          }
          
-         void JustRespawned()
+         void JustAppeared()
          override {
              Reset();
          }

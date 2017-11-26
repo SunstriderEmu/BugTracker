@@ -454,7 +454,7 @@ public:
     
         void EnterCombat(Unit* who) override {}
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             pos = i;
             if (i == 0 && pInstance && !IsOverrun)
@@ -582,7 +582,7 @@ public:
             KnockDownTimer = 10000;
         }
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             pos = i;
             if (i == 7 && pInstance && !IsOverrun)
@@ -688,7 +688,7 @@ public:
             RandomMove = false;
         }
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             pos = i;
             if (i == 7 && pInstance && !IsOverrun)
@@ -798,7 +798,7 @@ public:
             summons.Summon(summon);
         }
         void SummonedCreatureDespawn(Creature *summon) override {summons.Despawn(summon);}
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             pos = i;
             if (i == 7 && pInstance && !IsOverrun)
@@ -921,7 +921,7 @@ public:
             //ShellTimer = 50000+rand()%10000;
         }
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             pos = i;
             if (i == 7 && pInstance && !IsOverrun)
@@ -1026,7 +1026,7 @@ public:
             WebTimer = 20000+rand()%5000;
         }
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             pos = i;
             if (i == 7 && pInstance && !IsOverrun)
@@ -1122,7 +1122,7 @@ public:
             ManaBurnTimer = 9000+rand()%5000;
         }
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             pos = i;
             if (i == 7 && pInstance && !IsOverrun)
@@ -1222,7 +1222,7 @@ public:
             me->SetDisableGravity(true);
         }
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override {
             pos = i;
             if (i == 2 && pInstance && !IsOverrun)
@@ -1352,7 +1352,7 @@ public:
             me->SetDisableGravity(true);
         }
     
-        void WaypointReached(uint32 i)
+        void WaypointReached(uint32 i, uint32 pathID)
         override  
         {
             pos = i;

@@ -532,7 +532,7 @@ public:
                     //Bringer1->Say("[DEBUG] First bringer!", LANG_UNIVERSAL);
                     Bringer1->SetKeepActive(true);
                     Bringer1->SetSpeedRate(MOVE_WALK, 3.5);
-                    Bringer1->GetMotionMaster()->MovePath(25851); //this path is PATH_TYPE_ONCE
+                    Bringer1->GetMotionMaster()->MovePath(25851, false); //this path is PATH_TYPE_ONCE
                 }
 
                 Commander->GetRandomPoint(Commander, 1.0f, x, y, z);
@@ -540,7 +540,7 @@ public:
                     //Bringer2->Say("[DEBUG] Second bringer!", LANG_UNIVERSAL);
                     Bringer2->SetKeepActive(true);
                     Bringer2->SetSpeedRate(MOVE_WALK, 3.5);
-                    Bringer2->GetMotionMaster()->MovePath(25851); //this path is PATH_TYPE_ONCE
+                    Bringer2->GetMotionMaster()->MovePath(25851, false); //this path is PATH_TYPE_ONCE
                 }
 
                 BringersTimer = 80000;
