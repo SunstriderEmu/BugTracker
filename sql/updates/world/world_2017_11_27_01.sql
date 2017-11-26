@@ -1,0 +1,4 @@
+-- Set Therylune on escort start
+UPDATE `smart_scripts` SET link = 5 WHERE entryorguid = 3584 AND id = 1;
+REPLACE INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_flags`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) values('3584','0','5','0','61','0','100','512','0','0','0','0','2','1709','3584','0','0','0','2','1','0','0','0','0','0','0','0','0','Therylune - On Quest \"<a href=\"http://wowhead.com/quest=945\">Therylune\"s Escape</a>\" Accepted - Set Faction 1709 ');
+UPDATE creature_template SET ArmorModifier = 1 WHERE entry = 3584;
