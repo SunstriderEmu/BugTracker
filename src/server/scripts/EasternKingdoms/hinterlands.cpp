@@ -57,10 +57,10 @@ public:
     npc_00x09hl() : CreatureScript("npc_00x09hl")
     { }
 
-    class npc_00x09hlAI : public npc_escortAI
+    class npc_00x09hlAI : public EscortAI
     {
         public:
-        npc_00x09hlAI(Creature* pCreature) : npc_escortAI(pCreature) { }
+        npc_00x09hlAI(Creature* pCreature) : EscortAI(pCreature) { }
     
         void Reset() override {}
     
@@ -103,9 +103,9 @@ public:
             pSummoned->AI()->AttackStart(me);
         }
 
-        virtual void QuestAccept(Player* pPlayer, Quest const* pQuest) override
+        virtual void QuestAccept(Player* pPlayer, Quest const* quest) override
         {
-            if (pQuest->GetQuestId() == QUEST_RESQUE_OOX_09)
+            if (quest->GetQuestId() == QUEST_RESQUE_OOX_09)
             {
                 me->SetStandState(UNIT_STAND_STATE_STAND);
                 me->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
@@ -114,7 +114,7 @@ public:
 
                 DoScriptText(SAY_OOX_START, me);
 
-                ((npc_escortAI*)(me->AI()))->Start(false, false, false, pPlayer->GetGUID(), me->GetEntry());
+                ((EscortAI*)(me->AI()))->Start(false, false, pPlayer->GetGUID(), quest);
             }
         }
 
@@ -172,10 +172,10 @@ public:
     npc_rinji() : CreatureScript("npc_rinji")
     { }
 
-    class npc_rinjiAI : public npc_escortAI
+    class npc_rinjiAI : public EscortAI
     {
         public:
-        npc_rinjiAI(Creature* pCreature) : npc_escortAI(pCreature)
+        npc_rinjiAI(Creature* pCreature) : EscortAI(pCreature)
         {
             m_bIsByOutrunner = false;
             m_iSpawnId = 0;
@@ -197,7 +197,7 @@ public:
             m_bIsByOutrunner = false;
             m_iSpawnId = 0;
     
-            npc_escortAI::JustAppeared();
+            EscortAI::JustAppeared();
         }
     
         void EnterCombat(Unit* pWho)
@@ -268,7 +268,7 @@ public:
             }
         }
     
-        void UpdateEscortAI(const uint32 uiDiff)
+        void UpdateEscortAI(uint32 uiDiff) override
         {
             //Check if we have a current target
             if (!UpdateVictim())
@@ -309,14 +309,14 @@ public:
             DoMeleeAttackIfReady();
         }
 
-        virtual void QuestAccept(Player* pPlayer, Quest const* pQuest) override
+        virtual void QuestAccept(Player* pPlayer, Quest const* quest) override
         {
-            if (pQuest->GetQuestId() == QUEST_RINJI_TRAPPED)
+            if (quest->GetQuestId() == QUEST_RINJI_TRAPPED)
             {
                 if (GameObject* pGo = me->FindNearestGameObject(GO_RINJI_CAGE, INTERACTION_DISTANCE))
                     pGo->UseDoorOrButton();
 
-                ((npc_escortAI*)(me->AI()))->Start(false, false, false, pPlayer->GetGUID(), me->GetEntry());
+                ((EscortAI*)(me->AI()))->Start(false, false, pPlayer->GetGUID(), quest);
             }
         }
 

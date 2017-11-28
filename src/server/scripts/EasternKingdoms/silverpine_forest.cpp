@@ -135,10 +135,10 @@ public:
     npc_deathstalker_erland() : CreatureScript("npc_deathstalker_erland")
     { }
 
-    class npc_deathstalker_erlandAI : public npc_escortAI
+    class npc_deathstalker_erlandAI : public EscortAI
     {
         public:
-        npc_deathstalker_erlandAI(Creature *c) : npc_escortAI(c) {}
+        npc_deathstalker_erlandAI(Creature *c) : EscortAI(c) {}
     
         void WaypointReached(uint32 i, uint32 pathID)
         override {
@@ -185,7 +185,7 @@ public:
     
         void UpdateAI(const uint32 diff)
         override {
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
         }
 
         virtual void QuestAccept(Player* player, Quest const* quest) override
@@ -193,7 +193,7 @@ public:
             if (quest->GetQuestId() == QUEST_ESCORTING)
             {
                 DoScriptText(SAY_QUESTACCEPT, me, player);
-                ((npc_escortAI*)(me->AI()))->Start(true, true, false, player->GetGUID(), me->GetEntry());
+                ((EscortAI*)(me->AI()))->Start(true, false, player->GetGUID(), quest);
             }
         }
 

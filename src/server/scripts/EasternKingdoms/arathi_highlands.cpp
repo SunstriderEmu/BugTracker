@@ -56,10 +56,10 @@ public:
     npc_professor_phizzlethorpe() : CreatureScript("npc_professor_phizzlethorpe")
     { }
 
-    class npc_professor_phizzlethorpeAI : public npc_escortAI
+    class npc_professor_phizzlethorpeAI : public EscortAI
     {
         public:
-        npc_professor_phizzlethorpeAI(Creature *c) : npc_escortAI(c) {}
+        npc_professor_phizzlethorpeAI(Creature *c) : EscortAI(c) {}
     
         bool Completed;
     
@@ -109,7 +109,7 @@ public:
     
         void JustDied(Unit* killer) override
         {
-            if (PlayerGUID && !Completed )
+            if (_playerGUID && !Completed )
             {
                 Player* player = GetPlayerForEscort();
                 if (player)
@@ -119,16 +119,16 @@ public:
     
         void UpdateAI(const uint32 diff) override
         {
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
         }
 
-        virtual void QuestAccept(Player* pPlayer, Quest const* pQuest) override
+        virtual void QuestAccept(Player* pPlayer, Quest const* quest) override
         {
-            if (pQuest->GetQuestId() == QUEST_SUNKEN_TREASURE)
+            if (quest->GetQuestId() == QUEST_SUNKEN_TREASURE)
             {
                 DoScriptText(SAY_PROGRESS_1, me, pPlayer);
-                if (npc_escortAI* pEscortAI = CAST_AI(npc_professor_phizzlethorpeAI, (me->AI())))
-                    pEscortAI->Start(false, false, false, pPlayer->GetGUID(), me->GetEntry());
+                if (EscortAI* pEscortAI = CAST_AI(npc_professor_phizzlethorpeAI, (me->AI())))
+                    pEscortAI->Start(false, false, pPlayer->GetGUID(), quest);
                     
                 me->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
             }

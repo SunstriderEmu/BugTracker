@@ -108,9 +108,9 @@ float StageLocations[6][2]=
 #define SPELL_SPOTLIGHT     25824
 #define SPELL_TUXEDO        32616
 
-#define SPAWN_Z             90.5
-#define SPAWN_Y             -1758
-#define SPAWN_O             4.738
+#define SPAWN_Z             90.5f
+#define SPAWN_Y             -1758.0f
+#define SPAWN_O             4.738f
 
 
 class npc_barnes : public CreatureScript
@@ -119,13 +119,16 @@ public:
     npc_barnes() : CreatureScript("npc_barnes")
     { }
 
-    class npc_barnesAI : public npc_escortAI
+    class npc_barnesAI : public EscortAI
     {
         public:
-        npc_barnesAI(Creature* c) : npc_escortAI(c)
+        npc_barnesAI(Creature* c) : EscortAI(c)
         {
             RaidWiped = false;
             pInstance = ((InstanceScript*)c->GetInstanceScript());
+
+            for (uint8 i = 0; i < 6; ++i)
+                AddWaypoint(i, StageLocations[i][0], StageLocations[i][1], 90.465);
         }
     
         InstanceScript* pInstance;
@@ -178,7 +181,7 @@ public:
             switch(i)
             {
                 case 2:
-                    RemoveEscortState(STATE_ESCORT_ESCORTING);
+                    SetEscortPaused(true);
                     TalkCount = 0;
                     IsTalking = true;
     
@@ -198,7 +201,7 @@ public:
                         if (GameObject* Door = GameObject::GetGameObject((*me), pInstance->GetData64(DATA_GAMEOBJECT_STAGEDOORLEFT)))
                             Door->ResetDoorOrButton();
                     }
-                    RemoveEscortState(STATE_ESCORT_ESCORTING);
+                    SetEscortPaused(false);
                     PerformanceReady = true;
                     break;
             }
@@ -238,7 +241,7 @@ public:
     
         void UpdateAI(const uint32 diff)
         override {
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
     
             if(IsTalking)
             {
@@ -254,7 +257,7 @@ public:
     
                         me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_STAND);
                         IsTalking = false;
-                        AddEscortState(STATE_ESCORT_ESCORTING);
+                        SetEscortPaused(false);
                         return;
                     }
     
@@ -391,7 +394,7 @@ public:
                     else
                         player->SEND_GOSSIP_MENU_TEXTID(8975, me->GetGUID());
                 }else {
-                    player->SEND_GOSSIP_MENU_TEXTID(8978, me->GetGUID()); //Someone should take care of Moroes
+                    player->SEND_GOSSIP_MENU_TEXTID(8972, me->GetGUID()); //Someone should take care of Moroes
                 }
             }
 

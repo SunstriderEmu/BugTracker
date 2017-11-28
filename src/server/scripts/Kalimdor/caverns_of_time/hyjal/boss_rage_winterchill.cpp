@@ -112,23 +112,23 @@ public:
         override {
             if (IsEvent)
             {
-                //Must update npc_escortAI
-                npc_escortAI::UpdateAI(diff);
+                //Must update EscortAI
+                EscortAI::UpdateAI(diff);
                 if(!go)
                 {
                     go = true;
                     if(pInstance)
                     {
-                        ((npc_escortAI*)(me->AI()))->AddWaypoint(0, 4896.08,    -1576.35,    1333.65);
-                        ((npc_escortAI*)(me->AI()))->AddWaypoint(1, 4898.68,    -1615.02,    1329.48);
-                        ((npc_escortAI*)(me->AI()))->AddWaypoint(2, 4907.12,    -1667.08,    1321.00);
-                        ((npc_escortAI*)(me->AI()))->AddWaypoint(3, 4963.18,    -1699.35,    1340.51);
-                        ((npc_escortAI*)(me->AI()))->AddWaypoint(4, 4989.16,    -1716.67,    1335.74);
-                        ((npc_escortAI*)(me->AI()))->AddWaypoint(5, 5026.27,    -1736.89,    1323.02);
-                        ((npc_escortAI*)(me->AI()))->AddWaypoint(6, 5037.77,    -1770.56,    1324.36);
-                        ((npc_escortAI*)(me->AI()))->AddWaypoint(7, 5067.23,    -1789.95,    1321.17);
-                        ((npc_escortAI*)(me->AI()))->Start(false, true, true);
-                        ((npc_escortAI*)(me->AI()))->SetDespawnAtEnd(false);
+                        ((EscortAI*)(me->AI()))->AddWaypoint(0, 4896.08,    -1576.35,    1333.65);
+                        ((EscortAI*)(me->AI()))->AddWaypoint(1, 4898.68,    -1615.02,    1329.48);
+                        ((EscortAI*)(me->AI()))->AddWaypoint(2, 4907.12,    -1667.08,    1321.00);
+                        ((EscortAI*)(me->AI()))->AddWaypoint(3, 4963.18,    -1699.35,    1340.51);
+                        ((EscortAI*)(me->AI()))->AddWaypoint(4, 4989.16,    -1716.67,    1335.74);
+                        ((EscortAI*)(me->AI()))->AddWaypoint(5, 5026.27,    -1736.89,    1323.02);
+                        ((EscortAI*)(me->AI()))->AddWaypoint(6, 5037.77,    -1770.56,    1324.36);
+                        ((EscortAI*)(me->AI()))->AddWaypoint(7, 5067.23,    -1789.95,    1321.17);
+                        ((EscortAI*)(me->AI()))->Start(false, true, true);
+                        ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                     }
                 }
             }

@@ -169,10 +169,10 @@ public:
     npc_custodian_of_time() : CreatureScript("npc_custodian_of_time")
     { }
 
-    class npc_custodian_of_timeAI : public npc_escortAI
+    class npc_custodian_of_timeAI : public EscortAI
     {
         public:
-        npc_custodian_of_timeAI(Creature *c) : npc_escortAI(c) {}
+        npc_custodian_of_timeAI(Creature *c) : EscortAI(c) {}
     
         void WaypointReached(uint32 i, uint32 pathID)
         override {
@@ -220,7 +220,7 @@ public:
                     float Radius = 10.0;
                     if( me->IsWithinDistInMap(who, Radius) )
                     {
-                        ((npc_escortAI*)(me->AI()))->Start(false, false, false, who->GetGUID(), me->GetEntry());
+                        ((EscortAI*)(me->AI()))->Start(false, false, who->GetGUID());
                     }
                 }
             }
@@ -231,7 +231,7 @@ public:
     
         void UpdateAI(const uint32 diff)
         override {
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
         }
     };
 
@@ -267,7 +267,7 @@ public:
             if( me->IsVendor() && player->GetQuestRewardStatus(2662) )
                 player->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
 
-            SEND_DEFAULT_GOSSIP_MENU(player, me);
+            SEND_PREPARED_GOSSIP_MENU(player, me);
 
             return true;
         }
@@ -458,10 +458,10 @@ public:
     npc_OOX17() : CreatureScript("npc_OOX17")
     { }
 
-    class npc_OOX17AI : public npc_escortAI
+    class npc_OOX17AI : public EscortAI
     {
         public:
-        npc_OOX17AI(Creature *c) : npc_escortAI(c)
+        npc_OOX17AI(Creature *c) : EscortAI(c)
         {
             complete = false;
         }
@@ -515,7 +515,7 @@ public:
     
         void JustDied(Unit* killer)
         override {
-            if (PlayerGUID && !complete)
+            if (_playerGUID && !complete)
             {
                 if (Player* player = GetPlayerForEscort())
                     player->FailQuest(Q_OOX17);
@@ -525,7 +525,7 @@ public:
     
         void UpdateAI(const uint32 diff)
         override {
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
             if (!UpdateVictim())
                 return;
         }
@@ -538,7 +538,7 @@ public:
                 me->SetUInt32Value(UNIT_FIELD_BYTES_1,0);
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                 DoScriptText(SAY_CHICKEN_ACC, me);
-                ((npc_escortAI*)(me->AI()))->Start(true, true, false, player->GetGUID(), me->GetEntry());
+                ((EscortAI*)(me->AI()))->Start(true, false, player->GetGUID(), quest);
             }
         }
 

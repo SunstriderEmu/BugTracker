@@ -636,7 +636,7 @@ public:
                 }
             }
 
-            SEND_DEFAULT_GOSSIP_MENU(player, me);
+            SEND_PREPARED_GOSSIP_MENU(player, me);
             return true;
 
         }
@@ -955,7 +955,7 @@ public:
                 }
             }
 
-            SEND_DEFAULT_GOSSIP_MENU(player, me);
+            SEND_PREPARED_GOSSIP_MENU(player, me);
             return true;
 
         }
@@ -1168,7 +1168,7 @@ public:
                 }
             }
 
-            SEND_DEFAULT_GOSSIP_MENU(player, me);
+            SEND_PREPARED_GOSSIP_MENU(player, me);
             return true;
 
         }

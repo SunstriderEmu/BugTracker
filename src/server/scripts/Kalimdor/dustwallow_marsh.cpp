@@ -589,10 +589,10 @@ public:
     npc_stinky() : CreatureScript("npc_stinky")
     { }
 
-    class npc_stinkyAI : public npc_escortAI
+    class npc_stinkyAI : public EscortAI
     {
         public:
-        npc_stinkyAI(Creature* pCreature) : npc_escortAI(pCreature)
+        npc_stinkyAI(Creature* pCreature) : EscortAI(pCreature)
         {
             completed = false;
         }
@@ -668,7 +668,7 @@ public:
     
        void UpdateAI(const uint32 uiDiff)
         override {
-            npc_escortAI::UpdateAI(uiDiff);
+            EscortAI::UpdateAI(uiDiff);
     
             if (!UpdateVictim())
                 return;
@@ -682,7 +682,7 @@ public:
                 me->SetFaction(250);
                 me->SetStandState(UNIT_STAND_STATE_STAND);
                 DoScriptText(SAY_QUEST_ACCEPTED, me);
-                ((npc_escortAI*)(me->AI()))->Start(false, false, false, pPlayer->GetGUID(), me->GetEntry());
+                ((EscortAI*)(me->AI()))->Start(false, false, pPlayer->GetGUID(), quest);
             }
         }
 
@@ -775,10 +775,10 @@ public:
     npc_ogron() : CreatureScript("npc_ogron")
     { }
 
-    class npc_ogronAI : public npc_escortAI
+    class npc_ogronAI : public EscortAI
     {
         public:
-        npc_ogronAI(Creature* pCreature) : npc_escortAI(pCreature)
+        npc_ogronAI(Creature* pCreature) : EscortAI(pCreature)
         {
             completed = false;
         }
@@ -830,7 +830,7 @@ public:
     
        void UpdateAI(const uint32 uiDiff)
         override {
-            npc_escortAI::UpdateAI(uiDiff);
+            EscortAI::UpdateAI(uiDiff);
             
             if (step) {
                 if (timer <= uiDiff) {
@@ -981,8 +981,8 @@ public:
                 me->SetStandState(UNIT_STAND_STATE_STAND);
                 me->Say("I saw a fire on the island there, as well as a human. Let's go check it.", LANG_UNIVERSAL);
                 //me->MonsterSay("J'ai remarqué du feu sur cette île, là-bas. Et un humain, aussi. Allons vérifier.", LANG_UNIVERSAL, 0);
-                ((npc_escortAI*)(me->AI()))->Start(true, true, false, pPlayer->GetGUID(), me->GetEntry());
-                ((npc_escortAI*)(me->AI()))->SetDespawnAtEnd(false);
+                ((EscortAI*)(me->AI()))->Start(true, false, pPlayer->GetGUID(), quest);
+                ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
             }
         }
 

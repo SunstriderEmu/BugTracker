@@ -36,7 +36,7 @@ public:
             if(player->GetQuestStatus(alliance ? QUEST_TELEPORT_ALLIANCE : QUEST_TELEPORT_HORDE) == QUEST_STATUS_COMPLETE)
                 player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_TELEPORT, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+(alliance ? 1 : 2));
 
-            SEND_DEFAULT_GOSSIP_MENU(player, me);
+            SEND_PREPARED_GOSSIP_MENU(player, me);
             return true;
 
         }
@@ -170,7 +170,7 @@ public:
             if(player->GetQuestStatus(questid) == QUEST_STATUS_INCOMPLETE)
                 player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_DUEL, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-            SEND_DEFAULT_GOSSIP_MENU(player, me);
+            SEND_PREPARED_GOSSIP_MENU(player, me);
             return true;
 
         }

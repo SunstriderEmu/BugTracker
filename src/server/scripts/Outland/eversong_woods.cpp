@@ -74,11 +74,11 @@ public:
     npc_prospector_anvilward() : CreatureScript("npc_prospector_anvilward")
     { }
 
-    class npc_prospector_anvilwardAI : public npc_escortAI
+    class npc_prospector_anvilwardAI : public EscortAI
     {
         public:
         // CreatureAI functions
-        npc_prospector_anvilwardAI(Creature *c) : npc_escortAI(c) {}
+        npc_prospector_anvilwardAI(Creature *c) : EscortAI(c) {}
     
         // Pure Virtual Functions
         void WaypointReached(uint32 i, uint32 pathID)
@@ -110,7 +110,7 @@ public:
     
         void UpdateAI(const uint32 diff)
         override {
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
         }
 
         virtual bool GossipHello(Player* pPlayer) override
@@ -134,8 +134,8 @@ public:
                     break;
                 case GOSSIP_ACTION_INFO_DEF+2:
                     player->CLOSE_GOSSIP_MENU();
-                    if (npc_escortAI* pEscortAI = CAST_AI(npc_prospector_anvilward::npc_prospector_anvilwardAI, (me->AI())))
-                        pEscortAI->Start(true, true, false, player->GetGUID(), me->GetEntry());
+                    if (EscortAI* pEscortAI = CAST_AI(npc_prospector_anvilward::npc_prospector_anvilwardAI, (me->AI())))
+                        pEscortAI->Start(true, false, player->GetGUID());
                     break;
             }
             return true;

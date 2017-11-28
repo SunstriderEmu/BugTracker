@@ -260,10 +260,10 @@ public:
     npc_anchorite_truuen() : CreatureScript("npc_anchorite_truuen")
     { }
 
-    class npc_anchorite_truuenAI : public npc_escortAI
+    class npc_anchorite_truuenAI : public EscortAI
     {    
         public:
-        npc_anchorite_truuenAI(Creature* pCreature) : npc_escortAI(pCreature) { }
+        npc_anchorite_truuenAI(Creature* pCreature) : EscortAI(pCreature) { }
     
         uint32 EventTimer;
         uint64 UterGUID;
@@ -324,7 +324,7 @@ public:
     
         void UpdateAI(const uint32 uiDiff)
         override {
-            npc_escortAI::UpdateAI(uiDiff);
+            EscortAI::UpdateAI(uiDiff);
     
             if (!UpdateVictim())
             {
@@ -369,13 +369,13 @@ public:
                 pSummoned->AI()->AttackStart(me);
         }
 
-        virtual void QuestAccept(Player* pPlayer, Quest const* pQuest) override
+        virtual void QuestAccept(Player* pPlayer, Quest const* quest) override
         {
-            if (pQuest->GetQuestId() == QUEST_TOMB_LIGHTBRINGER)
+            if (quest->GetQuestId() == QUEST_TOMB_LIGHTBRINGER)
             {
                 if (npc_anchorite_truuenAI* pEscortAI = CAST_AI(npc_anchorite_truuen::npc_anchorite_truuenAI, me->AI()))
                 {
-                    pEscortAI->Start(true, true, false, pPlayer->GetGUID(), me->GetEntry());
+                    pEscortAI->Start(true, false, pPlayer->GetGUID(), quest);
                     pEscortAI->SetDespawnAtEnd(false);
                 }
             }

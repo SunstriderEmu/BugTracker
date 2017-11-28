@@ -148,10 +148,14 @@ public:
     mob_scarlet_trainee() : CreatureScript("mob_scarlet_trainee")
     { }
 
-    class mob_scarlet_traineeAI : public npc_escortAI
+    class mob_scarlet_traineeAI : public EscortAI
     {
         public:
-        mob_scarlet_traineeAI(Creature *c) : npc_escortAI(c) {}
+        mob_scarlet_traineeAI(Creature *c) : EscortAI(c) 
+        {
+            for (uint32 i = 0; i < 12; ++i)
+                AddWaypoint(i, Location[i][0], Location[i][1], Location[i][2], Wait[i][0]);
+        }
     
         uint32 Start_Timer;
     
@@ -160,7 +164,7 @@ public:
             Start_Timer = urand(1500,4500);
         }
 
-        void WaypointReached(uint32, uint32) override {} //must be implemented because we inherit from npc_escortAI
+        void WaypointReached(uint32, uint32) override {} //must be implemented because we inherit from EscortAI
 
         void EnterCombat(Unit* who) override { }
     
@@ -175,7 +179,7 @@ public:
                 } else Start_Timer -= diff;
             }
     
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
         }
     };
 

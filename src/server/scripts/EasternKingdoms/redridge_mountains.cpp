@@ -46,10 +46,10 @@ public:
     npc_corporal_keeshan() : CreatureScript("npc_corporal_keeshan")
     { }
 
-    class npc_corporal_keeshanAI : public npc_escortAI
+    class npc_corporal_keeshanAI : public EscortAI
     {
         public:
-        npc_corporal_keeshanAI(Creature* pCreature) : npc_escortAI(pCreature) {}
+        npc_corporal_keeshanAI(Creature* pCreature) : EscortAI(pCreature) {}
     
         uint32 uiPhase;
         uint32 uiTimer;
@@ -107,7 +107,7 @@ public:
             if (HasEscortState(STATE_ESCORT_NONE))
                 return;
     
-            npc_escortAI::UpdateAI(uiDiff);
+            EscortAI::UpdateAI(uiDiff);
     
             if (uiPhase)
             {
@@ -162,11 +162,11 @@ public:
             DoMeleeAttackIfReady();
         }
 
-        virtual void QuestAccept(Player* pPlayer, Quest const* pQuest) override
+        virtual void QuestAccept(Player* pPlayer, Quest const* quest) override
         {
-            if (pQuest->GetQuestId() == QUEST_MISSING_IN_ACTION)
+            if (quest->GetQuestId() == QUEST_MISSING_IN_ACTION)
             {
-                ((npc_escortAI*)(me->AI()))->Start(true, true, false, pPlayer->GetGUID(), me->GetEntry());
+                ((EscortAI*)(me->AI()))->Start(true, false, pPlayer->GetGUID(), quest);
                 me->SetFaction(pPlayer->GetFaction());
                 DoScriptText(SAY_CORPORAL_1, me);
             }

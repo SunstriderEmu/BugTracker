@@ -141,7 +141,7 @@ float HordeOverrunWP[21][3]=//waypoints in the horde base used in the end in the
 
 void hyjal_trashAI::Reset(){}
 
-hyjal_trashAI::hyjal_trashAI(Creature *c) : npc_escortAI(c), cannibalism(false)
+hyjal_trashAI::hyjal_trashAI(Creature *c) : EscortAI(c), cannibalism(false)
 {
     pInstance = ((InstanceScript*)c->GetInstanceScript());
     IsEvent = false;
@@ -397,7 +397,7 @@ void hyjal_trashAI::MovementInform(uint32 MovementType, uint32 data)
         me->AttackStop();
         DoCast(me,31537); //cannibalism
     } else {
-        npc_escortAI::MovementInform(MovementType,data);
+        EscortAI::MovementInform(MovementType,data);
     }
 }
 
@@ -514,7 +514,7 @@ public:
             if(!CanMove)return;
             hyjal_trashAI::UpdateAI(diff);
             if(IsEvent || IsOverrun)
-                npc_escortAI::UpdateAI(diff);
+                EscortAI::UpdateAI(diff);
             if (IsEvent)
             {
                 if(!go)
@@ -522,9 +522,9 @@ public:
                     go = true;
                     if(pInstance)
                     {
-                        ((npc_escortAI*)(me->AI()))->AddWaypoint(0, HordeWPs[7][0]+irand(-3,3),    HordeWPs[7][1]+irand(-3,3),    HordeWPs[7][2]);//HordeWPs[7] infront of thrall
-                        ((npc_escortAI*)(me->AI()))->Start(true, true, true);
-                        ((npc_escortAI*)(me->AI()))->SetDespawnAtEnd(false);
+                        ((EscortAI*)(me->AI()))->AddWaypoint(0, HordeWPs[7][0]+irand(-3,3),    HordeWPs[7][1]+irand(-3,3),    HordeWPs[7][2]);//HordeWPs[7] infront of thrall
+                        ((EscortAI*)(me->AI()))->Start(true, true, true);
+                        ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                     }
                 }
             }
@@ -613,7 +613,7 @@ public:
         override {
             hyjal_trashAI::UpdateAI(diff);
             if(IsEvent || IsOverrun)
-                npc_escortAI::UpdateAI(diff);
+                EscortAI::UpdateAI(diff);
             if (IsEvent)
             {
                 if(!go)
@@ -624,15 +624,15 @@ public:
                         if (pInstance->GetData(DATA_ALLIANCE_RETREAT))//2.alliance boss down, use horde WPs
                         {
                             for (uint8 i = 0; i < 8; ++i)
-                                ((npc_escortAI*)(me->AI()))->AddWaypoint(i, HordeWPs[i][0]+irand(-3,3),    HordeWPs[i][1]+irand(-3,3),    HordeWPs[i][2]);
-                            ((npc_escortAI*)(me->AI()))->Start(false, true, true);
-                            ((npc_escortAI*)(me->AI()))->SetDespawnAtEnd(false);
+                                ((EscortAI*)(me->AI()))->AddWaypoint(i, HordeWPs[i][0]+irand(-3,3),    HordeWPs[i][1]+irand(-3,3),    HordeWPs[i][2]);
+                            ((EscortAI*)(me->AI()))->Start(false, true, true);
+                            ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }else//use alliance WPs
                         {
                             for (uint8 i = 0; i < 8; ++i)
-                                ((npc_escortAI*)(me->AI()))->AddWaypoint(i, AllianceWPs[i][0]+irand(-3,3),    AllianceWPs[i][1]+irand(-3,3),    AllianceWPs[i][2]);
-                            ((npc_escortAI*)(me->AI()))->Start(false, true, true);
-                            ((npc_escortAI*)(me->AI()))->SetDespawnAtEnd(false);
+                                ((EscortAI*)(me->AI()))->AddWaypoint(i, AllianceWPs[i][0]+irand(-3,3),    AllianceWPs[i][1]+irand(-3,3),    AllianceWPs[i][2]);
+                            ((EscortAI*)(me->AI()))->Start(false, true, true);
+                            ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }
                     }
                 }
@@ -721,7 +721,7 @@ public:
         override {
             hyjal_trashAI::UpdateAI(diff);
             if(IsEvent || IsOverrun)
-                npc_escortAI::UpdateAI(diff);
+                EscortAI::UpdateAI(diff);
             if (IsEvent)
             {
                 if(!go)
@@ -732,15 +732,15 @@ public:
                         if (pInstance->GetData(DATA_ALLIANCE_RETREAT))//2.alliance boss down, use horde WPs
                         {
                             for (uint8 i = 0; i < 8; ++i)
-                                ((npc_escortAI*)(me->AI()))->AddWaypoint(i, HordeWPs[i][0]+irand(-3,3),    HordeWPs[i][1]+irand(-3,3),    HordeWPs[i][2]);
-                            ((npc_escortAI*)(me->AI()))->Start(false, true, true);
-                            ((npc_escortAI*)(me->AI()))->SetDespawnAtEnd(false);
+                                ((EscortAI*)(me->AI()))->AddWaypoint(i, HordeWPs[i][0]+irand(-3,3),    HordeWPs[i][1]+irand(-3,3),    HordeWPs[i][2]);
+                            ((EscortAI*)(me->AI()))->Start(false, true, true);
+                            ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }else//use alliance WPs
                         {
                             for (uint8 i = 0; i < 8; ++i)
-                                ((npc_escortAI*)(me->AI()))->AddWaypoint(i, AllianceWPs[i][0]+irand(-3,3),    AllianceWPs[i][1]+irand(-3,3),    AllianceWPs[i][2]);
-                            ((npc_escortAI*)(me->AI()))->Start(false, true, true);
-                            ((npc_escortAI*)(me->AI()))->SetDespawnAtEnd(false);
+                                ((EscortAI*)(me->AI()))->AddWaypoint(i, AllianceWPs[i][0]+irand(-3,3),    AllianceWPs[i][1]+irand(-3,3),    AllianceWPs[i][2]);
+                            ((EscortAI*)(me->AI()))->Start(false, true, true);
+                            ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }
                     }
                 }
@@ -843,7 +843,7 @@ public:
         override {
             hyjal_trashAI::UpdateAI(diff);
             if(IsEvent || IsOverrun)
-                npc_escortAI::UpdateAI(diff);
+                EscortAI::UpdateAI(diff);
             if (IsEvent)
             {
                 if(!go)
@@ -854,15 +854,15 @@ public:
                         if (pInstance->GetData(DATA_ALLIANCE_RETREAT))//2.alliance boss down, use horde WPs
                         {
                             for (uint8 i = 0; i < 8; ++i)
-                                ((npc_escortAI*)(me->AI()))->AddWaypoint(i, HordeWPs[i][0]+irand(-3,3),    HordeWPs[i][1]+irand(-3,3),    HordeWPs[i][2]);
-                            ((npc_escortAI*)(me->AI()))->Start(true, true, true);
-                            ((npc_escortAI*)(me->AI()))->SetDespawnAtEnd(false);
+                                ((EscortAI*)(me->AI()))->AddWaypoint(i, HordeWPs[i][0]+irand(-3,3),    HordeWPs[i][1]+irand(-3,3),    HordeWPs[i][2]);
+                            ((EscortAI*)(me->AI()))->Start(true, true, true);
+                            ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }else//use alliance WPs
                         {
                             for (uint8 i = 0; i < 8; ++i)
-                                ((npc_escortAI*)(me->AI()))->AddWaypoint(i, AllianceWPs[i][0]+irand(-3,3),    AllianceWPs[i][1]+irand(-3,3),    AllianceWPs[i][2]);
-                            ((npc_escortAI*)(me->AI()))->Start(true, true, true);
-                            ((npc_escortAI*)(me->AI()))->SetDespawnAtEnd(false);
+                                ((EscortAI*)(me->AI()))->AddWaypoint(i, AllianceWPs[i][0]+irand(-3,3),    AllianceWPs[i][1]+irand(-3,3),    AllianceWPs[i][2]);
+                            ((EscortAI*)(me->AI()))->Start(true, true, true);
+                            ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }
                     }
                 }
@@ -945,7 +945,7 @@ public:
         override {
             hyjal_trashAI::UpdateAI(diff);
             if(IsEvent || IsOverrun)
-                npc_escortAI::UpdateAI(diff);
+                EscortAI::UpdateAI(diff);
             if (IsEvent)
             {
                 if(!go)
@@ -956,15 +956,15 @@ public:
                         if (pInstance->GetData(DATA_ALLIANCE_RETREAT))//2.alliance boss down, use horde WPs
                         {
                             for (uint8 i = 0; i < 8; ++i)
-                                ((npc_escortAI*)(me->AI()))->AddWaypoint(i, HordeWPs[i][0]+irand(-3,3),    HordeWPs[i][1]+irand(-3,3),    HordeWPs[i][2]);
-                            ((npc_escortAI*)(me->AI()))->Start(false, true, true);
-                            ((npc_escortAI*)(me->AI()))->SetDespawnAtEnd(false);
+                                ((EscortAI*)(me->AI()))->AddWaypoint(i, HordeWPs[i][0]+irand(-3,3),    HordeWPs[i][1]+irand(-3,3),    HordeWPs[i][2]);
+                            ((EscortAI*)(me->AI()))->Start(false, true, true);
+                            ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }else//use alliance WPs
                         {
                             for (uint8 i = 0; i < 8; ++i)
-                                ((npc_escortAI*)(me->AI()))->AddWaypoint(i, AllianceWPs[i][0]+irand(-3,3),    AllianceWPs[i][1]+irand(-3,3),    AllianceWPs[i][2]);
-                            ((npc_escortAI*)(me->AI()))->Start(false, true, true);
-                            ((npc_escortAI*)(me->AI()))->SetDespawnAtEnd(false);
+                                ((EscortAI*)(me->AI()))->AddWaypoint(i, AllianceWPs[i][0]+irand(-3,3),    AllianceWPs[i][1]+irand(-3,3),    AllianceWPs[i][2]);
+                            ((EscortAI*)(me->AI()))->Start(false, true, true);
+                            ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }
                     }
                 }
@@ -1050,7 +1050,7 @@ public:
         override {
             hyjal_trashAI::UpdateAI(diff);
             if(IsEvent || IsOverrun)
-                npc_escortAI::UpdateAI(diff);
+                EscortAI::UpdateAI(diff);
             if (IsEvent)
             {
                 if(!go)
@@ -1061,15 +1061,15 @@ public:
                         if (pInstance->GetData(DATA_ALLIANCE_RETREAT))//2.alliance boss down, use horde WPs
                         {
                             for (uint8 i = 0; i < 8; ++i)
-                                ((npc_escortAI*)(me->AI()))->AddWaypoint(i, HordeWPs[i][0]+irand(-3,3),    HordeWPs[i][1]+irand(-3,3),    HordeWPs[i][2]);
-                            ((npc_escortAI*)(me->AI()))->Start(false, true, true);
-                            ((npc_escortAI*)(me->AI()))->SetDespawnAtEnd(false);
+                                ((EscortAI*)(me->AI()))->AddWaypoint(i, HordeWPs[i][0]+irand(-3,3),    HordeWPs[i][1]+irand(-3,3),    HordeWPs[i][2]);
+                            ((EscortAI*)(me->AI()))->Start(false, true, true);
+                            ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }else//use alliance WPs
                         {
                             for (uint8 i = 0; i < 8; ++i)
-                                ((npc_escortAI*)(me->AI()))->AddWaypoint(i, AllianceWPs[i][0]+irand(-3,3),    AllianceWPs[i][1]+irand(-3,3),    AllianceWPs[i][2]);
-                            ((npc_escortAI*)(me->AI()))->Start(false, true, true);
-                            ((npc_escortAI*)(me->AI()))->SetDespawnAtEnd(false);
+                                ((EscortAI*)(me->AI()))->AddWaypoint(i, AllianceWPs[i][0]+irand(-3,3),    AllianceWPs[i][1]+irand(-3,3),    AllianceWPs[i][2]);
+                            ((EscortAI*)(me->AI()))->Start(false, true, true);
+                            ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }
     
                     }
@@ -1146,7 +1146,7 @@ public:
         override {
             hyjal_trashAI::UpdateAI(diff);
             if(IsEvent || IsOverrun)
-                npc_escortAI::UpdateAI(diff);
+                EscortAI::UpdateAI(diff);
             if (IsEvent)
             {
                 if(!go)
@@ -1157,15 +1157,15 @@ public:
                         if (pInstance->GetData(DATA_ALLIANCE_RETREAT))//2.alliance boss down, use horde WPs
                         {
                             for (uint8 i = 0; i < 8; ++i)
-                                ((npc_escortAI*)(me->AI()))->AddWaypoint(i, HordeWPs[i][0]+irand(-3,3),    HordeWPs[i][1]+irand(-3,3),    HordeWPs[i][2]);
-                            ((npc_escortAI*)(me->AI()))->Start(false, true, true);
-                            ((npc_escortAI*)(me->AI()))->SetDespawnAtEnd(false);
+                                ((EscortAI*)(me->AI()))->AddWaypoint(i, HordeWPs[i][0]+irand(-3,3),    HordeWPs[i][1]+irand(-3,3),    HordeWPs[i][2]);
+                            ((EscortAI*)(me->AI()))->Start(false, true, true);
+                            ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }else//use alliance WPs
                         {
                             for (uint8 i = 0; i < 8; ++i)
-                                ((npc_escortAI*)(me->AI()))->AddWaypoint(i, AllianceWPs[i][0]+irand(-3,3),    AllianceWPs[i][1]+irand(-3,3),    AllianceWPs[i][2]);
-                            ((npc_escortAI*)(me->AI()))->Start(false, true, true);
-                            ((npc_escortAI*)(me->AI()))->SetDespawnAtEnd(false);
+                                ((EscortAI*)(me->AI()))->AddWaypoint(i, AllianceWPs[i][0]+irand(-3,3),    AllianceWPs[i][1]+irand(-3,3),    AllianceWPs[i][2]);
+                            ((EscortAI*)(me->AI()))->Start(false, true, true);
+                            ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }
     
                     }
@@ -1249,15 +1249,18 @@ public:
         }
     
         void EnterCombat(Unit* who) override {}
-    
+
+        void UpdateEscortAI(uint32 diff) override
+        {
+            if (IsEvent || IsOverrun)
+                return;
+
+            EscortAI::UpdateEscortAI(diff);
+        }
+
         void UpdateAI(const uint32 diff)
         override {
             hyjal_trashAI::UpdateAI(diff);
-            if(IsEvent || IsOverrun)
-            {
-                ((hyjal_trashAI*)me->AI())->SetCanMelee(false);
-                npc_escortAI::UpdateAI(diff);
-            }
             if (IsEvent)
             {
                 if(!go)
@@ -1268,16 +1271,16 @@ public:
                         if(!useFlyPath)
                         {
                             for (uint8 i = 0; i < 3; ++i)
-                                ((npc_escortAI*)(me->AI()))->AddWaypoint(i, FrostWyrmWPs[i][0],    FrostWyrmWPs[i][1],    FrostWyrmWPs[i][2]);
+                                ((EscortAI*)(me->AI()))->AddWaypoint(i, FrostWyrmWPs[i][0],    FrostWyrmWPs[i][1],    FrostWyrmWPs[i][2]);
 
-                            ((npc_escortAI*)(me->AI()))->Start(false, true, true);
-                            ((npc_escortAI*)(me->AI()))->SetDespawnAtEnd(false);
+                            ((EscortAI*)(me->AI()))->Start(false, true, true);
+                            ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         } else { //fly path FlyPathWPs
                             for (uint8 i = 0; i < 3; ++i)
-                                ((npc_escortAI*)(me->AI()))->AddWaypoint(i, FlyPathWPs[i][0]+irand(-10,10),    FlyPathWPs[i][1]+irand(-10,10),    FlyPathWPs[i][2]);
+                                ((EscortAI*)(me->AI()))->AddWaypoint(i, FlyPathWPs[i][0]+irand(-10,10),    FlyPathWPs[i][1]+irand(-10,10),    FlyPathWPs[i][2]);
 
-                            ((npc_escortAI*)(me->AI()))->Start(false, true, true);
-                            ((npc_escortAI*)(me->AI()))->SetDespawnAtEnd(false);
+                            ((EscortAI*)(me->AI()))->Start(false, true, true);
+                            ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }
                     }
                 }
@@ -1377,18 +1380,21 @@ public:
             me->Relocate(x,y,z,0);
             hyjal_trashAI::JustDied(victim);
         }
-    
+
+        void UpdateEscortAI(uint32 diff) override
+        {
+            if (IsEvent || IsOverrun)
+                return;
+
+            EscortAI::UpdateEscortAI(diff);
+        }
+
         void UpdateAI(const uint32 diff)
         override 
         {
             me->AddUnitState(UNIT_STATE_IGNORE_PATHFINDING);
     
             hyjal_trashAI::UpdateAI(diff);
-            if(IsEvent || IsOverrun)
-            {
-                ((hyjal_trashAI*)me->AI())->SetCanMelee(false);
-                npc_escortAI::UpdateAI(diff);
-            }
             if (IsEvent)
             {
                 if(!go)
@@ -1399,16 +1405,16 @@ public:
                         if(!useFlyPath)
                         {
                             for (uint8 i = 0; i < 3; ++i)
-                                ((npc_escortAI*)(me->AI()))->AddWaypoint(i, GargoyleWPs[i][0]+irand(-10,10), GargoyleWPs[i][1]+irand(-10,10), GargoyleWPs[i][2]);
+                                ((EscortAI*)(me->AI()))->AddWaypoint(i, GargoyleWPs[i][0]+irand(-10,10), GargoyleWPs[i][1]+irand(-10,10), GargoyleWPs[i][2]);
 
-                            ((npc_escortAI*)(me->AI()))->Start(false, true, true);
-                            ((npc_escortAI*)(me->AI()))->SetDespawnAtEnd(false);
+                            ((EscortAI*)(me->AI()))->Start(false, true, true);
+                            ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }else{//fly path FlyPathWPs
                             for (uint8 i = 0; i < 3; ++i)
-                                ((npc_escortAI*)(me->AI()))->AddWaypoint(i, FlyPathWPs[i][0]+irand(-10,10),    FlyPathWPs[i][1]+irand(-10,10),    FlyPathWPs[i][2]);
+                                ((EscortAI*)(me->AI()))->AddWaypoint(i, FlyPathWPs[i][0]+irand(-10,10),    FlyPathWPs[i][1]+irand(-10,10),    FlyPathWPs[i][2]);
 
-                            ((npc_escortAI*)(me->AI()))->Start(false, true, true);
-                            ((npc_escortAI*)(me->AI()))->SetDespawnAtEnd(false);
+                            ((EscortAI*)(me->AI()))->Start(false, true, true);
+                            ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }
                     }
                 }

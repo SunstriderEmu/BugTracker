@@ -842,10 +842,32 @@ public:
     npc_maghar_captive() : CreatureScript("npc_maghar_captive")
     { }
 
-    class npc_maghar_captiveAI : public npc_escortAI
+    class npc_maghar_captiveAI : public EscortAI
     {
         public:
-        npc_maghar_captiveAI(Creature* pCreature) : npc_escortAI(pCreature), summons(me) {}
+        npc_maghar_captiveAI(Creature* pCreature) : EscortAI(pCreature), summons(me) 
+        {
+            AddWaypoint(0, -1581.410034, 8557.933594, 2.726),
+            AddWaypoint(1, -1579.908447, 8553.716797, 2.559),
+            AddWaypoint(2, -1577.829102, 8549.880859, 2.001),
+            AddWaypoint(3, -1571.161987, 8543.494141, 2.001),
+            AddWaypoint(4, -1563.944824, 8530.334961, 1.605),
+            AddWaypoint(5, -1554.565552, 8518.413086, 0.364),
+            AddWaypoint(6, -1549.239136, 8515.518555, 0.293),
+            AddWaypoint(7, -1518.490112, 8516.771484, 0.683, 2000),
+            AddWaypoint(8, -1505.038940, 8513.247070, 0.672),
+            AddWaypoint(9, -1476.161133, 8496.066406, 2.157),
+            AddWaypoint(10, -1464.450684, 8492.601563, 3.529),
+            AddWaypoint(11, -1457.568359, 8492.183594, 4.449),
+            AddWaypoint(12, -1444.100342, 8499.031250, 6.177),
+            AddWaypoint(13, -1426.472168, 8510.116211, 7.686),
+            AddWaypoint(14, -1403.685303, 8524.146484, 9.680),
+            AddWaypoint(15, -1384.890503, 8542.014648, 11.180),
+            AddWaypoint(16, -1382.286133, 8539.869141, 11.139, 7500),
+            AddWaypoint(17, -1361.224609, 8521.440430, 11.144),
+            AddWaypoint(18, -1324.803589, 8510.688477, 13.050),
+            AddWaypoint(19, -1312.075439, 8492.709961, 14.235);
+        }
     
         uint32 m_uiChainLightningTimer;
         uint32 m_uiHealTimer;
@@ -916,7 +938,7 @@ public:
             }
         }
     
-        void UpdateEscortAI(const uint32 uiDiff)
+        void UpdateEscortAI(uint32 uiDiff) override
         {
             if (/*!me->SelectHostilTarget() ||*/ !me->GetVictim())
                 return;
@@ -951,9 +973,9 @@ public:
             DoMeleeAttackIfReady();
         }
 
-        virtual void QuestAccept(Player* pPlayer, Quest const* pQuest) override
+        virtual void QuestAccept(Player* pPlayer, Quest const* quest) override
         {
-            if (pQuest->GetQuestId() == QUEST_TOTEM_KARDASH_H)
+            if (quest->GetQuestId() == QUEST_TOTEM_KARDASH_H)
             {
                 if (npc_maghar_captiveAI* pEscortAI = CAST_AI(npc_maghar_captive::npc_maghar_captiveAI, (me->AI())))
                 {
@@ -961,7 +983,7 @@ public:
                     me->SetFaction(232);
                     me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
 
-                    pEscortAI->Start(true, true, false, pPlayer->GetGUID());
+                    pEscortAI->Start(true, false, pPlayer->GetGUID(), quest);
 
                     DoScriptText(SAY_MAG_START, me);
 
@@ -1150,10 +1172,10 @@ public:
     npc_kurenai_captive() : CreatureScript("npc_kurenai_captive")
     { }
 
-    class npc_kurenai_captiveAI : public npc_escortAI
+    class npc_kurenai_captiveAI : public EscortAI
     {
         public:
-        npc_kurenai_captiveAI(Creature *c) : npc_escortAI(c), summons(me) {}
+        npc_kurenai_captiveAI(Creature *c) : EscortAI(c), summons(me) {}
         
         bool complete;
         
@@ -1253,7 +1275,7 @@ public:
     
         void UpdateAI(const uint32 diff)
         override {
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
     
             if (!UpdateVictim())
                 return;
@@ -1289,7 +1311,7 @@ public:
         {
             if (quest->GetQuestId() == QUEST_TOTEM_KARDASH_A) {
                 me->SetStandState(UNIT_STAND_STATE_STAND);
-                ((npc_escortAI*)(me->AI()))->Start(true, true, false, player->GetGUID(), me->GetEntry());
+                ((EscortAI*)(me->AI()))->Start(true, false, player->GetGUID(), quest);
                 DoScriptText(SAY_KUR_START, me);
                 
                 me->SummonCreature(NPC_KUR_MURK_RAIDER, kurenaiAmbushA[0]+2.5f, kurenaiAmbushA[1]-2.5f, kurenaiAmbushA[2], 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 25000);

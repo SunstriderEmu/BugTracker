@@ -309,7 +309,7 @@ public:
             if( player->GetReputationRank(989) >= REP_REVERED )
                 player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_HZ, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-            SEND_DEFAULT_GOSSIP_MENU(player, me);
+            SEND_PREPARED_GOSSIP_MENU(player, me);
             return true;
         }
 
@@ -367,16 +367,16 @@ public:
     npc_kservant() : CreatureScript("npc_kservant")
     { }
 
-    class npc_kservantAI : public npc_escortAI
+    class npc_kservantAI : public EscortAI
     {
         public:
     public:
-        npc_kservantAI(Creature *c) : npc_escortAI(c) {}
+        npc_kservantAI(Creature *c) : EscortAI(c) {}
     
     
         void WaypointReached(uint32 i, uint32 pathID)
         override {
-            Unit *pTemp = ObjectAccessor::GetUnit(*me,PlayerGUID);
+            Unit *pTemp = ObjectAccessor::GetUnit(*me, _playerGUID);
     
             if( !pTemp )
                 return;
@@ -405,7 +405,7 @@ public:
                 case 54: DoScriptText(WHISP19, me, pTemp); break;
                 case 55: DoScriptText(WHISP20, me, pTemp); break;
                 case 56: DoScriptText(WHISP21, me, pTemp);
-                   if( PlayerGUID )
+                   if(_playerGUID)
                     {
                         Player* player = (GetPlayerForEscort());
                         if( player )
@@ -427,12 +427,13 @@ public:
     
             if( who->GetTypeId() == TYPEID_PLAYER )
             {
+                Quest const* quest = sObjectMgr->GetQuestTemplate(10211);
                 if( (who->ToPlayer())->GetQuestStatus(10211) == QUEST_STATUS_INCOMPLETE )
                 {
                     float Radius = 10.0;
                     if( me->IsWithinDistInMap(who, Radius) )
                     {
-                        ((npc_escortAI*)(me->AI()))->Start(false, false, false, who->GetGUID(), me->GetEntry());
+                        ((EscortAI*)(me->AI()))->Start(false, false, who->GetGUID(), quest);
                     }
                 }
             }
@@ -442,7 +443,7 @@ public:
     
         void UpdateAI(const uint32 diff)
         override {
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
         }
     };
 

@@ -310,7 +310,7 @@ float HordeFirePos[65][8]=//spawn points for the fire visuals (GO) in the horde 
     {5545.43f,    -2647.82f,    1483.05f,    5.3884800f,    0.0f,    0.0f,    0.4325780f,    -0.9015960f}
 };
 
-hyjalAI::hyjalAI(Creature *c) : npc_escortAI(c), Summons(me)
+hyjalAI::hyjalAI(Creature *c) : EscortAI(c), Summons(me)
 {
     pInstance = ((InstanceScript*)c->GetInstanceScript());
     VeinsSpawned[0] = false;
@@ -1053,7 +1053,7 @@ void hyjalAI::WaypointReached(uint32 i, uint32 pathID)
 }
 void hyjalAI::DoOverrun(uint32 faction, const uint32 diff)
 {
-    npc_escortAI::UpdateAI(diff);
+    EscortAI::UpdateAI(diff);
     if(WaitForTeleport)
     {
         if(TeleportTimer < diff)

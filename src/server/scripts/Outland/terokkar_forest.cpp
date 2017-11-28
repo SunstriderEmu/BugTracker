@@ -429,7 +429,7 @@ public:
             if (player->GetReputationRank(1031) >= REP_HONORED)
                 player->ADD_GOSSIP_ITEM( 2, GOSSIP_SKYGUARD, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-            SEND_DEFAULT_GOSSIP_MENU(player, me);
+            SEND_PREPARED_GOSSIP_MENU(player, me);
 
             return true;
 
@@ -479,10 +479,10 @@ public:
     npc_isla_starmane() : CreatureScript("npc_isla_starmane")
     { }
 
-    class npc_isla_starmaneAI : public npc_escortAI
+    class npc_isla_starmaneAI : public EscortAI
     {
         public:
-        npc_isla_starmaneAI(Creature* c) : npc_escortAI(c) {}
+        npc_isla_starmaneAI(Creature* c) : EscortAI(c) {}
     
         bool Completed;
         
@@ -535,7 +535,7 @@ public:
     
         void JustDied(Unit* killer)
         override {
-            if (PlayerGUID)
+            if (_playerGUID)
             {
                 Player* player = GetPlayerForEscort();
                 if (player && !Completed)
@@ -550,14 +550,14 @@ public:
     
         void UpdateAI(const uint32 diff)
         override {
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
         }
 
         virtual void QuestAccept(Player* player, Quest const* quest) override
         {
             if (quest->GetQuestId() == QUEST_EFTW_H || quest->GetQuestId() == QUEST_EFTW_A)
             {
-                ((npc_escortAI*)(me->AI()))->Start(true, true, false, player->GetGUID(), me->GetEntry());
+                ((EscortAI*)(me->AI()))->Start(true, false, player->GetGUID(), quest);
                 me->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             }
@@ -1007,10 +1007,10 @@ public:
     npc_chief_letoll() : CreatureScript("npc_chief_letoll")
     { }
 
-    class npc_chief_letollAI : public npc_escortAI
+    class npc_chief_letollAI : public EscortAI
     {
         public:
-        npc_chief_letollAI(Creature* c) : npc_escortAI(c), summons(me)
+        npc_chief_letollAI(Creature* c) : EscortAI(c), summons(me)
         {
             timer = 0;
         }
@@ -1129,7 +1129,7 @@ public:
                 }
             }
             
-            npc_escortAI::EnterEvadeMode(why);
+            EscortAI::EnterEvadeMode(why);
         }
         
         void ResearchersSetRun(bool run)
@@ -1148,7 +1148,7 @@ public:
         
         void UpdateAI(uint32 const diff)
         override {
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
             
             Player* player = ObjectAccessor::GetPlayer(*me, playerGUID);
             if (!player) {
@@ -1292,7 +1292,7 @@ public:
         virtual void QuestAccept(Player* player, Quest const* quest) override
         {
             if (quest->GetQuestId() == QUEST_DIGGING_THROUGH_BONES) {
-                ((npc_escortAI*)me->AI())->Start(true, true, false, player->GetGUID(), me->GetEntry());
+                ((EscortAI*)me->AI())->Start(true, false, player->GetGUID(), quest);
                 ((npc_chief_letoll::npc_chief_letollAI*)me->AI())->StartEvent(player->GetGUID());
             }
         }
@@ -1330,10 +1330,10 @@ public:
     npc_skyguard_prisoner() : CreatureScript("npc_skyguard_prisoner")
     { }
 
-    class npc_skyguard_prisonerAI : public npc_escortAI
+    class npc_skyguard_prisonerAI : public EscortAI
     {
         public:
-        npc_skyguard_prisonerAI(Creature* c) : npc_escortAI(c) {}
+        npc_skyguard_prisonerAI(Creature* c) : EscortAI(c) {}
         
         void Reset() override {}
         
@@ -1371,7 +1371,7 @@ public:
         
         void UpdateAI(uint32 const diff)
         override {
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
             
             DoMeleeAttackIfReady();
         }
@@ -1382,7 +1382,7 @@ public:
                 if (GameObject* cage = me->FindNearestGameObject(GO_SKYGUARD_CAGE, 5.0f))
                     cage->UseDoorOrButton(30);
                 DoScriptText(SAY_SKYGUARD_PRISONER_START, me);
-                ((npc_escortAI*)me->AI())->Start(true, true, false, player->GetGUID(), me->GetEntry());
+                ((EscortAI*)me->AI())->Start(true, false, player->GetGUID(), quest);
             }
         }
 

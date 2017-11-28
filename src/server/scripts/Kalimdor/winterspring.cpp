@@ -65,7 +65,7 @@ public:
             if (player->GetQuestStatus(5126) == QUEST_STATUS_INCOMPLETE)
                 player->ADD_GOSSIP_ITEM( GOSSIP_ICON_CHAT, GOSSIP_HL, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
 
-            SEND_DEFAULT_GOSSIP_MENU(player, me);
+            SEND_PREPARED_GOSSIP_MENU(player, me);
 
             return true;
 
@@ -142,7 +142,7 @@ public:
             if (me->IsVendor() && player->GetReputationRank(589) == REP_EXALTED)
                 player->ADD_GOSSIP_ITEM(1, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
 
-            SEND_DEFAULT_GOSSIP_MENU(player, me);
+            SEND_PREPARED_GOSSIP_MENU(player, me);
 
             return true;
 
@@ -358,10 +358,10 @@ public:
     npc_ranshalla() : CreatureScript("npc_ranshalla")
     { }
 
-    class npc_ranshallaAI : public npc_escortAI
+    class npc_ranshallaAI : public EscortAI
     {
         public:
-        npc_ranshallaAI(Creature* pCreature) : npc_escortAI(pCreature)
+        npc_ranshallaAI(Creature* pCreature) : EscortAI(pCreature)
         {
             completed = false;
             step = 0;
@@ -470,7 +470,7 @@ public:
     
         void UpdateAI(const uint32 diff)
         override {
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
             
             if (step) {
                 switch (step) {
@@ -741,8 +741,8 @@ public:
                 me->AI()->Talk(TALK_START);
                 me->SetFaction(pPlayer->GetFaction());
                 me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-                ((npc_escortAI*)(me->AI()))->Start(false, true, false, pPlayer->GetGUID(), me->GetEntry());
-                ((npc_escortAI*)(me->AI()))->SetDespawnAtEnd(false);
+                ((EscortAI*)(me->AI()))->Start(true, false, pPlayer->GetGUID(), quest);
+                ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
             }
         }
 

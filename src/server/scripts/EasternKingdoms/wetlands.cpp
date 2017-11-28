@@ -51,10 +51,10 @@ public:
     npc_tapoke_slim_jahn() : CreatureScript("npc_tapoke_slim_jahn")
     { }
 
-    class npc_tapoke_slim_jahnAI : public npc_escortAI
+    class npc_tapoke_slim_jahnAI : public EscortAI
     {
         public:
-        npc_tapoke_slim_jahnAI(Creature* pCreature) : npc_escortAI(pCreature) { }
+        npc_tapoke_slim_jahnAI(Creature* pCreature) : EscortAI(pCreature) { }
     
         bool m_bFriendSummoned;
     
@@ -144,9 +144,9 @@ public:
         {}
 
 
-        virtual void QuestAccept(Player* pPlayer, Quest const* pQuest) override
+        virtual void QuestAccept(Player* pPlayer, Quest const* quest) override
         {
-            if (pQuest->GetQuestId() == QUEST_MISSING_DIPLO_PT11)
+            if (quest->GetQuestId() == QUEST_MISSING_DIPLO_PT11)
             {
                 Creature* pSlim = me->FindNearestCreature(NPC_TAPOKE_SLIM_JAHN, 25.0f);
 
@@ -156,7 +156,7 @@ public:
                 if (!pSlim->HasStealthAura())
                     pSlim->CastSpell(pSlim, SPELL_STEALTH, true);
 
-                ((npc_escortAI*)(me->AI()))->Start(false, false, false, pPlayer->GetGUID(), me->GetEntry());
+                ((EscortAI*)(me->AI()))->Start(false, false, pPlayer->GetGUID(), quest);
             }
         }
 

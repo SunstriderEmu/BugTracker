@@ -116,10 +116,10 @@ public:
     npc_gilthares() : CreatureScript("npc_gilthares")
     { }
 
-    class npc_giltharesAI : public npc_escortAI
+    class npc_giltharesAI : public EscortAI
     {
         public:
-        npc_giltharesAI(Creature* pCreature) : npc_escortAI(pCreature) { }
+        npc_giltharesAI(Creature* pCreature) : EscortAI(pCreature) { }
     
         void Reset() override { }
     
@@ -168,9 +168,9 @@ public:
             }
         }
 
-        virtual void QuestAccept(Player* pPlayer, Quest const* pQuest) override
+        virtual void QuestAccept(Player* pPlayer, Quest const* quest) override
         {
-            if (pQuest->GetQuestId() == QUEST_FREE_FROM_HOLD)
+            if (quest->GetQuestId() == QUEST_FREE_FROM_HOLD)
             {
                 me->SetFaction(FACTION_ESCORTEE);
                 me->SetStandState(PLAYER_STATE_NONE);
@@ -179,7 +179,7 @@ public:
 
                 /*if (npc_giltharesAI* pEscortAI = CAST_AI(npc_gilthares::npc_giltharesAI, me->AI()))
                     pEscortAI->Start(false, false, pPlayer->GetGUID(), pQuest);*/
-                ((npc_escortAI*)(me->AI()))->Start(false, false, pPlayer->GetGUID());
+                ((EscortAI*)(me->AI()))->Start(true, false, pPlayer->GetGUID(), quest);
             }
         }
 
@@ -606,10 +606,10 @@ public:
     npc_wizzlecrank_shredder() : CreatureScript("npc_wizzlecrank_shredder")
     { }
 
-    class npc_wizzlecrank_shredderAI : public npc_escortAI
+    class npc_wizzlecrank_shredderAI : public EscortAI
     {
         public:
-        npc_wizzlecrank_shredderAI(Creature* pCreature) : npc_escortAI(pCreature)
+        npc_wizzlecrank_shredderAI(Creature* pCreature) : EscortAI(pCreature)
         {
             m_bIsPostEvent = false;
             m_uiPostEventTimer = 1000;
@@ -734,12 +734,12 @@ public:
             DoMeleeAttackIfReady();
         }
 
-        virtual void QuestAccept(Player* pPlayer, Quest const* pQuest) override
+        virtual void QuestAccept(Player* pPlayer, Quest const* quest) override
         {
-            if (pQuest->GetQuestId() == QUEST_ESCAPE)
+            if (quest->GetQuestId() == QUEST_ESCAPE)
             {
-                if (npc_escortAI* pEscortAI = CAST_AI(npc_wizzlecrank_shredderAI, (me->AI())))
-                    pEscortAI->Start(true, true, false, pPlayer->GetGUID(), me->GetEntry());
+                if (EscortAI* pEscortAI = CAST_AI(npc_wizzlecrank_shredderAI, (me->AI())))
+                    pEscortAI->Start(true, false, pPlayer->GetGUID(), quest);
                     
                 me->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
             }
@@ -1069,10 +1069,10 @@ public:
     npc_gilthares_firebough() : CreatureScript("npc_gilthares_firebough")
     { }
 
-    class npc_gilthares_fireboughAI : public npc_escortAI
+    class npc_gilthares_fireboughAI : public EscortAI
     {
         public:
-        npc_gilthares_fireboughAI(Creature* c) : npc_escortAI(c) {}
+        npc_gilthares_fireboughAI(Creature* c) : EscortAI(c) {}
         
         bool completed;
         
@@ -1115,7 +1115,7 @@ public:
         
         void UpdateAI(uint32 const diff)
         override {
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
             
             if (!UpdateVictim())
                 return;
@@ -1126,8 +1126,8 @@ public:
         virtual void QuestAccept(Player* player, Quest const* quest) override
         {
             if (quest->GetQuestId() == QUEST_FREE_FROM_THE_HOLD) {
-                if (npc_escortAI* escortAI = CAST_AI(npc_gilthares_fireboughAI, (me->AI())))
-                    escortAI->Start(true, true, false, player->GetGUID(), me->GetEntry());
+                if (EscortAI* escortAI = CAST_AI(npc_gilthares_fireboughAI, (me->AI())))
+                    escortAI->Start(true, false, player->GetGUID(), quest);
                     
                 me->SetFaction(FACTION_ESCORT);
             }

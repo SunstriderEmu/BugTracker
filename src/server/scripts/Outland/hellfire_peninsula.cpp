@@ -375,10 +375,10 @@ public:
     npc_wounded_blood_elf() : CreatureScript("npc_wounded_blood_elf")
     { }
 
-    class npc_wounded_blood_elfAI : public npc_escortAI
+    class npc_wounded_blood_elfAI : public EscortAI
     {
         public:
-        npc_wounded_blood_elfAI(Creature *c) : npc_escortAI(c) {}
+        npc_wounded_blood_elfAI(Creature *c) : EscortAI(c) {}
     
         void WaypointReached(uint32 i, uint32 pathID)
         override {
@@ -441,7 +441,7 @@ public:
             if (!HasEscortState(STATE_ESCORT_ESCORTING))
                 return;
     
-            if (PlayerGUID)
+            if (_playerGUID)
             {
                 // If NPC dies, player fails the quest
                 Player* player = GetPlayerForEscort();
@@ -452,14 +452,14 @@ public:
     
         void UpdateAI(const uint32 diff)
         override {
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
         }
 
-        virtual void QuestAccept(Player* pPlayer, Quest const* pQuest) override
+        virtual void QuestAccept(Player* pPlayer, Quest const* quest) override
         {
-            if (pQuest->GetQuestId() == QUEST_ROAD_TO_FALCON_WATCH)
+            if (quest->GetQuestId() == QUEST_ROAD_TO_FALCON_WATCH)
             {
-                CAST_AI(npc_escortAI, (me->AI()))->Start(true, true, false, pPlayer->GetGUID(), me->GetEntry());
+                CAST_AI(EscortAI, (me->AI()))->Start(true, false, pPlayer->GetGUID(), quest);
                 // Change faction so mobs attack
                 me->SetFaction(775);
             }
@@ -670,86 +670,6 @@ public:
         return new npc_living_flareAI(creature);
     }
 };
-
-
-/*######
-## npc_ancestral_wolf
-######*/
-
-enum eAncestralWolf
-{
-    EMOTE_WOLF_LIFT_HEAD            = -1000496,
-    EMOTE_WOLF_HOWL                 = -1000497,
-    SAY_WOLF_WELCOME                = -1000498,
-
-    SPELL_ANCESTRAL_WOLF_BUFF       = 29981,
-
-    NPC_RYGA                        = 17123
-};
-
-
-class npc_ancestral_wolf : public CreatureScript
-{
-public:
-    npc_ancestral_wolf() : CreatureScript("npc_ancestral_wolf")
-    { }
-
-    class npc_ancestral_wolfAI : public npc_escortAI
-    {
-        public:
-        npc_ancestral_wolfAI(Creature* pCreature) : npc_escortAI(pCreature)
-        {
-            if (pCreature->GetOwner() && pCreature->GetOwner()->GetTypeId() == TYPEID_PLAYER)
-                Start(false, false, true, pCreature->GetOwner()->GetGUID(), pCreature->GetEntry());
-            else
-                TC_LOG_ERROR("scripts","TRINITY: npc_ancestral_wolf can not obtain owner or owner is not a player.");
-    
-            pCreature->SetSpeedRate(MOVE_WALK, 1.5f);
-            Reset();
-        }
-    
-        Unit* pRyga;
-    
-        void Reset()
-        override {
-            pRyga = nullptr;
-            DoCast(me, SPELL_ANCESTRAL_WOLF_BUFF, true);
-        }
-    
-        void EnterCombat(Unit *pWho) override {}
-    
-        void MoveInLineOfSight(Unit* pWho)
-        override {
-            if (!pRyga && pWho->GetTypeId() == TYPEID_UNIT && pWho->GetEntry() == NPC_RYGA && me->IsWithinDistInMap(pWho, 15.0f))
-                pRyga = pWho;
-    
-            npc_escortAI::MoveInLineOfSight(pWho);
-        }
-    
-        void WaypointReached(uint32 uiPointId, uint32 pathID)
-        override {
-            switch(uiPointId)
-            {
-                case 0:
-                    DoScriptText(EMOTE_WOLF_LIFT_HEAD, me);
-                    break;
-                case 2:
-                    DoScriptText(EMOTE_WOLF_HOWL, me);
-                    break;
-                case 50:
-                    if (pRyga && pRyga->IsAlive() && !pRyga->IsInCombat())
-                        DoScriptText(SAY_WOLF_WELCOME, pRyga);
-                    break;
-            }
-        }
-    };
-
-    CreatureAI* GetAI(Creature* creature) const override
-    {
-        return new npc_ancestral_wolfAI(creature);
-    }
-};
-
 
 /*######
 ## npc_pathaleon_image
@@ -2482,8 +2402,6 @@ void AddSC_hellfire_peninsula()
     new npc_anchorite_relic();
     
     new npc_living_flare();
-    
-    new npc_ancestral_wolf();
     
     new npc_pathaleon_image();
     

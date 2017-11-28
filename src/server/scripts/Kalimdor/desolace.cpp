@@ -169,10 +169,10 @@ public:
     npc_dalinda() : CreatureScript("npc_dalinda")
     { }
 
-    class npc_dalindaAI : public npc_escortAI
+    class npc_dalindaAI : public EscortAI
     {
         public:
-        npc_dalindaAI(Creature* pCreature) : npc_escortAI(pCreature)
+        npc_dalindaAI(Creature* pCreature) : EscortAI(pCreature)
         {
             completed = false;
         }   
@@ -214,7 +214,7 @@ public:
     
         void UpdateAI(const uint32 uiDiff)
         override {        
-            npc_escortAI::UpdateAI(uiDiff);
+            EscortAI::UpdateAI(uiDiff);
     
             if (!UpdateVictim())
                 return;
@@ -226,9 +226,9 @@ public:
         {
             if (quest->GetQuestId() == QUEST_RETURN_TO_VAHLARRIEL)
    {        
-                if (npc_escortAI* pEscortAI = CAST_AI(npc_dalindaAI, me->AI()))
+                if (EscortAI* pEscortAI = CAST_AI(npc_dalindaAI, me->AI()))
                 {
-                    pEscortAI->Start(true, true, false, player->GetGUID(), me->GetEntry());
+                    pEscortAI->Start(true, false, player->GetGUID(), quest);
                     me->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
                     me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 }
@@ -251,10 +251,10 @@ public:
     npc_melizza() : CreatureScript("npc_melizza")
     { }
 
-    class npc_melizzaAI : public npc_escortAI
+    class npc_melizzaAI : public EscortAI
     {
         public:
-        npc_melizzaAI(Creature* pCreature) : npc_escortAI(pCreature)
+        npc_melizzaAI(Creature* pCreature) : EscortAI(pCreature)
         {
             completed = false;
         }   
@@ -294,7 +294,7 @@ public:
     
         void UpdateAI(const uint32 uiDiff)
         override {        
-            npc_escortAI::UpdateAI(uiDiff);
+            EscortAI::UpdateAI(uiDiff);
     
             if (!UpdateVictim())
                 return;
@@ -306,9 +306,9 @@ public:
         {
             if (quest->GetQuestId() == 6132)
    {        
-                if (npc_escortAI* pEscortAI = CAST_AI(npc_melizzaAI, me->AI()))
+                if (EscortAI* pEscortAI = CAST_AI(npc_melizzaAI, me->AI()))
                 {
-                    pEscortAI->Start(true, true, false, player->GetGUID(), me->GetEntry());
+                    pEscortAI->Start(true, false, player->GetGUID(), quest);
                     me->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
                     me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 }

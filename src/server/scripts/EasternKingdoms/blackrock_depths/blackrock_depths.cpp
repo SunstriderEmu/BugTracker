@@ -145,13 +145,16 @@ public:
     npc_grimstone() : CreatureScript("npc_grimstone")
     { }
 
-    class npc_grimstoneAI : public npc_escortAI
+    class npc_grimstoneAI : public EscortAI
     {
         public:
-        npc_grimstoneAI(Creature *c) : npc_escortAI(c)
+        npc_grimstoneAI(Creature *c) : EscortAI(c)
         {
             pInstance = ((InstanceScript*)c->GetInstanceScript());
             MobSpawnId = rand()%6;
+
+            for (uint8 i = 0; i < 6; ++i)
+               AddWaypoint(i, RingLocations[i][0], RingLocations[i][1], RingLocations[i][2]);
         }
     
         InstanceScript* pInstance;
@@ -361,7 +364,7 @@ public:
             }
     
             if (CanWalk)
-                npc_escortAI::UpdateAI(diff);
+                EscortAI::UpdateAI(diff);
            }
     };
 
@@ -669,9 +672,9 @@ enum DughalQuests
 
 /*
 InstanceScript *pInstance;
-struct npc_dughal_stormwingAI : public npc_escortAI
+struct npc_dughal_stormwingAI : public EscortAI
 {
-    npc_dughal_stormwingAI(Creature *c) : npc_escortAI(c) {}
+    npc_dughal_stormwingAI(Creature *c) : EscortAI(c) {}
 
     void WaypointReached(uint32 i)
     {
@@ -717,7 +720,7 @@ struct npc_dughal_stormwingAI : public npc_escortAI
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
-        npc_escortAI::UpdateAI(diff);
+        EscortAI::UpdateAI(diff);
     }
 };
 CreatureAI* GetAI_npc_dughal_stormwing(Creature *_Creature)
@@ -746,7 +749,7 @@ bool GossipSelect_npc_dughal_stormwing(Player *player, Creature *_Creature, uint
     if (action == GOSSIP_ACTION_INFO_DEF + 1)
     {
         player->CLOSE_GOSSIP_MENU();
-        ((npc_escortAI*)(_Creature->AI()))->Start(false, false, true, player->GetGUID());
+        ((EscortAI*)(_Creature->AI()))->Start(false, false, true, player->GetGUID());
         _Creature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
         pInstance->SetData(DATA_QUEST_JAIL_BREAK,ENCOUNTER_STATE_IN_PROGRESS);
     }
@@ -770,9 +773,9 @@ bool GossipSelect_npc_dughal_stormwing(Player *player, Creature *_Creature, uint
 
 Player* PlayerStart;
 /*
-struct npc_marshal_windsorAI : public npc_escortAI
+struct npc_marshal_windsorAI : public EscortAI
 {
-    npc_marshal_windsorAI(Creature *c) : npc_escortAI(c)
+    npc_marshal_windsorAI(Creature *c) : EscortAI(c)
     {
         pInstance = ((InstanceScript*)c->GetInstanceScript());
     }
@@ -866,7 +869,7 @@ struct npc_marshal_windsorAI : public npc_escortAI
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
-        npc_escortAI::UpdateAI(diff);
+        EscortAI::UpdateAI(diff);
     }
 };
 CreatureAI* GetAI_npc_marshal_windsor(Creature *_Creature)
@@ -903,7 +906,7 @@ bool QuestAccept_npc_marshal_windsor(Player *player, Creature *creature, Quest c
         {PlayerStart = player;
         if( pInstance->GetData(DATA_QUEST_JAIL_BREAK) == ENCOUNTER_STATE_NOT_STARTED )
         {
-                ((npc_escortAI*)(creature->AI()))->Start(true, true, false, player->GetGUID());
+                ((EscortAI*)(creature->AI()))->Start(true, true, false, player->GetGUID());
                 pInstance->SetData(DATA_QUEST_JAIL_BREAK,ENCOUNTER_STATE_IN_PROGRESS);
                 creature->SetFaction(11);
         }
@@ -935,9 +938,9 @@ bool QuestAccept_npc_marshal_windsor(Player *player, Creature *creature, Quest c
 
 int wp = 0;
 /*
-struct npc_marshal_reginald_windsorAI : public npc_escortAI
+struct npc_marshal_reginald_windsorAI : public EscortAI
 {
-    npc_marshal_reginald_windsorAI(Creature *c) : npc_escortAI(c)
+    npc_marshal_reginald_windsorAI(Creature *c) : EscortAI(c)
     {
     }
 
@@ -1012,7 +1015,7 @@ struct npc_marshal_reginald_windsorAI : public npc_escortAI
                 if( me->IsWithinDistInMap(who, Radius) )
                 {
                     IsOnHold = false;
-                    ((npc_escortAI*)(me->AI()))->Start(true, true, false, who->GetGUID());
+                    ((EscortAI*)(me->AI()))->Start(true, true, false, who->GetGUID());
                 }
             }
         }
@@ -1078,7 +1081,7 @@ struct npc_marshal_reginald_windsorAI : public npc_escortAI
                 }
             }
         if( pInstance->GetData(DATA_TOBIAS)==ENCOUNTER_STATE_OBJECTIVE_COMPLETED ) IsOnHold = false;
-        npc_escortAI::UpdateAI(diff);
+        EscortAI::UpdateAI(diff);
     }
 };
 CreatureAI* GetAI_npc_marshal_reginald_windsor(Creature *_Creature)
@@ -1130,9 +1133,9 @@ CreatureAI* GetAI_npc_marshal_reginald_windsor(Creature *_Creature)
 
 #define SAY_TOBIAS_FREE         "Thank you! I will run for safety immediately!"
 /*
-struct npc_tobias_seecherAI : public npc_escortAI
+struct npc_tobias_seecherAI : public EscortAI
 {
-    npc_tobias_seecherAI(Creature *c) :npc_escortAI(c) {}
+    npc_tobias_seecherAI(Creature *c) :EscortAI(c) {}
 
     void EnterCombat(Unit* who) { }
     void Reset() {}
@@ -1179,7 +1182,7 @@ struct npc_tobias_seecherAI : public npc_escortAI
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
-        npc_escortAI::UpdateAI(diff);
+        EscortAI::UpdateAI(diff);
     }
 };
 
@@ -1212,7 +1215,7 @@ bool GossipSelect_npc_tobias_seecher(Player *player, Creature *_Creature, uint32
     if (action == GOSSIP_ACTION_INFO_DEF + 1)
     {
         player->CLOSE_GOSSIP_MENU();
-        ((npc_escortAI*)(_Creature->AI()))->Start(false, false, true, player->GetGUID());
+        ((EscortAI*)(_Creature->AI()))->Start(false, false, true, player->GetGUID());
         _Creature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
         pInstance->SetData(DATA_TOBIAS,ENCOUNTER_STATE_IN_PROGRESS);
     }
@@ -1270,10 +1273,10 @@ public:
     npc_rocknot() : CreatureScript("npc_rocknot")
     { }
 
-    class npc_rocknotAI : public npc_escortAI
+    class npc_rocknotAI : public EscortAI
     {
         public:
-        npc_rocknotAI(Creature *c) : npc_escortAI(c)
+        npc_rocknotAI(Creature *c) : EscortAI(c)
         {
             pInstance = ((InstanceScript*)c->GetInstanceScript());
         }
@@ -1360,7 +1363,7 @@ public:
                 }else BreakDoor_Timer -= diff;
             }
     
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
         }
 
         virtual void QuestReward(Player* pPlayer, Quest const* _Quest, uint32 item) override
@@ -1383,7 +1386,7 @@ public:
                 {
                     DoScriptText(SAY_GOT_BEER, me);
                     me->CastSpell(me,SPELL_DRUNKEN_RAGE,false);
-                    ((npc_escortAI*)(me->AI()))->Start(false, false, false);
+                    ((EscortAI*)(me->AI()))->Start(false, false, false);
                 }
             }
         }
@@ -1467,10 +1470,10 @@ public:
     npc_windsor_brd() : CreatureScript("npc_windsor_brd")
     { }
 
-    class npc_windsor_brdAI : public npc_escortAI
+    class npc_windsor_brdAI : public EscortAI
     {
         public:
-        npc_windsor_brdAI(Creature* c) : npc_escortAI(c) {}
+        npc_windsor_brdAI(Creature* c) : EscortAI(c) {}
         
         void Reset() override {}
         
@@ -1551,7 +1554,7 @@ public:
         
         void UpdateAI(uint32 const diff)
         override {
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
             
             if (!UpdateVictim())
                 return;
@@ -1565,7 +1568,7 @@ public:
                 DoScriptText(WINDSOR_SAY_START, me, nullptr);
                 me->SetFaction(11);
 
-                npc_escortAI::Start(true, true, false, player->GetGUID(), me->GetEntry());
+                EscortAI::Start(true, false, player->GetGUID(), quest);
             }
         }
 
@@ -1608,7 +1611,7 @@ public:
                     dughal->GetMotionMaster()->MovePoint(0, 324.853241, -197.296951, -77.042488);
                 }
 
-                ((npc_escortAI*)windsor->AI())->SetEscortPaused(false);
+                ((EscortAI*)windsor->AI())->SetEscortPaused(false);
                 break;
             }
             case 170568:
@@ -1624,7 +1627,7 @@ public:
                     ograbisi->AI()->AttackStart(windsor);
                 }
 
-                ((npc_escortAI*)windsor->AI())->SetEscortPaused(false);
+                ((EscortAI*)windsor->AI())->SetEscortPaused(false);
                 break;
             }
             case 170569:
@@ -1637,7 +1640,7 @@ public:
                     DoScriptText(WINDSOR_SAY_ATTACK_DINGER, windsor, nullptr);
                 }
 
-                ((npc_escortAI*)windsor->AI())->SetEscortPaused(false);
+                ((EscortAI*)windsor->AI())->SetEscortPaused(false);
                 break;
             }
             case 170567:
@@ -1650,7 +1653,7 @@ public:
                     DoScriptText(WINDSOR_ATTACK_CREST, windsor, nullptr);
                 }
 
-                ((npc_escortAI*)windsor->AI())->SetEscortPaused(false);
+                ((EscortAI*)windsor->AI())->SetEscortPaused(false);
                 break;
             }
             case 170566:
@@ -1662,7 +1665,7 @@ public:
                     DoScriptText(WINDSOR_SAY_CONGRATS, windsor, player);
                 }
 
-                ((npc_escortAI*)windsor->AI())->SetEscortPaused(false);
+                ((EscortAI*)windsor->AI())->SetEscortPaused(false);
                 break;
             }
             }

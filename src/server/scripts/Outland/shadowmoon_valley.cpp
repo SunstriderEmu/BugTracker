@@ -1127,10 +1127,10 @@ public:
     npc_earthmender_wilda() : CreatureScript("npc_earthmender_wilda")
     { }
 
-    class npc_earthmender_wildaAI : public npc_escortAI
+    class npc_earthmender_wildaAI : public EscortAI
     {
         public:
-        npc_earthmender_wildaAI(Creature *c) : npc_escortAI(c) {}
+        npc_earthmender_wildaAI(Creature *c) : EscortAI(c) {}
     
         bool Completed;
     
@@ -1237,7 +1237,7 @@ public:
     
            void JustDied(Unit* killer)
            override {
-               if (PlayerGUID && !Completed)
+               if (_playerGUID && !Completed)
                {
                    Player* player = GetPlayerForEscort();
                    if (player)
@@ -1247,7 +1247,7 @@ public:
     
            void UpdateAI(const uint32 diff)
            override {
-                   npc_escortAI::UpdateAI(diff);
+                   EscortAI::UpdateAI(diff);
            }
 
         virtual void QuestAccept(Player* player, Quest const* quest) override
@@ -1255,7 +1255,7 @@ public:
             if (quest->GetQuestId() == QUEST_ESCAPE_FROM_COILSKAR_CISTERN)
             {
                 me->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
-                ((npc_escortAI*)(me->AI()))->Start(true, true, false, player->GetGUID(), me->GetEntry());
+                ((EscortAI*)(me->AI()))->Start(true, false, player->GetGUID(), quest);
             }
         }
 

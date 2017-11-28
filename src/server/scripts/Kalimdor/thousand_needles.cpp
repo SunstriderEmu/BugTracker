@@ -51,10 +51,10 @@ public:
     npc_swiftmountain() : CreatureScript("npc_swiftmountain")
     { }
 
-    class npc_swiftmountainAI : public npc_escortAI
+    class npc_swiftmountainAI : public EscortAI
     {
         public:
-    npc_swiftmountainAI(Creature *c) : npc_escortAI(c) {}
+    npc_swiftmountainAI(Creature *c) : EscortAI(c) {}
     
         void WaypointReached(uint32 i, uint32 pathID)
         override {
@@ -94,7 +94,7 @@ public:
     
         void JustDied(Unit* killer)
         override {
-            if (PlayerGUID)
+            if (_playerGUID)
             {
                 if (Player* player = GetPlayerForEscort())
                     player->FailQuest(QUEST_HOMEWARD_BOUND);
@@ -103,14 +103,14 @@ public:
     
         void UpdateAI(const uint32 diff)
         override {
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
         }
 
         virtual void QuestAccept(Player* player, Quest const* quest) override
         {
             if (quest->GetQuestId() == QUEST_HOMEWARD_BOUND)
             {
-                ((npc_escortAI*)(me->AI()))->Start(true, true, false, player->GetGUID(), me->GetEntry());
+                ((EscortAI*)(me->AI()))->Start(true, false, player->GetGUID(), quest);
                 DoScriptText(SAY_START, me, player);
                 me->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
             }
@@ -349,10 +349,10 @@ public:
     npc_kanati() : CreatureScript("npc_kanati")
     { }
 
-    class npc_kanatiAI : public npc_escortAI
+    class npc_kanatiAI : public EscortAI
     {
         public:
-        npc_kanatiAI(Creature* pCreature) : npc_escortAI(pCreature) { }
+        npc_kanatiAI(Creature* pCreature) : EscortAI(pCreature) { }
     
         void Reset() override {}
         
@@ -386,10 +386,10 @@ public:
             pSummoned->AI()->AttackStart(me);
         }
 
-        virtual void QuestAccept(Player* pPlayer, Quest const* pQuest) override
+        virtual void QuestAccept(Player* pPlayer, Quest const* quest) override
         {
-            if (pQuest->GetQuestId() == QUEST_PROTECT_KANATI)
-                ((npc_escortAI*)(me->AI()))->Start(false, false, false, pPlayer->GetGUID(), me->GetEntry());
+            if (quest->GetQuestId() == QUEST_PROTECT_KANATI)
+                ((EscortAI*)(me->AI()))->Start(false, false, pPlayer->GetGUID(), quest);
         }
 
     };
@@ -440,10 +440,10 @@ public:
     npc_lakota_windsong() : CreatureScript("npc_lakota_windsong")
     { }
 
-    class npc_lakota_windsongAI : public npc_escortAI
+    class npc_lakota_windsongAI : public EscortAI
     {
         public:
-        npc_lakota_windsongAI(Creature* pCreature) : npc_escortAI(pCreature) {}
+        npc_lakota_windsongAI(Creature* pCreature) : EscortAI(pCreature) {}
     
         void Reset() override {}
         
@@ -480,14 +480,14 @@ public:
                 TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 60000);
         }
 
-        virtual void QuestAccept(Player* pPlayer, Quest const* pQuest) override
+        virtual void QuestAccept(Player* pPlayer, Quest const* quest) override
         {
-            if (pQuest->GetQuestId() == QUEST_FREE_AT_LAST)
+            if (quest->GetQuestId() == QUEST_FREE_AT_LAST)
             {
                 DoScriptText(SAY_LAKO_START, me, pPlayer);
                 me->SetFaction(FACTION_ESCORTEE_LAKO);
 
-                ((npc_escortAI*)(me->AI()))->Start(false, false, false, pPlayer->GetGUID(), me->GetEntry());
+                ((EscortAI*)(me->AI()))->Start(false, false, pPlayer->GetGUID(), quest);
             }
         }
 

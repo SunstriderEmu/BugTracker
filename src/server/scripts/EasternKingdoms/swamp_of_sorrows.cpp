@@ -45,10 +45,10 @@ public:
     npc_galen_goodward() : CreatureScript("npc_galen_goodward")
     { }
 
-    class npc_galen_goodwardAI : public npc_escortAI
+    class npc_galen_goodwardAI : public EscortAI
     {
         public:
-        npc_galen_goodwardAI(Creature* pCreature) : npc_escortAI(pCreature)
+        npc_galen_goodwardAI(Creature* pCreature) : EscortAI(pCreature)
         {
             m_uiGalensCageGUID = 0;
             Reset();
@@ -111,7 +111,7 @@ public:
     
         void UpdateAI(const uint32 uiDiff)
         override {
-            npc_escortAI::UpdateAI(uiDiff);
+            EscortAI::UpdateAI(uiDiff);
     
             if (HasEscortState(STATE_ESCORT_NONE))
                 return;
@@ -131,7 +131,7 @@ public:
         {
             if (quest->GetQuestId() == QUEST_GALENS_ESCAPE)
             {
-                ((npc_escortAI*)(me->AI()))->Start(false, false, false, pPlayer->GetGUID(), me->GetEntry());
+                ((EscortAI*)(me->AI()))->Start(false, false, pPlayer->GetGUID(), quest);
                 me->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_ACTIVE);
                 DoScriptText(SAY_QUEST_ACCEPTED, me);
             }

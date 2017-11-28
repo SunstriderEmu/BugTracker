@@ -118,10 +118,10 @@ public:
     npc_kaya_flathoof() : CreatureScript("npc_kaya_flathoof")
     { }
 
-    class npc_kaya_flathoofAI : public npc_escortAI
+    class npc_kaya_flathoofAI : public EscortAI
     {
         public:
-        npc_kaya_flathoofAI(Creature* c) : npc_escortAI(c) {}
+        npc_kaya_flathoofAI(Creature* c) : EscortAI(c) {}
     
         void WaypointReached(uint32 i, uint32 pathID)
         override {
@@ -156,7 +156,7 @@ public:
     
         void JustDied(Unit* killer)
         override {
-            if (PlayerGUID)
+            if (_playerGUID)
             {
                 Player* player = GetPlayerForEscort();
                 if (player)
@@ -166,14 +166,14 @@ public:
     
         void UpdateAI(const uint32 diff)
         override {
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
         }
 
         virtual void QuestAccept(Player* player, Quest const* quest) override
         {
             if (quest->GetQuestId() == QUEST_PK)
             {
-                ((npc_escortAI*)(me->AI()))->Start(true, true, false, player->GetGUID(), me->GetEntry());
+                ((EscortAI*)(me->AI()))->Start(true, false, player->GetGUID(), quest);
                 DoScriptText(SAY_START, me);
                 me->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);

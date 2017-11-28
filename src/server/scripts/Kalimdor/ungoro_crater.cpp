@@ -55,10 +55,10 @@ public:
     npc_ame() : CreatureScript("npc_ame")
     { }
 
-    class npc_ameAI : public npc_escortAI
+    class npc_ameAI : public EscortAI
     {
         public:
-        npc_ameAI(Creature *c) : npc_escortAI(c) {}
+        npc_ameAI(Creature *c) : EscortAI(c) {}
     
         uint32 DEMORALIZINGSHOUT_Timer;
     
@@ -110,7 +110,7 @@ public:
     
         void JustDied(Unit* killer)
         override {
-            if (PlayerGUID)
+            if (_playerGUID)
             {
                 if (Player* player = GetPlayerForEscort())
                     player->FailQuest(QUEST_CHASING_AME);
@@ -119,7 +119,7 @@ public:
     
         void UpdateAI(const uint32 diff)
         override {
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
             if (!UpdateVictim())
                 return;
     
@@ -135,7 +135,7 @@ public:
         {
             if (quest->GetQuestId() == QUEST_CHASING_AME)
             {
-                ((npc_escortAI*)(me->AI()))->Start(false, true, false, player->GetGUID(), me->GetEntry());
+                ((EscortAI*)(me->AI()))->Start(true, false, player->GetGUID(), quest);
                 DoScriptText(SAY_READY, me, player);
                 me->SetUInt32Value(UNIT_FIELD_BYTES_1,0);
                 // Change faction so mobs attack

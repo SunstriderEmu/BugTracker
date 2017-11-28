@@ -116,10 +116,10 @@ public:
     npc_oox22fe() : CreatureScript("npc_oox22fe")
     { }
 
-    class npc_oox22feAI : public npc_escortAI
+    class npc_oox22feAI : public EscortAI
     {
         public:
-        npc_oox22feAI(Creature* pCreature) : npc_escortAI(pCreature) { }
+        npc_oox22feAI(Creature* pCreature) : EscortAI(pCreature) { }
     
         void WaypointReached(uint32 i, uint32 pathID)
         override {
@@ -182,7 +182,7 @@ public:
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                 DoScriptText(SAY_OOX_START, me);
 
-                if (npc_escortAI* pEscortAI = CAST_AI(npc_oox22feAI, me->AI()))
+                if (EscortAI* pEscortAI = CAST_AI(npc_oox22feAI, me->AI()))
                     pEscortAI->Start(true, false, pPlayer->GetGUID());
 
             }

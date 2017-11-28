@@ -246,10 +246,10 @@ public:
     npc_ranger_lilatha() : CreatureScript("npc_ranger_lilatha")
     { }
 
-    class npc_ranger_lilathaAI : public npc_escortAI
+    class npc_ranger_lilathaAI : public EscortAI
     {
         public:
-        npc_ranger_lilathaAI(Creature *c) : npc_escortAI(c) {}
+        npc_ranger_lilathaAI(Creature *c) : EscortAI(c) {}
     
         std::list<GameObject*> CageList;
     
@@ -323,7 +323,7 @@ public:
     
         void JustDied(Unit* killer)
         override {
-            if (PlayerGUID)
+            if (_playerGUID)
             {
                 Player* player = GetPlayerForEscort();
                 if (player)
@@ -333,7 +333,7 @@ public:
     
         void UpdateAI(const uint32 diff)
         override {
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
         }
 
         virtual void QuestAccept(Player* player, Quest const* quest) override
@@ -341,7 +341,7 @@ public:
             if (quest->GetQuestId() == QUEST_ESCAPE_FROM_THE_CATACOMBS)
             {
                 me->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
-                ((npc_escortAI*)(me->AI()))->Start(true, true, false, player->GetGUID(), me->GetEntry());
+                ((EscortAI*)(me->AI()))->Start(true, false, player->GetGUID(), quest);
             }
         }
 

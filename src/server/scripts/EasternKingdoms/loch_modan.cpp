@@ -140,10 +140,10 @@ public:
     npc_miran() : CreatureScript("npc_miran")
     { }
 
-    class npc_miranAI : public npc_escortAI
+    class npc_miranAI : public EscortAI
     {
         public:
-        npc_miranAI(Creature* pCreature) : npc_escortAI(pCreature) { }    
+        npc_miranAI(Creature* pCreature) : EscortAI(pCreature) { }    
     
         void Reset() override {}
         
@@ -178,13 +178,13 @@ public:
             pSummoned->AI()->AttackStart(me);
         }
 
-        virtual void QuestAccept(Player* pPlayer, Quest const* pQuest) override
+        virtual void QuestAccept(Player* pPlayer, Quest const* quest) override
         {
-            if (pQuest->GetQuestId() == QUEST_PROTECTING_THE_SHIPMENT)
+            if (quest->GetQuestId() == QUEST_PROTECTING_THE_SHIPMENT)
             {        
                 me->SetFaction(231);
 
-                ((npc_escortAI*)(me->AI()))->Start(true, true, false, pPlayer->GetGUID(), me->GetEntry());
+                ((EscortAI*)(me->AI()))->Start(true, false, pPlayer->GetGUID(), quest);
             }
         }
 

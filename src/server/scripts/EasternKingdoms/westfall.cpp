@@ -48,10 +48,10 @@ public:
     npc_defias_traitor() : CreatureScript("npc_defias_traitor")
     { }
 
-    class npc_defias_traitorAI : public npc_escortAI
+    class npc_defias_traitorAI : public EscortAI
     {
         public:
-        npc_defias_traitorAI(Creature *c) : npc_escortAI(c) {}
+        npc_defias_traitorAI(Creature *c) : EscortAI(c) {}
     
         bool IsWalking;
         bool complete;
@@ -107,7 +107,7 @@ public:
     
         void JustDied(Unit* killer)
         override {
-            if (PlayerGUID && !complete)
+            if (_playerGUID && !complete)
             {
                 if (Player* player = GetPlayerForEscort())
                     player->FailQuest(QUEST_DEFIAS_BROTHERHOOD);
@@ -116,14 +116,14 @@ public:
     
         void UpdateAI(const uint32 diff)
         override {
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
         }
 
         virtual void QuestAccept(Player* player, Quest const* quest) override
         {
             if (quest->GetQuestId() == QUEST_DEFIAS_BROTHERHOOD)
             {
-                ((npc_escortAI*)(me->AI()))->Start(true, true, true, player->GetGUID(), me->GetEntry());
+                ((EscortAI*)(me->AI()))->Start(true, true, player->GetGUID(), quest);
                 DoScriptText(SAY_START, me, player);
             }
         }
@@ -163,10 +163,10 @@ public:
     npc_daphne_stilwell() : CreatureScript("npc_daphne_stilwell")
     { }
 
-    class npc_daphne_stilwellAI : public npc_escortAI
+    class npc_daphne_stilwellAI : public EscortAI
     {
         public:
-        npc_daphne_stilwellAI(Creature* pCreature) : npc_escortAI(pCreature) {}
+        npc_daphne_stilwellAI(Creature* pCreature) : EscortAI(pCreature) {}
     
         uint32 uiWPHolder;
         uint32 uiShootTimer;
@@ -265,7 +265,7 @@ public:
     
         void Update(const uint32 diff)
         {
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
     
             if (!UpdateVictim())
                 return;
@@ -284,14 +284,14 @@ public:
             DoMeleeAttackIfReady();
         }
 
-        virtual void QuestAccept(Player* pPlayer, Quest const* pQuest) override
+        virtual void QuestAccept(Player* pPlayer, Quest const* quest) override
         {
-            if (pQuest->GetQuestId() == QUEST_TOME_VALOR)
+            if (quest->GetQuestId() == QUEST_TOME_VALOR)
             {
                 DoScriptText(SAY_DS_START, me);
 
-                if (npc_escortAI* pEscortAI = CAST_AI(npc_daphne_stilwellAI, me->AI()))
-                    pEscortAI->Start(true, true, true, pPlayer->GetGUID(), me->GetEntry());
+                if (EscortAI* pEscortAI = CAST_AI(npc_daphne_stilwellAI, me->AI()))
+                    pEscortAI->Start(true, true, pPlayer->GetGUID(), quest);
             }
         }
 

@@ -313,10 +313,10 @@ public:
     npc_prospector_remtravel() : CreatureScript("npc_prospector_remtravel")
     { }
 
-    class npc_prospector_remtravelAI : public npc_escortAI
+    class npc_prospector_remtravelAI : public EscortAI
     {
         public:
-        npc_prospector_remtravelAI(Creature* pCreature) : npc_escortAI(pCreature) {}
+        npc_prospector_remtravelAI(Creature* pCreature) : EscortAI(pCreature) {}
     
         void WaypointReached(uint32 i, uint32 pathID)
         override {
@@ -377,11 +377,11 @@ public:
                 DoScriptText(SAY_REM_AGGRO, me, who);
         }
 
-        virtual void QuestAccept(Player* pPlayer, Quest const* pQuest) override
+        virtual void QuestAccept(Player* pPlayer, Quest const* quest) override
         {
-            if (pQuest->GetQuestId() == QUEST_ABSENT_MINDED_PT2)
+            if (quest->GetQuestId() == QUEST_ABSENT_MINDED_PT2)
             {
-                ((npc_escortAI*)(me->AI()))->Start(true, true, false, pPlayer->GetGUID(), me->GetEntry());
+                ((EscortAI*)(me->AI()))->Start(true, false, pPlayer->GetGUID(), quest);
                 me->SetFaction(FACTION_ESCORTEE);
             }
         }

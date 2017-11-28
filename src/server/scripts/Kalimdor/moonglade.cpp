@@ -344,11 +344,11 @@ public:
     npc_clintar_spirit() : CreatureScript("npc_clintar_spirit")
     { }
 
-    class npc_clintar_spiritAI : public npc_escortAI
+    class npc_clintar_spiritAI : public EscortAI
     {
         public:
     public:
-        npc_clintar_spiritAI(Creature *c) : npc_escortAI(c) {}
+        npc_clintar_spiritAI(Creature *c) : EscortAI(c) {}
     
         uint32 Step;
         uint32 CurrWP;
@@ -395,7 +395,7 @@ public:
                 return;
             }
             
-            npc_escortAI::EnterEvadeMode(why);
+            EscortAI::EnterEvadeMode(why);
         }
     
         void EnterCombat(Unit* pWho)
@@ -420,14 +420,14 @@ public:
                     AddWaypoint(i, Clintar_spirit_WP[i][0], Clintar_spirit_WP[i][1], Clintar_spirit_WP[i][2], (uint32)Clintar_spirit_WP[i][4]);
                 }
                 PlayerGUID = pPlayer->GetGUID();
-                Start(true, true, false, PlayerGUID);
+                Start(true, false, PlayerGUID);
             }
             return;
         }
     
         void UpdateAI(const uint32 diff)
         override {
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
     
             if(!PlayerGUID)
             {

@@ -374,10 +374,10 @@ public:
     npc_magwin() : CreatureScript("npc_magwin")
     { }
 
-    class npc_magwinAI : public npc_escortAI
+    class npc_magwinAI : public EscortAI
     {
         public:
-        npc_magwinAI(Creature *c) : npc_escortAI(c) {}
+        npc_magwinAI(Creature *c) : EscortAI(c) {}
     
     
         void WaypointReached(uint32 i, uint32 pathID)
@@ -419,7 +419,7 @@ public:
     
         void JustDied(Unit* killer)
         override {
-            if (PlayerGUID)
+            if (_playerGUID)
             {
                 Player* player = GetPlayerForEscort();
                 if (player)
@@ -430,16 +430,16 @@ public:
         void UpdateAI(const uint32 diff)
         override {
             me->AddUnitState(UNIT_STATE_IGNORE_PATHFINDING);
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
         }
 
-        virtual void QuestAccept(Player* pPlayer, Quest const* pQuest) override
+        virtual void QuestAccept(Player* pPlayer, Quest const* quest) override
         {
-            if (pQuest->GetQuestId() == QUEST_A_CRY_FOR_HELP)
+            if (quest->GetQuestId() == QUEST_A_CRY_FOR_HELP)
             {
                 me->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
-                if (npc_escortAI* pEscortAI = CAST_AI(npc_magwin::npc_magwinAI, (me->AI())))
-                    pEscortAI->Start(true, true, false, pPlayer->GetGUID(), me->GetEntry());
+                if (EscortAI* pEscortAI = CAST_AI(npc_magwin::npc_magwinAI, (me->AI())))
+                    pEscortAI->Start(true,false, pPlayer->GetGUID(), quest);
             }
         }
 

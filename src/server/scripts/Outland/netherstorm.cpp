@@ -1006,16 +1006,16 @@ public:
     npc_bessy() : CreatureScript("npc_bessy")
     { }
 
-    class npc_bessyAI : public npc_escortAI
+    class npc_bessyAI : public EscortAI
     {
         public:
-        npc_bessyAI(Creature *c) : npc_escortAI(c) {}
+        npc_bessyAI(Creature *c) : EscortAI(c) {}
     
         bool Completed;
     
         void JustDied(Unit* killer)
         override {
-            if (PlayerGUID)
+            if (_playerGUID)
             {
                 if (Player* player = GetPlayerForEscort())
                     player->FailQuest(Q_ALMABTRIEB);
@@ -1074,7 +1074,7 @@ public:
     
         void UpdateAI(const uint32 diff)
         override {
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
         }
     
 
@@ -1084,7 +1084,7 @@ public:
             {
                 me->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                ((npc_escortAI*)(me->AI()))->Start(true, true, false, player->GetGUID(), me->GetEntry());
+                ((EscortAI*)(me->AI()))->Start(true, false, player->GetGUID(), quest);
             }
         }
 
@@ -1115,10 +1115,10 @@ public:
     npc_maxx_a_million_escort() : CreatureScript("npc_maxx_a_million_escort")
     { }
 
-    class npc_maxx_a_million_escortAI : public npc_escortAI
+    class npc_maxx_a_million_escortAI : public EscortAI
     {
         public:
-        npc_maxx_a_million_escortAI(Creature* pCreature) : npc_escortAI(pCreature) {}
+        npc_maxx_a_million_escortAI(Creature* pCreature) : EscortAI(pCreature) {}
     
         bool bTake;
         uint32 uiTakeTimer;
@@ -1165,7 +1165,7 @@ public:
     
         void UpdateAI(const uint32 uiDiff)
         override {
-            npc_escortAI::UpdateAI(uiDiff);
+            EscortAI::UpdateAI(uiDiff);
     
             if (bTake) {
                 if (uiTakeTimer < uiDiff) {
@@ -1184,11 +1184,11 @@ public:
             DoMeleeAttackIfReady();
         }
 
-        virtual void QuestAccept(Player* pPlayer, Quest const* pQuest) override
+        virtual void QuestAccept(Player* pPlayer, Quest const* quest) override
         {
-            if (pQuest->GetQuestId() == QUEST_MARK_V_IS_ALIVE) {
+            if (quest->GetQuestId() == QUEST_MARK_V_IS_ALIVE) {
                 me->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
-                ((npc_escortAI*)(me->AI()))->Start(true, true, false, pPlayer->GetGUID(), me->GetEntry());
+                ((EscortAI*)(me->AI()))->Start(true, false, pPlayer->GetGUID(), quest);
             }
         }
 
@@ -1435,10 +1435,10 @@ public:
     npc_drijya() : CreatureScript("npc_drijya")
     { }
 
-    class npc_drijyaAI : public npc_escortAI
+    class npc_drijyaAI : public EscortAI
     {
         public:
-        npc_drijyaAI(Creature* pCreature) : npc_escortAI(pCreature) {}
+        npc_drijyaAI(Creature* pCreature) : EscortAI(pCreature) {}
     
         bool Destroy;
         bool SummonImp;
@@ -1569,7 +1569,7 @@ public:
     
         void UpdateAI(const uint32 uiDiff)
         override {
-            npc_escortAI::UpdateAI(uiDiff);
+            EscortAI::UpdateAI(uiDiff);
     
             if (SummonImp)
             {
@@ -1638,14 +1638,14 @@ public:
             DoMeleeAttackIfReady();
         }
 
-        virtual void QuestAccept(Player* pPlayer, Quest const* pQuest) override
+        virtual void QuestAccept(Player* pPlayer, Quest const* quest) override
         {
-            if (pQuest->GetQuestId() == QUEST_WARP_GATE)
+            if (quest->GetQuestId() == QUEST_WARP_GATE)
             {
                 if (npc_drijyaAI* pEscortAI = dynamic_cast<npc_drijyaAI*>(me->AI()))
                 {
                     me->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
-                    pEscortAI->Start(true, true, false, pPlayer->GetGUID(), me->GetEntry());
+                    pEscortAI->Start(true,  false, pPlayer->GetGUID(), quest);
                 }
             }
         }

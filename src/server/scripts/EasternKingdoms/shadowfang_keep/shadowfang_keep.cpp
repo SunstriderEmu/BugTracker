@@ -43,12 +43,26 @@ public:
     npc_shadowfang_prisoner() : CreatureScript("npc_shadowfang_prisoner")
     { }
 
-    class npc_shadowfang_prisonerAI : public npc_escortAI
+    class npc_shadowfang_prisonerAI : public EscortAI
     {
         public:
-        npc_shadowfang_prisonerAI(Creature *c) : npc_escortAI(c)
+        npc_shadowfang_prisonerAI(Creature *c) : EscortAI(c)
         {
             pInstance = ((InstanceScript*)c->GetInstanceScript());
+
+            uint32 eCreature = c->GetEntry();
+
+            if (eCreature == 3849)                                    //adamant
+                AddWaypoint(0, -254.47, 2117.48, 81.17);
+            if (eCreature == 3850)                                    //ashcrombe
+                AddWaypoint(0, -252.35, 2126.71, 81.17);
+
+            AddWaypoint(1, -253.63, 2131.27, 81.28);
+            AddWaypoint(2, -249.66, 2142.45, 87.01);
+            AddWaypoint(3, -248.08, 2143.68, 87.01);
+            AddWaypoint(4, -238.87, 2139.93, 87.01);
+            AddWaypoint(5, -235.47, 2149.18, 90.59);
+            AddWaypoint(6, -239.89, 2156.06, 90.62, 20000);
         }
     
         InstanceScript *pInstance;
@@ -87,7 +101,7 @@ public:
             if (action == GOSSIP_ACTION_INFO_DEF+1)
             {
                 player->CLOSE_GOSSIP_MENU();
-                ((npc_escortAI*)(me->AI()))->Start(false, false, false);
+                ((EscortAI*)(me->AI()))->Start(false, false, false);
             }
             return true;
 

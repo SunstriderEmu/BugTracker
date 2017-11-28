@@ -61,10 +61,10 @@ public:
     npc_torek() : CreatureScript("npc_torek")
     { }
 
-    class npc_torekAI : public npc_escortAI
+    class npc_torekAI : public EscortAI
     {
         public:
-        npc_torekAI(Creature *c) : npc_escortAI(c) {}
+        npc_torekAI(Creature *c) : EscortAI(c) {}
     
         uint32 Rend_Timer;
         uint32 Thunderclap_Timer;
@@ -146,7 +146,7 @@ public:
     
         void JustDied(Unit* killer) override
         {
-            if (PlayerGUID && !Completed)
+            if (_playerGUID && !Completed)
             {
                 if (Player* player = GetPlayerForEscort())
                     player->FailQuest(QUEST_TOREK_ASSULT);
@@ -155,7 +155,7 @@ public:
     
         void UpdateAI(const uint32 diff) override
         {
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
     
             if (!UpdateVictim())
                 return;
@@ -173,13 +173,13 @@ public:
             }else Thunderclap_Timer -= diff;
         }
 
-        virtual void QuestAccept(Player* pPlayer, Quest const* pQuest) override
+        virtual void QuestAccept(Player* pPlayer, Quest const* quest) override
         {
-            if (pQuest->GetQuestId() == QUEST_TOREK_ASSULT)
+            if (quest->GetQuestId() == QUEST_TOREK_ASSULT)
             {
                 //TODO: find companions, make them follow Torek, at any time (possibly done by mangos/database in future?)
-                if (npc_escortAI* pEscortAI = CAST_AI(npc_torekAI, (me->AI()))) {
-                    pEscortAI->Start(true, true, true, pPlayer->GetGUID(), me->GetEntry());
+                if (EscortAI* pEscortAI = CAST_AI(npc_torekAI, (me->AI()))) {
+                    pEscortAI->Start(true, true, pPlayer->GetGUID(), quest);
                     ((npc_torek::npc_torekAI*)pEscortAI)->GatherGuards();
                 }
                     
@@ -212,10 +212,10 @@ public:
     npc_ruul_snowhoof() : CreatureScript("npc_ruul_snowhoof")
     { }
 
-    class npc_ruul_snowhoofAI : public npc_escortAI
+    class npc_ruul_snowhoofAI : public EscortAI
     {
         public:
-        npc_ruul_snowhoofAI(Creature *c) : npc_escortAI(c) {}
+        npc_ruul_snowhoofAI(Creature *c) : EscortAI(c) {}
         
         bool completed;
     
@@ -273,7 +273,7 @@ public:
     
         void JustDied(Unit* killer) override
         {
-            if (PlayerGUID)
+            if (_playerGUID)
             {
                 Player* player = GetPlayerForEscort();
                 if (player && !completed)
@@ -283,7 +283,7 @@ public:
     
         void UpdateAI(const uint32 diff) override
         {
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
         }
 
         virtual void QuestAccept(Player* player, Quest const* quest) override
@@ -292,7 +292,7 @@ public:
             {
                 me->SetFaction(player->GetFaction());
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                ((npc_escortAI*)(me->AI()))->Start(true, true, false, player->GetGUID(), me->GetEntry());
+                ((EscortAI*)(me->AI()))->Start(true, false, player->GetGUID(), quest);
             }
         }
 
@@ -360,10 +360,10 @@ public:
     npc_muglash() : CreatureScript("npc_muglash")
     { }
 
-    class npc_muglashAI : public npc_escortAI
+    class npc_muglashAI : public EscortAI
     {
         public:
-        npc_muglashAI(Creature* pCreature) : npc_escortAI(pCreature) { }
+        npc_muglashAI(Creature* pCreature) : EscortAI(pCreature) { }
     
         uint32 m_uiWaveId;
         uint32 m_uiEventTimer;
@@ -387,14 +387,6 @@ public:
             }
         }
         
-        void EnterEvadeMode(EvadeReason /* why */)
-        override {
-            me->RemoveAllAuras();
-            me->GetThreatManager().ClearAllThreat();
-            me->CombatStop();
-            me->SetLootRecipient(nullptr);
-        }
-    
         void WaypointReached(uint32 i, uint32 pathID)
         override {
             Player* pPlayer = GetPlayerForEscort();
@@ -415,17 +407,16 @@ public:
                         if (GameObject* pGo = pPlayer->FindNearestGameObject(GO_NAGA_BRAZIER, INTERACTION_DISTANCE*2))
                         {
                             //TODO translate
-                            //me->Say("Light the blaze, if you please.", LANG_UNIVERSAL);
-                            me->Say("Activez le brasier, s'il vous plait.", LANG_UNIVERSAL, nullptr);
+                            me->Say("Light the blaze, if you please.", LANG_UNIVERSAL);
+                            //me->Say("Activez le brasier, s'il vous plait.", LANG_UNIVERSAL, nullptr);
                             pGo->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NOT_SELECTABLE);
-                            AddEscortState(STATE_ESCORT_ESCORTING);
+                            //AddEscortState(STATE_ESCORT_ESCORTING);
                             SetEscortPaused(true);
                         }
                     }
                     break;
                 case 14:
-                    AddEscortState(STATE_ESCORT_ESCORTING);
-                    AddEscortState(STATE_ESCORT_ESCORTING);
+                    //AddEscortState(STATE_ESCORT_ESCORTING);
                     break;
             }
         }
@@ -435,7 +426,7 @@ public:
             if (HasEscortState(STATE_ESCORT_PAUSED))
             {
                 if (urand(0, 1))                
-                DoScriptText(SAY_MUG_ON_GUARD, me);
+                    DoScriptText(SAY_MUG_ON_GUARD, me);
                 return;
             }
         }
@@ -494,7 +485,7 @@ public:
     
         void UpdateAI(const uint32 uiDiff)
         override {
-            npc_escortAI::UpdateAI(uiDiff);
+            EscortAI::UpdateAI(uiDiff);
     
             if (!me->GetVictim())
             {
@@ -515,16 +506,16 @@ public:
             DoMeleeAttackIfReady();
         }
 
-        virtual void QuestAccept(Player* pPlayer, Quest const* pQuest) override
+        virtual void QuestAccept(Player* pPlayer, Quest const* quest) override
         {
-            if (pQuest->GetQuestId() == QUEST_VORSHA)
+            if (quest->GetQuestId() == QUEST_VORSHA)
             {
                 if (npc_muglashAI* pEscortAI = CAST_AI(npc_muglash::npc_muglashAI, me->AI()))
                 {
                     DoScriptText(SAY_MUG_START1, me);
                     me->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
 
-                    pEscortAI->Start(true, true, true, pPlayer->GetGUID(), me->GetEntry());
+                    pEscortAI->Start(true, true, pPlayer->GetGUID(), quest);
                     pEscortAI->SetDespawnAtEnd(false);
                 }
             }
@@ -606,10 +597,10 @@ public:
     npc_feero_ironhand() : CreatureScript("npc_feero_ironhand")
     { }
 
-    class npc_feero_ironhandAI : public npc_escortAI
+    class npc_feero_ironhandAI : public EscortAI
     {
         public:
-        npc_feero_ironhandAI(Creature* c) : npc_escortAI(c), summons(me) {}
+        npc_feero_ironhandAI(Creature* c) : EscortAI(c), summons(me) {}
         
         SummonList summons;
         
@@ -669,7 +660,7 @@ public:
                 DoScriptText(FEERO_SAY_AMBUSH3_GO, me, nullptr);
             }
                 
-            npc_escortAI::AttackStart(who);
+            EscortAI::AttackStart(who);
         }
         
         void JustSummoned(Creature* summon)
@@ -734,7 +725,7 @@ public:
     
         void UpdateAI(uint32 const diff)
         override {
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
             
             DoMeleeAttackIfReady();
         }
@@ -746,7 +737,7 @@ public:
                     DoScriptText(FEERO_SAY_START, me);
                     me->SetFaction(player->GetFaction());
 
-                    escortAI->Start(true, true, false, player->GetGUID(), me->GetEntry());
+                    escortAI->Start(true, false, player->GetGUID(), quest);
                 }
             }
         }

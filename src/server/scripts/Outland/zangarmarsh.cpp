@@ -379,10 +379,10 @@ public:
     npc_kayra_longmane() : CreatureScript("npc_kayra_longmane")
     { }
 
-    class npc_kayra_longmaneAI : public npc_escortAI
+    class npc_kayra_longmaneAI : public EscortAI
     {
         public:
-        npc_kayra_longmaneAI(Creature* c) : npc_escortAI(c) {}
+        npc_kayra_longmaneAI(Creature* c) : EscortAI(c) {}
     
         bool Completed;
     
@@ -433,7 +433,7 @@ public:
         void JustDied(Unit* killer)
         override 
         {
-            if (PlayerGUID && !Completed)
+            if (_playerGUID && !Completed)
             {
                 Player* player = GetPlayerForEscort();
                 if (player && !Completed)
@@ -444,14 +444,14 @@ public:
         void UpdateAI(const uint32 diff)
         override 
         {
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
         }
 
         virtual void QuestAccept(Player* player, Quest const* quest) override
         {
             if (quest->GetQuestId() == QUEST_EFU)
             {
-                ((npc_escortAI*)(me->AI()))->Start(true, true, false, player->GetGUID(), me->GetEntry());
+                ((EscortAI*)(me->AI()))->Start(true, false, player->GetGUID(), quest);
                 me->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
             }
         }

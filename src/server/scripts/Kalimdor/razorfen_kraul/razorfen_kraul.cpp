@@ -52,10 +52,10 @@ public:
     npc_willix() : CreatureScript("npc_willix")
     { }
 
-    class npc_willixAI : public npc_escortAI
+    class npc_willixAI : public EscortAI
     {
         public:
-        npc_willixAI(Creature *c) : npc_escortAI(c) {}
+        npc_willixAI(Creature *c) : EscortAI(c) {}
         
         bool complete;
     
@@ -127,7 +127,7 @@ public:
     
         void JustDied(Unit* killer)
         override {
-            if (PlayerGUID && !complete)
+            if (_playerGUID && !complete)
             {
                 if (Player* player = GetPlayerForEscort())
                     player->FailQuest(QUEST_WILLIX_THE_IMPORTER);
@@ -136,14 +136,14 @@ public:
     
         void UpdateAI(const uint32 diff)
         override {
-            npc_escortAI::UpdateAI(diff);
+            EscortAI::UpdateAI(diff);
         }
 
         virtual void QuestAccept(Player* player, Quest const* quest) override
         {
             if (quest->GetQuestId() == QUEST_WILLIX_THE_IMPORTER)
             {
-                ((npc_escortAI*)(me->AI()))->Start(true, true, false, player->GetGUID(), me->GetEntry());
+                ((EscortAI*)(me->AI()))->Start(true, false, player->GetGUID(), quest);
                 DoScriptText(SAY_READY, me, player);
                 me->SetFaction(FACTION_ESCORTEE_N_NEUTRAL_PASSIVE);
             }

@@ -79,10 +79,10 @@ public:
     npc_disciple_of_naralex() : CreatureScript("npc_disciple_of_naralex")
     { }
 
-    class npc_disciple_of_naralexAI : public npc_escortAI
+    class npc_disciple_of_naralexAI : public EscortAI
     {
         public:
-        npc_disciple_of_naralexAI(Creature *c) : npc_escortAI(c)
+        npc_disciple_of_naralexAI(Creature *c) : EscortAI(c)
         {
             pInstance = ((InstanceScript*)c->GetInstanceScript());
             eventTimer = 0;
@@ -121,7 +121,7 @@ public:
                 break;
                 case 12:
                     ++eventProgress;
-                    SetLastPos(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ());
+                    me->SetHomePosition(me->GetPosition());
                     break;
                 case 19:
                     DoScriptText(SAY_BEYOND_THIS_CORRIDOR, me);
@@ -164,13 +164,13 @@ public:
             if (currentEvent == TYPE_NARALEX_PART3 || (currentEvent == TYPE_NARALEX_PART2 && eventProgress == 2) || me->HasUnitState(UNIT_STATE_CASTING))
                 return;
             else
-                npc_escortAI::EnterEvadeMode(why);
+                EscortAI::EnterEvadeMode(why);
         }
     
         void UpdateAI(const uint32 diff)
         override {
             if (currentEvent != TYPE_NARALEX_PART3)
-                npc_escortAI::UpdateAI(diff);
+                EscortAI::UpdateAI(diff);
     
             if (!pInstance)
                 return;
@@ -197,7 +197,7 @@ public:
                                 DoScriptText(SAY_BANISH_THE_SPIRITS, me);
                                 DoCast(me, SPELL_SERPENTINE_CLEANSING);
                                 me->AddUnitState(UNIT_STATE_ROOT);
-                                CAST_AI(npc_escortAI, me->AI())->SetCanDefend(false);
+                                CAST_AI(EscortAI, me->AI())->SetCanAttack(false);
                                 eventTimer = 30000;
                                 me->SummonCreature(NPC_DEVIATE_VIPER, -61.5261, 273.676, -92.8442, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 5000);
                                 me->SummonCreature(NPC_DEVIATE_VIPER, -58.4658, 280.799, -92.8393, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 5000);
@@ -206,7 +206,7 @@ public:
                             else
                             if (eventProgress == 2)
                             {
-                                CAST_AI(npc_escortAI, me->AI())->SetCanDefend(true);
+                                CAST_AI(EscortAI, me->AI())->SetCanAttack(true);
                                 me->ClearUnitState(UNIT_STATE_ROOT);
                                 DoScriptText(SAY_CAVERNS_PURIFIED, me);
                                 pInstance->SetData(TYPE_NARALEX_PART2, DONE);
@@ -227,7 +227,7 @@ public:
                             {
                                 ++eventProgress;
                                 eventTimer = 15000;
-                                CAST_AI(npc_escortAI, me->AI())->SetCanDefend(false);
+                                CAST_AI(EscortAI, me->AI())->SetCanAttack(false);
                                 if (Creature* naralex = pInstance->instance->GetCreature(pInstance->GetData64(DATA_NARALEX)))
                                     DoCast(naralex, SPELL_NARALEXS_AWAKENING, true);
                                 DoScriptText(EMOTE_AWAKENING_RITUAL, me);
@@ -385,9 +385,9 @@ public:
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                 me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
-                CAST_AI(npc_escortAI, (me->AI()))->Start(true, true, false, player->GetGUID(), me->GetEntry());
-                CAST_AI(npc_escortAI, (me->AI()))->SetDespawnAtFar(false);
-                CAST_AI(npc_escortAI, (me->AI()))->SetDespawnAtEnd(false);
+                CAST_AI(EscortAI, (me->AI()))->Start(true, false, player->GetGUID());
+                CAST_AI(EscortAI, (me->AI()))->SetDespawnAtFar(false);
+                CAST_AI(EscortAI, (me->AI()))->SetDespawnAtEnd(false);
             }
             return true;
 
