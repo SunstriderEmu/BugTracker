@@ -1279,6 +1279,9 @@ public:
         npc_rocknotAI(Creature *c) : EscortAI(c)
         {
             pInstance = ((InstanceScript*)c->GetInstanceScript());
+
+            for (uint8 i = 0; i < 8; ++i)
+                AddWaypoint(i, BarWpLocations[i][0], BarWpLocations[i][1], BarWpLocations[i][2], BarWpWait[i]);
         }
     
         InstanceScript* pInstance;
