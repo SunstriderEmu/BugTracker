@@ -129,6 +129,8 @@ public:
 
             for (uint8 i = 0; i < 6; ++i)
                 AddWaypoint(i, StageLocations[i][0], StageLocations[i][1], 90.465);
+
+            PrepareStageSet();
         }
     
         InstanceScript* pInstance;
@@ -341,22 +343,51 @@ public:
             Start(false, false, false);
         }
     
+        void PrepareStageSet()
+        {
+            Position backdropLoc(-10890.9, -1744.06, 90.4765, -1.67552);
+            G3D::Quat backdropRotation(0, 0, -0.743146, 0.669129);
+            switch (Event)
+            {
+            case EVENT_OZ:
+                me->SummonGameObject(OPERA_BACKDROP_WIZARD_OF_OZ, backdropLoc, backdropRotation, 0);
+                me->SummonGameObject(OPERA_WIZARD_OF_OZ_HAY, Position(-10909.5, -1761.79, 90.4773, -1.65806), G3D::Quat(0, 0, -0.737276, 0.675591), 0);
+                me->SummonGameObject(OPERA_WIZARD_OF_OZ_HAY, Position(-10877.7, -1763.18, -1.69297, -1.65806), G3D::Quat(0, 0, -0.737276, 0.675591), 0);
+                me->SummonGameObject(OPERA_WIZARD_OF_OZ_HAY, Position(-10883, -1751.81, 90.4765, -1.65806), G3D::Quat(0, 0, -0.737276, 0.675591), 0);
+                me->SummonGameObject(OPERA_WIZARD_OF_OZ_HAY, Position(-10906.7, -1750.01, 90.4765, -1.65806), G3D::Quat(0, 0, -0.737276, 0.675591), 0);
+                break;
+
+            case EVENT_HOOD:
+                me->SummonGameObject(OPERA_BACKDROP_RED_RIDING, backdropLoc, backdropRotation, 0);
+                me->SummonGameObject(OPERA_RED_RIDING_HOOD_TREE, Position(-10881.7, -1753.65, 90.4771, 4.41055), G3D::Quat(0, 0, -0.737276, 0.675591), 0);
+                me->SummonGameObject(OPERA_RED_RIDING_HOOD_TREE, Position(-10874.7, -1758.96, 90.4765, 4.18043), G3D::Quat(0, 0, 0.868108, -0.496376), 0);
+                me->SummonGameObject(OPERA_RED_RIDING_HOOD_HOUSE, Position(-10903.8, -1749.94, 90.4766, 4.84016), G3D::Quat(0, 0, 0.66052, -0.750809), 0);
+                break;
+
+            case EVENT_RAJ:
+                me->SummonGameObject(OPERA_BACKDROP_ROMEO_AND_JULIET, backdropLoc, backdropRotation, 0);
+                me->SummonGameObject(OPERA_ROMEO_AND_JULIET_MOON, Position(-10903.4, -1752.81, 108.539, 4.67092), G3D::Quat(0, 0, 4.67092, -0.692293), 0);
+                me->SummonGameObject(OPERA_ROMEO_AND_JULIET_BALCONY, Position(-10891.3, -1752.24, 90.4768, 4.6039), G3D::Quat(0, 0, 0.744405, -0.667729), 0);
+                break;
+            }
+        }
+
         void PrepareEncounter()
         {
             uint8 index = 0;
             uint8 count = 0;
+            Position backdropLoc(-10890.9, -1744.06, 90.4765, -1.67552);
+            G3D::Quat backdropRotation(0, 0, -0.743146, 0.669129);
             switch(Event)
             {
                 case EVENT_OZ:
                     index = 0;
                     count = 4;
                     break;
-    
                 case EVENT_HOOD:
                     index = 4;
                     count = index+1;
                     break;
-    
                 case EVENT_RAJ:
                     index = 5;
                     count = index+1;
@@ -367,9 +398,9 @@ public:
             {
                 uint32 entry = ((uint32)Spawns[index][0]);
                 float PosX = Spawns[index][1];
-                if (Creature* pCreature = me->SummonCreature(entry, PosX, SPAWN_Y, SPAWN_Z, SPAWN_O, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000))
+                if (Creature* pCreature = me->SummonCreature(entry, PosX, SPAWN_Y, SPAWN_Z, SPAWN_O, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 2 * MINUTE * IN_MILLISECONDS))
                 {
-                                                                // In case database has bad flags
+                    // In case database has bad flags
                     pCreature->SetUInt32Value(UNIT_FIELD_FLAGS, 0);
                     pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 }
