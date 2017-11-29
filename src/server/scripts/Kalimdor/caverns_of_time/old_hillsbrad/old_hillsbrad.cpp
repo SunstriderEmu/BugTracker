@@ -476,6 +476,7 @@ public:
                     DoScriptText(SAY_TH_MOUNTS_UP, me);
                     me->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
                     DoMount();
+                    HadMount = true;
                     break;
                 case 37:
                     //possibly regular patrollers? If so, remove this and let database handle them
@@ -749,7 +750,6 @@ public:
 
         }
 
-
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
@@ -795,9 +795,7 @@ public:
                     break;
             }
             return true;
-
         }
-
     };
 
     CreatureAI* GetAI(Creature* creature) const override
@@ -805,8 +803,6 @@ public:
         return new npc_thrall_old_hillsbradAI(creature);
     }
 };
-
-
 
 
 /*######
@@ -848,6 +844,7 @@ public:
                     break;
             }
         }
+
         void Reset() override {}
         void EnterCombat(Unit* who) override {}
     
@@ -866,7 +863,6 @@ public:
             return true;
 
         }
-
 
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
@@ -899,9 +895,7 @@ public:
                 }
             }
             return true;
-
         }
-
     };
 
     CreatureAI* GetAI(Creature* creature) const override
@@ -911,21 +905,15 @@ public:
 };
 
 
-
-
 /*######
 ## AddSC
 ######*/
 
 void AddSC_old_hillsbrad()
 {
-
     new npc_brazen();
-
     new npc_erozion();
-
     new npc_thrall_old_hillsbrad();
-
     new npc_taretha();
 }
 
