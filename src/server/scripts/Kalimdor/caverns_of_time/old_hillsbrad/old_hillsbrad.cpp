@@ -262,7 +262,7 @@ public:
             pInstance = ((InstanceScript*)c->GetInstanceScript());
             me->SetKeepActive(30 * MINUTE*IN_MILLISECONDS);
 
-            AddWaypoint(0, 2230.91, 118.765, 82.2947, 0.0f, 5000);
+            AddWaypoint(0, 2230.91, 118.765, 82.2947);
             AddWaypoint(1, 2230.33, 114.980, 82.2946);
             AddWaypoint(2, 2233.36, 111.057, 82.2996);
             AddWaypoint(3, 2231.17, 108.486, 82.6624);
@@ -479,6 +479,7 @@ public:
                     DoScriptText(SAY_TH_MOUNTS_UP, me);
                     me->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
                     DoMount();
+                    SetRun(true);
                     HadMount = true;
                     break;
                 case 37:

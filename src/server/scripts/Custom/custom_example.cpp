@@ -1,19 +1,3 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
-
 /* ScriptData
 SDName: Custom_Example
 SD%Complete: 100
@@ -21,6 +5,7 @@ SDComment: Short custom scripting example
 SDCategory: OLDScript Examples
 EndScriptData */
 
+#include "EscortAI.h"
 
 
 // **** This script is designed as an example for others to build on ****
@@ -272,10 +257,72 @@ public:
     }
 };
 
+//Meant to be spawn in map 13
+class npc_escort_example : public CreatureScript
+{
+public:
+    npc_escort_example() : CreatureScript("npc_escort_example")
+    { }
 
-//This function is called when the player clicks an option on the gossip menu
+    class npc_escort_exampleAI : public EscortAI
+    {
+    public:
+        npc_escort_exampleAI(Creature *c) : EscortAI(c)
+        {
+            AddWaypoint(0, 67.0f, -70.0f, -144.0f);
+            AddWaypoint(1, 107.0f, -70.0f, -144.0f);
+            AddWaypoint(2, 107.0f, -100.0f, -144.0f);
+            AddWaypoint(3, 67.0f, -100.0f, -144.0f);
+        }
 
-//This function is called when the player opens the gossip menu
+        void WaypointReached(uint32 i, uint32 pathID)
+            override {
+
+            switch (i)
+            {
+            default:
+                std::stringstream str;
+                str << "Reached wp " << i;
+                me->Say(str.str().c_str());
+                break;
+            }
+        }
+
+        virtual bool GossipHello(Player* player) override
+        {
+            player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Start escort", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+            SEND_PREPARED_GOSSIP_MENU(player, me);
+            return true;
+        }
+
+        virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
+        {
+            uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
+            ClearGossipMenuFor(player);
+            switch (action)
+            {
+            case GOSSIP_ACTION_INFO_DEF + 1:
+                player->CLOSE_GOSSIP_MENU();
+                ((EscortAI*)(me->AI()))->Start(true, false, player->GetGUID());
+                ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
+                ((EscortAI*)(me->AI()))->SetDespawnAtFar(false);
+                break;
+            }
+            return true;
+        }
+
+        void EnterCombat(Unit* who)
+            override {}
+
+        void Reset()
+            override {}
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new npc_escort_exampleAI(creature);
+    }
+};
 
 //This is the actual function called only once durring InitScripts()
 //It must define all handled functions that are to be run in this script
@@ -283,7 +330,7 @@ public:
 //newscript->ReciveEmote = My_Emote_Function;
 void AddSC_custom_example()
 {
-
     new custom_example();
+    new npc_escort_example();
 }
 
