@@ -62,7 +62,7 @@ public:
             AddWaypoint(3, -248.08, 2143.68, 87.01);
             AddWaypoint(4, -238.87, 2139.93, 87.01);
             AddWaypoint(5, -235.47, 2149.18, 90.59);
-            AddWaypoint(6, -239.89, 2156.06, 90.62, 20000);
+            AddWaypoint(6, -239.89, 2156.06, 90.62, 0.0f, 20000);
         }
     
         InstanceScript *pInstance;

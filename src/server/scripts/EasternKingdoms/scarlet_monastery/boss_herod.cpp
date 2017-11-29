@@ -154,7 +154,7 @@ public:
         mob_scarlet_traineeAI(Creature *c) : EscortAI(c) 
         {
             for (uint32 i = 0; i < 12; ++i)
-                AddWaypoint(i, Location[i][0], Location[i][1], Location[i][2], Wait[i][0]);
+                AddWaypoint(i, Location[i][0], Location[i][1], Location[i][2], 0.0f, Wait[i][0]);
         }
     
         uint32 Start_Timer;

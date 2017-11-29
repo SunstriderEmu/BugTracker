@@ -237,13 +237,13 @@ public:
 //gossip items
 #define GOSSIP_ID_START         9568
 #define GOSSIP_ID_SKARLOC1      9614                        // I'm glad Taretha is alive. We now must find a way to free her...
-#define GOSSIP_ITEM_SKARLOC1    "Taretha ne peut pas vous voir, Thrall." // Taretha cannot see you, Thrall.
+#define GOSSIP_ITEM_SKARLOC1    "Taretha cannot see you, Thrall." // "Taretha ne peut pas vous voir, Thrall." 
 #define GOSSIP_ID_SKARLOC2      9579                        // What do you mean by this? Is Taretha in danger?
-#define GOSSIP_ITEM_SKARLOC2    "La situation est assez compliquée, Thrall. Il vaudrait mieux que vous filiez vers les montagnes dès maintenant, avant que d'autres hommes de Landenoire ne se montrent. Nous veillerons à la sécurité de Taretha." // The situation is rather complicated, Thrall. It would be best for you to head into the mountains now, before more of Blackmoore's men show up. We'll make sure Taretha is safe.
+#define GOSSIP_ITEM_SKARLOC2    "The situation is rather complicated, Thrall. It would be best for you to head into the mountains now, before more of Blackmoore's men show up. We'll make sure Taretha is safe." // "La situation est assez compliquée, Thrall. Il vaudrait mieux que vous filiez vers les montagnes dès maintenant, avant que d'autres hommes de Landenoire ne se montrent. Nous veillerons à la sécurité de Taretha." 
 #define GOSSIP_ID_SKARLOC3      9580
 
 #define GOSSIP_ID_TARREN        9597                        // Tarren mill is beyond these trees...
-#define GOSSIP_ITEM_TARREN      "Nous sommes prêts, Thrall." // We're ready, Thrall.
+#define GOSSIP_ITEM_TARREN      "We're ready, Thrall." // "Nous sommes prêts, Thrall." 
 
 #define GOSSIP_ID_COMPLETE      9578                        // Thank you friends, I owe my freedom to you. Where is Taretha? I hoped to see her
 
@@ -262,7 +262,7 @@ public:
             pInstance = ((InstanceScript*)c->GetInstanceScript());
             me->SetKeepActive(30 * MINUTE*IN_MILLISECONDS);
 
-            AddWaypoint(0, 2230.91, 118.765, 82.2947, 5000);
+            AddWaypoint(0, 2230.91, 118.765, 82.2947, 0.0f, 5000);
             AddWaypoint(1, 2230.33, 114.980, 82.2946);
             AddWaypoint(2, 2233.36, 111.057, 82.2996);
             AddWaypoint(3, 2231.17, 108.486, 82.6624);
@@ -274,9 +274,9 @@ public:
             AddWaypoint(8, 2192.26, 112.618, 89.4549);
 
             //get weapon
-            AddWaypoint(9, 2181.28, 118.612, 89.4549, 8000);
+            AddWaypoint(9, 2181.28, 118.612, 89.4549, 0.0f, 8000);
             //get armor
-            AddWaypoint(10, 2181.62, 120.385, 89.4549, 5000);
+            AddWaypoint(10, 2181.62, 120.385, 89.4549, 0.0f, 5000);
 
             AddWaypoint(11, 2189.44, 113.922, 89.4549);
             AddWaypoint(12, 2195.63, 110.584, 89.4549);
@@ -300,13 +300,13 @@ public:
             AddWaypoint(27, 2096.77, 196.939, 65.2117);
             AddWaypoint(28, 2083.90, 209.395, 64.8736);
             //in front of keeps gate, meeting scarloc
-            AddWaypoint(29, 2067.84, 224.376, 64.8022, 30000);
+            AddWaypoint(29, 2067.84, 224.376, 64.8022, 0.0f, 30000);
 
             //ref point after skarloc fight
             AddWaypoint(30, 2055.40, 242.90, 63.3418);
 
             //mount up!
-            AddWaypoint(31, 2039.20, 266.460, 63.0182, 10000);
+            AddWaypoint(31, 2039.20, 266.460, 63.0182, 0.0f, 10000);
             AddWaypoint(32, 2011.77, 278.478, 65.3388);
             AddWaypoint(33, 2005.08, 289.676, 66.1179);
             AddWaypoint(34, 2033.11, 337.450, 66.0948);
@@ -315,7 +315,7 @@ public:
             //possible road ambush
             AddWaypoint(37, 2101.70, 497.955, 61.7881);
 
-            AddWaypoint(38, 2133.39, 530.933, 55.3700, 5000);
+            AddWaypoint(38, 2133.39, 530.933, 55.3700, 0.0f, 5000);
             AddWaypoint(39, 2157.91, 559.635, 48.5157);
             AddWaypoint(40, 2167.34, 586.191, 42.4394);
             AddWaypoint(41, 2174.17, 637.643, 33.9002);
@@ -337,7 +337,7 @@ public:
             AddWaypoint(57, 2480.00, 585.408, 56.6921);
             AddWaypoint(58, 2482.67, 608.817, 55.6643);
             //demount
-            AddWaypoint(59, 2485.62, 626.061, 58.0132, 2000);
+            AddWaypoint(59, 2485.62, 626.061, 58.0132, 0.0f, 2000);
             //scare the shit out of horse, so it'll run off
             AddWaypoint(60, 2486.91, 626.356, 58.0761);
 
@@ -348,7 +348,7 @@ public:
             AddWaypoint(65, 2491.10, 703.300, 55.7630);
             AddWaypoint(66, 2485.64, 702.992, 55.7917);
 
-            AddWaypoint(67, 2479.10, 695.291, 55.7901, 10000);
+            AddWaypoint(67, 2479.10, 695.291, 55.7901, 0.0f, 10000);
             //spawn mobs
             AddWaypoint(68, 2476.75, 693.689, 55.7960);
             AddWaypoint(69, 2475.39, 695.983, 55.8146);
@@ -356,7 +356,7 @@ public:
             //meet mobs in doorway
             AddWaypoint(71, 2481.27, 697.747, 55.7910);
 
-            AddWaypoint(72, 2486.31, 703.131, 55.7861, 5000);
+            AddWaypoint(72, 2486.31, 703.131, 55.7861, 0.0f, 5000);
             AddWaypoint(73, 2490.76, 703.511, 55.7662);
             AddWaypoint(74, 2491.30, 694.792, 55.7195);
             AddWaypoint(75, 2518.69, 693.876, 55.1383);
@@ -367,11 +367,11 @@ public:
             AddWaypoint(80, 2630.41, 661.464, 54.2761);
             AddWaypoint(81, 2629.00, 656.982, 56.0651);
             //stop in church
-            AddWaypoint(82, 2620.84, 633.007, 56.0300, 3000);
+            AddWaypoint(82, 2620.84, 633.007, 56.0300, 0.0f, 3000);
             //summon
             AddWaypoint(83, 2622.99, 639.178, 56.0300);
 
-            AddWaypoint(84, 2628.73, 656.693, 56.0610, 5000);
+            AddWaypoint(84, 2628.73, 656.693, 56.0610, 0.0f, 5000);
             AddWaypoint(85, 2630.34, 661.135, 54.2738);
             AddWaypoint(86, 2635.38, 672.243, 54.4508);
             AddWaypoint(87, 2644.13, 668.158, 55.3797);
@@ -383,14 +383,14 @@ public:
             AddWaypoint(92, 2652.28, 670.270, 61.9353);
             //summon inn
             AddWaypoint(93, 2650.79, 664.290, 61.9302);
-            AddWaypoint(94, 2658.19, 660.454, 61.9320, 5000);
+            AddWaypoint(94, 2658.19, 660.454, 61.9320, 0.0f, 5000);
             //speak with Taretha
             AddWaypoint(95, 2660.57, 659.173, 61.9370);
 
             //epoch calls
-            AddWaypoint(96, 2658.19, 660.454, 61.9320, 5000);
+            AddWaypoint(96, 2658.19, 660.454, 61.9320, 0.0f, 5000);
             //taretha "dies"
-            AddWaypoint(97, 2659.84, 659.482, 61.9361, 5000);
+            AddWaypoint(97, 2659.84, 659.482, 61.9361, 0.0f, 5000);
 
             AddWaypoint(98, 2654.28, 662.722, 61.9313);
             AddWaypoint(99, 2652.37, 670.561, 61.9368);
@@ -402,14 +402,17 @@ public:
             AddWaypoint(104, 2634.79, 672.964, 54.4577);
 
             //getting ready here, must start attack before 30secs up
-            AddWaypoint(105, 2635.06, 673.892, 54.4713, 30000);
+            AddWaypoint(105, 2635.06, 673.892, 54.4713, 0.0f, 30000);
 
             //ref point, will move here when all dead and meet Taretha
-            AddWaypoint(106, 2634.79, 672.964, 54.4577, 60000);
+            AddWaypoint(106, 2634.79, 672.964, 54.4577, 0.0f, 60000);
 
             //run off
             AddWaypoint(107, 2631.72, 665.629, 54.2923);
             AddWaypoint(108, 2647.40, 640.530, 55.7634);
+
+            HadMount = false;
+            LowHp = false;
         }
     
         InstanceScript *pInstance;
@@ -425,12 +428,12 @@ public:
             switch( i )
             {
                 case 8:
-                    me->SetWalk(true);
+                    SetRun(false);
                     me->SummonCreature(18764, 2181.87, 112.46, 89.45, 0.26, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                     break;
                 case 9:
                     DoScriptText(SAY_TH_ARMORY, me);
-                    me->SetWalk(true);
+                    SetRun(false);
                     me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, THRALL_WEAPON_MODEL);
                     me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO, THRALL_WEAPON_INFO);
                     me->SetUInt32Value(UNIT_VIRTUAL_ITEM_INFO+1, 781);
@@ -442,7 +445,7 @@ public:
                     me->SetUInt32Value(UNIT_FIELD_DISPLAYID, THRALL_MODEL_EQUIPPED);
                     break;
                 case 11:
-                    me->SetWalk(false);
+                    SetRun(true);
                     break;
                 case 15:
                     me->SummonCreature(MOB_ENTRY_RIFLE,2200.28,137.37,87.93,5.07,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,5000);
@@ -464,7 +467,7 @@ public:
                     break;
                 case 29:
                     DoScriptText(SAY_TH_SKARLOC_MEET, me);
-                    me->SummonCreature(17862,2036.48,271.22,63.43,5.27,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,30000);
+                    me->SummonCreature(ENTRY_SCARLOC, 2036.48,271.22,63.43,5.27,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,30000);
                     //temporary,skarloc should rather be triggered to walk up to thrall
                     break;
                 case 30:
@@ -497,7 +500,7 @@ public:
                     pInstance->SetData(TYPE_THRALL_PART2, DONE);
                     break;
                 case 64:
-                    me->SetWalk(true);
+                    SetRun(false);
                     break;
                 case 68:
                     me->SummonCreature(MOB_ENTRY_BARN_PROTECTOR,2500.22,692.60,55.50,2.84,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,5000);
@@ -506,10 +509,10 @@ public:
                     me->SummonCreature(MOB_ENTRY_BARN_GUARDSMAN,2500.94,695.81,55.50,3.14,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,5000);
                     break;
                 case 71:
-                    me->SetWalk(false);
+                    SetRun(true);
                     break;
                 case 81:
-                    me->SetWalk(true);
+                    SetRun(false);
                     break;
                 case 83:
                     me->SummonCreature(MOB_ENTRY_CHURCH_PROTECTOR,2627.33,646.82,56.03,4.28,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,5000);
@@ -521,7 +524,7 @@ public:
                     DoScriptText(SAY_TH_CHURCH_END, me);
                     break;
                 case 91:
-                    me->SetWalk(true);
+                    SetRun(false);
                     break;
                 case 93:
                     me->SummonCreature(MOB_ENTRY_INN_PROTECTOR,2652.71,660.31,61.93,1.67,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,5000);
@@ -530,7 +533,7 @@ public:
                     me->SummonCreature(MOB_ENTRY_INN_GUARDSMAN,2656.39,659.77,61.93,2.61,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,5000);
                     break;
                 case 94:
-                    me->SetWalk(true);
+                    SetRun(false);
                     if (uint64 tarethaGUID = pInstance->GetData64(DATA_TARETHA))
                     {
                         if (Unit* Taretha = ObjectAccessor::GetUnit((*me), tarethaGUID))
@@ -549,23 +552,20 @@ public:
                 case 97:
                     DoScriptText(SAY_TH_EPOCH_KILL_TARETHA, me);
                     me->HandleEmoteCommand(EMOTE_ONESHOT_EXCLAMATION);
-                    me->SetWalk(false);
+                    SetRun(true);
                     break;
                 case 98:
                     //trigger epoch Yell("Thrall! Come outside and face your fate! ....")
                     //from here, thrall should not never be allowed to move to point 106 which he currently does.
                     break;
-    
                 case 106:
                     {
-                        if (!_playerGUID)
-                            break;
-    
                         //trigger taretha to run down outside
                         if (uint64 tarethaGUID = pInstance->GetData64(DATA_TARETHA))
                         {
                             if (Creature* Taretha = (ObjectAccessor::GetCreature(*me, tarethaGUID)))
-                                ((EscortAI*)(Taretha->AI()))->Start(false, true, _playerGUID);
+                                if (Player* player = GetPlayerForEscort())
+                                    ((EscortAI*)(Taretha->AI()))->Start(false, true, player->GetGUID());
                         }
     
                         //kill credit creature for quest
@@ -576,7 +576,7 @@ public:
                             for(const auto & player : players)
                             {
                                 if (Player* pPlayer = player.GetSource())
-                                    pPlayer->KilledMonsterCredit(20156,me->GetGUID());
+                                    pPlayer->KilledMonsterCredit(20156, me->GetGUID());
                             }
                         }
     
@@ -630,14 +630,14 @@ public:
         void DoMount()
         {
             me->Mount(SKARLOC_MOUNT_MODEL);
-            me->SetSpeedRate(MOVE_RUN,SPEED_MOUNT);
-            me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
+            me->SetSpeedRate(MOVE_RUN, SPEED_MOUNT);
+            SetRun(true);
         }
 
         void DoDismount()
         {
             me->Dismount();
-            me->SetSpeedRate(MOVE_RUN,SPEED_RUN);
+            me->SetSpeedRate(MOVE_RUN, SPEED_RUN);
         }
 
         void EnterCombat(Unit* who)

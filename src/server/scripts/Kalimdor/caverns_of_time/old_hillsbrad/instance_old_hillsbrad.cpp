@@ -120,6 +120,8 @@ public:
                         Encounter[0] = DONE;
                     }
                 }
+                else 
+                    Encounter[0] = data;
                 break;
             }
             case TYPE_THRALL_EVENT:

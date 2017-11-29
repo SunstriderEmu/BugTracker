@@ -876,8 +876,8 @@ CreatureAI* GetAI_npc_marshal_windsor(Creature *_Creature)
 {
     npc_marshal_windsorAI* marshal_windsorAI = new npc_marshal_windsorAI(_Creature);
 
-    marshal_windsorAI->AddWaypoint(0, 316.336,-225.528, -77.7258,7000);
-    marshal_windsorAI->AddWaypoint(1, 316.336,-225.528, -77.7258,2000);
+    marshal_windsorAI->AddWaypoint(0, 316.336,-225.528, -77.7258, 0.0f, 7000);
+    marshal_windsorAI->AddWaypoint(1, 316.336,-225.528, -77.7258, 0.0f, 2000);
     marshal_windsorAI->AddWaypoint(2, 322.96,-207.13, -77.87,0);
     marshal_windsorAI->AddWaypoint(3, 281.05,-172.16, -75.12,0);
     marshal_windsorAI->AddWaypoint(4, 272.19,-139.14, -70.61,0);
@@ -889,12 +889,12 @@ CreatureAI* GetAI_npc_marshal_windsor(Creature *_Creature)
     marshal_windsorAI->AddWaypoint(10, 383.38,-69.40, -63.25,0);
     marshal_windsorAI->AddWaypoint(11, 389.99,-67.86, -62.57,0);
     marshal_windsorAI->AddWaypoint(12, 400.98,-72.01, -62.31,0);
-    marshal_windsorAI->AddWaypoint(13, 404.22,-62.30, -63.50,2300);
-    marshal_windsorAI->AddWaypoint(14, 404.22,-62.30, -63.50,1500);
+    marshal_windsorAI->AddWaypoint(13, 404.22,-62.30, -63.50,0.0f, 2300);
+    marshal_windsorAI->AddWaypoint(14, 404.22,-62.30, -63.50,0.0f, 1500);
     marshal_windsorAI->AddWaypoint(154, 407.65,-51.86, -63.96,0);
-    marshal_windsorAI->AddWaypoint(16, 403.61,-51.71, -63.92,1000);
-    marshal_windsorAI->AddWaypoint(17, 403.61,-51.71, -63.92,2000);
-    marshal_windsorAI->AddWaypoint(18, 403.61,-51.71, -63.92,1000);
+    marshal_windsorAI->AddWaypoint(16, 403.61,-51.71, -63.92,0.0f, 1000);
+    marshal_windsorAI->AddWaypoint(17, 403.61,-51.71, -63.92,0.0f, 2000);
+    marshal_windsorAI->AddWaypoint(18, 403.61,-51.71, -63.92,0.0f, 1000);
     marshal_windsorAI->AddWaypoint(19, 403.61,-51.71, -63.92,0);
 
     return (CreatureAI*)marshal_windsorAI;
@@ -1088,20 +1088,20 @@ CreatureAI* GetAI_npc_marshal_reginald_windsor(Creature *_Creature)
 {
     npc_marshal_reginald_windsorAI* marshal_reginald_windsorAI = new npc_marshal_reginald_windsorAI(_Creature);
 
-    marshal_reginald_windsorAI->AddWaypoint(0, 403.61,-52.71, -63.92,4000);
-    marshal_reginald_windsorAI->AddWaypoint(1, 403.61,-52.71, -63.92,4000);
+    marshal_reginald_windsorAI->AddWaypoint(0, 403.61,-52.71, -63.92,0.0f, 4000);
+    marshal_reginald_windsorAI->AddWaypoint(1, 403.61,-52.71, -63.92,0.0f, 4000);
     marshal_reginald_windsorAI->AddWaypoint(2, 406.33,-54.87, -63.95,0);
     marshal_reginald_windsorAI->AddWaypoint(3, 407.99,-73.91, -62.26,0);
     marshal_reginald_windsorAI->AddWaypoint(4, 557.03,-119.71, -61.83,0);
     marshal_reginald_windsorAI->AddWaypoint(5, 573.40,-124.39, -65.07,0);
     marshal_reginald_windsorAI->AddWaypoint(6, 593.91,-130.29, -69.25,0);
     marshal_reginald_windsorAI->AddWaypoint(7, 593.21,-132.16, -69.25,0);
-    marshal_reginald_windsorAI->AddWaypoint(8, 593.21,-132.16, -69.25,3000);
+    marshal_reginald_windsorAI->AddWaypoint(8, 593.21,-132.16, -69.25,0.0f, 3000);
     marshal_reginald_windsorAI->AddWaypoint(9, 622.81,-135.55, -71.92,0);
     marshal_reginald_windsorAI->AddWaypoint(10, 634.68,-151.29, -70.32,0);
     marshal_reginald_windsorAI->AddWaypoint(11, 635.06,-153.25, -70.32,0);
-    marshal_reginald_windsorAI->AddWaypoint(12, 635.06,-153.25, -70.32,3000);
-    marshal_reginald_windsorAI->AddWaypoint(13, 635.06,-153.25, -70.32,1500);
+    marshal_reginald_windsorAI->AddWaypoint(12, 635.06,-153.25, -70.32,0.0f, 3000);
+    marshal_reginald_windsorAI->AddWaypoint(13, 635.06,-153.25, -70.32,0.0f, 1500);
     marshal_reginald_windsorAI->AddWaypoint(14, 655.25,-172.39, -73.72,0);
     marshal_reginald_windsorAI->AddWaypoint(15, 654.79,-226.30, -83.06,0);
     marshal_reginald_windsorAI->AddWaypoint(16, 622.85,-268.85, -83.96,0);
@@ -1109,19 +1109,19 @@ CreatureAI* GetAI_npc_marshal_reginald_windsor(Creature *_Creature)
     marshal_reginald_windsorAI->AddWaypoint(18, 561.19,-266.85, -75.59,0);
     marshal_reginald_windsorAI->AddWaypoint(19, 547.91,-253.92, -70.34,0);
     marshal_reginald_windsorAI->AddWaypoint(20, 549.20,-252.40, -70.34,0);
-    marshal_reginald_windsorAI->AddWaypoint(21, 549.20,-252.40, -70.34,4000);
+    marshal_reginald_windsorAI->AddWaypoint(21, 549.20,-252.40, -70.34,0.0f, 4000);
     marshal_reginald_windsorAI->AddWaypoint(22, 555.33,-269.16, -74.40,0);
     marshal_reginald_windsorAI->AddWaypoint(23, 554.31,-270.88, -74.40,0);
-    marshal_reginald_windsorAI->AddWaypoint(24, 554.31,-270.88, -74.40,4000);
+    marshal_reginald_windsorAI->AddWaypoint(24, 554.31,-270.88, -74.40,0.0f, 4000);
     marshal_reginald_windsorAI->AddWaypoint(25, 536.10,-249.60, -67.47,0);
     marshal_reginald_windsorAI->AddWaypoint(26, 520.94,-216.65, -59.28,0);
     marshal_reginald_windsorAI->AddWaypoint(27, 505.99,-148.74, -62.17,0);
     marshal_reginald_windsorAI->AddWaypoint(28, 484.21,-56.24, -62.43,0);
     marshal_reginald_windsorAI->AddWaypoint(29, 470.39,-6.01, -70.10,0);
     marshal_reginald_windsorAI->AddWaypoint(30, 451.27,30.85, -70.07,0);
-    marshal_reginald_windsorAI->AddWaypoint(31, 452.45,29.85, -70.37,1500);
-    marshal_reginald_windsorAI->AddWaypoint(32, 452.45,29.85, -70.37,7000);
-    marshal_reginald_windsorAI->AddWaypoint(33, 452.45,29.85, -70.37,10000);
+    marshal_reginald_windsorAI->AddWaypoint(31, 452.45,29.85, -70.37,0.0f, 1500);
+    marshal_reginald_windsorAI->AddWaypoint(32, 452.45,29.85, -70.37,0.0f, 7000);
+    marshal_reginald_windsorAI->AddWaypoint(33, 452.45,29.85, -70.37,0.0f, 10000);
     marshal_reginald_windsorAI->AddWaypoint(34, 451.27,31.85, -70.07,0);
 
     return (CreatureAI*)marshal_reginald_windsorAI;
@@ -1281,7 +1281,7 @@ public:
             pInstance = ((InstanceScript*)c->GetInstanceScript());
 
             for (uint8 i = 0; i < 8; ++i)
-                AddWaypoint(i, BarWpLocations[i][0], BarWpLocations[i][1], BarWpLocations[i][2], BarWpWait[i]);
+                AddWaypoint(i, BarWpLocations[i][0], BarWpLocations[i][1], BarWpLocations[i][2], 0.0f, BarWpWait[i]);
         }
     
         InstanceScript* pInstance;
