@@ -162,8 +162,8 @@ public:
                                 {
                                     switch(rand()%2)
                                     {
-                                        case 0: target2->CastSpell(target, SPELL_MAGNETIC_PULL, true, nullptr, nullptr, me->GetGUID()); break;
-                                        case 1: target2->CastSpell(target, SPELL_KNOCK_BACK, true, nullptr, nullptr, me->GetGUID()); break;
+                                        case 0: target2->CastSpell(target, SPELL_MAGNETIC_PULL, TRIGGERED_FULL_MASK, nullptr, nullptr, me->GetGUID()); break;
+                                        case 1: target2->CastSpell(target, SPELL_KNOCK_BACK, TRIGGERED_FULL_MASK, nullptr, nullptr, me->GetGUID()); break;
                                     }
                                 }
                             }
@@ -184,7 +184,7 @@ public:
                                 if(target)
                                 {
                                     target->RemoveAurasDueToSpell(SPELL_GRONN_LORDS_GRASP);
-                                    target->CastSpell(target, SPELL_STONED, true, nullptr, nullptr, me->GetGUID());
+                                    target->CastSpell(target, SPELL_STONED, TRIGGERED_FULL_MASK, nullptr, nullptr, me->GetGUID());
                                 }
                             }
     
@@ -217,7 +217,7 @@ public:
                                     target->RemoveAurasDueToSpell(SPELL_STONED);
     
                                     if(target->GetTypeId() == TYPEID_PLAYER)
-                                        target->CastSpell(target, SPELL_SHATTER_EFFECT, false, nullptr, nullptr, me->GetGUID());
+                                        target->CastSpell(target, SPELL_SHATTER_EFFECT, TRIGGERED_NONE, nullptr, nullptr, me->GetGUID());
                                 }
     
                             }

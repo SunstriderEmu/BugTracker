@@ -447,8 +447,8 @@ public:
             if (!Start)
             {
                 //triggered spell of consumption does not properly show it's SpellVisual, hack it a bit
-                me->CastSpell(me,SPELL_TEMPORARY_VISUAL,true);
-                me->CastSpell(me,SPELL_CONSUMPTION,false);
+                me->CastSpell(me,SPELL_TEMPORARY_VISUAL, TRIGGERED_FULL_MASK);
+                me->CastSpell(me,SPELL_CONSUMPTION, TRIGGERED_NONE);
                 Start = true;
             }
     

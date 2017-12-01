@@ -879,7 +879,7 @@ public:
                 case NPC_WARLOCK_KROMZAR:
                 {
                     if (Player* player = ObjectAccessor::GetPlayer(*me, starterGUID))
-                        player->CastSpell(player, 13965, true);
+                        player->CastSpell(player, 13965, TRIGGERED_FULL_MASK);
                     break;
                 }
             }
@@ -905,7 +905,7 @@ public:
                 case NPC_WARLOCK_KROMZAR:
                 {
                     if (Player* player = ObjectAccessor::GetPlayer(*me, starterGUID))
-                        player->CastSpell(player, 13965, true);
+                        player->CastSpell(player, 13965, TRIGGERED_FULL_MASK);
     
                     EndEvent();
                     break;

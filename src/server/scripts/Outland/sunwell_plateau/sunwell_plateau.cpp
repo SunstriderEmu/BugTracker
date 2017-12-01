@@ -1048,7 +1048,7 @@ public:
                 player->TeleportTo(580, 1703.977051, 928.625610, 53.077671, 4.748818);
                 break;
             case GOSSIP_ACTION_INFO_DEF + 2:
-                player->CastSpell(player, 46883, true);
+                player->CastSpell(player, 46883, TRIGGERED_FULL_MASK);
                 break;
             }
             

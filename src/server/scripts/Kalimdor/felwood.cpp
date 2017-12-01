@@ -89,7 +89,7 @@ public:
             if (action==GOSSIP_ACTION_INFO_DEF+1)
             {
                 player->CLOSE_GOSSIP_MENU();
-                me->CastSpell(player, 15120, false);
+                me->CastSpell(player, 15120, TRIGGERED_NONE);
             }
             
             return true;

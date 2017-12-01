@@ -98,7 +98,7 @@ public:
             events.Update(diff);
             
             if (me->IsBelowHPPercent(30.0f) && !enraged) {
-                me->CastSpell(me, SPELL_ENRAGE, true);
+                me->CastSpell(me, SPELL_ENRAGE, TRIGGERED_FULL_MASK);
                 enraged = true;
             }
             
@@ -111,7 +111,7 @@ public:
                 events.RescheduleEvent(EV_MORTAL_WOUND, 2000, 7000);
                 break;
             case EV_SANDTRAP:
-                me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 3, 200.0f, true), SPELL_SANDTRAP, true);
+                me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 3, 200.0f, true), SPELL_SANDTRAP, TRIGGERED_FULL_MASK);
                 events.RescheduleEvent(EV_SANDTRAP, 20000);
                 break;
             case EV_WIDE_SLASH:

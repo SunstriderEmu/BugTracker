@@ -169,8 +169,8 @@ public:
                     return;
 
                 summoned->SetFaction(me->GetFaction());
-                summoned->CastSpell(summoned, SPELL_SUMMON_LIQUID_FIRE, true); //this should be handled in 34653 && 36920 spells script effects
-                summoned->CastSpell(summoned, SPELL_FIRE_NOVA_VISUAL, true);
+                summoned->CastSpell(summoned, SPELL_SUMMON_LIQUID_FIRE, TRIGGERED_FULL_MASK); //this should be handled in 34653 && 36920 spells script effects
+                summoned->CastSpell(summoned, SPELL_FIRE_NOVA_VISUAL, TRIGGERED_FULL_MASK);
             }
         }
 

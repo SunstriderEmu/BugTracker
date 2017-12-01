@@ -110,8 +110,8 @@ class boss_curator : public CreatureScript
             if (summoned->GetEntry() == NPC_ASTRAL_FLARE)
             {
                 // Flare start with aggro on it's target, should be immune to arcane
-                summoned->CastSpell(summoned, SPELL_ASTRAL_FLARE_PASSIVE, true);
-                summoned->CastSpell(summoned, SPELL_ASTRAL_FLARE_VISUAL, true);
+                summoned->CastSpell(summoned, SPELL_ASTRAL_FLARE_PASSIVE, TRIGGERED_FULL_MASK);
+                summoned->CastSpell(summoned, SPELL_ASTRAL_FLARE_VISUAL, TRIGGERED_FULL_MASK);
                 summoned->ApplySpellImmune(0, IMMUNITY_DAMAGE, SPELL_SCHOOL_MASK_ARCANE, true);
 
                 if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))

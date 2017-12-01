@@ -57,7 +57,7 @@ public:
             FrostVolley_Timer = 24000;
             Fear_Timer = 45000;
     
-            me->CastSpell(me,SPELL_ICEARMOR,true);
+            me->CastSpell(me,SPELL_ICEARMOR, TRIGGERED_FULL_MASK);
         }
     
         void EnterCombat(Unit *who)

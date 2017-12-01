@@ -69,11 +69,11 @@ public:
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF+1)
             {
-                player->CastSpell(player, 45071, true);               //TaxiPath 779
+                player->CastSpell(player, 45071, TRIGGERED_FULL_MASK);               //TaxiPath 779
             }
             if (action == GOSSIP_ACTION_INFO_DEF+2)
             {
-                player->CastSpell(player, 45113, true);               //TaxiPath 784
+                player->CastSpell(player, 45113, TRIGGERED_FULL_MASK);               //TaxiPath 784
             }
             player->CLOSE_GOSSIP_MENU();
             return true;
@@ -194,7 +194,7 @@ public:
             if (action == GOSSIP_ACTION_INFO_DEF+1)
             {
                 player->CLOSE_GOSSIP_MENU();
-                player->CastSpell(player, 45353, true);               //TaxiPath 788
+                player->CastSpell(player, 45353, TRIGGERED_FULL_MASK);               //TaxiPath 788
             }
             return true;
 

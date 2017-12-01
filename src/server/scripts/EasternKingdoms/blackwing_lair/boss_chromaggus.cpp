@@ -269,7 +269,7 @@ public:
     
                                 //WORKAROUND
                                 if (pUnit->GetTypeId() == TYPEID_PLAYER)
-                                    pUnit->CastSpell(pUnit, 5, false);
+                                    pUnit->CastSpell(pUnit, 5, TRIGGERED_NONE);
                             }
                         }
                     }

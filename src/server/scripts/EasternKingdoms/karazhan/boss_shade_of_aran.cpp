@@ -228,7 +228,7 @@ public:
                     FlameWreathTarget[i] = target->GetGUID();
                     FWTargPosX[i] = target->GetPositionX();
                     FWTargPosY[i] = target->GetPositionY();
-                    me->CastSpell(target, SPELL_FLAME_WREATH, true);
+                    me->CastSpell(target, SPELL_FLAME_WREATH, TRIGGERED_FULL_MASK);
                     i++;
                 }
             }
@@ -289,9 +289,9 @@ public:
     
                 if (!DrinkInturrupted)
                 {
-                    me->CastSpell(me, SPELL_MASS_POLY, true);
-                    me->CastSpell(me, SPELL_CONJURE, false);
-                    me->CastSpell(me, SPELL_DRINK, false);
+                    me->CastSpell(me, SPELL_MASS_POLY, TRIGGERED_FULL_MASK);
+                    me->CastSpell(me, SPELL_CONJURE, TRIGGERED_NONE);
+                    me->CastSpell(me, SPELL_DRINK, TRIGGERED_NONE);
                                                                 //Sitting down
                     me->SetUInt32Value(UNIT_FIELD_BYTES_1, 1);
                     DrinkInturruptTimer = 10000;
@@ -305,7 +305,7 @@ public:
                 me->RemoveAurasDueToSpell(SPELL_DRINK);
                 me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
                 me->SetPower(POWER_MANA, me->GetMaxPower(POWER_MANA)-32000);
-                me->CastSpell(me, SPELL_POTION, false);
+                me->CastSpell(me, SPELL_POTION, TRIGGERED_NONE);
             }
     
             //Drink Inturrupt Timer
@@ -316,8 +316,8 @@ public:
                     DrinkInturruptTimer -= diff;
                 } else {
                     me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-                    me->CastSpell(me, SPELL_POTION, true);
-                    me->CastSpell(me, SPELL_AOE_PYROBLAST, false);
+                    me->CastSpell(me, SPELL_POTION, TRIGGERED_FULL_MASK);
+                    me->CastSpell(me, SPELL_AOE_PYROBLAST, TRIGGERED_NONE);
                     DrinkInturrupted = true;
                     Drinking = false;
                 }
@@ -416,10 +416,10 @@ public:
                             
                         me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_INTERRUPT, true);
     
-                        me->CastSpell(me, SPELL_BLINK_CENTER, true);
-                        me->CastSpell(me, SPELL_PLAYERPULL, true);
-                        me->CastSpell(me, SPELL_MASSSLOW, true);
-                        me->CastSpell(me, SPELL_AEXPLOSION, false);
+                        me->CastSpell(me, SPELL_BLINK_CENTER, TRIGGERED_FULL_MASK);
+                        me->CastSpell(me, SPELL_PLAYERPULL, TRIGGERED_FULL_MASK);
+                        me->CastSpell(me, SPELL_MASSSLOW, TRIGGERED_FULL_MASK);
+                        me->CastSpell(me, SPELL_AEXPLOSION, TRIGGERED_NONE);
                         break;
     
                     case SUPER_FLAME:
@@ -450,7 +450,7 @@ public:
                         if (Spawn)
                         {
                             Spawn->SetFaction(me->GetFaction());
-                            Spawn->CastSpell(Spawn, SPELL_CIRCULAR_BLIZZARD, false);
+                            Spawn->CastSpell(Spawn, SPELL_CIRCULAR_BLIZZARD, TRIGGERED_NONE);
                         }
                         break;
                 }
@@ -509,8 +509,8 @@ public:
                         Unit* pUnit = ObjectAccessor::GetUnit(*me, FlameWreathTarget[i]);
                         if (pUnit && pUnit->GetDistance2d(FWTargPosX[i], FWTargPosY[i]) > 3)
                         {
-                            pUnit->CastSpell(pUnit, 20476, true, nullptr, nullptr, me->GetGUID());
-                            pUnit->CastSpell(pUnit, 11027, true);
+                            pUnit->CastSpell(pUnit, 20476, TRIGGERED_FULL_MASK, nullptr, nullptr, me->GetGUID());
+                            pUnit->CastSpell(pUnit, 11027, TRIGGERED_FULL_MASK);
                             FlameWreathTarget[i] = 0;
                         }
                     }

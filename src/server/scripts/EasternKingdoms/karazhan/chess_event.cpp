@@ -659,47 +659,47 @@ public:
             // Force half-turn?
             if (orientation == ORI_SE && pieceRow == 0) {
                 if (Creature* trigger = ObjectAccessor::GetCreature(*me, board[pieceRow+1][pieceCol]->triggerGUID))
-                    piece->CastSpell(trigger, SPELL_CHANGE_FACING, false);
+                    piece->CastSpell(trigger, SPELL_CHANGE_FACING, TRIGGERED_NONE);
                 return true;
             }
             else if (orientation == ORI_SW && pieceCol == 0) {
                 if (Creature* trigger = ObjectAccessor::GetCreature(*me, board[pieceRow][pieceCol+1]->triggerGUID))
-                    piece->CastSpell(trigger, SPELL_CHANGE_FACING, false);
+                    piece->CastSpell(trigger, SPELL_CHANGE_FACING, TRIGGERED_NONE);
                 return true;
             }
             else if (orientation == ORI_NW && pieceRow == 7) {
                 if (Creature* trigger = ObjectAccessor::GetCreature(*me, board[pieceRow-1][pieceCol]->triggerGUID))
-                    piece->CastSpell(trigger, SPELL_CHANGE_FACING, false);
+                    piece->CastSpell(trigger, SPELL_CHANGE_FACING, TRIGGERED_NONE);
                 return true;
             }
             else if (orientation == ORI_NE && pieceCol == 7) {
                 if (Creature* trigger = ObjectAccessor::GetCreature(*me, board[pieceRow][pieceCol-1]->triggerGUID))
-                    piece->CastSpell(trigger, SPELL_CHANGE_FACING, false);
+                    piece->CastSpell(trigger, SPELL_CHANGE_FACING, TRIGGERED_NONE);
                 return true;
             }
             else if (rand()%2) { // 1/3 chance to check near enemies
                 if (pieceRow > 0 && pieceRow < 7 && pieceCol > 0 && pieceCol < 7) {
                     if (Creature* neightboor = ObjectAccessor::GetCreature(*me, board[pieceRow-1][pieceCol]->pieceGUID)) {
                         if (!piece->IsFriendlyTo(neightboor)) {
-                            piece->CastSpell(neightboor, SPELL_CHANGE_FACING, false);
+                            piece->CastSpell(neightboor, SPELL_CHANGE_FACING, TRIGGERED_NONE);
                             return true;
                         }
                     }
                     else if (Creature* neightboor = ObjectAccessor::GetCreature(*me, board[pieceRow+1][pieceCol]->pieceGUID)) {
                         if (!piece->IsFriendlyTo(neightboor)) {
-                            piece->CastSpell(neightboor, SPELL_CHANGE_FACING, false);
+                            piece->CastSpell(neightboor, SPELL_CHANGE_FACING, TRIGGERED_NONE);
                             return true;
                         }
                     }
                     else if (Creature* neightboor = ObjectAccessor::GetCreature(*me, board[pieceRow][pieceCol-1]->pieceGUID)) {
                         if (!piece->IsFriendlyTo(neightboor)) {
-                            piece->CastSpell(neightboor, SPELL_CHANGE_FACING, false);
+                            piece->CastSpell(neightboor, SPELL_CHANGE_FACING, TRIGGERED_NONE);
                             return true;
                         }
                     }
                     else if (Creature* neightboor = ObjectAccessor::GetCreature(*me, board[pieceRow][pieceCol+1]->pieceGUID)) {
                         if (!piece->IsFriendlyTo(neightboor)) {
-                            piece->CastSpell(neightboor, SPELL_CHANGE_FACING, false);
+                            piece->CastSpell(neightboor, SPELL_CHANGE_FACING, TRIGGERED_NONE);
                             return true;
                         }
                     }
@@ -730,7 +730,7 @@ public:
                     randomCol = 0;
     
                 if (Creature* trigger = ObjectAccessor::GetCreature(*me, board[pieceRow-1][randomCol]->triggerGUID))
-                    piece->CastSpell(trigger, SPELL_MOVE_1, false);
+                    piece->CastSpell(trigger, SPELL_MOVE_1, TRIGGERED_NONE);
                 break;
                 //return HandlePieceMove(piece, board[pieceRow-1][pieceCol]->triggerGUID);
             }
@@ -755,7 +755,7 @@ public:
                     randomRow = 0;
                     
                 if (Creature* trigger = ObjectAccessor::GetCreature(*me, board[randomRow][pieceCol-1]->triggerGUID))
-                    piece->CastSpell(trigger, SPELL_MOVE_1, false);
+                    piece->CastSpell(trigger, SPELL_MOVE_1, TRIGGERED_NONE);
                 break;
                 //return HandlePieceMove(piece, board[pieceRow][pieceCol-1]->triggerGUID);
             }
@@ -780,7 +780,7 @@ public:
                     randomCol = 0;
                     
                 if (Creature* trigger = ObjectAccessor::GetCreature(*me, board[pieceRow+1][randomCol]->triggerGUID))
-                    piece->CastSpell(trigger, SPELL_MOVE_1, false);
+                    piece->CastSpell(trigger, SPELL_MOVE_1, TRIGGERED_NONE);
                 break;
                 //return HandlePieceMove(piece, board[pieceRow+1][pieceCol]->triggerGUID);
             }
@@ -805,7 +805,7 @@ public:
                     randomRow = 0;
                     
                 if (Creature* trigger = ObjectAccessor::GetCreature(*me, board[randomRow][pieceCol+1]->triggerGUID))
-                    piece->CastSpell(trigger, SPELL_MOVE_1, false);
+                    piece->CastSpell(trigger, SPELL_MOVE_1, TRIGGERED_NONE);
                 break;
                 //return HandlePieceMove(piece, board[pieceRow][pieceCol+1]->triggerGUID);
             }
@@ -965,7 +965,7 @@ public:
                 pInstance->SetData(DATA_CHESS_GAME_PHASE, PVE_WARMUP);
                 ((npc_echo_of_medivh::npc_echo_of_medivhAI*)(me->AI()))->SetupBoard();
                 pInstance->SetData(DATA_CHESS_EVENT, IN_PROGRESS);
-                me->CastSpell(me, 39331, true);
+                me->CastSpell(me, 39331, TRIGGERED_FULL_MASK);
                 DoScriptText(SCRIPTTEXT_AT_EVENT_START, me);
                 break;
             case MEDIVH_GOSSIP_RESTART:
@@ -984,7 +984,7 @@ public:
                 pInstance->SetData(DATA_CHESS_GAME_PHASE, PVP_WARMUP);
                 ((npc_echo_of_medivh::npc_echo_of_medivhAI*)(me->AI()))->SetupBoard();
                 pInstance->SetData(DATA_CHESS_EVENT, SPECIAL);
-                me->CastSpell(me, 39331, true);
+                me->CastSpell(me, 39331, TRIGGERED_FULL_MASK);
                 break;
             default:
                 TC_LOG_ERROR("scripts","Chess event: unknown action %u", action);
@@ -1267,7 +1267,7 @@ public:
                         destX = target->GetPositionX();
                         destY = target->GetPositionY();
                         me->GetMotionMaster()->MovePoint(0, target->GetPositionX(), target->GetPositionY(), target->GetPositionZ());
-                        target->CastSpell(target, SPELL_MOVE_MARKER, false);
+                        target->CastSpell(target, SPELL_MOVE_MARKER, TRIGGERED_NONE);
                     }
                 }
             }
@@ -1360,7 +1360,7 @@ public:
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF + 1) {
-                player->CastSpell(me, SPELL_POSSESS_CHESSPIECE, false);
+                player->CastSpell(me, SPELL_POSSESS_CHESSPIECE, TRIGGERED_NONE);
                 player->TeleportTo(532, playerTeleportPosition[0], playerTeleportPosition[1], playerTeleportPosition[2], playerTeleportPosition[3]);
 
                 if (!pInstance)

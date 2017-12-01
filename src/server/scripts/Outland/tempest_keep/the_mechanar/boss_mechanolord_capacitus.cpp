@@ -170,7 +170,7 @@ public:
                     else if (target->HasAuraEffect(SPELL_NEGCHARGE_INCDMG))
                         target->RemoveAurasDueToSpell(SPELL_NEGCHARGE_INCDMG);
                         
-                    target->CastSpell(target, RAND(SPELL_POSITIVE_CHARGE, SPELL_NEGATIVE_CHARGE), true);     // Random : positive or negative
+                    target->CastSpell(target, RAND(SPELL_POSITIVE_CHARGE, SPELL_NEGATIVE_CHARGE), TRIGGERED_FULL_MASK);     // Random : positive or negative
                 }
             }
         }
@@ -232,10 +232,10 @@ public:
                                     }
                                     
                                     if (plr->HasAuraEffect(SPELL_POSITIVE_CHARGE) && pGroupGuy->HasAuraEffect(SPELL_NEGATIVE_CHARGE)) {         // Different charges, plr has +
-                                        plr->CastSpell(plr, SPELL_POSCHARGE_DAMAGE, true);
+                                        plr->CastSpell(plr, SPELL_POSCHARGE_DAMAGE, TRIGGERED_FULL_MASK);
                                     }
                                     else if (plr->HasAuraEffect(SPELL_NEGATIVE_CHARGE) && pGroupGuy->HasAuraEffect(SPELL_POSITIVE_CHARGE)) {    // Different charges, plr has -
-                                        plr->CastSpell(plr, SPELL_NEGCHARGE_DAMAGE, true);
+                                        plr->CastSpell(plr, SPELL_NEGCHARGE_DAMAGE, TRIGGERED_FULL_MASK);
                                     }
                                 }
                                 

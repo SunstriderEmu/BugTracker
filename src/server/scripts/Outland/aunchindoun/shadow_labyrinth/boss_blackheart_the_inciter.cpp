@@ -126,7 +126,7 @@ public:
                 {
                     Unit* target = ObjectAccessor::GetUnit(*me, itr->getUnitGuid());
                     if (target && target->GetTypeId() == TYPEID_PLAYER)
-                        target->CastSpell(target,SPELL_INCITE_CHAOS_B,true);
+                        target->CastSpell(target,SPELL_INCITE_CHAOS_B, TRIGGERED_FULL_MASK);
                 }
     
                 DoResetThreat();

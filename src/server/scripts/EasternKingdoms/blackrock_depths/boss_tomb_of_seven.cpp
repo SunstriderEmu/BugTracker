@@ -388,7 +388,7 @@ public:
             FrostNova_Timer = 12000;
             FrostWard_Timer = 25000;
     
-            me->CastSpell(me,SPELL_FROSTARMOR,true);
+            me->CastSpell(me,SPELL_FROSTARMOR, TRIGGERED_FULL_MASK);
         }
     
         void EnterCombat(Unit *who)
@@ -559,7 +559,7 @@ public:
                     break;
                 case GOSSIP_ACTION_INFO_DEF+11:
                     player->CLOSE_GOSSIP_MENU();
-                    me->CastSpell(player, 14894, false);
+                    me->CastSpell(player, 14894, TRIGGERED_NONE);
                     break;
                 case GOSSIP_ACTION_INFO_DEF+2:
                     player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "[PH] Continue...", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 22);

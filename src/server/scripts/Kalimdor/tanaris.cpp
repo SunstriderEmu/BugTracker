@@ -332,7 +332,7 @@ public:
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if( action == GOSSIP_ACTION_INFO_DEF + 1 )
-                player->CastSpell(player,34891,true);               //(Flight through Caverns)
+                player->CastSpell(player,34891, TRIGGERED_FULL_MASK);               //(Flight through Caverns)
 
             return true;
 
@@ -342,7 +342,7 @@ public:
         virtual void QuestAccept(Player* player, Quest const* quest) override
         {
             if( quest->GetQuestId() == 10279 )                      //Quest: To The Master's Lair
-                player->CastSpell(player,34891,true);               //(Flight through Caverns)
+                player->CastSpell(player,34891, TRIGGERED_FULL_MASK);               //(Flight through Caverns)
         }
 
     };

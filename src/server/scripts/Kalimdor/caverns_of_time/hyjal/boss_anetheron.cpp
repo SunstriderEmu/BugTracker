@@ -148,7 +148,7 @@ public:
                 {
                     Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0,100,true);
                     if(target)
-                        target->CastSpell(target,SPELL_SLEEP,true);
+                        target->CastSpell(target,SPELL_SLEEP, TRIGGERED_FULL_MASK);
                 }
                 SleepTimer = TIMER_SLEEP;
                 DoScriptText(SAY_SLEEP1 - rand()%2,me);

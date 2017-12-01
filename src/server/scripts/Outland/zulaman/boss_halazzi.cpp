@@ -169,7 +169,7 @@ public:
             case PHASE_ENRAGE:
                 if(Phase == PHASE_MERGE)
                 {
-                    me->CastSpell(me, SPELL_TRANSFORM_MERGE, true);
+                    me->CastSpell(me, SPELL_TRANSFORM_MERGE, TRIGGERED_FULL_MASK);
                     me->Attack(me->GetVictim(), true);
                     me->GetMotionMaster()->MoveChase(me->GetVictim());
                 }
@@ -188,7 +188,7 @@ public:
             case PHASE_SPLIT:
                 me->Yell(YELL_SPLIT, LANG_UNIVERSAL, nullptr);
                 DoPlaySoundToSet(me, SOUND_SPLIT);
-                me->CastSpell(me, SPELL_TRANSFORM_SPLIT, true);
+                me->CastSpell(me, SPELL_TRANSFORM_SPLIT, TRIGGERED_FULL_MASK);
                 break;
             case PHASE_HUMAN:
                 //DoCast(me, SPELL_SUMMON_LYNX, true);
@@ -245,8 +245,8 @@ public:
                         break;
                     }
                     // A tank with more than 490 defense skills should receive no critical hit
-                    //me->CastSpell(me, 41296, true);
-                    me->CastSpell(me->GetVictim(), SPELL_SABER_LASH, true);
+                    //me->CastSpell(me, 41296, TRIGGERED_FULL_MASK);
+                    me->CastSpell(me->GetVictim(), SPELL_SABER_LASH, TRIGGERED_FULL_MASK);
                     //me->RemoveAurasDueToSpell(41296);
                     SaberlashTimer = 30000;
                 }else SaberlashTimer -= diff;

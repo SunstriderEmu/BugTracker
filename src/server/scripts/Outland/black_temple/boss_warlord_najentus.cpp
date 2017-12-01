@@ -132,7 +132,7 @@ public:
             if(spell->Id == SPELL_HURL_SPINE && hasShield())
             {
                 me->RemoveAurasDueToSpell(SPELL_TIDAL_SHIELD);
-                me->CastSpell(me, SPELL_TIDAL_BURST, true);
+                me->CastSpell(me, SPELL_TIDAL_BURST, TRIGGERED_FULL_MASK);
                 NeedleSpineTimer = 10000;
                 ImpalingSpineTimer = TIMER_IMPALING_SPINE;
             }
@@ -164,7 +164,7 @@ public:
     
             if(TidalShieldTimer < diff)
             {
-                me->CastSpell(me, SPELL_TIDAL_SHIELD, true);
+                me->CastSpell(me, SPELL_TIDAL_SHIELD, TRIGGERED_FULL_MASK);
                 TidalShieldTimer = TIMER_TIDAL_SHIELD;
             }else TidalShieldTimer -= diff;
     
@@ -178,17 +178,17 @@ public:
                 if(EnrageTimer < diff)
                 {
                     DoScriptText(SAY_ENRAGE2, me);
-                    me->CastSpell(me, SPELL_BERSERK, true);
+                    me->CastSpell(me, SPELL_BERSERK, TRIGGERED_FULL_MASK);
                 }else EnrageTimer -= diff;
             }
     
             if(NeedleSpineTimer < diff)
             {
-                //me->CastSpell(me, SPELL_NEEDLE_SPINE, true);
+                //me->CastSpell(me, SPELL_NEEDLE_SPINE, TRIGGERED_FULL_MASK);
                 std::list<Unit*> target;
                 SelectUnitList(target, 3, SELECT_TARGET_RANDOM, 80.0f, true);
                 for(auto & i : target)
-                    me->CastSpell(i, SPELL_NEEDLE_SPINE2, true);
+                    me->CastSpell(i, SPELL_NEEDLE_SPINE2, TRIGGERED_FULL_MASK);
                 NeedleSpineTimer = TIMER_NEEDLE_SPINE;
             }else NeedleSpineTimer -= diff;
     
@@ -208,7 +208,7 @@ public:
                 if(!target) target = me->GetVictim();
                 if(target)
                 {
-                    me->CastSpell(target, SPELL_IMPALING_SPINE, true);
+                    me->CastSpell(target, SPELL_IMPALING_SPINE, TRIGGERED_FULL_MASK);
                     SpineTargetGUID = target->GetGUID();
                     //must let target summon, otherwise you cannot click the spine
                     target->SummonGameObject(GOBJECT_SPINE, target->GetPosition(), G3D::Quat(), 30);
@@ -252,7 +252,7 @@ public:
             if (Creature* Najentus = ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_HIGHWARLORDNAJENTUS)))
                 if (((boss_najentus::boss_najentusAI*)Najentus->AI())->RemoveImpalingSpine())
                 {
-                    player->CastSpell(player, SPELL_CREATE_NAJENTUS_SPINE, true);
+                    player->CastSpell(player, SPELL_CREATE_NAJENTUS_SPINE, TRIGGERED_FULL_MASK);
                     me->SetLootState(GO_NOT_READY);
                     me->SetRespawnTime(604800); //one week respawn
                     me->RemoveFromWorld();

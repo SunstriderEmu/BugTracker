@@ -164,7 +164,7 @@ public:
                 {
                     if (Player* plr = player.GetSource())
                         if (plr->IsAttackableByAOE())
-                            plr->CastSpell(plr, spellid, true);
+                            plr->CastSpell(plr, spellid, TRIGGERED_FULL_MASK);
                 }
             }
         }

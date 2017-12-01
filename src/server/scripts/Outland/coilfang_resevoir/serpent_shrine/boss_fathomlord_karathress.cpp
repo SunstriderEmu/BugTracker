@@ -435,7 +435,7 @@ public:
                 Creature *Pet = (Creature*)ObjectAccessor::GetUnit(*me, SummonedPet);
                 if( Pet && Pet->IsAlive() )
                 {
-                    Pet->CastSpell( Pet, SPELL_PET_ENRAGE, true );
+                    Pet->CastSpell( Pet, SPELL_PET_ENRAGE, TRIGGERED_FULL_MASK);
                 }
                 TheBeastWithin_Timer = 30000;
             }else TheBeastWithin_Timer -= diff;
@@ -697,7 +697,7 @@ public:
                 DoCast(me->GetVictim(), SPELL_TIDAL_SURGE);
                 // Hacky way to do it - won't trigger elseways
                 if (me->GetVictim() && me->GetVictim()->IsAlive())
-                    me->GetVictim()->CastSpell( me->GetVictim(), SPELL_TIDAL_SURGE_FREEZE, true );
+                    me->GetVictim()->CastSpell( me->GetVictim(), SPELL_TIDAL_SURGE_FREEZE, TRIGGERED_FULL_MASK);
                 TidalSurge_Timer = 15000+rand()%5000;
             }else TidalSurge_Timer -= diff;
     
@@ -712,7 +712,7 @@ public:
                     (Cyclone->ToCreature())->SetFloatValue(OBJECT_FIELD_SCALE_X, 3.0f);
                     Cyclone->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                     Cyclone->SetFaction(me->GetFaction());
-                    Cyclone->CastSpell(Cyclone, SPELL_CYCLONE_CYCLONE, true);
+                    Cyclone->CastSpell(Cyclone, SPELL_CYCLONE_CYCLONE, TRIGGERED_FULL_MASK);
                     Unit *target = SelectTarget(SELECT_TARGET_RANDOM, 0);
                     if( target )
                     {

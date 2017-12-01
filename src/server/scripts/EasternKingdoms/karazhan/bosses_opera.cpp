@@ -579,7 +579,7 @@ public:
             {
                 Creature* Cyclone = DoSpawnCreature(CREATURE_CYCLONE, rand()%10, rand()%10, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 15000);
                 if(Cyclone)
-                    Cyclone->CastSpell(Cyclone, SPELL_CYCLONE_VISUAL, true);
+                    Cyclone->CastSpell(Cyclone, SPELL_CYCLONE_VISUAL, TRIGGERED_FULL_MASK);
                 CycloneTimer = 30000;
             }else CycloneTimer -= diff;
     
@@ -974,7 +974,7 @@ void Resurrect(Creature* target)
     target->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     target->SetHealth(target->GetMaxHealth());
     target->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-    target->CastSpell(target, SPELL_RES_VISUAL, true);
+    target->CastSpell(target, SPELL_RES_VISUAL, TRIGGERED_FULL_MASK);
     if(target->GetVictim())
     {
         target->SetUInt64Value(UNIT_FIELD_TARGET, target->GetVictim()->GetGUID());

@@ -171,7 +171,7 @@ public:
             //DoCast(me, SPELL_HEAD_SPEAKS, true);
             Creature *speaker = DoSpawnCreature(HELPER, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 1000);
             if (speaker)
-                speaker->CastSpell(speaker, SPELL_HEAD_SPEAKS, false);
+                speaker->CastSpell(speaker, SPELL_HEAD_SPEAKS, TRIGGERED_NONE);
     
             laugh += 3000;
         }
@@ -272,7 +272,7 @@ public:
                     //DoCast(me,SPELL_HEAD_SPEAKS,true); //this spell remove buff "head"
                     Creature *speaker = DoSpawnCreature(HELPER, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 1000);
                     if (speaker)
-                        speaker->CastSpell(speaker, SPELL_HEAD_SPEAKS, false);
+                        speaker->CastSpell(speaker, SPELL_HEAD_SPEAKS, TRIGGERED_NONE);
     
                     me->TextEmote("rit.",nullptr);
                 } else laugh -= diff;
@@ -605,7 +605,7 @@ public:
     
             Creature* flame = DoSpawnCreature(HELPER, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 60000);
             if (flame)
-                flame->CastSpell(flame, SPELL_BODY_FLAME, false);
+                flame->CastSpell(flame, SPELL_BODY_FLAME, TRIGGERED_NONE);
     
             Creature* wisp = DoSpawnCreature(WISP_INVIS, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 60000);
             if (wisp)
@@ -680,11 +680,11 @@ public:
                 Unit* Head = ObjectAccessor::GetUnit((*me), headGUID);
                 if (Head && Head->IsAlive()) {
                     Head->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                    //Head->CastSpell(Head,SPELL_HEAD_INVIS,false);
+                    //Head->CastSpell(Head,SPELL_HEAD_INVIS, TRIGGERED_NONE);
                     me->InterruptNonMeleeSpells(false);
                     DoCast(me, SPELL_IMMUNE, true);
                     DoCast(me, SPELL_BODY_REGEN, true);
-                    me->CastSpell(Head, SPELL_FLYING_HEAD, true);
+                    me->CastSpell(Head, SPELL_FLYING_HEAD, TRIGGERED_FULL_MASK);
                     DoCast(me, SPELL_CONFUSE, false);                     //test
                     doneBy->ProcDamageAndSpell(me, PROC_FLAG_KILL_AND_GET_XP, PROC_FLAG_KILLED, PROC_EX_NONE, 0);
                     whirlwind = 4000 + (rand()%5)*IN_MILLISECONDS;
@@ -755,7 +755,7 @@ public:
                     {
                         Unit *plr = (Unit*)SelectRandomPlayer(30.0f);
                         if (plr)
-                            me->CastSpell(plr,SPELL_CONFLAGRATION,false);
+                            me->CastSpell(plr,SPELL_CONFLAGRATION, TRIGGERED_NONE);
                         conflagrate = 10000 + rand()%7 * 1000;
                     }
                     else
@@ -863,7 +863,7 @@ public:
             Creature* debuff = DoSpawnCreature(HELPER, 0, 0, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 14500);
             if (debuff) {
                 debuff->SetDisplayId(me->GetDisplayId());
-                debuff->CastSpell(debuff, SPELL_PUMPKIN_AURA_GREEN, false);
+                debuff->CastSpell(debuff, SPELL_PUMPKIN_AURA_GREEN, TRIGGERED_NONE);
                 ((mob_wisp_invis::mob_wisp_invisAI*)debuff->AI())->SetType(1);
                 debuffGUID = debuff->GetGUID();
             }

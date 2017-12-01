@@ -154,7 +154,7 @@ public:
                     return;
 
                 if (!pSlim->HasStealthAura())
-                    pSlim->CastSpell(pSlim, SPELL_STEALTH, true);
+                    pSlim->CastSpell(pSlim, SPELL_STEALTH, TRIGGERED_FULL_MASK);
 
                 ((EscortAI*)(me->AI()))->Start(false, false, pPlayer->GetGUID(), quest);
             }

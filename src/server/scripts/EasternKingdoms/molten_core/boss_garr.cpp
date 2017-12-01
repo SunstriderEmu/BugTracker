@@ -164,7 +164,7 @@ class Mob_FiresWorn : public CreatureScript
             override {
                 if (Creature* garr = _instance->instance->GetCreature(_instance->GetData64(DATA_GARR)))
                     if (garr->IsAlive())
-                        garr->CastSpell(garr, SPELL_FRENZY, false);
+                        garr->CastSpell(garr, SPELL_FRENZY, TRIGGERED_NONE);
             }
         
             void UpdateAI(uint32 const diff)

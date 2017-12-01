@@ -200,7 +200,7 @@ public:
 
                                 if (!pPlayer->HasAuraEffect(SPELL_SCALDINGWATER))
                                 {
-                                    pPlayer->CastSpell(pPlayer, SPELL_SCALDINGWATER, true);
+                                    pPlayer->CastSpell(pPlayer, SPELL_SCALDINGWATER, TRIGGERED_FULL_MASK);
                                 }
                             }
                         }

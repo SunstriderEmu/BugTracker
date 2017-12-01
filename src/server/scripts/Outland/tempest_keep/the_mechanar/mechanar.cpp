@@ -164,7 +164,7 @@ public:
                         c->AI()->AttackStart(who);
                   /*  Much bugs with this
                   c->RemoveAurasDueToSpell(INVISIBLE_AURA);
-                    c->CastSpell(c,TELEPORT_IN_VISUAL,true); */
+                    c->CastSpell(c,TELEPORT_IN_VISUAL, TRIGGERED_FULL_MASK); */
                 }
             }
     

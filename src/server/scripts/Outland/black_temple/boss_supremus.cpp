@@ -151,7 +151,7 @@ public:
             if(Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 1, 100, true))
             {
                 if(me->GetDistance2d(me->GetVictim()) > 40)
-                    me->CastSpell(me->GetVictim(),SPELL_CHARGE,false);
+                    me->CastSpell(me->GetVictim(),SPELL_CHARGE, TRIGGERED_NONE);
                             
                 DoResetThreat();
                 me->GetThreatManager().AddThreat(target, 5000000.0f);

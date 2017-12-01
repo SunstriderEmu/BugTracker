@@ -160,7 +160,7 @@ public:
         mylittlebombling_visualAI(Creature* creature) : ScriptedAI(creature) 
         {
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            me->CastSpell(me, SPELL_VISUAL_BADABOUM, true);
+            me->CastSpell(me, SPELL_VISUAL_BADABOUM, TRIGGERED_FULL_MASK);
         }
     
         void EnterCombat(Unit* who)

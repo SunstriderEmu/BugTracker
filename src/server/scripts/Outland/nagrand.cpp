@@ -788,7 +788,7 @@ public:
             {
                 if(spell->Id == SPELL_SPARROWHAWK_NET && (pCaster)->ToPlayer()->GetQuestStatus(10987) == QUEST_STATUS_INCOMPLETE)
                 {
-                    me->CastSpell(pCaster, SPELL_ITEM_CAPTIVE_SPARROWHAWK, true);
+                    me->CastSpell(pCaster, SPELL_ITEM_CAPTIVE_SPARROWHAWK, TRIGGERED_FULL_MASK);
                     me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
                     me->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
                 }

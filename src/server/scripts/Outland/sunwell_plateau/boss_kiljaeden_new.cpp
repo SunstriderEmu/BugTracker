@@ -441,7 +441,7 @@ public:
                     if (DynamicObject* Dyn = dummy->GetDynObject(SPELL_RING_OF_BLUE_FLAMES))
                         Dyn->RemoveFromWorld();
 
-                plr->CastSpell(plr, SPELL_POWER_OF_THE_BLUE_FLIGHT, true);
+                plr->CastSpell(plr, SPELL_POWER_OF_THE_BLUE_FLIGHT, TRIGGERED_FULL_MASK);
                 me->SetUInt32Value(GAMEOBJECT_FACTION, 0); //not usable anymore
                 me->Refresh();
             }
@@ -538,8 +538,8 @@ public:
                 return;
             if(Unit* dummy = pInstance->instance->GetCreature(OrbDummies[i]))
             {
-                dummy->CastSpell(dummy,SPELL_VISUAL_MOONFIRE,true);
-                dummy->CastSpell(dummy, SPELL_RING_OF_BLUE_FLAMES,true);
+                dummy->CastSpell(dummy,SPELL_VISUAL_MOONFIRE, TRIGGERED_FULL_MASK);
+                dummy->CastSpell(dummy, SPELL_RING_OF_BLUE_FLAMES, TRIGGERED_FULL_MASK);
             }
             orb->SetUInt32Value(GAMEOBJECT_FACTION, 35);
             orb->SetKeepActive(true);
@@ -653,10 +653,10 @@ public:
                 {
                     if (pInstance->GetData(DATA_KILJAEDEN_EVENT) == DONE)
                     {
-                        me->CastSpell(me,SPELL_SUNWELL_IGNITION,true);
+                        me->CastSpell(me,SPELL_SUNWELL_IGNITION, TRIGGERED_FULL_MASK);
                         return;
                     } else {
-                        me->CastSpell(me,SPELL_ANVEENA_ENERGY_DRAIN,true);
+                        me->CastSpell(me,SPELL_ANVEENA_ENERGY_DRAIN, TRIGGERED_FULL_MASK);
                         
                         pInstance->SetData(DATA_KILJAEDEN_EVENT, NOT_STARTED);
                     }
@@ -693,7 +693,7 @@ public:
                 if (Creature *anveena = me->SummonCreature(CREATURE_ANVEENA,  me->GetPositionX(), me->GetPositionY(), 60, 0, TEMPSUMMON_DEAD_DESPAWN, 0))
                     anveena->SetSummoner(me);
 
-                me->CastSpell(me,SPELL_DESTROY_DRAKES,true);
+                me->CastSpell(me,SPELL_DESTROY_DRAKES, TRIGGERED_FULL_MASK);
 
                 m_currentAngleFirst = 0;
                 m_currentAngleSecond = 0;
@@ -707,26 +707,26 @@ public:
                 switch(summoned->GetEntry())
                 {
                     case CREATURE_HAND_OF_THE_DECEIVER:
-                        summoned->CastSpell(summoned, SPELL_SHADOW_CHANNELING, false);
+                        summoned->CastSpell(summoned, SPELL_SHADOW_CHANNELING, TRIGGERED_NONE);
                         break;
                     case CREATURE_ANVEENA:
                     {
                         summoned->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                         summoned->SetDisableGravity(true);
                         summoned->SendMovementFlagUpdate();
-                        summoned->CastSpell(summoned, SPELL_ANVEENA_PRISON, true);
+                        summoned->CastSpell(summoned, SPELL_ANVEENA_PRISON, TRIGGERED_FULL_MASK);
                         summoned->SetReactState(REACT_PASSIVE);
                         break;
                     }
                     case CREATURE_KILJAEDEN:
-                        summoned->CastSpell((Unit*)nullptr, SPELL_REBIRTH, false);
+                        summoned->CastSpell((Unit*)nullptr, SPELL_REBIRTH, TRIGGERED_NONE);
                         summoned->AI()->message(boss_kiljaedenAI_Messages::MESSAGE_SET_PHASE, PHASE_NORMAL);
                         break;
                     case NPC_RIFTWALKER:
-                        summoned->CastSpell(summoned, SPELL_TELEPORT_VISUAL, true);
+                        summoned->CastSpell(summoned, SPELL_TELEPORT_VISUAL, TRIGGERED_FULL_MASK);
                         break;
                     case NPC_SOLDIER:
-                        summoned->CastSpell(summoned, SPELL_TELEPORT_VISUAL, true);
+                        summoned->CastSpell(summoned, SPELL_TELEPORT_VISUAL, TRIGGERED_FULL_MASK);
                         summoned->SetWalk(false);
                         summoned->SetSpeedRate(MOVE_RUN, 1.0f);
                         break;
@@ -734,11 +734,11 @@ public:
                         summoned->GetMotionMaster()->MovePoint(0, aOutroLocations[5].m_fX, aOutroLocations[5].m_fY, aOutroLocations[5].m_fZ);
                         // no break here
                     case CREATURE_LIADRIN:
-                        summoned->CastSpell(summoned, SPELL_TELEPORT_VISUAL, true);
+                        summoned->CastSpell(summoned, SPELL_TELEPORT_VISUAL, TRIGGERED_FULL_MASK);
                         break;
                     case NPC_CORE_ENTROPIUS:
                         summoned->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                        summoned->CastSpell(summoned, SPELL_ENTROPIUS_BODY, true);
+                        summoned->CastSpell(summoned, SPELL_ENTROPIUS_BODY, TRIGGERED_FULL_MASK);
                         summoned->SetDisableGravity(true);
                         summoned->SendMovementFlagUpdate();
                         m_EntropiusGuid = summoned->GetGUID();
@@ -779,7 +779,7 @@ public:
                         if (Creature* pKalec = pInstance->instance->GetCreature(pInstance->GetData64(DATA_KALECGOS_KJ)))
                         {
                             pKalec->SetVisible(true);
-                            pKalec->CastSpell(pKalec, SPELL_KALEC_TELEPORT, true);
+                            pKalec->CastSpell(pKalec, SPELL_KALEC_TELEPORT, TRIGGERED_FULL_MASK);
                             pKalec->SetDisableGravity(false);
                             pKalec->SendMovementFlagUpdate();
                         }
@@ -900,7 +900,7 @@ public:
                         if (Creature* pEntropius = me->GetMap()->GetCreature(m_EntropiusGuid))
                         {
                             if (Creature* pVelen = pInstance->GetSingleCreatureFromStorage(CREATURE_PROPHET))
-                                pVelen->CastSpell(pEntropius, SPELL_CALL_ENTROPIUS, false);
+                                pVelen->CastSpell(pEntropius, SPELL_CALL_ENTROPIUS, TRIGGERED_NONE);
 
                             pEntropius->SetWalk(false);
                             pEntropius->GetMotionMaster()->MovePoint(1, me->GetPositionX(), me->GetPositionY(), 40.0f);
@@ -913,7 +913,7 @@ public:
                     case POINT_BLAZE:
                         if (Creature* pEntropius = me->GetMap()->GetCreature(m_EntropiusGuid))
                         {
-                            pEntropius->CastSpell(pEntropius, SPELL_BLAZE_TO_LIGHT, true);
+                            pEntropius->CastSpell(pEntropius, SPELL_BLAZE_TO_LIGHT, TRIGGERED_FULL_MASK);
                             pEntropius->RemoveAurasDueToSpell(SPELL_ENTROPIUS_BODY);
                         }
                         break;
@@ -967,7 +967,7 @@ public:
                     case NPC_RIFTWALKER:
                         if(Creature* riftTarget = pSummoned->GetMap()->GetCreature(riftTargets[0]))
                         {
-                            pSummoned->CastSpell(riftTarget, SPELL_OPEN_PORTAL, false);
+                            pSummoned->CastSpell(riftTarget, SPELL_OPEN_PORTAL, TRIGGERED_NONE);
                             riftTarget->GetMotionMaster()->MovePoint(0, aOutroLocations[9].m_fX, aOutroLocations[9].m_fY, aOutroLocations[9].m_fZ+13.0f);
                         }
                         break;
@@ -989,7 +989,7 @@ public:
                     case NPC_RIFTWALKER:
                         if(Creature* riftTarget = pSummoned->GetMap()->GetCreature(riftTargets[1]))
                         {
-                            pSummoned->CastSpell(riftTarget, SPELL_OPEN_PORTAL, false);
+                            pSummoned->CastSpell(riftTarget, SPELL_OPEN_PORTAL, TRIGGERED_NONE);
                             riftTarget->GetMotionMaster()->MovePoint(0, aOutroLocations[10].m_fX, aOutroLocations[10].m_fY, aOutroLocations[10].m_fZ+13.0f);
                         }
                         break;
@@ -1244,7 +1244,7 @@ public:
                     events.RescheduleEvent(EVENT_SINISTER_REFLECTION, 500);
 
                     Talk(SAY_KJ_PHASE4);
-                    me->CastSpell((Unit*)nullptr, SPELL_DESTROY_DRAKES, true);
+                    me->CastSpell((Unit*)nullptr, SPELL_DESTROY_DRAKES, TRIGGERED_FULL_MASK);
                     break;
                 case PHASE_SACRIFICE:
                     // Phase 2
@@ -1262,7 +1262,7 @@ public:
                     events.RescheduleEvent(EVENT_ARMAGEDDON, 21000);
 
                     Talk(SAY_KJ_PHASE5);
-                    me->CastSpell((Unit*)nullptr, SPELL_DESTROY_DRAKES, true);
+                    me->CastSpell((Unit*)nullptr, SPELL_DESTROY_DRAKES, TRIGGERED_FULL_MASK);
                     break;
             }
             phaseDarknessCount = 0;
@@ -1336,7 +1336,7 @@ public:
                     if (Creature* Anveena = pInstance->instance->GetCreature(pInstance->GetData64(DATA_ANVEENA)))
                     {
                         Anveena->RemoveAurasDueToSpell(SPELL_ANVEENA_PRISON);
-                        Anveena->CastSpell((Unit*)nullptr, SPELL_SACRIFICE_OF_ANVEENA, true);
+                        Anveena->CastSpell((Unit*)nullptr, SPELL_SACRIFICE_OF_ANVEENA, TRIGGERED_FULL_MASK);
                         Anveena->ForcedDespawn(3000);
                     }
                     me->SetControlled(true, UNIT_STATE_STUNNED);
@@ -1360,7 +1360,7 @@ public:
                 Player* pl = player.GetSource();
                 if (pl->IsAttackableByAOE() && pl->GetExactDistance2d(me->GetPositionX(),me->GetPositionY()) <= 13.0f) //~when a player set foot in the well
                     if (bumpHelper.AddCooldown(pl)) //return true if player wasn't knocked back < 2s ago
-                        me->CastSpell(pl, SPELL_KNOCK_BACK,true);
+                        me->CastSpell(pl, SPELL_KNOCK_BACK, TRIGGERED_FULL_MASK);
             }
         }
 
@@ -1541,13 +1541,13 @@ public:
                     break;
                 case EVENT_SINISTER_REFLECTION:
                     Talk(SAY_KJ_REFLECTION);
-                    me->CastSpell((Unit*)nullptr, SPELL_SINISTER_REFLECTION, true);
+                    me->CastSpell((Unit*)nullptr, SPELL_SINISTER_REFLECTION, TRIGGERED_FULL_MASK);
 
                     events.CancelEvent(EVENT_SINISTER_REFLECTION);
                     break;
                 case EVENT_ARMAGEDDON:
                 { 
-                    me->CastSpell(me, SPELL_ARMAGEDDON_PERIODIC_SUMMON, true);
+                    me->CastSpell(me, SPELL_ARMAGEDDON_PERIODIC_SUMMON, TRIGGERED_FULL_MASK);
 
                     if (phase == PHASE_SACRIFICE)
                         events.CancelEvent(EVENT_ARMAGEDDON); //timer will be reset uppon EVENT_DARKNESS
@@ -1649,7 +1649,7 @@ public:
                 // Gain Shadow Infusion
                 if (me->IsBetweenHPPercent(20, 25) && !me->HasAuraEffect(SPELL_SHADOW_INFUSION))
                     if (rand()%2)
-                        me->CastSpell(me, SPELL_SHADOW_INFUSION, true);
+                        me->CastSpell(me, SPELL_SHADOW_INFUSION, TRIGGERED_FULL_MASK);
 
                 events.Update(diff);
             
@@ -1731,7 +1731,7 @@ public:
                 case 0:
                     break;
                 case EVENT_SPAWNFIEND:
-                    me->CastSpell(me, SPELL_SUMMON_FELFIRE_FIEND, false);
+                    me->CastSpell(me, SPELL_SUMMON_FELFIRE_FIEND, TRIGGERED_NONE);
                     events.CancelEvent(EVENT_SPAWNFIEND);
                     break;
             }
@@ -1885,7 +1885,7 @@ public:
                     case 0:
                         break;
                     case EVENT_VISUAL1:
-                        if (me->CastSpell(me, SPELL_ARMAGEDDON_VISUAL, true) == SPELL_CAST_OK)
+                        if (me->CastSpell(me, SPELL_ARMAGEDDON_VISUAL, TRIGGERED_FULL_MASK) == SPELL_CAST_OK)
                         {
                             events.CancelEvent(EVENT_VISUAL1);
                             if (!events.IsEventScheduled(EVENT_TRIGGER))
@@ -1893,7 +1893,7 @@ public:
                         }
                         break;
                     case EVENT_TRIGGER:
-                        if (me->CastSpell(me, SPELL_ARMAGEDDON_TRIGGER, true) == SPELL_CAST_OK)
+                        if (me->CastSpell(me, SPELL_ARMAGEDDON_TRIGGER, TRIGGERED_FULL_MASK) == SPELL_CAST_OK)
                         {
                             events.CancelEvent(EVENT_TRIGGER);
                             if (!events.IsEventScheduled(EVENT_DIE))
@@ -2036,7 +2036,7 @@ public:
                         break;
                     case EVENT_SHADOWBOLT_S:
                         if (Unit* random = SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true))
-                            if(me->CastSpell(random, SPELL_SHADOW_BOLT, false) == SPELL_CAST_OK)
+                            if(me->CastSpell(random, SPELL_SHADOW_BOLT, TRIGGERED_NONE) == SPELL_CAST_OK)
                                 events.RescheduleEvent(EVENT_SHADOWBOLT_S, urand(500, 1000));
                         break;
                 }
@@ -2091,7 +2091,7 @@ public:
                 me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_HASTE_SPELLS, true);
                 me->AddUnitState(UNIT_STATE_STUNNED);
 
-                me->CastSpell(me, 45893, true);
+                me->CastSpell(me, 45893, TRIGGERED_FULL_MASK);
             }
 
             void UpdateAI(uint32 const diff)
@@ -2149,7 +2149,7 @@ public:
                         if (Timer[0] <= diff)
                         {
                             if (Unit* random = SelectTarget(SELECT_TARGET_RANDOM, 0, 30.0f, true))
-                                me->CastSpell(random, SPELL_SR_MOONFIRE, false);
+                                me->CastSpell(random, SPELL_SR_MOONFIRE, TRIGGERED_NONE);
                             Timer[0] = urand(5000, 7000);
                         }
                         break;
@@ -2157,14 +2157,14 @@ public:
                         if (Timer[0] <= diff)
                         {
                             if (Unit *random = SelectTarget(SELECT_TARGET_RANDOM, 0, 30.0f, true))
-                                me->CastSpell(random, SPELL_SR_MULTI_SHOT, false);
+                                me->CastSpell(random, SPELL_SR_MULTI_SHOT, TRIGGERED_NONE);
                             Timer[0] = urand(8000, 10000);
                         }
 
                         if (Timer[1] <= diff)
                         {
                             if (Unit *random = SelectTarget(SELECT_TARGET_RANDOM, 0, 30.0f, true))
-                                me->CastSpell(random, SPELL_SR_SHOOT, false);
+                                me->CastSpell(random, SPELL_SR_SHOOT, TRIGGERED_NONE);
                             Timer[1] = urand(4000, 6000);
                         }
 
@@ -2172,7 +2172,7 @@ public:
                         {
                             if (Timer[2] <= diff)
                             {
-                                me->CastSpell(me->GetVictim(), SPELL_SR_WING_CLIP, false);
+                                me->CastSpell(me->GetVictim(), SPELL_SR_WING_CLIP, TRIGGERED_NONE);
                                 Timer[2] = urand(6000, 8000);
                             }
                 
@@ -2182,68 +2182,68 @@ public:
                     case CLASS_MAGE:
                         if (Timer[0] <= diff)
                         {
-                            me->CastSpell(me->GetVictim(), SPELL_SR_FIREBALL, false);
+                            me->CastSpell(me->GetVictim(), SPELL_SR_FIREBALL, TRIGGERED_NONE);
                             Timer[0] = urand(2000, 4000);
                         }
                         break;
                     case CLASS_WARLOCK:
                         if (Timer[0] <= diff)
                         {
-                            me->CastSpell(me->GetVictim(), SPELL_SR_SHADOW_BOLT, false);
+                            me->CastSpell(me->GetVictim(), SPELL_SR_SHADOW_BOLT, TRIGGERED_NONE);
                             Timer[0] = urand(3000, 5000);
                         }
 
                         if (Timer[1] <= diff)
                         {
                             if (Unit *random = SelectTarget(SELECT_TARGET_RANDOM, 0, 30.0f, true))
-                                me->CastSpell(random, SPELL_SR_CURSE_OF_AGONY, false);
+                                me->CastSpell(random, SPELL_SR_CURSE_OF_AGONY, TRIGGERED_NONE);
                             Timer[1] = urand(15000, 17000);
                         }
                         break;
                     case CLASS_WARRIOR:
                         if (Timer[0] <= diff)
                         {
-                            me->CastSpell(me->GetVictim(), SPELL_SR_WHIRLWIND, false);
+                            me->CastSpell(me->GetVictim(), SPELL_SR_WHIRLWIND, TRIGGERED_NONE);
                             Timer[0] = urand(9000, 11000);
                         }
                         break;
                     case CLASS_PALADIN:
                         if (Timer[0] <= diff)
                         {
-                            me->CastSpell(me->GetVictim(), SPELL_SR_HAMMER_OF_JUSTICE, false);
+                            me->CastSpell(me->GetVictim(), SPELL_SR_HAMMER_OF_JUSTICE, TRIGGERED_NONE);
                             Timer[0] = urand(9000, 12000);
                         }
 
                         if (Timer[1] <= diff)
                         {
-                            me->CastSpell(me->GetVictim(), SPELL_SR_HOLY_SHOCK, false);
+                            me->CastSpell(me->GetVictim(), SPELL_SR_HOLY_SHOCK, TRIGGERED_NONE);
                             Timer[1] = urand(2000, 4000);
                         }
                         break;
                     case CLASS_PRIEST:
                         if (Timer[0] <= diff)
                         {
-                            me->CastSpell(me->GetVictim(), SPELL_SR_HOLY_SMITE, false);
+                            me->CastSpell(me->GetVictim(), SPELL_SR_HOLY_SMITE, TRIGGERED_NONE);
                             Timer[0] = urand(4000, 6000);
                         }
 
                         if (Timer[1] <= diff)
                         {
-                            me->CastSpell(urand(0, 1) ? me : m_kj,  SPELL_SR_RENEW, false);
+                            me->CastSpell(urand(0, 1) ? me : m_kj,  SPELL_SR_RENEW, TRIGGERED_NONE);
                             Timer[1] = urand(6000, 8000);
                         }
                         break;
                     case CLASS_SHAMAN:
                         if (Timer[0] <= diff)
                         {
-                            me->CastSpell(me->GetVictim(), SPELL_SR_EARTH_SHOCK, false);
+                            me->CastSpell(me->GetVictim(), SPELL_SR_EARTH_SHOCK, TRIGGERED_NONE);
                             Timer[0] = urand(4000, 6000);
                         }
                         break;
                     case CLASS_ROGUE:
                         if (Timer[0] <= diff)
                         {
-                            me->CastSpell(me->GetVictim(), SPELL_SR_HEMORRHAGE, false);
+                            me->CastSpell(me->GetVictim(), SPELL_SR_HEMORRHAGE, TRIGGERED_NONE);
                             Timer[0] = urand(4000, 6000);
                         }
                         break;

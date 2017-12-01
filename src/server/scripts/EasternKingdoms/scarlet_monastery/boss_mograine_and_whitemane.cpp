@@ -197,7 +197,7 @@ public:
                         break;
                     case 7:
                         if (Creature* father = ObjectAccessor::GetCreature(*me, fatherGUID))
-                            father->CastSpell(me, 28697, false); 
+                            father->CastSpell(me, 28697, TRIGGERED_NONE);
                             
                         eventTimer = 2000;
                         break;

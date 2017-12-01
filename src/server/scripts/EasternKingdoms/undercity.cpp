@@ -121,7 +121,7 @@ public:
                 {
                     target->MonsterMoveWithSpeed(target->GetPositionX(), target->GetPositionY(), myZ+15.0,0);
                     target->Relocate(target->GetPositionX(), target->GetPositionY(), myZ+15.0);
-                    summoned->CastSpell(target, SPELL_RIBBON_OF_SOULS, false);
+                    summoned->CastSpell(target, SPELL_RIBBON_OF_SOULS, TRIGGERED_NONE);
                 }
     
                 summoned->SetDisableGravity(true);
@@ -221,7 +221,7 @@ public:
             {
                 LamentEvent = true;
                 DoPlaySoundToSet(me,SOUND_CREDIT);
-                me->CastSpell(me,SPELL_SYLVANAS_CAST,false);
+                me->CastSpell(me,SPELL_SYLVANAS_CAST, TRIGGERED_NONE);
 
                 for(auto & i : HighborneLoc)
                     me->SummonCreature(ENTRY_HIGHBORNE_LAMENTER, i[0], i[1], HIGHBORNE_LOC_Y, i[2], TEMPSUMMON_TIMED_DESPAWN, 160000);
@@ -348,7 +348,7 @@ public:
             if (action == GOSSIP_ACTION_INFO_DEF+1)
             {
                 player->CLOSE_GOSSIP_MENU();
-                me->CastSpell(player,SPELL_MARK_OF_SHAME,false);
+                me->CastSpell(player,SPELL_MARK_OF_SHAME, TRIGGERED_NONE);
             }
             if (action == GOSSIP_ACTION_INFO_DEF+2)
             {

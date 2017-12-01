@@ -258,7 +258,7 @@ public:
         void Reset()
         override {
             ShadowShock_Timer = 1000;
-            me->CastSpell(me, SPELL_INVISIBLE,true);
+            me->CastSpell(me, SPELL_INVISIBLE, TRIGGERED_FULL_MASK);
         }
     
         void EnterCombat(Unit *who)

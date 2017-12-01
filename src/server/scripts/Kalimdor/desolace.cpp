@@ -106,10 +106,10 @@ public:
                     me->GetEntry() == NPC_DYING_KODO ||
                     me->GetEntry() == NPC_ANCIENT_KODO)
                 {
-                    pCaster->CastSpell(pCaster,SPELL_KODO_KOMBO_PLAYER_BUFF,true);
+                    pCaster->CastSpell(pCaster,SPELL_KODO_KOMBO_PLAYER_BUFF, TRIGGERED_FULL_MASK);
 
                     me->UpdateEntry(NPC_TAMED_KODO);
-                    me->CastSpell(me,SPELL_KODO_KOMBO_DESPAWN_BUFF,false);
+                    me->CastSpell(me,SPELL_KODO_KOMBO_DESPAWN_BUFF, TRIGGERED_NONE);
 
                     if (me->GetMotionMaster()->GetCurrentMovementGeneratorType() == WAYPOINT_MOTION_TYPE)
                         me->GetMotionMaster()->MoveIdle();
@@ -131,7 +131,7 @@ public:
             if (pPlayer->HasAuraEffect(SPELL_KODO_KOMBO_PLAYER_BUFF,0) && me->HasAuraEffect(SPELL_KODO_KOMBO_DESPAWN_BUFF,0))
             {    
                 pPlayer->RemoveAurasDueToSpell(SPELL_KODO_KOMBO_PLAYER_BUFF);
-                pPlayer->CastSpell(me, SPELL_KODO_KOMBO_GOSSIP, true);
+                pPlayer->CastSpell(me, SPELL_KODO_KOMBO_GOSSIP, TRIGGERED_FULL_MASK);
 
                 me->RemoveAurasDueToSpell(SPELL_KODO_KOMBO_DESPAWN_BUFF);
                 me->GetMotionMaster()->MoveIdle();    

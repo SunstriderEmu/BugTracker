@@ -87,7 +87,7 @@ public:
             if (pInstance)
                 pInstance->SetData(DATA_BURU_EVENT, IN_PROGRESS);
 
-            me->CastSpell(me, SPELL_THORNS, false);
+            me->CastSpell(me, SPELL_THORNS, TRIGGERED_NONE);
         }
 
         void JustDied(Unit* /*killer*/)
@@ -106,7 +106,7 @@ public:
                 if (dismemberTimer <= diff)
                 {
                     if (me->GetVictim())
-                        me->CastSpell(me->GetVictim(), SPELL_DISMEMBER, false);
+                        me->CastSpell(me->GetVictim(), SPELL_DISMEMBER, TRIGGERED_NONE);
                     dismemberTimer = urand(4000, 10000);
                 }
                 else
@@ -115,7 +115,7 @@ public:
 
             if (gatheringspeedTimer <= diff)
             {
-                me->CastSpell(me, SPELL_GATHERING_SPEED, false);
+                me->CastSpell(me, SPELL_GATHERING_SPEED, TRIGGERED_NONE);
                 gatheringspeedTimer = 9000;
             }
             else
@@ -126,7 +126,7 @@ public:
             {
                 phase = 1;
                 actionDone = true;
-                me->CastSpell(me, SPELL_BURU_TRANSFORM, false);
+                me->CastSpell(me, SPELL_BURU_TRANSFORM, TRIGGERED_NONE);
                 me->RemoveAurasDueToSpell(SPELL_THORNS);
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -136,7 +136,7 @@ public:
             {
                 if (creepingplagueTimer <= diff)
                 {
-                    me->CastSpell(me, SPELL_CREEPING_PLAGUE, false);
+                    me->CastSpell(me, SPELL_CREEPING_PLAGUE, TRIGGERED_NONE);
                     creepingplagueTimer = urand(8000, 15000);
                 }
                 else
@@ -190,8 +190,8 @@ public:
 
         void JustDied(Unit* /*killer*/)
         override {
-            me->CastSpell((Unit*)nullptr, SPELL_EGG_EXPLOSION, false);
-            me->CastSpell(me, SPELL_SUMMON_HIVE_HATCHALING, false);
+            me->CastSpell((Unit*)nullptr, SPELL_EGG_EXPLOSION, TRIGGERED_NONE);
+            me->CastSpell(me, SPELL_SUMMON_HIVE_HATCHALING, TRIGGERED_NONE);
             if (Creature* buru = pInstance->instance->GetCreature(pInstance->GetData64(DATA_BURU)))
                 buru->AI()->AttackStart(SelectTarget(SELECT_TARGET_RANDOM, 1, 100.0f, false));
         }
@@ -221,7 +221,7 @@ public:
         void Reset()
         override {
             DespawnTimer = 2000;
-            me->CastSpell(me, SPELL_BURU_EGG_TRIGGER_EFFECT, false);
+            me->CastSpell(me, SPELL_BURU_EGG_TRIGGER_EFFECT, TRIGGERED_NONE);
         }
 
         void UpdateAI(const uint32 diff)

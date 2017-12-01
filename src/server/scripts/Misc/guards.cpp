@@ -2684,8 +2684,8 @@ public:
                 {
                     if( Unit* temp = ObjectAccessor::GetUnit(*me,playerGUID) )
                     {
-                        temp->CastSpell(temp,SPELL_EXILE,true);
-                        temp->CastSpell(temp,SPELL_BANISH_TELEPORT,true);
+                        temp->CastSpell(temp,SPELL_EXILE, TRIGGERED_FULL_MASK);
+                        temp->CastSpell(temp,SPELL_BANISH_TELEPORT, TRIGGERED_FULL_MASK);
                     }
                     playerGUID = 0;
                     Exile_Timer = 8500;
@@ -2886,8 +2886,8 @@ public:
                 {
                     if( Unit* temp = ObjectAccessor::GetUnit(*me,playerGUID) )
                     {
-                        temp->CastSpell(temp,SPELL_EXILE,true);
-                        temp->CastSpell(temp,SPELL_BANISH_TELEPORT,true);
+                        temp->CastSpell(temp,SPELL_EXILE, TRIGGERED_FULL_MASK);
+                        temp->CastSpell(temp,SPELL_BANISH_TELEPORT, TRIGGERED_FULL_MASK);
                     }
                     playerGUID = 0;
                     Exile_Timer = 8500;

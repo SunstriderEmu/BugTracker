@@ -72,7 +72,7 @@ public:
             if(action == GOSSIP_ACTION_INFO_DEF)
             {
                 player->CLOSE_GOSSIP_MENU();
-                me->CastSpell(player, SPELL_TELEPORT_SINGLE, true);
+                me->CastSpell(player, SPELL_TELEPORT_SINGLE, TRIGGERED_FULL_MASK);
             }
 
             return true;

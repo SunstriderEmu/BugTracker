@@ -137,7 +137,7 @@ public:
                     if (plr->IsWithinMeleeRange(me) && plr->IsAttackableByAOE()) 
                     {
                         DoCast(plr, SPELL_COLD_SLAP);
-                        plr->CastSpell(plr, SPELL_ICE_SPEAR, true);
+                        plr->CastSpell(plr, SPELL_ICE_SPEAR, TRIGGERED_FULL_MASK);
                     }
                 }
             }
@@ -385,7 +385,7 @@ public:
                 {
                     if (plr->IsWithinMeleeRange(me) && plr->IsAttackableByAOE())
                     {
-                        plr->CastSpell(plr, SPELL_ICE_SPEAR, true);
+                        plr->CastSpell(plr, SPELL_ICE_SPEAR, TRIGGERED_FULL_MASK);
                     }
                 }
             }

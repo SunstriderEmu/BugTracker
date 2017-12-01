@@ -86,12 +86,12 @@ public:
             if (action == GOSSIP_ACTION_INFO_DEF+HALLOWEEN_EVENTID && isHalloweenEventActive() && !player->GetAura(SPELL_TRICK_OR_TREATED,0))
             {
                 player->CLOSE_GOSSIP_MENU();
-                player->CastSpell(player, SPELL_TRICK_OR_TREATED, true);
+                player->CastSpell(player, SPELL_TRICK_OR_TREATED, TRIGGERED_FULL_MASK);
 
                 // either trick or treat, 50% chance
                 if(rand()%2)
                 {
-                    player->CastSpell(player, SPELL_TREAT, true);
+                    player->CastSpell(player, SPELL_TREAT, TRIGGERED_FULL_MASK);
                 }
                 else
                 {
@@ -126,7 +126,7 @@ public:
                             trickspell=24723;                       // skeleton costume
                             break;
                     }
-                    player->CastSpell(player, trickspell, true);
+                    player->CastSpell(player, trickspell, TRIGGERED_FULL_MASK);
                 }
                 return true;                                        // prevent Trinity core handling
             }

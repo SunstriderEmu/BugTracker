@@ -781,7 +781,7 @@ void hyjalAI::UpdateAI(const uint32 diff)
     {
         if(MassTeleportTimer < diff && DoMassTeleport)
         {
-            me->CastSpell(me,SPELL_MASS_TELEPORT,false);
+            me->CastSpell(me,SPELL_MASS_TELEPORT, TRIGGERED_NONE);
             DoMassTeleport = false;
         }else MassTeleportTimer -= diff;
         return;
@@ -1006,7 +1006,7 @@ void hyjalAI::WaypointReached(uint32 i, uint32 pathID)
         if(me->GetEntry() == JAINA)
         {
             DoScriptText(EMOTE_MASS_TELEPORT,me);
-            me->CastSpell(me,SPELL_MASS_TELEPORT,false);
+            me->CastSpell(me,SPELL_MASS_TELEPORT, TRIGGERED_NONE);
         }
         if(me->GetEntry() == THRALL && DummyGuid)
         {
@@ -1015,7 +1015,7 @@ void hyjalAI::WaypointReached(uint32 i, uint32 pathID)
             {
                 ((hyjalAI*)(Dummy->ToCreature())->AI())->DoMassTeleport = true;
                 ((hyjalAI*)(Dummy->ToCreature())->AI())->MassTeleportTimer = 20000;
-                Dummy->CastSpell(me,SPELL_MASS_TELEPORT,false);
+                Dummy->CastSpell(me,SPELL_MASS_TELEPORT, TRIGGERED_NONE);
                 DoScriptText(EMOTE_MASS_TELEPORT,Dummy);
             }
         }
@@ -1069,7 +1069,7 @@ void hyjalAI::DoOverrun(uint32 faction, const uint32 diff)
                 {
                     if(creature && creature->IsAlive())
                     {
-                        creature->CastSpell(creature, SPELL_TELEPORT_VISUAL, true);
+                        creature->CastSpell(creature, SPELL_TELEPORT_VISUAL, TRIGGERED_FULL_MASK);
                         creature->SetFaction(FACTION_FRIENDLY);//make them friendly so mobs won't attack them
                         creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     }

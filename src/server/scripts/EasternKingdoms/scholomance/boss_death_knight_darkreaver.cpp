@@ -42,7 +42,7 @@ public:
         override {
             if (me->GetHealth() <= damage)
             {
-                me->CastSpell(me,23261,true);   //Summon Darkreaver's Fallen Charger
+                me->CastSpell(me,23261, TRIGGERED_FULL_MASK);   //Summon Darkreaver's Fallen Charger
             }
         }
     

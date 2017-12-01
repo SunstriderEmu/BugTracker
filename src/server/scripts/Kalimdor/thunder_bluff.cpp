@@ -124,7 +124,7 @@ public:
             ClearGossipMenuFor(player);
             if( action == GOSSIP_SENDER_INFO )
             {
-                player->CastSpell(player, 23123, false);
+                player->CastSpell(player, 23123, TRIGGERED_NONE);
                 player->SEND_GOSSIP_MENU_TEXTID(7014, me->GetGUID() );
             }
             return true;

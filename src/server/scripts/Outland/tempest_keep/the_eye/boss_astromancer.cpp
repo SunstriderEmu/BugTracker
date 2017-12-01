@@ -381,7 +381,7 @@ public:
                         if(Summoned)
                         {
                             Summoned->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                            Summoned->CastSpell(Summoned, SPELL_SPOTLIGHT, false);
+                            Summoned->CastSpell(Summoned, SPELL_SPOTLIGHT, TRIGGERED_NONE);
                         }
                     }
                     AppearDelay = true;

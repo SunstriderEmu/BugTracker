@@ -189,7 +189,7 @@ public:
                             i=3;
                 }
                 if (target)                                     // cast on self (see below)
-                    target->CastSpell(target,SPELL_BURNINGADRENALINE,1);
+                    target->CastSpell(target,SPELL_BURNINGADRENALINE, TRIGGERED_FULL_MASK);
     
                 BurningAdrenalineCaster_Timer = 15000;
             }else BurningAdrenalineCaster_Timer -= diff;
@@ -199,7 +199,7 @@ public:
             {
                 // have the victim cast the spell on himself otherwise the third effect aura will be applied
                 // to Vael instead of the player
-                me->GetVictim()->CastSpell(me->GetVictim(),SPELL_BURNINGADRENALINE,1);
+                me->GetVictim()->CastSpell(me->GetVictim(),SPELL_BURNINGADRENALINE, TRIGGERED_FULL_MASK);
     
                 BurningAdrenalineTank_Timer = 45000;
             }else BurningAdrenalineTank_Timer -= diff;

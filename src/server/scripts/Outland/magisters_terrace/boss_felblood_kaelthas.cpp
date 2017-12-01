@@ -294,7 +294,7 @@ public:
                 if (Player* i_pl = i->GetSource())
                     if(i_pl->IsAlive() && i_pl->IsAttackableByAOE())
                     {
-                        i_pl->CastSpell(i_pl, SPELL_TELEPORT_CENTER, true);
+                        i_pl->CastSpell(i_pl, SPELL_TELEPORT_CENTER, TRIGGERED_FULL_MASK);
                         me->GetNearPoint(me,x,y,z,5,5,0);
                         i_pl->TeleportTo(me->GetMapId(),x,y,LOCATION_Z,i_pl->GetOrientation());
                     }
@@ -312,7 +312,7 @@ public:
                 if (Player* i_pl = i->GetSource())
                     if (i_pl->IsAlive() && i_pl->IsAttackableByAOE())
                     // Knockback into the air
-                        i_pl->CastSpell(i_pl, SPELL_GRAVITY_LAPSE_DOT, true, nullptr, nullptr, me->GetGUID());
+                        i_pl->CastSpell(i_pl, SPELL_GRAVITY_LAPSE_DOT, TRIGGERED_FULL_MASK, nullptr, nullptr, me->GetGUID());
             }
         }
     
@@ -328,7 +328,7 @@ public:
                     if (i_pl->IsAlive() && i_pl->IsAttackableByAOE())
                     {
                         // Also needs an exception in spell system.
-                        i_pl->CastSpell(i_pl, SPELL_GRAVITY_LAPSE_FLY, true, nullptr, nullptr, me->GetGUID());
+                        i_pl->CastSpell(i_pl, SPELL_GRAVITY_LAPSE_FLY, TRIGGERED_FULL_MASK, nullptr, nullptr, me->GetGUID());
                         // Use packet hack
                         WorldPacket data(12);
                         data.SetOpcode(SMSG_MOVE_SET_CAN_FLY);

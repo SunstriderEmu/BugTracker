@@ -178,7 +178,7 @@ public:
                 {
                     if (Unit* pMember = ObjectAccessor::GetUnit(*me, Council[YellCounter]))
                     {
-                        pMember->CastSpell(pMember, SPELL_BERSERK, true);
+                        pMember->CastSpell(pMember, SPELL_BERSERK, TRIGGERED_FULL_MASK);
                         DoScriptText(CouncilEnrage[YellCounter].entry, pMember);
                         EnrageTimer = CouncilEnrage[YellCounter].timer;
                     }
@@ -600,7 +600,7 @@ public:
                 SpellCastResult result = SPELL_CAST_OK;
                 Unit* pUnit = ObjectAccessor::GetUnit((*me), i);
                 if (pUnit)
-                    result = SpellCastResult(pUnit->CastSpell(pUnit, spellid, true, nullptr, nullptr, me->GetGUID()));
+                    result = SpellCastResult(pUnit->CastSpell(pUnit, spellid, TRIGGERED_FULL_MASK, nullptr, nullptr, me->GetGUID()));
     
                 success = success && result == SPELL_CAST_OK;
             }

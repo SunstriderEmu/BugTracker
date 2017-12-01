@@ -52,7 +52,7 @@ public:
         void DamageTaken(Unit *done_by, uint32 &damage)
         override {
             if( me->GetHealth() <= damage )
-                me->CastSpell(me,SPELL_SUMMON_SPIRE_SPIDERLING,true);
+                me->CastSpell(me,SPELL_SUMMON_SPIRE_SPIDERLING, TRIGGERED_FULL_MASK);
         }
     
         void UpdateAI(const uint32 diff)

@@ -103,7 +103,7 @@ public:
                     break;
                 case GOSSIP_ACTION_INFO_DEF+5:
                     player->CLOSE_GOSSIP_MENU();
-                    me->CastSpell(player, 17529, false);
+                    me->CastSpell(player, 17529, TRIGGERED_NONE);
                     break;
             }
             return true;
@@ -298,7 +298,7 @@ public:
             if (action == GOSSIP_ACTION_INFO_DEF + 1)
             {
                 player->CLOSE_GOSSIP_MENU();
-                player->CastSpell(player, SPELL_SCARLET_ILLUSION, false);
+                player->CastSpell(player, SPELL_SCARLET_ILLUSION, TRIGGERED_NONE);
             }
             return true;
 

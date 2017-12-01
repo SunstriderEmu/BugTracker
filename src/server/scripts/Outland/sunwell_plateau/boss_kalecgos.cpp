@@ -108,9 +108,9 @@ public:
             if (player->HasAuraEffect(AURA_SPECTRAL_EXHAUSTION))
                 player->GetSession()->SendNotification(GO_FAILED);
             else {
-                player->CastSpell(player, SPELL_TELEPORT_SPECTRAL, true);
+                player->CastSpell(player, SPELL_TELEPORT_SPECTRAL, TRIGGERED_FULL_MASK);
                 if (player->GetPet()) {
-                    player->GetPet()->CastSpell(player->GetPet(), SPELL_TELEPORT_SPECTRAL, true);
+                    player->GetPet()->CastSpell(player->GetPet(), SPELL_TELEPORT_SPECTRAL, TRIGGERED_FULL_MASK);
                     player->AddAura(AURA_SPECTRAL_REALM, player->GetPet());
                 }
                 player->RemoveAurasDueToSpell(SPELL_ARCANE_BUFFET);
@@ -572,7 +572,7 @@ public:
                     Unit* Kalecgos = ObjectAccessor::GetUnit(*me, KalecgosGUID);
                     if(Kalecgos)
                     {
-                        //Kalecgos->CastSpell(Kalecgos, SPELL_ENRAGE, true);
+                        //Kalecgos->CastSpell(Kalecgos, SPELL_ENRAGE, TRIGGERED_FULL_MASK);
                         Kalecgos->AddAura(SPELL_ENRAGE, Kalecgos);
                         ((boss_kalecgos::boss_kalecgosAI*)(Kalecgos->ToCreature())->AI())->isEnraged = true;
                     }
@@ -711,7 +711,7 @@ void boss_kalecgos::boss_kalecgosAI::UpdateAI(const uint32 diff)
                 Unit* Sath = ObjectAccessor::GetUnit(*me, SathGUID);
                 if (Sath)
                 {
-                    //Sath->CastSpell(Sath, SPELL_ENRAGE, true);
+                    //Sath->CastSpell(Sath, SPELL_ENRAGE, TRIGGERED_FULL_MASK);
                     Sath->AddAura(SPELL_ENRAGE, Sath);
                     ((boss_sathrovarr::boss_sathrovarrAI*)(Sath->ToCreature())->AI())->isEnraged = true;
                 }
@@ -785,7 +785,7 @@ void boss_kalecgos::boss_kalecgosAI::UpdateAI(const uint32 diff)
                 DoCast(target, SPELL_SPECTRAL_BLAST);
                 if (target->ToPlayer() && target->ToPlayer()->GetPet()) {
                     Pet *pet = target->ToPlayer()->GetPet();
-                    target->CastSpell(pet, SPELL_TELEPORT_SPECTRAL, true);
+                    target->CastSpell(pet, SPELL_TELEPORT_SPECTRAL, TRIGGERED_FULL_MASK);
                     target->AddAura(AURA_SPECTRAL_REALM, pet);
                     pet->Relocate(pet->GetPositionX(), pet->GetPositionY(), pet->GetPositionZ(), pet->GetOrientation());
                 }

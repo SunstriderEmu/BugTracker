@@ -374,7 +374,7 @@ public:
         boss_illidan_stormrageAI(Creature* c) : ScriptedAI(c), Summons(me)
         {
             pInstance = ((InstanceScript*)c->GetInstanceScript());
-            me->CastSpell(me, SPELL_DUAL_WIELD, true);
+            me->CastSpell(me, SPELL_DUAL_WIELD, TRIGGERED_FULL_MASK);
         }
 
         InstanceScript* pInstance;
@@ -612,7 +612,7 @@ public:
                         Unit* Glaive = ObjectAccessor::GetUnit((*me), i);
                         if (Glaive)
                         {
-                            Glaive->CastSpell(me, SPELL_GLAIVE_RETURNS, false); // Make it look like the Glaive flies back up to us
+                            Glaive->CastSpell(me, SPELL_GLAIVE_RETURNS, TRIGGERED_NONE); // Make it look like the Glaive flies back up to us
                             Glaive->SetUInt32Value(UNIT_FIELD_DISPLAYID, 11686); // disappear but not die for now
                         }
                     }
@@ -799,7 +799,7 @@ public:
                 case EVENT_PARASITIC_SHADOWFIEND:
                 {
                     if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 150.0, true, true))
-                        me->CastSpell(target, SPELL_PARASITIC_SHADOWFIEND, true);
+                        me->CastSpell(target, SPELL_PARASITIC_SHADOWFIEND, TRIGGERED_FULL_MASK);
                     Timer[EVENT_PARASITIC_SHADOWFIEND] = 35000 + rand() % 10000;
                 }break;
 
@@ -1321,8 +1321,8 @@ public:
                 break;
             case 7: // spirit help
                 DoCast(Channel, SPELL_AKAMA_DOOR_CHANNEL);
-                Spirit[0]->CastSpell(Channel, SPELL_DEATHSWORN_DOOR_CHANNEL,false);
-                Spirit[1]->CastSpell(Channel, SPELL_DEATHSWORN_DOOR_CHANNEL,false);
+                Spirit[0]->CastSpell(Channel, SPELL_DEATHSWORN_DOOR_CHANNEL, TRIGGERED_NONE);
+                Spirit[1]->CastSpell(Channel, SPELL_DEATHSWORN_DOOR_CHANNEL, TRIGGERED_NONE);
                 Timer = 5000;
                 break;
             case 8: //open the gate
@@ -1596,7 +1596,7 @@ void boss_illidan_stormrage::boss_illidan_stormrageAI::HandleTalkSequence()
         if(GETUNIT(Maiev, MaievGUID))
         {
             Maiev->SetVisible(true); // Maiev is now visible
-            Maiev->CastSpell(Maiev, SPELL_TELEPORT_VISUAL, true); // onoz she looks like she teleported!
+            Maiev->CastSpell(Maiev, SPELL_TELEPORT_VISUAL, TRIGGERED_FULL_MASK); // onoz she looks like she teleported!
             Maiev->SetInFront(me); // Have her face us
             me->SetInFront(Maiev); // Face her, so it's not rude =P
             Maiev->GetMotionMaster()->MoveIdle();
@@ -1635,7 +1635,7 @@ void boss_illidan_stormrage::boss_illidan_stormrageAI::HandleTalkSequence()
     case 20: // Make Maiev leave
         if(GETUNIT(Maiev, MaievGUID))
         {
-            Maiev->CastSpell(Maiev, SPELL_TELEPORT_VISUAL, true);
+            Maiev->CastSpell(Maiev, SPELL_TELEPORT_VISUAL, TRIGGERED_FULL_MASK);
             Maiev->SetDeathState(JUST_DIED);
             me->SetUInt32Value(UNIT_FIELD_BYTES_1,PLAYER_STATE_DEAD);
         }
@@ -1699,8 +1699,8 @@ bool boss_illidan_stormrage::boss_illidan_stormrageAI::CastEyeBlast()
 
 void boss_illidan_stormrage::boss_illidan_stormrageAI::SummonMaiev()
 {
-    me->CastSpell(me, SPELL_SHADOW_PRISON, true);
-    me->CastSpell(me, 40403, true);
+    me->CastSpell(me, SPELL_SHADOW_PRISON, TRIGGERED_FULL_MASK);
+    me->CastSpell(me, 40403, TRIGGERED_FULL_MASK);
     if(!MaievGUID) // If Maiev cannot be summoned, reset the encounter and post some errors to the console.
     {
         EnterEvadeMode();
@@ -2072,7 +2072,7 @@ public:
                 /*
                 else if(!me->HasAuraEffect(SPELL_AZZINOTH_CHANNEL, 0))
                 {
-                    Glaive->CastSpell(me, SPELL_AZZINOTH_CHANNEL, false);
+                    Glaive->CastSpell(me, SPELL_AZZINOTH_CHANNEL, TRIGGERED_NONE);
                     me->RemoveAurasDueToSpell(SPELL_FLAME_ENRAGE);
                 } */
             }
@@ -2173,7 +2173,7 @@ public:
             GETCRE(Illidan,IllidanGUID);
             if(Illidan && me->IsWithinDistInMap(Illidan, 3) && (!Illidan->HasAuraEffect(SPELL_CAGED, 0)))
             {
-                Illidan->CastSpell(Illidan, SPELL_CAGED, true);
+                Illidan->CastSpell(Illidan, SPELL_CAGED, TRIGGERED_FULL_MASK);
                 DespawnTimer = 5000;
                 if(Illidan->HasAuraEffect(SPELL_ENRAGE, 0))
                     Illidan->RemoveAurasDueToSpell(SPELL_ENRAGE); // Dispel his enrage
@@ -2190,8 +2190,8 @@ public:
                     Unit* visual = me->SummonCreature(INVISIBLE_DUMMY,tX,tY,z+1,0,TEMPSUMMON_TIMED_DESPAWN,15000);
                     if(visual)
                     {
-                        visual->CastSpell(Illidan,SPELL_CAGE_TRAP_BEAM,true);
-                        Illidan->CastSpell(visual,SPELL_CAGE_TRAP_BEAM,true);
+                        visual->CastSpell(Illidan,SPELL_CAGE_TRAP_BEAM, TRIGGERED_FULL_MASK);
+                        Illidan->CastSpell(visual,SPELL_CAGE_TRAP_BEAM, TRIGGERED_FULL_MASK);
                     }
                 }
             }
@@ -2243,7 +2243,7 @@ public:
         void Reset()
         override {
             TargetGUID = 0;
-            me->CastSpell(me, SPELL_SHADOW_DEMON_PASSIVE, true);
+            me->CastSpell(me, SPELL_SHADOW_DEMON_PASSIVE, TRIGGERED_FULL_MASK);
             SelectRandomTarget();
         }
     
@@ -2352,7 +2352,7 @@ public:
                 if(!me->GetVictim()->HasAuraEffect(SPELL_PARASITIC_SHADOWFIEND, 0)
                     && !me->GetVictim()->HasAuraEffect(SPELL_PARASITIC_SHADOWFIEND2, 0))
                 {
-                    me->CastSpell(me->GetVictim(), SPELL_PARASITIC_SHADOWFIEND2, true, nullptr, nullptr, IllidanGUID); //do not stack
+                    me->CastSpell(me->GetVictim(), SPELL_PARASITIC_SHADOWFIEND2, TRIGGERED_FULL_MASK, nullptr, nullptr, IllidanGUID); //do not stack
                 }
                 me->AttackerStateUpdate(me->GetVictim());
                 me->ResetAttackTimer();
@@ -2409,7 +2409,7 @@ void boss_illidan_stormrage::boss_illidan_stormrageAI::SummonFlamesOfAzzinoth()
                 Flame->SetMeleeDamageSchool(SPELL_SCHOOL_FIRE);
                 FlameGUID[i] = Flame->GetGUID(); // Record GUID in order to check if they're dead later on to move to the next phase
                 ((mob_flame_of_azzinoth::flame_of_azzinothAI*)Flame->AI())->SetGlaiveGUID(GlaiveGUID[i]);
-                Glaive->CastSpell(Flame, SPELL_AZZINOTH_CHANNEL, false); // Glaives do some random Beam type channel on it.
+                Glaive->CastSpell(Flame, SPELL_AZZINOTH_CHANNEL, TRIGGERED_NONE); // Glaives do some random Beam type channel on it.
             }
         }
     }

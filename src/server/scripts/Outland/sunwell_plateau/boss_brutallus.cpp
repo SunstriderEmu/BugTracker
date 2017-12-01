@@ -109,7 +109,7 @@ public:
             Enraged = false;
             //Intro = true; // TODO: RESTORE INTRO IN CONSTRUCTOR AFTER TESTS
     
-            me->CastSpell(me, SPELL_DUAL_WIELD, true);
+            me->CastSpell(me, SPELL_DUAL_WIELD, TRIGGERED_FULL_MASK);
     
             if (pInstance && pInstance->GetData(DATA_BRUTALLUS_EVENT) != DONE)
                 pInstance->SetData(DATA_BRUTALLUS_EVENT, NOT_STARTED);
@@ -278,7 +278,7 @@ public:
             case 5:
             {
                 //((ScriptedAI*)Madrigosa->AI())->AttackStart(me, false);
-                Madrigosa->CastSpell(me, 45203, true);
+                Madrigosa->CastSpell(me, 45203, TRIGGERED_FULL_MASK);
                 IntroPhaseTimer = 800;
                 ++IntroPhase;
                 break;
@@ -290,7 +290,7 @@ public:
             case 10:
             case 11:
             {
-                Madrigosa->CastSpell(me, 44843, true);
+                Madrigosa->CastSpell(me, 44843, TRIGGERED_FULL_MASK);
                 IntroPhaseTimer = 1100;
                 ++IntroPhase;
                 break;
@@ -322,7 +322,7 @@ public:
                 break;
             }
             case 15:
-                Madrigosa->CastSpell(me, SPELL_INTRO_ENCAPSULATE_CHANELLING, true);
+                Madrigosa->CastSpell(me, SPELL_INTRO_ENCAPSULATE_CHANELLING, TRIGGERED_FULL_MASK);
                 DoScriptText(YELL_MADR_TRAP, Madrigosa);
                 DoCast(me, SPELL_INTRO_ENCAPSULATE);
                 IntroPhaseTimer = 11000;
@@ -449,7 +449,7 @@ public:
             {
                 if (Unit *target = SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true)) {
                     if(!target->HasAuraEffect(SPELL_BURN, 0)) {
-                        target->CastSpell(target, SPELL_BURN, true);
+                        target->CastSpell(target, SPELL_BURN, TRIGGERED_FULL_MASK);
                         //BurnTimer = urand(60000,180000);
                         BurnTimer = 20000;
                     }

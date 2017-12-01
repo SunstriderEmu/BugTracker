@@ -98,7 +98,7 @@ public:
             if (minion && minion->IsAlive())
             {
                 DoCast (minion, SPELL_AWAKEN_VAULT_WALKER, flag);
-                minion->CastSpell(minion, SPELL_ARCHAEDAS_AWAKEN,true);
+                minion->CastSpell(minion, SPELL_ARCHAEDAS_AWAKEN, TRIGGERED_FULL_MASK);
             }
         }
     
@@ -347,7 +347,7 @@ public:
             if (!alreadyUsed)
                 altarOfArchaedasCount[altarOfArchaedasCounter++] = player->GetGUID();
 
-            player->CastSpell(player, SPELL_BOSS_OBJECT_VISUAL, false);
+            player->CastSpell(player, SPELL_BOSS_OBJECT_VISUAL, TRIGGERED_NONE);
 
             if (altarOfArchaedasCounter < NUMBER_NEEDED_TO_ACTIVATE) {
                 return false;        // not enough people yet
@@ -496,7 +496,7 @@ public:
             }
             if (!alreadyUsed && altarOfTheKeeperCounter < 5)
                 altarOfTheKeeperCount[altarOfTheKeeperCounter++] = player->GetGUID();
-            player->CastSpell(player, SPELL_BOSS_OBJECT_VISUAL, false);
+            player->CastSpell(player, SPELL_BOSS_OBJECT_VISUAL, TRIGGERED_NONE);
 
             if (altarOfTheKeeperCounter < NUMBER_NEEDED_TO_ACTIVATE)
             {

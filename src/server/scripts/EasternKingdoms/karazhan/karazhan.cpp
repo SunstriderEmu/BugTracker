@@ -192,7 +192,7 @@ public:
                     if (Creature* Spotlight = me->SummonCreature(CREATURE_SPOTLIGHT, x, y, z, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 50000))
                     {
                         Spotlight->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                        Spotlight->CastSpell(Spotlight, SPELL_SPOTLIGHT, false);
+                        Spotlight->CastSpell(Spotlight, SPELL_SPOTLIGHT, TRIGGERED_NONE);
                         SpotlightGUID = Spotlight->GetGUID();
                     }
                     break;
@@ -337,7 +337,7 @@ public:
             if (GameObject* Door = GameObject::GetGameObject((*me), pInstance->GetData64(DATA_GAMEOBJECT_STAGEDOORLEFT)))
                 Door->UseDoorOrButton();
     
-            me->CastSpell(me, SPELL_TUXEDO, true);
+            me->CastSpell(me, SPELL_TUXEDO, TRIGGERED_FULL_MASK);
             me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
     
             Start(false, false, false);
@@ -714,7 +714,7 @@ public:
                 return 10000;
             case 10:
                 if(arca)
-                    me->CastSpell(arca, SPELL_CONFLAGRATION_BLAST, false);
+                    me->CastSpell(arca, SPELL_CONFLAGRATION_BLAST, TRIGGERED_NONE);
                 return 1000;
             case 11:
                 if(arca)
@@ -773,7 +773,7 @@ public:
                 if(FireArcanagosTimer < diff)
                 {
                     if(arca)
-                        arca->CastSpell(me, SPELL_FIRE_BALL, false);
+                        arca->CastSpell(me, SPELL_FIRE_BALL, TRIGGERED_NONE);
                     FireArcanagosTimer = 6000;
                 }else FireArcanagosTimer -= diff;
     
@@ -889,7 +889,7 @@ public:
         bool GossipHello(Player* player) override
         {
             if (rand() % 3 == 1)
-                player->CastSpell(player, RAND(30762, 30763, 30764, 30765, 30766), true);
+                player->CastSpell(player, RAND(30762, 30763, 30764, 30765, 30766), TRIGGERED_FULL_MASK);
 
             return false;
         }

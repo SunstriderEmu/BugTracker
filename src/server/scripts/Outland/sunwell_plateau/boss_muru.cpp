@@ -149,8 +149,8 @@ public:
             blackHoleTimer = 300;
             Visual2 = false;
 
-            me->CastSpell((Unit*)nullptr, SPELL_BLACKHOLE_SPAWN, true);
-            me->CastSpell((Unit*)nullptr, SPELL_BLACKHOLE_SPAWN2, true);
+            me->CastSpell((Unit*)nullptr, SPELL_BLACKHOLE_SPAWN, TRIGGERED_FULL_MASK);
+            me->CastSpell((Unit*)nullptr, SPELL_BLACKHOLE_SPAWN2, TRIGGERED_FULL_MASK);
             me->AddUnitState(UNIT_STATE_STUNNED);
             me->SetReactState(REACT_AGGRESSIVE);
 
@@ -202,7 +202,7 @@ public:
                 {
                     case 0:
                         me->RemoveAura(SPELL_BLACKHOLE_SPAWN2, 1);
-                        me->CastSpell((Unit*)nullptr, SPELL_BLACKHOLE_VISUAL2, true);
+                        me->CastSpell((Unit*)nullptr, SPELL_BLACKHOLE_VISUAL2, TRIGGERED_FULL_MASK);
                         me->ClearUnitState(UNIT_STATE_STUNNED);
                         DoZoneInCombat();
                         phaseTimer = 300;
@@ -242,7 +242,7 @@ public:
                                     {
                                         if (guidPlayerCD[plr->GetGUID()] == 0)
                                         {
-                                            me->CastSpell(plr, SPELL_BLACK_HOLE_EFFECT, false);
+                                            me->CastSpell(plr, SPELL_BLACK_HOLE_EFFECT, TRIGGERED_NONE);
                                             guidPlayerCD[plr->GetGUID()] = 4000; //remove effect in 4 second
                                         }
                                     }
@@ -262,7 +262,7 @@ public:
                                 {
                                     Player* plr = player.GetSource();
                                     if (plr && me->GetDistance(plr) <= 5.0f && plr->IsAttackableByAOE())
-                                        me->CastSpell(plr, SPELL_SINGULARITY, true);
+                                        me->CastSpell(plr, SPELL_SINGULARITY, TRIGGERED_FULL_MASK);
                                 }
                             }
                             SingularityTimer = 1000;
@@ -389,7 +389,7 @@ public:
             switch(summoned->GetEntry())
             {
                 case CREATURE_DARK_FIENDS:
-                    summoned->CastSpell(summoned,SPELL_DARKFIEND_VISUAL,false);
+                    summoned->CastSpell(summoned,SPELL_DARKFIEND_VISUAL, TRIGGERED_NONE);
                     break;
             }
             */
@@ -416,7 +416,7 @@ public:
                 switch (phase)
                 {
                     case 0:
-                        me->CastSpell(me, SPELL_ENTROPIUS_SPAWN, false);
+                        me->CastSpell(me, SPELL_ENTROPIUS_SPAWN, TRIGGERED_NONE);
                         phase = 1;
                         phaseTimer = 3000;
                         break;
@@ -424,7 +424,7 @@ public:
                         me->ClearUnitState(UNIT_STATE_STUNNED);
                         DoZoneInCombat();
                         AttackStart(SelectTarget(SELECT_TARGET_NEAREST, 0, 100.0f, true));
-                        me->CastSpell((Unit*)nullptr, SPELL_NEGATIVE_ENERGY_E, true);
+                        me->CastSpell((Unit*)nullptr, SPELL_NEGATIVE_ENERGY_E, TRIGGERED_FULL_MASK);
                         phase = 2;
                         break;
                 }
@@ -440,7 +440,7 @@ public:
 
             if (EnrageTimer <= diff && !me->HasAuraEffect(SPELL_ENRAGE, 0))
             {
-                me->CastSpell(me, SPELL_ENRAGE, false);
+                me->CastSpell(me, SPELL_ENRAGE, TRIGGERED_NONE);
             } else EnrageTimer -= diff;
 
             if (BlackHoleSummonTimer <= diff)
@@ -452,12 +452,12 @@ public:
                 float rayon = rand() % 25;
                 px = 1816.25f + cos(angle) * rayon;
                 py = 625.484f + sin(angle) * rayon;
-                me->CastSpell(px, py, 71.0f, SPELL_DARKNESS_P2, false);
+                me->CastSpell(px, py, 71.0f, SPELL_DARKNESS_P2, TRIGGERED_NONE);
 
                 Unit* random = SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true);
                 if (!random)
                     return;
-                me->CastSpell(random, SPELL_BLACKHOLE, false);
+                me->CastSpell(random, SPELL_BLACKHOLE, TRIGGERED_NONE);
             } else BlackHoleSummonTimer -= diff;
 
             DoMeleeAttackIfReady();
@@ -533,7 +533,7 @@ public:
 
         void EnterCombat(Unit* /*who*/)
         override {
-            me->CastSpell((Unit*)nullptr, SPELL_NEGATIVE_ENERGY, false);
+            me->CastSpell((Unit*)nullptr, SPELL_NEGATIVE_ENERGY, TRIGGERED_NONE);
 
             if (pInstance)
                 pInstance->SetData(DATA_MURU_EVENT, IN_PROGRESS);
@@ -557,7 +557,7 @@ public:
             switch(summoned->GetEntry())
             {
                 case CREATURE_DARK_FIENDS:
-                    summoned->CastSpell(summoned, SPELL_DARKFIEND_VISUAL, false);
+                    summoned->CastSpell(summoned, SPELL_DARKFIEND_VISUAL, TRIGGERED_NONE);
                     break;
             }
             */
@@ -611,7 +611,7 @@ public:
                 {
                     case 1:
                         me->RemoveAllAuras();
-                        me->CastSpell(me, SPELL_OPEN_ALL_PORTALS, false);
+                        me->CastSpell(me, SPELL_OPEN_ALL_PORTALS, TRIGGERED_NONE);
                         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                         Phase = 2;
                         PhaseTimer = 3000;
@@ -624,7 +624,7 @@ public:
                         PhaseTimer = 3000;
                         break;
                     case 3:
-                        me->CastSpell(me, SPELL_SUMMON_ENTROPIUS, false);
+                        me->CastSpell(me, SPELL_SUMMON_ENTROPIUS, TRIGGERED_NONE);
                         Phase = 4;
                         PhaseTimer = 2000;
                         break;
@@ -671,7 +671,7 @@ public:
                 PhaseTimer -= diff;
 
             if (EnrageTimer <= diff && !me->HasAuraEffect(SPELL_ENRAGE, 0))
-                me->CastSpell(me, SPELL_ENRAGE, false);
+                me->CastSpell(me, SPELL_ENRAGE, TRIGGERED_NONE);
             else
                 EnrageTimer -= diff;
 
@@ -681,7 +681,7 @@ public:
                 {
                     if (!DarkFiend)
                     {
-                        me->CastSpell((Unit*)nullptr, SPELL_DARKNESS_P1, false);
+                        me->CastSpell((Unit*)nullptr, SPELL_DARKNESS_P1, TRIGGERED_NONE);
                         DarknessTimer = 3000;
                         DarkFiend = true;
                     }
@@ -734,7 +734,7 @@ public:
 
                 if (SentinelTimer <= diff)
                 {
-                    if(me->CastSpell((Unit*)nullptr, SPELL_OPEN_PORTAL_2, false) == SPELL_CAST_OK)
+                    if(me->CastSpell((Unit*)nullptr, SPELL_OPEN_PORTAL_2, TRIGGERED_NONE) == SPELL_CAST_OK)
                         SentinelTimer = 30000;
                 }
                 else
@@ -793,10 +793,10 @@ public:
             switch(Spell->Id)
             {
                 case SPELL_OPEN_ALL_PORTALS:
-                    me->CastSpell((Unit*)nullptr, SPELL_OPEN_PORTAL, false);
+                    me->CastSpell((Unit*)nullptr, SPELL_OPEN_PORTAL, TRIGGERED_NONE);
                     break;
                 case SPELL_OPEN_PORTAL_2:
-                    me->CastSpell((Unit*)nullptr, SPELL_OPEN_PORTAL, false);
+                    me->CastSpell((Unit*)nullptr, SPELL_OPEN_PORTAL, TRIGGERED_NONE);
                     SummonSentinel = true;
                     break;
             }
@@ -818,7 +818,7 @@ public:
                     {
                         if (Creature* muru = pInstance->instance->GetCreature(pInstance->GetData64(DATA_MURU)))
                         {
-                            me->CastSpell(muru, switchState ? 46178 : 46208, true);
+                            me->CastSpell(muru, switchState ? 46178 : 46208, TRIGGERED_FULL_MASK);
                             switchState = 1 - switchState;
                         }
                         switchTimer = 500;
@@ -833,7 +833,7 @@ public:
             if (SummonTimer <= diff)
             {
                 if (Creature* summoner = me->FindNearestCreature(CREATURE_SENTINAL_SUMMONER, 100.0f, true))
-                    me->CastSpell(summoner, SPELL_SUMMON_VOID_SENTINEL_VISUAL, false);
+                    me->CastSpell(summoner, SPELL_SUMMON_VOID_SENTINEL_VISUAL, TRIGGERED_NONE);
 
                 SummonTimer = 5000;
                 SummonSentinel = false;
@@ -885,7 +885,7 @@ public:
             switch(Spell->Id)
             {
                 case SPELL_SUMMON_VOID_SENTINEL_VISUAL:
-                    me->CastSpell(me, SPELL_SUMMON_VOID_SENTINEL, false);
+                    me->CastSpell(me, SPELL_SUMMON_VOID_SENTINEL, TRIGGERED_NONE);
                     break;
             }
         }
@@ -941,7 +941,7 @@ public:
             WaitTimer = 3000;
             //DarknessTimer = 3000;
             me->AddUnitState(UNIT_STATE_STUNNED);
-            //me->CastSpell(me,SPELL_VOID_ZONE_PERIODIC,true); //already done via db
+            //me->CastSpell(me,SPELL_VOID_ZONE_PERIODIC, TRIGGERED_FULL_MASK); //already done via db
             
             //DoZoneInCombat(true);
         }
@@ -1029,7 +1029,7 @@ public:
 
         void JustDied(Unit* killer)
         override {
-            me->CastSpell(me,SPELL_DARKFIEND_DEATH_VISUAL,true); //Visuel effect on death
+            me->CastSpell(me,SPELL_DARKFIEND_DEATH_VISUAL, TRIGGERED_FULL_MASK); //Visuel effect on death
         }
 
         void Reset()
@@ -1056,7 +1056,7 @@ public:
                 {
                     case 0:
                         me->ClearUnitState(UNIT_STATE_STUNNED);
-                        me->CastSpell((Unit*)nullptr, SPELL_DARKFIEND_SKIN, false);
+                        me->CastSpell((Unit*)nullptr, SPELL_DARKFIEND_SKIN, TRIGGERED_NONE);
                         DoZoneInCombat();
                         AttackStart(SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true));
                         phase = 1;
@@ -1074,7 +1074,7 @@ public:
                             {
                                 trigger->SetFaction(16);
                                 trigger->SetName("Sombre fiel");
-                                trigger->CastSpell(trigger, SPELL_DARKFIEND_AOE, false);
+                                trigger->CastSpell(trigger, SPELL_DARKFIEND_AOE, TRIGGERED_NONE);
                             }
                             me->DisappearAndDie();
                         }
@@ -1129,7 +1129,7 @@ class npc_void_sentinel : public CreatureScript
         override {
             for (uint8 i = 0; i < 6; ++i)
             {
-                me->CastSpell(me->GetPositionX() + ((2 * rand()%1000) / 1000.0f), me->GetPositionY() + ((2 * rand()%1000) / 1000.0f), me->GetPositionZ(), SPELL_SUMMON_VOID_SPAWN, false);
+                me->CastSpell(me->GetPositionX() + ((2 * rand()%1000) / 1000.0f), me->GetPositionY() + ((2 * rand()%1000) / 1000.0f), me->GetPositionZ(), SPELL_SUMMON_VOID_SPAWN, TRIGGERED_NONE);
             }
         }
 
@@ -1158,7 +1158,7 @@ class npc_void_sentinel : public CreatureScript
 
             if (PulseTimer <= diff)
             {
-                if(me->CastSpell((Unit*)nullptr, SPELL_SHADOW_PULSE, true) == SPELL_CAST_OK)
+                if(me->CastSpell((Unit*)nullptr, SPELL_SHADOW_PULSE, TRIGGERED_FULL_MASK) == SPELL_CAST_OK)
                     PulseTimer = 3000;
             }
             else
@@ -1166,7 +1166,7 @@ class npc_void_sentinel : public CreatureScript
 
             if (VoidBlastTimer <= diff)
             {
-                if(me->CastSpell(me->GetVictim(), SPELL_VOID_BLAST, false) == SPELL_CAST_OK)
+                if(me->CastSpell(me->GetVictim(), SPELL_VOID_BLAST, TRIGGERED_NONE) == SPELL_CAST_OK)
                     VoidBlastTimer = 20000;
             }
             else
@@ -1237,7 +1237,7 @@ class npc_void_spawn : public CreatureScript
 
             if (ShadowBoltVolleyTimer <= diff)
             {
-                me->CastSpell((Unit*)nullptr, SPELL_SHADOW_BOLT_VOLLEY, false);
+                me->CastSpell((Unit*)nullptr, SPELL_SHADOW_BOLT_VOLLEY, TRIGGERED_NONE);
                 ShadowBoltVolleyTimer = 5000;
             }
             else
@@ -1319,7 +1319,7 @@ class npc_berserker : public CreatureScript
                 if (!me->HasAuraEffect(SPELL_FLURRY))
                 {
                     me->InterruptNonMeleeSpells(false);
-                    me->CastSpell(me, SPELL_FLURRY, false);
+                    me->CastSpell(me, SPELL_FLURRY, TRIGGERED_NONE);
                 }
 
                 FuryTimer = urand(20000, 35000);
@@ -1405,7 +1405,7 @@ class npc_mage : public CreatureScript
                 if (!me->HasAuraEffect(SPELL_SPELL_FURY))
                 {
                     me->InterruptNonMeleeSpells(false);
-                    me->CastSpell(me, SPELL_SPELL_FURY, false);
+                    me->CastSpell(me, SPELL_SPELL_FURY, TRIGGERED_NONE);
                 }
 
                 FuryTimer = urand(45000, 55000);
@@ -1415,7 +1415,7 @@ class npc_mage : public CreatureScript
 
             if (FelFireballTimer <= diff)
             {
-                me->CastSpell(me->GetVictim(), SPELL_FEL_FIREBALL, false);
+                me->CastSpell(me->GetVictim(), SPELL_FEL_FIREBALL, TRIGGERED_NONE);
 
                 FelFireballTimer = urand(2000, 3000);
             }

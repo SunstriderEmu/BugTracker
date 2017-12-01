@@ -199,8 +199,8 @@ public:
                 Creature *target = instance->GetCreature(archaedasWallMinion);
                 if (!target || !target->IsAlive() || target->GetFaction() == 14)
                     continue;
-                archaedas->CastSpell(target, SPELL_AWAKEN_VAULT_WALKER, true);
-                target->CastSpell(target, SPELL_ARCHAEDAS_AWAKEN, true);
+                archaedas->CastSpell(target, SPELL_AWAKEN_VAULT_WALKER, TRIGGERED_FULL_MASK);
+                target->CastSpell(target, SPELL_ARCHAEDAS_AWAKEN, TRIGGERED_FULL_MASK);
                 return;        // only want the first one we find
             }
         }
@@ -244,7 +244,7 @@ public:
 
             if (Unit *victim = ObjectAccessor::GetUnit(*archaedas, target))
             {
-                archaedas->CastSpell(archaedas, SPELL_ARCHAEDAS_AWAKEN, false);
+                archaedas->CastSpell(archaedas, SPELL_ARCHAEDAS_AWAKEN, TRIGGERED_NONE);
                 whoWokeArchaedasGUID = target;
             }
         }

@@ -297,7 +297,7 @@ class Boss_Majordomo : public CreatureScript
                         events.RescheduleEvent(EV_CHECK_PHASE, 10000);
                         break;
                     case EV_DOWN:
-                        me->CastSpell(me, SPELL_TELEPORT, true);
+                        me->CastSpell(me, SPELL_TELEPORT, TRIGGERED_FULL_MASK);
                         setPhase(NOT_VISIBLE);
                         DoScriptText(SAY_DEFEAT, me);
                         break;
@@ -326,7 +326,7 @@ class Boss_Majordomo : public CreatureScript
                 }
                 case EV_TELEPORT:
                     if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true))
-                        me->CastSpell(target, SPELL_TELEPORT, true);
+                        me->CastSpell(target, SPELL_TELEPORT, TRIGGERED_FULL_MASK);
 
                     events.RescheduleEvent(EV_TELEPORT, 30000);
                     break;
@@ -442,7 +442,7 @@ class Mob_FlameWalker_Healer : public CreatureScript
                 else
                 {
                     if (domoAI->guardCount <= 4 && !me->HasAuraEffect(SPELL_SEPARATION_ANXIETY, 0))
-                        me->CastSpell(me, SPELL_SEPARATION_ANXIETY, true);
+                        me->CastSpell(me, SPELL_SEPARATION_ANXIETY, TRIGGERED_FULL_MASK);
                 }
             
                 events.Update(diff);
@@ -525,7 +525,7 @@ class Mob_FlameWalker_Elite : public CreatureScript
                 else
                 {
                     if (domoAI->guardCount <= 4 && !me->HasAuraEffect(SPELL_SEPARATION_ANXIETY, 0))
-                        me->CastSpell(me, SPELL_SEPARATION_ANXIETY, true);
+                        me->CastSpell(me, SPELL_SEPARATION_ANXIETY, TRIGGERED_FULL_MASK);
 
                     if (Creature* domo = _instance->instance->GetCreature(_instance->GetData64(DATA_MAJORDOMO)))
                         domo->GetThreatManager().AddThreat(me->GetVictim(), 0);
@@ -605,7 +605,7 @@ class Mob_Hot_Coal : public CreatureScript
                             if (Player* i_pl = i.GetSource())
                                 if (i_pl->IsAlive() && i_pl->IsAttackableByAOE() && i_pl->GetDistance(CaolLocation.x, CaolLocation.y, CaolLocation.z) <= 8)
                                 {
-                                    me->CastSpell(i_pl, SPELL_HOTCOAL, true);
+                                    me->CastSpell(i_pl, SPELL_HOTCOAL, TRIGGERED_FULL_MASK);
                                     i_pl->CombatStop(true);
                                 }
                         }

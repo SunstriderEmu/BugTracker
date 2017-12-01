@@ -75,7 +75,7 @@ public:
             {
                 //Cast
                 // DoCast(me->GetVictim(),SPELL_CSLUMBER);
-                me->CastSpell(me->GetVictim(),SPELL_CSLUMBER, true);
+                me->CastSpell(me->GetVictim(),SPELL_CSLUMBER, TRIGGERED_FULL_MASK);
     
                 //Stop attacking target thast asleep and pick new target
                 Cslumber_Timer = 28000;

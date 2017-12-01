@@ -440,7 +440,7 @@ public:
                     enfeeble_targets[i] = target->GetGUID();
                     enfeeble_health[i] = target->GetHealth();
     
-                    //target->CastSpell(target, SPELL_ENFEEBLE, true, 0, 0, me->GetGUID());
+                    //target->CastSpell(target, SPELL_ENFEEBLE, TRIGGERED_FULL_MASK, 0, 0, me->GetGUID());
                     target->AddAura(SPELL_ENFEEBLE, target);
                     target->SetHealth(1);
                 }
@@ -496,7 +496,7 @@ public:
                     DoScriptText(SAY_AXE_TOSS1, me);
     
                     //passive thrash aura
-                    me->CastSpell(me, SPELL_THRASH_AURA, true);
+                    me->CastSpell(me, SPELL_THRASH_AURA, TRIGGERED_FULL_MASK);
     
                     //weapons
                     me->SetWeapon(WEAPON_SLOT_MAINHAND, AXE_EQUIP_MODEL, ITEM_SUBCLASS_WEAPON_AXE, INVTYPE_WEAPON);
@@ -743,7 +743,7 @@ public:
             {
                 SummonInfernal();
                 me->SetUInt32Value(UNIT_FIELD_DISPLAYID, me->GetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID));
-                me->CastSpell(me,SPELL_INFERAL_LAND_VISUAL,true);
+                me->CastSpell(me,SPELL_INFERAL_LAND_VISUAL, TRIGGERED_FULL_MASK);
             }
         }
     };

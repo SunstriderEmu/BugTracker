@@ -57,7 +57,7 @@ public:
         override {
             if (summoned && summoned->GetEntry() == ENTRY_FOCUS_FIRE)
             {
-                summoned->CastSpell(summoned,SPELL_FOCUS_FIRE_VISUAL,false);
+                summoned->CastSpell(summoned,SPELL_FOCUS_FIRE_VISUAL, TRIGGERED_NONE);
                 summoned->SetFaction(me->GetFaction());
                 summoned->SetLevel(me->GetLevel());
                 summoned->AddUnitState(UNIT_STATE_ROOT);

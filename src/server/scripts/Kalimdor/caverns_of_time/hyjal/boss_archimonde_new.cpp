@@ -167,7 +167,7 @@ public:
             _instance = ((InstanceScript*)creature->GetInstanceScript());
             _refreshTimer = DOOMFIRE_REFRESHTIMER;
             _lifeTime = DOOMFIRE_DESPAWNTIME;
-            me->CastSpell(me, SPELL_DOOMFIRE_VISUAL, true);
+            me->CastSpell(me, SPELL_DOOMFIRE_VISUAL, TRIGGERED_FULL_MASK);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         }
 
@@ -207,8 +207,8 @@ public:
                 {
                     if (i_pl->IsAlive() && i_pl->IsAttackableByAOE() && i_pl->GetDistance(me) <= 3)
                     {
-                        //i_pl->CastSpell(i_pl, SPELL_DOOMFIRE_DAMAGE, true, 0, 0, _archimondeGUID); 
-                        i_pl->CastSpell(i_pl, SPELL_DOOMFIRE_DAMAGE, true);
+                        //i_pl->CastSpell(i_pl, SPELL_DOOMFIRE_DAMAGE, TRIGGERED_FULL_MASK, 0, 0, _archimondeGUID); 
+                        i_pl->CastSpell(i_pl, SPELL_DOOMFIRE_DAMAGE, TRIGGERED_FULL_MASK);
                         //soulcharges seems to be gained correctly.
                     }
                 }
@@ -254,7 +254,7 @@ public:
             _LastY = 0;
             _SummonTimer = DOOMFIRE_SUMMONTIMER;
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            me->CastSpell(me, SPELL_DOOMFIRE_SPAWN, true);
+            me->CastSpell(me, SPELL_DOOMFIRE_SPAWN, TRIGGERED_FULL_MASK);
             _archimondeGUID = 0;
             _Archimonde = nullptr;
 
@@ -528,17 +528,17 @@ public:
                 case CLASS_PRIEST:
                 case CLASS_PALADIN:
                 case CLASS_WARLOCK:
-                    me->CastSpell(me, SPELL_SOUL_CHARGE_RED, true);
+                    me->CastSpell(me, SPELL_SOUL_CHARGE_RED, TRIGGERED_FULL_MASK);
                     break;
                 case CLASS_MAGE:
                 case CLASS_ROGUE:
                 case CLASS_WARRIOR:
-                    me->CastSpell(me, SPELL_SOUL_CHARGE_YELLOW, true);
+                    me->CastSpell(me, SPELL_SOUL_CHARGE_YELLOW, TRIGGERED_FULL_MASK);
                     break;
                 case CLASS_DRUID:
                 case CLASS_SHAMAN:
                 case CLASS_HUNTER:
-                    me->CastSpell(me, SPELL_SOUL_CHARGE_GREEN, true);
+                    me->CastSpell(me, SPELL_SOUL_CHARGE_GREEN, TRIGGERED_FULL_MASK);
                     break;
                 }
             }
@@ -610,7 +610,7 @@ public:
                     if (Creature* trigger = me->SummonCreature(CREATURE_CHANNEL_TARGET, NORDRASSIL_X, NORDRASSIL_Y, NORDRASSIL_Z, 0, TEMPSUMMON_TIMED_DESPAWN, 2000)) {
                         trigger->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                         trigger->SetUInt32Value(UNIT_FIELD_DISPLAYID, 11686);
-                        trigger->CastSpell(me, SPELL_DRAIN_WORLD_TREE_2, true);
+                        trigger->CastSpell(me, SPELL_DRAIN_WORLD_TREE_2, TRIGGERED_FULL_MASK);
                     }
                     
                     me->RemoveAurasDueToSpell(SPELL_SOUL_CHARGE_YELLOW);
@@ -631,7 +631,7 @@ public:
             if (me->IsBelowHPPercent(10.0f) && !_under10Percent) {
                 _under10Percent = true;
                 events.RescheduleEvent(EV_UNDER_10_PERCENT2, 1000);
-                me->CastSpell(me->GetVictim(), SPELL_PROTECTION_OF_ELUNE, true);
+                me->CastSpell(me->GetVictim(), SPELL_PROTECTION_OF_ELUNE, TRIGGERED_FULL_MASK);
             }
                 
             events.Update(diff);
@@ -722,7 +722,7 @@ public:
                     }
                         
                     Trinity::Containers::RandomResize(unleashSpells, 1);
-                    me->CastSpell(me->GetVictim(), unleashSpells.front(), true);
+                    me->CastSpell(me->GetVictim(), unleashSpells.front(), TRIGGERED_FULL_MASK);
                     
                     events.RescheduleEvent(EV_UNLEASH_SOULCHARGE, urand(2000, 10000));
                     switch (unleashSpells.front()) {

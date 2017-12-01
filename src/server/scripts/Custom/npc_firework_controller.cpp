@@ -150,7 +150,7 @@ public:
                     c->SetDisplayId(11686); //invisible model
                     c->SetDisableGravity(true);
                     c->SetFloatValue(OBJECT_FIELD_SCALE_X, event->size);
-                    c->CastSpell(c,event->spellorGobId,true);
+                    c->CastSpell(c,event->spellorGobId, TRIGGERED_FULL_MASK);
                 }
             } else {
                 if(GameObject* gob = me->SummonGameObject(event->spellorGobId,Position(x,y,z,event->ori), G3D::Quat(event->morphX,event->morphY,0,0),0))

@@ -199,7 +199,7 @@ public:
             if(pInstance)
                 pInstance->SetData(DATA_FELMYST_EVENT, NOT_STARTED);
 
-            me->CastSpell((Unit*)nullptr, SPELL_TRANSFORM_FELMYST, true);
+            me->CastSpell((Unit*)nullptr, SPELL_TRANSFORM_FELMYST, TRIGGERED_FULL_MASK);
 
             if (pInstance)
             {
@@ -211,14 +211,14 @@ public:
                         if (Player* plr = player.GetSource())
                         {
                             if (plr->HasAuraEffect(SPELL_FOG_CHARM))
-                                plr->CastSpell(plr, SPELL_SOUL_SEVER, true);
+                                plr->CastSpell(plr, SPELL_SOUL_SEVER, TRIGGERED_FULL_MASK);
                         }
                     }
                 }
             }
 
             me->RemoveAurasDueToSpell(AURA_SUNWELL_RADIANCE);
-            me->CastSpell(me, AURA_SUNWELL_RADIANCE, true);
+            me->CastSpell(me, AURA_SUNWELL_RADIANCE, TRIGGERED_FULL_MASK);
         }
 
         void setPhase(uint32 newPhase)
@@ -281,7 +281,7 @@ public:
             if (pInstance)
                 pInstance->SetData(DATA_FELMYST_EVENT, IN_PROGRESS);
 
-            me->CastSpell(me, AURA_NOXIOUS_FUMES, true);
+            me->CastSpell(me, AURA_NOXIOUS_FUMES, TRIGGERED_FULL_MASK);
 
             if (pInstance)
             {
@@ -326,7 +326,7 @@ public:
             if(summoned->GetEntry() == MOB_DEAD)
             {
                 summoned->AI()->AttackStart(SelectTarget(SELECT_TARGET_RANDOM, 0));
-                summoned->CastSpell(summoned, SPELL_DEAD_PASSIVE, true);
+                summoned->CastSpell(summoned, SPELL_DEAD_PASSIVE, TRIGGERED_FULL_MASK);
             }
             else if (summoned->GetEntry() == MOB_VAPOR)
                 me->SetTarget(summoned->GetGUID());
@@ -502,7 +502,7 @@ public:
                         else
                             me->GetMotionMaster()->MovePoint(2, rights[chosenLane][0], rights[chosenLane][1], rights[chosenLane][2],false);
 
-                        me->CastSpell(me, SPELL_FOG_BREATH, false);
+                        me->CastSpell(me, SPELL_FOG_BREATH, TRIGGERED_NONE);
                         flightPhaseTimer = 1500;
                         flightPhase++;
                         break;
@@ -611,20 +611,20 @@ public:
                 case 0:
                     break;
                 case EVENT_CLEAVE:
-                    if(me->CastSpell(me->GetVictim(), SPELL_CLEAVE, false) == SPELL_CAST_OK)
+                    if(me->CastSpell(me->GetVictim(), SPELL_CLEAVE, TRIGGERED_NONE) == SPELL_CAST_OK)
                         events.RescheduleEvent(EVENT_CLEAVE, urand(5000, 10000), 0, PHASE_GROUND);
                     break;
                 case EVENT_CORROSION:
-                    if(me->CastSpell(me->GetVictim(), SPELL_CORROSION, false) == SPELL_CAST_OK)
+                    if(me->CastSpell(me->GetVictim(), SPELL_CORROSION, TRIGGERED_NONE) == SPELL_CAST_OK)
                         events.RescheduleEvent(EVENT_CORROSION, urand(20000, 30000), 0, PHASE_GROUND);
                     break;
                 case EVENT_GAS_NOVA:
-                    if(me->CastSpell(me, SPELL_GAS_NOVA, false) == SPELL_CAST_OK)
+                    if(me->CastSpell(me, SPELL_GAS_NOVA, TRIGGERED_NONE) == SPELL_CAST_OK)
                         events.RescheduleEvent(EVENT_GAS_NOVA, urand(21000, 26000), 0, PHASE_GROUND);
                     break;
                 case EVENT_ENCAPSULATE:
                     if(encapsTarget)
-                        if (me->CastSpell(encapsTarget, SPELL_ENCAPSULATE_CHANNEL, false) == SPELL_CAST_OK)
+                        if (me->CastSpell(encapsTarget, SPELL_ENCAPSULATE_CHANNEL, TRIGGERED_NONE) == SPELL_CAST_OK)
                         {
 
                             phase = PHASE_GROUND;
@@ -648,13 +648,13 @@ public:
                     if (!me->HasAuraEffect(SPELL_BERSERK))
                     {
                         DoScriptText(YELL_BERSERK, me);
-                        me->CastSpell(me, SPELL_BERSERK, true);
+                        me->CastSpell(me, SPELL_BERSERK, TRIGGERED_FULL_MASK);
                     }
                     events.RescheduleEvent(EVENT_BERSERK, 10000);
                     break;
                 case EVENT_DEMONIC_VAPOR:
                     if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 150, true)) //useless here ? The spell should do the random itself
-                        me->CastSpell(me, SPELL_VAPOR_SELECT, true);
+                        me->CastSpell(me, SPELL_VAPOR_SELECT, TRIGGERED_FULL_MASK);
 
                     demonicCount++;
                     if (demonicCount >= 2)
@@ -720,8 +720,8 @@ public:
         override {
             startFollow = true;
             DoZoneInCombat();
-            me->CastSpell((Unit*)nullptr, SPELL_VAPOR_FORCE, true);
-            me->CastSpell(me, SPELL_VAPOR_TRIGGER, true);
+            me->CastSpell((Unit*)nullptr, SPELL_VAPOR_FORCE, TRIGGERED_FULL_MASK);
+            me->CastSpell(me, SPELL_VAPOR_TRIGGER, TRIGGERED_FULL_MASK);
         }
 
         void UpdateAI(uint32 const /*diff*/)
@@ -771,7 +771,7 @@ public:
             events.RescheduleEvent(EVENT_DEAD, urand(7000, 8000));
 
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            me->CastSpell((Unit*)nullptr, SPELL_TRAIL_TRIGGER, true);
+            me->CastSpell((Unit*)nullptr, SPELL_TRAIL_TRIGGER, TRIGGERED_FULL_MASK);
             me->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 0.01); // core bug
         }
 
@@ -794,7 +794,7 @@ public:
                     break;
                 case EVENT_DEAD:
                     events.CancelEvent(EVENT_DEAD);
-                    me->CastSpell((Unit*)nullptr, SPELL_DEAD_SUMMON, true);
+                    me->CastSpell((Unit*)nullptr, SPELL_DEAD_SUMMON, TRIGGERED_FULL_MASK);
                     me->DisappearAndDie();
                     break;
             }
@@ -832,7 +832,7 @@ public:
                 me->GetThreatManager().AddThreat(target,500.0f);
                 AttackStart(target);
             }
-            me->CastSpell((Unit*)nullptr, SPELL_DEAD_PASSIVE, true);
+            me->CastSpell((Unit*)nullptr, SPELL_DEAD_PASSIVE, TRIGGERED_FULL_MASK);
         }
 
         void UpdateAI(const uint32 diff)

@@ -355,7 +355,7 @@ public:
                             me->StopMoving();
     
                             //Actual dark glare cast, maybe something missing here?
-                            me->CastSpell(me, SPELL_DARK_GLARE, false);
+                            me->CastSpell(me, SPELL_DARK_GLARE, TRIGGERED_NONE);
     
                             //Increase tick
                             DarkGlareTick++;
@@ -785,7 +785,7 @@ public:
                             //Set target in stomach
                             Stomach_Map[target->GetGUID()] = true;
                             target->InterruptNonMeleeSpells(false);
-                            target->CastSpell(target, SPELL_MOUTH_TENTACLE, true, nullptr, nullptr, me->GetGUID());
+                            target->CastSpell(target, SPELL_MOUTH_TENTACLE, TRIGGERED_FULL_MASK, nullptr, nullptr, me->GetGUID());
                             StomachEnterTarget = target->GetGUID();
                             StomachEnterVisTimer = 3800;
                         }

@@ -165,7 +165,7 @@ public:
                 for(auto target : targetList)
                 {
                     AttractionTargetGUID[i] = target->GetGUID();
-                    target->CastSpell(target, SPELL_TELEPORT_VISUAL, true);
+                    target->CastSpell(target, SPELL_TELEPORT_VISUAL, TRIGGERED_FULL_MASK);
                     DoCast(target,SPELL_ATTRACTION_VIS,true);
                     DoTeleportPlayer(target, pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), target->GetOrientation());
                     i++;
@@ -291,7 +291,7 @@ public:
                                  continue;
                             }
                         }
-                        p[i]->CastSpell((Unit*)nullptr,SPELL_ATTRACTION,true);
+                        p[i]->CastSpell((Unit*)nullptr,SPELL_ATTRACTION, TRIGGERED_FULL_MASK);
                         clear = false;
                     }
                 }

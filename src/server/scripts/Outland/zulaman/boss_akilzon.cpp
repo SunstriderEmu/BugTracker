@@ -106,7 +106,7 @@ public:
             if(TargetGUID)
             {
                 if(Unit* target = ObjectAccessor::GetUnit(*me, TargetGUID))
-                    me->CastSpell(target, SPELL_EAGLE_SWOOP, true);
+                    me->CastSpell(target, SPELL_EAGLE_SWOOP, TRIGGERED_FULL_MASK);
                 TargetGUID = 0;
                 me->SetSpeedRate(MOVE_RUN, 1.2f);
                 EagleSwoop_Timer = 5000 + rand()%5000;
@@ -307,7 +307,7 @@ public:
                 {
                     if(Cloud->GetDistance2d(*i)>= 6)
                     {
-                        Cloud->CastCustomSpell(*i, 43137, &bp0, NULL, NULL, true, 0, 0, me->GetGUID());
+                        Cloud->CastCustomSpell(*i, 43137, &bp0, NULL, NULL, TRIGGERED_FULL_MASK, 0, 0, me->GetGUID());
                     }
                 }*/
                 Map::PlayerList const& players = pInstance->instance->GetPlayers();
@@ -320,7 +320,7 @@ public:
                     if (Player* plr = player.GetSource()) 
                     {
                         if (Cloud->GetDistance2d(plr) >= 6 && plr->IsAttackableByAOE())
-                            Cloud->CastCustomSpell(plr, 43137, &bp0, nullptr, nullptr, true, nullptr, nullptr, me->GetGUID());
+                            Cloud->CastCustomSpell(plr, 43137, &bp0, nullptr, nullptr, TRIGGERED_FULL_MASK, nullptr, nullptr, me->GetGUID());
                     }
                 }
                 // visual
@@ -338,7 +338,7 @@ public:
                         trigger->SetHealth(100000);
                         trigger->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                         if (Cloud)
-                            Cloud->CastCustomSpell(trigger, 43137, &bp0, NULL, NULL,true, 0, 0, Cloud->GetGUID());
+                            Cloud->CastCustomSpell(trigger, 43137, &bp0, NULL, NULL, TRIGGERED_FULL_MASK, 0, 0, Cloud->GetGUID());
                     }
                 }*/
             }
@@ -371,7 +371,7 @@ public:
                     return;
                 }
                 else if(Unit* Cyclone = ObjectAccessor::GetUnit(*me, CycloneGUID))
-                    Cyclone->CastSpell(target, 25160, true); // keep casting or...
+                    Cyclone->CastSpell(target, 25160, TRIGGERED_FULL_MASK); // keep casting or...
     
                 if(StormSequenceTimer < diff) {
                     HandleStormSequence(target);
@@ -382,7 +382,7 @@ public:
             if (Enrage_Timer < diff) {
                 me->Yell(SAY_ONENRAGE, LANG_UNIVERSAL, nullptr);
                 DoPlaySoundToSet(me, SOUND_ONENRAGE);
-                me->CastSpell(me, SPELL_BERSERK, true);
+                me->CastSpell(me, SPELL_BERSERK, TRIGGERED_FULL_MASK);
                 Enrage_Timer = 600000;
             }else Enrage_Timer -= diff;
     
@@ -390,7 +390,7 @@ public:
                 Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 150.0, true, true);
                 if(!target) target = me->GetVictim();
                 TargetGUID = target->GetGUID();
-                me->CastSpell(target, SPELL_STATIC_DISRUPTION, false);
+                me->CastSpell(target, SPELL_STATIC_DISRUPTION, TRIGGERED_NONE);
                 /*Unit *target = NULL;
                 std::list<HostileReference *> t_list = me->GetThreatManager().getThreatList();
                 for(std::list<HostileReference *>::iterator itr = t_list.begin(); itr!= t_list.end(); ++itr) {
@@ -433,8 +433,8 @@ public:
                     EnterEvadeMode();
                     return;
                 }
-                target->CastSpell(target, 44007, true);//cloud visual
-                me->CastSpell(target, SPELL_ELECTRICAL_STORM, false);//storm cyclon + visual
+                target->CastSpell(target, 44007, TRIGGERED_FULL_MASK);//cloud visual
+                me->CastSpell(target, SPELL_ELECTRICAL_STORM, TRIGGERED_NONE);//storm cyclon + visual
                 float x,y,z;
                 target->GetPosition(x,y,z);
                 if (target)

@@ -95,8 +95,8 @@ struct EredarTwin : public ScriptedAI
                 if(target->HasAuraEffect(SPELL_DARK_TOUCHED, 0))
                 {
                     target->RemoveAurasDueToSpell(SPELL_DARK_TOUCHED);
-                    target->CastSpell(target, SPELL_DARK_FLAME, true);
-                }else target->CastSpell(target, SPELL_FLAME_TOUCHED, true);
+                    target->CastSpell(target, SPELL_DARK_FLAME, TRIGGERED_FULL_MASK);
+                }else target->CastSpell(target, SPELL_FLAME_TOUCHED, TRIGGERED_FULL_MASK);
             }
             break;
         case SPELL_DARK_TOUCHED:
@@ -105,8 +105,8 @@ struct EredarTwin : public ScriptedAI
                 if(target->HasAuraEffect(SPELL_FLAME_TOUCHED, 0))
                 {
                     target->RemoveAurasDueToSpell(SPELL_FLAME_TOUCHED);
-                    target->CastSpell(target, SPELL_DARK_FLAME, true);
-                }else target->CastSpell(target, SPELL_DARK_TOUCHED, true);
+                    target->CastSpell(target, SPELL_DARK_FLAME, TRIGGERED_FULL_MASK);
+                }else target->CastSpell(target, SPELL_DARK_TOUCHED, TRIGGERED_FULL_MASK);
             }
             break;
         }
@@ -127,7 +127,7 @@ struct EredarTwin : public ScriptedAI
             HandleTouchedSpells(target, SPELL_FLAME_TOUCHED);
             break;
         case SPELL_BLAZE:
-            me->CastSpell(target, SPELL_BLAZE_SUMMON, true);
+            me->CastSpell(target, SPELL_BLAZE_SUMMON, TRIGGERED_FULL_MASK);
             break;
         }
     }
@@ -637,8 +637,8 @@ public:
                     if(target->HasAuraEffect(SPELL_FLAME_TOUCHED, 0))
                     {
                         target->RemoveAurasDueToSpell(SPELL_FLAME_TOUCHED);
-                        target->CastSpell(target, SPELL_DARK_FLAME, true);
-                    }else target->CastSpell(target,SPELL_DARK_TOUCHED,true);
+                        target->CastSpell(target, SPELL_DARK_FLAME, TRIGGERED_FULL_MASK);
+                    }else target->CastSpell(target,SPELL_DARK_TOUCHED, TRIGGERED_FULL_MASK);
                 }
                 break;
             }

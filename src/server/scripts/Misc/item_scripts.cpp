@@ -584,7 +584,7 @@ public:
             if (pPlayer->HasItemCount(ITEM_TAINTED_MEAT, 1, false))
             {
                 uint32 spell_id = roll_chance_i(50) ? 29277 : 29278;
-                pPlayer->CastSpell(pPlayer, spell_id, true, nullptr);
+                pPlayer->CastSpell(pPlayer, spell_id, TRIGGERED_FULL_MASK, nullptr);
                 pPlayer->DestroyItemCount(ITEM_TAINTED_MEAT, 1, true, false);
 
                 return false;
@@ -642,7 +642,7 @@ public:
     {
         if (Unit* target = ObjectAccessor::GetUnit(*player, player->GetTarget())) {
             if (!target->IsFriendlyTo(player)) {
-                player->CastSpell(target, 31367, false);
+                player->CastSpell(target, 31367, TRIGGERED_NONE);
                 //player->DestroyItemCount(item->GetEntry(), 1, true);
             }
         }

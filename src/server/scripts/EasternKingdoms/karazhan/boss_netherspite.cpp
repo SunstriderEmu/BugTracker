@@ -223,7 +223,7 @@ public:
                         // remove currently beaming portal
                         if(Creature *beamer = ObjectAccessor::GetCreature(*portal, BeamerGUID[j]))
                         {
-                            beamer->CastSpell(target, PortalBeam[j], false);
+                            beamer->CastSpell(target, PortalBeam[j], TRIGGERED_NONE);
                             beamer->SetVisible(false);
                             beamer->DealDamage(beamer, beamer->GetMaxHealth());
                             beamer->RemoveFromWorld();
@@ -232,7 +232,7 @@ public:
                         // create new one and start beaming on the target
                         if(Creature *beamer = portal->SummonCreature(PortalID[j],portal->GetPositionX(),portal->GetPositionY(),portal->GetPositionZ(),portal->GetOrientation(),TEMPSUMMON_TIMED_DESPAWN,60000))
                         {
-                            beamer->CastSpell(target, PortalBeam[j], false);
+                            beamer->CastSpell(target, PortalBeam[j], TRIGGERED_NONE);
                             BeamerGUID[j] = beamer->GetGUID();
                         }
                     }

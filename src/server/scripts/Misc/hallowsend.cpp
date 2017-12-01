@@ -129,7 +129,7 @@ public:
 
         bool GossipHello(Player* player) override
         {
-            player->CastSpell(player, 24705, true);
+            player->CastSpell(player, 24705, TRIGGERED_FULL_MASK);
 
             return true;
         }

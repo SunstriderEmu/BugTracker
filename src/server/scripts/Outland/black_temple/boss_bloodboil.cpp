@@ -293,7 +293,7 @@ public:
                         /*if(me->GetThreat(target))
                             DoModifyThreatPercent(target, -100);*/
                         me->GetThreatManager().AddThreat(target, 50000000.0f);
-                        target->CastSpell(me, SPELL_TAUNT_GURTOGG, true);
+                        target->CastSpell(me, SPELL_TAUNT_GURTOGG, TRIGGERED_FULL_MASK);
                         me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
                         me->ApplySpellImmune(0, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
                         

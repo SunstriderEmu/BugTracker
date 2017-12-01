@@ -74,7 +74,7 @@ public:
             if(action == GOSSIP_ACTION_INFO_DEF)
             {
                 player->CLOSE_GOSSIP_MENU();
-                me->CastSpell(player, 42711, true);
+                me->CastSpell(player, 42711, TRIGGERED_FULL_MASK);
             }
 
             return true;

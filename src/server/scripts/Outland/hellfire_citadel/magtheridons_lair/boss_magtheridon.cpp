@@ -103,7 +103,7 @@ public:
             override {
             if (trigger == 2 && spell->Id == SPELL_BLAZE_TARGET)
             {
-                me->CastSpell(me, SPELL_BLAZE_TRAP, true);
+                me->CastSpell(me, SPELL_BLAZE_TRAP, TRIGGERED_FULL_MASK);
                 me->SetVisible(false);
                 Despawn_Timer = 130000;
             }
@@ -116,7 +116,7 @@ public:
             if (trigger == 1) //debris
             {
                 me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                me->CastSpell(me, SPELL_DEBRIS_VISUAL, true);
+                me->CastSpell(me, SPELL_DEBRIS_VISUAL, TRIGGERED_FULL_MASK);
                 FireBlast_Timer = 5000;
                 Despawn_Timer = 10000;
             }
@@ -134,7 +134,7 @@ public:
                 {
                     if (FireBlast_Timer < diff)
                     {
-                        me->CastSpell(me, SPELL_DEBRIS_DAMAGE, true);
+                        me->CastSpell(me, SPELL_DEBRIS_DAMAGE, TRIGGERED_FULL_MASK);
                         trigger = 3;
                     }
                     else FireBlast_Timer -= diff;
@@ -223,7 +223,7 @@ public:
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
             me->AddUnitState(UNIT_STATE_STUNNED);
-            me->CastSpell(me, SPELL_SHADOW_CAGE_C, true);
+            me->CastSpell(me, SPELL_SHADOW_CAGE_C, TRIGGERED_FULL_MASK);
         }
     
         void SetClicker(uint64 cubeGUID, uint64 clickerGUID)
@@ -243,7 +243,7 @@ public:
     
             clicker->RemoveAurasDueToSpell(SPELL_SHADOW_GRASP); // cannot interrupt triggered spells
             clicker->InterruptNonMeleeSpells(false);
-            clicker->CastSpell(clicker, SPELL_MIND_EXHAUSTION, true);
+            clicker->CastSpell(clicker, SPELL_MIND_EXHAUSTION, TRIGGERED_FULL_MASK);
         }
     
         void NeedCheckCubeStatus()
@@ -265,7 +265,7 @@ public:
             if(ClickerNum >= CLICKERS_COUNT && !me->HasAuraEffect(SPELL_SHADOW_CAGE, 0))
             {
                 DoScriptText(SAY_BANISH, me);
-                me->CastSpell(me, SPELL_SHADOW_CAGE, true);
+                me->CastSpell(me, SPELL_SHADOW_CAGE, TRIGGERED_FULL_MASK);
             }
             else if(ClickerNum < CLICKERS_COUNT && me->HasAuraEffect(SPELL_SHADOW_CAGE, 0))
                 me->RemoveAurasDueToSpell(SPELL_SHADOW_CAGE);
@@ -324,7 +324,7 @@ public:
     
             if(Berserk_Timer < diff)
             {
-                me->CastSpell(me, SPELL_BERSERK, true);
+                me->CastSpell(me, SPELL_BERSERK, TRIGGERED_FULL_MASK);
                 DoScriptText(EMOTE_BERSERK, me);
                 Berserk_Timer = 60000;
             }else Berserk_Timer -= diff;
@@ -351,7 +351,7 @@ public:
                 // to avoid blastnova interruption
                 if(!me->IsNonMeleeSpellCast(false))
                 {
-                    me->CastSpell(me, SPELL_QUAKE_TRIGGER, true);
+                    me->CastSpell(me, SPELL_QUAKE_TRIGGER, TRIGGERED_FULL_MASK);
                     Quake_Timer = 50000;
                 }
             }else Quake_Timer -= diff;
@@ -366,7 +366,7 @@ public:
                     if(summon)
                     {
                         ((mob_abyssal::mob_abyssalAI*)summon->AI())->SetTrigger(2);
-                        me->CastSpell(summon, SPELL_BLAZE_TARGET, true);
+                        me->CastSpell(summon, SPELL_BLAZE_TARGET, TRIGGERED_FULL_MASK);
                         summon->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                     }
                 }
@@ -379,8 +379,8 @@ public:
             {
                 Phase3 = true;
                 DoScriptText(SAY_CHAMBER_DESTROY, me);
-                me->CastSpell(me, SPELL_CAMERA_SHAKE, true);
-                me->CastSpell(me, SPELL_DEBRIS_KNOCKDOWN, true);
+                me->CastSpell(me, SPELL_CAMERA_SHAKE, TRIGGERED_FULL_MASK);
+                me->CastSpell(me, SPELL_DEBRIS_KNOCKDOWN, TRIGGERED_FULL_MASK);
     
                 if(pInstance)
                     pInstance->SetData(DATA_COLLAPSE, true);
@@ -436,8 +436,8 @@ public:
                 return true;
 
             player->InterruptNonMeleeSpells(false);
-            player->CastSpell(player, SPELL_SHADOW_GRASP, true);
-            player->CastSpell(player, SPELL_SHADOW_GRASP_VISUAL, false);
+            player->CastSpell(player, SPELL_SHADOW_GRASP, TRIGGERED_FULL_MASK);
+            player->CastSpell(player, SPELL_SHADOW_GRASP_VISUAL, TRIGGERED_NONE);
             ((boss_magtheridon::boss_magtheridonAI*)Magtheridon->AI())->SetClicker(me->GetGUID(), player->GetGUID());
             return true;
         }
@@ -486,7 +486,7 @@ public:
                 pInstance->SetData(DATA_CHANNELER_EVENT, NOT_STARTED);
     
             me->RemoveAllAuras();
-            me->CastSpell(me, SPELL_SHADOW_GRASP_C, false);
+            me->CastSpell(me, SPELL_SHADOW_GRASP_C, TRIGGERED_NONE);
         }
     
         void EnterCombat(Unit *who)
@@ -505,7 +505,7 @@ public:
         void DamageTaken(Unit*, uint32 &damage)
         override {
             if(damage >= me->GetHealth())
-                me->CastSpell(me, SPELL_SOUL_TRANSFER, true);
+                me->CastSpell(me, SPELL_SOUL_TRANSFER, TRIGGERED_FULL_MASK);
         }
     
         void JustDied(Unit*)
@@ -542,7 +542,7 @@ public:
             if(Infernal_Timer < diff)
             {
                 if(Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
-                    me->CastSpell(target, SPELL_BURNING_ABYSSAL, true);
+                    me->CastSpell(target, SPELL_BURNING_ABYSSAL, TRIGGERED_FULL_MASK);
                 Infernal_Timer = 30000 + rand()%10000;
             }else Infernal_Timer -= diff;
     

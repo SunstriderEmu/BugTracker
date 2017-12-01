@@ -402,7 +402,7 @@ public:
                 for (uint64 & itr : northList) {
                     if (Creature *trigger = instance->GetCreature(itr)) {
                         if (trigger->GetPositionY() > data)
-                            trigger->CastSpell(trigger, 45582, true);
+                            trigger->CastSpell(trigger, 45582, TRIGGERED_FULL_MASK);
                     }
                 }
                 break;
@@ -410,7 +410,7 @@ public:
                 for (uint64 & itr : centerList) {
                     if (Creature *trigger = instance->GetCreature(itr)) {
                         if (trigger->GetPositionY() > data)
-                            trigger->CastSpell(trigger, 45582, true);
+                            trigger->CastSpell(trigger, 45582, TRIGGERED_FULL_MASK);
                     }
                 }
                 break;
@@ -418,7 +418,7 @@ public:
                 for (uint64 & itr : southList) {
                     if (Creature *trigger = instance->GetCreature(itr)) {
                         if (trigger->GetPositionY() > data)
-                            trigger->CastSpell(trigger, 45582, true);
+                            trigger->CastSpell(trigger, 45582, TRIGGERED_FULL_MASK);
                     }
                 }
                 break;
@@ -426,7 +426,7 @@ public:
                 for (uint64 & itr : northList) {
                     if (Creature *trigger = instance->GetCreature(itr)) {
                         if (trigger->GetPositionY() < data)
-                            trigger->CastSpell(trigger, 45582, true);
+                            trigger->CastSpell(trigger, 45582, TRIGGERED_FULL_MASK);
                     }
                 }
                 break;
@@ -434,7 +434,7 @@ public:
                 for (uint64 & itr : centerList) {
                     if (Creature *trigger = instance->GetCreature(itr)) {
                         if (trigger->GetPositionY() < data)
-                            trigger->CastSpell(trigger, 45582, true);
+                            trigger->CastSpell(trigger, 45582, TRIGGERED_FULL_MASK);
                     }
                 }
                 break;
@@ -442,7 +442,7 @@ public:
                 for (uint64 & itr : southList) {
                     if (Creature *trigger = instance->GetCreature(itr)) {
                         if (trigger->GetPositionY() < data)
-                            trigger->CastSpell(trigger, 45582, true);
+                            trigger->CastSpell(trigger, 45582, TRIGGERED_FULL_MASK);
                     }
                 }
                 break;
@@ -450,7 +450,7 @@ public:
                 IceBarrierDone = true;
                 IceBarrierTimer = 3600000;
                 if (Creature* trigger = instance->GetCreature(BarrierTriggerGUID))
-                    trigger->CastSpell(trigger, 47030, true);
+                    trigger->CastSpell(trigger, 47030, TRIGGERED_FULL_MASK);
                 ShowIceBarrier();
                 break;
             case DATA_MURU_GATE_EVENT:
@@ -481,7 +481,7 @@ public:
                 if (felmystNorthTimer <= diff) {
                     for (std::vector<uint64>::iterator itr = northList.begin(); itr != northList.end(); itr++) {
                         if (Creature *trigger = instance->GetCreature(*itr))
-                            trigger->CastSpell(trigger, 45582, true);
+                            trigger->CastSpell(trigger, 45582, TRIGGERED_FULL_MASK);
                     }
                     felmystNorthTimer = 0;
                 }
@@ -493,7 +493,7 @@ public:
                 if (felmystCenterTimer <= diff) {
                     for (std::vector<uint64>::iterator itr = centerList.begin(); itr != centerList.end(); itr++) {
                         if (Creature *trigger = instance->GetCreature(*itr))
-                            trigger->CastSpell(trigger, 45582, true);
+                            trigger->CastSpell(trigger, 45582, TRIGGERED_FULL_MASK);
                     }
                     felmystCenterTimer = 0;
                 }
@@ -505,7 +505,7 @@ public:
                 if (felmystSouthTimer <= diff) {
                     for (std::vector<uint64>::iterator itr = southList.begin(); itr != southList.end(); itr++) {
                         if (Creature *trigger = instance->GetCreature(*itr))
-                            trigger->CastSpell(trigger, 45582, true);
+                            trigger->CastSpell(trigger, 45582, TRIGGERED_FULL_MASK);
                     }
                     felmystSouthTimer = 0;
                 }
