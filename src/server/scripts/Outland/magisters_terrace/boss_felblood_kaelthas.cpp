@@ -115,10 +115,10 @@ public:
 };
 
 
-class MovieOrb : public GameObjectScript
+class SunwellMovieOrb : public GameObjectScript
 {
 public:
-    MovieOrb() : GameObjectScript("go_movie_orb")
+    SunwellMovieOrb() : GameObjectScript("go_movie_orb")
     {}
 
     struct MovieOrbAI : public GameObjectAI
@@ -829,6 +829,6 @@ void AddSC_boss_felblood_kaelthas()
     new mob_felkael_flamestrike();
 
     new KaelOrb();
-    new MovieOrb();
+    new SunwellMovieOrb();
 }
 

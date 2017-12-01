@@ -100,10 +100,8 @@ public:
     }
 };
 
-
 void AddSC_elwynn_forest()
 {
-
     new npc_henze_faulk();
 }
 
