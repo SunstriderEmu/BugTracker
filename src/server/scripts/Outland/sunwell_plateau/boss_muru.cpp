@@ -243,7 +243,7 @@ public:
                                         if (guidPlayerCD[plr->GetGUID()] == 0)
                                         {
                                             me->CastSpell(plr, SPELL_BLACK_HOLE_EFFECT, false);
-                                            guidPlayerCD[plr->GetGUID()] = 4000;
+                                            guidPlayerCD[plr->GetGUID()] = 4000; //remove effect in 4 second
                                         }
                                     }
                                 }
@@ -274,13 +274,13 @@ public:
                         {
                             for (GuidMapCD::const_iterator i = guidPlayerCD.begin(); i != guidPlayerCD.end(); ++i)
                             {
-                                if ((*i).second > 0)
+                                if ((*i).second > 0) //if has cooldown
                                 {
                                     if ((*i).second > diff)
-                                        guidPlayerCD[(*i).first] = (*i).second - diff;
+                                        guidPlayerCD[(*i).first] = (*i).second - diff; //decrease
                                     else
                                     {
-                                        guidPlayerCD[(*i).first] = 0;
+                                        guidPlayerCD[(*i).first] = 0; //cooldown expired, remove aura
                                         if (Player *plr = sObjectMgr->GetPlayer((*i).first))
                                             plr->RemoveAurasDueToSpell(SPELL_BLACK_HOLE_EFFECT);
                                     }
