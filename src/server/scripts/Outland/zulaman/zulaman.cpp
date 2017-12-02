@@ -145,7 +145,7 @@ public:
         }
         void UpdateAI(const uint32 diff)
         override {
-            if(IsLoot) me->CastSpell(me, 7, false);
+            if(IsLoot) me->CastSpell(me, 7, TRIGGERED_NONE);
         }
 
         virtual bool GossipHello(Player* player) override
@@ -383,8 +383,8 @@ public:
                     if (CAST_AI(npc_harrison_jones::npc_harrison_jonesAI, (harrisonJones->AI()))->IncreaseClick(pPlayer->GetGUID()))
                     {
                         pPlayer->InterruptNonMeleeSpells(true);
-                        pPlayer->CastSpell(pPlayer, 45226, true);
-                        //pPlayer->CastSpell(pPlayer, 44762, true);
+                        pPlayer->CastSpell(pPlayer, 45226, TRIGGERED_FULL_MASK);
+                        //pPlayer->CastSpell(pPlayer, 44762, TRIGGERED_FULL_MASK);
                         /*if (!pPlayer->HasAuraEffect(45225))
                             pPlayer->AddAura(45225, pPlayer);*/
                     }

@@ -163,7 +163,7 @@ public:
                 DoScriptText(SAY_ENERGY, me);
                 DoScriptText(EMOTE_CRYSTAL, me);
     
-                CrystalChosen->CastSpell(CrystalChosen, SPELL_FEL_CRYSTAL_COSMETIC, true);
+                CrystalChosen->CastSpell(CrystalChosen, SPELL_FEL_CRYSTAL_COSMETIC, TRIGGERED_FULL_MASK);
     
                 float x, y, z;                                  // coords that we move to, close to the crystal.
                 CrystalChosen->GetClosePoint(x, y, z, me->GetCombatReach(), CONTACT_DISTANCE);
@@ -221,7 +221,7 @@ public:
                     // Make the crystal attackable
                     // We also remove NON_ATTACKABLE in case the database has it set.
                     CrystalChosen->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
-                    CrystalChosen->CastSpell(me, SPELL_MANA_RAGE, true);
+                    CrystalChosen->CastSpell(me, SPELL_MANA_RAGE, TRIGGERED_FULL_MASK);
                     IsDraining = true;
                 }
                 else

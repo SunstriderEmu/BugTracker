@@ -377,7 +377,7 @@ public:
                     if(Chains)
                     {
                         ((mob_demon_chain::mob_demon_chainAI*)Chains->AI())->SacrificeGUID = target->GetGUID();
-                        Chains->CastSpell(Chains, SPELL_DEMON_CHAINS, true);
+                        Chains->CastSpell(Chains, SPELL_DEMON_CHAINS, TRIGGERED_FULL_MASK);
                         switch(rand()%2)
                         {
                         case 0: DoScriptText(SAY_SACRIFICE1, me); break;

@@ -639,7 +639,7 @@ public:
             if (action == GOSSIP_ACTION_INFO_DEF + 1)
             {
                 player->CLOSE_GOSSIP_MENU();
-                player->CastSpell(player, SPELL_CREATE_THORIUM_BROTHERHOOD_CONTRACT_DND, false);
+                player->CastSpell(player, SPELL_CREATE_THORIUM_BROTHERHOOD_CONTRACT_DND, TRIGGERED_NONE);
             }
             if (action == GOSSIP_ACTION_TRADE)
                 player->SEND_VENDORLIST( me->GetGUID() );
@@ -1388,7 +1388,7 @@ public:
                 if (pInstance->GetData(TYPE_BAR) == SPECIAL)
                 {
                     DoScriptText(SAY_GOT_BEER, me);
-                    me->CastSpell(me,SPELL_DRUNKEN_RAGE,false);
+                    me->CastSpell(me,SPELL_DRUNKEN_RAGE, TRIGGERED_NONE);
                     ((EscortAI*)(me->AI()))->Start(false, false, false);
                 }
             }

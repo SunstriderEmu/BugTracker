@@ -1137,7 +1137,7 @@ public:
                 if (TalkId == 24 && tyrande)
                     tyrande->SetStandState(UNIT_STAND_STATE_KNEEL);
     /*            if (TalkId == 21 && tyrande)
-                    tyrande->CastSpell(tyrande, 14751, true);*/
+                    tyrande->CastSpell(tyrande, 14751, TRIGGERED_FULL_MASK);*/
                 break;
             }
             case 27:
@@ -1848,7 +1848,7 @@ public:
             if (Shoot_Timer <= diff)
             {
                 int bp0 = 1100;
-                me->CastCustomSpell(me->GetVictim(), 37770, &bp0, nullptr, nullptr, false);
+                me->CastCustomSpell(me->GetVictim(), 37770, &bp0, nullptr, nullptr, TRIGGERED_NONE);
                 Shoot_Timer = 3000;
             } else
                 Shoot_Timer -= diff;

@@ -780,7 +780,7 @@ public:
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF+1)
             {
-                me->CastSpell(player, SPELL_PHASE_DISTRUPTOR, false);
+                me->CastSpell(player, SPELL_PHASE_DISTRUPTOR, TRIGGERED_NONE);
                 player->CLOSE_GOSSIP_MENU();
             }
 
@@ -845,7 +845,7 @@ public:
             if (action == GOSSIP_ACTION_INFO_DEF)
             {
                 player->CLOSE_GOSSIP_MENU();
-                player->CastSpell(player,34905,true);               //TaxiPath 606
+                player->CastSpell(player,34905, TRIGGERED_FULL_MASK);               //TaxiPath 606
             }
             return true;
         }
@@ -1545,7 +1545,7 @@ public:
                     DoScriptText(SAY_DR_6, me);
                     if (Creature* pTrigger = me->FindNearestCreature(NPC_EXPLODE_TRIGGER, 20.0f))
                     {
-                        pTrigger->CastSpell(pTrigger, SPELL_BOOM , false);
+                        pTrigger->CastSpell(pTrigger, SPELL_BOOM , TRIGGERED_NONE);
                     }
                     me->SummonGameObject(GO_SMOKE, Position(3008.503f, 2729.432f, 114.350f, 0.0f), G3D::Quat(), 60);
                     me->SummonGameObject(GO_FIRE, Position(3026.163f, 2723.538f, 113.681f, 0.0f), G3D::Quat(), 60);

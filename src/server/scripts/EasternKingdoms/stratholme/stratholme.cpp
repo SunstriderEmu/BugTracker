@@ -69,13 +69,13 @@ public:
                     if (pGroupie->GetQuestStatus(QUEST_DEAD_MAN_PLEA) == QUEST_STATUS_INCOMPLETE &&
                         !pGroupie->HasAuraEffect(SPELL_BARON_ULTIMATUM, 0) &&
                         pGroupie->GetMap() == me->GetMap())
-                        pGroupie->CastSpell(pGroupie, SPELL_BARON_ULTIMATUM, true);
+                        pGroupie->CastSpell(pGroupie, SPELL_BARON_ULTIMATUM, TRIGGERED_FULL_MASK);
                 }
             }
             else if (player->GetQuestStatus(QUEST_DEAD_MAN_PLEA) == QUEST_STATUS_INCOMPLETE &&
                 !player->HasAuraEffect(SPELL_BARON_ULTIMATUM, 0) &&
                 player->GetMap() == me->GetMap())
-                player->CastSpell(player, SPELL_BARON_ULTIMATUM, true);
+                player->CastSpell(player, SPELL_BARON_ULTIMATUM, TRIGGERED_FULL_MASK);
 
             pInstance->SetData(TYPE_BARON_RUN, IN_PROGRESS);
             return false;
@@ -180,7 +180,7 @@ public:
     
         void JustSummoned(Creature *summoned)
         override {
-            summoned->CastSpell(summoned,SPELL_SOUL_FREED,false);
+            summoned->CastSpell(summoned,SPELL_SOUL_FREED, TRIGGERED_NONE);
         }
     
         void JustDied(Unit* Killer)

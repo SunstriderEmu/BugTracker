@@ -68,11 +68,11 @@ public:
             player->CLOSE_GOSSIP_MENU();
             if(action == GOSSIP_ACTION_INFO_DEF + 1) {
                 player->InterruptNonMeleeSpells(false);
-                player->CastSpell(player, SPELL_TELEPORT, false);
+                player->CastSpell(player, SPELL_TELEPORT, TRIGGERED_NONE);
             }
             else if (action == GOSSIP_ACTION_INFO_DEF + 2) {
                 player->InterruptNonMeleeSpells(false);
-                player->CastSpell(player, SPELL_TELEPORT_UDALO, false);
+                player->CastSpell(player, SPELL_TELEPORT_UDALO, TRIGGERED_NONE);
             }
 
             return true;
@@ -126,7 +126,7 @@ public:
                 player->CLOSE_GOSSIP_MENU();
 
             player->InterruptNonMeleeSpells(false);
-            player->CastSpell(player, SPELL_TELEPORT_UDALO, false);
+            player->CastSpell(player, SPELL_TELEPORT_UDALO, TRIGGERED_NONE);
             return true;
 
         }

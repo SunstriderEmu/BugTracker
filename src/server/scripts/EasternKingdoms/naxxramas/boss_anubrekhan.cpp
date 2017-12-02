@@ -70,7 +70,7 @@ public:
         void KilledUnit(Unit* Victim) override
         {
             //Force the player to spawn corpse scarabs via spell
-            Victim->CastSpell(Victim, SPELL_SELF_SPAWN_5, true);
+            Victim->CastSpell(Victim, SPELL_SELF_SPAWN_5, TRIGGERED_FULL_MASK);
     
             if (rand()%5)
                 return;

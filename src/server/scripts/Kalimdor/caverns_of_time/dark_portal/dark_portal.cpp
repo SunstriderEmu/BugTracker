@@ -78,11 +78,11 @@ public:
                 return;
     
             if (pInstance->GetData(TYPE_MEDIVH) == IN_PROGRESS)
-                me->CastSpell(me,SPELL_CHANNEL,true);
+                me->CastSpell(me,SPELL_CHANNEL, TRIGGERED_FULL_MASK);
             else if (me->HasAuraEffect(SPELL_CHANNEL,0))
                 me->RemoveAura(SPELL_CHANNEL,0);
     
-            me->CastSpell(me,SPELL_PORTAL_RUNE,true);
+            me->CastSpell(me,SPELL_PORTAL_RUNE, TRIGGERED_FULL_MASK);
         }
     
         void MoveInLineOfSight(Unit *who)
@@ -100,7 +100,7 @@ public:
     
                 DoScriptText(SAY_INTRO, me);
                 pInstance->SetData(TYPE_MEDIVH,IN_PROGRESS);
-                me->CastSpell(me,SPELL_CHANNEL,false);
+                me->CastSpell(me,SPELL_CHANNEL, TRIGGERED_NONE);
                 Check_Timer = 5000;
             }
             else if (who->GetTypeId() == TYPEID_UNIT && me->IsWithinDistInMap(who, 15.0f))
@@ -112,12 +112,12 @@ public:
                 if (entry == C_ASSAS || entry == C_WHELP || entry == C_CHRON || entry == C_EXECU || entry == C_VANQU)
                 {
                     who->StopMoving();
-                    who->CastSpell(me,SPELL_CORRUPT,false);
+                    who->CastSpell(me,SPELL_CORRUPT, TRIGGERED_NONE);
                 }
                 else if (entry == C_AEONUS)
                 {
                     who->StopMoving();
-                    who->CastSpell(me,SPELL_CORRUPT_AEONUS,false);
+                    who->CastSpell(me,SPELL_CORRUPT_AEONUS, TRIGGERED_NONE);
                 }
             }
         }
@@ -446,7 +446,7 @@ public:
             if (action == GOSSIP_ACTION_INFO_DEF+1)
             {
                 player->CLOSE_GOSSIP_MENU();
-                me->CastSpell(player,SPELL_CHRONO_BEACON,false);
+                me->CastSpell(player,SPELL_CHRONO_BEACON, TRIGGERED_NONE);
             }
             return true;
 

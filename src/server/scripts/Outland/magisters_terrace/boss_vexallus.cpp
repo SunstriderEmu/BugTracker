@@ -210,7 +210,7 @@ public:
     
         void JustDied(Unit* slayer)
         override {
-            slayer->CastSpell(slayer, SPELL_ENERGY_FEEDBACK, true, nullptr, nullptr, me->GetGUID());
+            slayer->CastSpell(slayer, SPELL_ENERGY_FEEDBACK, TRIGGERED_FULL_MASK, nullptr, nullptr, me->GetGUID());
         }
     
         void EnterCombat(Unit *who)override {}

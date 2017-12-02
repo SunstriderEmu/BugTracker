@@ -191,7 +191,7 @@ public:
                     if(Portal)
                     {
                         PortalsGuid[i] = Portal->GetGUID();
-                        Portal->CastSpell(Portal, SPELL_VOID_PORTAL_VISUAL, false);
+                        Portal->CastSpell(Portal, SPELL_VOID_PORTAL_VISUAL, TRIGGERED_NONE);
                         Portal->SetControlled(true, UNIT_STATE_ROOT);
                     }
                 }

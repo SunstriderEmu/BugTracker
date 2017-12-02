@@ -229,7 +229,7 @@ public:
                     case TEXTEMOTE_DANCE:
                     {
                         if (!player->HasAuraEffect(SPELL_SEDUCTION,0))
-                            me->CastSpell(player,SPELL_SEDUCTION,true);
+                            me->CastSpell(player,SPELL_SEDUCTION, TRIGGERED_FULL_MASK);
                     }
                     break;
                 }
@@ -698,7 +698,7 @@ public:
     
             if (me->IsAttackReady())
             {
-                me->CastSpell(me->GetVictim(),SPELL_DEATHTOUCH, true);
+                me->CastSpell(me->GetVictim(),SPELL_DEATHTOUCH, TRIGGERED_FULL_MASK);
                 me->ResetAttackTimer();
             }
         }
@@ -873,7 +873,7 @@ public:
             {
                 case GOSSIP_ACTION_INFO_DEF+1:
                     player->CLOSE_GOSSIP_MENU();
-                    player->CastSpell(player,21100,false);
+                    player->CastSpell(player,21100, TRIGGERED_NONE);
                     break;
                 case GOSSIP_ACTION_TRAIN:
                     player->SEND_TRAINERLIST( me->GetGUID() );
@@ -960,42 +960,42 @@ public:
                     SendAction_npc_sayge(player, me, action);
                     break;
                 case GOSSIP_SENDER_MAIN+1:
-                    me->CastSpell(player, SPELL_DMG, false);
+                    me->CastSpell(player, SPELL_DMG, TRIGGERED_NONE);
                     player->AddSpellCooldown(SPELL_DMG,0,time(nullptr) + 7200);
                     SendAction_npc_sayge(player, me, action);
                     break;
                 case GOSSIP_SENDER_MAIN+2:
-                    me->CastSpell(player, SPELL_RES, false);
+                    me->CastSpell(player, SPELL_RES, TRIGGERED_NONE);
                     player->AddSpellCooldown(SPELL_RES,0,time(nullptr) + 7200);
                     SendAction_npc_sayge(player, me, action);
                     break;
                 case GOSSIP_SENDER_MAIN+3:
-                    me->CastSpell(player, SPELL_ARM, false);
+                    me->CastSpell(player, SPELL_ARM, TRIGGERED_NONE);
                     player->AddSpellCooldown(SPELL_ARM,0,time(nullptr) + 7200);
                     SendAction_npc_sayge(player, me, action);
                     break;
                 case GOSSIP_SENDER_MAIN+4:
-                    me->CastSpell(player, SPELL_SPI, false);
+                    me->CastSpell(player, SPELL_SPI, TRIGGERED_NONE);
                     player->AddSpellCooldown(SPELL_SPI,0,time(nullptr) + 7200);
                     SendAction_npc_sayge(player, me, action);
                     break;
                 case GOSSIP_SENDER_MAIN+5:
-                    me->CastSpell(player, SPELL_INT, false);
+                    me->CastSpell(player, SPELL_INT, TRIGGERED_NONE);
                     player->AddSpellCooldown(SPELL_INT,0,time(nullptr) + 7200);
                     SendAction_npc_sayge(player, me, action);
                     break;
                 case GOSSIP_SENDER_MAIN+6:
-                    me->CastSpell(player, SPELL_STM, false);
+                    me->CastSpell(player, SPELL_STM, TRIGGERED_NONE);
                     player->AddSpellCooldown(SPELL_STM,0,time(nullptr) + 7200);
                     SendAction_npc_sayge(player, me, action);
                     break;
                 case GOSSIP_SENDER_MAIN+7:
-                    me->CastSpell(player, SPELL_STR, false);
+                    me->CastSpell(player, SPELL_STR, TRIGGERED_NONE);
                     player->AddSpellCooldown(SPELL_STR,0,time(nullptr) + 7200);
                     SendAction_npc_sayge(player, me, action);
                     break;
                 case GOSSIP_SENDER_MAIN+8:
-                    me->CastSpell(player, SPELL_AGI, false);
+                    me->CastSpell(player, SPELL_AGI, TRIGGERED_NONE);
                     player->AddSpellCooldown(SPELL_AGI,0,time(nullptr) + 7200);
                     SendAction_npc_sayge(player, me, action);
                     break;
@@ -1044,7 +1044,7 @@ public:
                 player->SEND_GOSSIP_MENU_TEXTID(7364, _Creature->GetGUID());
                 break;
             case GOSSIP_ACTION_INFO_DEF + 6:
-                _Creature->CastSpell(player, SPELL_FORTUNE, false);
+                _Creature->CastSpell(player, SPELL_FORTUNE, TRIGGERED_NONE);
                 player->SEND_GOSSIP_MENU_TEXTID(7365, _Creature->GetGUID());
                 break;
             }
@@ -1128,7 +1128,7 @@ public:
         override {
             if (ExplosionTimer < diff)
             {
-                me->CastSpell(me, SPELL_TONK_MINE_DETONATE, true);
+                me->CastSpell(me, SPELL_TONK_MINE_DETONATE, TRIGGERED_FULL_MASK);
                 me->SetDeathState(DEAD); // unsummon it
             } else
                 ExplosionTimer -= diff;
@@ -1166,13 +1166,13 @@ public:
 
             if( emote == TEXTEMOTE_KISS )
             {
-                me->CastSpell(me, 26218, false);
-                player->CastSpell(player, 26218, true);
+                me->CastSpell(me, 26218, TRIGGERED_NONE);
+                player->CastSpell(player, 26218, TRIGGERED_FULL_MASK);
                 switch(rand()%3)
                 {
-                case 0: me->CastSpell(player, 26207, false); break;
-                case 1: me->CastSpell(player, 26206, false); break;
-                case 2: me->CastSpell(player, 45036, false); break;
+                case 0: me->CastSpell(player, 26207, TRIGGERED_NONE); break;
+                case 1: me->CastSpell(player, 26206, TRIGGERED_NONE); break;
+                case 2: me->CastSpell(player, 45036, TRIGGERED_NONE); break;
                 }
             }
         }
@@ -1206,7 +1206,7 @@ public:
         virtual void ReceiveEmote(Player* player, uint32 emote) override
         {
             if( emote == TEXTEMOTE_DANCE )
-                me->CastSpell(player, 41586, false);
+                me->CastSpell(player, 41586, TRIGGERED_NONE);
         }
 
     };
@@ -1484,7 +1484,7 @@ public:
                 ((npc_mojo::npc_mojoAI*)me->AI())->PlayerGUID = pPlayer->GetGUID();
                 me->AddAura(SPELL_HEARTS, me);
                 if (!pPlayer->IsInCombat())
-                    pPlayer->CastSpell(pPlayer, SPELL_FEELING_FROGGY, true);
+                    pPlayer->CastSpell(pPlayer, SPELL_FEELING_FROGGY, TRIGGERED_FULL_MASK);
                 me->old_Whisper(irand(INDECENT_WHISPER7, INDECENT_WHISPER1), pPlayer->GetGUID());
                 me->SetInFront(pPlayer);
                 me->GetMotionMaster()->MoveFollow(pPlayer, PET_FOLLOW_DIST/3.0f, M_PI/4);
@@ -1589,7 +1589,7 @@ public:
             PetAI::Minipet_DistanceCheck(diff);
             if (me->GetVictim()) {
                 if (me->IsWithinDistInMap(me->GetVictim(), 3.0f)) {
-                    me->CastSpell(me->GetVictim(), SPELL_MALFUNCTION_EXPLOSION, false);
+                    me->CastSpell(me->GetVictim(), SPELL_MALFUNCTION_EXPLOSION, TRIGGERED_NONE);
                     me->DisappearAndDie();
                 }
             }
@@ -1632,10 +1632,10 @@ public:
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             switch (action) {
             case GOSSIP_ACTION_INFO_DEF:
-                player->CastSpell(player, 37808, true);
+                player->CastSpell(player, 37808, TRIGGERED_FULL_MASK);
                 break;
             case GOSSIP_ACTION_INFO_DEF+1:
-                player->CastSpell(player, 37809, true);
+                player->CastSpell(player, 37809, TRIGGERED_FULL_MASK);
                 break;
             }
             
@@ -1690,7 +1690,7 @@ public:
 
             if (action == GOSSIP_ACTION_INFO_DEF) {
                 player->KilledMonsterCredit(me->GetEntry(), me->GetGUID());
-                me->CastSpell(me, 25952, false);
+                me->CastSpell(me, 25952, TRIGGERED_NONE);
             }
             
             return true;
@@ -1737,7 +1737,7 @@ public:
                 return;
                 
             if (who->ToCreature() && who->GetEntry() == me->GetEntry() && who->IsWithinDistInMap(me, 15.0f))
-                me->CastSpell(who, 45269, false);
+                me->CastSpell(who, 45269, TRIGGERED_NONE);
         }
     };
 
@@ -1787,7 +1787,7 @@ public:
     
             for (std::list<WorldObject*>::const_iterator itr = targets.begin(); itr != targets.end(); itr++) {
                 if ((*itr)->ToPlayer())
-                    ((Unit*)(*itr))->CastSpell((Unit*)(*itr), 31961, true);
+                    ((Unit*)(*itr))->CastSpell((Unit*)(*itr), 31961, TRIGGERED_FULL_MASK);
                 else if ((*itr)->ToCreature())
                     ((Unit*)(*itr))->AddAura(31961, (Unit*)(*itr));
             }
@@ -2071,7 +2071,7 @@ public:
             PetAI::Minipet_DistanceCheck(diff);
             if (animTimer <= diff) {
                 me->GetMotionMaster()->MoveIdle();
-                me->CastSpell(me, 45255, false);
+                me->CastSpell(me, 45255, TRIGGERED_NONE);
                 animTimer = 20000 + rand()%10000;
             }
             else
@@ -2292,7 +2292,7 @@ public:
                 {           
                     sleeping = true;
                     me->GetMotionMaster()->MoveIdle();
-                    me->CastSpell(me,SPELL_SLEEP,true);
+                    me->CastSpell(me,SPELL_SLEEP, TRIGGERED_FULL_MASK);
                     restingTimer = PANDA_SLEEP_TIMER;
                 } else restingTimer -= diff;
             }     
@@ -2384,7 +2384,7 @@ public:
                         {           
                             sleeping = true;
                             me->GetMotionMaster()->MoveIdle();
-                            me->CastSpell(me,SPELL_SLEEP,true);
+                            me->CastSpell(me,SPELL_SLEEP, TRIGGERED_FULL_MASK);
                             //death anim is used for willy's sleep
                             me->SetFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FEIGN_DEATH); 
                             restingTimer = WILLY_SLEEP_TIMER;
@@ -2398,7 +2398,7 @@ public:
                     {
                         if (Unit* critter = FindACritterToNuke())
                         {
-                            me->CastSpell(critter,SPELL_DEATHRAY,false);
+                            me->CastSpell(critter,SPELL_DEATHRAY, TRIGGERED_NONE);
                             target = critter;
                             deathRayTimer = DEATHRAY_TIMER;
                             restingTimer = WILLY_SLEEP_TIMER;
@@ -2413,7 +2413,7 @@ public:
                 {
                     if(deathRayDurationTimer <= diff)
                     {
-                        me->CastSpell(target,SPELL_DEATHTOUCH,true);
+                        me->CastSpell(target,SPELL_DEATHTOUCH, TRIGGERED_FULL_MASK);
                         target = nullptr;
                         deathRayDurationTimer = DEATHRAY_DURATION;
                     } else deathRayDurationTimer -= diff;

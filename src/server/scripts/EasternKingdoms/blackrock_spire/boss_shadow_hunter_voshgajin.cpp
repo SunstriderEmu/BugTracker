@@ -48,7 +48,7 @@ public:
             Hex_Timer = 8000;
             Cleave_Timer = 14000;
     
-            //me->CastSpell(me,SPELL_ICEARMOR,true);
+            //me->CastSpell(me,SPELL_ICEARMOR, TRIGGERED_FULL_MASK);
         }
     
         void EnterCombat(Unit *who)

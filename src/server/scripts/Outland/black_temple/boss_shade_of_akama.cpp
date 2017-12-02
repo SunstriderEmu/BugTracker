@@ -510,7 +510,7 @@ public:
                         me->GetMotionMaster()->Clear(false);
                         me->GetMotionMaster()->MoveIdle();
                     }
-                    me->CastSpell(shade, SPELL_SHADE_SOUL_CHANNEL, false);
+                    me->CastSpell(shade, SPELL_SHADE_SOUL_CHANNEL, TRIGGERED_NONE);
                 } else {
                     if(!me->isMoving())
                         me->GetMotionMaster()->MoveFollow(shade,10.0f,(float)rand()/1000); //random angle to avoid packing
@@ -872,7 +872,7 @@ public:
             case 8:
                 for(auto itr : summons)
                     if(Creature* c = me->GetMap()->GetCreature(itr))
-                        c->CastSpell(c, SPELL_KNEEL, true);
+                        c->CastSpell(c, SPELL_KNEEL, TRIGGERED_FULL_MASK);
     
                 outroProgress++;
                 outroWaitTimer = 5000;

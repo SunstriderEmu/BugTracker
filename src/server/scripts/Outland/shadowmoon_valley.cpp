@@ -630,7 +630,7 @@ public:
                 case GOSSIP_ACTION_INFO_DEF+6:
                                                                     //correct id not known
                     player->SEND_GOSSIP_MENU_TEXTID(10940, me->GetGUID());
-                    me->CastSpell(player,41121,false);
+                    me->CastSpell(player,41121, TRIGGERED_NONE);
                     player->AreaExploredOrEventHappens(QUEST_11082);
                     break;
             }
@@ -940,7 +940,7 @@ public:
                 Illi->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 return 350;
             case 6:
-                Illi->CastSpell(Illi, SPELL_RED_BOLT, true);
+                Illi->CastSpell(Illi, SPELL_RED_BOLT, TRIGGERED_FULL_MASK);
                 Illi->SetUInt64Value(UNIT_FIELD_TARGET, me->GetGUID());
                 me->SetUInt64Value(UNIT_FIELD_TARGET, IllidanGUID);
                 return 2000;
@@ -973,7 +973,7 @@ public:
                 return 1500;
             case 16:
                 if (plr) {
-                    plr->CastSpell(plr, SPELL_MARK_OF_STORMRAGE, true);
+                    plr->CastSpell(plr, SPELL_MARK_OF_STORMRAGE, TRIGGERED_FULL_MASK);
                     return 5000;
                 }
                 else {
@@ -2139,7 +2139,7 @@ public:
         bool GossipHello(Player* pPlayer) override
         {
             if (Creature *pCreature = pPlayer->FindNearestCreature(21909, 25.0f)) {
-                pPlayer->CastSpell(pCreature, 37868, true);
+                pPlayer->CastSpell(pCreature, 37868, TRIGGERED_FULL_MASK);
                 pCreature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
                 return true;
@@ -2200,10 +2200,10 @@ public:
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF) {
-                player->CastSpell(player, 37602, true); //        Replace Lost Spectrecles T1
+                player->CastSpell(player, 37602, TRIGGERED_FULL_MASK); //        Replace Lost Spectrecles T1
             }
             else if (action == GOSSIP_ACTION_INFO_DEF + 1) {
-                player->CastSpell(player, 37700, true); //        Replace Lost Spectrecles T2
+                player->CastSpell(player, 37700, TRIGGERED_FULL_MASK); //        Replace Lost Spectrecles T2
             }
             
             player->CLOSE_GOSSIP_MENU();
@@ -2475,7 +2475,7 @@ public:
                 if (Creature* presence = me->SummonCreature(NPC_ILLIDAN_PRESENCE, -3724.522705, 1029.824463, 55.955868, 6.259977, TEMPSUMMON_MANUAL_DESPAWN, 0)) {
                     presenceGUID = presence->GetGUID();
                     presence->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
-                    presence->CastSpell(presence, SPELL_SHADOWFORM, true);
+                    presence->CastSpell(presence, SPELL_SHADOWFORM, TRIGGERED_FULL_MASK);
                     presence->SetReactState(REACT_PASSIVE);
                 }
                     

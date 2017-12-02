@@ -72,7 +72,7 @@ public:
             if(victim)
             {
                 victimGUID = victim->GetGUID();
-                victim->CastSpell(victim, SPELL_WEBTRAP, true);
+                victim->CastSpell(victim, SPELL_WEBTRAP, TRIGGERED_FULL_MASK);
             }
         }
     

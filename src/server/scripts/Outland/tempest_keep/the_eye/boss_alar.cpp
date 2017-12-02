@@ -191,7 +191,7 @@ public:
     
             if(Berserk_Timer < diff)
             {
-                me->CastSpell(me, SPELL_BERSERK, true);
+                me->CastSpell(me, SPELL_BERSERK, TRIGGERED_FULL_MASK);
                 Berserk_Timer = 60000;
             }else Berserk_Timer -= diff;
     
@@ -222,7 +222,7 @@ public:
                             Platforms_Move_Timer = 30000+rand()%5000;
                             break;
                         case WE_QUILL:
-                            me->CastSpell(me, SPELL_FLAME_QUILLS, true);
+                            me->CastSpell(me, SPELL_FLAME_QUILLS, TRIGGERED_FULL_MASK);
                             Platforms_Move_Timer = 1;
                             WaitTimer = 10000;
                             WaitEvent = WE_DUMMY;
@@ -239,7 +239,7 @@ public:
                             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                             DoResetThreat();
                             DoZoneInCombat();
-                            me->CastSpell(me, SPELL_REBIRTH, true);
+                            me->CastSpell(me, SPELL_REBIRTH, TRIGGERED_FULL_MASK);
                             MeltArmor_Timer = 60000;
                             Charge_Timer = 7000;
                             DiveBomb_Timer = 40000+rand()%5000;
@@ -248,7 +248,7 @@ public:
                             break;
                         case WE_METEOR:
                             me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, false);
-                            me->CastSpell(me, SPELL_DIVE_BOMB_VISUAL, false);
+                            me->CastSpell(me, SPELL_DIVE_BOMB_VISUAL, TRIGGERED_NONE);
                             WaitEvent = WE_DIVE;
                             WaitTimer = 4000;
                             return;
@@ -256,7 +256,7 @@ public:
                             if(Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
                             {
                                 me->RemoveAurasDueToSpell(SPELL_DIVE_BOMB_VISUAL);
-                                me->CastSpell(target, SPELL_DIVE_BOMB, true);
+                                me->CastSpell(target, SPELL_DIVE_BOMB, TRIGGERED_FULL_MASK);
                                 float dist = me->GetDistance(target->GetPositionX(), target->GetPositionY(), target->GetPositionZ());
                                 if (dist < 5.0f) dist = 5.0f;
                                 WaitTimer = 1000 + floor(dist / 80 * 1000.0f);
@@ -279,7 +279,7 @@ public:
                             me->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 10);
                             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                             me->SetDisplayId(me->GetNativeDisplayId());
-                            me->CastSpell(me, SPELL_REBIRTH_2, true);
+                            me->CastSpell(me, SPELL_REBIRTH_2, TRIGGERED_FULL_MASK);
                             break;
                         case WE_DUMMY:
                         default:
@@ -378,7 +378,7 @@ public:
                             Summoned->SetDisplayId(11686);
                             Summoned->SetFaction(me->GetFaction());
                             Summoned->SetLevel(me->GetLevel());
-                            Summoned->CastSpell(Summoned, SPELL_FLAME_PATCH, false);
+                            Summoned->CastSpell(Summoned, SPELL_FLAME_PATCH, TRIGGERED_NONE);
                         }
                     }
                     FlamePatch_Timer = 30000;
@@ -405,7 +405,7 @@ public:
                         me->AI()->AttackStart(target);
                     else
                     {
-                        me->CastSpell(me, SPELL_FLAME_BUFFET, true);
+                        me->CastSpell(me, SPELL_FLAME_BUFFET, TRIGGERED_FULL_MASK);
                         me->SetAttackTimer(BASE_ATTACK, 1500);
                     }
                 }
@@ -452,7 +452,7 @@ public:
             if(damage >= me->GetHealth() && pKiller != me && !toDie)
             {
                 damage = 0;
-                me->CastSpell(me, SPELL_EMBER_BLAST, true);
+                me->CastSpell(me, SPELL_EMBER_BLAST, TRIGGERED_FULL_MASK);
                 me->SetDisplayId(11686);
                 me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 if(pInstance/* && pInstance->GetData(DATA_ALAREVENT) == 2*/)

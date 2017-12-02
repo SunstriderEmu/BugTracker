@@ -318,7 +318,7 @@ public:
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF + 1)
             {
-                player->CastSpell(player, 37778, false);
+                player->CastSpell(player, 37778, TRIGGERED_NONE);
                 player->CLOSE_GOSSIP_MENU();
             }
 

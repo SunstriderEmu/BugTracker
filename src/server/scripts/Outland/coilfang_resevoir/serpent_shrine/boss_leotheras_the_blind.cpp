@@ -207,7 +207,7 @@ public:
             me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_NIGHTELF);
             me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY  , 0);
             me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY+1, 0);
-            me->CastSpell(me, SPELL_DUAL_WIELD, true);
+            me->CastSpell(me, SPELL_DUAL_WIELD, TRIGGERED_FULL_MASK);
             me->SetCorpseDelay(1000*60*60);
             if(pInstance)
                 pInstance->SetData(DATA_LEOTHERASTHEBLINDEVENT, NOT_STARTED);
@@ -346,7 +346,7 @@ public:
                         Unit* pUnit_target = ObjectAccessor::GetUnit((*pUnit), ((mob_inner_demon::mob_inner_demonAI*)(pUnit->ToCreature())->AI())->victimGUID);
                         if( pUnit_target && pUnit_target->IsAlive())
                         {
-                            pUnit->CastSpell(pUnit_target, SPELL_CONSUMING_MADNESS, true);
+                            pUnit->CastSpell(pUnit_target, SPELL_CONSUMING_MADNESS, TRIGGERED_FULL_MASK);
                             DoModifyThreatPercent(pUnit_target, -100);
                         }
                     }
@@ -498,9 +498,9 @@ public:
                     // will cast only when in range of spell
                     if(me->GetDistance(me->GetVictim()) < 30)
                     {
-                        //me->CastSpell(me->GetVictim(), SPELL_CHAOS_BLAST, true);
+                        //me->CastSpell(me->GetVictim(), SPELL_CHAOS_BLAST, TRIGGERED_FULL_MASK);
                         int damage = 100;
-                        me->CastCustomSpell(me->GetVictim(), SPELL_CHAOS_BLAST, &damage, nullptr, nullptr, false, nullptr, nullptr, me->GetGUID());
+                        me->CastCustomSpell(me->GetVictim(), SPELL_CHAOS_BLAST, &damage, nullptr, nullptr, TRIGGERED_NONE, nullptr, nullptr, me->GetGUID());
                     }
                     ChaosBlast_Timer = 3000;
                 }else ChaosBlast_Timer -= diff;
@@ -634,7 +634,7 @@ public:
         void JustDied(Unit *victim)
         override {
             //invisibility (blizzlike, at the end of the fight he doesn't die, he disappears)
-            me->CastSpell(me, 8149, true);
+            me->CastSpell(me, 8149, TRIGGERED_FULL_MASK);
         }
     
         void EnterCombat(Unit *who)
@@ -656,9 +656,9 @@ public:
                 // will cast only when in range od spell
                 if(me->GetDistance(me->GetVictim()) < 30)
                 {
-                    //me->CastSpell(me->GetVictim(),SPELL_CHAOS_BLAST,true);
+                    //me->CastSpell(me->GetVictim(),SPELL_CHAOS_BLAST, TRIGGERED_FULL_MASK);
                     int damage = 100;
-                    me->CastCustomSpell(me->GetVictim(), SPELL_CHAOS_BLAST, &damage, nullptr, nullptr, false, nullptr, nullptr, me->GetGUID());
+                    me->CastCustomSpell(me->GetVictim(), SPELL_CHAOS_BLAST, &damage, nullptr, nullptr, TRIGGERED_NONE, nullptr, nullptr, me->GetGUID());
                     ChaosBlast_Timer = 3000;
                 }
              }else ChaosBlast_Timer -= diff;

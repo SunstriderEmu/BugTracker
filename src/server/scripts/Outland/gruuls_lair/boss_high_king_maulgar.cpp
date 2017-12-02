@@ -149,7 +149,7 @@ public:
             Charging_Timer = 0;
             Roar_Timer = 0;
     
-            me->CastSpell(me, SPELL_DUAL_WIELD, false);
+            me->CastSpell(me, SPELL_DUAL_WIELD, TRIGGERED_NONE);
     
             Phase2 = false;
     
@@ -283,7 +283,7 @@ public:
                 Phase2 = true;
                 DoScriptText(SAY_ENRAGE, me);
     
-                me->CastSpell(me, SPELL_DUAL_WIELD, true);
+                me->CastSpell(me, SPELL_DUAL_WIELD, TRIGGERED_FULL_MASK);
                 me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 0);
                 me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY+1, 0);
             }

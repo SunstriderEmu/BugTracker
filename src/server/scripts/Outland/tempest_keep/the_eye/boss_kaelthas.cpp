@@ -723,7 +723,7 @@ public:
                             {
                                 Weapon->SetFaction(me->GetFaction());
                                 Weapon->AI()->AttackStart(Target);
-                                Weapon->CastSpell(Weapon, SPELL_WEAPON_SPAWN, false);
+                                Weapon->CastSpell(Weapon, SPELL_WEAPON_SPAWN, TRIGGERED_NONE);
                                 WeaponGuid[i] = Weapon->GetGUID();
                             }
                         }
@@ -805,7 +805,7 @@ public:
                                 {
                                     //interruptable
                                     me->ApplySpellImmune(0, IMMUNITY_EFFECT, SPELL_EFFECT_INTERRUPT_CAST, false);
-                                    me->CastSpell(me->GetVictim(), SPELL_FIREBALL, false);
+                                    me->CastSpell(me->GetVictim(), SPELL_FIREBALL, TRIGGERED_NONE);
                                     IsCastingFireball = true;
                                     Fireball_Timer = 2500;
                                 }
@@ -973,11 +973,11 @@ public:
                                         ++i;
                                         if(pUnit && pUnit->GetTypeId() == TYPEID_PLAYER && pUnit->IsAlive())
                                         {
-                                            me->CastSpell(pUnit, SPELL_KNOCKBACK, true);
+                                            me->CastSpell(pUnit, SPELL_KNOCKBACK, TRIGGERED_FULL_MASK);
                                             //Gravity lapse - needs an exception in Spell system to work
     
-                                            pUnit->CastSpell(pUnit, SPELL_GRAVITY_LAPSE, true, 0, 0, me->GetGUID());
-                                            pUnit->CastSpell(pUnit, SPELL_GRAVITY_LAPSE_AURA, true, 0, 0, me->GetGUID());
+                                            pUnit->CastSpell(pUnit, SPELL_GRAVITY_LAPSE, TRIGGERED_FULL_MASK, 0, 0, me->GetGUID());
+                                            pUnit->CastSpell(pUnit, SPELL_GRAVITY_LAPSE_AURA, TRIGGERED_FULL_MASK, 0, 0, me->GetGUID());
     
                                             //Using packet workaround
                                             WorldPacket data(12);
@@ -1550,7 +1550,7 @@ public:
             me->SetDisableGravity(true);//birds can fly! :)
             egg = true;
             Cycle_Timer = 2000;
-            me->CastSpell(me,SPELL_BURN,true);
+            me->CastSpell(me,SPELL_BURN, TRIGGERED_FULL_MASK);
         }
     
         void EnterCombat(Unit *who) override { }
@@ -1630,7 +1630,7 @@ public:
         void JustSummoned(Creature* summoned)
         override {
             summoned->AddThreat(me->GetVictim(), 0.0f);
-            summoned->CastSpell(summoned,SPELL_REBIRTH,false);
+            summoned->CastSpell(summoned,SPELL_REBIRTH, TRIGGERED_NONE);
         }
     
         void UpdateAI(const uint32 diff)

@@ -84,19 +84,19 @@ public:
                     switch (player->GetReputationRank(942))
                     {                                               //mark of lore
                         case REP_FRIENDLY:
-                            me->CastSpell(player, 31808, true);
+                            me->CastSpell(player, 31808, TRIGGERED_FULL_MASK);
                             DoScriptText(GOSSIP_REWARD_BLESS, me);
                             break;
                         case REP_HONORED:
-                            me->CastSpell(player, 31810, true);
+                            me->CastSpell(player, 31810, TRIGGERED_FULL_MASK);
                             DoScriptText(GOSSIP_REWARD_BLESS, me);
                             break;
                         case REP_REVERED:
-                            me->CastSpell(player, 31811, true);
+                            me->CastSpell(player, 31811, TRIGGERED_FULL_MASK);
                             DoScriptText(GOSSIP_REWARD_BLESS, me);
                             break;
                         case REP_EXALTED:
-                            me->CastSpell(player, 31815, true);
+                            me->CastSpell(player, 31815, TRIGGERED_FULL_MASK);
                             DoScriptText(GOSSIP_REWARD_BLESS, me);
                             break;
                         default:
@@ -109,19 +109,19 @@ public:
                     switch (player->GetReputationRank(942))         //mark of war
                     {
                         case REP_FRIENDLY:
-                            me->CastSpell(player, 31807, true);
+                            me->CastSpell(player, 31807, TRIGGERED_FULL_MASK);
                             DoScriptText(GOSSIP_REWARD_BLESS, me);
                             break;
                         case REP_HONORED:
-                            me->CastSpell(player, 31812, true);
+                            me->CastSpell(player, 31812, TRIGGERED_FULL_MASK);
                             DoScriptText(GOSSIP_REWARD_BLESS, me);
                             break;
                         case REP_REVERED:
-                            me->CastSpell(player, 31813, true);
+                            me->CastSpell(player, 31813, TRIGGERED_FULL_MASK);
                             DoScriptText(GOSSIP_REWARD_BLESS, me);
                             break;
                         case REP_EXALTED:
-                            me->CastSpell(player, 31814, true);
+                            me->CastSpell(player, 31814, TRIGGERED_FULL_MASK);
                             DoScriptText(GOSSIP_REWARD_BLESS, me);
                             break;
                         default:

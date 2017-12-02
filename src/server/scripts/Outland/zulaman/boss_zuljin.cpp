@@ -237,16 +237,16 @@ public:
                     spirit->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_DEAD);
 
                 if (Unit* spirit = ObjectAccessor::GetUnit(*me, spiritGUIDs[newPhase - 1]))
-                    spirit->CastSpell(me, SPELL_SIPHON_SOUL, false);
+                    spirit->CastSpell(me, SPELL_SIPHON_SOUL, TRIGGERED_NONE);
                     
                 if (newPhase == PHASE_EAGLE) {
                     me->GetMotionMaster()->Clear();
-                    me->CastSpell(me, SPELL_ENERGY_STORM, true);
+                    me->CastSpell(me, SPELL_ENERGY_STORM, TRIGGERED_FULL_MASK);
                     for (uint8 i = 0; i < 4; i++) {
                         Creature* vortex = me->SummonCreature(CREATURE_FEATHER_VORTEX, 0, 0, 0, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
                         if (vortex) {
-                            vortex->CastSpell(vortex, SPELL_CYCLONE_PASSIVE, true);
-                            vortex->CastSpell(vortex, SPELL_CYCLONE_VISUAL, true);
+                            vortex->CastSpell(vortex, SPELL_CYCLONE_PASSIVE, TRIGGERED_FULL_MASK);
+                            vortex->CastSpell(vortex, SPELL_CYCLONE_VISUAL, TRIGGERED_FULL_MASK);
                             vortex->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                             vortex->SetSpeedRate(MOVE_RUN, 1.0f);
                             vortex->AI()->AttackStart(SelectTarget(SELECT_TARGET_RANDOM, 0)); // FIXME: when converting vortex AI, change this
@@ -275,7 +275,7 @@ public:
             for (uint8 i = 1; i < 5; i++) {
                 if ((spirit = me->SummonCreature(SpiritInfo[i - 1].entry, SpiritInfo[i - 1].x, SpiritInfo[i - 1].y, SpiritInfo[i - 1].z, SpiritInfo[i - 1].orient, TEMPSUMMON_DEAD_DESPAWN, 0))) 
                 {
-                    spirit->CastSpell(spirit, SPELL_SPIRIT_AURA, true);
+                    spirit->CastSpell(spirit, SPELL_SPIRIT_AURA, TRIGGERED_FULL_MASK);
                     spirit->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     spirit->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                     spiritGUIDs[i] = spirit->GetGUID();
@@ -297,7 +297,7 @@ public:
                         me->AttackerStateUpdate(me->GetVictim());
                         if (me->GetVictim() && health == me->GetVictim()->GetHealth()) 
                         { // Dodged
-                            me->CastSpell(me->GetVictim(), SPELL_OVERPOWER, false);
+                            me->CastSpell(me->GetVictim(), SPELL_OVERPOWER, TRIGGERED_NONE);
                             overpowerReady = false;
                             events.RescheduleEvent(EV_OVERPOWER_READY, 5000, 0, PHASE_BEAR);
                         }
@@ -349,7 +349,7 @@ public:
                         me->SetSpeedRate(MOVE_RUN, 1.2f);
                         events.RescheduleEvent(EV_REINIT_SPEED, 2000, 0, PHASE_LYNX);
                         me->CastSpell(clawRageTarget, SPELL_CLAW_RAGE_CHARGE);
-                        me->CastSpell(me, SPELL_CLAW_RAGE_TRIGGER, true); // Triggers SPELL_CLAW_RAGE_DAMAGE every 500 ms
+                        me->CastSpell(me, SPELL_CLAW_RAGE_TRIGGER, TRIGGERED_FULL_MASK); // Triggers SPELL_CLAW_RAGE_DAMAGE every 500 ms
                     }
 
                     //reset claw rage focus after 5.5

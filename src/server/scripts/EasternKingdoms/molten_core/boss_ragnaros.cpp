@@ -305,7 +305,7 @@ class Boss_Ragnaros : public CreatureScript
             void DamageTaken(Unit* who, uint32& /* Damage */)
             override {  
                 if (who->HasUnitState(UNIT_STATE_MELEE_ATTACKING) && rand()%100 < MELTWEAPON_CHANCE)
-                    me->CastSpell(who, SPELL_MELT_WEAPON, true);
+                    me->CastSpell(who, SPELL_MELT_WEAPON, TRIGGERED_FULL_MASK);
             }
  
             void DoIntroEvent(uint8 Event)
@@ -313,7 +313,7 @@ class Boss_Ragnaros : public CreatureScript
                 switch(Event)
                 {
                     case 1:
-                        Domo->CastSpell(Domo,SPELL_SUMMON_RAGNAROS,false); //only visual
+                        Domo->CastSpell(Domo,SPELL_SUMMON_RAGNAROS, TRIGGERED_NONE); //only visual
                         Domo->GetMotionMaster()->MovePoint(0, DomoInvocLocation.x, DomoInvocLocation.y, DomoInvocLocation.z, false);
                         DoScriptText(SAY_SUMMON_DOMO, Domo);
                         Intro_Timer = 10000;
@@ -345,7 +345,7 @@ class Boss_Ragnaros : public CreatureScript
                         Intro_Timer = 17000;
                         break;
                     case 8:
-                        me->CastSpell(Domo,SPELL_ELEMENTAL_FIRE_KILL,false);
+                        me->CastSpell(Domo,SPELL_ELEMENTAL_FIRE_KILL, TRIGGERED_NONE);
                         Intro_Timer = 1000;
                         break;
                     case 9:
@@ -452,7 +452,7 @@ class Boss_Ragnaros : public CreatureScript
                                 {
                                     DoScriptText(SAY_HAMMER, me);
                                     Unit* target = ValidTargets[urand(0, ValidTargets.size() -1)];
-                                    me->CastSpell(target,SPELL_MIGHT_OF_RAGNAROS, false);
+                                    me->CastSpell(target,SPELL_MIGHT_OF_RAGNAROS, TRIGGERED_NONE);
                                 }
                                 HammerOfRagnaros_Timer = urand(20000, 30000);
                             }
@@ -471,7 +471,7 @@ class Boss_Ragnaros : public CreatureScript
                                     target = SelectTarget(SELECT_TARGET_RANDOM, 0, 150,true);
                                     if(target && target->IsWithinLOSInMap(me))
                                     {
-                                        me->CastSpell(target, SPELL_MAGMA_BLAST, false);
+                                        me->CastSpell(target, SPELL_MAGMA_BLAST, TRIGGERED_NONE);
                                         if (!Said_MagmaBlast && Phase_Timer < EMERGED_TIME - 20000) //we dont want to say we're tired just after aggro
                                         {  
                                             DoScriptText(SAY_MAGMA_BLAST, me);
@@ -488,7 +488,7 @@ class Boss_Ragnaros : public CreatureScript
                             MagmaBlast_Wait_Timer = 2000;
                             //Elemental Fire
                             if (!me->GetVictim()->HasAuraEffect(SPELL_ELEMENTAL_FIRE, 1)) //index 0 = damage, 1 = aura
-                                me->CastSpell(me->GetVictim(),SPELL_ELEMENTAL_FIRE, false);
+                                me->CastSpell(me->GetVictim(),SPELL_ELEMENTAL_FIRE, TRIGGERED_NONE);
                         }
                         DoMeleeAttackIfReady();
                         break;
@@ -583,7 +583,7 @@ class Son_Of_Flame : public CreatureScript
                 {
                     Unit* pUnit = ObjectAccessor::GetUnit((*me), (*i)->getUnitGuid());
                     if(pUnit && pUnit->IsWithinDistInMap(me,MANABURN_RANGE))
-                        pUnit->CastSpell(pUnit, SPELL_MANABURN, true);
+                        pUnit->CastSpell(pUnit, SPELL_MANABURN, TRIGGERED_FULL_MASK);
                 }
             }
 

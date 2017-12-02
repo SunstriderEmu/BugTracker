@@ -347,7 +347,7 @@ public:
         {
             if (pInstance)
             {
-                me->CastSpell(pPlayer, SPELL_MARK_OF_THE_WILD_RANK_2, true);
+                me->CastSpell(pPlayer, SPELL_MARK_OF_THE_WILD_RANK_2, TRIGGERED_FULL_MASK);
                 if ((pInstance->GetData(TYPE_LORD_COBRAHN) == DONE) && (pInstance->GetData(TYPE_LORD_PYTHAS) == DONE) &&
                     (pInstance->GetData(TYPE_LADY_ANACONDRA) == DONE) && (pInstance->GetData(TYPE_LORD_SERPENTIS) == DONE))
                 {

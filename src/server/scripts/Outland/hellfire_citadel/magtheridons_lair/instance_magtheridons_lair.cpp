@@ -188,7 +188,7 @@ public:
                         Creature *Channeler = instance->GetCreature(i);
                         if (Channeler && Channeler->IsAlive())
                         {
-                            //Channeler->CastSpell(Channeler, SPELL_SOUL_TRANSFER, true);
+                            //Channeler->CastSpell(Channeler, SPELL_SOUL_TRANSFER, TRIGGERED_FULL_MASK);
                             data = IN_PROGRESS;
                             break;
                         }

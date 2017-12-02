@@ -198,7 +198,7 @@ public:
                     if (Peasant) {
                         Peasant->SetOwnerGUID(me->GetGUID());
                         if (summon == CREATURE_PEASANTT1) 
-                            Peasant->CastSpell(Peasant, SPELL_SEETHINGPLAGUE, true);
+                            Peasant->CastSpell(Peasant, SPELL_SEETHINGPLAGUE, TRIGGERED_FULL_MASK);
     
                         for (uint64 & Summon : Summons) {
                             if (Creature* BadGuy = ObjectAccessor::GetCreature((*me), Summon))
@@ -406,7 +406,7 @@ public:
                     Arrow_Timer = 2700;
                     DoCast(target, SPELL_ARROW, false);
                     if (rand() % 10 == 0) 
-                        target->CastSpell(target, SPELL_DEATHSDOOR, true);
+                        target->CastSpell(target, SPELL_DEATHSDOOR, TRIGGERED_FULL_MASK);
                 }
                 else {
                     Unit* uTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 60.0f, false);

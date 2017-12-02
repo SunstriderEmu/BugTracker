@@ -351,7 +351,7 @@ public:
                     }
     
                     if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 80.0f, true))
-                       target->CastSpell(target, SPELL_GARROTE,true);
+                       target->CastSpell(target, SPELL_GARROTE, TRIGGERED_FULL_MASK);
     
                     InVanish = false;
                 }else Wait_Timer -= diff;

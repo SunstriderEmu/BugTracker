@@ -65,7 +65,7 @@ public:
             //Knockaway_Timer
             if (Knockaway_Timer < diff)
             {
-                me->CastSpell(me->GetVictim(),SPELL_KNOCKAWAY, true);
+                me->CastSpell(me->GetVictim(),SPELL_KNOCKAWAY, TRIGGERED_FULL_MASK);
     
                 // current aggro target is knocked away pick new target
                 Unit* Target = SelectTarget(SELECT_TARGET_TOPAGGRO, 0);

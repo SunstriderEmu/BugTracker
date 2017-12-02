@@ -52,13 +52,13 @@ public:
         {
             if (player->GetTeam() == ALLIANCE && player->GetQuestRewardStatus(10589))
             {
-                player->CastSpell(player, SPELL_TELE_A_TO, false);
+                player->CastSpell(player, SPELL_TELE_A_TO, TRIGGERED_NONE);
                 return true;
             }
 
             if (player->GetTeam() == HORDE && player->GetQuestRewardStatus(10604))
             {
-                player->CastSpell(player, SPELL_TELE_H_TO, false);
+                player->CastSpell(player, SPELL_TELE_H_TO, TRIGGERED_NONE);
                 return true;
             }
 

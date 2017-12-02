@@ -429,7 +429,7 @@ public:
             case GOSSIP_ACTION_INFO_DEF + 1:
                 if (!player->HasSpell(S_TRANSMUTE) && player->GetMoney() >= DoLearnCost(player))
                 {
-                    player->CastSpell(player, S_LEARN_TRANSMUTE, true);
+                    player->CastSpell(player, S_LEARN_TRANSMUTE, TRIGGERED_FULL_MASK);
                     player->ModifyMoney(-DoLearnCost(player));
                 }
                 else
@@ -439,7 +439,7 @@ public:
             case GOSSIP_ACTION_INFO_DEF + 2:
                 if (!player->HasSpell(S_ELIXIR) && player->GetMoney() >= DoLearnCost(player))
                 {
-                    player->CastSpell(player, S_LEARN_ELIXIR, true);
+                    player->CastSpell(player, S_LEARN_ELIXIR, TRIGGERED_FULL_MASK);
                     player->ModifyMoney(-DoLearnCost(player));
                 }
                 else
@@ -449,7 +449,7 @@ public:
             case GOSSIP_ACTION_INFO_DEF + 3:
                 if (!player->HasSpell(S_POTION) && player->GetMoney() >= DoLearnCost(player))
                 {
-                    player->CastSpell(player, S_LEARN_POTION, true);
+                    player->CastSpell(player, S_LEARN_POTION, TRIGGERED_FULL_MASK);
                     player->ModifyMoney(-DoLearnCost(player));
                 }
                 else
@@ -460,7 +460,7 @@ public:
             case GOSSIP_ACTION_INFO_DEF + 4:
                 if (player->GetMoney() >= DoHighUnlearnCost(player))
                 {
-                    _Creature->CastSpell(player, S_UNLEARN_TRANSMUTE, true);
+                    _Creature->CastSpell(player, S_UNLEARN_TRANSMUTE, TRIGGERED_FULL_MASK);
                     player->ModifyMoney(-DoHighUnlearnCost(player));
                 }
                 else
@@ -470,7 +470,7 @@ public:
             case GOSSIP_ACTION_INFO_DEF + 5:
                 if (player->GetMoney() >= DoHighUnlearnCost(player))
                 {
-                    _Creature->CastSpell(player, S_UNLEARN_ELIXIR, true);
+                    _Creature->CastSpell(player, S_UNLEARN_ELIXIR, TRIGGERED_FULL_MASK);
                     player->ModifyMoney(-DoHighUnlearnCost(player));
                 }
                 else
@@ -480,7 +480,7 @@ public:
             case GOSSIP_ACTION_INFO_DEF + 6:
                 if (player->GetMoney() >= DoHighUnlearnCost(player))
                 {
-                    _Creature->CastSpell(player, S_UNLEARN_POTION, true);
+                    _Creature->CastSpell(player, S_UNLEARN_POTION, TRIGGERED_FULL_MASK);
                     player->ModifyMoney(-DoHighUnlearnCost(player));
                 }
                 else
@@ -672,16 +672,16 @@ public:
             case GOSSIP_ACTION_INFO_DEF + 1:
                 if (!player->HasSpell(S_ARMOR))
                 {
-                    player->CastSpell(player, S_LEARN_ARMOR, true);
-                    //_Creature->CastSpell(player, S_REP_ARMOR, true);
+                    player->CastSpell(player, S_LEARN_ARMOR, TRIGGERED_FULL_MASK);
+                    //_Creature->CastSpell(player, S_REP_ARMOR, TRIGGERED_FULL_MASK);
                 }
                 player->CLOSE_GOSSIP_MENU();
                 break;
             case GOSSIP_ACTION_INFO_DEF + 2:
                 if (!player->HasSpell(S_WEAPON))
                 {
-                    player->CastSpell(player, S_LEARN_WEAPON, true);
-                    //_Creature->CastSpell(player, S_REP_WEAPON, true);
+                    player->CastSpell(player, S_LEARN_WEAPON, TRIGGERED_FULL_MASK);
+                    //_Creature->CastSpell(player, S_REP_WEAPON, TRIGGERED_FULL_MASK);
                 }
                 player->CLOSE_GOSSIP_MENU();
                 break;
@@ -698,10 +698,10 @@ public:
                 {
                     if (player->GetMoney() >= DoLowUnlearnCost(player))
                     {
-                        player->CastSpell(player, S_UNLEARN_WEAPON, true);
+                        player->CastSpell(player, S_UNLEARN_WEAPON, TRIGGERED_FULL_MASK);
                         ProfessionUnlearnSpells(player, S_UNLEARN_WEAPON);
                         player->ModifyMoney(-DoLowUnlearnCost(player));
-                        _Creature->CastSpell(player, S_REP_ARMOR, true);
+                        _Creature->CastSpell(player, S_REP_ARMOR, TRIGGERED_FULL_MASK);
                         player->CLOSE_GOSSIP_MENU();
                     }
                     else
@@ -718,10 +718,10 @@ public:
                 {
                     if (player->GetMoney() >= DoLowUnlearnCost(player))
                     {
-                        player->CastSpell(player, S_UNLEARN_ARMOR, true);
+                        player->CastSpell(player, S_UNLEARN_ARMOR, TRIGGERED_FULL_MASK);
                         ProfessionUnlearnSpells(player, S_UNLEARN_ARMOR);
                         player->ModifyMoney(-DoLowUnlearnCost(player));
-                        _Creature->CastSpell(player, S_REP_WEAPON, true);
+                        _Creature->CastSpell(player, S_REP_WEAPON, TRIGGERED_FULL_MASK);
                     }
                     else
                         player->SendBuyError(BUY_ERR_NOT_ENOUGHT_MONEY, _Creature, 0, 0);
@@ -732,15 +732,15 @@ public:
                 break;
                 //Learn Hammer/Axe/Sword
             case GOSSIP_ACTION_INFO_DEF + 5:
-                player->CastSpell(player, S_LEARN_HAMMER, true);
+                player->CastSpell(player, S_LEARN_HAMMER, TRIGGERED_FULL_MASK);
                 player->CLOSE_GOSSIP_MENU();
                 break;
             case GOSSIP_ACTION_INFO_DEF + 6:
-                player->CastSpell(player, S_LEARN_AXE, true);
+                player->CastSpell(player, S_LEARN_AXE, TRIGGERED_FULL_MASK);
                 player->CLOSE_GOSSIP_MENU();
                 break;
             case GOSSIP_ACTION_INFO_DEF + 7:
-                player->CastSpell(player, S_LEARN_SWORD, true);
+                player->CastSpell(player, S_LEARN_SWORD, TRIGGERED_FULL_MASK);
                 player->CLOSE_GOSSIP_MENU();
                 break;
                 //Unlearn Hammer/Axe/Sword
@@ -749,7 +749,7 @@ public:
                 {
                     if (player->GetMoney() >= DoMedUnlearnCost(player))
                     {
-                        player->CastSpell(player, S_UNLEARN_HAMMER, true);
+                        player->CastSpell(player, S_UNLEARN_HAMMER, TRIGGERED_FULL_MASK);
                         ProfessionUnlearnSpells(player, S_UNLEARN_HAMMER);
                         player->ModifyMoney(-DoMedUnlearnCost(player));
                     }
@@ -765,7 +765,7 @@ public:
                 {
                     if (player->GetMoney() >= DoMedUnlearnCost(player))
                     {
-                        player->CastSpell(player, S_UNLEARN_AXE, true);
+                        player->CastSpell(player, S_UNLEARN_AXE, TRIGGERED_FULL_MASK);
                         ProfessionUnlearnSpells(player, S_UNLEARN_AXE);
                         player->ModifyMoney(-DoMedUnlearnCost(player));
                     }
@@ -781,7 +781,7 @@ public:
                 {
                     if (player->GetMoney() >= DoMedUnlearnCost(player))
                     {
-                        player->CastSpell(player, S_UNLEARN_SWORD, true);
+                        player->CastSpell(player, S_UNLEARN_SWORD, TRIGGERED_FULL_MASK);
                         ProfessionUnlearnSpells(player, S_UNLEARN_SWORD);
                         player->ModifyMoney(-DoMedUnlearnCost(player));
                     }
@@ -868,10 +868,10 @@ public:
 /*bool QuestComplete_npc_prof_blacksmith( Player *player, Creature *_Creature, Quest const *_Quest )
 {
     if ( (_Quest->GetQuestId() == 5283) || (_Quest->GetQuestId() == 5301) )             //armorsmith
-        _Creature->CastSpell(player, 17451, true);
+        _Creature->CastSpell(player, 17451, TRIGGERED_FULL_MASK);
 
     if ( (_Quest->GetQuestId() == 5284) || (_Quest->GetQuestId() == 5302) )             //weaponsmith
-        _Creature->CastSpell(player, 17452, true);
+        _Creature->CastSpell(player, 17452, TRIGGERED_FULL_MASK);
 
     return true;
 }*/
@@ -994,7 +994,7 @@ public:
                 {
                     if (player->GetMoney() >= DoMedUnlearnCost(player))
                     {
-                        player->CastSpell(player, S_UNLEARN_DRAGON, true);
+                        player->CastSpell(player, S_UNLEARN_DRAGON, TRIGGERED_FULL_MASK);
                         ProfessionUnlearnSpells(player, S_UNLEARN_DRAGON);
                         player->ModifyMoney(-DoMedUnlearnCost(player));
                     }
@@ -1010,7 +1010,7 @@ public:
                 {
                     if (player->GetMoney() >= DoMedUnlearnCost(player))
                     {
-                        player->CastSpell(player, S_UNLEARN_ELEMENTAL, true);
+                        player->CastSpell(player, S_UNLEARN_ELEMENTAL, TRIGGERED_FULL_MASK);
                         ProfessionUnlearnSpells(player, S_UNLEARN_ELEMENTAL);
                         player->ModifyMoney(-DoMedUnlearnCost(player));
                     }
@@ -1026,7 +1026,7 @@ public:
                 {
                     if (player->GetMoney() >= DoMedUnlearnCost(player))
                     {
-                        player->CastSpell(player, S_UNLEARN_TRIBAL, true);
+                        player->CastSpell(player, S_UNLEARN_TRIBAL, TRIGGERED_FULL_MASK);
                         ProfessionUnlearnSpells(player, S_UNLEARN_TRIBAL);
                         player->ModifyMoney(-DoMedUnlearnCost(player));
                     }
@@ -1076,19 +1076,19 @@ public:
             case GOSSIP_ACTION_INFO_DEF + 4:
                 if (!player->HasSpell(S_LEARN_DRAGON))
                 {
-                    player->CastSpell(player, S_LEARN_DRAGON, true);
+                    player->CastSpell(player, S_LEARN_DRAGON, TRIGGERED_FULL_MASK);
                 }
                 break;
             case GOSSIP_ACTION_INFO_DEF + 5:
                 if (!player->HasSpell(S_LEARN_ELEMENTAL))
                 {
-                    player->CastSpell(player, S_LEARN_ELEMENTAL, true);
+                    player->CastSpell(player, S_LEARN_ELEMENTAL, TRIGGERED_FULL_MASK);
                 }
                 break;
             case GOSSIP_ACTION_INFO_DEF + 6:
                 if (!player->HasSpell(S_LEARN_TRIBAL))
                 {
-                    player->CastSpell(player, S_LEARN_TRIBAL, true);
+                    player->CastSpell(player, S_LEARN_TRIBAL, TRIGGERED_FULL_MASK);
                 }
                 break;
             }
@@ -1205,7 +1205,7 @@ public:
             case GOSSIP_ACTION_INFO_DEF + 1:
                 if (!player->HasSpell(S_SPELLFIRE) && player->GetMoney() >= DoLearnCost(player))
                 {
-                    player->CastSpell(player, S_LEARN_SPELLFIRE, true);
+                    player->CastSpell(player, S_LEARN_SPELLFIRE, TRIGGERED_FULL_MASK);
                     player->ModifyMoney(-DoLearnCost(player));
                 }
                 else
@@ -1215,7 +1215,7 @@ public:
             case GOSSIP_ACTION_INFO_DEF + 2:
                 if (!player->HasSpell(S_MOONCLOTH) && player->GetMoney() >= DoLearnCost(player))
                 {
-                    player->CastSpell(player, S_LEARN_MOONCLOTH, true);
+                    player->CastSpell(player, S_LEARN_MOONCLOTH, TRIGGERED_FULL_MASK);
                     player->ModifyMoney(-DoLearnCost(player));
                 }
                 else
@@ -1225,7 +1225,7 @@ public:
             case GOSSIP_ACTION_INFO_DEF + 3:
                 if (!player->HasSpell(S_SHADOWEAVE) && player->GetMoney() >= DoLearnCost(player))
                 {
-                    player->CastSpell(player, S_LEARN_SHADOWEAVE, true);
+                    player->CastSpell(player, S_LEARN_SHADOWEAVE, TRIGGERED_FULL_MASK);
                     player->ModifyMoney(-DoLearnCost(player));
                 }
                 else
@@ -1238,7 +1238,7 @@ public:
                 {
                     if (player->GetMoney() >= DoHighUnlearnCost(player))
                     {
-                        player->CastSpell(player, S_UNLEARN_SPELLFIRE, true);
+                        player->CastSpell(player, S_UNLEARN_SPELLFIRE, TRIGGERED_FULL_MASK);
                         ProfessionUnlearnSpells(player, S_UNLEARN_SPELLFIRE);
                         player->ModifyMoney(-DoHighUnlearnCost(player));
                     }
@@ -1254,7 +1254,7 @@ public:
                 {
                     if (player->GetMoney() >= DoHighUnlearnCost(player))
                     {
-                        player->CastSpell(player, S_UNLEARN_MOONCLOTH, true);
+                        player->CastSpell(player, S_UNLEARN_MOONCLOTH, TRIGGERED_FULL_MASK);
                         ProfessionUnlearnSpells(player, S_UNLEARN_MOONCLOTH);
                         player->ModifyMoney(-DoHighUnlearnCost(player));
                     }
@@ -1270,7 +1270,7 @@ public:
                 {
                     if (player->GetMoney() >= DoHighUnlearnCost(player))
                     {
-                        player->CastSpell(player, S_UNLEARN_SHADOWEAVE, true);
+                        player->CastSpell(player, S_UNLEARN_SHADOWEAVE, TRIGGERED_FULL_MASK);
                         ProfessionUnlearnSpells(player, S_UNLEARN_SHADOWEAVE);
                         player->ModifyMoney(-DoHighUnlearnCost(player));
                     }

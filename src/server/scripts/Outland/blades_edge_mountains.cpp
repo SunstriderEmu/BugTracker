@@ -808,7 +808,7 @@ public:
                         Cell::VisitGridObjects(me, searcher, 50.0f);
     
                         for (auto & visualBunnie : visualBunnies)
-                            visualBunnie->CastSpell(visualBunnie, 39921, false);
+                            visualBunnie->CastSpell(visualBunnie, 39921, TRIGGERED_NONE);
                     }
                 }
                 
@@ -1080,13 +1080,13 @@ public:
             for (auto & trigger : triggers) {
                 trigger->GetMotionMaster()->MoveTargetedHome();
                 if (step == 1 && int32(trigger->GetPositionX()) == 3493)
-                    trigger->CastSpell(me, SPELL_VISUAL_BEAM, false);
+                    trigger->CastSpell(me, SPELL_VISUAL_BEAM, TRIGGERED_NONE);
                 else if (step == 2 && int32(trigger->GetPositionX()) == 3465)
-                    trigger->CastSpell(me, SPELL_VISUAL_BEAM, false);
+                    trigger->CastSpell(me, SPELL_VISUAL_BEAM, TRIGGERED_NONE);
                 else if (step == 3 && int32(trigger->GetPositionX()) == 3515)
-                    trigger->CastSpell(me, SPELL_VISUAL_BEAM, false);
+                    trigger->CastSpell(me, SPELL_VISUAL_BEAM, TRIGGERED_NONE);
                 else if (step == 4 && int32(trigger->GetPositionX()) == 3472)
-                    trigger->CastSpell(me, SPELL_VISUAL_BEAM, false);
+                    trigger->CastSpell(me, SPELL_VISUAL_BEAM, TRIGGERED_NONE);
             }
         }
         
@@ -1429,8 +1429,8 @@ public:
             }
             else {                  // Wrong, hurt player and restart level
                 if (Player *plr = sObjectMgr->GetPlayer(playerGUID)) {
-                    plr->CastSpell(plr, SPELL_GAME_FAILED, true);
-                    plr->CastSpell(plr, SPELL_BAD_PRESS, true);
+                    plr->CastSpell(plr, SPELL_GAME_FAILED, TRIGGERED_FULL_MASK);
+                    plr->CastSpell(plr, SPELL_BAD_PRESS, TRIGGERED_FULL_MASK);
                 }
                 
                 beamList.clear();
@@ -1451,7 +1451,7 @@ public:
             
             if (level > 8) {        // Complete quest and stop event
                 //DoCast(summoner, SPELL_APEXIS_VIBRATIONS, true);
-                summoner->CastSpell(summoner, SPELL_APEXIS_VIBRATIONS, false);
+                summoner->CastSpell(summoner, SPELL_APEXIS_VIBRATIONS, TRIGGERED_NONE);
                 if (summoner->ToPlayer()->GetQuestStatus(11058) == QUEST_STATUS_INCOMPLETE) {
                     summoner->ToPlayer()->CompleteQuest(11058);
                     summoner->ToPlayer()->GroupEventHappens(11058, me);
@@ -1541,7 +1541,7 @@ public:
             if (!bunny)
                 return false;
 
-            pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, true);
+            pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, TRIGGERED_FULL_MASK);
             ((npc_simon_bunny::npc_simon_bunnyAI*)bunny->AI())->PlayerProposal(BEAM_BLUE);
 
             return true;
@@ -1570,7 +1570,7 @@ public:
             if (!bunny)
                 return false;
 
-            pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, true);
+            pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, TRIGGERED_FULL_MASK);
             ((npc_simon_bunny::npc_simon_bunnyAI*)bunny->AI())->PlayerProposal(BEAM_RED);
 
             return true;
@@ -1599,7 +1599,7 @@ public:
             if (!bunny)
                 return false;
 
-            pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, true);
+            pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, TRIGGERED_FULL_MASK);
             ((npc_simon_bunny::npc_simon_bunnyAI*)bunny->AI())->PlayerProposal(BEAM_GREEN);
 
             return true;
@@ -1628,7 +1628,7 @@ public:
             if (!bunny)
                 return false;
 
-            pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, true);
+            pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, TRIGGERED_FULL_MASK);
             ((npc_simon_bunny::npc_simon_bunnyAI*)bunny->AI())->PlayerProposal(BEAM_YELLOW);
 
             return true;
@@ -1885,8 +1885,8 @@ public:
             }
             else {                  // Wrong, hurt player and restart level
                 if (Player *plr = sObjectMgr->GetPlayer(playerGUID)) {
-                    plr->CastSpell(plr, SPELL_GAME_FAILED, true);
-                    plr->CastSpell(plr, SPELL_BAD_PRESS, true);
+                    plr->CastSpell(plr, SPELL_GAME_FAILED, TRIGGERED_FULL_MASK);
+                    plr->CastSpell(plr, SPELL_BAD_PRESS, TRIGGERED_FULL_MASK);
                 }
                 
                 beamList.clear();
@@ -1986,7 +1986,7 @@ public:
             if (!bunny)
                 return false;
 
-            pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, true);
+            pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, TRIGGERED_FULL_MASK);
             ((npc_simon_bunny_large::npc_simon_bunny_largeAI*)bunny->AI())->PlayerProposal(BEAM_BLUE);
 
             return true;
@@ -2015,7 +2015,7 @@ public:
             if (!bunny)
                 return false;
 
-            pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, true);
+            pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, TRIGGERED_FULL_MASK);
             ((npc_simon_bunny_large::npc_simon_bunny_largeAI*)bunny->AI())->PlayerProposal(BEAM_GREEN);
 
             return true;
@@ -2044,7 +2044,7 @@ public:
             if (!bunny)
                 return false;
 
-            pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, true);
+            pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, TRIGGERED_FULL_MASK);
             ((npc_simon_bunny_large::npc_simon_bunny_largeAI*)bunny->AI())->PlayerProposal(BEAM_RED);
 
             return true;
@@ -2073,7 +2073,7 @@ public:
             if (!bunny)
                 return false;
 
-            pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, true);
+            pPlayer->CastSpell(pPlayer, SPELL_INTROSPECTION, TRIGGERED_FULL_MASK);
             ((npc_simon_bunny_large::npc_simon_bunny_largeAI*)bunny->AI())->PlayerProposal(BEAM_YELLOW);
 
             return true;
@@ -2431,7 +2431,7 @@ public:
         override {
             if (pSpell->Id == 40856 && me->IsBelowHPPercent(30)) {
                 me->DisappearAndDie();
-                pCaster->CastSpell(pCaster, 40917, false);
+                pCaster->CastSpell(pCaster, 40917, TRIGGERED_NONE);
             }
         }
         
@@ -3073,14 +3073,14 @@ public:
             
             if (lightningCount >= 5) {
                 if (Creature* trigger = ObjectAccessor::GetCreature(*me, triggerGUID))
-                    player->CastSpell(player, (quest == QUEST_ZEPHYRIUM_CAPACITORIUM) ? SPELL_SOARING_ZEPHYR : SPELL_SOARING_SINGING, true);
+                    player->CastSpell(player, (quest == QUEST_ZEPHYRIUM_CAPACITORIUM) ? SPELL_SOARING_ZEPHYR : SPELL_SOARING_SINGING, TRIGGERED_FULL_MASK);
                     
                 EndEvent();
             }
                 
             if (blueRayTimer <= diff) {
                 if (Creature* trigger = ObjectAccessor::GetCreature(*me, triggerGUID)) {
-                    trigger->CastSpell(player, SPELL_COSMETIC_LIGHTNING, true);
+                    trigger->CastSpell(player, SPELL_COSMETIC_LIGHTNING, TRIGGERED_FULL_MASK);
                     lightningCount++;
                 }
                 
@@ -3110,13 +3110,13 @@ public:
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             player->CLOSE_GOSSIP_MENU();
             if (action == GOSSIP_ACTION_INFO_DEF) {
-                player->CastSpell(player, 37958, true);
+                player->CastSpell(player, 37958, TRIGGERED_FULL_MASK);
                 ((npc_rally_zapnabber::npc_rally_zapnabberAI*)me->AI())->quest = QUEST_SINGING_RIDGE;
                 ((npc_rally_zapnabber::npc_rally_zapnabberAI*)me->AI())->playerGUID = player->GetGUID();
                 ((npc_rally_zapnabber::npc_rally_zapnabberAI*)me->AI())->StartEvent();
             }
             else if (action == GOSSIP_ACTION_INFO_DEF+1) {
-                player->CastSpell(player, 37958, true);
+                player->CastSpell(player, 37958, TRIGGERED_FULL_MASK);
                 ((npc_rally_zapnabber::npc_rally_zapnabberAI*)me->AI())->quest = QUEST_ZEPHYRIUM_CAPACITORIUM;
                 ((npc_rally_zapnabber::npc_rally_zapnabberAI*)me->AI())->playerGUID = player->GetGUID();
                 ((npc_rally_zapnabber::npc_rally_zapnabberAI*)me->AI())->StartEvent();
@@ -3306,7 +3306,7 @@ public:
         
         void JustDied(Unit* killer)
         override {
-            killer->CastSpell(killer, 37466, true);
+            killer->CastSpell(killer, 37466, TRIGGERED_FULL_MASK);
         }
         
         void UpdateAI(uint32 const diff)

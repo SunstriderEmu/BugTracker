@@ -430,7 +430,7 @@ class boss_kaelthas : public CreatureScript
                         break;
                     case EVENT_PREFIGHT_PHASE51:
                         Talk(SAY_PHASE2_WEAPON);
-                        me->CastSpell(me, SPELL_SUMMON_WEAPONS, false);
+                        me->CastSpell(me, SPELL_SUMMON_WEAPONS, TRIGGERED_NONE);
                         phase = PHASE_WEAPONS;
                         break;
                     case EVENT_PREFIGHT_PHASE52:
@@ -454,7 +454,7 @@ class boss_kaelthas : public CreatureScript
                         Talk(SAY_PHASE3_ADVANCE);
                         break;
                     case EVENT_PREFIGHT_PHASE62:
-                        me->CastSpell(me, SPELL_RESURRECTION, false);
+                        me->CastSpell(me, SPELL_RESURRECTION, TRIGGERED_NONE);
                         break;
                     case EVENT_PREFIGHT_PHASE63:
                         for (SummonList::const_iterator i = summons.begin(); i != summons.end(); ++i)
@@ -496,40 +496,40 @@ class boss_kaelthas : public CreatureScript
                         break;
                     case EVENT_SCENE_2:
                         me->SetTarget(0);
-                        me->CastSpell(me, SPELL_KAEL_EXPLODES1, true);
-                        me->CastSpell(me, SPELL_KAEL_GAINING_POWER, false);
+                        me->CastSpell(me, SPELL_KAEL_EXPLODES1, TRIGGERED_FULL_MASK);
+                        me->CastSpell(me, SPELL_KAEL_GAINING_POWER, TRIGGERED_NONE);
                         me->SetDisableGravity(true);
                         break;
                     case EVENT_SCENE_3:
                         me->SetTarget(0);
                         for (uint8 i = 0; i < 2; ++i)
                             if (Creature* trigger = me->SummonCreature(WORLD_TRIGGER, triggersPos[i], TEMPSUMMON_TIMED_DESPAWN, 60 * SECOND))
-                                trigger->CastSpell(me, SPELL_NETHERBEAM1+i, false);
+                                trigger->CastSpell(me, SPELL_NETHERBEAM1+i, TRIGGERED_NONE);
                         me->GetMotionMaster()->MovePoint(POINT_AIR, me->GetPositionX(), me->GetPositionY(), 76.0f, false, true);
-                        me->CastSpell(me, SPELL_GROW, true);
+                        me->CastSpell(me, SPELL_GROW, TRIGGERED_FULL_MASK);
                         break;
                     case EVENT_SCENE_4:
                         me->SetTarget(0);
-                        me->CastSpell(me, SPELL_GROW, true);
-                        me->CastSpell(me, SPELL_KAEL_EXPLODES2, true);
-                        me->CastSpell(me, SPELL_NETHERBEAM_AURA1, true);
+                        me->CastSpell(me, SPELL_GROW, TRIGGERED_FULL_MASK);
+                        me->CastSpell(me, SPELL_KAEL_EXPLODES2, TRIGGERED_FULL_MASK);
+                        me->CastSpell(me, SPELL_NETHERBEAM_AURA1, TRIGGERED_FULL_MASK);
                         for (uint8 i = 0; i < 2; ++i)
                             if (Creature* trigger = me->SummonCreature(WORLD_TRIGGER, triggersPos[i+2], TEMPSUMMON_TIMED_DESPAWN, 60000))
-                                trigger->CastSpell(me, SPELL_NETHERBEAM1+i, false);
+                                trigger->CastSpell(me, SPELL_NETHERBEAM1+i, TRIGGERED_NONE);
                         break;
                     case EVENT_SCENE_5:
                         me->SetTarget(0);
-                        me->CastSpell(me, SPELL_GROW, true);
-                        me->CastSpell(me, SPELL_KAEL_EXPLODES3, true);
-                        me->CastSpell(me, SPELL_NETHERBEAM_AURA2, true);
+                        me->CastSpell(me, SPELL_GROW, TRIGGERED_FULL_MASK);
+                        me->CastSpell(me, SPELL_KAEL_EXPLODES3, TRIGGERED_FULL_MASK);
+                        me->CastSpell(me, SPELL_NETHERBEAM_AURA2, TRIGGERED_FULL_MASK);
                         for (uint8 i = 0; i < 2; ++i)
                             if (Creature* trigger = me->SummonCreature(WORLD_TRIGGER, triggersPos[i+4], TEMPSUMMON_TIMED_DESPAWN, 60000))
-                                trigger->CastSpell(me, SPELL_NETHERBEAM1+i, false);
+                                trigger->CastSpell(me, SPELL_NETHERBEAM1+i, TRIGGERED_NONE);
                         break;
                     case EVENT_SCENE_6:
-                        me->CastSpell(me, SPELL_GROW, true);
-                        me->CastSpell(me, SPELL_KAEL_EXPLODES4, true);
-                        me->CastSpell(me, SPELL_NETHERBEAM_AURA3, true);
+                        me->CastSpell(me, SPELL_GROW, TRIGGERED_FULL_MASK);
+                        me->CastSpell(me, SPELL_KAEL_EXPLODES4, TRIGGERED_FULL_MASK);
+                        me->CastSpell(me, SPELL_NETHERBEAM_AURA3, TRIGGERED_FULL_MASK);
                         break;
                     case EVENT_SCENE_7:
                         SetRoomState(GO_STATE_ACTIVE);
@@ -541,51 +541,51 @@ class boss_kaelthas : public CreatureScript
                         me->RemoveAurasDueToSpell(SPELL_NETHERBEAM_AURA1);
                         me->RemoveAurasDueToSpell(SPELL_NETHERBEAM_AURA2);
                         me->RemoveAurasDueToSpell(SPELL_NETHERBEAM_AURA3);
-                        me->CastSpell(me, SPELL_KAEL_EXPLODES5, true);
-                        me->CastSpell(me, SPELL_FLOATING_DROWNED, false);
-                        //me->CastSpell(me, SPELL_KEAL_STUNNED, true);
+                        me->CastSpell(me, SPELL_KAEL_EXPLODES5, TRIGGERED_FULL_MASK);
+                        me->CastSpell(me, SPELL_FLOATING_DROWNED, TRIGGERED_NONE);
+                        //me->CastSpell(me, SPELL_KEAL_STUNNED, TRIGGERED_FULL_MASK);
                         break;
                     case EVENT_SCENE_9:
-                        me->CastSpell(me, 52241, true); // WRONG VISUAL, ZOMG!
-                        me->CastSpell(me, 34807, true);
+                        me->CastSpell(me, 52241, TRIGGERED_FULL_MASK); // WRONG VISUAL, ZOMG!
+                        me->CastSpell(me, 34807, TRIGGERED_FULL_MASK);
                         me->SummonCreature(NPC_WORLD_TRIGGER, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ()+15.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 60000);
                         if (Creature* trigger = me->SummonCreature(WORLD_TRIGGER, me->GetPositionX()+5, me->GetPositionY(), me->GetPositionZ()+15.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 60000))
-                            trigger->CastSpell(me, SPELL_PURE_NETHER_BEAM1, true);
+                            trigger->CastSpell(me, SPELL_PURE_NETHER_BEAM1, TRIGGERED_FULL_MASK);
                         if (Creature* trigger = me->SummonCreature(WORLD_TRIGGER, me->GetPositionX()-5, me->GetPositionY(), me->GetPositionZ()+15.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 60000))
-                            trigger->CastSpell(me, SPELL_PURE_NETHER_BEAM2, true);
+                            trigger->CastSpell(me, SPELL_PURE_NETHER_BEAM2, TRIGGERED_FULL_MASK);
                         break;
                     case EVENT_SCENE_10:
                         if (Creature* trigger = me->SummonCreature(WORLD_TRIGGER, me->GetPositionX()-5, me->GetPositionY()-5, me->GetPositionZ()+15.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 60000))
-                            trigger->CastSpell(me, SPELL_PURE_NETHER_BEAM3, true);
+                            trigger->CastSpell(me, SPELL_PURE_NETHER_BEAM3, TRIGGERED_FULL_MASK);
                         if (Creature* trigger = me->SummonCreature(WORLD_TRIGGER, me->GetPositionX()+5, me->GetPositionY()+5, me->GetPositionZ()+15.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 60000))
-                            trigger->CastSpell(me, SPELL_PURE_NETHER_BEAM1, true);
+                            trigger->CastSpell(me, SPELL_PURE_NETHER_BEAM1, TRIGGERED_FULL_MASK);
                         break;
                     case EVENT_SCENE_11:
                         if (Creature* trigger = me->SummonCreature(WORLD_TRIGGER, me->GetPositionX(), me->GetPositionY()+5, me->GetPositionZ()+15.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 60000))
-                            trigger->CastSpell(me, SPELL_PURE_NETHER_BEAM2, true);
+                            trigger->CastSpell(me, SPELL_PURE_NETHER_BEAM2, TRIGGERED_FULL_MASK);
                         break;
                     case EVENT_SCENE_12:
                         if (Creature* trigger = me->SummonCreature(WORLD_TRIGGER, me->GetPositionX(), me->GetPositionY()-5, me->GetPositionZ()+15.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 60000))
-                            trigger->CastSpell(me, SPELL_PURE_NETHER_BEAM3, true);
+                            trigger->CastSpell(me, SPELL_PURE_NETHER_BEAM3, TRIGGERED_FULL_MASK);
                         if (Creature* trigger = me->SummonCreature(WORLD_TRIGGER, me->GetPositionX()+5, me->GetPositionY()-5, me->GetPositionZ()+15.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 60000))
-                            trigger->CastSpell(me, SPELL_PURE_NETHER_BEAM1, true);
+                            trigger->CastSpell(me, SPELL_PURE_NETHER_BEAM1, TRIGGERED_FULL_MASK);
                         break;
                     case EVENT_SCENE_13:
                         if (Creature* trigger = me->SummonCreature(WORLD_TRIGGER, me->GetPositionX()-5, me->GetPositionY()+5, me->GetPositionZ()+15.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 60000))
-                            trigger->CastSpell(me, SPELL_PURE_NETHER_BEAM2, true);
+                            trigger->CastSpell(me, SPELL_PURE_NETHER_BEAM2, TRIGGERED_FULL_MASK);
                         break;
                     case EVENT_SCENE_14:
                         //if (Creature* trigger = me->SummonCreature(WORLD_TRIGGER, me->GetPositionX()-5, me->GetPositionY()+5, me->GetPositionZ()+15.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 60000))
-                        //    trigger->CastSpell(me, SPELL_PURE_NETHER_BEAM3, true);
+                        //    trigger->CastSpell(me, SPELL_PURE_NETHER_BEAM3, TRIGGERED_FULL_MASK);
                         break;
                     case EVENT_SCENE_15:
                         me->RemoveAurasDueToSpell(SPELL_FLOATING_DROWNED);
                         me->RemoveAurasDueToSpell(SPELL_KEAL_STUNNED);
-                        me->CastSpell(me, SPELL_KAEL_FULL_POWER, false);
-                        me->CastSpell(me, 36709, true);
-                        me->CastSpell(me, 36201, true);
-                        me->CastSpell(me, 36290, true);
-                        me->CastSpell(me, 36291, true);
+                        me->CastSpell(me, SPELL_KAEL_FULL_POWER, TRIGGERED_NONE);
+                        me->CastSpell(me, 36709, TRIGGERED_FULL_MASK);
+                        me->CastSpell(me, 36201, TRIGGERED_FULL_MASK);
+                        me->CastSpell(me, 36290, TRIGGERED_FULL_MASK);
+                        me->CastSpell(me, 36291, TRIGGERED_FULL_MASK);
                         me->SetUnitMovementFlags(MOVEMENTFLAG_DISABLE_GRAVITY|MOVEMENTFLAG_WALKING);
                         me->SendMovementFlagUpdate();
                         break;
@@ -620,7 +620,7 @@ class boss_kaelthas : public CreatureScript
                         break;
                     case EVENT_SPELL_SEQ_3:
                         Talk(SAY_PYROBLAST);
-                        me->CastSpell(me, SPELL_SHOCK_BARRIER, false);
+                        me->CastSpell(me, SPELL_SHOCK_BARRIER, TRIGGERED_NONE);
                         events.ScheduleEvent(EVENT_SPELL_SEQ_3, 50000);
                         events.DelayEvents(10000);
                         events.ScheduleEvent(EVENT_SPELL_PYROBLAST, 0);
@@ -628,31 +628,31 @@ class boss_kaelthas : public CreatureScript
                         events.ScheduleEvent(EVENT_SPELL_PYROBLAST, 8000);
                         break;
                     case EVENT_SPELL_SHOCK_BARRIER:
-                        me->CastSpell(me, SPELL_SHOCK_BARRIER, false);
+                        me->CastSpell(me, SPELL_SHOCK_BARRIER, TRIGGERED_NONE);
                         break;
                     case EVENT_SPELL_FIREBALL:
-                        me->CastSpell(me->GetVictim(), SPELL_FIREBALL, false);
+                        me->CastSpell(me->GetVictim(), SPELL_FIREBALL, TRIGGERED_NONE);
                         events.ScheduleEvent(EVENT_SPELL_FIREBALL, roll_chance_i(70) ? 2000: 4000);
                         break;
                     case EVENT_SPELL_PYROBLAST:
-                        me->CastSpell(me->GetVictim(), SPELL_PYROBLAST, false);
+                        me->CastSpell(me->GetVictim(), SPELL_PYROBLAST, TRIGGERED_NONE);
                         break;
                     case EVENT_SPELL_FLAMESTRIKE:
                         if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true))
-                            me->CastSpell(target, SPELL_FLAME_STRIKE, false);
+                            me->CastSpell(target, SPELL_FLAME_STRIKE, TRIGGERED_NONE);
                         events.ScheduleEvent(EVENT_SPELL_FLAMESTRIKE, 20000);
                         break;
                     case EVENT_SPELL_ARCANE_DISRUPTION:
-                        me->CastSpell(me, SPELL_ARCANE_DISRUPTION, false);
+                        me->CastSpell(me, SPELL_ARCANE_DISRUPTION, TRIGGERED_NONE);
                         break;
                     case EVENT_SPELL_MIND_CONTROL:
                         if (roll_chance_i(50))
                             Talk(SAY_MINDCONTROL);
-                        me->CastCustomSpell(SPELL_MIND_CONTROL, SPELLVALUE_MAX_TARGETS, 3, me, false);
+                        me->CastCustomSpell(SPELL_MIND_CONTROL, SPELLVALUE_MAX_TARGETS, 3, me, TRIGGERED_NONE);
                         break;
                     case EVENT_SPELL_SUMMON_PHOENIX:
                         Talk(SAY_SUMMON_PHOENIX);
-                        me->CastSpell(me, SPELL_PHOENIX, false);
+                        me->CastSpell(me, SPELL_PHOENIX, TRIGGERED_NONE);
                         events.ScheduleEvent(EVENT_SPELL_SUMMON_PHOENIX, 40000);
                         break;
                     case EVENT_CHECK_HEALTH:
@@ -677,18 +677,18 @@ class boss_kaelthas : public CreatureScript
                         events.ScheduleEvent(EVENT_SPELL_SHOCK_BARRIER, 10000);
                         events.ScheduleEvent(EVENT_SPELL_NETHER_BEAM, 4000);
                         events.ScheduleEvent(EVENT_SPELL_NETHER_VAPOR, 0);
-                        me->CastSpell(me, SPELL_SHOCK_BARRIER, false);
-                        me->CastSpell(me, SPELL_GRAVITY_LAPSE, false);
+                        me->CastSpell(me, SPELL_SHOCK_BARRIER, TRIGGERED_NONE);
+                        me->CastSpell(me, SPELL_GRAVITY_LAPSE, TRIGGERED_NONE);
                         me->SetTarget(0);
                         me->GetMotionMaster()->Clear();
                         me->StopMoving();
                         Talk(SAY_GRAVITYLAPSE);
                         break;
                     case EVENT_SPELL_NETHER_VAPOR:
-                        me->CastSpell(me, SPELL_SUMMON_NETHER_VAPOR, false);
+                        me->CastSpell(me, SPELL_SUMMON_NETHER_VAPOR, TRIGGERED_NONE);
                         break;
                     case EVENT_SPELL_NETHER_BEAM:
-                        me->CastSpell(me, SPELL_NETHER_BEAM, false);
+                        me->CastSpell(me, SPELL_NETHER_BEAM, TRIGGERED_NONE);
                         events.ScheduleEvent(EVENT_SPELL_NETHER_BEAM, 4000);
                         break;
                     case EVENT_GRAVITY_LAPSE_END:
@@ -757,7 +757,7 @@ class spell_kaelthas_remote_toy : public SpellScriptLoader
             {
                 PreventDefaultAction();
                 if (roll_chance_i(66))
-                    GetUnitOwner()->CastSpell(GetUnitOwner(), SPELL_REMOTE_TOY_STUN, true);
+                    GetUnitOwner()->CastSpell(GetUnitOwner(), SPELL_REMOTE_TOY_STUN, TRIGGERED_FULL_MASK);
             }
 
             void Register()
@@ -785,7 +785,7 @@ class spell_kaelthas_summon_weapons : public SpellScriptLoader
             {
                 PreventHitEffect(effIndex);
                 for (uint32 i = SPELL_SUMMON_WEAPONA; i <= SPELL_SUMMON_WEAPONG; ++i)
-                    GetCaster()->CastSpell(GetCaster(), i, true);                
+                    GetCaster()->CastSpell(GetCaster(), i, TRIGGERED_FULL_MASK);                
             }
 
             void Register() override
@@ -897,7 +897,7 @@ class spell_kaelthas_flame_strike : public SpellScriptLoader
             void OnRemove(AuraEffect const* aurEff, AuraEffectHandleModes mode)
             {
                 GetUnitOwner()->RemoveAllAuras();
-                GetUnitOwner()->CastSpell(GetUnitOwner(), SPELL_FLAME_STRIKE_DAMAGE, true);
+                GetUnitOwner()->CastSpell(GetUnitOwner(), SPELL_FLAME_STRIKE_DAMAGE, TRIGGERED_FULL_MASK);
                 GetUnitOwner()->ToCreature()->DespawnOrUnsummon(2000);
             }
 
@@ -927,8 +927,8 @@ class lapseTeleport : public BasicEvent
                 _owner->m_Events.AddEvent(new lapseTeleport(_owner), _owner->m_Events.CalculateTime(1));
             else if (!_owner->IsBeingTeleported())
             {
-                _owner->CastSpell(_owner, SPELL_GRAVITY_LAPSE_KNOCKBACK, true);
-                _owner->CastSpell(_owner, SPELL_GRAVITY_LAPSE_AURA, true);
+                _owner->CastSpell(_owner, SPELL_GRAVITY_LAPSE_KNOCKBACK, TRIGGERED_FULL_MASK);
+                _owner->CastSpell(_owner, SPELL_GRAVITY_LAPSE_AURA, TRIGGERED_FULL_MASK);
             }
             return true;
         }
@@ -958,7 +958,7 @@ class spell_kaelthas_gravity_lapse : public SpellScriptLoader
                 if (_currentSpellId < SPELL_GRAVITY_LAPSE_TELEPORT1+25)
                     if (Player* target = GetHitPlayer())
                     {
-                        GetCaster()->CastSpell(target, _currentSpellId++, true);
+                        GetCaster()->CastSpell(target, _currentSpellId++, TRIGGERED_FULL_MASK);
                         target->m_Events.AddEvent(new lapseTeleport(target), target->m_Events.CalculateTime(1));
                     }
             }
@@ -1002,7 +1002,7 @@ class spell_kaelthas_nether_beam : public SpellScriptLoader
 
                 Trinity::Containers::RandomResize(targetList, 5);
                 for (std::list<Unit*>::const_iterator itr = targetList.begin(); itr != targetList.end(); ++itr)
-                    GetCaster()->CastSpell(*itr, SPELL_NETHER_BEAM_DAMAGE, true);
+                    GetCaster()->CastSpell(*itr, SPELL_NETHER_BEAM_DAMAGE, TRIGGERED_FULL_MASK);
             }
 
             void Register() override

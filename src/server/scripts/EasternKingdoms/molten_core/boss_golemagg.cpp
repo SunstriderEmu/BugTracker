@@ -86,7 +86,7 @@ class Boss_Golemagg : public CreatureScript
                     }
                 }
 
-                me->CastSpell(me, SPELL_MAGMASPLASH, true);
+                me->CastSpell(me, SPELL_MAGMASPLASH, TRIGGERED_FULL_MASK);
             }
 
             void EnterCombat(Unit* /*victim*/)

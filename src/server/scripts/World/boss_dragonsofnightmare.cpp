@@ -139,7 +139,7 @@ struct DragonOfNightmareAI_template : public ScriptedAI
             if (unit && unit->IsAlive() && unit->HasAuraEffect(SPELL_MARK_OF_NATURE,0))
             {
                 //DoCast(unit,SPELL_AURA_OF_NATURE_STUN,true);
-                unit->CastSpell(unit,SPELL_AURA_OF_NATURE_STUN,true);
+                unit->CastSpell(unit,SPELL_AURA_OF_NATURE_STUN, TRIGGERED_FULL_MASK);
                 unit->RemoveAura(SPELL_MARK_OF_NATURE,0,nullptr);
 
                 if(me->GetDistance2d(unit->GetPositionX(),unit->GetPositionY())>100)
@@ -603,7 +603,7 @@ public:
                     Mushroom->AI()->message(0,1); //set Stop to true
                     Mushroom->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                     Mushroom->SetFaction(me->GetFaction());
-                    Mushroom->CastSpell(Mushroom, SPELL_TOXIC_CLOUD_MUSHROOM, true);
+                    Mushroom->CastSpell(Mushroom, SPELL_TOXIC_CLOUD_MUSHROOM, TRIGGERED_FULL_MASK);
             }
             return;
         }

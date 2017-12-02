@@ -185,7 +185,7 @@ public:
                 if (me->GetHealth() <= damage)
                     if (rand()%100 < 75)
                         //Summon Wood Mites
-                        me->CastSpell(me,39130,true);
+                        me->CastSpell(me,39130, TRIGGERED_FULL_MASK);
         }
     };
 
@@ -220,7 +220,7 @@ public:
                 if (me->GetHealth() <= damage)
                     if (rand()%100 < 75)
                         //Summon Lots of Wood Mights
-                        me->CastSpell(me,39134,true);
+                        me->CastSpell(me,39134, TRIGGERED_FULL_MASK);
         }
     };
 
@@ -442,7 +442,7 @@ public:
             if (action == GOSSIP_ACTION_INFO_DEF+1)
             {
                 player->CLOSE_GOSSIP_MENU();
-                player->CastSpell(player,41279,true);               //TaxiPath 705 (Taxi - Skettis to Skyguard Outpost)
+                player->CastSpell(player,41279, TRIGGERED_FULL_MASK);               //TaxiPath 705 (Taxi - Skettis to Skyguard Outpost)
             }
             return true;
 
@@ -621,16 +621,16 @@ public:
             switch (action)
             {
             case GOSSIP_ACTION_INFO_DEF + 1:
-                player->CastSpell(player, 40642, false);
+                player->CastSpell(player, 40642, TRIGGERED_NONE);
                 break;
             case GOSSIP_ACTION_INFO_DEF + 2:
-                player->CastSpell(player, 40640, false);
+                player->CastSpell(player, 40640, TRIGGERED_NONE);
                 break;
             case GOSSIP_ACTION_INFO_DEF + 3:
-                player->CastSpell(player, 40632, false);
+                player->CastSpell(player, 40632, TRIGGERED_NONE);
                 break;
             case GOSSIP_ACTION_INFO_DEF + 4:
-                player->CastSpell(player, 40644, false);
+                player->CastSpell(player, 40644, TRIGGERED_NONE);
                 break;
             }
         }
@@ -862,11 +862,11 @@ public:
         virtual void QuestAccept(Player* player, Quest const* quest) override
         {
             if (quest->GetQuestId() == 10040 || quest->GetQuestId() == 10041) {
-                player->CastSpell(player, 32756, true);
+                player->CastSpell(player, 32756, TRIGGERED_FULL_MASK);
                 if (player->GetGender() == GENDER_MALE)
-                    player->CastSpell(player, 38080, true);
+                    player->CastSpell(player, 38080, TRIGGERED_FULL_MASK);
                 else
-                    player->CastSpell(player, 38081, true);
+                    player->CastSpell(player, 38081, TRIGGERED_FULL_MASK);
             }
         }
 
@@ -887,11 +887,11 @@ public:
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF + 1) {
-                player->CastSpell(player, 32756, true);
+                player->CastSpell(player, 32756, TRIGGERED_FULL_MASK);
                 if (player->GetGender() == GENDER_MALE)
-                    player->CastSpell(player, 38080, true);
+                    player->CastSpell(player, 38080, TRIGGERED_FULL_MASK);
                 else
-                    player->CastSpell(player, 38081, true);
+                    player->CastSpell(player, 38081, TRIGGERED_FULL_MASK);
             }
             
             player->CLOSE_GOSSIP_MENU();

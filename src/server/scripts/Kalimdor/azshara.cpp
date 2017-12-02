@@ -465,7 +465,7 @@ public:
             if (action == GOSSIP_ACTION_INFO_DEF + 1 && player->GetQuestStatus(10994) == QUEST_STATUS_INCOMPLETE)
             {
                 player->CLOSE_GOSSIP_MENU();
-                me->CastSpell(player, SPELL_GIVE_SOUTHFURY_MOONSTONE, true);
+                me->CastSpell(player, SPELL_GIVE_SOUTHFURY_MOONSTONE, TRIGGERED_FULL_MASK);
                 ((mob_rizzle_sprysprocket::mob_rizzle_sprysprocketAI*)me->AI())->Must_Die_Timer = 3000;
                 ((mob_rizzle_sprysprocket::mob_rizzle_sprysprocketAI*)me->AI())->Must_Die = true;
             }

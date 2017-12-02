@@ -140,7 +140,7 @@ public:
                         }
                         else
                         {
-                            target->CastSpell(target, SPELL_MAGNETIC_PULL, true);
+                            target->CastSpell(target, SPELL_MAGNETIC_PULL, TRIGGERED_FULL_MASK);
                             InAir = true;
                             LevitatedTarget_Timer = 1500;
                         }

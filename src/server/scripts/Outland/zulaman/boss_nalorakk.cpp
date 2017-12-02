@@ -438,7 +438,7 @@ public:
                     if(me->GetVictim() && !me->GetVictim()->HasAuraEffect(SPELL_MANGLEEFFECT, 0))
                     {
                         //DoCast(me->GetVictim(), SPELL_MANGLE);
-                        me->GetVictim()->CastSpell(me->GetVictim(), SPELL_MANGLE, true);
+                        me->GetVictim()->CastSpell(me->GetVictim(), SPELL_MANGLE, TRIGGERED_FULL_MASK);
                         Mangle_Timer = 1000;
                     }
                     else Mangle_Timer = 10000 + rand()%5000;

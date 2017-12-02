@@ -128,7 +128,7 @@ public:
             if (Blink)
             {
                 DoCast(me,HeroicMode ? H_SPELL_ARCANE_EXPLOSION : SPELL_ARCANE_EXPLOSION);
-                me->CastSpell(me,SPELL_ARCANE_BUBBLE,true);
+                me->CastSpell(me,SPELL_ARCANE_BUBBLE, TRIGGERED_FULL_MASK);
                 Blink = false;
             }
     

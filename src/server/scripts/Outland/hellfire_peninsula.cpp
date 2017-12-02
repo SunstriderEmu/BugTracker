@@ -212,11 +212,11 @@ public:
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF + 1)
             {
-                player->CastSpell(player, 33768, true);               //TaxiPath 585 (Gateways Murket and Shaadraz)
+                player->CastSpell(player, 33768, TRIGGERED_FULL_MASK);               //TaxiPath 585 (Gateways Murket and Shaadraz)
             }
             if (action == GOSSIP_ACTION_INFO_DEF + 2)
             {
-                player->CastSpell(player, 35069, true);               //TaxiPath 612 (Taxi - Hellfire Peninsula - Expedition Point to Shatter Point)
+                player->CastSpell(player, 35069, TRIGGERED_FULL_MASK);               //TaxiPath 612 (Taxi - Hellfire Peninsula - Expedition Point to Shatter Point)
             }
             player->CLOSE_GOSSIP_MENU();
             return true;
@@ -276,11 +276,11 @@ public:
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             if (action == GOSSIP_ACTION_INFO_DEF + 1)
             {
-                player->CastSpell(player, 33899, true);               //TaxiPath 589 (Aerial Assault Flight (Alliance))
+                player->CastSpell(player, 33899, TRIGGERED_FULL_MASK);               //TaxiPath 589 (Aerial Assault Flight (Alliance))
             }
             if (action == GOSSIP_ACTION_INFO_DEF + 2)
             {
-                player->CastSpell(player, 35065, true);               //TaxiPath 607 (Taxi - Hellfire Peninsula - Shatter Point to Beach Head)
+                player->CastSpell(player, 35065, TRIGGERED_FULL_MASK);               //TaxiPath 607 (Taxi - Hellfire Peninsula - Shatter Point to Beach Head)
             }
             player->CLOSE_GOSSIP_MENU();
             return true;
@@ -337,7 +337,7 @@ public:
             {
                 player->CLOSE_GOSSIP_MENU();
                 //TaxiPath 609 (3.x.x)
-                player->CastSpell(player, SPELL_TAXI_TO_SHATTERP, true);
+                player->CastSpell(player, SPELL_TAXI_TO_SHATTERP, TRIGGERED_FULL_MASK);
             }
             return true;
         }
@@ -743,20 +743,20 @@ public:
         override {
             if (pSummoned->GetEntry() == NPC_GOLIATHON)
             {
-                pSummoned->CastSpell(pSummoned, SPELL_TELE, false);
+                pSummoned->CastSpell(pSummoned, SPELL_TELE, TRIGGERED_NONE);
                 pSummoned->GetMotionMaster()->MovePoint(0, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ());
             }
     
             if (pSummoned->GetEntry() == NPC_CRYSTAL_TRIGGER)
             {
-                pSummoned->CastSpell(pSummoned, SPELL_INSECT, false);
-                pSummoned->CastSpell(pSummoned, SPELL_LIGHTING, false);
+                pSummoned->CastSpell(pSummoned, SPELL_INSECT, TRIGGERED_NONE);
+                pSummoned->CastSpell(pSummoned, SPELL_LIGHTING, TRIGGERED_NONE);
             }
             else
             {
                 if (pSummoned->GetEntry() == NPC_TARGET_TRIGGER)
                 {
-                    pSummoned->CastSpell(pSummoned, SPELL_ROOTS, false);
+                    pSummoned->CastSpell(pSummoned, SPELL_ROOTS, TRIGGERED_NONE);
                 }
             }
         }
@@ -920,25 +920,25 @@ public:
         override {
             if (pSummoned->GetEntry() == NPC_HELLFIRE_WARDLING)
             {
-                pSummoned->CastSpell(pSummoned, SPELL_SUMMONED, false);
+                pSummoned->CastSpell(pSummoned, SPELL_SUMMONED, TRIGGERED_NONE);
                 pSummoned->AI()->AttackStart(me);
             }
     
             if (pSummoned->GetEntry() == NPC_ORC_HA)
             {
-                pSummoned->CastSpell(pSummoned, SPELL_SUMMONED, false);
+                pSummoned->CastSpell(pSummoned, SPELL_SUMMONED, TRIGGERED_NONE);
                 pSummoned->AI()->AttackStart(me);
             }
     
             if (pSummoned->GetEntry() == NPC_BUTTRESS)
             {
-                pSummoned->CastSpell(pSummoned, SPELL_BUTTRESS_APPERANCE, false);
+                pSummoned->CastSpell(pSummoned, SPELL_BUTTRESS_APPERANCE, TRIGGERED_NONE);
             }
             else
             {
                 if (pSummoned->GetEntry() == NPC_BUTTRESS_SPAWNER)
                 {
-                    pSummoned->CastSpell(me, SPELL_SUCKER_CHANNEL, true);
+                    pSummoned->CastSpell(me, SPELL_SUCKER_CHANNEL, TRIGGERED_FULL_MASK);
                 }
             }
         }
@@ -1020,7 +1020,7 @@ public:
             if (action == GOSSIP_ACTION_INFO_DEF + 1)
             {
                 player->CLOSE_GOSSIP_MENU();
-                me->CastSpell(player, SPELL_DEMONIAC_VISITATION, false);
+                me->CastSpell(player, SPELL_DEMONIAC_VISITATION, TRIGGERED_NONE);
             }
 
             return true;
@@ -1301,7 +1301,7 @@ public:
                     return 2000;
                 case 11:
                     if (pAmb)
-                        me->CastSpell(pAmb, SPELL_STUN , false);
+                        me->CastSpell(pAmb, SPELL_STUN , TRIGGERED_NONE);
                     return 2000;
                 case 12:
                     if (pAmb)
@@ -1318,7 +1318,7 @@ public:
                     return 1000;
                 case 16:
                     if (pAmb)
-                        me->CastSpell(pAmb, SPELL_HOLYFIRE , false);
+                        me->CastSpell(pAmb, SPELL_HOLYFIRE , TRIGGERED_NONE);
                     return 6000;
                 case 17:
                     if (pAmb)
@@ -1344,7 +1344,7 @@ public:
                     return 1000;
                 case 23:
                     if (pKrun)
-                        me->CastSpell(pKrun, SPELL_HOLYFIRE, false);
+                        me->CastSpell(pKrun, SPELL_HOLYFIRE, TRIGGERED_NONE);
                     return 3000;
                 case 24:
                     me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE);
@@ -1484,16 +1484,16 @@ public:
                 case 7:me->GetMotionMaster()->MovePoint(0, -710.810f, 2748.376f, 101.590f);return 2100;
                 case 8:me->SetOrientation(colonel);
                        me->SendMovementFlagUpdate();return 2000;
-                case 9:me->CastSpell(me, SPELL_EXORCIM , false);return 10000;
+                case 9:me->CastSpell(me, SPELL_EXORCIM , TRIGGERED_NONE);return 10000;
                 case 10:DoScriptText(SAY_BARADA3, me,nullptr); return 10000;
                 case 11:DoScriptText(SAY_COLONEL2, pColonel, nullptr);return 8000;
                 case 12:me->RemoveAllAuras();
-                case 13:me->CastSpell(me, SPELL_EXORCIM2 , false);
-                case 14:pColonel->CastSpell(pColonel, SPELL_COLONEL1, false);
+                case 13:me->CastSpell(me, SPELL_EXORCIM2 , TRIGGERED_NONE);
+                case 14:pColonel->CastSpell(pColonel, SPELL_COLONEL1, TRIGGERED_NONE);
                 case 15:pColonel->SetUnitMovementFlags(MOVEMENTFLAG_DISABLE_GRAVITY);
                         pColonel->SetSpeedRate(MOVE_RUN, 0.17f);
                         pColonel->GetMotionMaster()->MovePoint(0, -710.611f, 2753.435f, 103.774f);
-                        pColonel->CastSpell(pColonel, SPELL_COLONEL3, false);return 14000;
+                        pColonel->CastSpell(pColonel, SPELL_COLONEL3, TRIGGERED_NONE);return 14000;
                 case 16:DoScriptText(SAY_COLONEL3, pColonel, nullptr);
                         DoSpawnDarkness();
                         DoSpawnDarkness();return 14000;
@@ -1503,15 +1503,15 @@ public:
                 case 18:DoScriptText(SAY_COLONEL4, pColonel, nullptr);
                         DoSpawnDarkness();return 14000;
                 case 19:DoScriptText(SAY_BARADA5, me, nullptr); return 14000;
-                case 20:pColonel->CastSpell(pColonel, SPELL_COLONEL4, false);
-                        pColonel->CastSpell(pColonel, SPELL_COLONEL2, false);
+                case 20:pColonel->CastSpell(pColonel, SPELL_COLONEL4, TRIGGERED_NONE);
+                        pColonel->CastSpell(pColonel, SPELL_COLONEL2, TRIGGERED_NONE);
                         DoSpawnDarkness();return 1500;
                 case 21:pColonel->GetMotionMaster()->MovePoint(0, -713.406f, 2744.240f, 103.774f);return 5000;
                 case 22:DoScriptText(SAY_COLONEL5, pColonel, nullptr);return 1000;
                 case 23:pColonel->GetMotionMaster()->MovePoint(0, -707.784f, 2749.562f, 103.774f);
                         DoSpawnDarkness();return 4000;
                 case 24:pColonel->GetMotionMaster()->MovePoint(0, -708.558f, 2744.923f, 103.774f);
-                        pColonel->CastSpell(me,SPELL_COLONEL5, false);return 2500;
+                        pColonel->CastSpell(me,SPELL_COLONEL5, TRIGGERED_NONE);return 2500;
                 case 25:DoScriptText(SAY_BARADA6, me, nullptr);
                 case 26:pColonel->GetMotionMaster()->MovePoint(0, -713.406f, 2744.240f, 103.774f);
                         DoSpawnDarkness();return 3500;
@@ -1541,9 +1541,9 @@ public:
                 case 43:DoScriptText(SAY_BARADA6, me, nullptr); return 1000;
                 case 44:pColonel->GetMotionMaster()->MovePoint(0, -708.558f, 2744.923f, 103.774f);return 4000;         
                 case 45:pColonel->GetMotionMaster()->MovePoint(0, -713.406f, 2744.240f, 103.774f);
-                        pColonel->CastSpell(pColonel, SPELL_COLONEL8, false);return 4000;
+                        pColonel->CastSpell(pColonel, SPELL_COLONEL8, TRIGGERED_NONE);return 4000;
                 case 46:pColonel->GetMotionMaster()->MovePoint(0, -714.212f, 2750.606f, 103.774f);
-                        pColonel->CastSpell(pColonel, SPELL_COLONEL7, false);return 4000;
+                        pColonel->CastSpell(pColonel, SPELL_COLONEL7, TRIGGERED_NONE);return 4000;
                 case 47:pColonel->GetMotionMaster()->MovePoint(0, -710.792f, 2750.693f, 103.774f);return 5000;
                 case 48:DoScriptText(SAY_BARADA8, me, nullptr); return 1000;
                 case 49:pColonel->GetMotionMaster()->MovePoint(0, -710.111f, 2754.346f, 102.367f);return 3000;
@@ -2190,7 +2190,7 @@ public:
             if (!pitLord)
                 return;
 
-            pitLord->CastSpell(pitLord, SPELL_SUMMON_INFERNALS, false);
+            pitLord->CastSpell(pitLord, SPELL_SUMMON_INFERNALS, TRIGGERED_NONE);
             //spell script in its own class below
         }
 
@@ -2331,7 +2331,7 @@ public:
 
                 //each infernal from a different relay
                 Creature* relay = relaysVector[i % relaysVector.size()];
-                relay->CastSpell(x, y, z, SPELL_INFERNAL_MISSILE, true);
+                relay->CastSpell(x, y, z, SPELL_INFERNAL_MISSILE, TRIGGERED_FULL_MASK);
             }
         }
 

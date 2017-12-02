@@ -412,7 +412,7 @@ public:
     
             if(DrainPower_Timer < diff)
             {
-                //me->CastSpell(me, SPELL_DRAIN_POWER_MORE, true);
+                //me->CastSpell(me, SPELL_DRAIN_POWER_MORE, TRIGGERED_FULL_MASK);
                 Map *map = me->GetMap();
                 if(!map->IsDungeon()) return;
                 Map::PlayerList const &PlayerList = map->GetPlayers();
@@ -439,7 +439,7 @@ public:
                 else
                 {
                     me->ApplySpellImmune(0, IMMUNITY_MECHANIC, MECHANIC_INTERRUPT, true);
-                    me->CastSpell(me, SPELL_SPIRIT_BOLTS, false);
+                    me->CastSpell(me, SPELL_SPIRIT_BOLTS, TRIGGERED_NONE);
                     me->Yell(YELL_SPIRIT_BOLTS, LANG_UNIVERSAL, nullptr);
                     DoPlaySoundToSet(me, SOUND_YELL_SPIRIT_BOLTS);
                     SpiritBolts_Timer = 40000;
@@ -461,10 +461,10 @@ public:
                 {
                     trigger->SetUInt32Value(UNIT_FIELD_DISPLAYID, 11686);
                     trigger->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                    trigger->CastSpell(target, SPELL_SIPHON_SOUL, true);
+                    trigger->CastSpell(target, SPELL_SIPHON_SOUL, TRIGGERED_FULL_MASK);
                     trigger->GetMotionMaster()->MoveChase(me);
     
-                    //me->CastSpell(target, SPELL_SIPHON_SOUL, true);
+                    //me->CastSpell(target, SPELL_SIPHON_SOUL, TRIGGERED_FULL_MASK);
                     //me->SetUInt64Value(UNIT_FIELD_CHANNEL_OBJECT, target->GetGUID());
                     //me->SetUInt32Value(UNIT_CHANNEL_SPELL, SPELL_SIPHON_SOUL);
     
@@ -517,7 +517,7 @@ public:
                 break;
             }
             if(target)
-                me->CastSpell(target, PlayerAbility[PlayerClass][random].spell, false);
+                me->CastSpell(target, PlayerAbility[PlayerClass][random].spell, TRIGGERED_NONE);
         }
     };
 
@@ -562,14 +562,14 @@ public:
                 if(!templist.empty())
                 {
                     if(Unit* target = *(templist.begin()))
-                        me->CastSpell(target, SPELL_BLOODLUST, false);
+                        me->CastSpell(target, SPELL_BLOODLUST, TRIGGERED_NONE);
                 }
                 bloodlust_timer = 12000;
             }else bloodlust_timer -= diff;
     
             if(cleave_timer < diff)
             {
-                me->CastSpell(me->GetVictim(),SPELL_CLEAVE, false);
+                me->CastSpell(me->GetVictim(),SPELL_CLEAVE, TRIGGERED_NONE);
                 cleave_timer = 12000; //3 sec cast
             }else cleave_timer -= diff;
     
@@ -635,7 +635,7 @@ public:
                 if(target)
                 {
                     if(target->IsWithinDistInMap(me, 50))
-                        me->CastSpell(target,SPELL_FLASH_HEAL, false);
+                        me->CastSpell(target,SPELL_FLASH_HEAL, TRIGGERED_NONE);
                     else
                     {
                         // bugged
@@ -648,10 +648,10 @@ public:
                     if(rand()%2)
                     {
                         if((target = DoSelectLowestHpFriendly(50, 0)))
-                            me->CastSpell(target, SPELL_DISPEL_MAGIC, false);
+                            me->CastSpell(target, SPELL_DISPEL_MAGIC, TRIGGERED_NONE);
                     }
                     else if((target = SelectTarget(SELECT_TARGET_RANDOM, 0)))
-                        me->CastSpell(target, SPELL_DISPEL_MAGIC, false);
+                        me->CastSpell(target, SPELL_DISPEL_MAGIC, TRIGGERED_NONE);
                 }
                 flashheal_timer = 2500;
             }else flashheal_timer -= diff;
@@ -662,10 +662,10 @@ public:
             {
             Unit* target = SelectTarget();
     
-            me->CastSpell(target, SPELL_DISPEL_MAGIC, false);
+            me->CastSpell(target, SPELL_DISPEL_MAGIC, TRIGGERED_NONE);
             }
             else
-            me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0), SPELL_DISPEL_MAGIC, false);
+            me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0), SPELL_DISPEL_MAGIC, TRIGGERED_NONE);
     
             dispelmagic_timer = 12000;
             }else dispelmagic_timer -= diff;*/
@@ -722,7 +722,7 @@ public:
     
             if(firebolt_timer < diff)
             {
-                me->CastSpell(me->GetVictim(),SPELL_FIREBOLT, false);
+                me->CastSpell(me->GetVictim(),SPELL_FIREBOLT, TRIGGERED_NONE);
                 firebolt_timer = 700;
             }else firebolt_timer -= diff;
     
@@ -766,13 +766,13 @@ public:
     
             if (thunderclap_timer < diff)
             {
-                me->CastSpell(me->GetVictim(),SPELL_THUNDERCLAP, false);
+                me->CastSpell(me->GetVictim(),SPELL_THUNDERCLAP, TRIGGERED_NONE);
                 thunderclap_timer = 12000;
             }else thunderclap_timer -= diff;
     
             if (flamebreath_timer < diff)
             {
-                me->CastSpell(me->GetVictim(),SPELL_FLAME_BREATH, false);
+                me->CastSpell(me->GetVictim(),SPELL_FLAME_BREATH, TRIGGERED_NONE);
                 flamebreath_timer = 12000;
             }else flamebreath_timer -= diff;
     
@@ -814,7 +814,7 @@ public:
     
             if (psychicwail_timer < diff)
             {
-                me->CastSpell(me->GetVictim(),SPELL_PSYCHIC_WAIL, false);
+                me->CastSpell(me->GetVictim(),SPELL_PSYCHIC_WAIL, TRIGGERED_NONE);
                 psychicwail_timer = 12000;
             }else psychicwail_timer -= diff;
     
@@ -872,7 +872,7 @@ public:
             if (venomspit_timer < diff)
             {
                 if(Unit* victim = SelectTarget(SELECT_TARGET_RANDOM, 0))
-                    me->CastSpell(victim,SPELL_VENOM_SPIT, false);
+                    me->CastSpell(victim,SPELL_VENOM_SPIT, TRIGGERED_NONE);
                 venomspit_timer = 2500;
             }else venomspit_timer -= diff;
     
@@ -915,7 +915,7 @@ public:
             if (volatileinf_timer < diff)
             {
                 // core bug
-                me->GetVictim()->CastSpell(me->GetVictim(),SPELL_VOLATILE_INFECTION, false);
+                me->GetVictim()->CastSpell(me->GetVictim(),SPELL_VOLATILE_INFECTION, TRIGGERED_NONE);
                 volatileinf_timer = 12000;
             }else volatileinf_timer -= diff;
     
@@ -959,13 +959,13 @@ public:
     
             if (mightyblow_timer < diff)
             {
-                me->CastSpell(me->GetVictim(),SPELL_MIGHTY_BLOW, false);
+                me->CastSpell(me->GetVictim(),SPELL_MIGHTY_BLOW, TRIGGERED_NONE);
                 mightyblow_timer = 12000;
             }
             if (coldstare_timer < diff)
             {
                 if(Unit* victim = SelectTarget(SELECT_TARGET_RANDOM, 0))
-                    me->CastSpell(victim,SPELL_COLD_STARE, false);
+                    me->CastSpell(victim,SPELL_COLD_STARE, TRIGGERED_NONE);
                 coldstare_timer = 12000;
             }
     

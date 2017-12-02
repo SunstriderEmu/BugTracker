@@ -117,7 +117,7 @@ public:
                             DoCast(boss, SPELL_WARLORDS_RAGE_NAGA, true);
     
                             DoScriptText(SAY_REGEN, boss);
-                            boss->CastSpell(boss, SPELL_WARLORDS_RAGE, true);
+                            boss->CastSpell(boss, SPELL_WARLORDS_RAGE, TRIGGERED_FULL_MASK);
     
                             if (pInstance)
                                 pInstance->SetData(TYPE_DISTILLER, IN_PROGRESS);

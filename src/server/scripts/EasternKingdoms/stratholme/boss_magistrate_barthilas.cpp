@@ -115,7 +115,7 @@ public:
                     return;
     
                 ++AngerCount;
-                me->CastSpell(me,SPELL_FURIOUS_ANGER,false);
+                me->CastSpell(me,SPELL_FURIOUS_ANGER, TRIGGERED_NONE);
             }else FuriousAnger_Timer -= diff;
     
             //DrainingBlow

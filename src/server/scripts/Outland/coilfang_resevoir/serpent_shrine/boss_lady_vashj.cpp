@@ -772,7 +772,7 @@ public:
             else if (targets.GetUnitTarget()->GetTypeId() == TYPEID_PLAYER)
             {
                 player->DestroyItemCount(31088, 1, true);
-                player->CastSpell(targets.GetUnitTarget(), 38134, true);
+                player->CastSpell(targets.GetUnitTarget(), 38134, TRIGGERED_FULL_MASK);
                 return true;
             }
         }
@@ -1047,7 +1047,7 @@ public:
                     if(trig)
                     {
                         trig->SetFaction(FACTION_MONSTER);
-                        trig->CastSpell(trig, SPELL_TOXIC_SPORES,true);
+                        trig->CastSpell(trig, SPELL_TOXIC_SPORES, TRIGGERED_FULL_MASK);
                     }
                 }
                 bolt_timer = 10000+rand()%5000;
@@ -1127,7 +1127,7 @@ public:
                     //start visual channel
                     if (!Casted || !Vashj->HasAuraEffect(SPELL_MAGIC_BARRIER,0))
                     {
-                        me->CastSpell(Vashj,SPELL_MAGIC_BARRIER,true);
+                        me->CastSpell(Vashj,SPELL_MAGIC_BARRIER, TRIGGERED_FULL_MASK);
                         Casted = true;
                     }
                 }

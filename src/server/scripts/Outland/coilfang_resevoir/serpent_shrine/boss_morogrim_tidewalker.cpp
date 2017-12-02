@@ -179,10 +179,10 @@ public:
         {
             switch(i)
             {
-            case 0: player->CastSpell(player, SPELL_WATERY_GRAVE_1, true); break;
-            case 1: player->CastSpell(player, SPELL_WATERY_GRAVE_2, true); break;
-            case 2: player->CastSpell(player, SPELL_WATERY_GRAVE_3, true); break;
-            case 3: player->CastSpell(player, SPELL_WATERY_GRAVE_4, true); break;
+            case 0: player->CastSpell(player, SPELL_WATERY_GRAVE_1, TRIGGERED_FULL_MASK); break;
+            case 1: player->CastSpell(player, SPELL_WATERY_GRAVE_2, TRIGGERED_FULL_MASK); break;
+            case 2: player->CastSpell(player, SPELL_WATERY_GRAVE_3, TRIGGERED_FULL_MASK); break;
+            case 3: player->CastSpell(player, SPELL_WATERY_GRAVE_4, TRIGGERED_FULL_MASK); break;
             }
         }
     
@@ -279,7 +279,7 @@ public:
                         counter++;
                         } while (itr != globulelist.end());
                         if(globuletarget)globulelist.insert(globuletarget->GetGUID());
-                        globuletarget->CastSpell(globuletarget, g, true);
+                        globuletarget->CastSpell(globuletarget, g, TRIGGERED_FULL_MASK);
                     }
                     DoScriptText(EMOTE_WATERY_GLOBULES, me);
                     WateryGlobules_Timer = 25000;

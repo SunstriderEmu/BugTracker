@@ -171,7 +171,7 @@ class Boss_Lurker_Below : public CreatureScript
                         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                         me->RemoveFlag(UNIT_NPC_EMOTESTATE, EMOTE_STATE_SUBMERGED);
-                        me->CastSpell(me, SPELL_EMERGE, true);
+                        me->CastSpell(me, SPELL_EMERGE, TRIGGERED_FULL_MASK);
                         submergeState = 0;
                         break;
                     case SUBMERGED:
@@ -372,7 +372,7 @@ class Boss_Lurker_Below : public CreatureScript
                                         if (me->IsWithinDistInMap(i.GetSource(), SPOUT_DIST))
                                         {
                                             if (!i.GetSource()->IsInWater())
-                                                me->CastSpell(i.GetSource(), SPELL_SPOUT, true);
+                                                me->CastSpell(i.GetSource(), SPELL_SPOUT, TRIGGERED_FULL_MASK);
                                         }
                                     }
                                 }
@@ -381,7 +381,7 @@ class Boss_Lurker_Below : public CreatureScript
                             if(spoutAnimTimer < diff)
                             {
                                 if (rotTimer >= 2000)
-                                    me->CastSpell(me, SPELL_SPOUT_ANIM, true);
+                                    me->CastSpell(me, SPELL_SPOUT_ANIM, TRIGGERED_FULL_MASK);
 
                                 spoutAnimTimer = 1000;
                             }

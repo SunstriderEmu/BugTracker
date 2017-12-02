@@ -90,7 +90,7 @@ public:
             HealSay = false;
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
             //cast red shining
-            me->CastSpell(me, 29152, false, nullptr);
+            me->CastSpell(me, 29152, TRIGGERED_NONE, nullptr);
             //set creature health
             me->SetHealth(int(me->GetMaxHealth()*.1));
             me->SetUInt32Value(UNIT_FIELD_BYTES_1, 3);
@@ -490,7 +490,7 @@ public:
             if (action == GOSSIP_ACTION_INFO_DEF)
             {
                 player->CLOSE_GOSSIP_MENU();
-                player->CastSpell(player, 32474, true);               //apparently correct spell, possible not correct place to cast, or correct caster
+                player->CastSpell(player, 32474, TRIGGERED_FULL_MASK);               //apparently correct spell, possible not correct place to cast, or correct caster
 
                 std::vector<uint32> nodes;
 

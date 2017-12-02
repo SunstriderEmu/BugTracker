@@ -207,7 +207,7 @@ public:
                         wall = me->SummonCreature(MOB_FIRE_BOMB, FireWallCoords[i][0],FireWallCoords[i][1]+5*(j-1),FireWallCoords[i][2],FireWallCoords[i][3],TEMPSUMMON_TIMED_DESPAWN,15000);
                     else
                         wall = me->SummonCreature(MOB_FIRE_BOMB, FireWallCoords[i][0]-2+4*j,FireWallCoords[i][1],FireWallCoords[i][2],FireWallCoords[i][3],TEMPSUMMON_TIMED_DESPAWN,15000);
-                    if(wall) wall->CastSpell(wall, SPELL_FIRE_WALL, true);
+                    if(wall) wall->CastSpell(wall, SPELL_FIRE_WALL, TRIGGERED_FULL_MASK);
                 }
             }
         }
@@ -228,7 +228,7 @@ public:
     
         bool HatchAllEggs(uint32 action) //1: reset, 2: isHatching all
         {
-            me->CastSpell(me, SPELL_HATCH_EGG, true);
+            me->CastSpell(me, SPELL_HATCH_EGG, TRIGGERED_FULL_MASK);
             return true;
         }
     
@@ -245,7 +245,7 @@ public:
             }
             for(auto & i : templist)
             {
-               i->CastSpell(i, SPELL_FIRE_BOMB_DAMAGE, true);
+               i->CastSpell(i, SPELL_FIRE_BOMB_DAMAGE, TRIGGERED_FULL_MASK);
                i->RemoveAllAuras();
             }
         }
@@ -309,14 +309,14 @@ public:
             {
                 if(!enraged)
                 {
-                    me->CastSpell(me, SPELL_ENRAGE, true);
+                    me->CastSpell(me, SPELL_ENRAGE, TRIGGERED_FULL_MASK);
                     enraged = true;
                     EnrageTimer = 300000;
                 }
                 else
                 {
                     DoScriptText(SAY_BERSERK, me);
-                    me->CastSpell(me, SPELL_BERSERK, true);
+                    me->CastSpell(me, SPELL_BERSERK, TRIGGERED_FULL_MASK);
                     EnrageTimer = 300000;
                 }
             }else EnrageTimer -= diff;
@@ -329,9 +329,9 @@ public:
                 me->GetMotionMaster()->Clear();
                 DoTeleportTo(JanalainPos[0][0],JanalainPos[0][1],JanalainPos[0][2]);
                 me->StopMoving();
-                me->CastSpell(me, SPELL_FIRE_BOMB_CHANNEL, false);
+                me->CastSpell(me, SPELL_FIRE_BOMB_CHANNEL, TRIGGERED_NONE);
                 //DoTeleportPlayer(me, JanalainPos[0][0], JanalainPos[0][1],JanalainPos[0][2], 0);
-                //me->CastSpell(me, SPELL_TELE_TO_CENTER, true);
+                //me->CastSpell(me, SPELL_TELE_TO_CENTER, TRIGGERED_FULL_MASK);
     
                 FireWall();
                 SpawnBombs();
@@ -351,7 +351,7 @@ public:
                             DoTeleportPlayer(i_pl, JanalainPos[0][0] - 5 + rand() % 10, JanalainPos[0][1] - 5 + rand() % 10, JanalainPos[0][2], 0);
                     }
                 }
-                //me->CastSpell(Temp, SPELL_SUMMON_PLAYERS, true); // core bug, spell does not work if too far
+                //me->CastSpell(Temp, SPELL_SUMMON_PLAYERS, TRIGGERED_FULL_MASK); // core bug, spell does not work if too far
                 return;
             }else BombTimer -= diff;
     
@@ -365,7 +365,7 @@ public:
                     me->GetMotionMaster()->Clear();
                     DoTeleportTo(JanalainPos[0][0],JanalainPos[0][1],JanalainPos[0][2]);
                     me->StopMoving();
-                    me->CastSpell(me, SPELL_HATCH_ALL, false);
+                    me->CastSpell(me, SPELL_HATCH_ALL, TRIGGERED_NONE);
                     HatchAllEggs(2);
                     noeggs = true;
                 }
@@ -403,7 +403,7 @@ public:
                 {
                     me->AttackStop();
                     me->GetMotionMaster()->Clear();
-                    me->CastSpell(target, SPELL_FLAME_BREATH, false);
+                    me->CastSpell(target, SPELL_FLAME_BREATH, TRIGGERED_NONE);
                     me->StopMoving();
                     isFlameBreathing = true;
                 }
@@ -436,7 +436,7 @@ public:
         void SpellHit(Unit *caster, const SpellInfo *spell)
         override {
             if(spell->Id == SPELL_FIRE_BOMB_THROW)
-                me->CastSpell(me, SPELL_FIRE_BOMB_DUMMY, true);
+                me->CastSpell(me, SPELL_FIRE_BOMB_DUMMY, TRIGGERED_FULL_MASK);
         }
     
         void EnterCombat(Unit* who) override {}
@@ -492,7 +492,7 @@ public:
     
         bool HatchEggs(uint32 num)
         {
-            me->CastSpell(me, SPELL_HATCH_EGG, true);
+            me->CastSpell(me, SPELL_HATCH_EGG, TRIGGERED_FULL_MASK);
             std::list<Creature*> templist;
             float x, y, z;
             me->GetPosition(x, y, z);
@@ -631,7 +631,7 @@ public:
     
             if(BuffetTimer < diff)
             {
-                me->CastSpell(me->GetVictim(), SPELL_FLAMEBUFFET, false);
+                me->CastSpell(me->GetVictim(), SPELL_FLAMEBUFFET, TRIGGERED_NONE);
                 BuffetTimer = 10000;
             }else BuffetTimer -= diff;
     

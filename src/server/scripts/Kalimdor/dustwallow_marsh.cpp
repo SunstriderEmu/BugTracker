@@ -77,7 +77,7 @@ public:
         override {
             if( pDoneBy->GetTypeId() == TYPEID_PLAYER )
                 if (damage >= me->GetHealth() && (pDoneBy)->ToPlayer()->GetQuestStatus(11180) == QUEST_STATUS_INCOMPLETE)
-                    me->CastSpell(pDoneBy, SPELL_SUMMON_RESTLESS_APPARITION, false);
+                    me->CastSpell(pDoneBy, SPELL_SUMMON_RESTLESS_APPARITION, TRIGGERED_NONE);
         }
     
         void UpdateAI(const uint32 diff)
@@ -282,7 +282,7 @@ public:
                 break;
             }
             case EV_WATER_ELEMENTALS:
-                if (me->CastSpell(me, SPELL_WATER_ELEMENTALS, true) == SPELL_CAST_OK)
+                if (me->CastSpell(me, SPELL_WATER_ELEMENTALS, TRIGGERED_FULL_MASK) == SPELL_CAST_OK)
                     events.RescheduleEvent(EV_WATER_ELEMENTALS, urand(45000, 55000));
                 break;
             }
@@ -310,7 +310,7 @@ public:
             if (action == GOSSIP_SENDER_INFO)
             {
                 player->SEND_GOSSIP_MENU_TEXTID(7012, me->GetGUID());
-                player->CastSpell(player, 23122, false);
+                player->CastSpell(player, 23122, TRIGGERED_NONE);
             }
             return true;
         }
@@ -734,7 +734,7 @@ public:
             player->CLOSE_GOSSIP_MENU();
 
             if (action == GOSSIP_ACTION_INFO_DEF) {
-                player->CastSpell(player, 42316, true);
+                player->CastSpell(player, 42316, TRIGGERED_FULL_MASK);
                 std::vector<uint32> nodes;
 
                 nodes.resize(2);
@@ -906,7 +906,7 @@ public:
                             break;
                         case 10:
                             if (Creature* hallan = me->FindNearestCreature(5045, 20.0f, true))
-                                hallan->CastSpell(reethe, 7105 /* Fake Shot*/, true);
+                                hallan->CastSpell(reethe, 7105 /* Fake Shot*/, TRIGGERED_FULL_MASK);
                             ++step;
                             timer = 500;
                             break;

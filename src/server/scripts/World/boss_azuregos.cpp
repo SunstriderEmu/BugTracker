@@ -54,7 +54,7 @@ public:
         void SpellHit(Unit* who, const SpellInfo*)
         override {
             if (who->HasAuraEffect(SPELL_MARK_OF_FROST) && !who->HasAuraEffect(SPELL_AURA_OF_FROST))
-                who->CastSpell(me, SPELL_AURA_OF_FROST, true);
+                who->CastSpell(me, SPELL_AURA_OF_FROST, TRIGGERED_FULL_MASK);
         }
 
         void UpdateAI(uint32 const diff)
@@ -65,7 +65,7 @@ public:
             events.Update(diff);
                 
             if (me->IsBelowHPPercent(25.0f) && !enraged) {
-                me->CastSpell(me, SPELL_ENRAGE, true);
+                me->CastSpell(me, SPELL_ENRAGE, TRIGGERED_FULL_MASK);
                 enraged = true;
             }
 

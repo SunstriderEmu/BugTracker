@@ -159,7 +159,7 @@ public:
             Creature* rift = getRandomRift();
 
             if(rift)
-                rift->CastSpell(rift,SPELL_SUMMON_SOUL2,true,nullptr,nullptr,me->GetGUID());
+                rift->CastSpell(rift,SPELL_SUMMON_SOUL2, TRIGGERED_FULL_MASK,nullptr,nullptr,me->GetGUID());
         }
 
         void JustDied(Unit* killer)
@@ -194,7 +194,7 @@ public:
                 }
                 break;
             case DATA_ESSENCE_OF_ANGER_DEATH:
-                me->CastSpell(me, 7, true); //suicide
+                me->CastSpell(me, 7, TRIGGERED_FULL_MASK); //suicide
                 break;
             }
             return 0;
@@ -403,9 +403,9 @@ public:
         override {
             Talk(TALK_SUFF_SAY_FREED);
             DoZoneInCombat();
-            me->CastSpell(me, AURA_OF_SUFFERING, true);
-            me->CastSpell(me, ESSENCE_OF_SUFFERING_PASSIVE, true);
-            me->CastSpell(me, ESSENCE_OF_SUFFERING_PASSIVE2, true);
+            me->CastSpell(me, AURA_OF_SUFFERING, TRIGGERED_FULL_MASK);
+            me->CastSpell(me, ESSENCE_OF_SUFFERING_PASSIVE, TRIGGERED_FULL_MASK);
+            me->CastSpell(me, ESSENCE_OF_SUFFERING_PASSIVE2, TRIGGERED_FULL_MASK);
         }
         
         void JustDied(Unit* victim)
@@ -430,7 +430,7 @@ public:
                     Unit* target = SelectTarget(SELECT_TARGET_NEAREST, 0, 30.0f, true);
 
                     if (target) {
-                        target->CastSpell(me, SPELL_FIXATE_TAUNT, true);
+                        target->CastSpell(me, SPELL_FIXATE_TAUNT, TRIGGERED_FULL_MASK);
                         DoResetThreat();
                         me->GetThreatManager().AddThreat(target, 1000000.0f);
                         
@@ -518,7 +518,7 @@ public:
             }
             else {
                 int32 bp0 = damage / 2;
-                me->CastCustomSpell(attacker, AURA_OF_DESIRE_DAMAGE, &bp0, nullptr, nullptr, true);
+                me->CastCustomSpell(attacker, AURA_OF_DESIRE_DAMAGE, &bp0, nullptr, nullptr, TRIGGERED_FULL_MASK);
             }
         }
         
@@ -542,7 +542,7 @@ public:
         override {
             Talk(TALK_DESI_SAY_FREED);
             DoZoneInCombat();
-            me->CastSpell(me, AURA_OF_DESIRE, true);
+            me->CastSpell(me, AURA_OF_DESIRE, TRIGGERED_FULL_MASK);
         }
         
         void KilledUnit(Unit* victim)
@@ -565,7 +565,7 @@ public:
                 case 0:
                     break;
                 case EV_RUNE_SHIELD:
-                    if (me->CastSpell(me, SPELL_RUNE_SHIELD, true) == SPELL_CAST_OK)
+                    if (me->CastSpell(me, SPELL_RUNE_SHIELD, TRIGGERED_FULL_MASK) == SPELL_CAST_OK)
                     {
                         events.SetMinimalDelay(EV_SOUL_SHOCK, 2000);
                         events.SetMinimalDelay(EV_DEADEN, 2000);
@@ -642,7 +642,7 @@ public:
             
             Talk(TALK_ANGER_SAY_FREED);
             DoZoneInCombat();
-            me->CastSpell(me, AURA_OF_ANGER, true);
+            me->CastSpell(me, AURA_OF_ANGER, TRIGGERED_FULL_MASK);
         }
         
         void JustDied(Unit* killer)
@@ -676,7 +676,7 @@ public:
                     break;
                 case EV_CHECK_TANK:
                     if (me->GetVictim() && me->GetVictim()->GetGUID() != tankGUID) {
-                        if (me->CastSpell(me, SPELL_SELF_SEETHE, true) == SPELL_CAST_OK)
+                        if (me->CastSpell(me, SPELL_SELF_SEETHE, TRIGGERED_FULL_MASK) == SPELL_CAST_OK)
                         {
                             Talk(TALK_ANGER_SAY_BEFORE);
                             tankGUID = me->GetVictim()->GetGUID();
@@ -730,8 +730,8 @@ public:
             if(instance)
                 reliquaryGUID = instance->GetData64(DATA_RELIQUARY_OF_SOULS);
 
-            me->CastSpell(me, ENSLAVED_SOUL_PASSIVE, true);
-            me->CastSpell(me, SPELL_SELFSTUN, true); //2.5s inactivity
+            me->CastSpell(me, ENSLAVED_SOUL_PASSIVE, TRIGGERED_FULL_MASK);
+            me->CastSpell(me, SPELL_SELFSTUN, TRIGGERED_FULL_MASK); //2.5s inactivity
             Creature* reliquary = me->GetMap()->GetCreature(reliquaryGUID);
             if (reliquary)
                 reliquary->AI()->message(DATA_SOUL_SPAWN, me->GetGUIDLow());
@@ -749,7 +749,7 @@ public:
             if (reliquary)
                 reliquary->AI()->message(DATA_SOUL_DEATH, 1);
                 
-            me->CastSpell(me, SPELL_SOUL_RELEASE, true);
+            me->CastSpell(me, SPELL_SOUL_RELEASE, TRIGGERED_FULL_MASK);
         }        
     private:
         InstanceScript* instance;

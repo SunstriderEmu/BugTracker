@@ -53,12 +53,12 @@ public:
                     if(std::strcmp(sCode, player->GetName().c_str())!=0)
                     {
                         me->Say("Wrong!", LANG_UNIVERSAL, nullptr);
-                        me->CastSpell(player, 12826, true);
+                        me->CastSpell(player, 12826, TRIGGERED_FULL_MASK);
                     }
                     else
                     {
                         me->Say("You're right, you are allowed to see my inner secrets.", LANG_UNIVERSAL, nullptr);
-                        me->CastSpell(player, 26990, true);
+                        me->CastSpell(player, 26990, TRIGGERED_FULL_MASK);
                     }
                     player->CLOSE_GOSSIP_MENU();
                     return true;

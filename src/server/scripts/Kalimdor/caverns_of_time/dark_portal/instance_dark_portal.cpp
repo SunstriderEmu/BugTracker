@@ -400,7 +400,7 @@ public:
                         else
                         {
                             pBoss->GetThreatManager().AddThreat(pTemp, 0.1f);
-                            pTemp->CastSpell(pBoss, SPELL_RIFT_CHANNEL, false);
+                            pTemp->CastSpell(pBoss, SPELL_RIFT_CHANNEL, TRIGGERED_NONE);
                             pBoss->AI()->AttackStart(pMedivh);
                         }
                     }

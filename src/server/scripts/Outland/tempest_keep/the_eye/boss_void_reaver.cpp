@@ -141,9 +141,9 @@ public:
                         target = *(target_list.begin()+rand()%target_list.size());
     
                     if (target)
-                        me->CastSpell(target->GetPositionX(),target->GetPositionY(),target->GetPositionZ(), SPELL_ARCANE_ORB, false);
+                        me->CastSpell(target->GetPositionX(),target->GetPositionY(),target->GetPositionZ(), SPELL_ARCANE_ORB, TRIGGERED_NONE);
                     else if (me->GetVictim())   // If no target >= 18 meters, cast Arcane Orb on the tank
-                        me->CastSpell(me->GetVictim()->GetPositionX(),me->GetVictim()->GetPositionY(),me->GetVictim()->GetPositionZ(), SPELL_ARCANE_ORB, false);
+                        me->CastSpell(me->GetVictim()->GetPositionX(),me->GetVictim()->GetPositionY(),me->GetVictim()->GetPositionZ(), SPELL_ARCANE_ORB, TRIGGERED_NONE);
     
                     ArcaneOrb_Timer = 3000;
                 //}

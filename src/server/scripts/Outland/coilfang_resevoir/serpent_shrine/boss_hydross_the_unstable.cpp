@@ -134,7 +134,7 @@ public:
             Creature* beamer = me->SummonCreature(ENTRY_BEAM_DUMMY,-258.333,-356.34,22.0499,5.90835,TEMPSUMMON_CORPSE_DESPAWN,0);
             if(beamer)
             {
-                beamer->CastSpell(me,SPELL_BLUE_BEAM,true);
+                beamer->CastSpell(me,SPELL_BLUE_BEAM, TRIGGERED_FULL_MASK);
                 beamer->SetUInt32Value(UNIT_FIELD_DISPLAYID , 11686);  //invisible
                 beamer->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 beams[0]=beamer->GetGUID();
@@ -142,7 +142,7 @@ public:
             beamer = beamer = me->SummonCreature(ENTRY_BEAM_DUMMY,-219.918,-371.308,22.0042,2.73072,TEMPSUMMON_CORPSE_DESPAWN,0);
             if(beamer)
             {
-                beamer->CastSpell(me,SPELL_BLUE_BEAM,true);
+                beamer->CastSpell(me,SPELL_BLUE_BEAM, TRIGGERED_FULL_MASK);
                 beamer->SetUInt32Value(UNIT_FIELD_DISPLAYID , 11686);  //invisible
                 beamer->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 beams[1]=beamer->GetGUID();
@@ -190,13 +190,13 @@ public:
             if (summoned->GetEntry() == ENTRY_PURE_SPAWN)
             {
                 summoned->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FROST, true);
-                summoned->CastSpell(summoned,SPELL_ELEMENTAL_SPAWNIN,true);
+                summoned->CastSpell(summoned,SPELL_ELEMENTAL_SPAWNIN, TRIGGERED_FULL_MASK);
                 Summons.Summon(summoned);
             }
             if (summoned->GetEntry() == ENTRY_TAINTED_SPAWN)
             {
                 summoned->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_NATURE, true);
-                summoned->CastSpell(summoned,SPELL_ELEMENTAL_SPAWNIN,true);
+                summoned->CastSpell(summoned,SPELL_ELEMENTAL_SPAWNIN, TRIGGERED_FULL_MASK);
                 Summons.Summon(summoned);
             }
         }

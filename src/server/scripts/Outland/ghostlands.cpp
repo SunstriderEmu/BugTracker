@@ -122,7 +122,7 @@ public:
             if( action == GOSSIP_ACTION_INFO_DEF )
             {
                 player->CLOSE_GOSSIP_MENU();
-                me->CastSpell(player, 42540, false);
+                me->CastSpell(player, 42540, TRIGGERED_NONE);
             }
             return true;
         }

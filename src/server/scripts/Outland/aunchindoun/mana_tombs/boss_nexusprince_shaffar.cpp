@@ -224,7 +224,7 @@ public:
         void Reset()
         override {
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            me->CastSpell(me,SPELL_ETHEREAL_BEACON_VISUAL,false);
+            me->CastSpell(me,SPELL_ETHEREAL_BEACON_VISUAL, TRIGGERED_NONE);
             Apprentice_Timer = (HeroicMode ? 10000 : 20000);
             ArcaneBolt_Timer = 1000;
         }
@@ -252,7 +252,7 @@ public:
     
             if( Apprentice_Timer < diff )
             {
-                if(me->CastSpell(me,SPELL_ETHEREAL_APPRENTICE,true) == SPELL_CAST_OK)
+                if(me->CastSpell(me,SPELL_ETHEREAL_APPRENTICE, TRIGGERED_FULL_MASK) == SPELL_CAST_OK)
                 {
                     KillSelf();
                     Apprentice_Timer = (HeroicMode ? 10000 : 20000);
@@ -305,7 +305,7 @@ public:
     
             if(Cast_Timer < diff)
             {
-                me->CastSpell(me->GetVictim(), isFireboltTurn ? SPELL_ETHEREAL_APPRENTICE_FIREBOLT : SPELL_ETHEREAL_APPRENTICE_FROSTBOLT, true);
+                me->CastSpell(me->GetVictim(), isFireboltTurn ? SPELL_ETHEREAL_APPRENTICE_FIREBOLT : SPELL_ETHEREAL_APPRENTICE_FROSTBOLT, TRIGGERED_FULL_MASK);
                 isFireboltTurn = !isFireboltTurn;
                 Cast_Timer = 3000;
             }else Cast_Timer -= diff;

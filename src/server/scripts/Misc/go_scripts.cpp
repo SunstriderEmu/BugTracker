@@ -171,7 +171,7 @@ public:
         {
             if (player->HasSkill(SKILL_TAILORING) && player->GetBaseSkillValue(SKILL_TAILORING) >= 280 && !player->HasSpell(26086))
             {
-                player->CastSpell(player, 26095, false);
+                player->CastSpell(player, 26095, TRIGGERED_NONE);
             }
             return true;
         }
@@ -197,7 +197,7 @@ public:
         {
             if (player->HasSkill(SKILL_ENGINEERING) && player->GetBaseSkillValue(SKILL_ENGINEERING) >= 300 && !player->HasSpell(22704))
             {
-                player->CastSpell(player, 22864, false);
+                player->CastSpell(player, 22864, TRIGGERED_NONE);
             }
             return true;
         }
@@ -248,7 +248,7 @@ public:
         {
             if (player->HasSkill(SKILL_ALCHEMY) && player->GetSkillValue(SKILL_ALCHEMY) >= 300 && !player->HasSpell(24266))
             {
-                player->CastSpell(player, 24267, false);
+                player->CastSpell(player, 24267, TRIGGERED_NONE);
             }
             return true;
         }
@@ -277,7 +277,7 @@ public:
                 return true;
 
             if (player->GetQuestStatus(4296) == QUEST_STATUS_INCOMPLETE)
-                player->CastSpell(player, 15065, false);
+                player->CastSpell(player, 15065, TRIGGERED_NONE);
 
             return true;
         }
@@ -325,7 +325,7 @@ public:
         bool GossipHello(Player* player) override
         {
             if (player->GetQuestStatus(10111) == QUEST_STATUS_INCOMPLETE)
-                player->CastSpell(player, 33382, true);
+                player->CastSpell(player, 33382, TRIGGERED_FULL_MASK);
 
             return true;
         }
@@ -446,12 +446,12 @@ public:
             switch (action)
             {
             case GOSSIP_ACTION_INFO_DEF:
-                player->CastSpell(player, SPELL_CREATE_1_FLASK_OF_BEAST, false);
+                player->CastSpell(player, SPELL_CREATE_1_FLASK_OF_BEAST, TRIGGERED_NONE);
                 player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_FEL_CRYSTALFORGE_ITEM_RETURN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
                 player->SEND_GOSSIP_MENU_TEXTID(GOSSIP_FEL_CRYSTALFORGE_ITEM_TEXT_RETURN, me->GetGUID());
                 break;
             case GOSSIP_ACTION_INFO_DEF + 1:
-                player->CastSpell(player, SPELL_CREATE_5_FLASK_OF_BEAST, false);
+                player->CastSpell(player, SPELL_CREATE_5_FLASK_OF_BEAST, TRIGGERED_NONE);
                 player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_FEL_CRYSTALFORGE_ITEM_RETURN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
                 player->SEND_GOSSIP_MENU_TEXTID(GOSSIP_FEL_CRYSTALFORGE_ITEM_TEXT_RETURN, me->GetGUID());
                 break;
@@ -495,9 +495,9 @@ public:
         bool GossipHello(Player* pPlayer) override
         {
             if (!pPlayer->HasItemCount(APEXIS_SHARD, 50, false))
-                pPlayer->CastSpell(pPlayer, SPELL_CREATE_1_FLASK_OF_SORCERER, false);
+                pPlayer->CastSpell(pPlayer, SPELL_CREATE_1_FLASK_OF_SORCERER, TRIGGERED_NONE);
             else
-                pPlayer->CastSpell(pPlayer, SPELL_CREATE_5_FLASK_OF_SORCERER, false);
+                pPlayer->CastSpell(pPlayer, SPELL_CREATE_5_FLASK_OF_SORCERER, TRIGGERED_NONE);
 
             return false;
         }
@@ -571,10 +571,10 @@ public:
         bool GossipHello(Player* pPlayer) override
         {
             //implicitTarget=48 not implemented as of writing this code, and manual summon may be just ok for our purpose
-            //pPlayer->CastSpell(pPlayer,SPELL_SUMMON_RIZZLE,false);
+            //pPlayer->CastSpell(pPlayer,SPELL_SUMMON_RIZZLE, TRIGGERED_NONE);
 
             if (Creature* pCreature = pPlayer->SummonCreature(NPC_RIZZLE, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_DEAD_DESPAWN, 0))
-                pCreature->CastSpell(pPlayer, SPELL_BLACKJACK, false);
+                pCreature->CastSpell(pPlayer, SPELL_BLACKJACK, TRIGGERED_NONE);
 
             return false;
         }
@@ -1135,7 +1135,7 @@ public:
         bool GossipHello(Player* player) override
         {
             if (Creature* felreaver = player->SummonCreature(21949, -2646.709961, 2673.530029, 74.858299, 4.974770, TEMPSUMMON_MANUAL_DESPAWN, 0))
-                player->CastSpell(felreaver, 530, true);
+                player->CastSpell(felreaver, 530, TRIGGERED_FULL_MASK);
 
             return true;
         }

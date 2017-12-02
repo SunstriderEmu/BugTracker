@@ -60,7 +60,7 @@ public:
             if (_instance)
                 _instance->SetData(DATA_MAGMADAR, NOT_STARTED);
             
-            me->CastSpell(me, SPELL_MAGMASPIT, true);
+            me->CastSpell(me, SPELL_MAGMASPIT, TRIGGERED_FULL_MASK);
         }
         
         void EnterCombat(Unit* /*victim*/)
