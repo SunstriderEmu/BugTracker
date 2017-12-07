@@ -335,7 +335,7 @@ public:
                     if (GameObject* door = me->FindNearestGameObject(GO_END_DOOR, 50.0f))
                         door->UseDoorOrButton();
                     //TODO: leave the area...
-                    me->ForcedDespawn();
+                    me->DespawnOrUnsummon();
                 }
             }
         }

@@ -83,7 +83,7 @@ public:
         void MovementInform(uint32 movementType, uint32 /*data*/) 
         override {
             if(movementType == WAYPOINT_MOTION_TYPE)
-                me->ForcedDespawn();
+                me->DespawnOrUnsummon();
         }
     
         //show some respect when hit by a slaver

@@ -956,7 +956,7 @@ public:
         override {
             if (uiEndTimer <= uiDiff)
             {
-                me->ForcedDespawn();
+                me->DespawnOrUnsummon();
                 uiEndTimer = 262000;
             }
             else uiEndTimer -= uiDiff;

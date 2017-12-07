@@ -203,7 +203,7 @@ public:
                 for (auto & row : board) {
                     for (uint8 col = 0; col < 8; col++) {
                         if (Creature* cellTrigger = ObjectAccessor::GetCreature(*me, row[col]->triggerGUID))
-                            cellTrigger->ForcedDespawn();
+                            cellTrigger->DespawnOrUnsummon();
                             
                         delete row[col];
                     }

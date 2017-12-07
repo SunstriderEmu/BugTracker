@@ -348,8 +348,8 @@ public:
                                 ++uiPhase = 0;
                                 break;
                             case 3:
-                                me->ForcedDespawn();
-                                pUter->ForcedDespawn();
+                                me->DespawnOrUnsummon();
+                                pUter->DespawnOrUnsummon();
                                 break;
                             }
                         }

@@ -469,7 +469,7 @@ public:
         {
             pInstance = ((InstanceScript*)creature->GetInstanceScript());
             if(!pInstance)
-                me->ForcedDespawn();
+                me->DespawnOrUnsummon();
 
             for (uint64 & OrbDummie : OrbDummies)
                 OrbDummie = 0;
@@ -661,7 +661,7 @@ public:
                         pInstance->SetData(DATA_KILJAEDEN_EVENT, NOT_STARTED);
                     }
                 } else {
-                    me->ForcedDespawn();
+                    me->DespawnOrUnsummon();
                     return;
                 }
 
@@ -1179,7 +1179,7 @@ public:
 
                 if(pInstance)
                     pInstance->SetData(DATA_KILJAEDEN_EVENT,NOT_STARTED);
-                me->ForcedDespawn();
+                me->DespawnOrUnsummon();
                 return;
             }
 

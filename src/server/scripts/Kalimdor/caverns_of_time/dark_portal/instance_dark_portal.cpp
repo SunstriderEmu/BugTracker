@@ -212,7 +212,7 @@ public:
                                 // Despawn current boss
                                 if (currentBoss) {
                                     currentBoss->DealDamage(currentBoss, medivh->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-                                    currentBoss->ForcedDespawn();
+                                    currentBoss->DespawnOrUnsummon();
                                 }
                                 Encounter[0] = FAIL;
                                 Encounter[1] = NOT_STARTED;

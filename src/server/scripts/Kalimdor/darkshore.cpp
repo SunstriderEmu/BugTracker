@@ -472,7 +472,7 @@ public:
         void MoveInLineOfSight(Unit* who)
         override {
             if (who->ToCreature() && who->GetEntry() == 11836)
-                who->ToCreature()->ForcedDespawn();
+                who->ToCreature()->DespawnOrUnsummon();
         }
         
         void UpdateAI(uint32 const diff)

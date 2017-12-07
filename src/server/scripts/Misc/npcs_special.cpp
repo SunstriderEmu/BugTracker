@@ -1383,7 +1383,7 @@ public:
         
         void JustDied(Unit* pKiller)
         override {
-            me->ForcedDespawn();
+            me->DespawnOrUnsummon();
         }
         
         void MoveInLineOfSight(Unit* pWho)
@@ -1397,7 +1397,7 @@ public:
             if (me->GetDistance2d(pWho) < 3 && pWho->IsHostileTo(me)) {
                 DoCast(pWho, SPELL_DETONATION);     // Explode and deal damage to pWho
                 me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, nullptr, false);      // Diseappear
-                me->ForcedDespawn();
+                me->DespawnOrUnsummon();
             }
         }
         

@@ -295,7 +295,7 @@ public:
                         }
                         else
                         {
-                            me->ForcedDespawn();
+                            me->DespawnOrUnsummon();
                             return;
                         }
                     }

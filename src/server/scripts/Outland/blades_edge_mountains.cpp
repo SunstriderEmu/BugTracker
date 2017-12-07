@@ -3055,7 +3055,7 @@ public:
             blueRayTimer = 0;
             lightningCount = 0;
             if (Creature* trigger = ObjectAccessor::GetCreature(*me, triggerGUID))
-                trigger->ForcedDespawn();
+                trigger->DespawnOrUnsummon();
             triggerGUID = 0;
             quest = 0;
         }

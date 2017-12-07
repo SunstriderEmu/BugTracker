@@ -280,6 +280,7 @@ public:
 
             switch (i)
             {
+            case 0:
             default:
                 std::stringstream str;
                 str << "Reached wp " << i;

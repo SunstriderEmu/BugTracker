@@ -1177,7 +1177,7 @@ public:
                 {
                     me->UseDoorOrButton();
                     player->KilledMonsterCredit(NPC_CAPTIVE_CHILD, (*itr)->GetGUID());
-                    (*itr)->ForcedDespawn(5000);
+                    (*itr)->DespawnOrUnsummon(5000);
                     (*itr)->GetMotionMaster()->MovePoint(1, me->GetPositionX() + 5, me->GetPositionY(), me->GetPositionZ());
                     (*itr)->AI()->Talk(SAY_FREE);
                     (*itr)->GetMotionMaster()->Clear();

@@ -874,7 +874,7 @@ public:
             if(FleeTimer)
             {
                 if(FleeTimer <= diff)
-                    me->ForcedDespawn();
+                    me->DespawnOrUnsummon();
                 else FleeTimer -= diff;
             }
         }
