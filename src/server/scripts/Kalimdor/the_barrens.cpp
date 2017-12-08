@@ -693,7 +693,7 @@ public:
                 pSummoned->AI()->AttackStart(me);
         }
     
-        void UpdateEscortAI(const uint32 uiDiff) override
+        void UpdateEscortAI(uint32 uiDiff) override
         {
             if (!UpdateVictim())
             {
