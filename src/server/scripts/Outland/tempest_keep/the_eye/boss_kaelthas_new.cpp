@@ -6,6 +6,7 @@
 
 //BUGS:
 /* BUGS:
+- KT is not notified of advisor death... NOTHING WORKS! Since they are in smartai, lets just add a message from them to trigger a check from KT?
 - Weapons can attack advisors (if you wait long enough for kael thas to revive advisors and weapons are still alive)
 - Comic Infuser (weapon creature) does heal the players
 - Longbow is invisible (this also prevent looting it)
@@ -164,6 +165,12 @@ enum Misc
     EVENT_SCENE_16                        = 65
 };
 
+uint32 m_auiSpellSummonWeapon[] =
+{
+    SPELL_SUMMON_WEAPONA, SPELL_SUMMON_WEAPONB, SPELL_SUMMON_WEAPONC, SPELL_SUMMON_WEAPOND,
+    SPELL_SUMMON_WEAPONE, SPELL_SUMMON_WEAPONF, SPELL_SUMMON_WEAPONG
+};
+
 const Position triggersPos[6] =
 {
     {799.11f, -38.95f, 85.0f, 0.0f},
@@ -188,7 +195,8 @@ class boss_kaelthas : public CreatureScript
             
             void PrepareAdvisors()
             {
-                for (uint8 i = DATA_KAEL_ADVISOR1; i <= DATA_KAEL_ADVISOR4; ++i)
+                summons.DespawnAll();
+                for (uint8 i = DATA_THALADREDTHEDARKENER; i <= DATA_MASTERENGINEERTELONICUS; ++i)
                     if (Creature* advisor = ObjectAccessor::GetCreature(*me, instance->GetData64(i)))
                     {
                         advisor->Respawn(true);
@@ -206,7 +214,7 @@ class boss_kaelthas : public CreatureScript
                 {
                     for (SummonList::const_iterator i = summons.begin(); i != summons.end(); ++i)
                         if (Creature* summon = ObjectAccessor::GetCreature(*me, *i))
-                            if (summon->GetSpawnId())
+                            if (summon->GetSpawnId()) //advisors
                             {
                                 summon->SetReactState(REACT_PASSIVE);
                                 summon->SetDeathState(JUST_RESPAWNED);
@@ -289,22 +297,22 @@ class boss_kaelthas : public CreatureScript
 
                 if (summon->GetEntry() == NPC_THALADRED)
                 {
-                    events2.ScheduleEvent(EVENT_PREFIGHT_PHASE21, 2000);
-                    events2.ScheduleEvent(EVENT_PREFIGHT_PHASE22, 14500);
+                    events2.ScheduleEvent(EVENT_PREFIGHT_PHASE21, 6500);
+                    events2.ScheduleEvent(EVENT_PREFIGHT_PHASE22, 17500);
                 }
                 else if (summon->GetEntry() == NPC_LORD_SANGUINAR)
                 {
-                    events2.ScheduleEvent(EVENT_PREFIGHT_PHASE31, 2000);
-                    events2.ScheduleEvent(EVENT_PREFIGHT_PHASE32, 9000);
+                    events2.ScheduleEvent(EVENT_PREFIGHT_PHASE31, 6000);
+                    events2.ScheduleEvent(EVENT_PREFIGHT_PHASE32, 10000);
                 }
                 else if (summon->GetEntry() == NPC_CAPERNIAN)
                 {
-                    events2.ScheduleEvent(EVENT_PREFIGHT_PHASE41, 2000);
+                    events2.ScheduleEvent(EVENT_PREFIGHT_PHASE41, 5000);
                     events2.ScheduleEvent(EVENT_PREFIGHT_PHASE42, 10400);
                 }
                 else if (summon->GetEntry() == NPC_TELONICUS)
                 {
-                    events2.ScheduleEvent(EVENT_PREFIGHT_PHASE51, 3000);
+                    events2.ScheduleEvent(EVENT_PREFIGHT_PHASE51, 5000);
                     events2.ScheduleEvent(EVENT_PREFIGHT_PHASE52, 9000);
                 }
             }
@@ -429,10 +437,18 @@ class boss_kaelthas : public CreatureScript
                         }
                         break;
                     case EVENT_PREFIGHT_PHASE51:
+                    {
                         Talk(SAY_PHASE2_WEAPON);
                         me->CastSpell(me, SPELL_SUMMON_WEAPONS, TRIGGERED_NONE);
+
+                        uint8 uiMaxWeapon = sizeof(m_auiSpellSummonWeapon) / sizeof(uint32);
+
+                        for (uint32 i = 0; i < uiMaxWeapon; ++i)
+                            DoCast(me, m_auiSpellSummonWeapon[i], true);
+
                         phase = PHASE_WEAPONS;
                         break;
+                    }
                     case EVENT_PREFIGHT_PHASE52:
                         for (SummonList::const_iterator i = summons.begin(); i != summons.end(); ++i)
                         {

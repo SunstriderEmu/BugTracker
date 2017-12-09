@@ -1,29 +1,42 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
-
+#idef DISABLED
 /* ScriptData
 SDName: boss_Kaelthas
 SD%Complete: 60
 SDComment: Mind Control, Reset Event if Weapons despawn/reset
 SDCategory: Tempest Keep, The Eye
 EndScriptData */
-#ifdef DISABLED
 
 #include "def_the_eye.h"
 #include "WorldPacket.h"
+
+//creature_text yells, to use instead of text scripts...
+enum Yells
+{
+    /*
+    // Kael'thas Speech
+    SAY_INTRO = 0,
+    SAY_INTRO_CAPERNIAN = 1,
+    SAY_INTRO_TELONICUS = 2,
+    SAY_INTRO_THALADRED = 3,
+    SAY_INTRO_SANGUINAR = 4,
+    SAY_PHASE2_WEAPON = 5,
+    SAY_PHASE3_ADVANCE = 6,
+    SAY_PHASE4_INTRO2 = 7,
+    SAY_PHASE5_NUTS = 8,
+    SAY_SLAY = 9,
+    SAY_MINDCONTROL = 10,
+    SAY_GRAVITYLAPSE = 11,
+    SAY_SUMMON_PHOENIX = 12,
+    SAY_DEATH = 13,
+    SAY_PYROBLAST = 14,
+
+    // Advisors
+    SAY_THALADRED_AGGRO = 0,
+    SAY_SANGUINAR_AGGRO = 0,
+    SAY_CAPERNIAN_AGGRO = 0,
+    SAY_TELONICUS_AGGRO = 0
+    */
+};
 
  //kael'thas Speech
 #define SAY_INTRO                           -1550016
@@ -92,7 +105,10 @@ EndScriptData */
 #define SPELL_KNOCKBACK                   11027
 #define SPELL_GRAVITY_LAPSE               34480
 #define SPELL_GRAVITY_LAPSE_AURA          39432
-#define SPELL_NETHER_BEAM                 35873
+#define SPELL_GRAVITY_LAPSE_KNOCKBACK     34480
+#define SPELL_GRAVITY_LAPSE_TELEPORT1     35966
+#define SPELL_NETHER_BEAM                 35869
+#define SPELL_NETHER_BEAM_DAMAGE          35873
 
 //Thaladred the Darkener spells
 #define SPELL_PSYCHIC_BLOW                10689
@@ -115,6 +131,7 @@ EndScriptData */
 
 //Nether Vapor spell
 #define SPELL_NETHER_VAPOR                35859
+#define NPC_NETHER_VAPOR                  21002
 
 //Phoenix spell
 #define SPELL_BURN                          36720
@@ -192,10 +209,10 @@ struct advisorbase_ai : public ScriptedAI
         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 
         //reset encounter
-        if(pInstance && (pInstance->GetData(DATA_KAELTHASEVENT) == 1 || pInstance->GetData(DATA_KAELTHASEVENT) == 3))
+        if(pInstance && (pInstance->GetData(DATA_KAELTHAS_EVENT) == 1 || pInstance->GetData(DATA_KAELTHAS_EVENT) == 3))
         {
             Creature *Kaelthas = NULL;
-            Kaelthas = (Creature*)(ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_KAELTHAS)));
+            Kaelthas = (Creature*)(ObjectAccessor::GetUnit((*me), pInstance->GetData64(NPC_KAELTHAS)));
 
             if(Kaelthas)
                 Kaelthas->AI()->EnterEvadeMode();
@@ -223,7 +240,7 @@ struct advisorbase_ai : public ScriptedAI
             return;
         }
         //Don't really die in phase 1 & 3, only die after that
-        if(pInstance && pInstance->GetData(DATA_KAELTHASEVENT) != 0)
+        if(pInstance && pInstance->GetData(DATA_KAELTHAS_EVENT) != 0)
         {
             //prevent death
             damage = 0;
@@ -242,7 +259,7 @@ struct advisorbase_ai : public ScriptedAI
             me->GetMotionMaster()->MoveIdle();
             me->SetUInt32Value(UNIT_FIELD_BYTES_1,PLAYER_STATE_DEAD);
 
-            if (pInstance->GetData(DATA_KAELTHASEVENT) == 3)
+            if (pInstance->GetData(DATA_KAELTHAS_EVENT) == 3)
                 JustDied(pKiller);
         }
     }
@@ -265,7 +282,7 @@ struct advisorbase_ai : public ScriptedAI
                 AttackStart(Target);
                 me->GetMotionMaster()->Clear();
                 me->GetMotionMaster()->MoveChase(Target);
-                me->AddThreat(Target, 0.0f);
+                me->EngageWithTarget(Target);
             }else DelayRes_Timer -= diff;
         }
     }
@@ -332,7 +349,17 @@ public:
         uint64 AdvisorGuid[4];
         uint64 WeaponGuid[7];
         SummonList summons;
-    
+
+        void SetRoomState(GOState state)
+        {
+            if (GameObject* window = ObjectAccessor::GetGameObject(*me, pInstance->GetData64(GO_BRIDGE_WINDOW)))
+                window->SetGoState(state);
+            if (GameObject* window = ObjectAccessor::GetGameObject(*me, pInstance->GetData64(GO_KAEL_STATUE_RIGHT)))
+                window->SetGoState(state);
+            if (GameObject* window = ObjectAccessor::GetGameObject(*me, pInstance->GetData64(GO_KAEL_STATUE_LEFT)))
+                window->SetGoState(state);
+        }
+
         void DeleteLegs()
         {
             InstanceMap::PlayerList::const_iterator it;
@@ -383,7 +410,9 @@ public:
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     
             if(pInstance)
-                pInstance->SetData(DATA_KAELTHASEVENT, NOT_STARTED);
+                pInstance->SetData(DATA_KAELTHAS_EVENT, NOT_STARTED);
+
+            SetRoomState(GO_STATE_READY);
         }
     
         void PrepareAdvisors()
@@ -420,7 +449,7 @@ public:
                 DoScriptText(SAY_PHASE4_INTRO2, me);
                 Phase = 4;
     
-                pInstance->SetData(DATA_KAELTHASEVENT, 4);
+                pInstance->SetData(DATA_KAELTHAS_EVENT, 4);
     
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -434,9 +463,10 @@ public:
             {
                 PrepareAdvisors();
     
+                Talk(SAY_INTRO);
                 DoScriptText(SAY_INTRO, me);
     
-                pInstance->SetData(DATA_KAELTHASEVENT, IN_PROGRESS);
+                pInstance->SetData(DATA_KAELTHAS_EVENT, IN_PROGRESS);
                 me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     
                 PhaseSubphase = 0;
@@ -480,7 +510,7 @@ public:
             summons.DespawnAll();
     
             if(pInstance)
-                pInstance->SetData(DATA_KAELTHASEVENT, DONE);
+                pInstance->SetData(DATA_KAELTHAS_EVENT, DONE);
     
             Creature *pCreature;
             for(uint8 i = 0; i < 4; ++i)
@@ -495,17 +525,14 @@ public:
     
         void EnterCombat(Unit *who) override
         {
-            if (pInstance && !pInstance->GetData(DATA_KAELTHASEVENT) && !Phase)
+            if (pInstance && !pInstance->GetData(DATA_KAELTHAS_EVENT) && !Phase)
                 StartEvent();
         }
     
         void MoveInLineOfSight(Unit *who) override
         {
-            if (!me->GetVictim() && me->CanAttack(who) == CAN_ATTACK_RESULT_OK && who->isInAccessiblePlaceFor(me) && me->IsHostileTo(who))
+            if (!me->GetVictim() && me->IsValidAttackTarget(who) && me->IsWithinDistInMap(who, 30.0f))
             {
-                if (!me->CanFly() && me->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
-                    return;
-    
                 float attackRadius = me->GetAggroRange(who);
                 if (Phase >= 4 && me->IsWithinDistInMap(who, attackRadius) && me->IsWithinLOSInMap(who))
                 {
@@ -513,11 +540,11 @@ public:
                 }
                 else if(who->IsAlive())
                 {
-                    if (pInstance && !pInstance->GetData(DATA_KAELTHASEVENT) && !Phase && me->IsWithinDistInMap(who, 60.0f))
+                    if (pInstance && !pInstance->GetData(DATA_KAELTHAS_EVENT) && !Phase && me->IsWithinDistInMap(who, 60.0f))
                         StartEvent();
     
                     //add to the threat list, so we can use SelectTarget
-                    me->AddThreat(who,0.0f);
+                    me->EngageWithTarget(who);
                 }
             }
         }
@@ -527,7 +554,7 @@ public:
     
             if(pInstance && Phase)
             {
-                if(pInstance->GetData(DATA_KAELTHASEVENT) == IN_PROGRESS && me->GetThreatManager().getThreatList().empty())
+                if(pInstance->GetData(DATA_KAELTHAS_EVENT) == IN_PROGRESS && me->GetThreatManager().getThreatList().empty())
                 {
                     EnterEvadeMode();
                     return;
@@ -687,7 +714,7 @@ public:
                             if(Advisor && (Advisor->GetUInt32Value(UNIT_FIELD_BYTES_1) == PLAYER_STATE_DEAD))
                             {
                                 Phase = 2;
-                                pInstance->SetData(DATA_KAELTHASEVENT, 2);
+                                pInstance->SetData(DATA_KAELTHAS_EVENT, 2);
     
                                 DoScriptText(SAY_PHASE2_WEAPON, me);
                                 PhaseSubphase = 0;
@@ -737,7 +764,7 @@ public:
                         if (Phase_Timer < diff)
                         {
                             DoScriptText(SAY_PHASE3_ADVANCE, me);
-                            pInstance->SetData(DATA_KAELTHASEVENT, 3);
+                            pInstance->SetData(DATA_KAELTHAS_EVENT, 3);
                             Phase = 3;
                             PhaseSubphase = 0;
                         } else { Phase_Timer -= diff; }
@@ -771,7 +798,7 @@ public:
                         DoScriptText(SAY_PHASE4_INTRO2, me);
                         Phase = 4;
     
-                        pInstance->SetData(DATA_KAELTHASEVENT, 4);
+                        pInstance->SetData(DATA_KAELTHAS_EVENT, 4);
     
                         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -869,7 +896,7 @@ public:
                     {
                         if (me->GetHealthPct() < 50)
                         {
-                            pInstance->SetData(DATA_KAELTHASEVENT, 4);
+                            pInstance->SetData(DATA_KAELTHAS_EVENT, 4);
                             Phase = 5;
                             Phase_Timer = 10000;
     
@@ -920,6 +947,7 @@ public:
                             me->InterruptNonMeleeSpells(false);
                             me->RemoveAurasDueToSpell(SPELL_FULLPOWER);
                             DoCast(me, SPELL_EXPLODE);
+                            SetRoomState(GO_STATE_ACTIVE);
                             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                             Phase = 6;
                             DoStartMovement(me->GetVictim());
@@ -1056,7 +1084,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_kaelthasAI(creature);
+        return GetTheEyeAI<boss_kaelthasAI>(creature);
     }
 };
 
@@ -1095,7 +1123,7 @@ public:
             DoScriptText(SAY_THALADRED_DEATH, me);
         }
     
-        void EnterCombat(Unit *who)
+        void EnterCombat(Unit* who)
         override {
             if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
                 return;
@@ -1104,7 +1132,7 @@ public:
                 return;
     
             DoScriptText(SAY_THALADRED_AGGRO, me);
-            me->AddThreat(who, 5000000.0f);
+            me->GetThreatManager().AddThreat(who, 5000000.0f);
         }
     
         void UpdateAI(const uint32 diff)
@@ -1127,7 +1155,7 @@ public:
                     DoResetThreat();
                     if(target)
                     {
-                        me->AddThreat(target, 5000000.0f);
+                        me->GetThreatManager().AddThreat(target, 5000000.0f);
                         DoScriptText(EMOTE_THALADRED_GAZE, me, target);
                     }
                     Gaze_Timer = urand(8000, 14000);
@@ -1274,7 +1302,7 @@ public:
     
             if (me->Attack(who, true))
             {
-                me->AddThreat(who, 0.0f);
+                me->EngageWithTarget(who);
     
                 DoStartMovement(who, CAPERNIAN_DISTANCE, M_PI/2);
             }
@@ -1566,7 +1594,7 @@ public:
             {
                 if(pInstance)//check for boss reset
                 {
-                    Creature* Kael = ObjectAccessor::GetCreature((*me), pInstance->GetData64(DATA_KAELTHAS));
+                    Creature* Kael = ObjectAccessor::GetCreature((*me), pInstance->GetData64(NPC_KAELTHAS));
                     if (Kael && Kael->GetThreatManager().getThreatList().empty())
                     {
                         egg = false;
@@ -1629,7 +1657,7 @@ public:
     
         void JustSummoned(Creature* summoned)
         override {
-            summoned->AddThreat(me->GetVictim(), 0.0f);
+            summoned->EngageWithTarget(me->GetVictim());
             summoned->CastSpell(summoned,SPELL_REBIRTH, TRIGGERED_NONE);
         }
     
@@ -1653,23 +1681,150 @@ public:
     }
 };
 
+class lapseTeleport : public BasicEvent
+{
+public:
+    lapseTeleport(Player* owner) : _owner(owner)
+    {
+    }
+
+    bool Execute(uint64 /*execTime*/, uint32 /*diff*/) override
+    {
+        if (_owner->IsBeingTeleportedNear())
+            _owner->m_Events.AddEvent(new lapseTeleport(_owner), _owner->m_Events.CalculateTime(1));
+        else if (!_owner->IsBeingTeleported())
+        {
+            _owner->CastSpell(_owner, SPELL_GRAVITY_LAPSE_KNOCKBACK, TRIGGERED_FULL_MASK);
+            _owner->CastSpell(_owner, SPELL_GRAVITY_LAPSE_AURA, TRIGGERED_FULL_MASK);
+        }
+        return true;
+    }
+
+private:
+    Player* _owner;
+};
+
+class spell_kaelthas_gravity_lapse : public SpellScriptLoader
+{
+public:
+    spell_kaelthas_gravity_lapse() : SpellScriptLoader("spell_kaelthas_gravity_lapse") { }
+
+    class spell_kaelthas_gravity_lapse_SpellScript : public SpellScript
+    {
+        PrepareSpellScript(spell_kaelthas_gravity_lapse_SpellScript);
+
+        bool Load() override
+        {
+            _currentSpellId = SPELL_GRAVITY_LAPSE_TELEPORT1;
+            return true;
+        }
+
+        void HandleScriptEffect(SpellEffIndex effIndex)
+        {
+            PreventHitEffect(effIndex);
+            if (_currentSpellId < SPELL_GRAVITY_LAPSE_TELEPORT1 + 25)
+                if (Player* target = GetHitPlayer())
+                {
+                    GetCaster()->CastSpell(target, _currentSpellId++, TRIGGERED_FULL_MASK);
+                    target->m_Events.AddEvent(new lapseTeleport(target), target->m_Events.CalculateTime(1));
+                }
+        }
+
+        void Register() override
+        {
+            OnEffectHitTarget += SpellEffectFn(spell_kaelthas_gravity_lapse_SpellScript::HandleScriptEffect, EFFECT_0, SPELL_EFFECT_SCRIPT_EFFECT);
+        }
+
+    private:
+        uint32 _currentSpellId;
+    };
+
+    SpellScript* GetSpellScript() const override
+    {
+        return new spell_kaelthas_gravity_lapse_SpellScript();
+    }
+};
+
+class spell_kaelthas_nether_beam : public SpellScriptLoader
+{
+public:
+    spell_kaelthas_nether_beam() : SpellScriptLoader("spell_kaelthas_nether_beam") { }
+
+    class spell_kaelthas_nether_beam_SpellScript : public SpellScript
+    {
+        PrepareSpellScript(spell_kaelthas_nether_beam_SpellScript);
+
+        void HandleScriptEffect(SpellEffIndex effIndex)
+        {
+            PreventHitEffect(effIndex);
+
+            ThreatContainer::StorageType const & ThreatList = GetCaster()->GetThreatManager().getThreatList();
+            std::list<Unit*> targetList;
+            for (auto itr : ThreatList)
+            {
+                Unit* target = ObjectAccessor::GetUnit(*GetCaster(), itr->getUnitGuid());
+                if (target && target->GetTypeId() == TYPEID_PLAYER)
+                    targetList.push_back(target);
+            }
+
+            Trinity::Containers::RandomResize(targetList, 5);
+            for (std::list<Unit*>::const_iterator itr = targetList.begin(); itr != targetList.end(); ++itr)
+                GetCaster()->CastSpell(*itr, SPELL_NETHER_BEAM_DAMAGE, TRIGGERED_FULL_MASK);
+        }
+
+        void Register() override
+        {
+            OnEffectHitTarget += SpellEffectFn(spell_kaelthas_nether_beam_SpellScript::HandleScriptEffect, EFFECT_0, SPELL_EFFECT_SCRIPT_EFFECT);
+        }
+    };
+
+    SpellScript* GetSpellScript() const override
+    {
+        return new spell_kaelthas_nether_beam_SpellScript();
+    }
+};
+
+class spell_kaelthas_summon_nether_vapor : public SpellScriptLoader
+{
+public:
+    spell_kaelthas_summon_nether_vapor() : SpellScriptLoader("spell_kaelthas_summon_nether_vapor") { }
+
+    class spell_kaelthas_summon_nether_vapor_SpellScript : public SpellScript
+    {
+        PrepareSpellScript(spell_kaelthas_summon_nether_vapor_SpellScript);
+
+        void HandleScriptEffect(SpellEffIndex effIndex)
+        {
+            PreventHitEffect(effIndex);
+            for (uint32 i = 0; i < 5; ++i)
+                GetCaster()->SummonCreature(NPC_NETHER_VAPOR, GetCaster()->GetPositionX() + 6 * cos(i / 5.0f * 2 * M_PI), GetCaster()->GetPositionY() + 6 * sin(i / 5.0f * 2 * M_PI), GetCaster()->GetPositionZ() + 7.0f + i, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 30000);
+        }
+
+        void Register() override
+        {
+            OnEffectHitTarget += SpellEffectFn(spell_kaelthas_summon_nether_vapor_SpellScript::HandleScriptEffect, EFFECT_0, SPELL_EFFECT_SCRIPT_EFFECT);
+        }
+    };
+
+    SpellScript* GetSpellScript() const override
+    {
+        return new spell_kaelthas_summon_nether_vapor_SpellScript();
+    }
+};
+
 void AddSC_boss_kaelthas()
 {
     new boss_kaelthas();
-
     new boss_thaladred_the_darkener();
-
     new boss_lord_sanguinar();
-
     new boss_grand_astromancer_capernian();
-
     new boss_master_engineer_telonicus();
-
     new mob_kael_flamestrike();
-
     new mob_phoenix_tk();
-
     new mob_phoenix_egg_tk();
-}
 
+    new spell_kaelthas_gravity_lapse();
+    new spell_kaelthas_nether_beam();
+    new spell_kaelthas_summon_nether_vapor();
+}
 #endif
