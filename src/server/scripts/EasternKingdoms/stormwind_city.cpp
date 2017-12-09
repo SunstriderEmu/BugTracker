@@ -230,10 +230,10 @@ class npc_general_marcus_jonathan : public CreatureScript
 public:
     npc_general_marcus_jonathan() : CreatureScript("npc_general_marcus_jonathan") {}
 
-    class npc_general_marcus_jonathanAI : public CreatureAI
+    class npc_general_marcus_jonathanAI : public ScriptedAI
     {
     public:
-        npc_general_marcus_jonathanAI(Creature* creature) : CreatureAI(creature)
+        npc_general_marcus_jonathanAI(Creature* creature) : ScriptedAI(creature)
         {
         }
 
@@ -345,12 +345,12 @@ class npc_innkeeper_allison : public CreatureScript
 public:
     npc_innkeeper_allison() : CreatureScript("npc_innkeeper_allison") {}
 
-    class npc_innkeeper_allisonAI : public CreatureAI
+    class npc_innkeeper_allisonAI : public ScriptedAI
     {
     public:
         const uint32 QUEST_FLEXING_NOUGAT = 8356;
 
-        npc_innkeeper_allisonAI(Creature* creature) : CreatureAI(creature)
+        npc_innkeeper_allisonAI(Creature* creature) : ScriptedAI(creature)
         {
         }
 
