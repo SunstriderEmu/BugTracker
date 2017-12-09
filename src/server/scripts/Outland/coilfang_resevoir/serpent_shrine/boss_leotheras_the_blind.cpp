@@ -287,7 +287,7 @@ public:
                 me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_NIGHTELF);
     
                 // and reseting equipment
-                me->LoadEquipment(me->GetEquipmentId());
+                me->LoadEquipment();
     
                 if(pInstance && pInstance->GetData64(DATA_LEOTHERAS_EVENT_STARTER))
                 {
@@ -401,7 +401,7 @@ public:
             if(me->HasAuraEffect(AURA_BANISH, 0))
             return;
     
-            me->LoadEquipment(me->GetEquipmentId());
+            me->LoadEquipment();
         }
     
         void UpdateAI(const uint32 diff)
@@ -552,7 +552,7 @@ public:
                 {
                     //switch to nightelf form
                     me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_NIGHTELF);
-                    me->LoadEquipment(me->GetEquipmentId());
+                    me->LoadEquipment();
     
                     CastConsumingMadness();
                     DespawnDemon();
@@ -581,7 +581,7 @@ public:
     
                 DoScriptText(SAY_FINAL_FORM, me);
                 me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_NIGHTELF);
-                me->LoadEquipment(me->GetEquipmentId());
+                me->LoadEquipment();
             }
         }
     };
