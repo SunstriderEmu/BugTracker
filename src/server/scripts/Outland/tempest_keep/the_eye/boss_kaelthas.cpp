@@ -1,4 +1,4 @@
-#idef DISABLED
+#ifdef DISABLED
 /* ScriptData
 SDName: boss_Kaelthas
 SD%Complete: 60
