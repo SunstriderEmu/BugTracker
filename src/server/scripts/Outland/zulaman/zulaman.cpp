@@ -455,7 +455,7 @@ public:
             }
             else if (id == 1) {
                 me->GetMotionMaster()->MovementExpired();
-                me->DisappearAndDie();
+                me->DespawnOrUnsummon(1); //despawn at next update, otherwise may cause crash when deleting waypoint movement generator immediately (this function is called from there)
             }
         }
     };
@@ -711,9 +711,9 @@ public:
         void MovementInform(uint32 type, uint32 id)
         override {
             if (me->GetEntry() == 24225 && id == 6)
-                me->DisappearAndDie();
+                me->DespawnOrUnsummon(1); //despawn at next update, otherwise may cause crash when deleting waypoint movement generator immediately (this function is called from there)
             else if (me->GetEntry() == 24159 && id == 7)
-                me->DisappearAndDie();
+                me->DespawnOrUnsummon(1);
         }
         
         void UpdateAI(uint32 const diff)

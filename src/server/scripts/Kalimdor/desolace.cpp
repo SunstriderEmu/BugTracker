@@ -270,7 +270,7 @@ public:
                     if (player)
                         player->GroupEventHappens(6132, me);
                         
-                    me->DisappearAndDie();
+                    me->DespawnOrUnsummon(1); //despawn at next update, otherwise may cause crash when deleting waypoint movement generator immediately (this function is called from there)
                     completed = true;
                     break;            
             }
