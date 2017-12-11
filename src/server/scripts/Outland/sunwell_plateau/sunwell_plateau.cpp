@@ -1120,7 +1120,7 @@ public:
                 break;
             }
             case 3:
-                me->DisappearAndDie();
+                me->DespawnOrUnsummon(1); //despawn at next update, otherwise may cause crash when deleting waypoint movement generator immediately (this function is called from there)
                 break;
             }
         }

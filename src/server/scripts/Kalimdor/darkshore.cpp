@@ -541,8 +541,7 @@ public:
         void MovementInform(uint32 type, uint32 id)
         override {
             if (id == 1) {
-                me->DisappearAndDie();
-                me->Respawn();
+                me->DespawnOrUnsummon(1);
                 timer = 0;
                 step = 0;
                 said = false;

@@ -1106,9 +1106,8 @@ public:
                 break;
             case 11:
                 completed = true;
-                me->DisappearAndDie();
                 me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
-                me->Respawn();
+                me->DespawnOrUnsummon(1);
                 break;
             }
         }
