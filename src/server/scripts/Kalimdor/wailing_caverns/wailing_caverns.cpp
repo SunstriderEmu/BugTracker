@@ -197,7 +197,7 @@ public:
                                 DoScriptText(SAY_BANISH_THE_SPIRITS, me);
                                 DoCast(me, SPELL_SERPENTINE_CLEANSING);
                                 me->AddUnitState(UNIT_STATE_ROOT);
-                                CAST_AI(EscortAI, me->AI())->SetCanAttack(false);
+                                CAST_AI(EscortAI, me->AI())->SetActiveAttacker(false);
                                 eventTimer = 30000;
                                 me->SummonCreature(NPC_DEVIATE_VIPER, -61.5261, 273.676, -92.8442, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 5000);
                                 me->SummonCreature(NPC_DEVIATE_VIPER, -58.4658, 280.799, -92.8393, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 5000);
@@ -206,7 +206,7 @@ public:
                             else
                             if (eventProgress == 2)
                             {
-                                CAST_AI(EscortAI, me->AI())->SetCanAttack(true);
+                                CAST_AI(EscortAI, me->AI())->SetActiveAttacker(true);
                                 me->ClearUnitState(UNIT_STATE_ROOT);
                                 DoScriptText(SAY_CAVERNS_PURIFIED, me);
                                 pInstance->SetData(TYPE_NARALEX_PART2, DONE);
@@ -227,7 +227,7 @@ public:
                             {
                                 ++eventProgress;
                                 eventTimer = 15000;
-                                CAST_AI(EscortAI, me->AI())->SetCanAttack(false);
+                                CAST_AI(EscortAI, me->AI())->SetActiveAttacker(false);
                                 if (Creature* naralex = pInstance->instance->GetCreature(pInstance->GetData64(DATA_NARALEX)))
                                     DoCast(naralex, SPELL_NARALEXS_AWAKENING, true);
                                 DoScriptText(EMOTE_AWAKENING_RITUAL, me);

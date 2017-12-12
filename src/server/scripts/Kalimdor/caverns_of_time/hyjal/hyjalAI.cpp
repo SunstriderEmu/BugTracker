@@ -448,7 +448,7 @@ void hyjalAI::MoveInLineOfSight(Unit *who)
     if(IsDummy)
         return;
 
-    if(HasEscortState(STATE_ESCORT_ESCORTING) && !GetAttack())
+    if(HasEscortState(STATE_ESCORT_ESCORTING) && !IsActiveAttacker())
         return;
 
     if(me->GetVictim() || me->CanAggro(who) != CAN_ATTACK_RESULT_OK)
