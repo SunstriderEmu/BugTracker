@@ -190,6 +190,7 @@ class boss_curator : public CreatureScript
                             }
                         }
                     }
+                    events.RescheduleEvent(EVENT_FLARE_SUMMON, 10 * SECOND * IN_MILLISECONDS, PHASE_NORMAL);
                     break;
                 }
                 case EVENT_HATEFUL_BOLT:
