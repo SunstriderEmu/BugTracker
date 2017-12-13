@@ -1,0 +1,3 @@
+-- zeppelin masters / Orgrimmar
+replace into `creature_text` (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Language`, `Probability`, `Emote`, `Duration`, `Sound`, `BroadcastTextId`, `TextRange`, `comment`) values('12136','0','0','The zeppelin to Grom\'gol has just arrived! All aboard for Stranglethorn!','14','0','100','0','0','0','22097','0','Snurk Bucksquick');
+replace into `creature_text` (`CreatureID`, `GroupID`, `ID`, `Text`, `Type`, `Language`, `Probability`, `Emote`, `Duration`, `Sound`, `BroadcastTextId`, `TextRange`, `comment`) values('9564','0','0','The zeppelin to Undercity has just arrived! All aboard for Tirisfal Glades!','14','0','100','0','0','0','29545','0','Frezza');
