@@ -1,13 +1,4 @@
-
-/* ScriptData
-SDName: Boss_Nightbane
-SD%Complete: 80
-SDComment: SDComment: Timers may incorrect
-SDCategory: Karazhan
-EndScriptData */
-
-
-#include "def_karazhan.h"
+#include "karazhan.h"
 
 //phase 1
 #define SPELL_BELLOWING_ROAR        39427
@@ -23,12 +14,14 @@ EndScriptData */
 #define SPELL_SEARING_CINDERS       30127
 #define SPELL_SUMMON_SKELETON       30170
 
-#define EMOTE_SUMMON                "Un être ancien apparait au loin..."
-#define YELL_AGGRO                  "Pauvres fous ! Je devrais apporter une fin rapide à votre souffrance !"
-#define YELL_FLY_PHASE              "Misérable vermine. Je vais vous exterminer depuis les airs !"
-#define YELL_LAND_PHASE_1           "Assez ! Je vais atterrir et vous écraser moi-même !"
-#define YELL_LAND_PHASE_2           "Insectes ! Laissez-moi vous montrer ma force !"
-#define EMOTE_BREATH                "Plaie-de-nuit prend une profonde respiration."
+enum Says
+{
+    EMOTE_SUMMON = 0,
+    YELL_AGGRO = 1,
+    YELL_FLY_PHASE = 2,
+    YELL_LAND_PHASE = 3,
+    EMOTE_BREATH = 4
+};
 
 float IntroWay[8][3] =
 {
@@ -49,17 +42,14 @@ public:
     boss_nightbane() : CreatureScript("boss_nightbane")
     { }
 
-    class boss_nightbaneAI : public ScriptedAI
+    class boss_nightbaneAI : public BossAI
     {
         public:
-        boss_nightbaneAI(Creature* c) : ScriptedAI(c)
+        boss_nightbaneAI(Creature* creature) : BossAI(creature, DATA_NIGHTBANE_EVENT)
         {
-            pInstance = ((InstanceScript*)c->GetInstanceScript());
             Intro = true;
         }
-    
-        InstanceScript* pInstance;
-    
+        
         uint32 Phase;
     
         bool RainBones;
@@ -88,6 +78,7 @@ public:
     
         void Reset()
         override {
+            _Reset();
             BellowingRoarTimer = 30000;
             CharredEarthTimer = 15000;
             DistractingAshTimer = 20000;
@@ -111,17 +102,10 @@ public:
     
             me->AddUnitState(UNIT_STATE_IGNORE_PATHFINDING);
     
-            if(pInstance->GetData(DATA_NIGHTBANE_EVENT) == DONE || pInstance->GetData(DATA_NIGHTBANE_EVENT) == IN_PROGRESS)
+            if(instance->GetBossState(DATA_NIGHTBANE_EVENT) == DONE || instance->GetBossState(DATA_NIGHTBANE_EVENT) == IN_PROGRESS)
             {
                 me->DespawnOrUnsummon();
             }
-            else
-            {
-                if(pInstance)
-                    pInstance->SetData(DATA_NIGHTBANE_EVENT, NOT_STARTED);
-            }
-    
-            HandleTerraceDoors(true);
     
             Flying = false;
             Movement = false;
@@ -133,35 +117,16 @@ public:
             }
         }
     
-        void HandleTerraceDoors(bool open)
+        void EnterCombat(Unit *who) override 
         {
-            if(GameObject *Door = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_MASTERS_TERRACE_DOOR_1)))
-                Door->SetUInt32Value(GAMEOBJECT_STATE, open ? 0 : 1);
-            if(GameObject *Door = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_MASTERS_TERRACE_DOOR_2)))
-                Door->SetUInt32Value(GAMEOBJECT_STATE, open ? 0 : 1);
+            _EnterCombat();
+            Talk(YELL_AGGRO);
         }
     
-        void EnterCombat(Unit *who)
-        override {
-            if(pInstance)
-                pInstance->SetData(DATA_NIGHTBANE_EVENT, IN_PROGRESS);
-    
-            HandleTerraceDoors(false);
-            me->Yell(YELL_AGGRO, LANG_UNIVERSAL, nullptr);
-        }
-    
-        void AttackStart(Unit* who)
-        override {
+        void AttackStart(Unit* who) override 
+        {
             if(!Intro && !Flying)
                 ScriptedAI::AttackStart(who);
-        }
-    
-        void JustDied(Unit* killer)
-        override {
-            if(pInstance)
-                pInstance->SetData(DATA_NIGHTBANE_EVENT, DONE);
-    
-            HandleTerraceDoors(true);
         }
     
         void MoveInLineOfSight(Unit *who)
@@ -194,7 +159,7 @@ public:
             {
                 if(id == 0)
                 {
-                    me->TextEmote(EMOTE_BREATH, nullptr, true);
+                    Talk(EMOTE_BREATH);
                     Flying = false;
                     Phase = 2;
                     return;
@@ -219,20 +184,15 @@ public:
             }
         }
     
-        void JustSummoned(Creature *summoned)
-        override {
-            summoned->AI()->AttackStart(me->GetVictim());
-        }
-    
         void TakeOff()
         {
-            me->Yell(YELL_FLY_PHASE, LANG_UNIVERSAL, nullptr);
+            Talk(YELL_FLY_PHASE);
     
             me->InterruptSpell(CURRENT_GENERIC_SPELL);
             me->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
             me->SetDisableGravity(true);
-            (*me).GetMotionMaster()->Clear(false);
-            (*me).GetMotionMaster()->MovePoint(0,IntroWay[2][0],IntroWay[2][1],IntroWay[2][2]);
+            me->GetMotionMaster()->Clear(false);
+            me->GetMotionMaster()->MovePoint(0,IntroWay[2][0],IntroWay[2][1],IntroWay[2][2]);
     
             Flying = true;
     
@@ -244,8 +204,8 @@ public:
             Skeletons = false;
          }
     
-        void UpdateAI(const uint32 diff)
-        override {
+        void UpdateAI(const uint32 diff) override 
+        {
             me->AddUnitState(UNIT_STATE_IGNORE_PATHFINDING);
     
             if(WaitTimer)
@@ -305,20 +265,20 @@ public:
                 {
                     DoCast(me->GetVictim(),SPELL_BELLOWING_ROAR);
                     BellowingRoarTimer = 30000+rand()%10000 ; //Timer
-                }else BellowingRoarTimer -= diff;
+                } else BellowingRoarTimer -= diff;
     
                 if (SmolderingBreathTimer < diff)
                 {
                     DoCast(me->GetVictim(),SPELL_SMOLDERING_BREATH);
                     SmolderingBreathTimer = 20000;//timer
-                }else SmolderingBreathTimer -= diff;
+                } else SmolderingBreathTimer -= diff;
     
                 if (CharredEarthTimer < diff)
                 {
                     if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
                         DoCast(target,SPELL_CHARRED_EARTH);
                     CharredEarthTimer = 20000; //timer
-                }else CharredEarthTimer -= diff;
+                } else CharredEarthTimer -= diff;
     
                 if (TailSweepTimer < diff)
                 {
@@ -326,21 +286,21 @@ public:
                         if (!me->HasInArc( M_PI, target))
                             DoCast(target,SPELL_TAIL_SWEEP);
                     TailSweepTimer = 15000;//timer
-                }else TailSweepTimer -= diff;
+                } else TailSweepTimer -= diff;
     
                 if (SearingCindersTimer < diff)
                 {
                     if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
                         DoCast(target,SPELL_SEARING_CINDERS);
                     SearingCindersTimer = 10000; //timer
-                }else SearingCindersTimer -= diff;
+                } else SearingCindersTimer -= diff;
                 
                 if (CleaveTimer < diff)
                 {
                     if (me->GetVictim())
                         DoCast(me->GetVictim(), SPELL_CLEAVE);
                     CleaveTimer = 10000;
-                }else CleaveTimer -= diff;
+                } else CleaveTimer -= diff;
     
                 uint32 Prozent;
                 Prozent = me->GetHealthPct();
@@ -374,17 +334,17 @@ public:
     
                     if (RainofBonesTimer < diff && !RainBones) // only once at the beginning of phase 2
                     {
-                        DoCast(me->GetVictim(),SPELL_RAIN_OF_BONES);
+                        DoCast(me->GetVictim(), SPELL_RAIN_OF_BONES);
                         RainBones = true;
                         SmokingBlastTimer = 20000;
-                    }else RainofBonesTimer -= diff;
+                    } else RainofBonesTimer -= diff;
     
                     if (DistractingAshTimer < diff)
                     {
                         if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
-                            DoCast(target,SPELL_DISTRACTING_ASH);
+                            DoCast(target, SPELL_DISTRACTING_ASH);
                         DistractingAshTimer = 2000;//timer wrong
-                    }else DistractingAshTimer -= diff;
+                    } else DistractingAshTimer -= diff;
                 }
     
                 if (RainBones)
@@ -401,20 +361,17 @@ public:
                     if (Unit* target = SelectTarget(SELECT_TARGET_FARTHEST, 0))
                         DoCast(target,SPELL_FIREBALL_BARRAGE);
                     FireballBarrageTimer = 20000; //Timer
-                }else FireballBarrageTimer -= diff;
+                } else FireballBarrageTimer -= diff;
     
                 if (FlyTimer < diff) //landing
                 {
-                    if(rand()%2 == 0)
-                        me->Yell(YELL_LAND_PHASE_1, LANG_UNIVERSAL, nullptr);
-                    else
-                        me->Yell(YELL_LAND_PHASE_2, LANG_UNIVERSAL, nullptr);
+                    Talk(YELL_LAND_PHASE);
     
-                    (*me).GetMotionMaster()->Clear(false);
+                    me->GetMotionMaster()->Clear(false);
                     me->GetMotionMaster()->MovePoint(3,IntroWay[3][0],IntroWay[3][1],IntroWay[3][2]);
     
                     Flying = true;
-                }else FlyTimer -= diff;
+                } else FlyTimer -= diff;
             }
         }
     };

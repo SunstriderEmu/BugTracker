@@ -5,7 +5,7 @@ SDComment: Need to check timers.
 SDCategory: Karazhan
 EndScriptData */
 
-#include "def_karazhan.h"
+#include "karazhan.h"
 
 enum CuratorData
 {
@@ -43,17 +43,12 @@ class boss_curator : public CreatureScript
   public:
     boss_curator() : CreatureScript("boss_curator") { }
 
-    class boss_curatorAI : public CreatureAI
+    class boss_curatorAI : public BossAI
     {
       public:
-        boss_curatorAI(Creature* creature) : CreatureAI(creature) 
+        boss_curatorAI(Creature* creature) : BossAI(creature, DATA_CURATOR_EVENT), _infused(false)
         {
-            instance = ((InstanceScript*)creature->GetInstanceScript());
-            if (instance)
-                instance->SetData(DATA_CURATOR_EVENT, NOT_STARTED);
         }
-        
-        EventMap events;
 
         enum CuratorEvents
         {
@@ -70,17 +65,21 @@ class boss_curator : public CreatureScript
 
         void Reset()
         override {
-            events.Reset();
+            _Reset();
+            _infused = false;
 
+            events.Reset();
             events.RescheduleEvent(EVENT_FLARE_SUMMON, 10 * IN_MILLISECONDS, PHASE_NORMAL);
             events.RescheduleEvent(EVENT_HATEFUL_BOLT, 15 * IN_MILLISECONDS, PHASE_NORMAL);
             events.RescheduleEvent(EVENT_BERSERK, 10 * MINUTE * IN_MILLISECONDS, PHASE_NORMAL);
 
             me->SetFullTauntImmunity(true);
+            me->ApplySpellImmune(0, IMMUNITY_DAMAGE, SPELL_SCHOOL_MASK_ARCANE, true);
         }
 
         void KilledUnit(Unit* /*victim*/)
-        override {
+        override 
+        {
             switch (rand()%2)
             {
                 case 0: DoScriptText(SAY_KILL1, me); break;
@@ -90,46 +89,22 @@ class boss_curator : public CreatureScript
 
         void JustDied(Unit* /*killer*/) 
         override {
+            _JustDied();
             DoScriptText(SAY_DEATH, me);
-
-            if (instance)
-                instance->SetData(DATA_CURATOR_EVENT, DONE);
         }
         
         void EnterCombat(Unit* /*victim*/)
         override {
+            _EnterCombat();
             DoScriptText(SAY_AGGRO, me);
             DoZoneInCombat();
-
-            if (instance)
-                instance->SetData(DATA_CURATOR_EVENT, IN_PROGRESS);
-        }
-
-        void JustSummoned(Creature* summoned)
-        override {
-            if (summoned->GetEntry() == NPC_ASTRAL_FLARE)
-            {
-                // Flare start with aggro on it's target, should be immune to arcane
-                summoned->CastSpell(summoned, SPELL_ASTRAL_FLARE_PASSIVE, TRIGGERED_FULL_MASK);
-                summoned->CastSpell(summoned, SPELL_ASTRAL_FLARE_VISUAL, TRIGGERED_FULL_MASK);
-                summoned->ApplySpellImmune(0, IMMUNITY_DAMAGE, SPELL_SCHOOL_MASK_ARCANE, true);
-
-                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
-                    summoned->AI()->AttackStart(target);
-            }
-        }
-
-        void JustReachedHome()
-        override {
-            if (instance)
-                if(instance->GetData(DATA_CURATOR_EVENT != DONE))
-                    instance->SetData(DATA_CURATOR_EVENT, FAIL);
         }
 
         void DamageTaken(Unit* /*attacker*/, uint32& /*damage*/)
         override {
-            if (me->GetHealthPct() < 15.0f)
+            if(me->HealthBelowPct(15) && !_infused)
             {
+                _infused = true;
                 events.SetPhase(PHASE_ENRAGED);
 
                 me->InterruptNonMeleeSpells(false);
@@ -138,18 +113,9 @@ class boss_curator : public CreatureScript
             }
         }
 
-        void UpdateAI(uint32 const diff)
-            override {
-            if (!UpdateVictim())
-                return;
-
-            // not supposed to do anything while evocate
-            if (me->HasAuraEffect(SPELL_EVOCATION))
-                return;
-
-            events.Update(diff);
-
-            switch (events.GetEvent())
+        void ExecuteEvent(uint32 eventId) override
+        {
+            switch(eventId)
             {
                 case 0:
                     break;
@@ -172,10 +138,11 @@ class boss_curator : public CreatureScript
                         // if this get's us below 10%, then we evocate (the 10th should be summoned now
                         if (me->GetPower(POWER_MANA) * 10 < me->GetMaxPower(POWER_MANA))
                         {
-                            if (me->CastSpell(me, SPELL_EVOCATION) == SPELL_CAST_OK)
+                            me->InterruptNonMeleeSpells(false);
+                            if (DoCastSelf(SPELL_EVOCATION) == SPELL_CAST_OK)
                             {
                                 DoScriptText(SAY_EVOCATE, me);
-                                // this small delay should make first flare appear fast after evocate, and also prevent possible spawn flood
+                                // this small delay should make next flare appear fast after evocate
                                 events.RescheduleEvent(EVENT_FLARE_SUMMON, 1 * IN_MILLISECONDS, PHASE_NORMAL);
                             }
 
@@ -204,12 +171,10 @@ class boss_curator : public CreatureScript
                 default:
                     break;
             }
-
-            DoMeleeAttackIfReady();
         }
 
       private:
-        InstanceScript *instance;
+        bool _infused;
     };
     
     CreatureAI* GetAI(Creature* creature) const
@@ -219,8 +184,53 @@ class boss_curator : public CreatureScript
     }
 };
 
+class npc_curator_astral_flare : public CreatureScript
+{
+public:
+    npc_curator_astral_flare() : CreatureScript("npc_curator_astral_flare") { }
+
+    struct npc_curator_astral_flareAI : public ScriptedAI
+    {
+        npc_curator_astral_flareAI(Creature* creature) : ScriptedAI(creature)
+        {
+            me->SetReactState(REACT_PASSIVE);
+        }
+
+        void Reset() override
+        {
+            // Flare start with aggro on it's target, should be immune to arcane
+            me->CastSpell(me, SPELL_ASTRAL_FLARE_PASSIVE, true);
+            me->CastSpell(me, SPELL_ASTRAL_FLARE_VISUAL, true);
+            me->ApplySpellImmune(0, IMMUNITY_DAMAGE, SPELL_SCHOOL_MASK_ARCANE, true);
+
+            _scheduler.Schedule(Seconds(2), [this](TaskContext /*context*/)
+            {
+                me->SetReactState(REACT_AGGRESSIVE);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                DoZoneInCombat();
+            });
+        }
+
+        void UpdateAI(uint32 diff) override
+        {
+            _scheduler.Update(diff);
+            UpdateVictim();
+            //no melee
+        }
+
+    private:
+        TaskScheduler _scheduler;
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return GetKarazhanAI<npc_curator_astral_flareAI>(creature);
+    }
+};
+
 void AddSC_boss_curator()
 {
     new boss_curator();
+    new npc_curator_astral_flare();
 }
 

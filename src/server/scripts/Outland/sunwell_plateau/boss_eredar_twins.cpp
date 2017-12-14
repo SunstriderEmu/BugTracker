@@ -176,8 +176,8 @@ struct EredarTwin : public ScriptedAI
 
             if(pInstance) {
                 pInstance->SetData(DATA_EREDAR_TWINS_EVENT, DONE);
-                pInstance->RemoveAuraOnAllPlayers(SPELL_DARK_TOUCHED);
-                pInstance->RemoveAuraOnAllPlayers(SPELL_FLAME_TOUCHED);
+                pInstance->DoRemoveAurasDueToSpellOnPlayers(SPELL_DARK_TOUCHED);
+                pInstance->DoRemoveAurasDueToSpellOnPlayers(SPELL_FLAME_TOUCHED);
             }
         }
         else
@@ -213,8 +213,8 @@ struct EredarTwin : public ScriptedAI
                 }
             }
 
-            pInstance->RemoveAuraOnAllPlayers(SPELL_DARK_TOUCHED);
-            pInstance->RemoveAuraOnAllPlayers(SPELL_FLAME_TOUCHED);
+            pInstance->DoRemoveAurasDueToSpellOnPlayers(SPELL_DARK_TOUCHED);
+            pInstance->DoRemoveAurasDueToSpellOnPlayers(SPELL_FLAME_TOUCHED);
 
             if (pInstance->GetData(DATA_EREDAR_TWINS_EVENT) != DONE)
                 pInstance->SetData(DATA_EREDAR_TWINS_EVENT, NOT_STARTED);

@@ -159,13 +159,8 @@ public:
 
         bool CheckRunes()
         {
-            Player* player = GetPlayer();
-
-            if (!player)
-                return false;
-
             for (uint8 i = 0; i < 7; i++) {
-                if (GameObject* rune = GameObject::GetGameObject(*player, runesGUID[i])) {
+                if (GameObject* rune = instance->GetGameObject(runesGUID[i])) {
                     float dist = (i == 5) ? 3.0f : 5.0f;
                     if (Creature* cre = rune->FindNearestCreature(9819, dist, true))
                         return false;

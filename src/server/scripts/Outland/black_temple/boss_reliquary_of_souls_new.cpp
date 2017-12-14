@@ -135,7 +135,7 @@ public:
             me->RemoveAurasDueToSpell(SPELL_SUBMERGE);
             
             if (instance)
-                instance->RemoveAuraOnAllPlayers(SPELL_ENEMY_SEETHE);
+                instance->DoRemoveAurasDueToSpellOnPlayers(SPELL_ENEMY_SEETHE);
                 
             //me->SetNoCallAssistance(true);
         }
@@ -166,7 +166,7 @@ public:
         override {
             if (instance) {
                 instance->SetData(DATA_RELIQUARYOFSOULSEVENT, DONE);
-                instance->RemoveAuraOnAllPlayers(SPELL_ENEMY_SEETHE);
+                instance->DoRemoveAurasDueToSpellOnPlayers(SPELL_ENEMY_SEETHE);
             }
         }
         

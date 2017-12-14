@@ -1,13 +1,5 @@
 #include "def_the_eye.h"
 
-DoorData const doorData[] =
-{
-    /* KT needs to be opened when Void and Solarian are complete. Need to close as well during combat ?
-    { GO_KAELTHAS_DOOR1,                  DATA_KAELTHAS_EVENT,  DOOR_TYPE_ROOM,     BOUNDARY_NONE },
-    { GO_KAELTHAS_DOOR2,                  DATA_KAELTHAS_EVENT,  DOOR_TYPE_ROOM,     BOUNDARY_NONE },*/
-    { 0,                                  0,                    DOOR_TYPE_ROOM,     BOUNDARY_NONE } // END
-};
-
 class instance_the_eye : public InstanceMapScript
 {
 public:
@@ -22,7 +14,7 @@ public:
     {
         instance_the_eye_script(Map *map) : InstanceScript(map) 
         {
-            LoadDoorData(doorData);
+            //LoadDoorData(doorData);
             Initialize(); 
         };
 

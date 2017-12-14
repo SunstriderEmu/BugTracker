@@ -7,7 +7,7 @@ SDCategory: Karazhan
 EndScriptData */
 
 
-#include "def_karazhan.h"
+#include "karazhan.h"
 
 #define SAY_SLAY1                   -1532065
 #define SAY_SLAY2                   -1532066
@@ -77,13 +77,7 @@ public:
     
         void EnterCombat(Unit *who)
         override {
-            if(!pInstance)
-            {
-                ERROR_INST_DATA(me);
-                return;
-            }
-    
-            Creature* Terestian = (ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_TERESTIAN)));
+            Creature* Terestian = (ObjectAccessor::GetCreature(*me, pInstance->GetGuidData(DATA_TERESTIAN)));
             if(Terestian && !Terestian->GetVictim())
                 Terestian->GetThreatManager().AddThreat(who, 1.0f);
         }
@@ -92,14 +86,14 @@ public:
         override {
             if(pInstance)
             {
-                uint64 terestianGUID = pInstance->GetData64(DATA_TERESTIAN);
+                uint64 terestianGUID = pInstance->GetGuidData(DATA_TERESTIAN);
                 if(terestianGUID)
                 {
                     Unit* Terestian = ObjectAccessor::GetUnit((*me), terestianGUID);
                     if(Terestian && Terestian->IsAlive())
                         DoCast(Terestian, SPELL_BROKEN_PACT, true);
                 }
-            }else ERROR_INST_DATA(me);
+            }
         }
     
         void UpdateAI(const uint32 diff)
@@ -128,7 +122,6 @@ public:
         return GetKarazhanAI<mob_kilrekAI>(creature);
     }
 };
-
 
 class mob_fiendish_imp : public CreatureScript
 {
@@ -171,7 +164,6 @@ public:
         return GetKarazhanAI<mob_fiendish_impAI>(creature);
     }
 };
-
 
 class mob_demon_chain : public CreatureScript
 {
@@ -223,22 +215,18 @@ public:
     }
 };
 
-
 class boss_terestian_illhoof : public CreatureScript
 {
 public:
     boss_terestian_illhoof() : CreatureScript("boss_terestian_illhoof")
     { }
 
-    class boss_terestianAI : public ScriptedAI
+    class boss_terestianAI : public BossAI
     {
         public:
-        boss_terestianAI(Creature *c) : ScriptedAI(c)
+        boss_terestianAI(Creature* creature) : BossAI(creature, DATA_TERESTIAN_EVENT)
         {
-            pInstance = ((InstanceScript*)c->GetInstanceScript());
         }
-    
-        InstanceScript *pInstance;
     
         uint64 KilrekGUID;
         uint64 PortalGUID[2];
@@ -253,20 +241,26 @@ public:
         bool SummonedPortals;
         bool Berserk;
     
-        void Reset()
-        override {
-            for(uint64 & i : PortalGUID)
+        void DespawnPortals()
+        {
+            for (uint64 & i : PortalGUID)
             {
-                if(i)
+                if (i)
                 {
-                    Unit* Portal = ObjectAccessor::GetUnit((*me), i);
-                    if(Portal)
-                        Portal->DealDamage(Portal, Portal->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-    
+                    Creature* Portal = ObjectAccessor::GetCreature((*me), i);
+                    if (Portal)
+                        Portal->DespawnOrUnsummon();
+
                     i = 0;
                 }
             }
-    
+        }
+
+        void Reset() override 
+        {
+            _Reset();
+            DespawnPortals();
+
             CheckKilrekTimer    =  5000;
             SacrificeTimer      = 30000;
             ShadowboltTimer     =  5000;
@@ -275,28 +269,21 @@ public:
     
             SummonedPortals     = false;
             Berserk             = false;
-    
-            if(pInstance)
-                pInstance->SetData(DATA_TERESTIAN_EVENT, NOT_STARTED);
         }
     
-        void EnterCombat(Unit* who)
-        override {
+        void EnterCombat(Unit* who) override 
+        {
+            _EnterCombat();
             DoScriptText(SAY_AGGRO, me);
     
-            if(pInstance)
-            {
-                // Put Kil'rek in combat against our target so players don't skip him
-                Creature* Kilrek = (ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_KILREK)));
-                if(Kilrek && !Kilrek->GetVictim())
-                    Kilrek->GetThreatManager().AddThreat(who, 1.0f);
-    
-                pInstance->SetData(DATA_TERESTIAN_EVENT, IN_PROGRESS);
-            }else ERROR_INST_DATA(me);
+            // Put Kil'rek in combat against our target so players don't skip him
+            Creature* Kilrek = (ObjectAccessor::GetCreature(*me, instance->GetGuidData(DATA_KILREK)));
+            if (Kilrek && !Kilrek->GetVictim())
+                Kilrek->EngageWithTarget(who);
         }
     
-        void KilledUnit(Unit *victim)
-        override {
+        void KilledUnit(Unit *victim) override 
+        {
             switch(rand()%2)
             {
             case 0: DoScriptText(SAY_SLAY1, me); break;
@@ -304,37 +291,22 @@ public:
             }
         }
     
-        void JustDied(Unit *killer)
-        override {
-            for(uint64 & i : PortalGUID)
-            {
-                if(i)
-                {
-                    Unit* Portal = ObjectAccessor::GetUnit((*me), i);
-                    if(Portal)
-                        Portal->DealDamage(Portal, Portal->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-    
-                    i = 0;
-                }
-            }
+        void JustDied(Unit *killer) override 
+        {
+            _JustDied();
+            DespawnPortals();
     
             DoScriptText(SAY_DEATH, me);
-    
-            if(pInstance)
-                pInstance->SetData(DATA_TERESTIAN_EVENT, DONE);
         }
     
-        void UpdateAI(const uint32 diff)
-        override {
+        void UpdateAI(const uint32 diff) override 
+        {
             if(!UpdateVictim())
                 return;
     
             if(CheckKilrekTimer < diff)
             {
                 CheckKilrekTimer = 5000;
-    
-                if(!pInstance)
-                    ERROR_INST_DATA(me);
     
                 Creature* Kilrek = (ObjectAccessor::GetCreature((*me), KilrekGUID));
                 if(SummonKilrek && Kilrek)
@@ -431,11 +403,8 @@ public:
 void AddSC_boss_terestian_illhoof()
 {
     new boss_terestian_illhoof();
-
     new mob_fiendish_imp();
-
     new mob_kilrek();
-
     new mob_demon_chain();
 }
 

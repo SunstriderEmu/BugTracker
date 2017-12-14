@@ -1,18 +1,3 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /* ScriptData
 SDName: Instance_Karazhan
@@ -22,9 +7,8 @@ SDCategory: Karazhan
 EndScriptData */
 
 
-#include "def_karazhan.h"
-
-#define ENCOUNTERS      12
+#include "karazhan.h"
+#include "AreaBoundary.h"
 
 /*
 0  - Attumen + Midnight (optional)
@@ -41,10 +25,36 @@ EndScriptData */
 11 - Nightbane
 */
 
+BossBoundaryData const boundaries =
+{
+    { DATA_ATTUMEN_EVENT,           new CircleBoundary(Position(-11126.0f, -1929.0f), 55.0f) },
+    { DATA_MAIDENOFVIRTUE_EVENT,    new CircleBoundary(Position(-10945.0f, -2103.0f), 50.0f) },
+    { DATA_MOROES_EVENT,            new RectangleBoundary(-11030.0f, -10935.0f, -1980.0f, -1850.0f ) },
+    { DATA_OPERA_EVENT,             new CircleBoundary(Position(-10894.0f, -1775.0f), 50.0f) },
+    { DATA_CURATOR_EVENT,           new CircleBoundary(Position(-11135.0f, -1882.0f), 125.0f) },
+    { DATA_TERESTIAN_EVENT,         new CircleBoundary(Position(-11229.0f, -1696.0f), 40.0f) },
+    { DATA_SHADEOFARAN_EVENT,       new CircleBoundary(Position(-11164.0f, -1911.0f), 50.0f) },
+    { DATA_NETHERSPITE_EVENT,       new CircleBoundary(Position(-11144.0f, -1632.0f), 100.0f) },
+    { DATA_NIGHTBANE_EVENT,         new CircleBoundary(Position(-11134.0f, -1909.0f), 200.0f) },
+    { DATA_MALCHEZZAR_EVENT,        new CircleBoundary(Position(-10953.0f, -1992.0f), 70.0f) },
+};
+
+DoorData const doorData[] =
+{
+    { GO_PRIVATE_LIBRARY_DOOR,                DATA_SHADEOFARAN_EVENT,     DOOR_TYPE_ROOM },
+    { GO_MASTERS_TERRACE_DOOR,                DATA_NIGHTBANE_EVENT,       DOOR_TYPE_ROOM },
+    { GO_MASTERS_TERRACE_DOOR2,               DATA_NIGHTBANE_EVENT,       DOOR_TYPE_ROOM },
+    { GO_NETHERSPACE_DOOR,                    DATA_MALCHEZZAR_EVENT,      DOOR_TYPE_ROOM },
+    { GO_MASSIVE_DOOR,                        DATA_NETHERSPITE_EVENT,     DOOR_TYPE_ROOM },
+    { GO_SIDE_ENTRANCE_DOOR,                  DATA_OPERA_EVENT,           DOOR_TYPE_PASSAGE },
+    { GO_GAMESMAN_HALL_EXIT_DOOR,             DATA_CHESS_EVENT,           DOOR_TYPE_PASSAGE },
+    { 0,                                      0,                          DOOR_TYPE_ROOM }  // END
+};
+
 class instance_karazhan : public InstanceMapScript
 {
 public:
-    instance_karazhan() : InstanceMapScript("instance_karazhan", 532) { }
+    instance_karazhan() : InstanceMapScript(KZScriptName, 532) { }
 
     InstanceScript* GetInstanceScript(InstanceMap* map) const override
     {
@@ -53,41 +63,20 @@ public:
 
     struct instance_karazhan_script : public InstanceScript
     {
-        instance_karazhan_script(Map* map) : InstanceScript(map) { Initialize(); }
+        instance_karazhan_script(Map* map) : InstanceScript(map) 
+        { 
+            SetHeaders(DataHeader);
+            SetBossNumber(EncounterCount);
+            LoadDoorData(doorData);
+            LoadBossBoundaries(boundaries);
 
-        uint32 Encounters[ENCOUNTERS];
-
-        uint32 OperaEvent;
-        uint32 OzDeathCount;
-        uint32 ChessTeam;
-
-        uint64 CurtainGUID;
-        uint64 StageDoorLeftGUID;
-        uint64 StageDoorRightGUID;
-        uint64 KilrekGUID;
-        uint64 TerestianGUID;
-        uint64 MoroesGUID;
-        uint64 MalchezaarGUID;
-        uint64 LibraryDoor;                                     // Door at Shade of Aran
-        uint64 MassiveDoor;                                     // Door at Netherspite
-        uint64 GamesmansDoor;                                   // Door before Chess
-        uint64 GamesmansExitDoor;                               // Door after Chess
-        uint64 NetherspaceDoor;                                // Door at Malchezaar
-        uint64 SideEntranceDoor;                                // Inside top entrance door
-        uint64 MastersTerraceDoor[2];
-        uint64 ImageGUID;
-
-        uint32 ChessGamePhase;
-
-        std::vector<uint64> ChessPieces;
-        std::vector<uint64> MedivhCheatFires;
+            Initialize(); 
+        }
 
         void Initialize()
-            override {
-            for (uint32 & Encounter : Encounters)
-                Encounter = NOT_STARTED;
-
-            OperaEvent = urand(1, 3);                   // 1 - OZ, 2 - HOOD, 3 - RAJ, this never gets altered.
+            override 
+        {
+            OperaEvent = urand(1, 3);                   // 1 - OZ, 2 - HOOD, 3 - RAJ, this never gets altered (expect when loading from DB)
             OzDeathCount = 0;
 
             CurtainGUID = 0;
@@ -107,7 +96,7 @@ public:
             SideEntranceDoor = 0;
             MastersTerraceDoor[0] = 0;
             MastersTerraceDoor[1] = 0;
-            ImageGUID = 0;
+            ChessMedivhGUID = 0;
             ChessTeam = 0;
 
             ChessPieces.resize(0);
@@ -115,49 +104,16 @@ public:
             ChessGamePhase = NOTSTARTED;
         }
 
-        bool IsEncounterInProgress() const override
-        {
-            for (uint32 Encounter : Encounters)
-                if (Encounter == IN_PROGRESS)
-                    return true;
-
-            return false;
-        }
-
-        uint32 GetData(uint32 identifier) const override
-        {
-            switch (identifier)
-            {
-            case DATA_ATTUMEN_EVENT:          return Encounters[0];
-            case DATA_MOROES_EVENT:           return Encounters[1];
-            case DATA_MAIDENOFVIRTUE_EVENT:   return Encounters[2];
-            case DATA_OPTIONAL_BOSS_EVENT:    return Encounters[3];
-            case DATA_OPERA_EVENT:            return Encounters[4];
-            case DATA_CURATOR_EVENT:          return Encounters[5];
-            case DATA_SHADEOFARAN_EVENT:      return Encounters[6];
-            case DATA_TERESTIAN_EVENT:        return Encounters[7];
-            case DATA_NETHERSPITE_EVENT:      return Encounters[8];
-            case DATA_CHESS_EVENT:            return Encounters[9];
-            case DATA_MALCHEZZAR_EVENT:       return Encounters[10];
-            case DATA_NIGHTBANE_EVENT:        return Encounters[11];
-            case DATA_OPERA_PERFORMANCE:      return OperaEvent;
-            case DATA_OPERA_OZ_DEATHCOUNT:    return OzDeathCount;
-            case CHESS_EVENT_TEAM:            return ChessTeam;
-            case DATA_CHESS_GAME_PHASE:       return ChessGamePhase;
-            }
-
-            return 0;
-        }
-
         void OnCreatureCreate(Creature *creature) override
         {
+            InstanceScript::OnCreatureCreate(creature);
             switch (creature->GetEntry())
             {
-            case 17229:   KilrekGUID = creature->GetGUID();      break;
-            case 15688:   TerestianGUID = creature->GetGUID();   break;
-            case 15687:   MoroesGUID = creature->GetGUID();      break;
-            case 16816:   ImageGUID = creature->GetGUID();       break;
-            case NPC_MALCHEZAAR:   MalchezaarGUID = creature->GetGUID();  break;
+            case NPC_KILREK:            KilrekGUID = creature->GetGUID();      break;
+            case NPC_TERESTIAN_ILLHOOF: TerestianGUID = creature->GetGUID();   break;
+            case NPC_MOROES:            MoroesGUID = creature->GetGUID();      break;
+            case NPC_MEDIVH:            ChessMedivhGUID = creature->GetGUID();       break;
+            case NPC_MALCHEZAAR:        MalchezaarGUID = creature->GetGUID();  break;
             case NPC_PAWN_H:
             case NPC_KNIGHT_H:
             case NPC_QUEEN_H:
@@ -179,14 +135,28 @@ public:
             }
         }
 
+        uint32 GetData(uint32 identifier) const override
+        {
+            switch (identifier)
+            {
+            case DATA_OPERA_PERFORMANCE:      return OperaEvent;
+            case DATA_OPERA_OZ_DEATHCOUNT:    return OzDeathCount;
+            case CHESS_EVENT_TEAM:            return ChessTeam;
+            case DATA_CHESS_GAME_PHASE:       return ChessGamePhase;
+            }
+
+            return 0;
+        }
+
         void OnPlayerEnter(Player* player) override
         {
-            if (GetData(DATA_CHESS_EVENT) != IN_PROGRESS)
+            if (GetBossState(DATA_CHESS_EVENT) != IN_PROGRESS)
                 player->RemoveAurasDueToSpell(39331);
+
             player->RemoveAurasDueToSpell(30019);
         }
 
-        uint64 GetData64(uint32 data) const override
+        ObjectGuid GetGuidData(uint32 data) const override
         {
             switch (data)
             {
@@ -203,78 +173,86 @@ public:
             case DATA_GAMEOBJECT_NETHER_DOOR:      return NetherspaceDoor;
             case DATA_MASTERS_TERRACE_DOOR_1:      return MastersTerraceDoor[0];
             case DATA_MASTERS_TERRACE_DOOR_2:      return MastersTerraceDoor[1];
-            case DATA_IMAGE_OF_MEDIVH:             return ImageGUID;
+            case DATA_CHESS_ECHO_OF_MEDIVH:        return ChessMedivhGUID;
+            case DATA_IMAGE_OF_MEDIVH:             return NightbaneMedivhGUID;
             case DATA_MALCHEZAAR:                  return MalchezaarGUID;
             }
 
             return 0;
         }
 
+        void ReinitChestPieces()
+        {
+            for (uint64 ChessPiece : ChessPieces)
+            {
+                if (Creature* piece = instance->GetCreature(ChessPiece))
+                {
+                    piece->CombatStop();
+                    piece->SetDeathState(JUST_RESPAWNED);
+                    piece->SetHealth(piece->GetMaxHealth());
+                    piece->AI()->SetData(0, 0);
+                    float x, y, z, o;
+                    piece->GetHomePosition(x, y, z, o);
+                    piece->Relocate(x, y, z, o);
+                    piece->SendMovementFlagUpdate();
+                    piece->AI()->SetData(1, 0); // Reset default orientation
+                    piece->RemoveAurasDueToSpell(39339);
+                    piece->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                }
+            }
+            for (uint64 MedivhCheatFire : MedivhCheatFires) {
+                if (Creature* fire = instance->GetCreature(MedivhCheatFire))
+                    fire->DisappearAndDie();
+            }
+            MedivhCheatFires.resize(0);
+        }
+
         void SetData(uint32 type, uint32 data) override
         {
             switch (type)
             {
-            case DATA_ATTUMEN_EVENT:           Encounters[0] = data; break;
-            case DATA_MOROES_EVENT:
-                if (Encounters[1] == DONE)
-                    break;
-                Encounters[1] = data;
-                break;
-            case DATA_MAIDENOFVIRTUE_EVENT:    Encounters[2] = data; break;
-            case DATA_OPTIONAL_BOSS_EVENT:     Encounters[3] = data; break;
+                case DATA_OPERA_OZ_DEATHCOUNT:     ++OzDeathCount;        break;
+                case CHESS_EVENT_TEAM:             ChessTeam = data;      break;
+                case DATA_CHESS_GAME_PHASE:        ChessGamePhase = data; break;
+                case DATA_CHESS_REINIT_PIECES:     ReinitChestPieces();   break;
+            }
+        }
+
+        bool SetBossState(uint32 type, EncounterState state) override
+        {
+            if (!InstanceScript::SetBossState(type, state))
+                return false;
+
+            switch (type)
+            {
             case DATA_OPERA_EVENT:
-                Encounters[4] = data;
-                if (data == DONE)
+            {
+                GameObject* sideDoor = instance->GetGameObject(SideEntranceDoor);
+                if (state == DONE)
                 {
-                    GameObject* sideDoor = instance->GetGameObject(SideEntranceDoor);
                     if (sideDoor)
                         sideDoor->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND);
 
-                    HandleGameObject(SideEntranceDoor, true);
-                    HandleGameObject(StageDoorLeftGUID, true);
-                    HandleGameObject(StageDoorRightGUID, true);
+                    //HandleGameObject(SideEntranceDoor, true);
+                    HandleGameObject(StageDoorLeftGUID, true); // DATA_GAMEOBJECT_STAGEDOORLEFT
+                    HandleGameObject(StageDoorRightGUID, true); // DATA_GAMEOBJECT_STAGEDOORRIGHT
+                }
+                else if (state == FAIL || state == NOT_STARTED)
+                {
+                    if (sideDoor)
+                        sideDoor->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND);
+
+                    //HandleGameObject(SideEntranceDoor, false);
+                    HandleGameObject(StageDoorLeftGUID, false); // DATA_GAMEOBJECT_STAGEDOORLEFT
+                    HandleGameObject(StageDoorRightGUID, false); // DATA_GAMEOBJECT_STAGEDOORRIGHT
                 }
                 break;
-            case DATA_CURATOR_EVENT:           Encounters[5] = data; break;
-            case DATA_SHADEOFARAN_EVENT:       Encounters[6] = data; break;
-            case DATA_TERESTIAN_EVENT:         Encounters[7] = data; break;
-            case DATA_NETHERSPITE_EVENT:       Encounters[8] = data; break;
+            }
             case DATA_CHESS_EVENT:
-                Encounters[9] = data;
-                if (data == FAIL || data == DONE || data == NOT_STARTED)
-                    RemoveAuraOnAllPlayers(39331);
+                if (state == FAIL || state == DONE || state == NOT_STARTED)
+                    DoRemoveAurasDueToSpellOnPlayers(39331);
                 /*else if (data == IN_PROGRESS || data == SPECIAL)
-                    CastOnAllPlayers(39331);*/
-                break;
-            case DATA_MALCHEZZAR_EVENT:        Encounters[10] = data; break;
-            case DATA_NIGHTBANE_EVENT:
-                if (Encounters[11] == DONE)
-                    break;
-                Encounters[11] = data;
-                break;
-            case DATA_OPERA_OZ_DEATHCOUNT:     ++OzDeathCount;        break;
-            case CHESS_EVENT_TEAM:             ChessTeam = data;      break;
-            case DATA_CHESS_REINIT_PIECES:
-                for (uint64 ChessPiece : ChessPieces) {
-                    if (Creature* piece = instance->GetCreature(ChessPiece)) {
-                        piece->CombatStop();
-                        piece->SetDeathState(JUST_RESPAWNED);
-                        piece->SetHealth(piece->GetMaxHealth());
-                        piece->AI()->SetData(0, 0);
-                        float x, y, z, o;
-                        piece->GetHomePosition(x, y, z, o);
-                        piece->Relocate(x, y, z, o);
-                        piece->SendMovementFlagUpdate();
-                        piece->AI()->SetData(1, 0); // Reset default orientation
-                        piece->RemoveAurasDueToSpell(39339);
-                        piece->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                    }
-                }
-                for (uint64 MedivhCheatFire : MedivhCheatFires) {
-                    if (Creature* fire = instance->GetCreature(MedivhCheatFire))
-                        fire->DisappearAndDie();
-                }
-                MedivhCheatFires.resize(0);
+                CastOnAllPlayers(39331);*/
                 break;
             case DATA_CHESS_CHECK_PIECES_ALIVE:
                 for (uint64 ChessPiece : ChessPieces) {
@@ -286,42 +264,60 @@ public:
                     }
                 }
                 break;
-            case DATA_CHESS_GAME_PHASE:
-                ChessGamePhase = data;
-                break;
             }
-
-            if (data == DONE && type != DATA_CHESS_GAME_PHASE)
-                SaveToDB();
+            return true;
         }
 
-        void SetData64(uint32 identifier, uint64 data) override
+        void SetGuidData(uint32 identifier, ObjectGuid data) override
         {
             switch (identifier)
             {
-            case DATA_IMAGE_OF_MEDIVH: ImageGUID = data;
+                case DATA_CHESS_ECHO_OF_MEDIVH:      ChessMedivhGUID = data;     break;
+                case DATA_IMAGE_OF_MEDIVH:           NightbaneMedivhGUID = data; break;
             }
         }
 
         void OnGameObjectCreate(GameObject* go) override
         {
+            InstanceScript::OnGameObjectCreate(go);
             switch (go->GetEntry())
             {
-            case 183932:   CurtainGUID = go->GetGUID();         break;
-            case 184278:   StageDoorLeftGUID = go->GetGUID();
-                if (DATA_OPERA_EVENT == DONE)
-                    HandleGameObject(StageDoorLeftGUID, true);  break;
-            case 184279:   StageDoorRightGUID = go->GetGUID();
-                if (DATA_OPERA_EVENT == DONE)
-                    HandleGameObject(StageDoorRightGUID, true); break;
-            case 184517:   LibraryDoor = go->GetGUID();         break;
-            case 185521:   MassiveDoor = go->GetGUID();         break;
-            case 184276:   GamesmansDoor = go->GetGUID();         break;
-            case 184277:   GamesmansExitDoor = go->GetGUID();         break;
-            case 185134:   NetherspaceDoor = go->GetGUID();         break;
-            case 184274:   MastersTerraceDoor[0] = go->GetGUID();         break;
-            case 184280:   MastersTerraceDoor[1] = go->GetGUID();         break;
-            case 184275:   SideEntranceDoor = go->GetGUID();
+            case GO_STAGE_CURTAIN:
+                CurtainGUID = go->GetGUID();         
+                break;
+            case GO_STAGE_DOOR_LEFT:
+                StageDoorLeftGUID = go->GetGUID();
+                if (GetBossState(DATA_OPERA_EVENT) == DONE)
+                    HandleGameObject(StageDoorLeftGUID, true);  
+                break;
+            case GO_STAGE_DOOR_RIGHT:
+                StageDoorRightGUID = go->GetGUID();
+                if (GetBossState(DATA_OPERA_EVENT) == DONE)
+                    HandleGameObject(StageDoorRightGUID, true);
+                break;
+            case GO_PRIVATE_LIBRARY_DOOR:
+                LibraryDoor = go->GetGUID();        
+                break;
+            case GO_MASSIVE_DOOR:
+                MassiveDoor = go->GetGUID();        
+                break;
+            case GO_GAMESMAN_HALL_DOOR:
+                GamesmansDoor = go->GetGUID();         
+                break;
+            case GO_GAMESMAN_HALL_EXIT_DOOR:
+                GamesmansExitDoor = go->GetGUID();         
+                break;
+            case GO_NETHERSPACE_DOOR:
+                NetherspaceDoor = go->GetGUID();         
+                break;
+            case GO_MASTERS_TERRACE_DOOR:
+                MastersTerraceDoor[0] = go->GetGUID();         
+                break;
+            case GO_MASTERS_TERRACE_DOOR2:
+                MastersTerraceDoor[1] = go->GetGUID();         
+                break;
+            case GO_SIDE_ENTRANCE_DOOR:
+                SideEntranceDoor = go->GetGUID();
                 if (DATA_OPERA_EVENT < DONE)
                 {
                     go->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND);
@@ -333,47 +329,54 @@ public:
             switch (OperaEvent)
             {
                 //TODO: Set Object visibilities for Opera based on performance
-            case EVENT_OZ:
-                break;
+                case EVENT_OZ:
+                    break;
 
-            case EVENT_HOOD:
-                break;
+                case EVENT_HOOD:
+                    break;
 
-            case EVENT_RAJ:
-                break;
+                case EVENT_RAJ:
+                    break;
             }
         }
 
-        std::string GetSaveData() override
-        {
-            OUT_SAVE_INST_DATA;
-            std::ostringstream stream;
-            stream << Encounters[0] << " " << Encounters[1] << " " << Encounters[2] << " " << Encounters[3] << " "
-                << Encounters[4] << " " << Encounters[5] << " " << Encounters[6] << " " << Encounters[7] << " "
-                << Encounters[8] << " " << Encounters[9] << " " << Encounters[10] << " " << Encounters[11];
 
-            OUT_SAVE_INST_DATA_COMPLETE;
-            return stream.str();
+        void WriteSaveDataMore(std::ostringstream& data) override
+        {
+            data << OperaEvent;
         }
 
-        void Load(const char* in) override
+        void ReadSaveDataMore(std::istringstream& data) override
         {
-            if (!in)
-            {
-                OUT_LOAD_INST_DATA_FAIL;
-                return;
-            }
-
-            OUT_LOAD_INST_DATA(in);
-            std::istringstream stream(in);
-            stream >> Encounters[0] >> Encounters[1] >> Encounters[2] >> Encounters[3]
-                >> Encounters[4] >> Encounters[5] >> Encounters[6] >> Encounters[7]
-                >> Encounters[8] >> Encounters[9] >> Encounters[10] >> Encounters[11];
-            for (uint32 & Encounter : Encounters)
-                if (Encounter == IN_PROGRESS)                // Do not load an encounter as "In Progress" - reset it instead.
-                    Encounter = NOT_STARTED;
-            OUT_LOAD_INST_DATA_COMPLETE;
+            data >> OperaEvent;
         }
+
+        private:
+            uint32 OperaEvent;
+            uint32 OzDeathCount;
+            uint32 ChessTeam;
+
+            uint64 CurtainGUID;
+            uint64 StageDoorLeftGUID;
+            uint64 StageDoorRightGUID;
+            uint64 KilrekGUID;
+            uint64 TerestianGUID;
+            uint64 MoroesGUID;
+            uint64 MalchezaarGUID;
+            uint64 LibraryDoor;                                     // Door at Shade of Aran
+            uint64 MassiveDoor;                                     // Door at Netherspite
+            uint64 GamesmansDoor;                                   // Door before Chess
+            uint64 GamesmansExitDoor;                               // Door after Chess
+            uint64 NetherspaceDoor;                                // Door at Malchezaar
+            uint64 SideEntranceDoor;                                // Inside top entrance door
+            uint64 MastersTerraceDoor[2];
+            uint64 NightbaneMedivhGUID;
+            uint64 ChessMedivhGUID;
+
+            uint32 ChessGamePhase;
+
+            std::vector<uint64> ChessPieces;
+            std::vector<uint64> MedivhCheatFires;
     };
 };
 

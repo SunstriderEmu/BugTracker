@@ -103,15 +103,13 @@ public:
 
         void HandleGameObject(uint64 guid, uint32 state)
         {
-            Player *player = GetPlayer();
-
-            if (!player || !guid)
+            if (!guid)
             {
                 TC_LOG_ERROR("scripts", "Shadow Labyrinth: HandleGameObject fail");
                 return;
             }
 
-            if (GameObject *go = GameObject::GetGameObject(*player, guid))
+            if (GameObject *go = instance->GetGameObject(guid))
                 go->SetGoState(GOState(state));
         }
 

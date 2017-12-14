@@ -8,7 +8,7 @@ EndScriptData */
 
 
 #include "SimpleAI.h"
-#include "def_karazhan.h"
+#include "karazhan.h"
 #include "GameObject.h"
 
 #define SAY_AGGRO1                  -1532073
@@ -72,21 +72,18 @@ public:
     boss_shade_of_aran() : CreatureScript("boss_shade_of_aran")
     { }
 
-    class boss_aranAI : public ScriptedAI
+    class boss_aranAI : public BossAI
     {
         public:
-        boss_aranAI(Creature *c) : ScriptedAI(c)
+        boss_aranAI(Creature* creature) : BossAI(creature, DATA_SHADEOFARAN_EVENT)
         {
-            pInstance = ((InstanceScript*)c->GetInstanceScript());
+
         }
-    
-        InstanceScript* pInstance;
     
         uint32 SecondarySpellTimer;
         uint32 NormalCastTimer;
         uint32 SuperCastTimer;
         uint32 BerserkTimer;
-        uint32 CloseDoorTimer;                                  // Don't close the door right on aggro in case some people are still entering.
     
         uint8 LastSuperSpell;
     
@@ -107,13 +104,13 @@ public:
         bool Drinking;
         bool DrinkInturrupted;
     
-        void Reset()
-        override {
+        void Reset() override 
+        {
+            _Reset();
             SecondarySpellTimer = 5000;
             NormalCastTimer = 0;
             SuperCastTimer = 35000;
             BerserkTimer = 720000;
-            CloseDoorTimer = 15000;
     
             LastSuperSpell = rand()%3;
     
@@ -130,16 +127,6 @@ public:
             ElementalsSpawned = false;
             Drinking = false;
             DrinkInturrupted = false;
-    
-            if(pInstance)
-            {
-                // Not in progress
-                if (me->IsAlive())
-                    pInstance->SetData(DATA_SHADEOFARAN_EVENT, NOT_STARTED);
-    
-                if(GameObject* Door = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_GAMEOBJECT_LIBRARY_DOOR)))
-                    Door->UseDoorOrButton();
-            }
         }
     
         void KilledUnit(Unit *victim)
@@ -153,33 +140,21 @@ public:
     
         void JustDied(Unit *victim)
         override {
+            _JustDied();
             DoScriptText(SAY_DEATH, me);
-    
-            if(pInstance)
-            {
-                pInstance->SetData(DATA_SHADEOFARAN_EVENT, DONE);
-    
-                if(GameObject* Door = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_GAMEOBJECT_LIBRARY_DOOR)))
-                    Door->UseDoorOrButton();
-            }
-            
+
             if (victim->GetTypeId() != TYPEID_PLAYER)
                 TC_LOG_ERROR("scripts","Aran has been killed by NON-PLAYER unit with entry %u", victim->GetEntry());
         }
     
-        void EnterCombat(Unit *who)
-        override {
+        void EnterCombat(Unit *who) override 
+        {
+            _EnterCombat();
             switch(rand()%3)
             {
             case 0: DoScriptText(SAY_AGGRO1, me); break;
             case 1: DoScriptText(SAY_AGGRO2, me); break;
             case 2: DoScriptText(SAY_AGGRO3, me); break;
-            }
-    
-            if(pInstance)
-            {
-                pInstance->SetData(DATA_SHADEOFARAN_EVENT, IN_PROGRESS);
-                pInstance->HandleGameObject(pInstance->GetData64(DATA_GAMEOBJECT_LIBRARY_DOOR), false);
             }
         }
     
@@ -228,18 +203,6 @@ public:
         override {
             if (!UpdateVictim() )
                 return;
-    
-            if(CloseDoorTimer)
-            {
-                if(CloseDoorTimer <= diff)
-                {
-                    if(pInstance)
-                    {
-                        pInstance->HandleGameObject(pInstance->GetData64(DATA_GAMEOBJECT_LIBRARY_DOOR), false);
-                        CloseDoorTimer = 0;
-                    }
-                }else CloseDoorTimer -= diff;
-            }
     
             //Cooldowns for casts
             if (ArcaneCooldown)
@@ -505,8 +468,8 @@ public:
                 DoMeleeAttackIfReady();
         }
     
-        void DamageTaken(Unit* pAttacker, uint32 &damage)
-        override {
+        void DamageTaken(Unit* pAttacker, uint32 &damage) override 
+        {
             if (!DrinkInturrupted && Drinking && damage)
                 DrinkInturrupted = true;
     
@@ -514,8 +477,8 @@ public:
                 damage = 0;
         }
     
-        void SpellHit(Unit* pAttacker, const SpellInfo* Spell)
-        override {
+        void SpellHit(Unit* pAttacker, const SpellInfo* Spell) override 
+        {
             //We only care about inturrupt effects and only if they are durring a spell currently being casted
             if ((Spell->Effects[0].Effect != SPELL_EFFECT_INTERRUPT_CAST &&
                 Spell->Effects[1].Effect != SPELL_EFFECT_INTERRUPT_CAST &&

@@ -1,13 +1,9 @@
+/* Possible bug:
+Infernal may seem to appear instead of falling from the sky... This happens if the relay creature is too far to be visible at client.
+How to fix? Either only use the close relay, or somehow force visibility on both relays.
+*/
 
-/* ScriptData
-SDName: Boss_Prince_Malchezzar
-SD%Complete: 100
-SDComment:
-SDCategory: Karazhan
-EndScriptData */
-
-
-#include "def_karazhan.h"
+#include "karazhan.h"
 
 #define SAY_AGGRO           -1532091
 #define SAY_AXE_TOSS1       -1532092
@@ -94,7 +90,7 @@ public:
             {
                 if(HellfireTimer <= diff)
                 {
-                    if (pInstance->GetData(DATA_MALCHEZZAR_EVENT) != IN_PROGRESS)
+                    if (pInstance->GetBossState(DATA_MALCHEZZAR_EVENT) != IN_PROGRESS)
                     {
                         me->DespawnOrUnsummon();
                         return;
@@ -112,7 +108,7 @@ public:
         void KilledUnit(Unit *who)
         override 
         {
-            Unit *pMalchezaar = ObjectAccessor::GetUnit(*me, pInstance->GetData64(DATA_MALCHEZAAR));
+            Unit *pMalchezaar = ObjectAccessor::GetUnit(*me, pInstance->GetGuidData(DATA_MALCHEZAAR));
             if(pMalchezaar)
                 (pMalchezaar->ToCreature())->AI()->KilledUnit(who);
         }
@@ -149,7 +145,7 @@ public:
     boss_malchezaar() : CreatureScript("boss_malchezaar")
     { }
 
-    class boss_malchezaarAI : public ScriptedAI
+    class boss_malchezaarAI : public BossAI
     {
         // Coordinates for Infernal spawns
         InfernalPoint InfernalPoints[19] =
@@ -175,13 +171,10 @@ public:
             { -10935.7f, -1996.0f }
         };
 
-        public:
-        boss_malchezaarAI(Creature *c) : ScriptedAI(c)
-        {
-            pInstance = ((InstanceScript*)c->GetInstanceScript());
-        }
+    public:
+        boss_malchezaarAI(Creature* creature) : BossAI(creature, DATA_MALCHEZZAR_EVENT)
+        { }
     
-        InstanceScript* pInstance;
         uint32 EnfeebleTimer;
         uint32 EnfeebleResetTimer;
         uint32 ShadowNovaTimer;
@@ -221,8 +214,9 @@ public:
                 positions.push_back(InfernalPoint);
         }
 
-        void Reset()
-        override {
+        void Reset()   override 
+        {
+            _Reset();
             AxesCleanup();
             ClearWeapons();
             InfernalCleanup();
@@ -241,14 +235,10 @@ public:
             phase = 1;
     
             ResetFreeInfernalsPosition();
-
-            pInstance->HandleGameObject(pInstance->GetData64(DATA_GAMEOBJECT_NETHER_DOOR), true); // open the door 
-    
-            pInstance->SetData(DATA_MALCHEZZAR_EVENT, NOT_STARTED);
         }
     
-        void KilledUnit(Unit *victim)
-        override {
+        void KilledUnit(Unit *victim) override 
+        {
             switch(rand()%3)
             {
             case 0: DoScriptText(SAY_SLAY1, me); break;
@@ -257,41 +247,35 @@ public:
             }
         }
     
-        void JustDied(Unit *victim)
-        override {
+        void JustDied(Unit *victim) override 
+        {
+            _JustDied();
             DoScriptText(SAY_DEATH, me);
     
             AxesCleanup();
             ClearWeapons();
             InfernalCleanup();
-
-            pInstance->HandleGameObject(pInstance->GetData64(DATA_GAMEOBJECT_NETHER_DOOR), true); //open door
-    
-            pInstance->SetData(DATA_MALCHEZZAR_EVENT, DONE);
         }
     
-        void EnterCombat(Unit *who)
-        override {
+        void EnterCombat(Unit *who)  override 
+        {
+            _EnterCombat();
             DoScriptText(SAY_AGGRO, me);
-
-            pInstance->HandleGameObject(pInstance->GetData64(DATA_GAMEOBJECT_NETHER_DOOR), false); // close the door leading further in
-    
-            pInstance->SetData(DATA_MALCHEZZAR_EVENT, IN_PROGRESS);
         }
     
         void InfernalCleanup()
         {
-            std::list<Creature*> infernals;
-            me->GetCreatureListWithEntryInGrid(infernals, CREATURE_INFERNAL, 250.0f);
+            std::list<Creature*> _infernals;
+            me->GetCreatureListWithEntryInGrid(_infernals, CREATURE_INFERNAL, 250.0f);
 
-            if (infernals.empty())
+            if (_infernals.empty())
             {
                 TC_LOG_WARN("scripts", "Malchezaar did not find any infernals to clean");
                 return;
             }
 
             //Infernal Cleanup
-            for(auto& infernal : infernals)
+            for(auto& infernal : _infernals)
             {
                 if(infernal->IsAlive())
                 {
@@ -624,7 +608,7 @@ public:
             }
             else
             {
-                Creature* malch = ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_MALCHEZAAR));
+                Creature* malch = ObjectAccessor::GetCreature(*me, pInstance->GetGuidData(DATA_MALCHEZAAR));
                 if(!malch)
                 {
                     TC_LOG_ERROR("scripts","infernal_relayAI : could not find malchezaar");

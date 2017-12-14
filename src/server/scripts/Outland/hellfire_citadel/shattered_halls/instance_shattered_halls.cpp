@@ -107,10 +107,6 @@ public:
 
         void OnCreatureCreate(Creature* creature) override
         {
-            uint8 pTeam = 0;
-            if (Player* tempPlayer = GetPlayer())
-                pTeam = tempPlayer->GetTeam();
-
             switch (creature->GetEntry()) {
             case 16807:     // Nethekurse
                 NethekurseGUID = creature->GetGUID();

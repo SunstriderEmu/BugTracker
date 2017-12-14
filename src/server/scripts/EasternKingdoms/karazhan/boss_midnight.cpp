@@ -1,28 +1,5 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
-/* ScriptData
-SDName: Boss_Midnight
-SD%Complete: 100
-SDComment:
-SDCategory: Karazhan
-EndScriptData */
-
-
-#include "def_karazhan.h"
+#include "karazhan.h"
 
 #define SAY_MIDNIGHT_KILL           -1532000
 #define SAY_APPEAR1                 -1532001
@@ -55,12 +32,11 @@ public:
     boss_midnight() : CreatureScript("boss_midnight")
     { }
 
-    class boss_midnightAI : public ScriptedAI
+    class boss_midnightAI : public BossAI
     {
         public:
-        boss_midnightAI(Creature *c) : ScriptedAI(c) 
+        boss_midnightAI(Creature* creature) : BossAI(creature, DATA_ATTUMEN_EVENT)
         {
-            pInstance = ((InstanceScript*)c->GetInstanceScript());
         }
     
         uint64 Attumen;
@@ -68,34 +44,31 @@ public:
         uint32 Mount_Timer;
         uint32 KnockDownTimer;
     
-        InstanceScript *pInstance;
-    
+        void JustSummoned(Creature* summon) override
+        {
+            //override this just to block BossAI::JustSummoned, we don't want attumen added to summon list and despawned when we die
+        }
+
         void Reset()
-        override {
+        override 
+        {
+            _Reset();
             Phase = 1;
             Attumen = 0;
             Mount_Timer = 0;
-            KnockDownTimer = 20000 + rand()%5000;
+            KnockDownTimer = urand(20000, 25000);
     
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             me->SetVisible(true);
-    
-            if(pInstance)
-                pInstance->SetData(DATA_ATTUMEN_EVENT, NOT_STARTED);
         }
-    
-        void EnterCombat(Unit* who) 
-        override {
-            if(pInstance)
-                pInstance->SetData(DATA_ATTUMEN_EVENT, IN_PROGRESS);
-        }
-    
+        
         void KilledUnit(Unit *victim)
-        override {
+        override 
+        {
             if(Phase == 2)
             {
-                if (Unit *pUnit = ObjectAccessor::GetUnit(*me, Attumen))
-                DoScriptText(SAY_MIDNIGHT_KILL, pUnit);
+                if (Unit* pUnit = ObjectAccessor::GetUnit(*me, Attumen))
+                    DoScriptText(SAY_MIDNIGHT_KILL, pUnit);
             }
         }
     
@@ -124,7 +97,7 @@ public:
                 {
                     Attumen = pAttumen->GetGUID();
                     pAttumen->AI()->AttackStart(me->GetVictim());
-                    SetMidnight(pAttumen, me->GetGUID());
+                    pAttumen->AI()->SetGUID(me->GetGUID(), NPC_MIDNIGHT);
                     switch(rand()%3)
                     {
                     case 0: DoScriptText(SAY_APPEAR1, pAttumen); break;
@@ -154,9 +127,9 @@ public:
                             if(pAttumen->GetVictim())
                             {
                                 pAttumen->GetMotionMaster()->MoveChase(pAttumen->GetVictim());
-                                pAttumen->SetUInt64Value(UNIT_FIELD_TARGET, pAttumen->GetVictim()->GetGUID());
+                                pAttumen->SetTarget(pAttumen->GetVictim()->GetGUID());
                             }
-                            pAttumen->SetFloatValue(OBJECT_FIELD_SCALE_X,1);
+                            pAttumen->SetFloatValue(OBJECT_FIELD_SCALE_X, 1.0f);
                         }
                     } else Mount_Timer -= diff;
                 }
@@ -191,8 +164,6 @@ public:
             //pAttumen->SendMonsterMove(newX, newY, newZ, 0, true, 1000);
             Mount_Timer = 1000;
         }
-    
-        void SetMidnight(Creature *, uint64);                   //Below ..
     };
 
     CreatureAI* GetAI(Creature* creature) const override
@@ -202,33 +173,29 @@ public:
 };
 
 
-
 class boss_attumen : public CreatureScript
 {
 public:
     boss_attumen() : CreatureScript("boss_attumen")
     { }
 
-    class boss_attumenAI : public ScriptedAI
+    class boss_attumenAI : public BossAI
     {
         public:
-        boss_attumenAI(Creature *c) : ScriptedAI(c)
+        boss_attumenAI(Creature* creature) : BossAI(creature, DATA_ATTUMEN_EVENT)
         {
             Phase = 1;
     
-            CleaveTimer = 10000 + (rand()%6)*IN_MILLISECONDS;
+            CleaveTimer = urand(10000, 15000); 
             CurseTimer = 30000;
-            RandomYellTimer = 30000 + (rand()%31)*IN_MILLISECONDS;         //Occasionally yell
+            RandomYellTimer = urand(30000, 60000);         //Occasionally yell
             ChargeTimer = 20000;
             ResetTimer = 0;
             KnockDownTimer = 0;
-    
-            pInstance = ((InstanceScript*)c->GetInstanceScript());
         }
     
-        InstanceScript *pInstance;
-    
-        uint64 Midnight;
+        bool mounted;
+        uint64 _midnightGUID;
         uint8 Phase;
         uint32 CleaveTimer;
         uint32 CurseTimer;
@@ -238,54 +205,52 @@ public:
         uint32 KnockDownTimer;
     
         void Reset()
-        override {
+        override 
+        {
+            _Reset();
             ResetTimer = 2000;
             CleaveTimer = 15000 + rand()%5000;
             CurseTimer = 30000;
             KnockDownTimer = 10000 + rand()%5000;
         }
-    
-        void EnterCombat(Unit* who) override {}
-    
+
+        void EnterEvadeMode(EvadeReason /*why*/) override
+        {
+            //respawn midnight and despawn self
+            if (Creature* midnight = ObjectAccessor::GetCreature(*me, _midnightGUID))
+                BossAI::_DespawnAtEvade(Seconds(10), midnight);
+
+            me->DespawnOrUnsummon();
+        }
+
         void KilledUnit(Unit *victim)
-        override {
+        override 
+        {
             switch(rand()%2)
             {
             case 0: DoScriptText(SAY_KILL1, me); break;
             case 1: DoScriptText(SAY_KILL2, me); break;
             }
         }
-    
+
         void JustDied(Unit *victim)
-        override {
+        override 
+        {
+            _JustDied();
             DoScriptText(SAY_DEATH, me);
-            if (Unit *pMidnight = ObjectAccessor::GetUnit(*me, Midnight))
+            if (Unit* pMidnight = ObjectAccessor::GetUnit(*me, _midnightGUID))
                 pMidnight->DealDamage(pMidnight, pMidnight->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-    
-            if(pInstance)
-                pInstance->SetData(DATA_ATTUMEN_EVENT, DONE);
         }
-    
+
+        void SetGUID(uint64 guid, int32 data) override
+        {
+            if (data == NPC_MIDNIGHT)
+                _midnightGUID = guid;
+        }
+
         void UpdateAI(const uint32 diff)
-        override {
-            if(ResetTimer)
-            {
-                if(ResetTimer <= diff)
-                {
-                    ResetTimer = 0;
-                    Unit *pMidnight = ObjectAccessor::GetUnit(*me, Midnight);
-                    if(pMidnight)
-                    {
-                        pMidnight->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                        pMidnight->SetVisible(true);
-                    }
-                    Midnight = 0;
-                    me->SetVisible(false);
-                    me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-                }
-            } else ResetTimer -= diff;
-    
-            //Return since we have no target
+        override 
+        {
             if (!UpdateVictim())
                 return;
     
@@ -349,7 +314,8 @@ public:
             {
                 if(me->IsBelowHPPercent(25.0f))
                 {
-                    Creature *pMidnight = ObjectAccessor::GetCreature(*me, Midnight);
+                    Creature *pMidnight = ObjectAccessor::GetCreature(*me, _midnightGUID);
+                    mounted = true;
                     if(pMidnight && pMidnight->GetTypeId() == TYPEID_UNIT)
                     {
                         ((boss_midnight::boss_midnightAI*)(pMidnight->AI()))->Mount(me);
@@ -362,7 +328,8 @@ public:
         }
     
         void SpellHit(Unit *source, const SpellInfo *spell)
-        override {
+        override 
+        {
             if(spell->Mechanic == MECHANIC_DISARM)
                 DoScriptText(SAY_DISARMED, me);
         }
@@ -374,16 +341,9 @@ public:
     }
 };
 
-void boss_midnight::boss_midnightAI::SetMidnight(Creature *pAttumen, uint64 value)
-{
-    ((boss_attumen::boss_attumenAI*)pAttumen->AI())->Midnight = value;
-}
-
-
 void AddSC_boss_attumen()
 {
     new boss_attumen();
-
     new boss_midnight();
 }
 

@@ -1,13 +1,5 @@
 
-/* ScriptData
-SDName: Boss_Maiden_of_Virtue
-SD%Complete: 100
-SDComment:
-SDCategory: Karazhan
-EndScriptData */
-
-
-#include "def_karazhan.h"
+#include "karazhan.h"
 
 #define SAY_AGGRO               -1532018
 #define SAY_SLAY1               -1532019
@@ -30,15 +22,12 @@ public:
     boss_maiden_of_virtue() : CreatureScript("boss_maiden_of_virtue")
     { }
 
-    class boss_maiden_of_virtueAI : public ScriptedAI
+    class boss_maiden_of_virtueAI : public BossAI
     {
         public:
-        boss_maiden_of_virtueAI(Creature *c) : ScriptedAI(c) 
+        boss_maiden_of_virtueAI(Creature *creature) : BossAI(creature, DATA_MAIDENOFVIRTUE_EVENT)
         {
-            pInstance = ((InstanceScript*)c->GetInstanceScript());
         }
-    
-        InstanceScript *pInstance;
     
         uint32 Repentance_Timer;
         uint32 Holyfire_Timer;
@@ -46,25 +35,23 @@ public:
         uint32 Holyground_Timer;
         uint32 Enrage_Timer;
     
-        bool Enraged;
+        bool enraged;
     
         void Reset()
         override {
+            _Reset();
             Repentance_Timer    = 20000;
-            Holyfire_Timer      = 8000+(rand()%17000);
+            Holyfire_Timer      = urand(8000,20000);
             Holywrath_Timer     = 20000;
             Holyground_Timer    = 3000;
             Enrage_Timer        = 600000;
     
-            Enraged = false;
-    
-            if(pInstance)
-                pInstance->SetData(DATA_MAIDENOFVIRTUE_EVENT, NOT_STARTED);
+            enraged = false;
         }
     
         void KilledUnit(Unit* Victim)
         override {
-            if(rand()%2)
+            if (roll_chance_i(50))
                 return;
     
             switch(rand()%3)
@@ -78,17 +65,15 @@ public:
         void JustDied(Unit* Killer)
         override {
             DoScriptText(SAY_DEATH, me);
-    
-            if(pInstance)
-                pInstance->SetData(DATA_MAIDENOFVIRTUE_EVENT, DONE);
+            _JustDied();
         }
     
         void EnterCombat(Unit *who)
         override {
+            _EnterCombat();
              DoScriptText(SAY_AGGRO, me);
-    
-             if(pInstance)
-                pInstance->SetData(DATA_MAIDENOFVIRTUE_EVENT, IN_PROGRESS);
+
+             DoCastSelf(SPELL_HOLYGROUND, true);
         }
     
         void UpdateAI(const uint32 diff)
@@ -96,10 +81,10 @@ public:
             if (!UpdateVictim() )
                 return;
     
-            if (Enrage_Timer < diff && !Enraged)
+            if (Enrage_Timer < diff && !enraged)
             {
                 DoCast(me, SPELL_BERSERK,true);
-                Enraged = true;
+                enraged = true;
             }else Enrage_Timer -=diff;
     
             if (Holyground_Timer < diff)
@@ -143,7 +128,6 @@ public:
         return GetKarazhanAI<boss_maiden_of_virtueAI>(creature);
     }
 };
-
 
 void AddSC_boss_maiden_of_virtue()
 {

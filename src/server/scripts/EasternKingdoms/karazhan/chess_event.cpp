@@ -22,7 +22,7 @@ TODO:
  - Sounds
 EndScriptData */
 
-#include "def_karazhan.h"
+#include "karazhan.h"
 #include "Util.h"
 
 #define A_FACTION               1690
@@ -177,7 +177,7 @@ public:
         override {
             cheatTimer = 80000 + rand()%20000;
             
-            if (pInstance && pInstance->GetData(DATA_CHESS_EVENT) == DONE)
+            if (pInstance && pInstance->GetBossState(DATA_CHESS_EVENT) == DONE)
                 pInstance->SetData(DATA_CHESS_GAME_PHASE, PVE_FINISHED);
         }
         
@@ -451,22 +451,22 @@ public:
                     DoScriptText(RAND(SCRIPTTEXT_LOSE_PAWN_M_1, SCRIPTTEXT_LOSE_PAWN_M_2, SCRIPTTEXT_LOSE_PAWN_M_3), me); break;
                 case NPC_KING_H:
                     DoScriptText(SCRIPTTEXT_MEDIVH_WIN, me);
-                    pInstance->SetData(DATA_CHESS_EVENT, NOT_STARTED);
+                    pInstance->SetBossState(DATA_CHESS_EVENT, NOT_STARTED);
                     me->RemoveAurasDueToSpell(39331);
                     pInstance->SetData(DATA_CHESS_REINIT_PIECES, 0);
                     pInstance->SetData(DATA_CHESS_GAME_PHASE, NOTSTARTED);
                     break;
                 case NPC_KING_A:
                     DoScriptText(SCRIPTTEXT_PLAYER_WIN, me);
-                    if (pInstance->GetData(DATA_CHESS_EVENT) == IN_PROGRESS) {
-                        pInstance->SetData(DATA_CHESS_EVENT, DONE);
+                    if (pInstance->GetBossState(DATA_CHESS_EVENT) == IN_PROGRESS) {
+                        pInstance->SetBossState(DATA_CHESS_EVENT, DONE);
                         me->RemoveAurasDueToSpell(39331);
                         pInstance->SetData(DATA_CHESS_GAME_PHASE, PVE_FINISHED);
                         me->SummonGameObject(DUST_COVERED_CHEST, Position(-11058, -1903, 221, 2.24), G3D::Quat(), 7200000);
                         pInstance->SetData(DATA_CHESS_REINIT_PIECES, 0);
                     }
-                    else if (pInstance->GetData(DATA_CHESS_EVENT) == SPECIAL) {
-                        pInstance->SetData(DATA_CHESS_EVENT, DONE);
+                    else if (pInstance->GetBossState(DATA_CHESS_EVENT) == SPECIAL) {
+                        pInstance->SetBossState(DATA_CHESS_EVENT, DONE);
                         me->RemoveAurasDueToSpell(39331);
                         pInstance->SetData(DATA_CHESS_REINIT_PIECES, 0);
                         pInstance->SetData(DATA_CHESS_GAME_PHASE, PVE_FINISHED);
@@ -475,7 +475,7 @@ public:
                 default: break;
                 }
             }
-            else if (pInstance->GetData(CHESS_EVENT_TEAM) == ALLIANCE) {
+            else if (pInstance->GetBossState(CHESS_EVENT_TEAM) == ALLIANCE) {
                 switch(piece->GetEntry()) {
                 case NPC_ROOK_A:   DoScriptText(SCRIPTTEXT_LOSE_ROOK_P, me);     break;
                 case NPC_ROOK_H:   DoScriptText(SCRIPTTEXT_LOSE_ROOK_M, me);     break;
@@ -491,22 +491,22 @@ public:
                     DoScriptText(RAND(SCRIPTTEXT_LOSE_PAWN_M_1, SCRIPTTEXT_LOSE_PAWN_M_2, SCRIPTTEXT_LOSE_PAWN_M_3), me); break;
                 case NPC_KING_A:
                     DoScriptText(SCRIPTTEXT_MEDIVH_WIN, me);
-                    pInstance->SetData(DATA_CHESS_EVENT, NOT_STARTED);
+                    pInstance->SetBossState(DATA_CHESS_EVENT, NOT_STARTED);
                     me->RemoveAurasDueToSpell(39331);
                     pInstance->SetData(DATA_CHESS_REINIT_PIECES, 0);
                     pInstance->SetData(DATA_CHESS_GAME_PHASE, NOTSTARTED);
                     break;
                 case NPC_KING_H:
                     DoScriptText(SCRIPTTEXT_PLAYER_WIN, me);
-                    if (pInstance->GetData(DATA_CHESS_EVENT) == IN_PROGRESS) {
-                        pInstance->SetData(DATA_CHESS_EVENT, DONE);
+                    if (pInstance->GetBossState(DATA_CHESS_EVENT) == IN_PROGRESS) {
+                        pInstance->SetBossState(DATA_CHESS_EVENT, DONE);
                         me->RemoveAurasDueToSpell(39331);
                         pInstance->SetData(DATA_CHESS_GAME_PHASE, PVE_FINISHED);
                         me->SummonGameObject(DUST_COVERED_CHEST, Position(-11058, -1903, 221, 2.24), G3D::Quat(), 7200000);
                         pInstance->SetData(DATA_CHESS_REINIT_PIECES, 0);
                     }
-                    else if (pInstance->GetData(DATA_CHESS_EVENT) == SPECIAL) {
-                        pInstance->SetData(DATA_CHESS_EVENT, DONE);
+                    else if (pInstance->GetBossState(DATA_CHESS_EVENT) == SPECIAL) {
+                        pInstance->SetBossState(DATA_CHESS_EVENT, DONE);
                         me->RemoveAurasDueToSpell(39331);
                         pInstance->SetData(DATA_CHESS_REINIT_PIECES, 0);
                         pInstance->SetData(DATA_CHESS_GAME_PHASE, PVE_FINISHED);
@@ -519,7 +519,7 @@ public:
                 switch(piece->GetEntry()) {
                 case NPC_KING_H:
                 case NPC_KING_A:
-                    pInstance->SetData(DATA_CHESS_EVENT, DONE);
+                    pInstance->SetBossState(DATA_CHESS_EVENT, DONE);
                     me->RemoveAurasDueToSpell(39331);
                     pInstance->SetData(DATA_CHESS_REINIT_PIECES, 0);
                     pInstance->SetData(DATA_CHESS_GAME_PHASE, PVE_FINISHED);
@@ -928,7 +928,7 @@ public:
             if (chessPhase == FAILED)
                 pInstance->SetData(DATA_CHESS_GAME_PHASE, NOTSTARTED);
             
-            if (pInstance->GetData(DATA_CHESS_EVENT) == DONE && chessPhase == NOTSTARTED)
+            if (pInstance->GetBossState(DATA_CHESS_EVENT) == DONE && chessPhase == NOTSTARTED)
                 pInstance->SetData(DATA_CHESS_GAME_PHASE, PVE_FINISHED);
 
             if (chessPhase == NOTSTARTED)
@@ -964,7 +964,7 @@ public:
             case MEDIVH_GOSSIP_START_PVE:
                 pInstance->SetData(DATA_CHESS_GAME_PHASE, PVE_WARMUP);
                 ((npc_echo_of_medivh::npc_echo_of_medivhAI*)(me->AI()))->SetupBoard();
-                pInstance->SetData(DATA_CHESS_EVENT, IN_PROGRESS);
+                pInstance->SetBossState(DATA_CHESS_EVENT, IN_PROGRESS);
                 me->CastSpell(me, 39331, TRIGGERED_FULL_MASK);
                 DoScriptText(SCRIPTTEXT_AT_EVENT_START, me);
                 break;
@@ -974,16 +974,16 @@ public:
                 ((npc_echo_of_medivh::npc_echo_of_medivhAI*)me->AI())->deadCount[DEAD_ALLIANCE] = 0;
                 ((npc_echo_of_medivh::npc_echo_of_medivhAI*)me->AI())->deadCount[DEAD_HORDE] = 0;
                 //((npc_echo_of_medivh::npc_echo_of_medivhAI*)me->AI())->RemoveCheats();
-                if (pInstance->GetData(DATA_CHESS_EVENT) == IN_PROGRESS)
-                    pInstance->SetData(DATA_CHESS_EVENT, NOT_STARTED);
-                else if (pInstance->GetData(DATA_CHESS_EVENT) == SPECIAL)
-                    pInstance->SetData(DATA_CHESS_EVENT, DONE);
+                if (pInstance->GetBossState(DATA_CHESS_EVENT) == IN_PROGRESS)
+                    pInstance->SetBossState(DATA_CHESS_EVENT, NOT_STARTED);
+                else if (pInstance->GetBossState(DATA_CHESS_EVENT) == SPECIAL)
+                    pInstance->SetBossState(DATA_CHESS_EVENT, DONE);
                 me->RemoveAurasDueToSpell(39331);
                 break;
             case MEDIVH_GOSSIP_START_PVP:
                 pInstance->SetData(DATA_CHESS_GAME_PHASE, PVP_WARMUP);
                 ((npc_echo_of_medivh::npc_echo_of_medivhAI*)(me->AI()))->SetupBoard();
-                pInstance->SetData(DATA_CHESS_EVENT, SPECIAL);
+                pInstance->SetBossState(DATA_CHESS_EVENT, SPECIAL);
                 me->CastSpell(me, 39331, TRIGGERED_FULL_MASK);
                 break;
             default:
@@ -1054,7 +1054,7 @@ public:
 
         void EnterCombat(Unit* pWho) // TODO
             override {
-            Unit* npc_medivh = ObjectAccessor::GetUnit(*me, pInstance->GetData64(DATA_IMAGE_OF_MEDIVH));
+            Unit* npc_medivh = ObjectAccessor::GetUnit(*me, pInstance->GetGuidData(DATA_CHESS_ECHO_OF_MEDIVH));
 
             if (npc_medivh) {
                 switch (pInstance->GetData(CHESS_EVENT_TEAM)) {
@@ -1076,7 +1076,7 @@ public:
 
         /*void ReceiveEmote(Player* player, uint32 text_emote)
         {
-        if (Creature* medivh = ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_IMAGE_OF_MEDIVH)))
+        if (Creature* medivh = ObjectAccessor::GetCreature(*me, pInstance->GetGuidData(DATA_CHESS_ECHO_OF_MEDIVH)))
         ((npc_echo_of_medivh::npc_echo_of_medivhAI*)medivh->AI())->HandleShowDebug(me);
         }*/
 
@@ -1153,7 +1153,7 @@ public:
 
         void JustDied(Unit* pKiller)
             override {
-            Creature* medivh = ObjectAccessor::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_IMAGE_OF_MEDIVH) : 0);
+            Creature* medivh = ObjectAccessor::GetCreature(*me, pInstance ? pInstance->GetGuidData(DATA_CHESS_ECHO_OF_MEDIVH) : 0);
             ((npc_echo_of_medivh::npc_echo_of_medivhAI*)medivh->AI())->HandlePieceDeath(me);
 
             if (me->IsCharmed()) {
@@ -1199,7 +1199,7 @@ public:
 
             if (AttackTimer <= diff) {
                 Creature* piece = nullptr;
-                if (Creature* medivh = ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_IMAGE_OF_MEDIVH)))
+                if (Creature* medivh = ObjectAccessor::GetCreature(*me, pInstance->GetGuidData(DATA_CHESS_ECHO_OF_MEDIVH)))
                     piece = ((npc_echo_of_medivh::npc_echo_of_medivhAI*)medivh->AI())->GetTargetFor(me, currentOrientation);
 
                 if (piece && !me->IsFriendlyTo(piece))
@@ -1212,7 +1212,7 @@ public:
 
             if (!me->IsCharmed()) {
                 if (NextMoveTimer <= diff) {
-                    if (Creature* medivh = ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_IMAGE_OF_MEDIVH))) {
+                    if (Creature* medivh = ObjectAccessor::GetCreature(*me, pInstance->GetGuidData(DATA_CHESS_ECHO_OF_MEDIVH))) {
                         if (((npc_echo_of_medivh::npc_echo_of_medivhAI*)medivh->AI())->HandlePieceMoveByAI(me, currentOrientation))
                             NextMoveTimer = 5000 + rand() % 2000;
                         else
@@ -1261,7 +1261,7 @@ public:
             if ((spell->Id == SPELL_MOVE_1
                 || spell->Id == SPELL_MOVE_2 || spell->Id == SPELL_MOVE_3 || spell->Id == SPELL_MOVE_4
                 || spell->Id == SPELL_MOVE_5 || spell->Id == SPELL_MOVE_6 || spell->Id == SPELL_MOVE_7)) {
-                if (Creature* medivh = ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_IMAGE_OF_MEDIVH))) {
+                if (Creature* medivh = ObjectAccessor::GetCreature(*me, pInstance->GetGuidData(DATA_CHESS_ECHO_OF_MEDIVH))) {
                     if (((npc_echo_of_medivh::npc_echo_of_medivhAI*)medivh->AI())->HandlePieceMove(me, target->GetGUID())) {
                         me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
                         destX = target->GetPositionX();
@@ -1272,7 +1272,7 @@ public:
                 }
             }
             else if (spell->Id == SPELL_CHANGE_FACING) {
-                if (Creature* medivh = ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_IMAGE_OF_MEDIVH))) {
+                if (Creature* medivh = ObjectAccessor::GetCreature(*me, pInstance->GetGuidData(DATA_CHESS_ECHO_OF_MEDIVH))) {
                     int result = ((npc_echo_of_medivh::npc_echo_of_medivhAI*)medivh->AI())->HandlePieceRotate(me, target->GetGUID());
                     if (result != -1) {
                         me->SetOrientation(orientations[result]);

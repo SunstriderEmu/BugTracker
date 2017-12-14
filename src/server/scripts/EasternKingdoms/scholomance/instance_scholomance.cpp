@@ -103,10 +103,7 @@ public:
                 IsBossDied[5] = true;
                 break;
             case DATA_KIRTONOS_DOOR:
-                if (Player *plr = GetPlayer()) {
-                    if (GameObject *kirtonosDoor = GameObject::GetGameObject(*plr, KirtonosDoorGUID))
-                        HandleGameObject(KirtonosDoorGUID, true, nullptr);
-                }
+                HandleGameObject(KirtonosDoorGUID, true);
                 break;
             }
         }

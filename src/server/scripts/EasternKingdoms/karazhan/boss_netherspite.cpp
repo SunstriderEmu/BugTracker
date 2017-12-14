@@ -1,19 +1,4 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
-
+/* C
 /* ScriptData
 SDName: Boss_Netherspite
 SD%Complete: 80
@@ -22,7 +7,7 @@ SDCategory: Karazhan
 EndScriptData */
 
 
-#include "def_karazhan.h"
+#include "karazhan.h"
 
 #define EMOTE_PHASE_PORTAL          -1532089
 #define EMOTE_PHASE_BANISH          -1532090
@@ -63,10 +48,10 @@ public:
     boss_netherspite() : CreatureScript("boss_netherspite")
     { }
 
-    class  boss_netherspiteAI : public ScriptedAI
+    class  boss_netherspiteAI : public BossAI
     {
         public:
-        boss_netherspiteAI(Creature* c) : ScriptedAI(c)
+        boss_netherspiteAI(Creature* c) : BossAI(c, DATA_NETHERSPITE_EVENT)
         {
             pInstance = ((InstanceScript*)c->GetInstanceScript());
     
@@ -121,6 +106,7 @@ public:
     
         void Reset()
         override {
+            _Reset();
             Berserk = false;
             NetherInfusionTimer = 540000;
             VoidZoneTimer = 15000;
@@ -129,7 +115,6 @@ public:
             for (uint32 & i : BuffTimer)
                 i = 1000;
     
-            HandleDoors(true);
             Destroyportalortals();
             
             me->RemoveAurasDueToSpell(SPELL_NETHERBURN_AURA);
@@ -269,23 +254,17 @@ public:
                 me->RemoveAurasDueToSpell(i);
         }
     
-        void HandleDoors(bool open) // Massive Door switcher
-        {
-            if(GameObject *Door = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_GAMEOBJECT_MASSIVE_DOOR)))
-                Door->SetUInt32Value(GAMEOBJECT_STATE, open ? 0 : 1);
-        }
-    
         void EnterCombat(Unit *who)
         override {
+            _EnterCombat();
             me->AddAura(SPELL_NETHERBURN_AURA, me);
             
-            HandleDoors(false);
             SwitchToPortalPhase();
         }
     
         void JustDied(Unit* killer)
         override {
-            HandleDoors(true);
+            _JustDied();
             Destroyportalortals();
         }
     
@@ -371,7 +350,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_netherspiteAI(creature);
+        return GetKarazhanAI<boss_netherspiteAI>(creature);
     }
 };
 

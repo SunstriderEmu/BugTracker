@@ -149,12 +149,10 @@ public:
         //if withRestoreTime true, then newState will be ignored and GO should be restored to original state after 10 seconds
         void UpdateGoState(uint64 goGuid, uint32 newState, bool withRestoreTime)
         {
-            Player *player = GetPlayer();
-
-            if (!player || !goGuid)
+            if (!goGuid)
                 return;
 
-            if (GameObject *go = GameObject::GetGameObject(*player, goGuid))
+            if (GameObject *go = instance->GetGameObject(goGuid))
             {
                 if (withRestoreTime)
                     go->UseDoorOrButton(10);
@@ -203,23 +201,15 @@ public:
         }
 
         void ResetCannonballStacks() {
-            Player *plr = GetPlayer();
-            if (!plr)
-                return;
-
             for (uint64 cannonballStacksGUID : cannonballStacksGUIDs) {
-                if (GameObject *currentStack = GameObject::GetGameObject(*plr, cannonballStacksGUID))
+                if (GameObject *currentStack = instance->GetGameObject(cannonballStacksGUID))
                     currentStack->SwitchDoorOrButton(true);
             }
         }
 
         void ActivateCannonballStacks() {
-            Player *plr = GetPlayer();
-            if (!plr)
-                return;
-
             for (uint64 cannonballStacksGUID : cannonballStacksGUIDs) {
-                if (GameObject *currentStack = GameObject::GetGameObject(*plr, cannonballStacksGUID))
+                if (GameObject *currentStack = instance->GetGameObject(cannonballStacksGUID))
                     currentStack->SwitchDoorOrButton(false);
             }
         }
@@ -248,7 +238,7 @@ public:
                     //may add code to remove aura from players, but in theory the time should be up already and removed.
                     break;
                 case DONE:
-                    if (Unit *t = ObjectAccessor::GetUnit(*player, ysidaTriggerGUID))
+                    if (Unit *t = instance->GetCreature(ysidaTriggerGUID))
                         t->SummonCreature(C_YSIDA, t->GetPositionX(), t->GetPositionY(), t->GetPositionZ(), t->GetOrientation(), TEMPSUMMON_TIMED_DESPAWN, 1800000);
                     BaronRun_Timer = 0;
                     break;
@@ -285,7 +275,7 @@ public:
                     uint32 count = abomnationGUID.size();
                     for (uint64 & i : abomnationGUID)
                     {
-                        if (Unit* abom = ObjectAccessor::GetUnit(*player, i))
+                        if (Unit* abom = instance->GetCreature(i))
                         {
                             if (!abom->IsAlive())
                                 --count;
@@ -481,7 +471,7 @@ public:
                     if (Player *player = GetPlayer()) {
                         for (uint64 & i : abomnationGUID)
                         {
-                            if (Unit* abom = ObjectAccessor::GetUnit(*player, i))
+                            if (Unit* abom = instance->GetCreature(i))
                             {
                                 if (abom->IsAlive()) {
                                     reinterpret_cast<Creature*>(abom)->AI()->AttackStart(player);

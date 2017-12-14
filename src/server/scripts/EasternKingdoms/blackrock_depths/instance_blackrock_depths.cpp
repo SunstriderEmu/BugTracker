@@ -1,18 +1,3 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
 
 /* ScriptData
 SDName: Instance_Blackrock_Depths
@@ -213,14 +198,6 @@ public:
 
         void SetData(uint32 type, uint32 data) override
         {
-            Player *player = GetPlayer();
-
-            if (!player)
-            {
-                TC_LOG_ERROR("scripts", "TSCR: Instance Blackrock Depths: SetData (Type: %u Data %u) cannot find any player.", type, data);
-                return;
-            }
-
             switch (type)
             {
             case TYPE_RING_OF_LAW:
@@ -351,17 +328,12 @@ public:
         {
             if (GhostKillCount < 7 && TombBossGUIDs[TombEventCounter])
             {
-                Player *player = GetPlayer();
-
-                if (player)
+                if (Creature* boss = instance->GetCreature(TombBossGUIDs[TombEventCounter]))
                 {
-                    if (Creature* boss = ObjectAccessor::GetCreature((*player), TombBossGUIDs[TombEventCounter]))
-                    {
-                        boss->SetFaction(FACTION_HOSTILE);
-                        boss->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
-                        if (Unit* target = boss->SelectNearestTarget(500))
-                            boss->AI()->AttackStart(target);
-                    }
+                    boss->SetFaction(FACTION_HOSTILE);
+                    boss->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
+                    if (Unit* target = boss->SelectNearestTarget(500))
+                        boss->AI()->AttackStart(target);
                 }
             }
         }
@@ -371,26 +343,21 @@ public:
             HandleGameObject(GoTombExitGUID, false);//event reseted, close exit door
             HandleGameObject(GoTombEnterGUID, true);//event reseted, open entrance door
 
-            Player* player = GetPlayer();
-
-            if (player)
+            for (uint64 TombBossGUID : TombBossGUIDs)
             {
-                for (uint64 TombBossGUID : TombBossGUIDs)
+                if (Creature* boss = instance->GetCreature(TombBossGUID))
                 {
-                    if (Creature* boss = ObjectAccessor::GetCreature((*player), TombBossGUID))
-                    {
-                        if (!boss->IsAlive())
-                        {//do not call EnterEvadeMode(), it will create infinit loops
-                            boss->Respawn();
-                            boss->RemoveAllAuras();
-                            boss->GetThreatManager().ClearAllThreat();
-                            boss->CombatStop(true);
-                            boss->InitCreatureAddon();
-                            boss->GetMotionMaster()->MoveTargetedHome();
-                            boss->SetLootRecipient(nullptr);
-                        }
-                        boss->SetFaction(FACTION_FRIEND);
+                    if (!boss->IsAlive())
+                    {//do not call EnterEvadeMode(), it will create infinit loops
+                        boss->Respawn();
+                        boss->RemoveAllAuras();
+                        boss->GetThreatManager().ClearAllThreat();
+                        boss->CombatStop(true);
+                        boss->InitCreatureAddon();
+                        boss->GetMotionMaster()->MoveTargetedHome();
+                        boss->SetLootRecipient(nullptr);
                     }
+                    boss->SetFaction(FACTION_FRIEND);
                 }
             }
             GhostKillCount = 0;

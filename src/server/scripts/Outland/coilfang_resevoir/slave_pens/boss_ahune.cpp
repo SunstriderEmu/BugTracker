@@ -124,7 +124,7 @@ public:
             summons.Despawn(pSummon);
         
             if (pInstance && pSummon->GetEntry() == NPC_AHUNITE_HAILSTONE)
-                pInstance->RemoveAuraOnAllPlayers(SPELL_HAILSTONE_CHILL);
+                pInstance->DoRemoveAurasDueToSpellOnPlayers(SPELL_HAILSTONE_CHILL);
         }
     
         void HandleColdSlap()
@@ -310,7 +310,7 @@ public:
         void JustDied(Unit* pKiller)
         override {
             if (pInstance)
-                pInstance->RemoveAuraOnAllPlayers(SPELL_HAILSTONE_CHILL);
+                pInstance->DoRemoveAurasDueToSpellOnPlayers(SPELL_HAILSTONE_CHILL);
         }
         
         void UpdateAI(uint32 const diff)

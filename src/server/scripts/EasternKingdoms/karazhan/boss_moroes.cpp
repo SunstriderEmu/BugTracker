@@ -1,18 +1,3 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /* ScriptData
 SDName: Boss_Moroes
@@ -22,7 +7,7 @@ SDCategory: Karazhan
 EndScriptData */
 
 
-#include "def_karazhan.h"
+#include "karazhan.h"
 
 #define SAY_AGGRO           -1532011
 #define SAY_SPECIAL_1       -1532012
@@ -97,20 +82,15 @@ public:
     boss_moroes() : CreatureScript("boss_moroes")
     { }
 
-    class boss_moroesAI : public ScriptedAI
+    class boss_moroesAI : public BossAI
     {
         public:
-        boss_moroesAI(Creature *c) : ScriptedAI(c)
+        boss_moroesAI(Creature* creature) : BossAI(creature, DATA_MOROES_EVENT)
         {
             for(uint32 & i : AddId)
-            {
                 i = 0;
-            }
-            pInstance = ((InstanceScript*)c->GetInstanceScript());
         }
-    
-        InstanceScript *pInstance;
-    
+
         uint64 AddGUID[4];
     
         uint32 Vanish_Timer;
@@ -124,7 +104,9 @@ public:
         bool Enrage;
     
         void Reset()
-        override {
+        override 
+        {
+            _Reset();
             Vanish_Timer = 30000;
             Blind_Timer = 35000;
             Gouge_Timer = 23000;
@@ -133,26 +115,12 @@ public:
     
             Enrage = false;
             InVanish = false;
-            if(me->GetHealth() > 0)
-            {
-                SpawnAdds();
-            }
-    
-            if(pInstance)
-                pInstance->SetData(DATA_MOROES_EVENT, NOT_STARTED);
-        }
-    
-        void StartEvent()
-        {
-            if(pInstance)
-                pInstance->SetData(DATA_MOROES_EVENT, IN_PROGRESS);
-    
-            DoZoneInCombat();
+            SpawnAdds();
         }
     
         void EnterCombat(Unit* who)
         override {
-            StartEvent();
+            _EnterCombat();
     
             DoScriptText(SAY_AGGRO, me);
             AddsAttack();
@@ -171,15 +139,13 @@ public:
     
         void JustDied(Unit* victim)
         override {
+            _JustDied();
             DoScriptText(SAY_DEATH, me);
-    
-            if (pInstance)
-                pInstance->SetData(DATA_MOROES_EVENT, DONE);
     
             DeSpawnAdds();
     
             //remove aura from spell Garrote when Moroes dies
-            Map *map = me->GetMap();
+            Map* map = me->GetMap();
             if (map->IsDungeon())
             {
                 Map::PlayerList const &PlayerList = map->GetPlayers();
@@ -189,7 +155,7 @@ public:
     
                 for (const auto & i : PlayerList)
                 {
-                    if (i.GetSource()->IsAlive() && i.GetSource()->HasAuraEffect(SPELL_GARROTE,0))
+                    if (i.GetSource()->IsAlive() && i.GetSource()->HasAuraEffect(SPELL_GARROTE, 0))
                         i.GetSource()->RemoveAurasDueToSpell(SPELL_GARROTE);
                 }
             }
@@ -281,17 +247,18 @@ public:
         }
     
         void UpdateAI(const uint32 diff)
-        override {
+        override 
+        {
             if(!UpdateVictim() )
                 return;
     
-            if(pInstance && !pInstance->GetData(DATA_MOROES_EVENT))
+            if(instance->GetBossState(DATA_MOROES_EVENT) == NOT_STARTED)
             {
                 EnterEvadeMode();
                 return;
             }
     
-            if(!Enrage &&  me->GetHealthPct()  < 30)
+            if(!Enrage && me->HealthBelowPct(30))
             {
                 DoCast(me, SPELL_FRENZY);
                 Enrage = true;
@@ -378,26 +345,23 @@ struct boss_moroes_guestAI : public ScriptedAI
 
     boss_moroes_guestAI(Creature* c) : ScriptedAI(c)
     {
-        for (uint64 & i : GuestGUID)
+        for (auto& i : GuestGUID)
             i = 0;
 
         pInstance = ((InstanceScript*)c->GetInstanceScript());
     }
 
     void Reset()
-        override {
-        if (pInstance)
-            pInstance->SetData(DATA_MOROES_EVENT, NOT_STARTED);
+        override 
+    {
+        pInstance->SetBossState(DATA_MOROES_EVENT, NOT_STARTED);
     }
 
     void EnterCombat(Unit* who) override {}
 
     void AcquireGUID()
     {
-        if (!pInstance)
-            return;
-
-        GuestGUID[0] = pInstance->GetData64(DATA_MOROES);
+        GuestGUID[0] = pInstance->GetGuidData(DATA_MOROES);
         Creature* Moroes = (ObjectAccessor::GetCreature((*me), GuestGUID[0]));
         if (Moroes)
         {
@@ -425,7 +389,7 @@ struct boss_moroes_guestAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
         override {
-        if (pInstance && !pInstance->GetData(DATA_MOROES_EVENT))
+        if (pInstance->GetBossState(DATA_MOROES_EVENT) == NOT_STARTED)
             EnterEvadeMode();
 
         DoMeleeAttackIfReady();
@@ -448,17 +412,19 @@ public:
         uint32 MindFlay_Timer;
     
         void Reset()
-        override {
+        override 
+        {
             ManaBurn_Timer = 7000;
             MindFlay_Timer = 1000;
     
-            DoCast(me,SPELL_SHADOWFORM, true);
+            DoCast(me, SPELL_SHADOWFORM, true);
     
             boss_moroes_guestAI::Reset();
         }
     
         void UpdateAI(const uint32 diff)
-        override {
+        override 
+        {
             if(!UpdateVictim() )
                 return;
     
@@ -504,7 +470,8 @@ public:
         uint32 JudgementOfCommand_Timer;
     
         void Reset()
-        override {
+        override 
+        {
             HammerOfJustice_Timer = 1000;
             SealOfCommand_Timer = 7000;
             JudgementOfCommand_Timer = SealOfCommand_Timer + 29000;
@@ -513,7 +480,8 @@ public:
         }
     
         void UpdateAI(const uint32 diff)
-        override {
+        override 
+        {
             if(!UpdateVictim() )
                 return;
     
@@ -530,13 +498,13 @@ public:
             {
                 DoCast(me->GetVictim(),SPELL_JUDGEMENTOFCOMMAND);
                 JudgementOfCommand_Timer = SealOfCommand_Timer + 29000;
-            }else JudgementOfCommand_Timer -= diff;
+            } else JudgementOfCommand_Timer -= diff;
     
             if(HammerOfJustice_Timer < diff)
             {
                 DoCast(me->GetVictim(),SPELL_HAMMEROFJUSTICE);
                 HammerOfJustice_Timer = 12000;
-            }else HammerOfJustice_Timer -= diff;
+            } else HammerOfJustice_Timer -= diff;
         }
     };
 
@@ -565,7 +533,8 @@ public:
         uint32 PowerWordShield_Timer;
     
         void Reset()
-        override {
+        override 
+        {
             DispelMagic_Timer = 11000;
             GreaterHeal_Timer = 1500;
             HolyFire_Timer = 5000;
@@ -577,7 +546,8 @@ public:
         }
     
         void UpdateAI(const uint32 diff)
-        override {
+        override 
+        {
             if(!UpdateVictim() )
                 return;
     
@@ -720,7 +690,8 @@ public:
         uint32 WhirlWind_Timer;
     
         void Reset()
-        override {
+        override 
+        {
             Hamstring_Timer = 7000;
             MortalStrike_Timer = 10000;
             WhirlWind_Timer = 21000;
@@ -729,7 +700,8 @@ public:
         }
     
         void UpdateAI(const uint32 diff)
-        override {
+        override 
+        {
             if(!UpdateVictim() )
                 return;
     
@@ -739,19 +711,19 @@ public:
             {
                 DoCast(me->GetVictim(),SPELL_HAMSTRING);
                 Hamstring_Timer = 12000;
-            }else Hamstring_Timer -= diff;
+            } else Hamstring_Timer -= diff;
     
             if(MortalStrike_Timer < diff)
             {
                 DoCast(me->GetVictim(), SPELL_MORTALSTRIKE);
                 MortalStrike_Timer = 18000;
-            }else MortalStrike_Timer -= diff;
+            } else MortalStrike_Timer -= diff;
     
             if(WhirlWind_Timer < diff)
             {
                 DoCast(me,SPELL_WHIRLWIND);
                 WhirlWind_Timer = 21000;
-            }else WhirlWind_Timer -= diff;
+            } else WhirlWind_Timer -= diff;
         }
     };
 
@@ -779,8 +751,8 @@ public:
         uint32 ShieldBash_Timer;
         uint32 ShieldWall_Timer;
     
-        void Reset()
-        override {
+        void Reset() override 
+        {
             Disarm_Timer = 6000;
             HeroicStrike_Timer = 10000;
             ShieldBash_Timer = 8000;
@@ -789,8 +761,8 @@ public:
             boss_moroes_guestAI::Reset();
         }
     
-        void UpdateAI(const uint32 diff)
-        override {
+        void UpdateAI(const uint32 diff) override 
+        {
             if(!UpdateVictim() )
                 return;
     
@@ -800,25 +772,25 @@ public:
             {
                 DoCast(me->GetVictim(),SPELL_DISARM);
                 Disarm_Timer = 12000;
-            }else Disarm_Timer -= diff;
+            } else Disarm_Timer -= diff;
     
             if(HeroicStrike_Timer < diff)
             {
                 DoCast(me->GetVictim(),SPELL_HEROICSTRIKE);
                 HeroicStrike_Timer = 10000;
-            }else HeroicStrike_Timer -= diff;
+            } else HeroicStrike_Timer -= diff;
     
             if(ShieldBash_Timer < diff)
             {
                 DoCast(me->GetVictim(),SPELL_SHIELDBASH);
                 ShieldBash_Timer = 13000;
-            }else ShieldBash_Timer -= diff;
+            } else ShieldBash_Timer -= diff;
     
             if(ShieldWall_Timer < diff)
             {
                 DoCast(me,SPELL_SHIELDWALL);
                 ShieldWall_Timer = 21000;
-            }else ShieldWall_Timer -= diff;
+            } else ShieldWall_Timer -= diff;
         }
     };
 

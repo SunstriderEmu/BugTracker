@@ -186,14 +186,6 @@ public:
 
         void SetData(uint32 type, uint32 data) override
         {
-            Player *player = GetPlayer();
-
-            if (!player)
-            {
-                TC_LOG_ERROR("scripts", "Instance Black Portal: SetData (Type: %u Data %u) cannot find any player.", type, data);
-                return;
-            }
-
             switch (type)
             {
             case TYPE_MEDIVH:
@@ -204,7 +196,7 @@ public:
 
                     if (!mShieldPercent)
                     {
-                        if (Unit *medivh = ObjectAccessor::GetUnit(*player, MedivhGUID))
+                        if (Unit *medivh = instance->GetCreature(MedivhGUID))
                         {
                             if (medivh->IsAlive())
                             {
@@ -226,7 +218,7 @@ public:
                     {
                         InitWorldState();
                         //prevent players from complete quest during event
-                        if (Unit *medivh = ObjectAccessor::GetUnit(*player, MedivhGUID))
+                        if (Unit *medivh = instance->GetCreature(MedivhGUID))
                             medivh->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
                         Encounter[1] = IN_PROGRESS;
                         NextPortal_Timer = 30000;
@@ -238,7 +230,7 @@ public:
                         Map::PlayerList const& players = instance->GetPlayers();
 
                         //setting Quest Giver flag back after event
-                        if (Unit *medivh = ObjectAccessor::GetUnit(*player, MedivhGUID))
+                        if (Unit *medivh = instance->GetCreature(MedivhGUID))
                             medivh->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
 
                         if (!players.isEmpty())
@@ -368,11 +360,7 @@ public:
 
         void DoSpawnPortal()
         {
-            Player *player = GetPlayer();
-            if (!player)
-                return;
-
-            if (Creature* pMedivh = ObjectAccessor::GetCreature((*player), MedivhGUID))
+            if (Creature* pMedivh = instance->GetCreature(MedivhGUID))
             {
                 int tmp = rand() % (4 - 1);
 

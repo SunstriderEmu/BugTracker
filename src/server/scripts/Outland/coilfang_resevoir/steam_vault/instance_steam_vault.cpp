@@ -137,22 +137,17 @@ public:
 
         void SetData(uint32 type, uint32 data) override
         {
-            Player *player = GetPlayer();
-
-            if (!player)
-                return;
-
             switch (type)
             {
             case TYPE_HYDROMANCER_THESPIA:
                 if (data == SPECIAL)
                 {
-                    if (GameObject *_go = GameObject::GetGameObject(*player, AccessPanelHydro))
+                    if (GameObject *_go = instance->GetGameObject(AccessPanelHydro))
                         _go->UseDoorOrButton();
 
                     if (GetData(TYPE_MEKGINEER_STEAMRIGGER) == SPECIAL)
                     {
-                        if (GameObject *_go = GameObject::GetGameObject(*player, MainChambersDoor))
+                        if (GameObject *_go = instance->GetGameObject(MainChambersDoor))
                             _go->UseDoorOrButton();
                     }
                 }
@@ -161,12 +156,12 @@ public:
             case TYPE_MEKGINEER_STEAMRIGGER:
                 if (data == SPECIAL)
                 {
-                    if (GameObject *_go = GameObject::GetGameObject(*player, AccessPanelMek))
+                    if (GameObject *_go = instance->GetGameObject(AccessPanelMek))
                         _go->UseDoorOrButton();
 
                     if (GetData(TYPE_HYDROMANCER_THESPIA) == SPECIAL)
                     {
-                        if (GameObject *_go = GameObject::GetGameObject(*player, MainChambersDoor))
+                        if (GameObject *_go = instance->GetGameObject(MainChambersDoor))
                             _go->UseDoorOrButton();
                     }
                 }

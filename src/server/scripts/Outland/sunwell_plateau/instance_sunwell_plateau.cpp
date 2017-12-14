@@ -291,8 +291,7 @@ public:
             if (players.isEmpty())
                 return;
 
-            Player* tmp = GetPlayer();
-            GameObject* barrier = GameObject::GetGameObject(*tmp, IceBarrier);
+            GameObject* barrier = instance->GetGameObject(IceBarrier);
             if (!barrier)
                 return;
 
