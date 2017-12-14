@@ -1,6 +1,3 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software licensed under GPL version 2
- * Please see the included DOCS/LICENSE.TXT for more information */
 
 #ifndef DEF_KARAZHAN_H
 #define DEF_KARAZHAN_H
@@ -41,6 +38,8 @@
 #define DATA_CHESS_GAME_PHASE           34
 #define DATA_MALCHEZAAR                 35
 
+#define KZScriptName "instance_karazhan"
+
 // Opera Performances
 #define EVENT_OZ        1
 #define EVENT_HOOD      2
@@ -61,7 +60,9 @@ enum eNPCs {
     NPC_ROOK_H   = 21726,
     NPC_ROOK_A   = 21160,
     NPC_KING_H   = 21752,
-    NPC_KING_A   = 21684
+    NPC_KING_A   = 21684,
+
+    NPC_MALCHEZAAR = 15690,
 };
 
 enum eGameObjects {
@@ -87,5 +88,12 @@ typedef enum gamePhase
     PVP_WARMUP      = 6,
     INPROGRESS_PVP  = 7  // Get back to PVE_FINISHED after that
 } GamePhase;
+
+template <class AI, class T>
+inline AI* GetKarazhanAI(T* obj)
+{
+    return GetInstanceAI<AI>(obj, KZScriptName);
+}
+
 #endif
 

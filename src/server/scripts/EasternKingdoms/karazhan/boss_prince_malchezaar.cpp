@@ -1,18 +1,3 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /* ScriptData
 SDName: Boss_Prince_Malchezzar
@@ -37,36 +22,7 @@ EndScriptData */
 #define SAY_SUMMON2         -1532101
 #define SAY_DEATH           -1532102
 
-// 19 Coordinates for Infernal spawns
-struct InfernalPoint
-{
-    float x,y;
-};
-
 #define INFERNAL_Z  275.5
-
-static InfernalPoint InfernalPoints[] =
-{
-    {-10922.8f, -1985.2f},
-    {-10916.2f, -1996.2f},
-    {-10932.2f, -2008.1f},
-    {-10948.8f, -2022.1f},
-    {-10958.7f, -1997.7f},
-    {-10971.5f, -1997.5f},
-    {-10990.8f, -1995.1f},
-    {-10989.8f, -1976.5f},
-    {-10971.6f, -1973.0f},
-    {-10955.5f, -1974.0f},
-    {-10939.6f, -1969.8f},
-    {-10958.0f, -1952.2f},
-    {-10941.7f, -1954.8f},
-    {-10943.1f, -1988.5f},
-    {-10948.8f, -2005.1f},
-    {-10984.0f, -2019.3f},
-    {-10932.8f, -1979.6f},
-    {-10932.8f, -1979.6f},
-    {-10935.7f, -1996.0f}
-};
 
 #define TOTAL_INFERNAL_POINTS 19
 
@@ -99,18 +55,12 @@ static InfernalPoint InfernalPoints[] =
 
 #define AXE_EQUIP_MODEL          40066                      //Axes model
 
-enum Messages
-{
-    MESSAGE_GET_RANDOM_POSITION,
-    MESSAGE_SET_POINT,
-    MESSAGE_FREE_POINT,
-    MESSAGE_ADD_INFERNAL,
-    MESSAGE_REMOVE_INFERNAL,
-};
-
-
 //---------Infernal code first
 
+struct InfernalPoint
+{
+    float x, y;
+};
 
 class netherspite_infernal : public CreatureScript
 {
@@ -122,97 +72,76 @@ public:
     {
         public:
         netherspite_infernalAI(Creature *c) : ScriptedAI(c) ,
-            malchezaar(0), HellfireTimer(0), CleanupTimer(0), point(nullptr) 
+            HellfireTimer(0)
         {
             pInstance = ((InstanceScript*)c->GetInstanceScript());
         }
     
         uint32 HellfireTimer;
-        uint32 CleanupTimer;
-        uint64 malchezaar;
-        InfernalPoint* point;
         InstanceScript* pInstance;
-    
-        uint64 message(uint32 id, uint64 data) 
-        override { 
-            if(id == MESSAGE_SET_POINT)
-                point = (InfernalPoint*)data;
-            return 0;
-        }
-    
+        
         void Reset()
-        override {
+        override
+        {
             me->SetStunned(true);
             me->AI()->SetCombatMovementAllowed(false);
         }
     
-        void Cleanup()
-        {
-            if(!pInstance) return;
-            if(Creature* malch = ObjectAccessor::GetCreature(*me,pInstance->GetData64(DATA_MALCHEZAAR)))
-            {
-                malch->AI()->message(MESSAGE_FREE_POINT,(uint64)point);
-                malch->AI()->message(MESSAGE_REMOVE_INFERNAL,me->GetGUID());
-            }
-        }
-    
         void UpdateAI(const uint32 diff)
-        override {
+        override 
+        {
             if(HellfireTimer)
             {
                 if(HellfireTimer <= diff)
                 {
+                    if (pInstance->GetData(DATA_MALCHEZZAR_EVENT) != IN_PROGRESS)
+                    {
+                        me->DespawnOrUnsummon();
+                        return;
+                    }
+
                     me->SetFaction(FACTION_MONSTER);
                     DoCast(me, SPELL_HELLFIRE);
                     HellfireTimer = 0;
                 }
                 else 
-                {
                     HellfireTimer -= diff;
-                }
-            }
-    
-            if(CleanupTimer)
-            {
-                if(CleanupTimer <= diff)
-                {
-                    Cleanup();
-                    CleanupTimer = 0;
-                } else { CleanupTimer -= diff; }
             }
         }
     
         void KilledUnit(Unit *who)
-        override {
-            Unit *pMalchezaar = ObjectAccessor::GetUnit(*me, malchezaar);
+        override 
+        {
+            Unit *pMalchezaar = ObjectAccessor::GetUnit(*me, pInstance->GetData64(DATA_MALCHEZAAR));
             if(pMalchezaar)
                 (pMalchezaar->ToCreature())->AI()->KilledUnit(who);
         }
     
         void SpellHit(Unit *who, const SpellInfo *spell)
-        override {
+        override 
+        {
             if(spell->Id == SPELL_INFERNAL_RELAY)
             {
                 me->SetUInt32Value(UNIT_FIELD_DISPLAYID, me->GetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID));
                 me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 HellfireTimer = 4000;
-                CleanupTimer = 170000;
             }
         }
     
-        void DamageTaken(Unit *done_by, uint32 &damage)
-        override {
-            if(done_by->GetGUID() != malchezaar)
+        void DamageTaken(Unit* done_by, uint32 &damage)
+        override 
+        
+        {
+            if(done_by->GetEntry() != NPC_MALCHEZAAR)
                 damage = 0;
         }
     };
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new netherspite_infernalAI(creature);
+        return GetKarazhanAI<netherspite_infernalAI>(creature);
     }
 };
-
 
 class boss_malchezaar : public CreatureScript
 {
@@ -222,13 +151,37 @@ public:
 
     class boss_malchezaarAI : public ScriptedAI
     {
+        // Coordinates for Infernal spawns
+        InfernalPoint InfernalPoints[19] =
+        {
+            { -10922.8f, -1985.2f },
+            { -10916.2f, -1996.2f },
+            { -10932.2f, -2008.1f },
+            { -10948.8f, -2022.1f },
+            { -10958.7f, -1997.7f },
+            { -10971.5f, -1997.5f },
+            { -10990.8f, -1995.1f },
+            { -10989.8f, -1976.5f },
+            { -10971.6f, -1973.0f },
+            { -10955.5f, -1974.0f },
+            { -10939.6f, -1969.8f },
+            { -10958.0f, -1952.2f },
+            { -10941.7f, -1954.8f },
+            { -10943.1f, -1988.5f },
+            { -10948.8f, -2005.1f },
+            { -10984.0f, -2019.3f },
+            { -10932.8f, -1979.6f },
+            { -10932.8f, -1979.6f },
+            { -10935.7f, -1996.0f }
+        };
+
         public:
         boss_malchezaarAI(Creature *c) : ScriptedAI(c)
         {
             pInstance = ((InstanceScript*)c->GetInstanceScript());
         }
     
-        InstanceScript *pInstance;
+        InstanceScript* pInstance;
         uint32 EnfeebleTimer;
         uint32 EnfeebleResetTimer;
         uint32 ShadowNovaTimer;
@@ -240,7 +193,7 @@ public:
         uint32 InfernalCleanupTimer;
     
         std::vector<uint64> infernals; //spawned infernal guids
-        std::vector<InfernalPoint*> positions; //free infernal positions
+        std::vector<InfernalPoint> positions; //free infernal positions
     
         uint64 axes[2];
         uint64 enfeeble_targets[5];
@@ -248,43 +201,31 @@ public:
     
         uint32 phase;
     
-        uint64 message(uint32 id, uint64 data) 
-        override { 
-            //return a random point and erase it from positions
-            switch(id)
-            {
-            case MESSAGE_GET_RANDOM_POSITION:
-                {
-                InfernalPoint *point = nullptr;
-                auto itr = positions.begin()+rand()%positions.size();
-                point = *itr;
-                positions.erase(itr);
-                return (uint64)point;
-                }
-            case MESSAGE_FREE_POINT:
-                positions.push_back((InfernalPoint*)data);
-                break;
-            case MESSAGE_ADD_INFERNAL:
-                infernals.push_back(data);
-                break;
-            case MESSAGE_REMOVE_INFERNAL:
-                for(auto itr = infernals.begin(); itr!= infernals.end(); ++itr)
-                if(*itr == data)
-                {
-                    infernals.erase(itr);
-                    break;
-                }
-                break;
-            }
-            return 0;
+        bool GetRandomInferalPosition(float& x, float& y)
+        {
+            if (positions.empty())
+                ResetFreeInfernalsPosition();
+
+            auto itr = positions.begin() + rand() % positions.size();
+            InfernalPoint& point = *itr;
+            x = point.x;
+            y = point.y;
+            positions.erase(itr);
+            return true;
         }
-    
+            
+        void ResetFreeInfernalsPosition()
+        {
+            positions.clear();
+            for (auto & InfernalPoint : InfernalPoints)
+                positions.push_back(InfernalPoint);
+        }
+
         void Reset()
         override {
             AxesCleanup();
             ClearWeapons();
             InfernalCleanup();
-            positions.clear();
     
             for(uint64 & enfeeble_target : enfeeble_targets)
                 enfeeble_target = 0;
@@ -299,19 +240,11 @@ public:
             AxesTargetSwitchTimer = 7500 + rand()%12500;
             phase = 1;
     
-            for(auto & InfernalPoint : InfernalPoints)
-                positions.push_back(&InfernalPoint);
+            ResetFreeInfernalsPosition();
+
+            pInstance->HandleGameObject(pInstance->GetData64(DATA_GAMEOBJECT_NETHER_DOOR), true); // open the door 
     
-            if(pInstance)
-            {
-                GameObject* Door = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_GAMEOBJECT_NETHER_DOOR));
-                if(Door)
-                {
-                    Door->UseDoorOrButton();
-                }
-    
-                pInstance->SetData(DATA_MALCHEZZAR_EVENT, NOT_STARTED);
-            }
+            pInstance->SetData(DATA_MALCHEZZAR_EVENT, NOT_STARTED);
         }
     
         void KilledUnit(Unit *victim)
@@ -331,52 +264,41 @@ public:
             AxesCleanup();
             ClearWeapons();
             InfernalCleanup();
-            positions.clear();
+
+            pInstance->HandleGameObject(pInstance->GetData64(DATA_GAMEOBJECT_NETHER_DOOR), true); //open door
     
-            for(auto & InfernalPoint : InfernalPoints)
-                positions.push_back(&InfernalPoint);
-    
-            if(pInstance)
-            {
-                GameObject* Door = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_GAMEOBJECT_NETHER_DOOR));
-                if(Door)
-                {
-                    Door->UseDoorOrButton();
-                }
-    
-                pInstance->SetData(DATA_MALCHEZZAR_EVENT, DONE);
-            }
+            pInstance->SetData(DATA_MALCHEZZAR_EVENT, DONE);
         }
     
         void EnterCombat(Unit *who)
         override {
             DoScriptText(SAY_AGGRO, me);
+
+            pInstance->HandleGameObject(pInstance->GetData64(DATA_GAMEOBJECT_NETHER_DOOR), false); // close the door leading further in
     
-            if(pInstance)
-            {
-                GameObject* Door = GameObject::GetGameObject((*me),pInstance->GetData64(DATA_GAMEOBJECT_NETHER_DOOR));
-                if(Door)
-                {
-                    Door->ResetDoorOrButton();
-                }
-    
-                pInstance->SetData(DATA_MALCHEZZAR_EVENT, IN_PROGRESS);
-            }
+            pInstance->SetData(DATA_MALCHEZZAR_EVENT, IN_PROGRESS);
         }
     
         void InfernalCleanup()
         {
-            //Infernal Cleanup
-            for(uint64 & infernal : infernals)
+            std::list<Creature*> infernals;
+            me->GetCreatureListWithEntryInGrid(infernals, CREATURE_INFERNAL, 250.0f);
+
+            if (infernals.empty())
             {
-                Unit *pInfernal = ObjectAccessor::GetUnit(*me, infernal);
-                if(pInfernal && pInfernal->IsAlive())
+                TC_LOG_WARN("scripts", "Malchezaar did not find any infernals to clean");
+                return;
+            }
+
+            //Infernal Cleanup
+            for(auto& infernal : infernals)
+            {
+                if(infernal->IsAlive())
                 {
-                    pInfernal->SetVisible(false);
-                    pInfernal->SetDeathState(JUST_DIED);
+                    infernal->SetVisible(false);
+                    infernal->SetDeathState(JUST_DIED);
                 }
             }
-            infernals.clear();
         }
     
         void AxesCleanup()
@@ -671,11 +593,11 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_malchezaarAI(creature);
+        return GetKarazhanAI<boss_malchezaarAI>(creature);
     }
 };
 
-
+//This npc summons an infernal to a random position when hit by spell SPELL_INFERNAL_RELAY_TRIGGER
 class npc_infernal_relay : public CreatureScript
 {
 public:
@@ -695,44 +617,42 @@ public:
     
         void SummonInfernal()
         {
-            Creature* malch = nullptr;
-            float posX,posY,posZ;
-            InfernalPoint* point = nullptr;
-            if(me->GetMapId() != 532)
+            float posX, posY, posZ;
+            if(me->GetMapId() != 532) //not kara
             {
-                me->GetRandomPoint(me, 60, posX, posY, posZ);
+                me->GetRandomPoint(me, 60.0f, posX, posY, posZ);
             }
             else
             {
-                if(!pInstance) 
-                    return;
-                malch = ObjectAccessor::GetCreature(*me,pInstance->GetData64(DATA_MALCHEZAAR));
+                Creature* malch = ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_MALCHEZAAR));
                 if(!malch)
                 {
                     TC_LOG_ERROR("scripts","infernal_relayAI : could not find malchezaar");
                     return;
                 }
-                point = (InfernalPoint*)malch->AI()->message(MESSAGE_GET_RANDOM_POSITION,0);
-                if(!point) 
+                auto malchAI = dynamic_cast<boss_malchezaar::boss_malchezaarAI*>(malch->GetAI());
+                if (!malchAI)
+                {
+                    TC_LOG_ERROR("scripts", "infernal_relayAI : Malchezaar has wrong AI");
+                    return;
+                }
+                
+                bool ok = malchAI->GetRandomInferalPosition(posX, posY);
+                if(!ok)
                 {
                     TC_LOG_ERROR("scripts","infernal_relayAI : Malchezaar did not return any point");
                     return;
                 }
     
-                posX = point->x;
-                posY = point->y;
                 posZ = INFERNAL_Z;
             }
     
             //creature is faction 35 at spawn
-            if (Creature *Infernal = me->SummonCreature(NETHERSPITE_INFERNAL, posX, posY, posZ, 0, TEMPSUMMON_TIMED_DESPAWN, 180000))
+            if (Creature *Infernal = me->SummonCreature(NETHERSPITE_INFERNAL, posX, posY, posZ, 0, TEMPSUMMON_TIMED_DESPAWN, 20 * MINUTE * IN_MILLISECONDS))
             {
                 //creature is invisible until SPELL_INFERNAL_RELAY touch it
                 Infernal->SetUInt32Value(UNIT_FIELD_DISPLAYID, INFERNAL_MODEL_INVISIBLE);
-                Infernal->AI()->message(MESSAGE_SET_POINT,(uint64)point);
                 DoCast(Infernal, SPELL_INFERNAL_RELAY);
-                if(malch)
-                    malch->AI()->message(MESSAGE_ADD_INFERNAL,Infernal->GetGUID());
             }
         }
     
@@ -750,7 +670,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new infernal_relayAI(creature);
+        return GetKarazhanAI<infernal_relayAI>(creature);
     }
 };
 
@@ -758,9 +678,6 @@ public:
 void AddSC_boss_malchezaar()
 {
     new boss_malchezaar();
-
     new netherspite_infernal();
-
     new npc_infernal_relay();
 }
-

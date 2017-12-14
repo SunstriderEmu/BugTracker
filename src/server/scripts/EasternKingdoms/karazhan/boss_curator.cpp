@@ -213,8 +213,9 @@ class boss_curator : public CreatureScript
     };
     
     CreatureAI* GetAI(Creature* creature) const
-    override {
-        return new boss_curatorAI(creature);
+    override 
+    {
+        return GetKarazhanAI<boss_curatorAI>(creature);
     }
 };
 
