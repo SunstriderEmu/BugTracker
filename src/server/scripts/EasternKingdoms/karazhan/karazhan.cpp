@@ -166,9 +166,9 @@ public:
                  if (GameObject* Door = GameObject::GetGameObject((*me), pInstance->GetData64(DATA_GAMEOBJECT_STAGEDOORLEFT)))
                  {
                     if (RaidWiped)
-                        Door->UseDoorOrButton();
+                        pInstance->HandleGameObject(pInstance->GetData64(DATA_GAMEOBJECT_STAGEDOORLEFT), true);
                     else
-                        Door->ResetDoorOrButton();
+                        pInstance->HandleGameObject(pInstance->GetData64(DATA_GAMEOBJECT_STAGEDOORLEFT), false);
                  }
     
                  if (GameObject* Curtain = GameObject::GetGameObject((*me), pInstance->GetData64(DATA_GAMEOBJECT_CURTAINS)))
@@ -200,8 +200,7 @@ public:
                 case 5:
                     if(pInstance)
                     {
-                        if (GameObject* Door = GameObject::GetGameObject((*me), pInstance->GetData64(DATA_GAMEOBJECT_STAGEDOORLEFT)))
-                            Door->ResetDoorOrButton();
+                        pInstance->HandleGameObject(pInstance->GetData64(DATA_GAMEOBJECT_STAGEDOORLEFT), false);
                     }
                     SetEscortPaused(false);
                     PerformanceReady = true;

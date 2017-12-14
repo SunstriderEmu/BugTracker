@@ -157,7 +157,7 @@ public:
             case 15688:   TerestianGUID = creature->GetGUID();   break;
             case 15687:   MoroesGUID = creature->GetGUID();      break;
             case 16816:   ImageGUID = creature->GetGUID();       break;
-            case 15690:   MalchezaarGUID = creature->GetGUID();  break;
+            case NPC_MALCHEZAAR:   MalchezaarGUID = creature->GetGUID();  break;
             case NPC_PAWN_H:
             case NPC_KNIGHT_H:
             case NPC_QUEEN_H:

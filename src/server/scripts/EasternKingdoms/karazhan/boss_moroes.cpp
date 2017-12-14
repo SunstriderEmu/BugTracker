@@ -364,7 +364,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_moroesAI(creature);
+        return GetKarazhanAI<boss_moroesAI>(creature);
     }
 };
 
@@ -482,7 +482,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_baroness_dorothea_millstipeAI(creature);
+        return GetKarazhanAI<boss_baroness_dorothea_millstipeAI>(creature);
     }
 };
 
@@ -542,7 +542,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_baron_rafe_dreugerAI(creature);
+        return GetKarazhanAI<boss_baron_rafe_dreugerAI>(creature);
     }
 };
 
@@ -621,7 +621,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_lady_catriona_von_indiAI(creature);
+        return GetKarazhanAI<boss_lady_catriona_von_indiAI>(creature);
     }
 };
 
@@ -698,7 +698,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_lady_keira_berrybuckAI(creature);
+        return GetKarazhanAI<boss_lady_keira_berrybuckAI>(creature);
     }
 };
 
@@ -757,7 +757,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_lord_robin_darisAI(creature);
+        return GetKarazhanAI<boss_lord_robin_darisAI>(creature);
     }
 };
 
@@ -824,26 +824,19 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_lord_crispin_ferenceAI(creature);
+        return GetKarazhanAI<boss_lord_crispin_ferenceAI>(creature);
     }
 };
 
 
 void AddSC_boss_moroes()
 {
-
     new boss_moroes();
-
     new boss_baroness_dorothea_millstipe();
-
     new boss_baron_rafe_dreuger();
-
     new boss_lady_catriona_von_indi();
-
     new boss_lady_keira_berrybuck();
-
     new boss_lord_robin_daris();
-
     new boss_lord_crispin_ference();
 }
 
