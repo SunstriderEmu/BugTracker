@@ -27,12 +27,13 @@ EndScriptData */
 
 BossBoundaryData const boundaries =
 {
-    { DATA_ATTUMEN_EVENT,           new CircleBoundary(Position(-11126.0f, -1929.0f), 55.0f) },
-    { DATA_MAIDENOFVIRTUE_EVENT,    new CircleBoundary(Position(-10945.0f, -2103.0f), 50.0f) },
-    { DATA_MOROES_EVENT,            new RectangleBoundary(-11030.0f, -10935.0f, -1980.0f, -1850.0f ) },
+    //not sure which ones should reset, only those with doors are enabled for now
+    //{ DATA_ATTUMEN_EVENT,           new CircleBoundary(Position(-11126.0f, -1929.0f), 55.0f) },
+    //{ DATA_MAIDENOFVIRTUE_EVENT,    new CircleBoundary(Position(-10945.0f, -2103.0f), 50.0f) },
+    //{ DATA_MOROES_EVENT,            new RectangleBoundary(-11030.0f, -10935.0f, -1980.0f, -1850.0f ) },
     { DATA_OPERA_EVENT,             new CircleBoundary(Position(-10894.0f, -1775.0f), 50.0f) },
-    { DATA_CURATOR_EVENT,           new CircleBoundary(Position(-11135.0f, -1882.0f), 125.0f) },
-    { DATA_TERESTIAN_EVENT,         new CircleBoundary(Position(-11229.0f, -1696.0f), 40.0f) },
+    //{ DATA_CURATOR_EVENT,           new CircleBoundary(Position(-11135.0f, -1882.0f), 125.0f) },
+    //{ DATA_TERESTIAN_EVENT,         new CircleBoundary(Position(-11229.0f, -1696.0f), 40.0f) },
     { DATA_SHADEOFARAN_EVENT,       new CircleBoundary(Position(-11164.0f, -1911.0f), 50.0f) },
     { DATA_NETHERSPITE_EVENT,       new CircleBoundary(Position(-11144.0f, -1632.0f), 100.0f) },
     { DATA_NIGHTBANE_EVENT,         new CircleBoundary(Position(-11134.0f, -1909.0f), 200.0f) },
