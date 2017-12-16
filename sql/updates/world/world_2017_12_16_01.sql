@@ -15,7 +15,7 @@ UPDATE creature_template SET HealthModifier = 20, ArmorModifier = 1, DamageModif
 --all bosses
 UPDATE creature_template SET DamageModifier = 7.5, ArmorModifier = 1 WHERE entry IN (11949, 11947, 11946, 11948);
 --drek & vanndar
-UPDATE creature_template SET HealthModifier = 3, DamageModifer = 27.5 WHERE entry IN (11946, 11948);
+UPDATE creature_template SET HealthModifier = 3, DamageModifier = 27.5 WHERE entry IN (11946, 11948);
 --galv
 UPDATE creature_template SET HealthModifier = 25 WHERE entry = 11947;
 --balinda
@@ -26,7 +26,7 @@ UPDATE creature_template SET HealthModifier = 1.5, DamageModifier = 1.5 WHERE en
 UPDATE creature_model_info SET combat_reach = 1.5 WHERE modelid IN (13400, 13401);
 
 -- some guards
-UPDATE creature_template SET HealthModifier = 0.7 AND DamageModifier = 2 WHERE entry IN (12050, 12053)
+UPDATE creature_template SET HealthModifier = 0.7 AND DamageModifier = 2 WHERE entry IN (12050, 12053);
 
 -- remove unused smartscripts
 DELETE FROM smart_scripts WHERE entryorguid IN (11949, 11947, 11946, 11948);
