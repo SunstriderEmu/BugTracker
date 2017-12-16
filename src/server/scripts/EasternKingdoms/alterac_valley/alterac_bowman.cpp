@@ -1,7 +1,7 @@
 #define MAX_RANGE 75.0f
 #define SPELL_SHOOT 22121
 #define SPELL_INFINITE_ROOT 53107
-#define TIMER_SHOOT urand(2000,3000)
+#define TIMER_SHOOT urand(2000, 3000)
 
 
 class alterac_bowman : public CreatureScript
@@ -16,77 +16,116 @@ public:
         alterac_bowmanAI(Creature *c) : ScriptedAI(c) 
         {   
             shoot_timer = 0;
-            SetCombatDistance(80.0f); //Disable melee visual
+            me->SetCombatDistance(80.0f); //Disable melee visual
             SetCombatMovementAllowed(false);
             me->SetSheath(SHEATH_STATE_RANGED);
         }
     
         uint16 shoot_timer;
-        uint64 targetGUID;
+        uint64 rangedTargetGUID;
+        uint64 lastMeleeUnitGUID;
     
-        void JustReachedHome()
-        override {
-           me->AddAura(SPELL_INFINITE_ROOT,me); //this creature can't be displaced even via CM
+        void JustReachedHome() override 
+        {
+           me->AddAura(SPELL_INFINITE_ROOT, me); //this creature can't be displaced even via CM
         }
     
-        void Reset()
-        override {   
-           targetGUID = 0;
+        void Reset() override 
+        {   
+            rangedTargetGUID = 0;
         }
-    
-        void UpdateAI(const uint32 diff)
-        override {    
-            if(!targetGUID)
+
+        void UpdateAI(const uint32 diff) override 
+        {    
+            // Melee handling
+            if (Unit* victim = me->GetVictim())
             {
-                if(me->GetVictim())
-                    EnterEvadeMode();
-                return;
-            }
-    
-            Unit* target = ObjectAccessor::GetUnit(*me,targetGUID);
-            if(!target)
-            {
-                targetGUID = 0;
-                return;
-            }
-    
-            if(!isValidTarget(target))
-            {
-                EnterEvadeMode();
-                return;
-            }
-    
-            if(me->GetDistance(target) > NOMINAL_MELEE_RANGE)
-            {
-                if (shoot_timer < diff)
+                if (me->IsWithinMeleeRange(victim))
                 {
-                    if(me->GetVictim() != target)
+                    DoMeleeAttackIfReady();
+                    return;
+                }
+                else 
+                {
+                    if (Unit* lastMeleeUnit = ObjectAccessor::GetUnit(*me, lastMeleeUnitGUID))
                     {
-                        AttackStart(target);
+                        if (me->IsWithinMeleeRange(lastMeleeUnit) && me->IsValidAttackTarget(lastMeleeUnit))
+                        {
+                            if (me->GetVictim() != lastMeleeUnit)
+                                AttackStart(lastMeleeUnit);
+
+                            DoMeleeAttackIfReady();
+                            return;
+                        }
                     }
-                        
-                   // me->SetInFront(target);
-                    DoCast(target,SPELL_SHOOT,false);
-                    shoot_timer = TIMER_SHOOT;
-                } else shoot_timer -= diff;
-            } else {
-                DoMeleeAttackIfReady();
+                    lastMeleeUnitGUID = 0;
+                }
             }
+
+            //okay, no target in melee, let's try to pick a distant one
+
+            if (rangedTargetGUID)
+            {
+                Unit* rangedTarget = ObjectAccessor::GetUnit(*me, rangedTargetGUID);
+                if (!rangedTarget || !IsValidRangedTarget(rangedTarget))
+                {
+                    rangedTarget = nullptr;
+                    rangedTargetGUID = 0;
+                }
+
+                if (rangedTarget)
+                {
+                    if (shoot_timer < diff)
+                    {
+                        if (me->GetVictim() != rangedTarget)
+                        {
+                            bool attackOk = me->Attack(rangedTarget, false);
+                            if (!attackOk)
+                            {
+                                rangedTarget = nullptr;
+                                rangedTargetGUID = 0;
+                                return;
+                            }
+                        }
+
+                        // me->SetInFront(target);
+                        if (DoCast(rangedTarget, SPELL_SHOOT, false) == SPELL_CAST_OK)
+                        {
+                            shoot_timer = TIMER_SHOOT;
+                        }
+                        else 
+                        {
+                            rangedTarget = nullptr;
+                            rangedTargetGUID = 0;
+                        }
+                    }
+                    else
+                        shoot_timer -= diff;
+                }
+            }
+
+            if(!rangedTargetGUID)
+                UpdateVictim(); //Evade if not in combat
         }
         
-        void MoveInLineOfSight(Unit *who)
-        override {    
-            if (   !targetGUID
-                && isValidTarget(who))
-                    targetGUID = who->GetGUID();
+        void MoveInLineOfSight(Unit *who) override 
+        {    
+            if (rangedTargetGUID && me->IsWithinMeleeRange(who) && me->CanAggro(who) == CAN_ATTACK_RESULT_OK)
+                lastMeleeUnitGUID = who->GetGUID();
+
+            if (!rangedTargetGUID
+                && IsValidRangedTarget(who))
+            {
+                rangedTargetGUID = who->GetGUID();
+            }
         }
-    
-        bool isValidTarget(Unit* target)
+
+        bool IsValidRangedTarget(Unit* target)
         {
             float distance = me->GetDistance(target);
             if (me->CanAggro(target) == CAN_ATTACK_RESULT_OK
                 && (distance < MAX_RANGE) 
-                && (distance > NOMINAL_MELEE_RANGE)
+                && !me->IsWithinMeleeRange(target)
                 && me->IsWithinLOSInMap(target))
                     return true;
             
@@ -103,7 +142,6 @@ public:
 
 void AddSC_alterac_bowman()
 {
-
     new alterac_bowman();
 }
 

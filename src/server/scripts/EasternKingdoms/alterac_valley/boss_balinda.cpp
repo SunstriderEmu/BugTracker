@@ -1,198 +1,174 @@
-/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */
 
-/* ScriptData
-SDName: Boss_Balinda
-SD%Complete: 
-SDComment: Timers should be adjusted
-EndScriptData */
+#include "ScriptMgr.h"
+#include "ObjectAccessor.h"
+#include "ScriptedCreature.h"
 
-#define YELL_AGGRO                  -2100019
-#define YELL_EVADE                  -2100020
-
-#define SPELL_ARCANE_EXPLOSION      46608
-#define SPELL_CONE_OF_COLD          38384
-#define SPELL_FIREBALL              46988
-#define SPELL_FROSTBOLT             46987
-#define WATER_ELEMENTAL             25040
-#define SPELL_WATERBOLT             46983
-
-
-
-class mob_water_elemental : public CreatureScript
+enum Spells
 {
-public:
-    mob_water_elemental() : CreatureScript("mob_water_elemental")
-    { }
+    SPELL_ARCANE_EXPLOSION                  = 46608,
+    SPELL_CONE_OF_COLD                      = 38384,
+    SPELL_FIREBALL                          = 46988,
+    SPELL_FROSTBOLT                         = 46987,
+    SPELL_SUMMON_WATER_ELEMENTAL            = 45067,
+    //LK ONLY SPELL_ICEBLOCK                          = 46604
+};
 
-    class  mob_water_elementalAI : public ScriptedAI
-    {
-    public:
-        mob_water_elementalAI(Creature *c) : ScriptedAI(c)
-        {
-            SetRestoreCombatMovementOnOOM(true);
-        }
+enum Texts
+{
+    SAY_AGGRO                              = 0,
+    SAY_EVADE                              = 1,
+    SAY_SALVATION                          = 2,
+};
 
-        uint32 WaterBoltTimer;
-        uint64 balindaGUID;
-        uint32 ResetTimer;
+enum Action
+{
+    ACTION_BUFF_YELL                        = -30001 // shared from Battleground
+};
 
-        void Reset() override {
-            WaterBoltTimer = 3000;
-            ResetTimer = 5000;
-            SetCombatMovementAllowed(false);
-        }
-
-        void JustDied(Unit* killer) override;
-        void SummonedCreatureDespawn(Creature*) override;
-
-        void UpdateAI(const uint32 diff) override {
-            if (!UpdateVictim())
-                return;
-
-            if (WaterBoltTimer <= diff) {
-                DoCast(me->GetVictim(), SPELL_WATERBOLT);
-                WaterBoltTimer = 5000;
-            }
-            else WaterBoltTimer -= diff;
-
-            // check if creature is not outside of building
-            if (ResetTimer <= diff) {
-                float x, y, z;
-                me->GetPosition(x, y, z);
-                if (x > -6.0f)
-                    EnterEvadeMode();
-                ResetTimer = 5000;
-            }
-            else ResetTimer -= diff;
-
-            DoMeleeAttackIfReady();
-        }
-    };
-
-    CreatureAI* GetAI(Creature* creature) const override
-    {
-        return new mob_water_elementalAI(creature);
-    }
+enum Events
+{
+    // Balinda
+    EVENT_ARCANE_EXPLOSION = 1,
+    EVENT_CONE_OF_COLD,
+    EVENT_FIREBOLT,
+    EVENT_FROSTBOLT,
+    EVENT_SUMMON_WATER_ELEMENTAL,
+    EVENT_CHECK_RESET,          // Checks if Balinda or the Water Elemental are outside of building.
 };
 
 class boss_balinda : public CreatureScript
 {
 public:
-    boss_balinda() : CreatureScript("boss_balinda")
-    { }
+    boss_balinda() : CreatureScript("boss_balinda") { }
 
-    class  boss_balindaAI : public ScriptedAI
+    struct boss_balindaAI : public ScriptedAI
     {
-        public:
-        boss_balindaAI(Creature *c) : ScriptedAI(c), summons(me) 
+        boss_balindaAI(Creature* creature) : ScriptedAI(creature), summons(me)
         {
-            SetRestoreCombatMovementOnOOM(true);
+            Initialize();
         }
-    
-    
-        uint32 ArcaneExplosionTimer;
-        uint32 ConeofcoldTimer;
-        uint32 FireboltTimer;
-        uint32 FrostboltTimer;
-        uint32 ResetTimer;
-        uint32 WaterElementalTimer;
-           
-        SummonList summons;
-           
+
+        void Initialize()
+        {
+            WaterElementalGUID.Clear();
+            //HasCastIceblock = false;
+        }
+
         void Reset() override
         {
-            ArcaneExplosionTimer    = (10+rand()%5)*IN_MILLISECONDS;
-            ConeofcoldTimer         = 8000;
-            FireboltTimer           = 1000;
-            FrostboltTimer          = 4000;
-            ResetTimer              = 5000;
-            WaterElementalTimer     = 0;
-    
-            summons.DespawnAll();
-            
-            me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_HASTE_SPELLS, true);
-            SetCombatMovementAllowed(false);
-        }
-    
-        void EnterCombat(Unit *who) override
-        {
-            DoScriptText(YELL_AGGRO, me);
-        }
-    
-        void JustDied(Unit* Killer) override
-        {
+            Initialize();
+            events.Reset();
             summons.DespawnAll();
         }
-        
-        void JustSummoned(Creature* pSummon) override
+
+        void EnterCombat(Unit* /*who*/) override
         {
-            summons.Summon(pSummon);
+            Talk(SAY_AGGRO);
+            events.ScheduleEvent(EVENT_ARCANE_EXPLOSION, urand(5 * IN_MILLISECONDS, 15 * IN_MILLISECONDS));
+            events.ScheduleEvent(EVENT_CONE_OF_COLD, 8 * IN_MILLISECONDS);
+            events.ScheduleEvent(EVENT_FIREBOLT, 1 * IN_MILLISECONDS);
+            events.ScheduleEvent(EVENT_FROSTBOLT, 4 * IN_MILLISECONDS);
+            events.ScheduleEvent(EVENT_SUMMON_WATER_ELEMENTAL, 3 * IN_MILLISECONDS);
+            events.ScheduleEvent(EVENT_CHECK_RESET, 5 * IN_MILLISECONDS);
         }
-        
-        void SummonedCreatureDespawn(Creature* pSummon) override { summons.Despawn(pSummon); }
-    
-        void UpdateAI(const uint32 diff) override
+
+        void JustSummoned(Creature* summoned) override
+        {
+            summoned->AI()->AttackStart(SelectTarget(SELECT_TARGET_RANDOM, 0, 50, true));
+            summoned->SetFaction(me->GetFaction());
+            WaterElementalGUID = summoned->GetGUID();
+            summons.Summon(summoned);
+        }
+
+        void SummonedCreatureDespawn(Creature* summoned) override
+        {
+            summons.Despawn(summoned);
+        }
+
+        void JustDied(Unit* /*killer*/) override
+        {
+            summons.DespawnAll();
+        }
+
+        void DoAction(int32 actionId) override
+        {
+            if (actionId == ACTION_BUFF_YELL)
+                Talk(SAY_AGGRO);
+        }
+
+        /* LK only
+        void DamageTaken(Unit* attacker, uint32& damage) override
+        {
+            if (me->HealthBelowPctDamaged(40, damage) && !HasCastIceblock)
+            {
+                DoCast(SPELL_ICEBLOCK);
+                HasCastIceblock = true;
+            }
+        }
+        */
+
+        void UpdateAI(uint32 diff) override
         {
             if (!UpdateVictim())
                 return;
-    
-            if (WaterElementalTimer <= diff) {
-                if (Creature* elemental = DoSpawnCreature(WATER_ELEMENTAL, 0, 0, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 45000)) {
-                    ((mob_water_elemental::mob_water_elementalAI*)elemental->AI())->balindaGUID = me->GetGUID();
-                    elemental->SetLevel(70);
-                    elemental->AI()->AttackStart(SelectTarget(SELECT_TARGET_RANDOM, 0));
-                    elemental->SetFaction(me->GetFaction());         
+
+            events.Update(diff);
+
+            if (me->HasUnitState(UNIT_STATE_CASTING))
+                return;
+
+            while (uint32 eventId = events.ExecuteEvent())
+            {
+                switch (eventId)
+                {
+                    case EVENT_ARCANE_EXPLOSION:
+                        DoCastVictim(SPELL_ARCANE_EXPLOSION);
+                        events.ScheduleEvent(EVENT_ARCANE_EXPLOSION, urand(5 * SECOND * IN_MILLISECONDS, 15 * SECOND * IN_MILLISECONDS));
+                        break;
+                    case EVENT_CONE_OF_COLD:
+                        DoCastVictim(SPELL_CONE_OF_COLD);
+                        events.ScheduleEvent(EVENT_CONE_OF_COLD, urand(10 * SECOND * IN_MILLISECONDS, 20 * SECOND * IN_MILLISECONDS));
+                        break;
+                    case EVENT_FIREBOLT:
+                        DoCastVictim(SPELL_FIREBALL);
+                        events.ScheduleEvent(EVENT_FIREBOLT, urand(5 * SECOND * IN_MILLISECONDS, 9 * SECOND * IN_MILLISECONDS));
+                        break;
+                    case EVENT_FROSTBOLT:
+                        DoCastVictim(SPELL_FROSTBOLT);
+                        events.ScheduleEvent(EVENT_FROSTBOLT, urand(4 * IN_MILLISECONDS, 12 * IN_MILLISECONDS));
+                        break;
+                    case EVENT_SUMMON_WATER_ELEMENTAL:
+                        if (summons.empty())
+                            DoCastSelf(SPELL_SUMMON_WATER_ELEMENTAL);
+                        events.ScheduleEvent(EVENT_SUMMON_WATER_ELEMENTAL, 5 * SECOND * IN_MILLISECONDS);
+                        break;
+                    case EVENT_CHECK_RESET:
+                        if (me->GetDistance2d(me->GetHomePosition().GetPositionX(), me->GetHomePosition().GetPositionY()) > 50)
+                        {
+                            EnterEvadeMode();
+                            Talk(SAY_EVADE);
+                        }
+                        if (Creature* elemental = ObjectAccessor::GetCreature(*me, WaterElementalGUID))
+                            if (elemental->GetDistance2d(me->GetHomePosition().GetPositionX(), me->GetHomePosition().GetPositionY()) > 50)
+                                elemental->AI()->EnterEvadeMode();
+                        events.ScheduleEvent(EVENT_CHECK_RESET, 5 * IN_MILLISECONDS);
+                        break;
+                    default:
+                        break;
                 }
-                WaterElementalTimer = 50000;
-            } else WaterElementalTimer -= diff;
-    
-            if (ArcaneExplosionTimer <= diff) {
-                if(DoCast(me->GetVictim(), SPELL_ARCANE_EXPLOSION) == SPELL_CAST_OK)
-                    ArcaneExplosionTimer = (10+rand()%5)*IN_MILLISECONDS;
-            } else ArcaneExplosionTimer -= diff;
-    
-            if (ConeofcoldTimer <= diff) {
-                if(DoCast(me->GetVictim(), SPELL_CONE_OF_COLD) == SPELL_CAST_OK)
-                    ConeofcoldTimer = (10+rand()%10)*IN_MILLISECONDS;
-            } else ConeofcoldTimer -= diff;
-    
-            if (FireboltTimer <= diff) {
-                if(DoCast(me->GetVictim(), SPELL_FIREBALL) == SPELL_CAST_OK)
-                    FireboltTimer = (5+rand()%4)*IN_MILLISECONDS;
-            } else FireboltTimer -= diff;
-    
-            if (FrostboltTimer <= diff) {
-                if(DoCast(me->GetVictim(), SPELL_FROSTBOLT) == SPELL_CAST_OK)
-                    FrostboltTimer = (4+rand()%8)*IN_MILLISECONDS;
-            } else FrostboltTimer -= diff;
-    
-            // check if creature is not outside of building
-            if(ResetTimer <= diff) {
-                float x, y, z;
-                me->GetPosition(x, y, z);
-                if (x > -6) {
-                    DoScriptText(YELL_EVADE, me);
-                    EnterEvadeMode();
-                }
-                ResetTimer = 5000;
-            } else ResetTimer -= diff;
-    
+
+                if (me->HasUnitState(UNIT_STATE_CASTING))
+                    return;
+            }
+
             DoMeleeAttackIfReady();
         }
+
+    private:
+        EventMap events;
+        SummonList summons;
+        ObjectGuid WaterElementalGUID;
+        //bool HasCastIceblock;
     };
 
     CreatureAI* GetAI(Creature* creature) const override
@@ -201,23 +177,7 @@ public:
     }
 };
 
-
-void mob_water_elemental::mob_water_elementalAI::JustDied(Unit *killer)
-{
-    Creature* balinda = (ObjectAccessor::GetCreature((*me), balindaGUID));
-    ((boss_balinda::boss_balindaAI*)balinda->AI())->WaterElementalTimer = 8000;
-}
-
-void mob_water_elemental::mob_water_elementalAI::SummonedCreatureDespawn(Creature*)
-{
-    Creature* balinda = (ObjectAccessor::GetCreature((*me), balindaGUID));
-    ((boss_balinda::boss_balindaAI*)balinda->AI())->WaterElementalTimer = 8000;
-}
-
 void AddSC_boss_balinda()
 {
-    
-    new boss_balinda();
-
-    new mob_water_elemental();
-};
+    new boss_balinda;
+}
