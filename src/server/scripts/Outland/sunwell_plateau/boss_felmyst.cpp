@@ -1,19 +1,4 @@
-/* Copyright (C) 2009 Trinity <http://www.trinitycore.org/>
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*/
-
+// Fixme - triggers are affected by aoe and die
 
 #include "def_sunwell_plateau.h"
 
@@ -82,8 +67,7 @@ enum PhaseFelmyst
     PHASE_RESET  = 2,
     PHASE_PULL   = 3, //ready to be pull
     PHASE_GROUND = 4,
-    PHASE_ENC    = 5,
-    PHASE_FLIGHT = 6
+    PHASE_FLIGHT = 5
 };
 
 #define ORIENTATION_LEFT    4.7984
@@ -150,7 +134,7 @@ public:
         uint8 phase;
         bool firstInit = true;
 
-        Unit* encapsTarget;
+        uint64 encapsTargetGUID;
 
         void Reset()
         override {
@@ -158,7 +142,7 @@ public:
             direction = false;
             inChaseOnFlight = false;
             chosenLane = 0;
-            encapsTarget = nullptr;
+            encapsTargetGUID = 0;
             flightPhaseTimer = 60000;
             flightPhase = 0;
             introPhaseTimer = 0;
@@ -168,22 +152,13 @@ public:
 
             //me->ApplyModFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE, true);
 
-            setPhase(PHASE_NULL);
+            events.Reset();
             if (firstInit)
                 setPhase(PHASE_INTRO);
             else
                 setPhase(PHASE_RESET);
 
             firstInit = false;
-
-            events.RescheduleEvent(EVENT_CLEAVE, urand(5000, 10000), 0, PHASE_GROUND);
-            events.RescheduleEvent(EVENT_CORROSION, urand(10000, 20000), 0, PHASE_GROUND);
-            events.RescheduleEvent(EVENT_GAS_NOVA, urand(21000, 26000), 0, PHASE_GROUND);
-            events.RescheduleEvent(EVENT_ENCAPSULATE, 33000, 0, PHASE_GROUND);
-            events.RescheduleEvent(EVENT_ENCAPS_WARN, 32000, 0, PHASE_GROUND);
-            events.CancelEvent(EVENT_FOG_CORRUPTION);
-            events.CancelEvent(EVENT_DEMONIC_VAPOR);
-            events.CancelEvent(EVENT_BERSERK);
 
             me->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 10);
             me->SetFloatValue(UNIT_FIELD_COMBATREACH, 10);
@@ -383,9 +358,9 @@ public:
             }
         }
 
-        void DamageTaken(Unit* attacker, uint32& damage)
-        override {
-            if(phase != PHASE_GROUND && phase != PHASE_ENC && damage >= me->GetHealth())
+        void DamageTaken(Unit* attacker, uint32& damage) override 
+        {
+            if(phase != PHASE_GROUND && damage >= me->GetHealth())
                 damage = 0;
         }
 
@@ -451,7 +426,7 @@ public:
                         flightPhase++;
                         break;
                     case 1: // Lift off : move higher
-                        me->GetMotionMaster()->MovePoint(0, me->GetPositionX()+1, me->GetPositionY(), me->GetPositionZ() + 15.0f,false);
+                        me->GetMotionMaster()->MovePoint(0, me->GetPositionX()+1, me->GetPositionY(), me->GetPositionZ() + 15.0f, false);
                         flightPhaseTimer = 30000; //wait 30 sec for the demonic vapor part
                         events.RescheduleEvent(EVENT_DEMONIC_VAPOR, 3000, 0, PHASE_FLIGHT);
                         flightPhase++;
@@ -459,9 +434,9 @@ public:
                     case 2: //fly near breath start position
                         me->SetSpeedRate(MOVE_RUN, 4.0f, true);
                         if (!direction)
-                            me->GetMotionMaster()->MovePoint(1, flightMobRight[0], flightMobRight[1], flightMobRight[2],false);
+                            me->GetMotionMaster()->MovePoint(1, flightMobRight[0], flightMobRight[1], flightMobRight[2], false);
                         else
-                            me->GetMotionMaster()->MovePoint(1, flightMobLeft[0], flightMobLeft[1], flightMobLeft[2],false);
+                            me->GetMotionMaster()->MovePoint(1, flightMobLeft[0], flightMobLeft[1], flightMobLeft[2], false);
 
                         flightPhase++;
                         flightPhaseTimer = 20000; //just to be sure to not stay stuck
@@ -474,9 +449,9 @@ public:
                         me->SetSpeedRate(MOVE_RUN, 1.3f, true);
                         chosenLane = rand()%3;
                         if (!direction)
-                            me->GetMotionMaster()->MovePoint(1, rights[chosenLane][0], rights[chosenLane][1], rights[chosenLane][2],false);
+                            me->GetMotionMaster()->MovePoint(1, rights[chosenLane][0], rights[chosenLane][1], rights[chosenLane][2], false);
                         else
-                            me->GetMotionMaster()->MovePoint(1, lefts[chosenLane][0], lefts[chosenLane][1], lefts[chosenLane][2],false);
+                            me->GetMotionMaster()->MovePoint(1, lefts[chosenLane][0], lefts[chosenLane][1], lefts[chosenLane][2], false);
 
                         flightPhase++;
                         flightPhaseTimer = 20000; //just to be sure to not stay stuck
@@ -498,9 +473,9 @@ public:
                         break;
                     case 7: //start passage
                         if (!direction)
-                            me->GetMotionMaster()->MovePoint(2, lefts[chosenLane][0], lefts[chosenLane][1], lefts[chosenLane][2],false);
+                            me->GetMotionMaster()->MovePoint(2, lefts[chosenLane][0], lefts[chosenLane][1], lefts[chosenLane][2], false);
                         else
-                            me->GetMotionMaster()->MovePoint(2, rights[chosenLane][0], rights[chosenLane][1], rights[chosenLane][2],false);
+                            me->GetMotionMaster()->MovePoint(2, rights[chosenLane][0], rights[chosenLane][1], rights[chosenLane][2], false);
 
                         me->CastSpell(me, SPELL_FOG_BREATH, TRIGGERED_NONE);
                         flightPhaseTimer = 1500;
@@ -529,9 +504,9 @@ public:
                         break;
                     case 11: //prepare to land, landing is handled in onMovementInform
                         if (!origin)
-                            me->GetMotionMaster()->MovePoint(3, prepareLandingLoc[0][0],prepareLandingLoc[0][1],prepareLandingLoc[0][2],false);
+                            me->GetMotionMaster()->MovePoint(3, prepareLandingLoc[0][0],prepareLandingLoc[0][1],prepareLandingLoc[0][2], false);
                         else
-                            me->GetMotionMaster()->MovePoint(3, prepareLandingLoc[1][0],prepareLandingLoc[1][1],prepareLandingLoc[1][2],false);
+                            me->GetMotionMaster()->MovePoint(3, prepareLandingLoc[1][0],prepareLandingLoc[1][1],prepareLandingLoc[1][2], false);
 
                         flightPhase++;
                         flightPhaseTimer = 15000;
@@ -553,7 +528,12 @@ public:
                 handleIntro(diff);
                 return;
             }
-            
+
+            events.Update(diff);
+
+            if (me->IsNonMeleeSpellCast(false))
+                return;
+
             UpdateVictim();
 
             switch (phase)
@@ -597,14 +577,11 @@ public:
                     }
 
                     DoMeleeAttackIfReady();
-                    break;
-                case PHASE_ENC:
-                    if (encapsTarget)
-                        me->SetTarget(encapsTarget->GetGUID());
+                    if (encapsTargetGUID)
+                        if(Unit* encapsTarget = ObjectAccessor::GetUnit((*me), encapsTargetGUID))
+                            me->SetTarget(encapsTargetGUID);
                     break;
             }
-
-            events.Update(diff);
 
             switch (events.GetEvent())
             {
@@ -623,24 +600,26 @@ public:
                         events.RescheduleEvent(EVENT_GAS_NOVA, urand(21000, 26000), 0, PHASE_GROUND);
                     break;
                 case EVENT_ENCAPSULATE:
-                    if(encapsTarget)
-                        if (me->CastSpell(encapsTarget, SPELL_ENCAPSULATE_CHANNEL, TRIGGERED_NONE) == SPELL_CAST_OK)
-                        {
+                    if(encapsTargetGUID)
+                        if (Unit* encapsTarget = ObjectAccessor::GetUnit((*me), encapsTargetGUID))
+                            if (me->CastSpell(encapsTarget, SPELL_ENCAPSULATE_CHANNEL, TRIGGERED_NONE) == SPELL_CAST_OK)
+                            {
 
-                            phase = PHASE_GROUND;
+                                phase = PHASE_GROUND;
 
-                            if (Unit* tank = SelectTarget(SELECT_TARGET_TOPAGGRO, 0, 150.0f, true))
-                                me->SetTarget(tank->GetGUID());
+                                if (Unit* tank = SelectTarget(SELECT_TARGET_TOPAGGRO, 0, 150.0f, true))
+                                    me->SetTarget(tank->GetGUID());
 
-                            events.RescheduleEvent(EVENT_ENCAPSULATE, 33000, 0, PHASE_GROUND);
-                            events.RescheduleEvent(EVENT_ENCAPS_WARN, 32000, 0, PHASE_GROUND);
-                        }
+                                events.RescheduleEvent(EVENT_ENCAPSULATE, 33000, 0, PHASE_GROUND);
+                                events.RescheduleEvent(EVENT_ENCAPS_WARN, 32000, 0, PHASE_GROUND);
+                            }
                     break;
                 case EVENT_ENCAPS_WARN:
-                    if ((encapsTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 150.0f, true)))
-                        me->SetTarget(encapsTarget->GetGUID());
-
-                    setPhase(PHASE_ENC);
+                    if (Unit* encapsTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 150.0f, true))
+                    {
+                        encapsTargetGUID = encapsTarget->GetGUID();
+                        me->SetTarget(encapsTargetGUID);
+                    }
 
                     events.CancelEvent(EVENT_ENCAPS_WARN);
                     break;
