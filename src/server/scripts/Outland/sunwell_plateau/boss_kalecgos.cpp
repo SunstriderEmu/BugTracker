@@ -54,13 +54,18 @@ enum Quotes
 enum SpellIds
 {
     AURA_SUNWELL_RADIANCE       =   45769,
-    AURA_SPECTRAL_EXHAUSTION    =   44867,
-    AURA_SPECTRAL_REALM         =   46021,
+    SPELL_SPECTRAL_EXHAUSTION    =   44867,
+    SPELL_SPECTRAL_REALM_AURA         =   46021,
     AURA_SPECTRAL_INVISIBILITY  =   44801,
     AURA_DEMONIC_VISUAL         =   44800,
 
     SPELL_SPECTRAL_BLAST        =   44869,
-    SPELL_TELEPORT_SPECTRAL     =   46019,
+    SPELL_SPECTRAL_BLAST_EFFECT   = 44866,
+    SPELL_SPECTRAL_BLAST_VISUAL   = 46648,
+    SPELL_SPECTRAL_REALM_TRIGGER  = 44811,
+    SPELL_SPECTRAL_REALM_TELEPORT     =   46019,
+    SPELL_SPECTRAL_REALM_2        = 44845,
+    SPELL_SPECTRAL_REALM_REACTION = 44852,
     SPELL_ARCANE_BUFFET         =   45018,
     SPELL_FROST_BREATH          =   44799,
     SPELL_TAIL_LASH             =   45122,
@@ -75,6 +80,8 @@ enum SpellIds
 
     SPELL_HEROIC_STRIKE         =   29426/*45026*/,
     SPELL_REVITALIZE            =   45027
+
+    
 };
 
 #define GO_FAILED   "Vous ne pouvez pas faire cela maintenant."
@@ -105,17 +112,17 @@ public:
 
         bool GossipHello(Player* player) override
         {
-            if (player->HasAuraEffect(AURA_SPECTRAL_EXHAUSTION))
+            if (player->HasAuraEffect(SPELL_SPECTRAL_EXHAUSTION))
                 player->GetSession()->SendNotification(GO_FAILED);
             else {
-                player->CastSpell(player, SPELL_TELEPORT_SPECTRAL, TRIGGERED_FULL_MASK);
+                player->CastSpell(player, SPELL_SPECTRAL_REALM_TELEPORT, TRIGGERED_FULL_MASK);
                 if (player->GetPet()) {
-                    player->GetPet()->CastSpell(player->GetPet(), SPELL_TELEPORT_SPECTRAL, TRIGGERED_FULL_MASK);
-                    player->AddAura(AURA_SPECTRAL_REALM, player->GetPet());
+                    player->GetPet()->CastSpell(player->GetPet(), SPELL_SPECTRAL_REALM_TELEPORT, TRIGGERED_FULL_MASK);
+                    player->AddAura(SPELL_SPECTRAL_REALM_AURA, player->GetPet());
                 }
                 player->RemoveAurasDueToSpell(SPELL_ARCANE_BUFFET);
-                if (player->HasAuraEffect(AURA_SPECTRAL_EXHAUSTION)) {
-                    player->RemoveAurasDueToSpell(AURA_SPECTRAL_EXHAUSTION);    // FIXME: If this happens, this is a bug.
+                if (player->HasAuraEffect(SPELL_SPECTRAL_EXHAUSTION)) {
+                    player->RemoveAurasDueToSpell(SPELL_SPECTRAL_EXHAUSTION);    // FIXME: If this happens, this is a bug.
                     TC_LOG_ERROR("scripts", "Sunwell Plateau/Kalecgos: Spectral Blast target (guid %u) had Spectral exhaustion when teleported VIA PORTAL!", player->GetGUIDLow());
                 }
             }
@@ -518,8 +525,8 @@ public:
             for(i = PlayerList.begin(); i != PlayerList.end(); ++i)
                 if(Player* i_pl = i->GetSource()) {
                     i_pl->RemoveAurasDueToSpell(SPELL_AGONY_CURSE);
-                    if(i_pl->HasAuraEffect(AURA_SPECTRAL_REALM))
-                        i_pl->RemoveAurasDueToSpell(AURA_SPECTRAL_REALM);
+                    if(i_pl->HasAuraEffect(SPELL_SPECTRAL_REALM_AURA))
+                        i_pl->RemoveAurasDueToSpell(SPELL_SPECTRAL_REALM_AURA);
                 }
         }
         
@@ -558,7 +565,7 @@ public:
             }
                 
             // If tank has not the aura anymore, maybe he was teleported back -> start attack on Kalecgos human form
-            if (me->GetVictim()->GetTypeId() == TYPEID_PLAYER && !me->GetVictim()->HasAuraEffect(AURA_SPECTRAL_REALM)) {
+            if (me->GetVictim()->GetTypeId() == TYPEID_PLAYER && !me->GetVictim()->HasAuraEffect(SPELL_SPECTRAL_REALM_AURA)) {
                 if(KalecGUID) {
                     if(Unit* Kalec = ObjectAccessor::GetUnit(*me, KalecGUID))
                         me->AI()->AttackStart(Kalec);
@@ -608,7 +615,7 @@ public:
     
             if(ResetThreat < diff)
             {
-                if (( me->GetVictim()->HasAuraEffect(AURA_SPECTRAL_EXHAUSTION)) && (me->GetVictim()->GetTypeId() == TYPEID_PLAYER))
+                if (( me->GetVictim()->HasAuraEffect(SPELL_SPECTRAL_EXHAUSTION)) && (me->GetVictim()->GetTypeId() == TYPEID_PLAYER))
                 {
                     for(auto & itr : me->GetThreatManager().getThreatList())
                     {
@@ -776,33 +783,31 @@ void boss_kalecgos::boss_kalecgosAI::UpdateAI(const uint32 diff)
 
         if (SpectralBlastTimer < diff)
         {
-            Unit *target = SelectTarget(1, 0.0f, 50.0f, true, true, false, AURA_SPECTRAL_EXHAUSTION, 0);
-
-            if (!target || (target && (target->IsDead() || target->GetGUIDLow() == me->GetVictim()->GetGUIDLow() || target->GetPositionZ() <= 52.5f || target->HasAuraEffect(AURA_SPECTRAL_EXHAUSTION))))        // Delay selection to next loop if no valid target found
-                SpectralBlastTimer = 300;
-            else if (target) {
-                me->InterruptNonMeleeSpells(true);
-                DoCast(target, SPELL_SPECTRAL_BLAST);
-                if (target->ToPlayer() && target->ToPlayer()->GetPet()) {
-                    Pet *pet = target->ToPlayer()->GetPet();
-                    target->CastSpell(pet, SPELL_TELEPORT_SPECTRAL, TRIGGERED_FULL_MASK);
-                    target->AddAura(AURA_SPECTRAL_REALM, pet);
-                    pet->Relocate(pet->GetPositionX(), pet->GetPositionY(), pet->GetPositionZ(), pet->GetOrientation());
-                }
-                DoModifyThreatPercent(target, -100);    // Reset threat so Kalecgos does not follow the player in spectral realm :)
-                target->RemoveAurasDueToSpell(SPELL_ARCANE_BUFFET); // FIXME: I'm not sure this is blizzlike
-                if (target->HasAuraEffect(AURA_SPECTRAL_EXHAUSTION)) {
-                    target->RemoveAurasDueToSpell(AURA_SPECTRAL_EXHAUSTION);    // FIXME: If this happens, this is a bug.
-                    TC_LOG_ERROR("scripts", "Sunwell Plateau/Kalecgos: Spectral Blast target (guid %u) had Spectral exhaustion when teleported!", target->GetGUIDLow());
-                }
-                SpectralBlastTimer = 20000 + (rand() % 5000);
-            }
+            DoCastAOE(SPELL_SPECTRAL_BLAST, true);
+            SpectralBlastTimer = 20000 + (rand() % 5000);
         }
         else SpectralBlastTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
-}
+};
+
+class SpectralBlastSelector : NonTankTargetSelector
+{
+public:
+    SpectralBlastSelector(Unit* source) : NonTankTargetSelector(source, true) { }
+
+    bool operator()(WorldObject* target) const
+    {
+        if (Unit* unitTarget = target->ToUnit())
+            return !NonTankTargetSelector::operator()(unitTarget) 
+            || unitTarget->HasAura(SPELL_SPECTRAL_EXHAUSTION) 
+            || unitTarget->HasAura(SPELL_SPECTRAL_REALM_AURA)
+            || unitTarget->IsDead()
+            || unitTarget->GetPositionZ() <= 52.5f; //in spectral realm
+        return false;
+    }
+};
 
 class boss_kalec : public CreatureScript
 {
@@ -877,8 +882,8 @@ public:
             for(i = PlayerList.begin(); i != PlayerList.end(); ++i)
                 if(Player* i_pl = i->GetSource()) {
                     i_pl->RemoveAurasDueToSpell(SPELL_AGONY_CURSE);
-                    if(i_pl->HasAuraEffect(AURA_SPECTRAL_REALM))
-                        i_pl->RemoveAurasDueToSpell(AURA_SPECTRAL_REALM);
+                    if(i_pl->HasAuraEffect(SPELL_SPECTRAL_REALM_AURA))
+                        i_pl->RemoveAurasDueToSpell(SPELL_SPECTRAL_REALM_AURA);
                 }
         }
     
@@ -938,14 +943,95 @@ public:
     }
 };
 
+// 44869 - Spectral Blast
+class spell_kalecgos_spectral_blast : public SpellScript
+{
+    PrepareSpellScript(spell_kalecgos_spectral_blast);
+
+    bool Validate(SpellInfo const* /*spell*/) override
+    {
+        return ValidateSpellInfo(
+        {
+            SPELL_SPECTRAL_BLAST_EFFECT,
+            SPELL_SPECTRAL_BLAST_VISUAL,
+            SPELL_SPECTRAL_REALM_TRIGGER
+        });
+    }
+
+    void FilterTargets(std::list<WorldObject*>& targets)
+    {
+        targets.remove_if(SpectralBlastSelector(GetCaster()));
+    }
+
+    void HandleDummy(SpellEffIndex /*effIndex*/)
+    {
+        Unit* caster = GetCaster();
+        Unit* target = GetHitUnit();
+
+        target->CastSpell(target, SPELL_SPECTRAL_BLAST_EFFECT, true);
+        caster->CastSpell(target, SPELL_SPECTRAL_BLAST_VISUAL, true);
+        caster->CastSpell(target, SPELL_SPECTRAL_REALM_TRIGGER, true);
+
+        //take pet with player
+        if (target->ToPlayer() && target->ToPlayer()->GetPet()) {
+            Pet *pet = target->ToPlayer()->GetPet();
+            target->CastSpell(pet, SPELL_SPECTRAL_REALM_TELEPORT, TRIGGERED_FULL_MASK);
+            target->AddAura(SPELL_SPECTRAL_REALM_AURA, pet);
+            pet->Relocate(pet->GetPositionX(), pet->GetPositionY(), pet->GetPositionZ(), pet->GetOrientation());
+        }
+        caster->GetThreatManager().modifyThreatPercent(target, -100);  // Reset threat so Kalecgos does not follow the player in spectral realm :)
+        target->RemoveAurasDueToSpell(SPELL_ARCANE_BUFFET); // FIXME: I'm not sure this is blizzlike
+        if (target->HasAuraEffect(SPELL_SPECTRAL_EXHAUSTION)) {
+            target->RemoveAurasDueToSpell(SPELL_SPECTRAL_EXHAUSTION);    // FIXME: If this happens, this is a bug.
+            TC_LOG_ERROR("scripts", "Sunwell Plateau/Kalecgos: Spectral Blast target (guid %u) had Spectral exhaustion when teleported!", target->GetGUIDLow());
+        }
+    }
+
+    void Register() override
+    {
+        OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_kalecgos_spectral_blast::FilterTargets, EFFECT_0, TARGET_UNIT_SRC_AREA_ENEMY);
+        OnEffectHitTarget += SpellEffectFn(spell_kalecgos_spectral_blast::HandleDummy, EFFECT_0, SPELL_EFFECT_DUMMY);
+    }
+};
+
+// 44811 - Spectral Realm
+class spell_kalecgos_spectral_realm_trigger : public SpellScript
+{
+    PrepareSpellScript(spell_kalecgos_spectral_realm_trigger);
+
+    bool Validate(SpellInfo const* /*spellInfo*/) override
+    {
+        return ValidateSpellInfo(
+        {
+            SPELL_SPECTRAL_REALM_TELEPORT,
+            SPELL_SPECTRAL_REALM_AURA,
+            SPELL_SPECTRAL_REALM_2,
+            SPELL_SPECTRAL_REALM_REACTION
+        });
+    }
+
+    void HandleDummy(SpellEffIndex /*effIndex*/)
+    {
+        Unit* target = GetHitUnit();
+        target->CastSpell(target, SPELL_SPECTRAL_REALM_TELEPORT, true);
+        target->CastSpell(target, SPELL_SPECTRAL_REALM_AURA, true);
+        target->CastSpell(target, SPELL_SPECTRAL_REALM_2, true);
+        target->CastSpell(target, SPELL_SPECTRAL_REALM_REACTION, true);
+    }
+
+    void Register() override
+    {
+        OnEffectHitTarget += SpellEffectFn(spell_kalecgos_spectral_realm_trigger::HandleDummy, EFFECT_0, SPELL_EFFECT_SCRIPT_EFFECT);
+    }
+};
 
 void AddSC_boss_kalecgos()
 {
     new boss_kalecgos();
-
     new boss_sathrovarr();
-
     new boss_kalec();
-
     new KalecgosTeleporter();
+
+    RegisterSpellScript(spell_kalecgos_spectral_blast);
+    RegisterSpellScript(spell_kalecgos_spectral_realm_trigger);
 }

@@ -1071,9 +1071,9 @@ public:
                         break;
                     case EVENT_SAY:
                         if (pInstance->GetData(DATA_MURU_EVENT) != DONE && pInstance->GetData(DATA_KILJAEDEN_EVENT) == NOT_STARTED)
-                            Talk(SAY_KJ_OFFCOMBAT); //TODO : MISSING TEXT
+                            Talk(SAY_KJ_OFFCOMBAT); 
 
-                        events.RescheduleEvent(EVENT_SAY, 45000, 75000);
+                        events.RescheduleEvent(EVENT_SAY, 20*MINUTE*IN_MILLISECONDS, 30*MINUTE*IN_MILLISECONDS);
                         break;
                 }
 
