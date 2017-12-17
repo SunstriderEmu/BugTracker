@@ -475,7 +475,7 @@ public:
                 default: break;
                 }
             }
-            else if (pInstance->GetBossState(CHESS_EVENT_TEAM) == ALLIANCE) {
+            else if (pInstance->GetData(CHESS_EVENT_TEAM) == ALLIANCE) {
                 switch(piece->GetEntry()) {
                 case NPC_ROOK_A:   DoScriptText(SCRIPTTEXT_LOSE_ROOK_P, me);     break;
                 case NPC_ROOK_H:   DoScriptText(SCRIPTTEXT_LOSE_ROOK_M, me);     break;
@@ -1151,12 +1151,14 @@ public:
             }
         }
 
-        void JustDied(Unit* pKiller)
-            override {
-            Creature* medivh = ObjectAccessor::GetCreature(*me, pInstance ? pInstance->GetGuidData(DATA_CHESS_ECHO_OF_MEDIVH) : 0);
-            ((npc_echo_of_medivh::npc_echo_of_medivhAI*)medivh->AI())->HandlePieceDeath(me);
+        void JustDied(Unit* pKiller) override 
+        {
+            if(ObjectGuid guid = pInstance->GetGuidData(DATA_CHESS_ECHO_OF_MEDIVH))
+                if(Creature* medivh = me->GetMap()->GetCreature(guid))
+                    ((npc_echo_of_medivh::npc_echo_of_medivhAI*)medivh->AI())->HandlePieceDeath(me);
 
-            if (me->IsCharmed()) {
+            if (me->IsCharmed()) 
+            {
                 if (Unit* charmer = me->GetCharmer())
                     charmer->RemoveAurasDueToSpell(30019);
                 me->RemoveCharmedBy(me->GetCharmer());

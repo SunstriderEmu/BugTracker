@@ -1,4 +1,3 @@
-/* C
 /* ScriptData
 SDName: Boss_Netherspite
 SD%Complete: 80
