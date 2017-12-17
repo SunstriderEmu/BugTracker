@@ -2436,7 +2436,7 @@ public:
 
             // Grid search for nearest live creature of entry 23304 within 10 yards
             Trinity::NearestCreatureEntryWithLiveStateInObjectRangeCheck check(*plr, 23304, true, 10.0f);
-            Trinity::CreatureLastSearcher<Trinity::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(trigger, check);
+            Trinity::CreatureLastSearcher<Trinity::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(me, trigger, check);
 
             Cell::VisitGridObjects(plr, searcher, 20.0f);
 

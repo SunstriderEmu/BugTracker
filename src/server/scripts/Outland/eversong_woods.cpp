@@ -515,7 +515,7 @@ public:
             // find spawn :: master_kelerun_bloodmourn
             Creature* event_controller = nullptr;
             Trinity::NearestCreatureEntryWithLiveStateInObjectRangeCheck u_check(*me, MASTER_KELERUN_BLOODMOURN, true, 30);
-            Trinity::CreatureLastSearcher<Trinity::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(event_controller, u_check);
+            Trinity::CreatureLastSearcher<Trinity::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(me, event_controller, u_check);
             Cell::VisitGridObjects(pPlayer, searcher, MAX_SEARCHER_DISTANCE);
 
             if (event_controller)

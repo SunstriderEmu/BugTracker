@@ -650,7 +650,7 @@ Creature* SearchDawnforge(Player *source, uint32 entry, float range)
     Creature* pCreature = nullptr;
 
     Trinity::NearestCreatureEntryWithLiveStateInObjectRangeCheck creature_check(*source, entry, true, range);
-    Trinity::CreatureLastSearcher<Trinity::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(pCreature, creature_check);
+    Trinity::CreatureLastSearcher<Trinity::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(source, pCreature, creature_check);
 
     Cell::VisitGridObjects(source, searcher, range);
 
