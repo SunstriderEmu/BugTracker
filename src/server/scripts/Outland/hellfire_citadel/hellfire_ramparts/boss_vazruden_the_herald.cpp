@@ -12,7 +12,7 @@ TODO:
 nazan animation when casting firewall is wrong whenever he's stationary flying. What I tried so far: Tweaking movement flags, tried every unknown cast flags. In the meanwhile, I'll make it so that Nazan is never stationary.
 */
 
-#include "def_hellfire_ramparts.h"
+#include "hellfire_ramparts.h"
 
 #define SPELL_FIREBALL              (uint32) (HeroicMode?36920:34653)
 #define SPELL_CONE_OF_FIRE          (uint32) (HeroicMode?36921:30926)
@@ -53,9 +53,9 @@ public:
         MESSAGE_SET_VAZRUDEN_GUID = 0,
     };
 
-    struct boss_nazanAI : public ScriptedAI
+    struct boss_nazanAI : public BossAI
     {
-        boss_nazanAI(Creature *c) : ScriptedAI(c)
+        boss_nazanAI(Creature* creature) : BossAI(creature, DATA_NAZAN)
         {
             HeroicMode = me->GetMap()->IsHeroic();
             VazrudenGUID = 0;
@@ -91,9 +91,9 @@ public:
         uint64 VazrudenGUID;
         bool HeroicMode;
 
-        void Reset()
-            override 
+        void Reset() override 
         {
+            _Reset();
             events.Reset();
             SetPhase(PHASE_FLIGHT);
         }
@@ -160,8 +160,8 @@ public:
             return 0;
         }
 
-        void SpellHitTarget(Unit* target, const SpellInfo* entry)
-            override {
+        void SpellHitTarget(Unit* target, const SpellInfo* entry) override 
+        {
             if (entry->Id == SPELL_FIREBALL)
             {
                 Creature* summoned = me->SummonCreature(NPC_LIQUID_FIRE, target->GetPositionX(), target->GetPositionY(), target->GetPositionZ(), target->GetOrientation(), TEMPSUMMON_TIMED_DESPAWN, 30000);
@@ -174,8 +174,7 @@ public:
             }
         }
 
-        void UpdateAI(const uint32 diff)
-            override 
+        void UpdateAI(const uint32 diff) override 
         {
             events.Update(diff);
 
@@ -249,9 +248,9 @@ class boss_vazruden : public CreatureScript
 public:
     boss_vazruden() : CreatureScript("boss_vazruden") { }
 
-    struct boss_vazrudenAI : public ScriptedAI
+    struct boss_vazrudenAI : public BossAI
     {
-        boss_vazrudenAI(Creature *c) : ScriptedAI(c)
+        boss_vazrudenAI(Creature* creature) : BossAI(creature, DATA_VAZRUDEN)
         {
             HeroicMode = me->GetMap()->IsHeroic();
         }
@@ -261,38 +260,40 @@ public:
         bool WipeSaid;
         uint32 UnsummonCheck;
 
-        void Reset()
-            override {
+        void Reset() override 
+        {
+            _Reset();
             Revenge_Timer = 4000;
             UnsummonCheck = 2000;
             WipeSaid = false;
         }
 
-        bool CheckEvadeIfOutOfCombatArea() const
-            override
+        bool CheckEvadeIfOutOfCombatArea() const override
         {
             return me->GetDistance2d(VazrudenMiddle.GetPositionX(), VazrudenMiddle.GetPositionY()) > 150.0f;
         }
 
-        void EnterCombat(Unit *who)
-            override {
+        void EnterCombat(Unit *who) override 
+        {
+            _EnterCombat();
             DoScriptText(RAND(SAY_AGGRO_1, SAY_AGGRO_2, SAY_AGGRO_3), me);
         }
 
-        void KilledUnit(Unit* who)
-            override {
+        void KilledUnit(Unit* who) override 
+        {
             if (who && who->GetEntry() != NPC_VAZRUDEN)
                 DoScriptText(RAND(SAY_KILL_1, SAY_KILL_2), me);
         }
 
-        void JustDied(Unit* who)
-            override {
+        void JustDied(Unit* who) override 
+        {
+            _JustDied();
             if (who && who != me)
                 DoScriptText(SAY_DIE, me);
         }
 
-        void UpdateAI(const uint32 diff)
-            override {
+        void UpdateAI(const uint32 diff) override 
+        {
             if (!UpdateVictim())
             {
                 if (UnsummonCheck < diff && me->IsAlive())
@@ -322,13 +323,13 @@ public:
         }
     };
 
-
-    CreatureAI* GetAI(Creature* creature) const
-        override {
+    CreatureAI* GetAI(Creature* creature) const override 
+    {
         return new boss_vazrudenAI(creature);
     }
 };
 
+//Controller + flying mop before the fight. Does not actually fight
 class boss_vazruden_the_herald : public CreatureScript
 {
 public:
@@ -362,7 +363,6 @@ public:
         uint64 VazrudenGUID;
         bool summoned;
         bool HeroicMode;
-        bool lootSpawned;
 
         void Reset()
             override {
@@ -372,7 +372,6 @@ public:
             me->SetDisableGravity(true);
             me->SetSpeedRate(MOVE_FLIGHT, 2.5);
             me->GetMotionMaster()->MovePath(PATH_ENTRY);
-            lootSpawned = false;
         }
 
         void UnsummonAdds()
@@ -480,8 +479,8 @@ public:
             case PHASE_INVISIBLE_CONTROLLER:
             default:
                 if (checkTimer < diff) {
-                    Creature *Nazan = me->GetMap()->GetCreature(NazanGUID);
-                    Creature *Vazruden = me->GetMap()->GetCreature(VazrudenGUID);
+                    Creature* Nazan = me->GetMap()->GetCreature(NazanGUID);
+                    Creature* Vazruden = me->GetMap()->GetCreature(VazrudenGUID);
                     if ((Nazan && Nazan->IsAlive()) || (Vazruden && Vazruden->IsAlive())) 
                     {
                         if ((Nazan && Nazan->GetVictim()) || (Vazruden && Vazruden->GetVictim()))
@@ -493,11 +492,9 @@ public:
                             return;
                         }
                     }
-                    else if (!lootSpawned) {
-                        me->SummonGameObject(GOBJECT_REINFORCED_FEL_IRON_CHEST, VazrudenMiddle, G3D::Quat(), 0);
+                    else
                         me->DisappearAndDie();
-                        lootSpawned = true;
-                    }
+
                     checkTimer = 2000;
                 }
                 else checkTimer -= diff;
@@ -506,8 +503,8 @@ public:
         }
     };
 
-    CreatureAI* GetAI(Creature* creature) const
-        override {
+    CreatureAI* GetAI(Creature* creature) const override 
+    {
         return new boss_vazruden_the_heraldAI(creature);
     }
 };
@@ -523,21 +520,19 @@ public:
 
         uint32 KidneyShot_Timer;
 
-        void Reset()
-            override {
+        void Reset() override 
+        {
             KidneyShot_Timer = urand(3000, 7000);
         }
 
-        void JustDied(Unit* who)
-            override 
+        void JustDied(Unit* who) override 
         {
             who = who->GetCharmerOrOwnerPlayerOrPlayerItself();
             if (Creature *herald = me->FindNearestCreature(NPC_VAZRUDEN_HERALD, 150.0f, true))
                 herald->AI()->message(boss_vazruden_the_herald::MESSAGE_SENTRY_DIED, who->GetGUID());
         }
 
-        void UpdateAI(const uint32 diff)
-            override 
+        void UpdateAI(const uint32 diff) override 
         {
             if (!UpdateVictim())
                 return;
@@ -553,8 +548,7 @@ public:
         }
     };
 
-    CreatureAI* GetAI(Creature *pCreature) const 
-        override
+    CreatureAI* GetAI(Creature *pCreature) const override
     {
         return new mob_hellfire_sentryAI(pCreature);
     }

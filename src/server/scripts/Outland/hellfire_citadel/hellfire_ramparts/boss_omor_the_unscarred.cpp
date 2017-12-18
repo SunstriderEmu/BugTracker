@@ -1,4 +1,4 @@
-#include "def_hellfire_ramparts.h"
+#include "hellfire_ramparts.h"
 
 #define SAY_AGGRO_1                 -1543009
 #define SAY_AGGRO_2                 -1543010
@@ -26,15 +26,13 @@ public:
     boss_omor_the_unscarred() : CreatureScript("boss_omor_the_unscarred")
     { }
 
-    class boss_omor_the_unscarredAI : public ScriptedAI
+    class boss_omor_the_unscarredAI : public BossAI
     {
         public:
-        boss_omor_the_unscarredAI(Creature *c) : ScriptedAI(c), summons(me)
+        boss_omor_the_unscarredAI(Creature* creature) : BossAI(creature, DATA_OMOR_THE_UNSCARRED)
         {
             HeroicMode = me->GetMap()->IsHeroic();
         }
-    
-        SummonList summons;
     
         bool HeroicMode;
     
@@ -47,9 +45,9 @@ public:
         uint64 orbitarStrikeTargetGUID;
         bool CanPullBack;
     
-        void Reset()
-        override {
-            summons.DespawnAll();
+        void Reset() override 
+        {
+            _Reset();
             SetCombatMovementAllowed(false);
     
             OrbitalStrike_Timer = urand(40000,45000);
@@ -64,11 +62,13 @@ public:
     
         void JustReachedHome() override
         {
+            _JustReachedHome();
             DoScriptText(SAY_WIPE, me);
         }
     
-        void EnterCombat(Unit *who)
-        override {
+        void EnterCombat(Unit *who) override 
+        {
+            _EnterCombat();
             switch(rand()%3)
             {
                 case 0: DoScriptText(SAY_AGGRO_1, me); break;
@@ -77,31 +77,31 @@ public:
             }
         }
     
-        void KilledUnit(Unit* victim)
-        override {
+        void KilledUnit(Unit* victim) override 
+        {
             if (rand()%2)
                 return;
     
             DoScriptText(SAY_KILL_1, me);
         }
     
-        void JustSummoned(Creature* summoned)
-        override {
+        void JustSummoned(Creature* summoned) override 
+        {
+            BossAI::JustSummoned(summoned);
             DoScriptText(SAY_SUMMON, me);
     
             if (Unit* random = SelectTarget(SELECT_TARGET_RANDOM, 0))
                 summoned->AI()->AttackStart(random);
-    
-            summons.Summon(summoned);
         }
     
-        void JustDied(Unit* Killer)
-        override {
+        void JustDied(Unit* Killer) override 
+        {
+            _JustDied();
             DoScriptText(SAY_DIE, me);
         }
     
-        void UpdateAI(const uint32 diff)
-        override {
+        void UpdateAI(const uint32 diff) override 
+        {
             if (!UpdateVictim())
                 return;
     
@@ -192,7 +192,6 @@ public:
 
 void AddSC_boss_omor_the_unscarred()
 {
-
     new boss_omor_the_unscarred();
 }
 

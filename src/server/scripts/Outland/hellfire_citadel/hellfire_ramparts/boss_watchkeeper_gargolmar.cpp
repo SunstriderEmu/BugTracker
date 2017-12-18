@@ -1,4 +1,4 @@
-#include "def_hellfire_ramparts.h"
+#include "hellfire_ramparts.h"
 
 #define SAY_TAUNT               -1543000
 #define SAY_HEAL                -1543001
@@ -16,18 +16,16 @@
 #define SPELL_RETALIATION       22857
 #define SPELL_OVERPOWER         32154
 
-
-
 class boss_watchkeeper_gargolmar : public CreatureScript
 {
 public:
     boss_watchkeeper_gargolmar() : CreatureScript("boss_watchkeeper_gargolmar")
     { }
 
-    class boss_watchkeeper_gargolmarAI : public ScriptedAI
+    class boss_watchkeeper_gargolmarAI : public BossAI
     {
         public:
-        boss_watchkeeper_gargolmarAI(Creature *c) : ScriptedAI(c)
+        boss_watchkeeper_gargolmarAI(Creature* creature) : BossAI(creature, DATA_WATCHKEEPER_GARGOLMAR)
         {
             HeroicMode = me->GetMap()->IsHeroic();
         }
@@ -43,8 +41,8 @@ public:
         bool HasTaunted;
         bool YelledForHeal;
     
-        void Reset()
-        override {
+        void Reset() override 
+        {
             Surge_Timer = urand(5000, 10000);
             MortalWound_Timer = urand(15000, 20000);
             Overpower_timer = 5000;
@@ -52,20 +50,22 @@ public:
     
             HasTaunted = false;
             YelledForHeal = false;
+            _Reset();
         }
     
-        void EnterCombat(Unit *who)
-        override {
+        void EnterCombat(Unit *who) override 
+        {
             switch(rand()%3)
             {
                 case 0: DoScriptText(SAY_AGGRO_1, me); break;
                 case 1: DoScriptText(SAY_AGGRO_2, me); break;
                 case 2: DoScriptText(SAY_AGGRO_3, me); break;
             }
+            _EnterCombat();
         }
     
-        void MoveInLineOfSight(Unit* who)
-        override {
+        void MoveInLineOfSight(Unit* who) override
+        {
             if (!me->GetVictim() && me->CanCreatureAttack(who) == CAN_ATTACK_RESULT_OK && ( me->IsHostileTo( who )) && who->isInAccessiblePlaceFor(me) )
             {
                 if (!me->CanFly() && me->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
@@ -85,8 +85,8 @@ public:
             }
         }
     
-        void KilledUnit(Unit* victim)
-        override {
+        void KilledUnit(Unit* victim) override 
+        {
             switch(rand()%2)
             {
                 case 0: DoScriptText(SAY_KILL_1, me); break;
@@ -94,13 +94,14 @@ public:
             }
         }
     
-        void JustDied(Unit* Killer)
-        override {
+        void JustDied(Unit* Killer) override 
+        {
             DoScriptText(SAY_DIE, me);
+            _JustDied();
         }
     
-        void UpdateAI(const uint32 diff)
-        override {
+        void UpdateAI(const uint32 diff) override 
+        {
             if (!UpdateVictim())
                 return;
     
@@ -162,7 +163,6 @@ public:
         return new boss_watchkeeper_gargolmarAI(creature);
     }
 };
-
 
 void AddSC_boss_watchkeeper_gargolmar()
 {
