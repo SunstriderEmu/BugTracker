@@ -28,15 +28,11 @@ public:
     boss_anzu() : CreatureScript("boss_anzu")
     { }
 
-    class boss_anzuAI : public ScriptedAI
+    class boss_anzuAI : public BossAI
     {
         public:
-        boss_anzuAI(Creature *c) : ScriptedAI(c), summons(me)
-        {
-            pInstance = ((InstanceScript*)c->GetInstanceScript());
-        }
-        
-        InstanceScript *pInstance;
+        boss_anzuAI(Creature* creature) : BossAI(creature, DATA_ANZU)
+        { }
         
         uint32 chargeTimer;
         uint32 paralysingTimer;
@@ -48,11 +44,8 @@ public:
         
         SummonList summons;
         
-        void Reset()
-        override {
-            if (pInstance && me->IsAlive())
-                pInstance->SetData(ANZU_EVENT, NOT_STARTED);
-                
+        void Reset() override 
+        {
             chargeTimer = 9000;
             paralysingTimer = 14000;
             featherCycloneTimer = 5000;
@@ -64,56 +57,43 @@ public:
             if (me->HasAuraEffect(SPELL_BANISH))
                 me->RemoveAurasDueToSpell(SPELL_BANISH);
                 
-            summons.DespawnAll();
+            _Reset();
         }
         
-        void JustDied(Unit *pKiller)
-        override {
-            if (pInstance)
-                pInstance->SetData(ANZU_EVENT, DONE);
-        }
-        
-        void JustSummoned(Creature* pSummon)
-        override {
-            summons.Summon(pSummon);
-            
-            if (Unit *target = SelectTarget(SELECT_TARGET_RANDOM,0))
-                pSummon->AI()->AttackStart(target);
-        }
-        
-        void SummonedCreatureDespawn(Creature* pSummon) override { summons.Despawn(pSummon); }
-        
-        void UpdateAI(uint32 const diff)
-        override {
+        void UpdateAI(uint32 const diff) override 
+        {
             if (!UpdateVictim())
                 return;
                 
             if (me->HasAuraEffect(SPELL_BANISH))
                 return;
                 
-            if (chargeTimer <= diff) {
-                if (rand()%10 < 8) {
-                    DoCast(SelectTarget(SELECT_TARGET_RANDOM, 0, 50.0, true, true), SPELL_CHARGE);
-                    chargeTimer = 9000;
-                }
+            if (chargeTimer <= diff) 
+            {
+                DoCast(SelectTarget(SELECT_TARGET_RANDOM, 0, 50.0, true, true), SPELL_CHARGE);
+                chargeTimer = 9000;
             } else chargeTimer -= diff;
             
-            if (paralysingTimer <= diff) {
+            if (paralysingTimer <= diff) 
+            {
                 DoCast(me->GetVictim(), SPELL_PARALYSING);
                 paralysingTimer = 26000;
             } else paralysingTimer -= diff;
             
-            if (featherCycloneTimer <= diff) {
+            if (featherCycloneTimer <= diff) 
+            {
                 DoCast(SelectTarget(SELECT_TARGET_RANDOM, 0, 50.0, true, true), SPELL_FEATHER_CYCLONE);
                 featherCycloneTimer = 21000;
             } else featherCycloneTimer -= diff;
             
-            if (spellBombTimer <= diff) {
+            if (spellBombTimer <= diff) 
+            {
                 DoCast(SelectTarget(SELECT_TARGET_RANDOM, 0), SPELL_SPELL_BOMB);
                 spellBombTimer = 30000;
             } else spellBombTimer -= diff;
             
-            if (me->GetHealth() < me->GetMaxHealth()*0.66 && !hasSummoned66) {
+            if (me->HealthBelowPct(67) && !hasSummoned66)
+            {
                 me->InterruptNonMeleeSpells(true);
                 DoCast(me, SPELL_BANISH, true);
                 int count;
@@ -122,7 +102,8 @@ public:
                 hasSummoned66 = true;
             }
             
-            if (me->GetHealth() < me->GetMaxHealth()*0.33 && !hasSummoned33) {
+            if (me->HealthBelowPct(33) && !hasSummoned33)
+            {
                 me->InterruptNonMeleeSpells(true);
                 DoCast(me, SPELL_BANISH, true);
                 int count;
@@ -137,10 +118,9 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_anzuAI(creature);
+        return GetSethekkHallsAI<boss_anzuAI>(creature);
     }
 };
-
 
 void AddSC_boss_anzu()
 {

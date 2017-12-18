@@ -1,18 +1,3 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /* ScriptData
 SDName: Boss_Darkweaver_Syth
@@ -21,7 +6,7 @@ SDComment: Shock spells/times need more work. Heroic partly implemented.
 SDCategory: Auchindoun, Sethekk Halls
 EndScriptData */
 
-
+#include "def_sethekk_halls.h"
 
 #define SAY_SUMMON                  -1556000
 
@@ -58,11 +43,10 @@ public:
     boss_darkweaver_syth() : CreatureScript("boss_darkweaver_syth")
     { }
 
-    class boss_darkweaver_sythAI : public ScriptedAI
+    class boss_darkweaver_sythAI : public BossAI
     {
         public:
-        boss_darkweaver_sythAI(Creature *c) : ScriptedAI(c), summons(me)
-    
+        boss_darkweaver_sythAI(Creature* creature) : BossAI(creature, DATA_DARKWEAVER_SYTH)
         {
             HeroicMode = me->GetMap()->IsHeroic();
         }
@@ -78,10 +62,8 @@ public:
         bool summon10;
         bool HeroicMode;
         
-        SummonList summons;
-    
-        void Reset()
-        override {
+        void Reset() override 
+        {
             flameshock_timer = 2000;
             arcaneshock_timer = 4000;
             frostshock_timer = 6000;
@@ -92,36 +74,27 @@ public:
             summon50 = false;
             summon10 = false;
             
-            summons.DespawnAll();
+            _Reset();
         }
     
-        void EnterCombat(Unit *who)
-        override {
+        void EnterCombat(Unit *who) override 
+        {
             DoScriptText(RAND(SAY_AGGRO_1, SAY_AGGRO_2, SAY_AGGRO_3), me);
+            _EnterCombat();
         }
     
-        void JustDied(Unit* Killer)
-        override {
+        void JustDied(Unit* Killer) override 
+        {
             DoScriptText(SAY_DEATH, me);
             
-            summons.DespawnAll();
+            _JustDied();
         }
     
-        void KilledUnit(Unit* pVictim)
-        override {
+        void KilledUnit(Unit* pVictim) override 
+        {
             DoScriptText(RAND(SAY_SLAY_1, SAY_SLAY_2), me);
         }
-    
-        void JustSummoned(Creature* pSummon)
-        override {
-            summons.Summon(pSummon);
-            
-            if (Unit *target = SelectTarget(SELECT_TARGET_RANDOM,0))
-                pSummon->AI()->AttackStart(target);
-        }
         
-        void SummonedCreatureDespawn(Creature* pSummon) override { summons.Despawn(pSummon); }
-    
         void SythSummoning()
         {
             DoScriptText(SAY_SUMMON, me);
@@ -135,8 +108,8 @@ public:
             DoCast(me,SPELL_SUMMON_SYTH_SHADOW,true);   //right
         }
     
-        void UpdateAI(const uint32 diff)
-        override {
+        void UpdateAI(const uint32 diff) override 
+        {
             if (!UpdateVictim())
                 return;
     
@@ -204,13 +177,12 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_darkweaver_sythAI(creature);
+        return GetSethekkHallsAI<boss_darkweaver_sythAI>(creature);
     }
 };
 
 
 /* ELEMENTALS */
-
 
 class mob_syth_fire : public CreatureScript
 {
@@ -222,7 +194,6 @@ public:
     {
         public:
         mob_syth_fireAI(Creature *c) : ScriptedAI(c)
-    
         {
             HeroicMode = me->GetMap()->IsHeroic();
         }
@@ -231,17 +202,15 @@ public:
         uint32 flamebuffet_timer;
         bool HeroicMode;
     
-        void Reset()
-        override {
+        void Reset() override 
+        {
             me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_FIRE, true);
             flameshock_timer = 2500;
             flamebuffet_timer = 5000;
         }
     
-        void EnterCombat(Unit *who) override { }
-    
-        void UpdateAI(const uint32 diff)
-        override {
+        void UpdateAI(const uint32 diff) override 
+        {
             if (!UpdateVictim())
                 return;
     
@@ -251,7 +220,7 @@ public:
                     DoCast(target,SPELL_FLAME_SHOCK);
     
                 flameshock_timer = 5000;
-            }else flameshock_timer -= diff;
+            } else flameshock_timer -= diff;
     
             if(flamebuffet_timer < diff)
             {
@@ -259,7 +228,7 @@ public:
                     DoCast(target,SPELL_FLAME_BUFFET);
     
                 flamebuffet_timer = 5000;
-            }else flamebuffet_timer -= diff;
+            } else flamebuffet_timer -= diff;
     
             DoMeleeAttackIfReady();
         }
@@ -267,11 +236,9 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new mob_syth_fireAI(creature);
+        return GetSethekkHallsAI<mob_syth_fireAI>(creature);
     }
 };
-
-
 
 class mob_syth_arcane : public CreatureScript
 {
@@ -292,8 +259,8 @@ public:
         uint32 arcanebuffet_timer;
         bool HeroicMode;
     
-        void Reset()
-        override {
+        void Reset() override 
+        {
             me->ApplySpellImmune(0, IMMUNITY_SCHOOL, SPELL_SCHOOL_MASK_ARCANE, true);
             arcaneshock_timer = 2500;
             arcanebuffet_timer = 5000;
@@ -328,7 +295,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new mob_syth_arcaneAI(creature);
+        return GetSethekkHallsAI<mob_syth_arcaneAI>(creature);
     }
 };
 
@@ -389,7 +356,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new mob_syth_frostAI(creature);
+        return GetSethekkHallsAI<mob_syth_frostAI>(creature);
     }
 };
 
@@ -450,7 +417,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new mob_syth_shadowAI(creature);
+        return GetSethekkHallsAI<mob_syth_shadowAI>(creature);
     }
 };
 

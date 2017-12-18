@@ -27,6 +27,13 @@ EndScriptData */
 #define IKISS_DOOR          183398
 #define GOBJECT_CAGE        183051
 
+DoorData const doorData[] =
+{
+    { GO_IKISS_DOOR, DATA_TALON_KING_IKISS, DOOR_TYPE_PASSAGE },
+    { 0,             0,                     DOOR_TYPE_ROOM } // END
+};
+
+
 class instance_sethekk_halls : public InstanceMapScript
 {
 public:
@@ -39,54 +46,58 @@ public:
 
     struct instance_sethekk_halls_script : public InstanceScript
     {
-        instance_sethekk_halls_script(Map *map) : InstanceScript(map) { Initialize(); };
+        instance_sethekk_halls_script(Map *map) : InstanceScript(map) 
+        {
+            SetHeaders(DataHeader);
+            SetBossNumber(EncounterCount);
+            LoadDoorData(doorData);
 
-        GameObject *IkissDoor;
+            summonerGUID = 0;
+        };
+
+        void OnCreatureCreate(Creature* creature) override
+        {
+            if (creature->GetEntry() == NPC_ANZU)
+            {
+                if (GetBossState(DATA_ANZU) == DONE)
+                    creature->DisappearAndDie();
+                else
+                    SetBossState(DATA_ANZU, IN_PROGRESS);
+            }
+        }
 
         uint64 summonerGUID;
 
-        void Initialize() override 
+        bool SetBossState(uint32 type, EncounterState state) override
         {
-            IkissDoor = nullptr;
-            summonerGUID = 0;
-        }
+            if (!InstanceScript::SetBossState(type, state))
+                return false;
 
-        void OnGameObjectCreate(GameObject *go)
-            override {
-            switch (go->GetEntry())
-            {
-            case IKISS_DOOR:
-                IkissDoor = go;
-                break;
-            }
-        }
-
-        void SetData(uint32 type, uint32 data)
-            override {
             switch (type)
             {
-            case DATA_IKISSDOOREVENT:
-                if (IkissDoor)
-                    IkissDoor->UseDoorOrButton();
-                break;
+            case DATA_TALON_KING_IKISS:
+                if (state == DONE)
+                {
+                    //chest handling done in boss script
+                }
             }
         }
 
-        void SetData64(uint32 identifier, uint64 data)
+        void SetGuidData(uint32 identifier, ObjectGuid data)
             override {
             switch (identifier)
             {
-            case ANZU_SUMMONER:
+            case ANZU_SUMMONER_GUID:
                 summonerGUID = data;
                 break;
             }
         }
 
-        uint64 GetData64(uint32 identifier) const override
+        ObjectGuid GetGuidData(uint32 identifier) const override
         {
             switch (identifier)
             {
-            case ANZU_SUMMONER:
+            case ANZU_SUMMONER_GUID:
                 return summonerGUID;
             default:
                 return 0;

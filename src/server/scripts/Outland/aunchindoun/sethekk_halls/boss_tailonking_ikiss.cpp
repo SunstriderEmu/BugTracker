@@ -42,15 +42,12 @@ public:
     boss_talon_king_ikiss() : CreatureScript("boss_talon_king_ikiss")
     { }
 
-    class boss_talon_king_ikissAI : public ScriptedAI
+    class boss_talon_king_ikissAI : public BossAI
     {
         public:
-        boss_talon_king_ikissAI(Creature *c) : ScriptedAI(c)
+        boss_talon_king_ikissAI(Creature* creature) : BossAI(creature, DATA_TALON_KING_IKISS)
         {
-            pInstance = ((InstanceScript*)c->GetInstanceScript());
         }
-    
-        InstanceScript* pInstance;
     
         bool HeroicMode;
     
@@ -63,8 +60,8 @@ public:
         bool Blink;
         bool Intro;
     
-        void Reset()
-        override {
+        void Reset() override 
+        {
             HeroicMode = me->GetMap()->IsHeroic();
     
             ArcaneVolley_Timer = 5000;
@@ -74,10 +71,11 @@ public:
             Blink = false;
             Intro = false;
             ManaShield = false;
+            _Reset();
         }
     
-        void MoveInLineOfSight(Unit *who)
-        override {
+        void MoveInLineOfSight(Unit *who) override 
+        {
             if( !me->GetVictim() && me->CanCreatureAttack(who) == CAN_ATTACK_RESULT_OK && ( me->IsHostileTo( who )) && who->isInAccessiblePlaceFor(me) )
             {
                 if(!Intro && me->IsWithinDistInMap(who, 100))
@@ -98,17 +96,16 @@ public:
             }
         }
     
-        void EnterCombat(Unit *who)
-        override {
+        void EnterCombat(Unit *who) override 
+        {
             DoScriptText(RAND(SAY_AGGRO_1, SAY_AGGRO_2, SAY_AGGRO_3), me);
+            _EnterCombat();
         }
     
         void JustDied(Unit* Killer)
         override {
             DoScriptText(SAY_DEATH, me);
-    
-            if (pInstance)
-                pInstance->SetData(DATA_IKISSDOOREVENT, DONE);
+            _JustDied();
         }
     
         void KilledUnit(Unit* victim)
@@ -195,7 +192,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_talon_king_ikissAI(creature);
+        return GetSethekkHallsAI<boss_talon_king_ikissAI>(creature);
     }
 };
 
