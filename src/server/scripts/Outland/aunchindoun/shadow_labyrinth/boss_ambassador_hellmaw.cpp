@@ -71,8 +71,8 @@ public:
                 DoIntro();
             else if (actionId == ACTION_AMBASSADOR_HELLMAW_BANISH)
             {
-                if (instance->GetData(DATA_FEL_OVERSEER) && me->HasAura(SPELL_BANISH))
-                    DoCast(me, SPELL_BANISH, true); // this will not work, because he is immune to banish
+                if (instance->GetData(DATA_FEL_OVERSEER) > 0)
+                    DoCast(me, SPELL_BANISH, true);
             }
         }
 

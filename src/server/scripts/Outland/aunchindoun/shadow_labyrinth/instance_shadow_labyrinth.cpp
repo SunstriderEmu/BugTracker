@@ -61,6 +61,18 @@ public:
             FelOverseerCount = 0;
         }
 
+        uint32 GetData(uint32 type) const override
+        {
+            switch (type)
+            {
+            case DATA_FEL_OVERSEER:
+                return FelOverseerCount;
+            default:
+                break;
+            }
+            return 0;
+        }
+
         void OnCreatureCreate(Creature *creature) override
         {
             switch (creature->GetEntry())
