@@ -20,6 +20,8 @@ class instance_ramparts : public InstanceMapScript
 
             void OnGameObjectCreate(GameObject* go) override
             {
+                InstanceScript::OnGameObjectCreate(go);
+
                 switch (go->GetEntry())
                 {
                     case GO_FEL_IRON_CHEST_NORMAL:

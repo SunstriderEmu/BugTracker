@@ -1,7 +1,5 @@
-/* Copyright (C) 2008 - 2009 BroodWyrm */
 
-
-#include "def_shattered_halls.h"
+#include "shattered_halls.h"
 
 #define SPELL_BLADE_DANCE               30739
 #define H_SPELL_CHARGE                  25821
@@ -37,16 +35,14 @@ public:
     boss_warchief_kargath_bladefist() : CreatureScript("boss_warchief_kargath_bladefist")
     { }
 
-    class boss_warchief_kargath_bladefistAI : public ScriptedAI
+    class boss_warchief_kargath_bladefistAI : public BossAI
     {
         public:
-        boss_warchief_kargath_bladefistAI(Creature *c) : ScriptedAI(c)
+        boss_warchief_kargath_bladefistAI(Creature* creature) : BossAI(creature, DATA_BLADEFIST)
         {
-            pInstance = ((InstanceScript*)c->GetInstanceScript());
             HeroicMode = me->GetMap()->IsHeroic();
         }
     
-        InstanceScript* pInstance;
         bool HeroicMode;
     
         std::vector<uint64> adds;
@@ -65,8 +61,8 @@ public:
     
         uint32 target_num;
     
-        void Reset()
-        override {
+        void Reset() override 
+        {
             removeAdds();
     
             me->SetSpeedRate(MOVE_RUN,2);
@@ -82,12 +78,11 @@ public:
             Assassins_Timer = 5000;
             resetcheck_timer = 5000;
             
-            if (pInstance && pInstance->GetData(DATA_BLADEFIST_EVENT) != DONE)
-                pInstance->SetData(DATA_BLADEFIST_EVENT, NOT_STARTED);
+            _Reset();
         }
     
-        void EnterCombat(Unit *who)
-        override {
+        void EnterCombat(Unit *who) override 
+        {
             switch (rand()%3)
             {
             case 0:
@@ -104,12 +99,11 @@ public:
                 break;
             }
             
-            if (pInstance)
-                pInstance->SetData(DATA_BLADEFIST_EVENT, IN_PROGRESS);
+            _EnterCombat();
         }
     
-        void JustSummoned(Creature* _summoned)
-        override {
+        void JustSummoned(Creature* _summoned) override 
+        {
             switch(_summoned->GetEntry())
             {
                 case MOB_HEARTHEN_GUARD:
@@ -124,8 +118,8 @@ public:
             }
         }
     
-        void KilledUnit(Unit *victim)
-        override {
+        void KilledUnit(Unit *victim) override 
+        {
             if(victim->GetTypeId() == TYPEID_PLAYER)
             {
                 switch(rand()%2)
@@ -142,22 +136,17 @@ public:
             }
         }
     
-        void JustDied(Unit* Killer)
-        override {
+        void JustDied(Unit* Killer) override 
+        {
             DoPlaySoundToSet(me, SOUND_DEATH);
             me->Yell(SAY_DEATH,LANG_UNIVERSAL,nullptr);
             removeAdds();
             
-            // Remove NOT_ATTACKABLE flag on the Executioner
-            if (pInstance) {
-                pInstance->SetData(DATA_BLADEFIST_EVENT, DONE);
-                if (Creature* Executioner = ObjectAccessor::GetCreature((*me), pInstance->GetData64(DATA_EXECUTIONER_GUID)))
-                    Executioner->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
-            }
+            _JustDied();
         }
     
-        void MovementInform(uint32 type, uint32 id)
-        override {
+        void MovementInform(uint32 type, uint32 id) override 
+        {
             if(InBlade)
             {
                 if(type != POINT_MOTION_TYPE)
@@ -199,6 +188,7 @@ public:
             }
             assassins.clear();
         }
+
         void SpawnAssassin()
         {
             me->SummonCreature(MOB_SHATTERED_ASSASSIN,AssassEntrance[0],AssassEntrance[1]+8, AssassEntrance[2], 0,TEMPSUMMON_CORPSE_TIMED_DESPAWN,10000);
@@ -207,8 +197,8 @@ public:
             me->SummonCreature(MOB_SHATTERED_ASSASSIN,AssassExit[0],AssassExit[1]-8, AssassExit[2], 0,TEMPSUMMON_CORPSE_TIMED_DESPAWN,10000);
         }
     
-        void UpdateAI(const uint32 diff)
-        override {
+        void UpdateAI(const uint32 diff) override
+        {
             if (!UpdateVictim() )
                 return;
     
@@ -313,7 +303,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_warchief_kargath_bladefistAI(creature);
+        return GetShatteredHallsAI<boss_warchief_kargath_bladefistAI>(creature);
     }
 };
 

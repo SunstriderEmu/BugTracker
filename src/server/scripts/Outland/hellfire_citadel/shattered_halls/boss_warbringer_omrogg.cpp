@@ -1,18 +1,3 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /* ScriptData
 SDName: Boss_Warbringer_Omrogg
@@ -27,7 +12,7 @@ boss_warbringer_omrogg
 EndContentData */
 
 
-#include "def_shattered_halls.h"
+#include "shattered_halls.h"
 
 #define ENTRY_LEFT_HEAD             19523
 #define ENTRY_RIGHT_HEAD            19524
@@ -134,7 +119,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new mob_omrogg_headsAI(creature);
+        return GetShatteredHallsAI<mob_omrogg_headsAI>(creature);
     }
 };
 
@@ -144,16 +129,14 @@ public:
     boss_warbringer_omrogg() : CreatureScript("boss_warbringer_omrogg")
     { }
 
-    class boss_warbringer_omroggAI : public ScriptedAI
+    class boss_warbringer_omroggAI : public BossAI
     {
         public:
-        boss_warbringer_omroggAI(Creature *c) : ScriptedAI(c)
+        boss_warbringer_omroggAI(Creature* creature) : BossAI(creature, DATA_OMROGG)
         {
-            pInstance = ((InstanceScript*)c->GetInstanceScript());
             HeroicMode = me->GetMap()->IsHeroic();
         }
     
-        InstanceScript* pInstance;
         bool HeroicMode;
     
         uint64 LeftHead;
@@ -175,8 +158,8 @@ public:
         uint32 ThunderClap_Timer;
         uint32 ResetThreat_Timer;
     
-        void Reset()
-        override {
+        void Reset() override 
+        {
             me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
             me->ApplySpellImmune(0, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
     
@@ -196,8 +179,7 @@ public:
             ThunderClap_Timer = 15000;
             ResetThreat_Timer = 30000;
     
-            if (pInstance && pInstance->GetData(DATA_OMROGG_EVENT) != DONE)
-                pInstance->SetData(DATA_OMROGG_EVENT, NOT_STARTED);             //End boss can use this later. O'mrogg must be defeated(DONE) or he will come to help.
+            _Reset();          
         }
     
         void DoYellForThreat()
@@ -221,8 +203,8 @@ public:
             }
         }
     
-        void EnterCombat(Unit *who)
-        override {
+        void EnterCombat(Unit *who) override 
+        {
             DoSpawnCreature(ENTRY_LEFT_HEAD, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 1800000);
             DoSpawnCreature(ENTRY_RIGHT_HEAD, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 1800000);
     
@@ -236,12 +218,11 @@ public:
                 AggroYell = true;
             }
     
-            if (pInstance)
-                pInstance->SetData(DATA_OMROGG_EVENT, IN_PROGRESS);
+            _EnterCombat();
         }
     
-        void JustSummoned(Creature *summoned)
-        override {
+        void JustSummoned(Creature *summoned) override 
+        {
             if (summoned->GetEntry() == ENTRY_LEFT_HEAD)
                 LeftHead = summoned->GetGUID();
     
@@ -253,8 +234,8 @@ public:
             summoned->SetVisible(false);
         }
     
-        void KilledUnit(Unit* victim)
-        override {
+        void KilledUnit(Unit* victim) override 
+        {
             if (LeftHead && RightHead)
             {
                 Unit* Left  = ObjectAccessor::GetUnit(*me, LeftHead);
@@ -282,8 +263,8 @@ public:
             }
         }
     
-        void JustDied(Unit* Killer)
-        override {
+        void JustDied(Unit* Killer) override 
+        {
             if (LeftHead && RightHead)
             {
                 Unit* Left  = ObjectAccessor::GetUnit(*me, LeftHead);
@@ -297,12 +278,11 @@ public:
                 ((mob_omrogg_heads::mob_omrogg_headsAI*)(Right->ToCreature())->AI())->DoDeathYell();
             }
     
-            if (pInstance)
-                pInstance->SetData(DATA_OMROGG_EVENT, DONE);
+            _JustDied();
         }
     
-        void UpdateAI(const uint32 diff)
-        override {
+        void UpdateAI(const uint32 diff) override 
+        {
             if (Delay_Timer < diff)
             {
                 Delay_Timer = 3500;
@@ -399,16 +379,13 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_warbringer_omroggAI(creature);
+        return GetShatteredHallsAI<boss_warbringer_omroggAI>(creature);
     }
 };
 
-
 void AddSC_boss_warbringer_omrogg()
 {
-
     new boss_warbringer_omrogg();
-
     new mob_omrogg_heads();
 }
 

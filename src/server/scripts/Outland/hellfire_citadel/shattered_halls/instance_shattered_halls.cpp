@@ -1,18 +1,3 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /* ScriptData
 SDName: Instance_Shattered_Halls
@@ -22,9 +7,7 @@ SDCategory: Hellfire Citadel, Shattered Halls
 EndScriptData */
 
 
-#include "def_shattered_halls.h"
-
-#define ENCOUNTERS  6
+#include "shattered_halls.h"
 
 uint32 HordePrisoners[3] = { 17296, 17295, 17297 };
 uint32 AlliancePrisoners[3] = { 17290, 17292, 17289 };
@@ -47,9 +30,14 @@ public:
 
     struct instance_shattered_halls_script : public InstanceScript
     {
-        instance_shattered_halls_script(Map* pMap) : InstanceScript(pMap) { Initialize(); };
+        instance_shattered_halls_script(Map* pMap) : InstanceScript(pMap) 
+        { 
+            Initialize(); 
 
-        uint32 Encounters[ENCOUNTERS];
+            SetHeaders(DataHeader);
+            SetBossNumber(EncounterCount);
+        };
+
         uint32 SaveIntervalTimer;
         uint32 TimerLeft;
 
@@ -62,6 +50,7 @@ public:
         Creature* SecondPrisoner;
         Creature* ThirdPrisoner;
 
+        uint32 const TIMER = 80 * MINUTE * IN_MILLISECONDS;
         bool HeroicMode;
         bool hasCasted80min;
         bool hasCasted25min;
@@ -80,26 +69,25 @@ public:
             SecondPrisoner = nullptr;
             ThirdPrisoner = nullptr;
 
-            for (uint8 i = 0; i < ENCOUNTERS - 1; i++)     // Do not override saved Timer value !
-                Encounters[i] = NOT_STARTED;
-
-            TimerLeft = 4800000;                        // 80 mins, in ms
+            TimerLeft = TIMER;
 
             HeroicMode = this->instance->IsHeroic();
         }
 
         void OnGameObjectCreate(GameObject* pGo) override
         {
+            InstanceScript::OnGameObjectCreate(pGo);
+
             switch (pGo->GetEntry())
             {
-            case ENTRY_FIRST_DOOR:
+            case GO_GRAND_WARLOCK_CHAMBER_DOOR_1:
                 FirstDoorGUID = pGo->GetGUID();
-                if (Encounters[DATA_NETHEKURSE_EVENT] == DONE)
+                if(GetBossState(DATA_NETHEKURSE) == DONE)
                     HandleGameObject(0, true, pGo);
                 break;
-            case ENTRY_SECOND_DOOR:
+            case GO_GRAND_WARLOCK_CHAMBER_DOOR_2:
                 SecondDoorGUID = pGo->GetGUID();
-                if (Encounters[DATA_NETHEKURSE_EVENT] == DONE)
+                if (GetBossState(DATA_NETHEKURSE) == DONE)
                     HandleGameObject(0, true, pGo);
                 break;
             }
@@ -107,16 +95,19 @@ public:
 
         void OnCreatureCreate(Creature* creature) override
         {
-            switch (creature->GetEntry()) {
-            case 16807:     // Nethekurse
+            InstanceScript::OnCreatureCreate(creature);
+
+            switch (creature->GetEntry()) 
+            {
+            case NPC_GRAND_WARLOCK_NETHEKURSE:     // Nethekurse
                 NethekurseGUID = creature->GetGUID();
                 break;
-            case 17301:     // Executioner
+            case NPC_SHATTERED_EXECUTIONER:     // Executioner
                 ExecutionerGUID = creature->GetGUID();
                 creature->SetKeepActive(true);
-                if (GetData(DATA_NETHEKURSE_EVENT) == NOT_STARTED)
+                if (GetData(DATA_NETHEKURSE) == NOT_STARTED)
                     creature->SetVisible(false);
-                if (GetData(DATA_BLADEFIST_EVENT) == NOT_STARTED)
+                if (GetData(DATA_BLADEFIST) == NOT_STARTED)
                     creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                 break;
             }
@@ -160,78 +151,87 @@ public:
                 {
                     if (Player* plr = player.GetSource())
                         if (plr->IsAttackableByAOE())
-                            plr->CastSpell(plr, spellid, TRIGGERED_FULL_MASK);
+                            plr->CastSpell(plr, spellid, true);
                 }
             }
         }
 
-        bool IsEncounterInProgress() const override
+        void EnableExecutioner(bool attackable)
         {
-            for (uint32 Encounter : Encounters)
-                if (Encounter == IN_PROGRESS) return true;
+            Creature* executioner = instance->GetCreature(DATA_EXECUTIONER_GUID);
+            if (!executioner)
+                return;
 
-            return false;
+            if (attackable)
+            {
+                executioner->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_NON_ATTACKABLE);
+            }
+            else
+            {
+                executioner->SetVisible(true);
+                executioner->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_NON_ATTACKABLE);
+                // TODO: Yell something ?
+            }
+        }
+
+        bool SetBossState(uint32 type, EncounterState state) override
+        {
+            if (!InstanceScript::SetBossState(type, state))
+                return false;
+
+            switch (type)
+            {
+                case DATA_NETHEKURSE:
+                if (state == DONE)
+                {
+                    EnableExecutioner(true);
+
+                    HandleGameObject(FirstDoorGUID, true, nullptr);
+                    HandleGameObject(SecondDoorGUID, true, nullptr);
+                }
+                break;
+                case DATA_BLADEFIST:
+                    if (state == DONE)
+                        EnableExecutioner(true);
+                    break;
+                case DATA_EXECUTIONER:
+                    if (state == IN_PROGRESS)
+                        EnableExecutioner(false);
+                    break;
+                default:
+                    break;
+            }
+            return true;
         }
 
         void SetData(uint32 type, uint32 data) override
         {
             switch (type)
             {
-            case DATA_NETHEKURSE_EVENT:
-                Encounters[DATA_NETHEKURSE_EVENT] = data;
-                if (data == DONE) {
-                    HandleGameObject(FirstDoorGUID, true, nullptr);
-                    HandleGameObject(SecondDoorGUID, true, nullptr);
-                }
-                break;
-            case DATA_PORUNG_EVENT:
-                Encounters[DATA_PORUNG_EVENT] = data;
-                break;
-            case DATA_OMROGG_EVENT:
-                Encounters[DATA_OMROGG_EVENT] = data;
-                break;
-            case DATA_BLADEFIST_EVENT:
-                Encounters[DATA_BLADEFIST_EVENT] = data;
-                break;
-            case DATA_EXECUTIONER_EVENT:
-                Encounters[DATA_EXECUTIONER_EVENT] = data;
-                break;
             case DATA_TIMER_LEFT:
-                Encounters[5] = data;
+                TimerLeft = data;
+                break;
             }
-
-            if (data == DONE)
-                SaveToDB();
         }
 
         uint32 GetData(uint32 type) const override
         {
             switch (type)
             {
-            case DATA_NETHEKURSE_EVENT:
-                return Encounters[DATA_NETHEKURSE_EVENT];
-            case DATA_PORUNG_EVENT:
-                return Encounters[DATA_PORUNG_EVENT];
-            case DATA_OMROGG_EVENT:
-                return Encounters[DATA_OMROGG_EVENT];
-            case DATA_BLADEFIST_EVENT:
-                return Encounters[DATA_BLADEFIST_EVENT];
-            case DATA_EXECUTIONER_EVENT:
-                return Encounters[DATA_EXECUTIONER_EVENT];
             case DATA_TIMER_LEFT:
-                return Encounters[5];
+                return TimerLeft;
             }
 
             return 0;
         }
 
-        uint64 GetData64(uint32 data) const override
+        ObjectGuid GetGuidData(uint32 data) const override
         {
             switch (data)
             {
-            case ENTRY_FIRST_DOOR:
+            case GO_GRAND_WARLOCK_CHAMBER_DOOR_1:
                 return FirstDoorGUID;
-            case ENTRY_SECOND_DOOR:
+            case GO_GRAND_WARLOCK_CHAMBER_DOOR_2:
                 return SecondDoorGUID;
             case DATA_NETHEKURSE_GUID:
                 return NethekurseGUID;
@@ -242,34 +242,17 @@ public:
             return 0;
         }
 
-        std::string GetSaveData() override
-        {
-            OUT_SAVE_INST_DATA;
-            std::ostringstream stream;
-            stream << Encounters[0] << " " << Encounters[1] << " " << Encounters[2] << " " << Encounters[3] << " " << Encounters[4] << " " << Encounters[5];
+        virtual void ReadSaveDataMore(std::istringstream& data) 
+        { 
+            data >> TimerLeft;
 
-            OUT_SAVE_INST_DATA_COMPLETE;
-            return stream.str();
+            if(TimerLeft > TIMER)
+                SetBossState(DATA_EXECUTIONER, IN_PROGRESS);
         }
 
-        void Load(const char* in) override
-        {
-            if (!in)
-            {
-                OUT_LOAD_INST_DATA_FAIL;
-                return;
-            }
-
-            OUT_LOAD_INST_DATA(in);
-            std::istringstream stream(in);
-            stream >> Encounters[0] >> Encounters[1] >> Encounters[2] >> Encounters[3] >> Encounters[4] >> Encounters[5];
-            for (uint8 i = 0; i < ENCOUNTERS; ++i)
-                if (Encounters[i] == IN_PROGRESS && i != 4)                // Do not load an encounter as "In Progress" - reset it instead, except for Executioner.
-                    Encounters[i] = NOT_STARTED;
-
-            TimerLeft = Encounters[5];
-
-            OUT_LOAD_INST_DATA_COMPLETE;
+        virtual void WriteSaveDataMore(std::ostringstream& data) 
+        { 
+            data << TimerLeft;
         }
 
         // Update is only needed in Heroic, for the timer
@@ -279,27 +262,30 @@ public:
                 return;
 
             // If Executioner is dead and some prisoners are still alive, reward players for quest
-            /*if (Executioner && Executioner->IsDead() && GetData(DATA_EXECUTIONER_EVENT) != DONE) {
+            /*if (Executioner && Executioner->IsDead() && GetBossState(DATA_EXECUTIONER) != DONE) {
                 if ( (FirstPrisoner && FirstPrisoner->IsAlive()) || (SecondPrisoner && SecondPrisoner->IsAlive()) || (ThirdPrisoner && ThirdPrisoner->IsAlive()) ) {
                     RewardAllPlayersInMapForQuest();
-                    SetData(DATA_EXECUTIONER_EVENT, DONE);
+                    SetBossState(DATA_EXECUTIONER, DONE);
                 }
             }*/
 
-            if (GetData(DATA_EXECUTIONER_EVENT) != IN_PROGRESS)
+            if (GetBossState(DATA_EXECUTIONER) != IN_PROGRESS)
                 return;
 
             // Decrease timer at each update
             TimerLeft -= diff;
 
-            if (!hasCasted80min) {      // Event just started
+            if (!hasCasted80min) 
+            {      // Event just started
                 // TODO: Correct this [PH] yell
                 if (Creature *Executioner = instance->GetCreature(ExecutionerGUID))
                     if (Executioner->IsInWorld())
                         Executioner->YellToMap("[PH] I got three hostages! In 55 minutes, I will kill the first one!");
-                CastSpellOnAllPlayersInMap(EXEC_TIMER_55);
+
+                CastSpellOnAllPlayersInMap(SPELL_KARGATH_EXECUTIONER_1);
                 Player* plr = GetPlayer();
-                if (!plr) {
+                if (!plr) 
+                {
                     TC_LOG_ERROR("scripts", "Instance Shattered Halls: Update: No player found in map when event started !");
                     return;
                 }
@@ -307,48 +293,55 @@ public:
                 hasCasted80min = true;
             }
 
-            if (TimerLeft < 1500000 && !hasCasted25min) {               // 25 min left and debuff not casted yet
+            if (TimerLeft < 25 * MINUTE * IN_MILLISECONDS && !hasCasted25min)
+            {
                 // TODO: Correct this [PH] yell
                 if (Creature *Executioner = instance->GetCreature(ExecutionerGUID))
                     if (Executioner->IsInWorld())
                         Executioner->YellToMap("[PH] The first hostage is dead! In 10 minutes, I will kill a second!", LANG_UNIVERSAL);
-                CastSpellOnAllPlayersInMap(GetData(EXEC_TIMER_10));      // 2nd timer of 10 mins
+
+                CastSpellOnAllPlayersInMap(GetData(SPELL_KARGATH_EXECUTIONER_2));      // 2nd timer of 10 mins
                 /*if (FirstPrisoner && Executioner)
                     Executioner->DealDamage(FirstPrisoner, FirstPrisoner->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);*/
                 hasCasted25min = true;
             }
 
-            if (TimerLeft < 900000 && !hasCasted15min) {                // 15 min left and debuff not casted yet
+            if (TimerLeft < 15 * MINUTE * IN_MILLISECONDS && !hasCasted15min) 
+            {
                 // TODO: Correct this [PH] yell
                 if (Creature *Executioner = instance->GetCreature(ExecutionerGUID))
                     if (Executioner->IsInWorld())
                         Executioner->YellToMap("[PH] I killed the second hostage! In fifteen minutes, I will kill the last.");
-                CastSpellOnAllPlayersInMap(GetData(EXEC_TIMER_15));      // 3rd (and last) timer of 15 mins
+
+                CastSpellOnAllPlayersInMap(GetData(SPELL_KARGATH_EXECUTIONER_3));      // 3rd (and last) timer of 15 mins
                 /*if (SecondPrisoner && Executioner)
                     Executioner->DealDamage(SecondPrisoner, SecondPrisoner->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);*/
                 hasCasted15min = true;
             }
 
-            if (TimerLeft < diff) {     // TIME UP ! Kill the third prisoner and stop the timer, killing executioner won't give the quest item
+            if (TimerLeft < diff) 
+            {     // TIME UP ! Kill the third prisoner and stop the timer, killing executioner won't give the quest item
                 // TODO: Correct this [PH] yell
                 if (Creature *Executioner = instance->GetCreature(ExecutionerGUID)) {
-                    if (Executioner->IsInWorld()) {
+                    if (Executioner->IsInWorld()) 
+                    {
                         Executioner->YellToMap("[PH] You're too late! I killed them all.");
                         Executioner->loot.RemoveItem(31716);
                     }
                 }
                 /*if (ThirdPrisoner && Executioner)
                     Executioner->DealDamage(ThirdPrisoner, ThirdPrisoner->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);*/
-                SetData(DATA_EXECUTIONER_EVENT, FAIL);
+                SetBossState(DATA_EXECUTIONER, FAIL);
             }
 
             // Save time left in DB every 30 sec
-            if (SaveIntervalTimer <= diff) {
+            if (SaveIntervalTimer <= diff) 
+            {
                 SetData(DATA_TIMER_LEFT, TimerLeft);
                 SaveToDB();
-                SaveIntervalTimer = 30000;
-            }
-            else SaveIntervalTimer -= diff;
+                SaveIntervalTimer = 30 * MINUTE * IN_MILLISECONDS;
+            } else 
+                SaveIntervalTimer -= diff;
         }
     };
 };
@@ -361,14 +354,11 @@ public:
 
     bool OnTrigger(Player *pPlayer, AreaTriggerEntry const *at) override
     {
-        if (InstanceScript* pInstance = ((InstanceScript*)pPlayer->GetInstanceScript())) {
-            if (pInstance->GetData(DATA_EXECUTIONER_EVENT) != IN_PROGRESS) {
-                pInstance->SetData(DATA_EXECUTIONER_EVENT, IN_PROGRESS);
-                if (Creature* Executioner = ObjectAccessor::GetCreature(*pPlayer, pInstance->GetData64(DATA_EXECUTIONER_GUID))) {
-                    Executioner->SetVisible(true);
-                    Executioner->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
-                    // TODO: Yell something ?
-                }
+        if (InstanceScript* pInstance = ((InstanceScript*)pPlayer->GetInstanceScript())) 
+        {
+            if (pInstance->GetBossState(DATA_EXECUTIONER) == NOT_STARTED)
+            {
+                pInstance->SetBossState(DATA_EXECUTIONER, IN_PROGRESS);
             }
         }
 
