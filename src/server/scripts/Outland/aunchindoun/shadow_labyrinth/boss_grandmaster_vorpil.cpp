@@ -124,7 +124,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new mob_voidtravelerAI(creature);
+        return GetShadowLabyrinthAI<mob_voidtravelerAI>(creature);
     }
 };
 
@@ -135,17 +135,15 @@ public:
     boss_grandmaster_vorpil() : CreatureScript("boss_grandmaster_vorpil")
     { }
 
-    class boss_grandmaster_vorpilAI : public ScriptedAI
+    class boss_grandmaster_vorpilAI : public BossAI
     {
         public:
-        boss_grandmaster_vorpilAI(Creature *c) : ScriptedAI(c)
+        boss_grandmaster_vorpilAI(Creature* creature) : BossAI(creature, DATA_GRANDMASTER_VORPIL)
         {
-            pInstance = ((InstanceScript*)c->GetInstanceScript());
             HeroicMode = me->GetMap()->IsHeroic();
             Intro = false;
         }
     
-        InstanceScript *pInstance;
         bool Intro, HelpYell;
         bool sumportals;
         bool HeroicMode;
@@ -173,9 +171,7 @@ public:
             HelpYell = false;
             destroyPortals();
     
-            if(pInstance)
-                pInstance->SetData(DATA_GRANDMASTERVORPILEVENT, NOT_STARTED);
-                
+            _Reset();
             if (isEventActive())
                 me->SetDisplayId(22801);
         }
@@ -228,6 +224,7 @@ public:
     
         void JustSummoned(Creature *summoned)
         override {
+            BossAI::JustSummoned(summoned);
             if (summoned && summoned->GetEntry() == MOB_VOID_TRAVELER)
                 ((mob_voidtraveler::mob_voidtravelerAI*)summoned->AI())->Vorpil = me;
         }
@@ -245,9 +242,7 @@ public:
         override {
             DoScriptText(SAY_DEATH, me);
             destroyPortals();
-    
-            if(pInstance)
-                pInstance->SetData(DATA_GRANDMASTERVORPILEVENT, DONE);
+            _JustDied();
         }
     
         void EnterCombat(Unit *who)
@@ -259,9 +254,7 @@ public:
                 case 2: DoScriptText(SAY_AGGRO3, me); break;
             }
             summonPortals();
-    
-            if(pInstance)
-                pInstance->SetData(DATA_GRANDMASTERVORPILEVENT, IN_PROGRESS);
+            _EnterCombat();
         }
     
         void MoveInLineOfSight(Unit *who)
@@ -329,7 +322,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_grandmaster_vorpilAI(creature);
+        return GetShadowLabyrinthAI<boss_grandmaster_vorpilAI>(creature);
     }
 };
 
@@ -337,7 +330,6 @@ public:
 void AddSC_boss_grandmaster_vorpil()
 {
     new boss_grandmaster_vorpil();
-
     new mob_voidtraveler();
 }
 

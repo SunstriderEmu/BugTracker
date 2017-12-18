@@ -26,7 +26,7 @@ DoorData const doorData[] =
 class instance_gruuls_lair : public InstanceMapScript
 {
 public:
-    instance_gruuls_lair() : InstanceMapScript("instance_gruuls_lair", 565) { }
+    instance_gruuls_lair() : InstanceMapScript(GLScriptName, 565) { }
 
     InstanceScript* GetInstanceScript(InstanceMap* map) const override
     {
@@ -35,7 +35,7 @@ public:
 
     struct instance_gruuls_lair_script : public InstanceScript
     {
-        instance_gruuls_lair_script(Map *map) : InstanceScript(map) 
+        instance_gruuls_lair_script(Map *map) : InstanceScript(map)
         {
             SetHeaders(DataHeader);
             SetBossNumber(EncounterCount);
@@ -85,7 +85,7 @@ public:
             case GO_MAULGAR_DOOR:
                 MaulgarDoor = go->GetGUID();
                 break;
-            case GO_GRUUL_DOOR: 
+            case GO_GRUUL_DOOR:
                 GruulDoor = go->GetGUID(); break;
             }
         }
@@ -116,12 +116,7 @@ public:
             }
             return 0;
         }
-
-        void SetData(uint32 type, uint32 data) override
-        {
-            if (data == DONE)
-                SaveToDB();
-        }
+    };
 };
 
 void AddSC_instance_gruuls_lair()

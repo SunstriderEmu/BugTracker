@@ -22,10 +22,13 @@ EndScriptData */
 
 #define SAY_DEATH       -1555007
 
-#define SPELL_BANISH            30231
-#define SPELL_CORROSIVE_ACID    23313
-#define SPELL_FEAR              33547
-#define SPELL_ENRAGE            0                           //need to find proper spell
+enum Spells
+{
+    SPELL_BANISH            = 30231,
+    SPELL_CORROSIVE_ACID    = 33551,
+    SPELL_FEAR              = 33547,
+    SPELL_ENRAGE            = 34970
+};
 
 class boss_ambassador_hellmaw : public CreatureScript
 {
@@ -33,16 +36,14 @@ public:
     boss_ambassador_hellmaw() : CreatureScript("boss_ambassador_hellmaw")
     { }
 
-    class boss_ambassador_hellmawAI : public ScriptedAI
+    class boss_ambassador_hellmawAI : public BossAI
     {
         public:
-        boss_ambassador_hellmawAI(Creature *c) : ScriptedAI(c)
+        boss_ambassador_hellmawAI(Creature* creature) : BossAI(creature, DATA_AMBASSADOR_HELLMAW)
         {
-            pInstance = ((InstanceScript*)c->GetInstanceScript());
             HeroicMode = me->GetMap()->IsHeroic();
         }
     
-        InstanceScript* pInstance;
         bool HeroicMode;
     
         uint32 EventCheck_Timer;
@@ -58,26 +59,23 @@ public:
             CorrosiveAcid_Timer = 25000;
             Fear_Timer = 40000;
             Enrage_Timer = 180000;
-            Intro = false;
             IsBanished = false;
     
-            if (pInstance)
+            DoAction(ACTION_AMBASSADOR_HELLMAW_BANISH);
+            _Reset();
+        }
+
+        void DoAction(int32 actionId) override
+        {
+            if (actionId == ACTION_AMBASSADOR_HELLMAW_INTRO)
+                DoIntro();
+            else if (actionId == ACTION_AMBASSADOR_HELLMAW_BANISH)
             {
-                if (pInstance->GetData(TYPE_HELLMAW) == NOT_STARTED)
-                {
-                    DoCast(me,SPELL_BANISH);
-                    IsBanished = true;
-                }
-                else pInstance->SetData(TYPE_HELLMAW,FAIL);
-                if (pInstance->GetData(TYPE_OVERSEER) == DONE)
-                {
-                    if (me->HasAuraEffect(SPELL_BANISH,0))
-                        me->RemoveAurasDueToSpell(SPELL_BANISH);
-                    Intro = true;
-                }
+                if (instance->GetData(DATA_FEL_OVERSEER) && me->HasAura(SPELL_BANISH))
+                    DoCast(me, SPELL_BANISH, true); // this will not work, because he is immune to banish
             }
         }
-    
+
         void MoveInLineOfSight(Unit *who) override
         {
             if (me->HasAuraEffect(SPELL_BANISH,0))
@@ -101,9 +99,6 @@ public:
     
             IsBanished = false;
             Intro = true;
-    
-            if (pInstance)
-                pInstance->SetData(TYPE_HELLMAW, IN_PROGRESS);
         }
     
         void EnterCombat(Unit *who) override
@@ -114,6 +109,7 @@ public:
                 case 1: DoScriptText(SAY_AGGRO2, me); break;
                 case 2: DoScriptText(SAY_AGGRO3, me); break;
             }
+            _EnterCombat();
         }
     
         void KilledUnit(Unit *victim) override
@@ -128,26 +124,11 @@ public:
         void JustDied(Unit *victim) override
         {
             DoScriptText(SAY_DEATH, me);
-    
-            if (pInstance)
-                pInstance->SetData(TYPE_HELLMAW, DONE);
+            _JustDied();
         }
     
         void UpdateAI(const uint32 diff) override
         {
-            if (!Intro)
-            {
-                if (EventCheck_Timer < diff)
-                {
-                    if(pInstance)
-                    {
-                        if (pInstance->GetData(TYPE_OVERSEER) == DONE)
-                            DoIntro();
-                    }
-                    EventCheck_Timer = 5000;
-                }else EventCheck_Timer -= diff;
-            }
-    
             if (!me->IsInCombat() && !IsBanished)
             {
                 //this is where we add MovePoint()
@@ -162,7 +143,10 @@ public:
                 EnterEvadeMode();
                 return;
             }
-    
+
+            if (me->HasUnitState(UNIT_STATE_CASTING))
+                return;
+
             if (CorrosiveAcid_Timer < diff)
             {
                 DoCast(me,SPELL_CORROSIVE_ACID);
@@ -175,13 +159,13 @@ public:
                 Fear_Timer = 35000;
             }else Fear_Timer -= diff;
     
-            /*if (HeroicMode)
+            if (HeroicMode)
             {
                 if (Enrage_Timer < diff)
                 {
                     DoCast(me,SPELL_ENRAGE);
                 }else Enrage_Timer -= diff;
-            }*/
+            }
     
             DoMeleeAttackIfReady();
         }
@@ -189,7 +173,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_ambassador_hellmawAI(creature);
+        return GetShadowLabyrinthAI<boss_ambassador_hellmawAI>(creature);
     }
 };
 

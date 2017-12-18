@@ -6,7 +6,7 @@ SDComment: Timers may be incorrect
 SDCategory: Auchindoun, Shadow Labyrinth
 EndScriptData */
 
-
+#include "def_shadow_labyrinth.h"
 
 #define EMOTE_SONIC_BOOM            -1555036
 
@@ -25,10 +25,10 @@ public:
     boss_murmur() : CreatureScript("boss_murmur")
     { }
 
-    class boss_murmurAI : public ScriptedAI
+    class boss_murmurAI : public BossAI
     {
         public:
-        boss_murmurAI(Creature *c) : ScriptedAI(c)
+        boss_murmurAI(Creature* creature) : BossAI(creature, DATA_MURMUR)
         {
             HeroicMode = me->GetMap()->IsHeroic();
             SetCombatMovementAllowed(false);
@@ -57,9 +57,8 @@ public:
             uint32 hp = (me->GetMaxHealth()*40)/100;
             if (hp) me->SetHealth(hp);
             me->ResetPlayerDamageReq();
+            _Reset();
         }
-    
-        void EnterCombat(Unit *who) override { }
     
         // Sonic Boom instant damage (needs core fix instead of this)
         void SpellHitTarget(Unit *target, const SpellInfo *spell)
@@ -165,7 +164,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_murmurAI(creature);
+        return GetShadowLabyrinthAI<boss_murmurAI>(creature);
     }
 };
 

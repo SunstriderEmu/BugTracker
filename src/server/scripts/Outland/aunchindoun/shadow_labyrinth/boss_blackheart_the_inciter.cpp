@@ -42,15 +42,12 @@ public:
     boss_blackheart_the_inciter() : CreatureScript("boss_blackheart_the_inciter")
     { }
 
-    class boss_blackheart_the_inciterAI : public ScriptedAI
+    class boss_blackheart_the_inciterAI : public BossAI
     {
         public:
-        boss_blackheart_the_inciterAI(Creature *c) : ScriptedAI(c)
+        boss_blackheart_the_inciterAI(Creature* creature) : BossAI(creature, DATA_BLACKHEART_THE_INCITER)
         {
-            pInstance = ((InstanceScript*)c->GetInstanceScript());
         }
-    
-        InstanceScript *pInstance;
     
         bool InciteChaos;
         uint32 InciteChaos_Timer;
@@ -65,9 +62,7 @@ public:
             InciteChaosWait_Timer = 15000;
             Charge_Timer = 5000;
             Knockback_Timer = 15000;
-    
-            if (pInstance)
-                pInstance->SetData(DATA_BLACKHEARTTHEINCITEREVENT, NOT_STARTED);
+            _Reset();
         }
     
         void KilledUnit(Unit *victim) override
@@ -82,9 +77,7 @@ public:
         void JustDied(Unit *victim) override
         {
             DoScriptText(SAY_DEATH, me);
-    
-            if( pInstance )
-                pInstance->SetData(DATA_BLACKHEARTTHEINCITEREVENT, DONE);
+            _JustDied();
         }
     
         void EnterCombat(Unit *who) override
@@ -95,9 +88,7 @@ public:
                 case 1: DoScriptText(SAY_AGGRO2, me); break;
                 case 2: DoScriptText(SAY_AGGRO3, me); break;
             }
-    
-            if (pInstance)
-                pInstance->SetData(DATA_BLACKHEARTTHEINCITEREVENT, IN_PROGRESS);
+            _EnterCombat();
         }
     
         void UpdateAI(const uint32 diff) override
@@ -156,7 +147,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_blackheart_the_inciterAI(creature);
+        return GetShadowLabyrinthAI<boss_blackheart_the_inciterAI>(creature);
     }
 };
 

@@ -42,8 +42,6 @@ public:
         bool hasSummoned66;
         bool hasSummoned33;
         
-        SummonList summons;
-        
         void Reset() override 
         {
             chargeTimer = 9000;

@@ -37,7 +37,7 @@ DoorData const doorData[] =
 class instance_sethekk_halls : public InstanceMapScript
 {
 public:
-    instance_sethekk_halls() : InstanceMapScript("instance_sethekk_halls", 556) { }
+    instance_sethekk_halls() : InstanceMapScript(SHScriptName, 556) { }
 
     InstanceScript* GetInstanceScript(InstanceMap* map) const override
     {
