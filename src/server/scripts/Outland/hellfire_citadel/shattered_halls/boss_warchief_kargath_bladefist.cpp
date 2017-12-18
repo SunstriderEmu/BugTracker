@@ -15,19 +15,15 @@ float AssassEntrance[3] = {275.136f,-84.29f,2.3f}; // y +-8
 float AssassExit[3] = {184.233f,-84.29f,2.3f}; // y +-8
 float AddsEntrance[3] = {306.036f,-84.29f,1.93f};
 
-#define SOUND_AGGRO1                    10323
-#define SAY_AGGRO1                      "Ours is the true Horde! The only Horde!"
-#define SOUND_AGGRO2                    10324
-#define SAY_AGGRO2                      "I'll carve the meat from your bones!"
-#define SOUND_AGGRO3                    10325
-#define SAY_AGGRO3                      "I am called Bladefist for a reason, as you will see!"
-#define SOUND_SLAY1                     10326
-#define SAY_SLAY1                       "For the real Horde!"
-#define SOUND_SLAY2                     10327
-#define SAY_SLAY2                       "I am the only Warchief!"
-#define SOUND_DEATH                     10328
-#define SAY_DEATH                       "The true Horde... will.. prevail.."
+enum Says
+{
+    SAY_AGGRO                      = 0,
+    SAY_SLAY                       = 1,
+    SAY_DEATH                      = 2,
 
+    SAY_CALL_EXECUTIONER_A = 3,
+    SAY_CALL_EXECUTIONER_H = 4
+};
 
 class boss_warchief_kargath_bladefist : public CreatureScript
 {
@@ -38,7 +34,7 @@ public:
     class boss_warchief_kargath_bladefistAI : public BossAI
     {
         public:
-        boss_warchief_kargath_bladefistAI(Creature* creature) : BossAI(creature, DATA_BLADEFIST)
+        boss_warchief_kargath_bladefistAI(Creature* creature) : BossAI(creature, DATA_KARGATH)
         {
             HeroicMode = me->GetMap()->IsHeroic();
         }
@@ -60,7 +56,25 @@ public:
         bool InBlade;
     
         uint32 target_num;
-    
+
+        void DoAction(int32 action) override
+        {
+            if (action == ACTION_EXECUTIONER_TAUNT)
+            {
+                switch (instance->GetData(DATA_TEAM_IN_INSTANCE))
+                {
+                case ALLIANCE:
+                    Talk(SAY_CALL_EXECUTIONER_A);
+                    break;
+                case HORDE:
+                    Talk(SAY_CALL_EXECUTIONER_H);
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
+
         void Reset() override 
         {
             removeAdds();
@@ -83,22 +97,7 @@ public:
     
         void EnterCombat(Unit *who) override 
         {
-            switch (rand()%3)
-            {
-            case 0:
-                DoPlaySoundToSet(me,SOUND_AGGRO1);
-                me->Yell(SAY_AGGRO1,LANG_UNIVERSAL,nullptr);
-                break;
-            case 1:
-                DoPlaySoundToSet(me,SOUND_AGGRO2);
-                me->Yell(SAY_AGGRO2,LANG_UNIVERSAL,nullptr);
-                break;
-            case 2:
-                DoPlaySoundToSet(me,SOUND_AGGRO3);
-                me->Yell(SAY_AGGRO3,LANG_UNIVERSAL,nullptr);
-                break;
-            }
-            
+            Talk(SAY_AGGRO);
             _EnterCombat();
         }
     
@@ -120,26 +119,13 @@ public:
     
         void KilledUnit(Unit *victim) override 
         {
-            if(victim->GetTypeId() == TYPEID_PLAYER)
-            {
-                switch(rand()%2)
-                {
-                case 0:
-                    DoPlaySoundToSet(me, SOUND_SLAY1);
-                    me->Yell(SAY_SLAY1,LANG_UNIVERSAL,nullptr);
-                    break;
-                case 1:
-                    DoPlaySoundToSet(me, SOUND_SLAY2);
-                    me->Yell(SAY_SLAY2,LANG_UNIVERSAL,nullptr);
-                    break;
-                }
-            }
+            if (victim->GetTypeId() == TYPEID_PLAYER)
+                Talk(SAY_SLAY);
         }
     
         void JustDied(Unit* Killer) override 
         {
-            DoPlaySoundToSet(me, SOUND_DEATH);
-            me->Yell(SAY_DEATH,LANG_UNIVERSAL,nullptr);
+            Talk(SAY_DEATH);
             removeAdds();
             
             _JustDied();

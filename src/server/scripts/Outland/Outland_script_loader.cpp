@@ -60,6 +60,7 @@ void AddSC_boss_grand_warlock_nethekurse();
 void AddSC_boss_warbringer_omrogg();
 void AddSC_boss_warchief_kargath_bladefist();
 void AddSC_instance_shattered_halls();
+void AddSC_shattered_halls();
 void AddSC_instance_ramparts();
 void AddSC_hellfire_peninsula();
 void AddSC_isle_of_queldanas();
@@ -175,6 +176,7 @@ void AddOutlandScripts()
     AddSC_boss_warbringer_omrogg();
     AddSC_boss_warchief_kargath_bladefist();
     AddSC_instance_shattered_halls();
+    AddSC_shattered_halls();
     AddSC_instance_ramparts();
     AddSC_hellfire_peninsula();
     AddSC_isle_of_queldanas();

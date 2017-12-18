@@ -6,7 +6,6 @@ SDComment: Loots of the Executioner should depend on the amount of prisoners kil
 SDCategory: Hellfire Citadel, Shattered Halls
 EndScriptData */
 
-
 #include "shattered_halls.h"
 
 uint32 HordePrisoners[3] = { 17296, 17295, 17297 };
@@ -32,46 +31,46 @@ public:
     {
         instance_shattered_halls_script(Map* pMap) : InstanceScript(pMap) 
         { 
-            Initialize(); 
-
             SetHeaders(DataHeader);
             SetBossNumber(EncounterCount);
-        };
-
-        uint32 SaveIntervalTimer;
-        uint32 TimerLeft;
-
-        uint64 FirstDoorGUID;
-        uint64 SecondDoorGUID;
-        uint64 NethekurseGUID;
-        uint64 ExecutionerGUID;
-
-        Creature* FirstPrisoner;
-        Creature* SecondPrisoner;
-        Creature* ThirdPrisoner;
-
-        uint32 const TIMER = 80 * MINUTE * IN_MILLISECONDS;
-        bool HeroicMode;
-        bool hasCasted80min;
-        bool hasCasted25min;
-        bool hasCasted15min;
-
-        void Initialize() override
-        {
-            SaveIntervalTimer = 30000;                  // Saving every 30 sec looks correct
 
             FirstDoorGUID = 0;
             SecondDoorGUID = 0;
             NethekurseGUID = 0;
-            ExecutionerGUID = 0;
+            executionerGUID = 0;
+            kargathGUID = 0;
 
-            FirstPrisoner = nullptr;
-            SecondPrisoner = nullptr;
-            ThirdPrisoner = nullptr;
+            victimsGUID[0] = 0;
+            victimsGUID[1] = 0;
+            victimsGUID[2] = 0;
 
-            TimerLeft = TIMER;
+            executionTimer = 0;
+            SaveIntervalTimer = 30000;
 
-            HeroicMode = this->instance->IsHeroic();
+            _team = 0;
+
+            HeroicMode = pMap->IsHeroic();
+        };
+
+        uint32 SaveIntervalTimer;
+        uint32 executionTimer;
+        uint8 executed;
+        uint32 _team;
+
+        ObjectGuid FirstDoorGUID;
+        ObjectGuid SecondDoorGUID;
+        ObjectGuid NethekurseGUID;
+        ObjectGuid executionerGUID;
+        ObjectGuid kargathGUID;
+
+        ObjectGuid victimsGUID[3];
+
+        bool HeroicMode;
+
+        void Initialize() override
+        {
+            if(HeroicMode)
+                executionTimer = 55 * MINUTE * IN_MILLISECONDS;
         }
 
         void OnGameObjectCreate(GameObject* pGo) override
@@ -93,22 +92,77 @@ public:
             }
         }
 
+        void OnPlayerEnter(Player* player) override
+        {
+            Aura* ex = nullptr;
+
+            if (!_team)
+                _team = player->GetTeam();
+
+            player->CastSpell(player, SPELL_REMOVE_KARGATH_EXECUTIONER, true);
+
+            if (!executionTimer || executionerGUID.IsEmpty())
+                return;
+
+            switch (executed)
+            {
+            case 0:
+                ex = player->AddAura(SPELL_KARGATH_EXECUTIONER_1, player);
+                break;
+            case 1:
+                ex = player->AddAura(SPELL_KARGATH_EXECUTIONER_2, player);
+                break;
+            case 2:
+                ex = player->AddAura(SPELL_KARGATH_EXECUTIONER_3, player);
+                break;
+            default:
+                break;
+            }
+
+            if (ex)
+                ex->SetDuration(executionTimer);
+        }
+
         void OnCreatureCreate(Creature* creature) override
         {
             InstanceScript::OnCreatureCreate(creature);
+
+            if (!_team)
+            {
+                Map::PlayerList const& players = instance->GetPlayers();
+                if (!players.isEmpty())
+                    if (Player* player = players.begin()->GetSource())
+                        _team = player->GetTeam();
+            }
 
             switch (creature->GetEntry()) 
             {
             case NPC_GRAND_WARLOCK_NETHEKURSE:     // Nethekurse
                 NethekurseGUID = creature->GetGUID();
                 break;
-            case NPC_SHATTERED_EXECUTIONER:     // Executioner
-                ExecutionerGUID = creature->GetGUID();
-                creature->SetKeepActive(true);
-                if (GetData(DATA_NETHEKURSE) == NOT_STARTED)
-                    creature->SetVisible(false);
-                if (GetData(DATA_BLADEFIST) == NOT_STARTED)
-                    creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
+            case NPC_KARGATH_BLADEFIST:
+                kargathGUID = creature->GetGUID();
+                break;
+            case NPC_RANDY_WHIZZLESPROCKET:
+                if (_team == HORDE)
+                    creature->UpdateEntry(NPC_DRISELLA);
+                break;
+            case NPC_SHATTERED_EXECUTIONER:
+                DoCastSpellOnPlayers(SPELL_KARGATH_EXECUTIONER_1);
+                executionerGUID = creature->GetGUID();
+                SaveToDB();
+                break;
+            case NPC_CAPTAIN_ALINA:
+            case NPC_CAPTAIN_BONESHATTER:
+                victimsGUID[0] = creature->GetGUID();
+                break;
+            case NPC_ALLIANCE_VICTIM_1:
+            case NPC_HORDE_VICTIM_1:
+                victimsGUID[1] = creature->GetGUID();
+                break;
+            case NPC_ALLIANCE_VICTIM_2:
+            case NPC_HORDE_VICTIM_2:
+                victimsGUID[2] = creature->GetGUID();
                 break;
             }
         }
@@ -156,22 +210,23 @@ public:
             }
         }
 
-        void EnableExecutioner(bool attackable)
+        void EnableExecutioner(bool visible)
         {
-            Creature* executioner = instance->GetCreature(DATA_EXECUTIONER_GUID);
+            Creature* executioner = instance->GetCreature(executionerGUID);
             if (!executioner)
                 return;
 
-            if (attackable)
+            if (visible)
             {
                 executioner->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_NON_ATTACKABLE);
+                executioner->SetVisible(true);
             }
             else
             {
-                executioner->SetVisible(true);
+                executioner->SetVisible(false);
                 executioner->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_NON_ATTACKABLE);
-                // TODO: Yell something ?
             }
+            executioner->AI()->Reset();
         }
 
         bool SetBossState(uint32 type, EncounterState state) override
@@ -184,20 +239,28 @@ public:
                 case DATA_NETHEKURSE:
                 if (state == DONE)
                 {
-                    EnableExecutioner(true);
-
                     HandleGameObject(FirstDoorGUID, true, nullptr);
                     HandleGameObject(SecondDoorGUID, true, nullptr);
                 }
                 break;
-                case DATA_BLADEFIST:
+                case DATA_KARGATH:
                     if (state == DONE)
                         EnableExecutioner(true);
                     break;
-                case DATA_EXECUTIONER:
+                case DATA_SHATTERED_EXECUTIONER:
+                {
                     if (state == IN_PROGRESS)
+                    {
                         EnableExecutioner(false);
+                    }
+                    if (state == DONE)
+                    {
+                        DoCastSpellOnPlayers(SPELL_REMOVE_KARGATH_EXECUTIONER);
+                        executionTimer = 0;
+                        SaveToDB();
+                    }
                     break;
+                }
                 default:
                     break;
             }
@@ -209,7 +272,7 @@ public:
             switch (type)
             {
             case DATA_TIMER_LEFT:
-                TimerLeft = data;
+                executionTimer = data;
                 break;
             }
         }
@@ -219,7 +282,9 @@ public:
             switch (type)
             {
             case DATA_TIMER_LEFT:
-                return TimerLeft;
+                return executionTimer;
+            case DATA_TEAM_IN_INSTANCE:
+                return _team;
             }
 
             return 0;
@@ -235,24 +300,66 @@ public:
                 return SecondDoorGUID;
             case DATA_NETHEKURSE_GUID:
                 return NethekurseGUID;
-            case DATA_EXECUTIONER_GUID:
-                return ExecutionerGUID;
+            case DATA_SHATTERED_EXECUTIONER_GUID:
+                return executionerGUID;
+            case NPC_KARGATH_BLADEFIST:
+                return kargathGUID;
+            case DATA_FIRST_PRISONER:
+            case DATA_SECOND_PRISONER:
+            case DATA_THIRD_PRISONER:
+                return victimsGUID[data - DATA_FIRST_PRISONER];
             }
 
             return 0;
         }
 
         virtual void ReadSaveDataMore(std::istringstream& data) 
-        { 
-            data >> TimerLeft;
+        {
+            if (!instance->IsHeroic())
+                return;
+            data >> _team;
 
-            if(TimerLeft > TIMER)
-                SetBossState(DATA_EXECUTIONER, IN_PROGRESS);
+            uint32 readbuff;
+            data >> readbuff;
+            executed = uint8(readbuff);
+            data >> readbuff;
+
+            if (executed > VictimCount)
+            {
+                executed = VictimCount;
+                executionTimer = 0;
+                return;
+            }
+
+            if (!readbuff)
+                return;
+
+            Creature* executioner = nullptr;
+
+            instance->LoadGrid(Executioner.GetPositionX(), Executioner.GetPositionY());
+            if (Creature* kargath = instance->GetCreature(kargathGUID))
+                if (executionerGUID.IsEmpty())
+                    executioner = kargath->SummonCreature(NPC_SHATTERED_EXECUTIONER, Executioner);
+
+            if (executioner)
+            {
+                for (uint8 i = executed; i < VictimCount; ++i)
+                    executioner->SummonCreature(executionerVictims[i](GetData(DATA_TEAM_IN_INSTANCE)), executionerVictims[i].GetPos());
+            }
+
+            executionTimer = readbuff;
+
+            if(executionTimer > 0 && executed < VictimCount)
+                SetBossState(DATA_SHATTERED_EXECUTIONER, IN_PROGRESS);
         }
 
         virtual void WriteSaveDataMore(std::ostringstream& data) 
         { 
-            data << TimerLeft;
+            if (!instance->IsHeroic())
+                return;
+
+            data << _team << ' ' << uint32(executed) << ' '
+                << executionTimer << ' ';
         }
 
         // Update is only needed in Heroic, for the timer
@@ -261,114 +368,49 @@ public:
             if (!HeroicMode)
                 return;
 
-            // If Executioner is dead and some prisoners are still alive, reward players for quest
-            /*if (Executioner && Executioner->IsDead() && GetBossState(DATA_EXECUTIONER) != DONE) {
-                if ( (FirstPrisoner && FirstPrisoner->IsAlive()) || (SecondPrisoner && SecondPrisoner->IsAlive()) || (ThirdPrisoner && ThirdPrisoner->IsAlive()) ) {
-                    RewardAllPlayersInMapForQuest();
-                    SetBossState(DATA_EXECUTIONER, DONE);
-                }
-            }*/
-
-            if (GetBossState(DATA_EXECUTIONER) != IN_PROGRESS)
-                return;
-
-            // Decrease timer at each update
-            TimerLeft -= diff;
-
-            if (!hasCasted80min) 
-            {      // Event just started
-                // TODO: Correct this [PH] yell
-                if (Creature *Executioner = instance->GetCreature(ExecutionerGUID))
-                    if (Executioner->IsInWorld())
-                        Executioner->YellToMap("[PH] I got three hostages! In 55 minutes, I will kill the first one!");
-
-                CastSpellOnAllPlayersInMap(SPELL_KARGATH_EXECUTIONER_1);
-                Player* plr = GetPlayer();
-                if (!plr) 
+            if (executionTimer <= diff)
+            {
+                DoCastSpellOnPlayers(SPELL_REMOVE_KARGATH_EXECUTIONER);
+                switch (++executed)
                 {
-                    TC_LOG_ERROR("scripts", "Instance Shattered Halls: Update: No player found in map when event started !");
-                    return;
+                case 1:
+                    DoCastSpellOnPlayers(SPELL_KARGATH_EXECUTIONER_2);
+                    executionTimer = 10 * MINUTE * IN_MILLISECONDS;
+                    break;
+                case 2:
+                    DoCastSpellOnPlayers(SPELL_KARGATH_EXECUTIONER_3);
+                    executionTimer = 15 * MINUTE * IN_MILLISECONDS;
+                    break;
+                default:
+                    SetBossState(DATA_SHATTERED_EXECUTIONER, FAIL);
+                    executionTimer = 0;
+                    break;
                 }
-                //SpawnPrisoners(plr->GetTeam(), 3);
-                hasCasted80min = true;
+
+                if (Creature* executioner = instance->GetCreature(executionerGUID))
+                    executioner->AI()->SetData(DATA_PRISONERS_EXECUTED, executed);
+
+                SaveToDB();
             }
+            else
+                executionTimer -= diff;
 
-            if (TimerLeft < 25 * MINUTE * IN_MILLISECONDS && !hasCasted25min)
-            {
-                // TODO: Correct this [PH] yell
-                if (Creature *Executioner = instance->GetCreature(ExecutionerGUID))
-                    if (Executioner->IsInWorld())
-                        Executioner->YellToMap("[PH] The first hostage is dead! In 10 minutes, I will kill a second!", LANG_UNIVERSAL);
-
-                CastSpellOnAllPlayersInMap(GetData(SPELL_KARGATH_EXECUTIONER_2));      // 2nd timer of 10 mins
-                /*if (FirstPrisoner && Executioner)
-                    Executioner->DealDamage(FirstPrisoner, FirstPrisoner->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);*/
-                hasCasted25min = true;
-            }
-
-            if (TimerLeft < 15 * MINUTE * IN_MILLISECONDS && !hasCasted15min) 
-            {
-                // TODO: Correct this [PH] yell
-                if (Creature *Executioner = instance->GetCreature(ExecutionerGUID))
-                    if (Executioner->IsInWorld())
-                        Executioner->YellToMap("[PH] I killed the second hostage! In fifteen minutes, I will kill the last.");
-
-                CastSpellOnAllPlayersInMap(GetData(SPELL_KARGATH_EXECUTIONER_3));      // 3rd (and last) timer of 15 mins
-                /*if (SecondPrisoner && Executioner)
-                    Executioner->DealDamage(SecondPrisoner, SecondPrisoner->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);*/
-                hasCasted15min = true;
-            }
-
-            if (TimerLeft < diff) 
-            {     // TIME UP ! Kill the third prisoner and stop the timer, killing executioner won't give the quest item
-                // TODO: Correct this [PH] yell
-                if (Creature *Executioner = instance->GetCreature(ExecutionerGUID)) {
-                    if (Executioner->IsInWorld()) 
-                    {
-                        Executioner->YellToMap("[PH] You're too late! I killed them all.");
-                        Executioner->loot.RemoveItem(31716);
-                    }
-                }
-                /*if (ThirdPrisoner && Executioner)
-                    Executioner->DealDamage(ThirdPrisoner, ThirdPrisoner->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);*/
-                SetBossState(DATA_EXECUTIONER, FAIL);
-            }
 
             // Save time left in DB every 30 sec
-            if (SaveIntervalTimer <= diff) 
+            if (SaveIntervalTimer <= diff)
             {
-                SetData(DATA_TIMER_LEFT, TimerLeft);
+                SetData(DATA_TIMER_LEFT, executionTimer);
                 SaveToDB();
-                SaveIntervalTimer = 30 * MINUTE * IN_MILLISECONDS;
-            } else 
+                SaveIntervalTimer = 30 * SECOND * IN_MILLISECONDS;
+            }
+            else
                 SaveIntervalTimer -= diff;
         }
     };
 };
 
-// AreaTrigger that starts the timed event
-class ATShatteredHalls : AreaTriggerScript
-{
-public:
-    ATShatteredHalls() : AreaTriggerScript("at_shattered_halls") {}
-
-    bool OnTrigger(Player *pPlayer, AreaTriggerEntry const *at) override
-    {
-        if (InstanceScript* pInstance = ((InstanceScript*)pPlayer->GetInstanceScript())) 
-        {
-            if (pInstance->GetBossState(DATA_EXECUTIONER) == NOT_STARTED)
-            {
-                pInstance->SetBossState(DATA_EXECUTIONER, IN_PROGRESS);
-            }
-        }
-
-        return true;
-    }
-};
-
 void AddSC_instance_shattered_halls()
 {
     new instance_shattered_halls();
-    new ATShatteredHalls();
 }
 
