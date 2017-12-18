@@ -82,18 +82,6 @@ public:
             }
         }
 
-        void HandleGameObject(uint64 guid, uint32 state)
-        {
-            if (!guid)
-            {
-                TC_LOG_ERROR("scripts", "Shadow Labyrinth: HandleGameObject fail");
-                return;
-            }
-
-            if (GameObject *go = instance->GetGameObject(guid))
-                go->SetGoState(GOState(state));
-        }
-
         void OnUnitDeath(Unit* unit) override
         {
             Creature* creature = unit->ToCreature();

@@ -11,7 +11,7 @@ boss_nexusprince_shaffar
 mob_ethereal_beacon
 EndContentData */
 
-
+#include "mana_tombs.h"
 
 #define SAY_INTRO                       -1557000
 
@@ -46,10 +46,11 @@ public:
     boss_nexusprince_shaffar() : CreatureScript("boss_nexusprince_shaffar")
     { }
 
-    class boss_nexusprince_shaffarAI : public ScriptedAI
+    class boss_nexusprince_shaffarAI : public BossAI
     {
         public:
-        boss_nexusprince_shaffarAI(Creature *c) : ScriptedAI(c), Summons(me) {}
+        boss_nexusprince_shaffarAI(Creature* creature) : BossAI(creature, DATA_NEXUSPRINCE_SHAFFAR)
+        {}
     
         uint32 Blink_Timer;
         uint32 Beacon_Timer;
@@ -57,15 +58,11 @@ public:
         uint32 Frostbolt_Timer;
         uint32 FrostNova_Timer;
     
-        SummonList Summons;
-    
         bool IntroDone;
         bool CanBlink;
     
         void Reset()
         override {
-            Summons.DespawnAll();
-    
             Blink_Timer = 1500;
             Beacon_Timer = 10000;
             FireBall_Timer = 8000;
@@ -80,6 +77,8 @@ public:
             float x[3] = { posX - dist, posX - dist, posX + dist };
             float y[3] = { posY - dist, posY + dist, posY };
     
+            _Reset();
+
             for(uint8 i = 0; i < NR_INITIAL_BEACONS; i++)
                 me->SummonCreature(ENTRY_BEACON, x[i], y[i], posZ, angle, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000);
         }
@@ -114,12 +113,8 @@ public:
                 case 1: DoScriptText(SAY_AGGRO_2, me); break;
                 case 2: DoScriptText(SAY_AGGRO_3, me); break;
             }
+            _EnterCombat();
         }
-    
-        void JustSummoned(Creature *summoned)
-        override {
-            Summons.Summon(summoned);
-        }      
     
         void KilledUnit(Unit* victim)
         override {
@@ -133,6 +128,7 @@ public:
         void JustDied(Unit* Killer)
         override {
             DoScriptText(SAY_DEAD, me);
+            _JustDied();
         }
     
         void UpdateAI(const uint32 diff)
@@ -189,7 +185,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_nexusprince_shaffarAI(creature);
+        return GetManaTombsAI<boss_nexusprince_shaffarAI>(creature);
     }
 };
 
@@ -263,7 +259,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new mob_ethereal_beaconAI(creature);
+        return GetManaTombsAI<mob_ethereal_beaconAI>(creature);
     }
 };
 
@@ -314,18 +310,15 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new mob_ethereal_apprenticeAI(creature);
+        return GetManaTombsAI<mob_ethereal_apprenticeAI>(creature);
     }
 };
 
 
 void AddSC_boss_nexusprince_shaffar()
 {
-
     new boss_nexusprince_shaffar();
-
     new mob_ethereal_beacon();
-    
     new mob_ethereal_apprentice();
 }
 

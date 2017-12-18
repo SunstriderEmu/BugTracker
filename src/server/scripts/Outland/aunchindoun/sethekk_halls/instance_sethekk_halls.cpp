@@ -81,6 +81,7 @@ public:
                     //chest handling done in boss script
                 }
             }
+            return true;
         }
 
         void SetGuidData(uint32 identifier, ObjectGuid data)

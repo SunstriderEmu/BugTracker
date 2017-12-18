@@ -12,7 +12,7 @@ boss_exarch_maladaar
 mob_avatar_of_martyred
 EndContentData */
 
-
+#include "auchenai_crypts.h"
 #include "GameEventMgr.h"
 
 #define SPELL_MOONFIRE          37328
@@ -35,18 +35,15 @@ public:
     class mob_stolen_soulAI : public ScriptedAI
     {
         public:
-        mob_stolen_soulAI(Creature *c) : ScriptedAI(c) {}
+        mob_stolen_soulAI(Creature* creature) : ScriptedAI(creature) { }
     
         uint8 myClass;
         uint32 Class_Timer;
     
-        void Reset()
-        override {
+        void Reset() override 
+        {
             Class_Timer = 1000;
         }
-    
-        void EnterCombat(Unit *who)
-        override { }
     
         void SetMyClass(uint8 myclass)
         {
@@ -107,7 +104,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new mob_stolen_soulAI(creature);
+        return GetAuchenaiCryptsAI<mob_stolen_soulAI>(creature);
     }
 };
 
@@ -144,10 +141,10 @@ public:
     boss_exarch_maladaar() : CreatureScript("boss_exarch_maladaar")
     { }
 
-    class boss_exarch_maladaarAI : public ScriptedAI
+    class boss_exarch_maladaarAI : public BossAI
     {
         public:
-        boss_exarch_maladaarAI(Creature *c) : ScriptedAI(c)
+        boss_exarch_maladaarAI(Creature* creature) : BossAI(creature, DATA_EXARCH_MALADAAR)
         {
             HasTaunted = false;
         }
@@ -185,6 +182,8 @@ public:
             
             if (isEventActive())
                 me->SetDisplayId(22802);
+
+            _Reset();
         }
     
         void MoveInLineOfSight(Unit *who)
@@ -207,10 +206,12 @@ public:
                 case 1: DoScriptText(SAY_AGGRO_2, me); break;
                 case 2: DoScriptText(SAY_AGGRO_3, me); break;
             }
+            _EnterCombat();
         }
     
         void JustSummoned(Creature *summoned)
         override {
+            BossAI::JustSummoned(summoned);
             if (summoned->GetEntry() == ENTRY_STOLEN_SOUL)
             {
                 //SPELL_STOLEN_SOUL_VISUAL has shapeshift effect, but not implemented feature in Trinity for this spell.
@@ -244,6 +245,7 @@ public:
             DoScriptText(SAY_DEATH, me);
             //When Exarch Maladar is defeated D'ore appear.
             DoSpawnCreature(19412,0,0,0,0, TEMPSUMMON_TIMED_DESPAWN, 600000);
+            _JustDied();
         }
     
         void UpdateAI(const uint32 diff)
@@ -310,7 +312,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_exarch_maladaarAI(creature);
+        return GetAuchenaiCryptsAI<boss_exarch_maladaarAI>(creature);
     }
 };
 
@@ -366,7 +368,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new mob_avatar_of_martyredAI(creature);
+        return GetAuchenaiCryptsAI<mob_avatar_of_martyredAI>(creature);
     }
 };
 

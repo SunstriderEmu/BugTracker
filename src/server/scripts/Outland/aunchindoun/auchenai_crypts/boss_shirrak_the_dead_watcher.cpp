@@ -5,6 +5,7 @@ Comment: InhibitMagic should stack slower far from the boss, proper Visual for F
 Category: Auchindoun, Auchenai Crypts
 EndScriptData */
 
+#include "auchenai_crypts.h"
 
 #define SPELL_INHIBITMAGIC          32264
 #define SPELL_ATTRACTMAGIC          32265
@@ -26,10 +27,10 @@ public:
     boss_shirrak_the_dead_watcher() : CreatureScript("boss_shirrak_the_dead_watcher")
     { }
 
-    class boss_shirrak_the_dead_watcherAI : public ScriptedAI
+    class boss_shirrak_the_dead_watcherAI : public BossAI
     {
         public:
-        boss_shirrak_the_dead_watcherAI(Creature *c) : ScriptedAI(c)
+        boss_shirrak_the_dead_watcherAI(Creature* creature) : BossAI(creature, DATA_SHIRRAK_THE_DEAD_WATCHER)
         {
             HeroicMode = me->GetMap()->IsHeroic();
         }
@@ -48,13 +49,12 @@ public:
             Carnivorousbite_Timer = 10000;
             FocusFire_Timer = 17000;
             focusedTarget = nullptr;
+            _Reset();
         }
-    
-        void EnterCombat(Unit *who)
-        override { }
     
         void JustSummoned(Creature *summoned)
         override {
+            BossAI::JustSummoned(summoned);
             if (summoned && summoned->GetEntry() == ENTRY_FOCUS_FIRE)
             {
                 summoned->CastSpell(summoned,SPELL_FOCUS_FIRE_VISUAL, TRIGGERED_NONE);
@@ -136,7 +136,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_shirrak_the_dead_watcherAI(creature);
+        return GetAuchenaiCryptsAI<boss_shirrak_the_dead_watcherAI>(creature);
     }
 };
 
@@ -192,7 +192,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new mob_focus_fireAI(creature);
+        return GetAuchenaiCryptsAI<mob_focus_fireAI>(creature);
     }
 };
 

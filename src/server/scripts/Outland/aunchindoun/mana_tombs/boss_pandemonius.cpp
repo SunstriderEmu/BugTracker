@@ -6,7 +6,7 @@ SDComment: Not known how void blast is done (amount of rapid cast seems to be re
 SDCategory: Auchindoun, Mana Tombs
 EndScriptData */
 
-
+#include "mana_tombs.h"
 
 #define SAY_AGGRO_1                     -1557008
 #define SAY_AGGRO_2                     -1557009
@@ -31,10 +31,10 @@ public:
     boss_pandemonius() : CreatureScript("boss_pandemonius")
     { }
 
-    class boss_pandemoniusAI : public ScriptedAI
+    class boss_pandemoniusAI : public BossAI
     {
         public:
-        boss_pandemoniusAI(Creature *c) : ScriptedAI(c)
+        boss_pandemoniusAI(Creature* creature) : BossAI(creature, DATA_PANDEMONIUS)
         {
             HeroicMode = me->GetMap()->IsHeroic();
         }
@@ -49,11 +49,13 @@ public:
             VoidBlast_Timer = 30000;
             DarkShell_Timer = 20000;
             VoidBlast_Counter = 0;
+            _Reset();
         }
     
         void JustDied(Unit* Killer)
         override {
             DoScriptText(SAY_DEATH, me);
+            _JustDied();
         }
     
         void KilledUnit(Unit* victim)
@@ -73,7 +75,7 @@ public:
                 case 1: DoScriptText(SAY_AGGRO_2, me); break;
                 case 2: DoScriptText(SAY_AGGRO_3, me); break;
             }
-    
+            _EnterCombat();
         }
     
         void UpdateAI(const uint32 diff)
@@ -117,7 +119,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_pandemoniusAI(creature);
+        return GetManaTombsAI<boss_pandemoniusAI>(creature);
     }
 };
 
