@@ -1,37 +1,37 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
+/* Missing timer!
+*/
 
-/* ScriptData
-SDName: Boss_Broggok
-SD%Complete: 100
-SDComment:
-SDCategory: Hellfire Citadel, Blood Furnace
-EndScriptData */
-
-
-#include "def_blood_furnace.h"
+#include "blood_furnace.h"
 
 #define SAY_AGGRO               -1542008
 
-#define SPELL_SLIME_SPRAY       30913
-#define SPELL_SLIME_SPRAY_H     38458
-#define SPELL_POISON_CLOUD      30916
-#define SPELL_POISON_BOLT       30917
-#define SPELL_POISON_BOLT_H     38459
+enum Spells
+{
+    SPELL_SLIME_SPRAY           = 30913,
+    SPELL_SLIME_SPRAY_H         = 38458,
+    SPELL_POISON_CLOUD          = 30916,
+    SPELL_POISON_BOLT           = 30917,
+    SPELL_POISON_BOLT_H         = 38459,
 
+    SPELL_POISON_CLOUD_PASSIVE  = 30914,
+};
+
+struct Prisoner
+{
+    Prisoner(Position pos, uint32 entry)
+        : pos(pos), entry(entry)
+    { }
+
+    Position pos;
+    uint32 entry;
+};
+
+enum Events
+{
+    EVENT_SLIME_SPRAY = 1,
+    EVENT_POISON_BOLT,
+    EVENT_POISON_CLOUD,
+};
 
 class boss_broggok : public CreatureScript
 {
@@ -39,47 +39,104 @@ public:
     boss_broggok() : CreatureScript("boss_broggok")
     { }
 
-    class boss_broggokAI : public ScriptedAI
+    class boss_broggokAI : public BossAI
     {
-        public:
-        boss_broggokAI(Creature *c) : ScriptedAI(c) 
+        //mobs are probably wrong, from what I read there a 3 mobs on the two first, and 4 on the two last.
+        //there is at always one 17429 after first cell
+        std::vector<Prisoner> const prisonnersCell1 =
         {
-            pInstance = ((InstanceScript*)c->GetInstanceScript());
+            { Prisoner({ 502.64f, 112.954f, 9.66f, 2.33f }, NPC_PRISONER) },
+            { Prisoner({ 502.63f, 116.706f, 9.66f, 3.97f }, NPC_PRISONER) },
+            { Prisoner({ 498.78f, 116.599f, 9.66f, 5.44f }, NPC_PRISONER) },
+            { Prisoner({ 498.35f, 112.381f, 9.66f, 0.63f }, NPC_PRISONER) },
+        };
+
+        std::vector<Prisoner> const prisonnersCell2 =
+        {
+            { Prisoner({ 409.11f, 112.17f, 9.66f, 1.19f }, NPC_PRISONER) },
+            { Prisoner({ 411.02f, 117.18f, 9.66f, 4.41f }, NPC_PRISONER) },
+            { Prisoner({ 407.17f, 115.17f, 9.66f, 0.01f }, NPC_PRISONER) },
+            { Prisoner({ 413.39f, 114.31f, 9.66f, 3.02f }, NPC_FEL_ORC_NEOPHYTE) },
+        };
+
+        std::vector<Prisoner> const prisonnersCell3 =
+        {
+            { Prisoner({ 498.06f,  86.54f, 9.66f, 5.42f }, NPC_PRISONER) },
+            { Prisoner({ 499.08f,  82.68f, 9.66f, 1.36f }, NPC_PRISONER) },
+            { Prisoner({ 501.71f,  85.96f, 9.66f, 3.76f }, NPC_FEL_ORC_NEOPHYTE) },
+        };
+
+        std::vector<Prisoner> const prisonnersCell4 =
+        {
+            { Prisoner({ 410.76f,  86.12f, 9.66f, 4.94f }, NPC_PRISONER) },
+            { Prisoner({ 409.22f,  83.29f, 9.66f, 0.14f }, NPC_PRISONER) },
+            { Prisoner({ 413.18f,  83.60f, 9.66f, 2.85f }, NPC_FEL_ORC_NEOPHYTE) },
+        };
+
+        public:
+        boss_broggokAI(Creature* creature) : BossAI(creature, DATA_BROGGOK)
+        {
             HeroicMode = me->GetMap()->IsHeroic();
         }
         
-        InstanceScript* pInstance;
-    
-        uint32 AcidSpray_Timer;
-        uint32 PoisonSpawn_Timer;
-        uint32 PoisonBolt_Timer;
+        enum EventPhase
+        {
+            PHASE_NOT_STARTED = 0,
+            PHASE_DOOR1,
+            PHASE_DOOR2,
+            PHASE_DOOR3,
+            PHASE_DOOR4,
+            PHASE_BOSS,
+        };
+
+        uint32 eventPhaseTimer; //Max time for players to clean a cell before sending next mobs. Only on heroic
         
         bool HeroicMode;
-    
+        EventPhase prisonPhase = PHASE_NOT_STARTED; //0 is not started, 1/2/3/4 are doors, 5 is boss
+        
+        std::vector<uint64> prisonnersGUID[4];
+
+        void SpawnPrisonners(std::vector<Prisoner> prisonners, std::vector<uint64>& container)
+        {
+            container.clear();
+            for (auto p : prisonners)
+                if (Creature* prisoner = me->SummonCreature(p.entry, p.pos, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 5 * MINUTE * IN_MILLISECONDS))
+                {
+                    container.push_back(prisoner->GetGUID());
+                    prisoner->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                    prisoner->SetImmuneToAll(true);
+                    summons.Summon(prisoner);
+                }
+        }
+
+        void ResetPrisonners()
+        {
+            summons.DespawnAll();
+            SpawnPrisonners(prisonnersCell1, prisonnersGUID[0]);
+            SpawnPrisonners(prisonnersCell2, prisonnersGUID[1]);
+            SpawnPrisonners(prisonnersCell3, prisonnersGUID[2]);
+            SpawnPrisonners(prisonnersCell4, prisonnersGUID[3]);
+        }
+
         void Reset() override
         {
-            me->SetUnitMovementFlags(MOVEMENTFLAG_NONE);
-            AcidSpray_Timer = 5000;
-            PoisonSpawn_Timer = 10000;
-            PoisonBolt_Timer = 8000;
-            if (pInstance && me->IsAlive())
-                pInstance->SetData(DATA_BROGGOKEVENT, NOT_STARTED);
+            StartPhase(PHASE_NOT_STARTED);
+            eventPhaseTimer = 0;
+
+            _Reset(); //reset all doors and levers in InstanceScript
+            ResetPrisonners();
         }
     
         void EnterCombat(Unit *who) override
         {
             DoScriptText(SAY_AGGRO, me);
     
-            if (pInstance)
-                pInstance->SetData(DATA_BROGGOKEVENT, IN_PROGRESS);
-    
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        }
-        
-        void JustDied(Unit* Killer) override
-        {
-            if (pInstance)
-                pInstance->SetData(DATA_BROGGOKEVENT, DONE);
+            _EnterCombat();
+
+            events.ScheduleEvent(EVENT_SLIME_SPRAY, 10000);
+            events.ScheduleEvent(EVENT_POISON_BOLT, 7000);
+            events.ScheduleEvent(EVENT_POISON_CLOUD, 5000);
         }
         
         void EnterEvadeMode(EvadeReason /* why */) override
@@ -93,60 +150,221 @@ public:
             if (!me->IsAlive())
                 return;    
     
-            if (pInstance) {
-                pInstance->SetData(DATA_BROGGOKEVENT, FAIL);
-                float fRespX, fRespY, fRespZ;
-                me->GetRespawnPosition(fRespX, fRespY, fRespZ);
-                me->GetMotionMaster()->MovePoint(0, fRespX, fRespY, fRespZ);
-            }
-            else
-                me->GetMotionMaster()->MoveTargetedHome();
+            instance->SetBossState(DATA_BROGGOK, FAIL);
+            float fRespX, fRespY, fRespZ;
+            me->GetRespawnPosition(fRespX, fRespY, fRespZ);
+            me->GetMotionMaster()->MovePoint(0, fRespX, fRespY, fRespZ);
         }
     
-        void MovementInform(uint32 uiMotionType, uint32 uiPointId)
-        override {
-            if (uiMotionType == POINT_MOTION_TYPE) {
-                if (GameObject* pFrontDoor = me->FindNearestGameObject(181819, 60.0f)) {
+        void MovementInform(uint32 uiMotionType, uint32 uiPointId) override 
+        {
+            if (uiMotionType == POINT_MOTION_TYPE) 
+            {
+                if (GameObject* pFrontDoor = me->FindNearestGameObject(GO_PRISON_DOOR_04, 60.0f))
+                {
                     me->SetOrientation(me->GetAngle(pFrontDoor->GetPositionX(), pFrontDoor->GetPositionY()));
                     me->SendMovementFlagUpdate();
                 }
             }
         }
-    
-        void UpdateAI(const uint32 diff)
-        override {
-    
+
+        void JustSummoned(Creature* summoned) override
+        {
+            if (summoned->GetEntry() == NPC_BROGGOK_POISON_CLOUD)
+            {
+                summoned->SetReactState(REACT_PASSIVE);
+                summoned->CastSpell(summoned, SPELL_POISON_CLOUD_PASSIVE, true);
+                summons.Summon(summoned);
+            }
+        }
+        void UpdateAI(const uint32 diff) override
+        {
+            events.Update(diff);
+
+            UpdateEvent(diff); 
+
             if (!UpdateVictim())
                 return;
-    
-            if (AcidSpray_Timer <= diff) {
-                DoCast(me->GetVictim(), HeroicMode ? SPELL_SLIME_SPRAY_H : SPELL_SLIME_SPRAY);
-                AcidSpray_Timer = 10000;
+
+            while (uint32 eventId = events.ExecuteEvent())
+            {
+                ExecuteEvent(eventId);
+                if (me->HasUnitState(UNIT_STATE_CASTING))
+                    return;
             }
-            else
-                AcidSpray_Timer -= diff;
-    
-            if (PoisonBolt_Timer <= diff) {
-                DoCast(me->GetVictim(), HeroicMode ? SPELL_POISON_BOLT_H : SPELL_POISON_BOLT);
-                PoisonBolt_Timer = 8000;
-            }
-            else
-                PoisonBolt_Timer -= diff;
-    
-            if (PoisonSpawn_Timer <= diff) {
-                DoCast(me, SPELL_POISON_CLOUD);
-                PoisonSpawn_Timer = 10000;
-            }
-            else
-                PoisonSpawn_Timer -= diff;
-    
+
             DoMeleeAttackIfReady();
+        }
+
+        void ExecuteEvent(uint32 eventId) override
+        {
+            switch (eventId)
+            {
+            case EVENT_SLIME_SPRAY:
+                DoCastVictim(HeroicMode ? SPELL_SLIME_SPRAY_H : SPELL_SLIME_SPRAY);
+                events.ScheduleEvent(EVENT_SLIME_SPRAY, urand(4000, 12000));
+                break;
+            case EVENT_POISON_BOLT:
+                DoCastVictim(HeroicMode ? SPELL_POISON_BOLT_H : SPELL_POISON_BOLT);
+                events.ScheduleEvent(EVENT_POISON_BOLT, urand(4000, 12000));
+                break;
+            case EVENT_POISON_CLOUD:
+                DoCast(me, SPELL_POISON_CLOUD);
+                events.ScheduleEvent(EVENT_POISON_CLOUD, 15000);
+                break;
+            default:
+                break;
+            }
+        } 
+
+        void DoAction(int32 action) override
+        {
+            switch (action)
+            {
+            case ACTION_START_EVENT:
+                if (prisonPhase != PHASE_NOT_STARTED)
+                    return;
+
+                StartPhase(PHASE_DOOR1);
+                break;
+            }
+        }
+
+        void SendCellAttackers(std::vector<uint64>& attackers)
+        {
+            for (auto itr : attackers)
+                if (Creature* prisoner = me->GetMap()->GetCreature(itr))
+                {
+                    prisoner->SetInCombatWithZone();
+                    prisoner->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
+                    prisoner->SetImmuneToAll(false);
+                    prisoner->SetInCombatWithZone();
+                }
+        }
+
+        void HandleStartPhase(std::vector<uint64>& attackers, BFDataTypes door)
+        {
+            eventPhaseTimer = HeroicMode ? 2 * MINUTE * IN_MILLISECONDS : 0;
+            instance->SetData(DATA_ACTIVATE_CELL, door);
+            SendCellAttackers(attackers);
+        }
+
+        void StartPhase(EventPhase phase)
+        {
+            switch (phase)
+            {
+            case PHASE_NOT_STARTED:
+                eventPhaseTimer = 0;
+                me->SetReactState(REACT_PASSIVE);
+                me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                me->SetImmuneToAll(true);
+                break;
+            case PHASE_DOOR1:
+                HandleStartPhase(prisonnersGUID[0], DATA_PRISON_CELL5);
+                break;
+            case PHASE_DOOR2:
+                HandleStartPhase(prisonnersGUID[1], DATA_PRISON_CELL6);
+                break;
+            case PHASE_DOOR3:
+                HandleStartPhase(prisonnersGUID[2], DATA_PRISON_CELL7);
+                break;
+            case PHASE_DOOR4:
+                HandleStartPhase(prisonnersGUID[3], DATA_PRISON_CELL8);
+                break;
+            case PHASE_BOSS:
+                instance->SetData(DATA_ACTIVATE_CELL, DATA_DOOR_4);
+                me->SetReactState(REACT_AGGRESSIVE);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                me->SetInCombatWithZone();
+                me->SetImmuneToAll(false);
+                return;
+            }
+            prisonPhase = phase;
+        }
+
+        bool CellPackCleaned(std::vector<uint64>& attackers) const 
+        {
+            for (auto itr : attackers)
+                if (Creature* prisoner = me->GetMap()->GetCreature(itr))
+                    if (prisoner->IsAlive())
+                        return false;
+
+            return true;
+        }
+
+        void CheckWipe()
+        {
+            bool inCombatPlayer = false;
+            Map::PlayerList const& players = me->GetMap()->GetPlayers();
+            for (const auto& player : players)
+            {
+                if (Player* plr = player.GetSource()) {
+                    if (plr->IsInCombat())
+                    {
+                        inCombatPlayer = true;
+                        break;
+                    }
+                }
+            }
+            if (!inCombatPlayer)
+            {
+                EnterEvadeMode(EVADE_REASON_NO_HOSTILES);
+                instance->SetBossState(DATA_BROGGOK, NOT_STARTED);
+            }
+        }
+
+        //return true if timer expired
+        bool UpdatePhaseTimer(uint32 diff)
+        {
+            if (!eventPhaseTimer) //no timer active
+                return false;
+
+            if (eventPhaseTimer < diff)
+            {
+                eventPhaseTimer = 0;
+                return true;
+            }
+            else
+                eventPhaseTimer -= diff;
+
+            return false;
+        }
+
+        void HandleUpdateEvent(std::vector<uint64>& pack, EventPhase nextPhase, uint32 diff)
+        {
+            if (CellPackCleaned(pack) || UpdatePhaseTimer(diff))
+                StartPhase(nextPhase);
+            else
+                CheckWipe();
+        }
+
+        void UpdateEvent(uint32 diff)
+        {
+            switch (prisonPhase)
+            {
+            case PHASE_NOT_STARTED:
+                return;
+            case PHASE_DOOR1:
+                HandleUpdateEvent(prisonnersGUID[0], PHASE_DOOR2, diff);
+                break;
+            case PHASE_DOOR2:
+                HandleUpdateEvent(prisonnersGUID[1], PHASE_DOOR3, diff);
+                break;
+            case PHASE_DOOR3:
+                HandleUpdateEvent(prisonnersGUID[2], PHASE_DOOR4, diff);
+                break;
+            case PHASE_DOOR4:
+                HandleUpdateEvent(prisonnersGUID[3], PHASE_BOSS, diff);
+                break;
+            case PHASE_BOSS:
+                return;
+            }
         }
     };
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_broggokAI(creature);
+        return GetBloodFurnaceAI<boss_broggokAI>(creature);
     }
 };
 
@@ -169,17 +387,10 @@ public:
     {
         public:
         mob_nascent_orcAI(Creature *c) : ScriptedAI(c)
-        {
-            pInstance = ((InstanceScript*)c->GetInstanceScript());
-            HeroicMode = me->GetMap()->IsHeroic();
-        }
-    
-        InstanceScript* pInstance;
+        { }
     
         uint32 Blow_Timer;
         uint32 Stomp_Timer;
-        
-        bool HeroicMode;
     
         void Reset() override
         {
@@ -202,9 +413,6 @@ public:
     
         void EnterEvadeMode(EvadeReason /* why */) override
         {
-            if (pInstance)
-                pInstance->SetData(DATA_BROGGOKEVENT, FAIL);
-    
             me->GetThreatManager().ClearAllThreat();
             me->CombatStop(true);
             me->GetMotionMaster()->MoveTargetedHome();
@@ -234,10 +442,9 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new mob_nascent_orcAI(creature);
+        return GetBloodFurnaceAI<mob_nascent_orcAI>(creature);
     }
 };
-
 
 /*######
 ## mob_fel_orc_neophyte
@@ -258,15 +465,10 @@ public:
         public:
         mob_fel_orc_neophyteAI(Creature *c) : ScriptedAI(c)
         {
-            pInstance = ((InstanceScript*)c->GetInstanceScript());
-            HeroicMode = me->GetMap()->IsHeroic();
         }
-    
-        InstanceScript* pInstance;
     
         uint32 ChargeTimer;
         
-        bool HeroicMode;
         bool Frenzy;
     
         void Reset() override
@@ -289,28 +491,27 @@ public:
     
         void EnterEvadeMode(EvadeReason /* why */) override
         {
-            if (pInstance)
-                pInstance->SetData(DATA_BROGGOKEVENT, FAIL);
-    
             me->GetThreatManager().ClearAllThreat();
             me->CombatStop(true);
             me->GetMotionMaster()->MoveTargetedHome();
             Reset();
         }
     
-        void UpdateAI(const uint32 diff)
-        override {
+        void UpdateAI(const uint32 diff) override 
+        {
             if (!UpdateVictim())
                 return;
     
-            if (ChargeTimer <= diff) {
+            if (ChargeTimer <= diff) 
+            {
                 DoCast(SelectTarget(SELECT_TARGET_RANDOM, 0, 50.0, true, true), SPELL_CHARGE);
                 ChargeTimer = 25000 + rand()+5000;
             }
             else
                 ChargeTimer -= diff;
                 
-            if (!Frenzy && me->IsBelowHPPercent(30)) {
+            if (!Frenzy && me->IsBelowHPPercent(30)) 
+            {
                 DoCast(me, SPELL_FRENZY);
                 Frenzy = true;
             }
@@ -321,10 +522,9 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new mob_fel_orc_neophyteAI(creature);
+        return GetBloodFurnaceAI<mob_fel_orc_neophyteAI>(creature);
     }
 };
-
 
 /*######
 ## mob_broggok_poisoncloud
@@ -332,7 +532,6 @@ public:
 
 #define SPELL_POISON      30914
 #define SPELL_POISON_H    38462
-
 
 class mob_broggok_poisoncloud : public CreatureScript
 {
@@ -344,36 +543,24 @@ public:
     {
         public:
         mob_broggok_poisoncloudAI(Creature *c) : ScriptedAI(c)
-        {
-            pInstance = ((InstanceScript*)c->GetInstanceScript());
-            HeroicMode = me->GetMap()->IsHeroic();
-        }
-    
-        InstanceScript* pInstance;
-        
-        bool HeroicMode;
+        { }
     
         void Reset() override
         {
-            DoCast(me, HeroicMode ? SPELL_POISON_H : SPELL_POISON);
+            DoCast(me, me->GetMap()->IsHeroic() ? SPELL_POISON_H : SPELL_POISON);
         }
     };
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new mob_broggok_poisoncloudAI(creature);
+        return GetBloodFurnaceAI<mob_broggok_poisoncloudAI>(creature);
     }
 };
-
 
 void AddSC_boss_broggok()
 {
     new boss_broggok();
-    
     new mob_nascent_orc();
-    
     new mob_fel_orc_neophyte();
-
     new mob_broggok_poisoncloud();
 }
-

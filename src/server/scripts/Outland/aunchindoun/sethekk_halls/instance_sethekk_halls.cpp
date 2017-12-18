@@ -45,8 +45,8 @@ public:
 
         uint64 summonerGUID;
 
-        void Initialize()
-            override {
+        void Initialize() override 
+        {
             IkissDoor = nullptr;
             summonerGUID = 0;
         }

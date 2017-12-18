@@ -12,7 +12,7 @@ mob_shadowmoon_channeler
 EndContentData */
 
 
-#include "def_blood_furnace.h"
+#include "blood_furnace.h"
 
 #define SAY_WAKE                    -1542000
 
@@ -60,17 +60,15 @@ public:
     boss_kelidan_the_breaker() : CreatureScript("boss_kelidan_the_breaker")
     { }
 
-    class boss_kelidan_the_breakerAI : public ScriptedAI
+    class boss_kelidan_the_breakerAI : public BossAI
     {
         public:
-        boss_kelidan_the_breakerAI(Creature *c) : ScriptedAI(c)
+        boss_kelidan_the_breakerAI(Creature* creature) : BossAI(creature, DATA_KELIDAN_THE_BREAKER)
         {
-            pInstance = ((InstanceScript*)c->GetInstanceScript());
             HeroicMode = me->GetMap()->IsHeroic();
             for(uint64 & Channeler : Channelers) Channeler = 0;
         }
     
-        InstanceScript* pInstance;
         bool HeroicMode;
     
         uint32 ShadowVolley_Timer;
@@ -82,40 +80,39 @@ public:
         bool addYell;
         uint64 Channelers[5];
     
-        void Reset()
-        override {
+        void Reset() override 
+        {
+            _Reset();
+
             ShadowVolley_Timer = 1000;
             BurningNova_Timer = 15000;
             Corruption_Timer = 5000;
             check_Timer = 0;
             Firenova = false;
             addYell = false;
-            SummonChannelers();
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             me->SetReactState(REACT_PASSIVE);
             SetCombatMovementAllowed(true);
-            if (pInstance && me->IsAlive())
-                pInstance->SetData(DATA_KELIDANEVENT, NOT_STARTED);
+            SummonChannelers();
         }
     
-        void EnterCombat(Unit *who)
-        override {
+        void EnterCombat(Unit *who) override 
+        {
             DoScriptText(SAY_WAKE, me);
             if (me->IsNonMeleeSpellCast(false))
                 me->InterruptNonMeleeSpells(true);
             DoStartMovement(who);
-            if (pInstance)
-                pInstance->SetData(DATA_KELIDANEVENT, IN_PROGRESS);
+            _EnterCombat();
         }
         
-        void MoveInLineOfSight(Unit* who)
-        override {
+        void MoveInLineOfSight(Unit* who) override 
+        {
             if (me->HasAuraEffect(SPELL_EVOCATION))
                 return;
         }
     
-        void KilledUnit(Unit* victim)
-        override {
+        void KilledUnit(Unit* victim) override 
+        {
             if (rand()%2)
                 return;
     
@@ -193,15 +190,14 @@ public:
             }
         }
     
-        void JustDied(Unit* Killer)
-        override {
+        void JustDied(Unit* Killer) override 
+        {
             DoScriptText(SAY_DIE, me);
-            if(pInstance)
-                pInstance->SetData(DATA_KELIDANEVENT, DONE);
+            _JustDied();
         }
     
-        void UpdateAI(const uint32 diff)
-        override {
+        void UpdateAI(const uint32 diff) override 
+        {
             if (!UpdateVictim())
             {
                 if(check_Timer < diff)
@@ -277,7 +273,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_kelidan_the_breakerAI(creature);
+        return GetBloodFurnaceAI<boss_kelidan_the_breakerAI>(creature);
     }
 };
 
@@ -308,11 +304,9 @@ public:
         public:
         mob_shadowmoon_channelerAI(Creature *c) : ScriptedAI(c)
         {
-            pInstance = ((InstanceScript*)c->GetInstanceScript());
             HeroicMode = me->GetMap()->IsHeroic();
         }
     
-        InstanceScript* pInstance;
         bool HeroicMode;
     
         uint32 ShadowBolt_Timer;
@@ -344,7 +338,7 @@ public:
                 me->InterruptNonMeleeSpells(true);
     
             DoScriptText(RAND(CHANNELER_SAY_AGGRO_1, CHANNELER_SAY_AGGRO_2, CHANNELER_SAY_AGGRO_3), me, nullptr);
-    
+     
             DoStartMovement(who);
         }
     
@@ -391,16 +385,13 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new mob_shadowmoon_channelerAI(creature);
+        return GetBloodFurnaceAI<mob_shadowmoon_channelerAI>(creature);
     }
 };
 
-
 void AddSC_boss_kelidan_the_breaker()
 {
-
     new boss_kelidan_the_breaker();
-
     new mob_shadowmoon_channeler();
 }
 
