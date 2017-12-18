@@ -26,7 +26,10 @@ public:
 
                 if (executioner)
                     for (uint8 i = 0; i < VictimCount; ++i)
-                        executioner->SummonCreature(executionerVictims[i](is->GetData(DATA_TEAM_IN_INSTANCE)), executionerVictims[i].GetPos());
+                    {
+                        if (Creature* victim = executioner->SummonCreature(executionerVictims[i](is->GetData(DATA_TEAM_IN_INSTANCE)), executionerVictims[i].GetPos()))
+                            victim->SetImmuneToAll(true);
+                    }
             }
         }
 

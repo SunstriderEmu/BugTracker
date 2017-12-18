@@ -1,26 +1,3 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
-
-/* ScriptData
-SDName: Boss_Gruul
-SD%Complete: 25
-SDComment: Ground Slam seriously messed up due to core problem
-SDCategory: Gruul's Lair
-EndScriptData */
-
 
 #include "def_gruuls_lair.h"
 
@@ -56,10 +33,10 @@ public:
     boss_gruul() : CreatureScript("boss_gruul")
     { }
 
-    class boss_gruulAI : public ScriptedAI
+    class boss_gruulAI : public BossAI
     {
         public:
-        boss_gruulAI(Creature *c) : ScriptedAI(c)
+        boss_gruulAI(Creature *c) : BossAI(c, DATA_GRUUL)
         {
             pInstance = ((InstanceScript*)c->GetInstanceScript());
         }
@@ -83,26 +60,19 @@ public:
             PerformingGroundSlam= false;
             HurtfulStrike_Timer= 20000;
             Reverberation_Timer= 60000+45000;
-    
-            if(pInstance)
-                pInstance->SetData(DATA_GRUULEVENT, NOT_STARTED);
+            _Reset();
         }
     
         void JustDied(Unit* Killer) override
         {
             DoScriptText(SAY_DEATH, me);
-    
-            if(pInstance)
-                pInstance->SetData(DATA_GRUULEVENT, DONE);
+            _JustDied();
         }
     
         void EnterCombat(Unit *who) override
         {
             DoScriptText(SAY_AGGRO, me);
-            DoZoneInCombat();
-    
-            if(pInstance)
-                pInstance->SetData(DATA_GRUULEVENT, IN_PROGRESS);
+            _EnterCombat();
         }
     
         void KilledUnit(Unit*) override
@@ -299,7 +269,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_gruulAI(creature);
+        return GetGruulsLairAI<boss_gruulAI>(creature);
     }
 };
 

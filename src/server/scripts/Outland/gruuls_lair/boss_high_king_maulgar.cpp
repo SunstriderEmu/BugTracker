@@ -82,11 +82,11 @@ bool CheckAllBossDied(InstanceScript* pInstance, Creature* me)
     Creature* Olm = nullptr;
     Creature* Krosh = nullptr;
 
-    MaulgarGUID = pInstance->GetData64(DATA_MAULGAR);
-    KigglerGUID = pInstance->GetData64(DATA_KIGGLERTHECRAZED);
-    BlindeyeGUID = pInstance->GetData64(DATA_BLINDEYETHESEER);
-    OlmGUID = pInstance->GetData64(DATA_OLMTHESUMMONER);
-    KroshGUID = pInstance->GetData64(DATA_KROSHFIREHAND);
+    MaulgarGUID = pInstance->GetGuidData(DATA_MAULGAR_GUID);
+    KigglerGUID = pInstance->GetGuidData(DATA_KIGGLERTHECRAZED_GUID);
+    BlindeyeGUID = pInstance->GetGuidData(DATA_BLINDEYETHESEER_GUID);
+    OlmGUID = pInstance->GetGuidData(DATA_OLMTHESUMMONER_GUID);
+    KroshGUID = pInstance->GetGuidData(DATA_KROSHFIREHAND_GUID);
 
     Maulgar = (Creature*)(ObjectAccessor::GetUnit((*me), MaulgarGUID));
     Kiggler = (Creature*)(ObjectAccessor::GetUnit((*me), KigglerGUID));
@@ -119,17 +119,14 @@ public:
     boss_high_king_maulgar() : CreatureScript("boss_high_king_maulgar")
     { }
 
-    class boss_high_king_maulgarAI : public ScriptedAI
+    class boss_high_king_maulgarAI : public BossAI
     {
         public:
-        boss_high_king_maulgarAI(Creature *c) : ScriptedAI(c)
+        boss_high_king_maulgarAI(Creature* c) : BossAI(c, DATA_MAULGAR)
         {
-            pInstance = ((InstanceScript*)c->GetInstanceScript());
             for(uint64 & i : Council)
                 i = 0;
         }
-    
-        InstanceScript* pInstance;
     
         uint32 ArcingSmash_Timer;
         uint32 MightyBlow_Timer;
@@ -166,10 +163,7 @@ public:
                     }
                 }
             }
-    
-            //reset encounter
-            if (pInstance)
-                pInstance->SetData(DATA_MAULGAREVENT, NOT_STARTED);
+            _Reset();
         }
     
         void KilledUnit(Unit*) override
@@ -185,59 +179,50 @@ public:
         void JustDied(Unit* Killer) override
         {
             DoScriptText(SAY_DEATH, me);
-    
-            if(CheckAllBossDied(pInstance, me))
-                pInstance->SetData(DATA_MAULGAREVENT, DONE);
+            _JustDied();
         }
     
-           void AddDeath()
-           {
-                switch(rand()%4)
-                {
-                    case 0: DoScriptText(SAY_OGRE_DEATH1, me);break;
-                    case 1: DoScriptText(SAY_OGRE_DEATH2, me);break;
-                    case 2: DoScriptText(SAY_OGRE_DEATH3, me);break;
-                    case 3: DoScriptText(SAY_OGRE_DEATH4, me);break;
-                }
-           }
+        void AddDeath()
+        {
+            switch(rand()%4)
+            {
+                case 0: DoScriptText(SAY_OGRE_DEATH1, me);break;
+                case 1: DoScriptText(SAY_OGRE_DEATH2, me);break;
+                case 2: DoScriptText(SAY_OGRE_DEATH3, me);break;
+                case 3: DoScriptText(SAY_OGRE_DEATH4, me);break;
+            }
+        }
     
-    
-        void EnterCombat(Unit *who)
-        override {
+        void EnterCombat(Unit *who) override 
+        {
             StartEvent(who);
+            _EnterCombat();
         }
     
         void GetCouncil()
         {
             //get council member's guid to respawn them if needed
-            Council[0] = pInstance->GetData64(DATA_KIGGLERTHECRAZED);
-            Council[1] = pInstance->GetData64(DATA_BLINDEYETHESEER);
-            Council[2] = pInstance->GetData64(DATA_OLMTHESUMMONER);
-            Council[3] = pInstance->GetData64(DATA_KROSHFIREHAND);
+            Council[0] = instance->GetGuidData(DATA_KIGGLERTHECRAZED_GUID);
+            Council[1] = instance->GetGuidData(DATA_BLINDEYETHESEER_GUID);
+            Council[2] = instance->GetGuidData(DATA_OLMTHESUMMONER_GUID);
+            Council[3] = instance->GetGuidData(DATA_KROSHFIREHAND_GUID);
         }
     
         void StartEvent(Unit *who)
         {
-            if(!pInstance)
-                return;
-    
             GetCouncil();
     
             DoScriptText(SAY_AGGRO, me);
     
-            pInstance->SetData64(DATA_MAULGAREVENT_TANK, who->GetGUID());
-            pInstance->SetData(DATA_MAULGAREVENT, IN_PROGRESS);
-    
-            DoZoneInCombat();
+            instance->SetGuidData(DATA_MAULGAREVENT_TANK, who->GetGUID());
         }
     
-        void UpdateAI(const uint32 diff)
-        override {
+        void UpdateAI(const uint32 diff) override 
+        {
             //Only if not incombat check if the event is started
-            if(!me->IsInCombat() && pInstance && pInstance->GetData(DATA_MAULGAREVENT))
+            if(!me->IsInCombat() && instance && instance->GetBossState(DATA_MAULGAR) == IN_PROGRESS)
             {
-                Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
-    
+                Unit* target = ObjectAccessor::GetUnit((*me), instance->GetGuidData(DATA_MAULGAREVENT_TANK));
                 if(target)
                 {
                     AttackStart(target);
@@ -250,7 +235,7 @@ public:
                 return;
     
             //someone evaded!
-            if(pInstance && !pInstance->GetData(DATA_MAULGAREVENT))
+            if(!instance->GetBossState(DATA_MAULGAR))
             {
                 EnterEvadeMode();
                 return;
@@ -317,7 +302,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_high_king_maulgarAI(creature);
+        return GetGruulsLairAI<boss_high_king_maulgarAI>(creature);
     }
 };
 
@@ -350,15 +335,15 @@ public:
     
             //reset encounter
             if (pInstance)
-                pInstance->SetData(DATA_MAULGAREVENT, NOT_STARTED);
+                pInstance->SetBossState(DATA_MAULGAR, NOT_STARTED);
         }
     
         void EnterCombat(Unit *who)
         override {
             if(pInstance)
             {
-                pInstance->SetData64(DATA_MAULGAREVENT_TANK, who->GetGUID());
-                pInstance->SetData(DATA_MAULGAREVENT, IN_PROGRESS);
+                pInstance->SetGuidData(DATA_MAULGAREVENT_TANK, who->GetGUID());
+                pInstance->SetBossState(DATA_MAULGAR, IN_PROGRESS);
             }
         }
     
@@ -367,22 +352,22 @@ public:
             if(pInstance)
             {
                 Creature *Maulgar = nullptr;
-                Maulgar = (Creature*)(ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_MAULGAR)));
+                Maulgar = (Creature*)(ObjectAccessor::GetUnit((*me), pInstance->GetGuidData(DATA_MAULGAR_GUID)));
     
                 if(Maulgar)
                     ((boss_high_king_maulgar::boss_high_king_maulgarAI*)Maulgar->AI())->AddDeath();
     
                 if(CheckAllBossDied(pInstance, me))
-                    pInstance->SetData(DATA_MAULGAREVENT, DONE);
+                    pInstance->SetBossState(DATA_MAULGAR, DONE);
             }
         }
     
         void UpdateAI(const uint32 diff)
         override {
             //Only if not incombat check if the event is started
-            if(!me->IsInCombat() && pInstance && pInstance->GetData(DATA_MAULGAREVENT))
+            if(!me->IsInCombat() && pInstance && pInstance->GetBossState(DATA_MAULGAR))
             {
-                Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
+                Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetGuidData(DATA_MAULGAREVENT_TANK));
     
                 if(target)
                 {
@@ -395,7 +380,7 @@ public:
                 return;
     
             //someone evaded!
-            if(pInstance && !pInstance->GetData(DATA_MAULGAREVENT))
+            if(pInstance && !pInstance->GetBossState(DATA_MAULGAR))
             {
                 EnterEvadeMode();
                 return;
@@ -432,7 +417,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_olm_the_summonerAI(creature);
+        return GetGruulsLairAI<boss_olm_the_summonerAI>(creature);
     }
 };
 
@@ -467,15 +452,15 @@ public:
     
             //reset encounter
             if (pInstance)
-                pInstance->SetData(DATA_MAULGAREVENT, NOT_STARTED);
+                pInstance->SetBossState(DATA_MAULGAR, NOT_STARTED);
         }
     
         void EnterCombat(Unit *who)
         override {
             if(pInstance)
             {
-                pInstance->SetData64(DATA_MAULGAREVENT_TANK, who->GetGUID());
-                pInstance->SetData(DATA_MAULGAREVENT, IN_PROGRESS);
+                pInstance->SetGuidData(DATA_MAULGAREVENT_TANK, who->GetGUID());
+                pInstance->SetBossState(DATA_MAULGAR, IN_PROGRESS);
             }
         }
     
@@ -484,22 +469,22 @@ public:
             if(pInstance)
             {
                 Creature *Maulgar = nullptr;
-                Maulgar = (Creature*)(ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_MAULGAR)));
+                Maulgar = (Creature*)(ObjectAccessor::GetUnit((*me), pInstance->GetGuidData(DATA_MAULGAR_GUID)));
     
                 if(Maulgar)
                     ((boss_high_king_maulgar::boss_high_king_maulgarAI*)Maulgar->AI())->AddDeath();
     
                 if(CheckAllBossDied(pInstance, me))
-                    pInstance->SetData(DATA_MAULGAREVENT, DONE);
+                    pInstance->SetBossState(DATA_MAULGAR, DONE);
             }
         }
     
         void UpdateAI(const uint32 diff)
         override {
             //Only if not incombat check if the event is started
-            if(!me->IsInCombat() && pInstance && pInstance->GetData(DATA_MAULGAREVENT))
+            if(!me->IsInCombat() && pInstance && pInstance->GetBossState(DATA_MAULGAR))
             {
-                Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
+                Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetGuidData(DATA_MAULGAREVENT_TANK));
     
                 if(target)
                 {
@@ -512,7 +497,7 @@ public:
                 return;
     
             //someone evaded!
-            if(pInstance && !pInstance->GetData(DATA_MAULGAREVENT))
+            if(pInstance && !pInstance->GetBossState(DATA_MAULGAR))
             {
                 EnterEvadeMode();
                 return;
@@ -555,7 +540,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_kiggler_the_crazedAI(creature);
+        return GetGruulsLairAI<boss_kiggler_the_crazedAI>(creature);
     }
 };
 
@@ -586,15 +571,15 @@ public:
     
             //reset encounter
             if (pInstance)
-                pInstance->SetData(DATA_MAULGAREVENT, NOT_STARTED);
+                pInstance->SetBossState(DATA_MAULGAR, NOT_STARTED);
         }
     
         void EnterCombat(Unit *who)
         override {
             if(pInstance)
             {
-                pInstance->SetData64(DATA_MAULGAREVENT_TANK, who->GetGUID());
-                pInstance->SetData(DATA_MAULGAREVENT, IN_PROGRESS);
+                pInstance->SetGuidData(DATA_MAULGAREVENT_TANK, who->GetGUID());
+                pInstance->SetBossState(DATA_MAULGAR, IN_PROGRESS);
             }
         }
     
@@ -603,22 +588,22 @@ public:
             if(pInstance)
             {
                 Creature *Maulgar = nullptr;
-                Maulgar = (Creature*)(ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_MAULGAR)));
+                Maulgar = (Creature*)(ObjectAccessor::GetUnit((*me), pInstance->GetGuidData(DATA_MAULGAR_GUID)));
     
                 if(Maulgar)
                     ((boss_high_king_maulgar::boss_high_king_maulgarAI*)Maulgar->AI())->AddDeath();
     
                 if(CheckAllBossDied(pInstance, me))
-                    pInstance->SetData(DATA_MAULGAREVENT, DONE);
+                    pInstance->SetBossState(DATA_MAULGAR, DONE);
             }
         }
     
          void UpdateAI(const uint32 diff)
         override {
             //Only if not incombat check if the event is started
-            if(!me->IsInCombat() && pInstance && pInstance->GetData(DATA_MAULGAREVENT))
+            if(!me->IsInCombat() && pInstance && pInstance->GetBossState(DATA_MAULGAR))
             {
-                Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
+                Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetGuidData(DATA_MAULGAREVENT_TANK));
     
                 if(target)
                 {
@@ -631,7 +616,7 @@ public:
                 return;
     
             //someone evaded!
-            if(pInstance && !pInstance->GetData(DATA_MAULGAREVENT))
+            if(pInstance && !pInstance->GetBossState(DATA_MAULGAR))
             {
                 EnterEvadeMode();
                 return;
@@ -657,7 +642,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_blindeye_the_seerAI(creature);
+        return GetGruulsLairAI<boss_blindeye_the_seerAI>(creature);
     }
 };
 
@@ -690,15 +675,15 @@ public:
     
             //reset encounter
             if (pInstance)
-                pInstance->SetData(DATA_MAULGAREVENT, NOT_STARTED);
+                pInstance->SetBossState(DATA_MAULGAR, NOT_STARTED);
         }
     
         void EnterCombat(Unit *who)
         override {
             if(pInstance)
             {
-                pInstance->SetData64(DATA_MAULGAREVENT_TANK, who->GetGUID());
-                pInstance->SetData(DATA_MAULGAREVENT, IN_PROGRESS);
+                pInstance->SetGuidData(DATA_MAULGAREVENT_TANK, who->GetGUID());
+                pInstance->SetBossState(DATA_MAULGAR, IN_PROGRESS);
             }
         }
     
@@ -707,22 +692,22 @@ public:
             if(pInstance)
             {
                 Creature *Maulgar = nullptr;
-                Maulgar = (Creature*)(ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_MAULGAR)));
+                Maulgar = (Creature*)(ObjectAccessor::GetUnit((*me), pInstance->GetGuidData(DATA_MAULGAR_GUID)));
     
                 if(Maulgar)
                     ((boss_high_king_maulgar::boss_high_king_maulgarAI*)Maulgar->AI())->AddDeath();
     
                 if(CheckAllBossDied(pInstance, me))
-                    pInstance->SetData(DATA_MAULGAREVENT, DONE);
+                    pInstance->SetBossState(DATA_MAULGAR, DONE);
             }
         }
     
         void UpdateAI(const uint32 diff)
         override {
             //Only if not incombat check if the event is started
-            if(!me->IsInCombat() && pInstance && pInstance->GetData(DATA_MAULGAREVENT))
+            if(!me->IsInCombat() && pInstance && pInstance->GetBossState(DATA_MAULGAR))
             {
-                Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_MAULGAREVENT_TANK));
+                Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetGuidData(DATA_MAULGAREVENT_TANK));
     
                 if(target)
                 {
@@ -735,7 +720,7 @@ public:
                 return;
     
             //someone evaded!
-            if(pInstance && !pInstance->GetData(DATA_MAULGAREVENT))
+            if(pInstance && !pInstance->GetBossState(DATA_MAULGAR))
             {
                 EnterEvadeMode();
                 return;
@@ -784,22 +769,17 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_krosh_firehandAI(creature);
+        return GetGruulsLairAI<boss_krosh_firehandAI>(creature);
     }
 };
 
 
 void AddSC_boss_high_king_maulgar()
 {
-
     new boss_high_king_maulgar();
-
     new boss_kiggler_the_crazed();
-
     new boss_blindeye_the_seer();
-
     new boss_olm_the_summoner();
-
     new boss_krosh_firehand();
 }
 

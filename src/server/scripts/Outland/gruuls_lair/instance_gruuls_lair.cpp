@@ -1,18 +1,3 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /* ScriptData
 SDName: Instance_Gruuls_Lair
@@ -31,6 +16,13 @@ EndScriptData */
 2 - Gruul event
 */
 
+DoorData const doorData[] =
+{
+    { GO_MAULGAR_DOOR,  DATA_MAULGAR_GUID,  DOOR_TYPE_PASSAGE },
+    { GO_GRUUL_DOOR,    DATA_GRUUL,         DOOR_TYPE_ROOM },
+    { 0,                0,                  DOOR_TYPE_ROOM } // END
+};
+
 class instance_gruuls_lair : public InstanceMapScript
 {
 public:
@@ -43,9 +35,22 @@ public:
 
     struct instance_gruuls_lair_script : public InstanceScript
     {
-        instance_gruuls_lair_script(Map *map) : InstanceScript(map) { Initialize(); };
+        instance_gruuls_lair_script(Map *map) : InstanceScript(map) 
+        {
+            SetHeaders(DataHeader);
+            SetBossNumber(EncounterCount);
+            LoadDoorData(doorData);
 
-        uint32 Encounters[ENCOUNTERS];
+            MaulgarEvent_Tank = 0;
+            KigglerTheCrazed = 0;
+            BlindeyeTheSeer = 0;
+            OlmTheSummoner = 0;
+            KroshFirehand = 0;
+            Maulgar = 0;
+
+            MaulgarDoor = 0;
+            GruulDoor = 0;
+        };
 
         uint64 MaulgarEvent_Tank;
         uint64 KigglerTheCrazed;
@@ -57,130 +62,66 @@ public:
         uint64 MaulgarDoor;
         uint64 GruulDoor;
 
-        void Initialize()
-            override {
-            MaulgarEvent_Tank = 0;
-            KigglerTheCrazed = 0;
-            BlindeyeTheSeer = 0;
-            OlmTheSummoner = 0;
-            KroshFirehand = 0;
-            Maulgar = 0;
-
-            MaulgarDoor = 0;
-            GruulDoor = 0;
-
-            for (uint32 & Encounter : Encounters)
-                Encounter = NOT_STARTED;
-        }
-
-        bool IsEncounterInProgress() const override
-        {
-            for (uint32 Encounter : Encounters)
-                if (Encounter == IN_PROGRESS) return true;
-
-            return false;
-        }
-
         void OnCreatureCreate(Creature *creature) override
         {
+            InstanceScript::OnCreatureCreate(creature);
+
             switch (creature->GetEntry())
             {
-            case 18835: KigglerTheCrazed = creature->GetGUID(); break;
-            case 18836: BlindeyeTheSeer = creature->GetGUID();  break;
-            case 18834: OlmTheSummoner = creature->GetGUID();   break;
-            case 18832: KroshFirehand = creature->GetGUID();    break;
-            case 18831: Maulgar = creature->GetGUID();          break;
+            case NPC_KIGGLER_THE_CRAZED: KigglerTheCrazed = creature->GetGUID(); break;
+            case NPC_BLINDEYE_THE_SEER: BlindeyeTheSeer = creature->GetGUID();  break;
+            case NPC_OLM_THE_SUMMONER: OlmTheSummoner = creature->GetGUID();   break;
+            case NPC_KROSH_FIREHAND: KroshFirehand = creature->GetGUID();    break;
+            case NPC_MAULGAR: Maulgar = creature->GetGUID();          break;
             }
         }
 
         void OnGameObjectCreate(GameObject* go) override
         {
+            InstanceScript::OnGameObjectCreate(go);
+
             switch (go->GetEntry())
             {
-            case 184468:
+            case GO_MAULGAR_DOOR:
                 MaulgarDoor = go->GetGUID();
-                if (Encounters[0] == DONE) HandleGameObject(0, true, go);
                 break;
-            case 184662: GruulDoor = go->GetGUID(); break;
+            case GO_GRUUL_DOOR: 
+                GruulDoor = go->GetGUID(); break;
             }
         }
 
-        void SetData64(uint32 type, uint64 data) override
+        void SetGuidData(uint32 type, ObjectGuid data) override
         {
-            if (type == DATA_MAULGAREVENT_TANK)
+            switch (type)
+            {
+            case DATA_MAULGAREVENT_TANK:
                 MaulgarEvent_Tank = data;
+                break;
+
+            }
         }
 
-        uint64 GetData64(uint32 identifier) const override
+        ObjectGuid GetGuidData(uint32 identifier) const override
         {
             switch (identifier)
             {
-            case DATA_MAULGAREVENT_TANK:    return MaulgarEvent_Tank;
-            case DATA_KIGGLERTHECRAZED:     return KigglerTheCrazed;
-            case DATA_BLINDEYETHESEER:      return BlindeyeTheSeer;
-            case DATA_OLMTHESUMMONER:       return OlmTheSummoner;
-            case DATA_KROSHFIREHAND:        return KroshFirehand;
-            case DATA_MAULGARDOOR:          return MaulgarDoor;
-            case DATA_GRUULDOOR:            return GruulDoor;
-            case DATA_MAULGAR:              return Maulgar;
+            case DATA_MAULGAREVENT_TANK:         return MaulgarEvent_Tank;
+            case DATA_KIGGLERTHECRAZED_GUID:     return KigglerTheCrazed;
+            case DATA_BLINDEYETHESEER_GUID:      return BlindeyeTheSeer;
+            case DATA_OLMTHESUMMONER_GUID:       return OlmTheSummoner;
+            case DATA_KROSHFIREHAND_GUID:        return KroshFirehand;
+            case DATA_MAULGARDOOR_GUID:          return MaulgarDoor;
+            case DATA_GRUULDOOR_GUID:            return GruulDoor;
+            case DATA_MAULGAR_GUID:              return Maulgar;
             }
             return 0;
         }
 
         void SetData(uint32 type, uint32 data) override
         {
-            switch (type)
-            {
-            case DATA_MAULGAREVENT:
-                if (data == DONE) HandleGameObject(MaulgarDoor, true);
-                Encounters[0] = data; break;
-            case DATA_GRUULEVENT:
-                if (data == IN_PROGRESS) HandleGameObject(GruulDoor, false);
-                else HandleGameObject(GruulDoor, true);
-                Encounters[1] = data; break;
-            }
-
             if (data == DONE)
                 SaveToDB();
         }
-
-        uint32 GetData(uint32 type) const override
-        {
-            switch (type)
-            {
-            case DATA_MAULGAREVENT: return Encounters[0];
-            case DATA_GRUULEVENT:   return Encounters[1];
-            }
-            return 0;
-        }
-
-        std::string GetSaveData() override
-        {
-            OUT_SAVE_INST_DATA;
-            std::ostringstream stream;
-            stream << Encounters[0] << " " << Encounters[1];
-
-            OUT_SAVE_INST_DATA_COMPLETE;
-            return stream.str();
-        }
-
-        void Load(const char* in) override
-        {
-            if (!in)
-            {
-                OUT_LOAD_INST_DATA_FAIL;
-                return;
-            }
-
-            OUT_LOAD_INST_DATA(in);
-            std::istringstream stream(in);
-            stream >> Encounters[0] >> Encounters[1];
-            for (uint32 & Encounter : Encounters)
-                if (Encounter == IN_PROGRESS)                // Do not load an encounter as "In Progress" - reset it instead.
-                    Encounter = NOT_STARTED;
-            OUT_LOAD_INST_DATA_COMPLETE;
-        }
-    };
 };
 
 void AddSC_instance_gruuls_lair()
