@@ -1,0 +1,1 @@
+UPDATE creature_template SET spell1 = 31707, spell2 = 33395, unit_flags = 0 WHERE entry = 510;
