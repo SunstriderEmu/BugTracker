@@ -1,0 +1,1 @@
+REPLACE INTO spell_template_override (entry, attributesEx, comment) VALUES (46546, 0x20000, "Remove channeled flag from Ritual of Summoning triggered effect");
