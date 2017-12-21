@@ -748,10 +748,8 @@ public:
             WaveTimer = 0;
         }
     
-        void EnterCombat(Unit* pWho) override {}
-    
-        void MoveInLineOfSight(Unit* pWho)
-        override {
+        void MoveInLineOfSight(Unit* pWho) override 
+        {
             if (pWho->GetTypeId() == TYPEID_PLAYER && me->CanAggro(pWho) != CAN_ATTACK_RESULT_OK && !Progress)
             {
                 if ((pWho)->ToPlayer()->GetQuestStatus(QUEST_POWERING_OUR_DEFENSES) == QUEST_STATUS_INCOMPLETE)

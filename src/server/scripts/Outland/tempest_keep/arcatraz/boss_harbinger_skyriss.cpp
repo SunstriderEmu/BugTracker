@@ -27,7 +27,7 @@ boss_harbinger_skyriss_illusion
 EndContentData */
 
 
-#include "def_arcatraz.h"
+#include "arcatraz.h"
 
 #define SAY_INTRO               -1552000
 #define SAY_AGGRO               -1552001
@@ -60,20 +60,18 @@ public:
     boss_harbinger_skyriss() : CreatureScript("boss_harbinger_skyriss")
     { }
 
-    class boss_harbinger_skyrissAI : public ScriptedAI
+    class boss_harbinger_skyrissAI : public BossAI
     {
         public:
-        boss_harbinger_skyrissAI(Creature *c) : ScriptedAI(c)
+        boss_harbinger_skyrissAI(Creature* creature) : BossAI(creature, DATA_HARBINGER_SKYRISS)
         {
-            pInstance = ((InstanceScript*)c->GetInstanceScript());
             HeroicMode = me->GetMap()->IsHeroic();
-            Intro = false;
+            IntroDone = false;
         }
     
-        InstanceScript *pInstance;
         bool HeroicMode;
     
-        bool Intro;
+        bool IntroDone;
         bool IsImage33;
         bool IsImage66;
     
@@ -84,9 +82,9 @@ public:
         uint32 Domination_Timer;
         uint32 ManaBurn_Timer;
     
-        void Reset()
-        override {
-            if(!Intro)
+        void Reset() override 
+        {
+            if(!IntroDone)
                 me->SetFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_IMMUNE_TO_PC);
     
             IsImage33 = false;
@@ -98,28 +96,26 @@ public:
             Fear_Timer = 15000;
             Domination_Timer = 30000;
             ManaBurn_Timer = 25000;
+            _Reset();
         }
     
-        void MoveInLineOfSight(Unit *who)
-        override {
-            if(!Intro)
+        void MoveInLineOfSight(Unit *who) override 
+        {
+            if(!IntroDone)
             {
                 return;
             }
             ScriptedAI::MoveInLineOfSight(who);
         }
     
-        void EnterCombat(Unit *who) override {}
-    
-        void JustDied(Unit* Killer)
-        override {
+        void JustDied(Unit* Killer) override 
+        {
             DoScriptText(SAY_DEATH, me);
-            if( pInstance )
-                pInstance->SetData(TYPE_HARBINGERSKYRISS,DONE);
+            _JustDied();
         }
     
-        void JustSummoned(Creature *summon)
-        override {
+        void JustSummoned(Creature *summon) override 
+        {
             if(!summon)
                 return;
             if(IsImage66)
@@ -128,11 +124,13 @@ public:
                 summon->SetHealth((summon->GetMaxHealth()*66)/100);
             if(me->GetVictim())
                 if(Unit *target = SelectTarget(SELECT_TARGET_RANDOM, 0))
-                    summon->AI()->AttackStart(target);
+                    summon->EngageWithTarget(target);
+
+            BossAI::JustSummoned(summon);
          }
     
-        void KilledUnit(Unit* victim)
-        override {
+        void KilledUnit(Unit* victim) override 
+        {
             //won't yell killing pet/other unit
             if( victim->GetEntry() == 21436 )
                 return;
@@ -157,39 +155,37 @@ public:
                 DoCast(me, SPELL_33_ILLUSION);
         }
     
-        void UpdateAI(const uint32 diff)
-        override {
-            if(!Intro)
+        void UpdateAI(const uint32 diff) override 
+        {
+            if(!IntroDone)
             {
-                if( !pInstance )
-                    return;
-    
                 if( Intro_Timer < diff )
                 {
                     switch( Intro_Phase )
                     {
                         case 1:
                              DoScriptText(SAY_INTRO, me);
-                             if (GameObject* Sphere = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_SPHERE_SHIELD)))
-                                 Sphere->UseDoorOrButton();
+
+                             instance->HandleGameObject(instance->GetGuidData(DATA_WARDENS_SHIELD), true);
                             ++Intro_Phase;
                             Intro_Timer = 25000;
                             break;
                         case 2:
                             DoScriptText(SAY_AGGRO, me);
-                            if( Unit *mellic = ObjectAccessor::GetUnit(*me,pInstance->GetData64(DATA_MELLICHAR)) )
+                            if( Unit *mellic = ObjectAccessor::GetUnit(*me,instance->GetData64(DATA_MELLICHAR)) )
                             {
                                 //should have a better way to do this. possibly spell exist.
                                 mellic->SetDeathState(JUST_DIED);
                                 mellic->SetHealth(0);
-                                pInstance->SetData(TYPE_SHIELD_OPEN,IN_PROGRESS);
+
+                                instance->HandleGameObject(instance->GetGuidData(DATA_WARDENS_SHIELD), false);
                             }
                             ++Intro_Phase;
                             Intro_Timer = 3000;
                             break;
                         case 3:
                             me->RemoveFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_IMMUNE_TO_PC);
-                            Intro = true;
+                            IntroDone = true;
                             break;
                     }
                 }else Intro_Timer -=diff;
@@ -198,12 +194,13 @@ public:
             if( !UpdateVictim() )
                 return;
     
-            if( !IsImage66 && (me->GetHealthPct() <= 66) )
+            
+            if( !IsImage66 && me->HealthBelowPct(66))
             {
                 DoSplit(66);
                 IsImage66 = true;
             }
-            if( !IsImage33 && (me->GetHealthPct() <= 33) )
+            if( !IsImage33 && me->HealthBelowPct(33))
             {
                 DoSplit(33);
                 IsImage33 = true;
@@ -265,7 +262,7 @@ public:
                         return;
     
                     if( Unit* target = SelectTarget(SELECT_TARGET_RANDOM,1) )
-                        DoCast(target,H_SPELL_MANA_BURN);
+                        DoCast(target, H_SPELL_MANA_BURN);
     
                     ManaBurn_Timer = 16000+rand()%16000;
                 }else ManaBurn_Timer -=diff;
@@ -277,7 +274,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_harbinger_skyrissAI(creature);
+        return GetArcatrazAI<boss_harbinger_skyrissAI>(creature);
     }
 };
 
@@ -297,11 +294,9 @@ public:
         public:
         boss_harbinger_skyriss_illusionAI(Creature *c) : ScriptedAI(c)
         {
-            pInstance = ((InstanceScript*)c->GetInstanceScript());
             HeroicMode = me->GetMap()->IsHeroic();
         }
     
-        InstanceScript *pInstance;
         bool HeroicMode;
     
         void Reset() override { }
@@ -311,16 +306,14 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new boss_harbinger_skyriss_illusionAI(creature);
+        return GetArcatrazAI<boss_harbinger_skyriss_illusionAI>(creature);
     }
 };
 
 
 void AddSC_boss_harbinger_skyriss()
 {
-
     new boss_harbinger_skyriss();
-
     new boss_harbinger_skyriss_illusion();
 }
 

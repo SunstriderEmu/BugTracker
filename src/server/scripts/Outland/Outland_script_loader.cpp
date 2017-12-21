@@ -84,6 +84,8 @@ void AddSC_boss_muru();
 void AddSC_instance_sunwell_plateau();
 void AddSC_sunwell_plateau();
 void AddSC_arcatraz();
+void AddSC_boss_dalliah_the_doomsayer();
+void AddSC_boss_wrath_scryer_soccothrates();
 void AddSC_boss_harbinger_skyriss();
 void AddSC_instance_arcatraz();
 void AddSC_boss_high_botanist_freywinn();
@@ -200,6 +202,8 @@ void AddOutlandScripts()
     AddSC_instance_sunwell_plateau();
     AddSC_sunwell_plateau();
     AddSC_arcatraz();
+    AddSC_boss_dalliah_the_doomsayer();
+    AddSC_boss_wrath_scryer_soccothrates();
     AddSC_boss_harbinger_skyriss();
     AddSC_instance_arcatraz();
     AddSC_boss_high_botanist_freywinn();
