@@ -59,7 +59,6 @@ public:
 
         virtual bool GossipHello(Player* player) override
         {
-            
             if(player->GetClass() != CLASS_HUNTER)
             {
                 me->Whisper("My services are reserved to hunters!", LANG_UNIVERSAL, player);
@@ -92,12 +91,10 @@ public:
                 return true;
             }
             
-            Pet* pet = new Pet(player, HUNTER_PET);
+            Pet* pet = player->CreateTamedPetFrom(getPetTypeEntry(action));
             if(!pet)
-                return false;
-            
-            if(!pet->CreateTamedPetFrom(getPetTypeEntry(action)))
             {
+                me->Whisper("Failed to create pet.", LANG_UNIVERSAL, player);
                 delete pet;
                 return false;
             }
