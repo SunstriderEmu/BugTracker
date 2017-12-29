@@ -126,10 +126,12 @@ public:
                     case NOT_STARTED:
                         ResetPrisons();
                         if (GameObject* lever = instance->GetGameObject(BroggokLeverGUID))
+                        {
                             if (!lever->isSpawned())
                                 lever->Respawn();
                             else
                                 lever->ResetDoorOrButton();
+                        }
                         break;
                     }
                     break;

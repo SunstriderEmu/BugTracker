@@ -313,7 +313,7 @@ public:
             return 0;
         }
 
-        virtual void ReadSaveDataMore(std::istringstream& data) 
+        virtual void ReadSaveDataMore(std::istringstream& data) override
         {
             if (!instance->IsHeroic())
                 return;
@@ -353,7 +353,7 @@ public:
                 SetBossState(DATA_SHATTERED_EXECUTIONER, IN_PROGRESS);
         }
 
-        virtual void WriteSaveDataMore(std::ostringstream& data) 
+        virtual void WriteSaveDataMore(std::ostringstream& data) override
         { 
             if (!instance->IsHeroic())
                 return;
