@@ -84,8 +84,7 @@ public:
                     break;
                 case 64:
                     DoScriptText(SAY_OOX_END, me);
-                    if (Player* pPlayer = GetPlayerForEscort())
-                        pPlayer->GroupEventHappens(QUEST_RESQUE_OOX_09, me);
+                    pPlayer->GroupEventHappens(QUEST_RESQUE_OOX_09, me);
                     break;
             }
         }

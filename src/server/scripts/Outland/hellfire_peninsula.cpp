@@ -383,7 +383,6 @@ public:
         void WaypointReached(uint32 i, uint32 pathID)
         override {
             Player* player = GetPlayerForEscort();
-    
             if (!player)
                 return;
     
@@ -412,9 +411,7 @@ public:
             case 27:
                 DoScriptText(SAY_ELF_COMPLETE, me, player);
                 // Award quest credit
-                Player* player = GetPlayerForEscort();
-                if (player)
-                    player->GroupEventHappens(QUEST_ROAD_TO_FALCON_WATCH,me);
+                player->GroupEventHappens(QUEST_ROAD_TO_FALCON_WATCH,me);
                 break;
             }
         }

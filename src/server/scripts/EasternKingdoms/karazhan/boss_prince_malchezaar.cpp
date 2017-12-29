@@ -338,9 +338,9 @@ public:
                 targets.erase(targets.begin()+rand()%targets.size());
     
             int i = 0;
-            for(auto itr = targets.begin(); itr!= targets.end(); ++itr, ++i)
+            for(auto itr2 = targets.begin(); itr2 != targets.end(); ++itr2, ++i)
             {
-                Unit *target = *itr;
+                Unit *target = *itr2;
                 if(target)
                 {
                     enfeeble_targets[i] = target->GetGUID();

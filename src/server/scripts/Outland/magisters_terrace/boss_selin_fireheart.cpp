@@ -318,8 +318,7 @@ public:
     
                                 DoScriptText(SAY_EMPOWERED, me);
     
-                                Unit* CrystalChosen = ObjectAccessor::GetUnit(*me, CrystalGUID);
-                                if( CrystalChosen && CrystalChosen->IsAlive() )
+                                if( CrystalChosen->IsAlive() )
                                     // Use Deal Damage to kill it, not setDeathState.
                                     CrystalChosen->DealDamage(CrystalChosen, CrystalChosen->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
                                 CrystalGUID = 0;

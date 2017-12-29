@@ -1020,18 +1020,18 @@ public:
         {
             Unit* p = DoSpawnCreature(MOB_SMALL_PORTAL,0,0,0,0,TEMPSUMMON_CORPSE_DESPAWN, 0);
             if (p)
-                Portal = p->GetGUID();
+                PortalGUID = p->GetGUID();
     
             SetCombatMovementAllowed(false);
         }
     
         uint32 MindflayTimer;
         uint32 KillSelfTimer;
-        uint64 Portal;
+        uint64 PortalGUID;
     
         void JustDied(Unit*)
         override {
-            Unit* p = ObjectAccessor::GetUnit(*me, Portal);
+            Unit* p = ObjectAccessor::GetUnit(*me, PortalGUID);
             if (p)
                 p->DealDamage(p, p->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, nullptr, false);
         }
@@ -1098,7 +1098,7 @@ public:
         {
             Unit* p = DoSpawnCreature(MOB_SMALL_PORTAL,0,0,0,0,TEMPSUMMON_CORPSE_DESPAWN, 0);
             if (p)
-                Portal = p->GetGUID();
+                PortalGUID = p->GetGUID();
     
             SetCombatMovementAllowed(false);
         }
@@ -1106,11 +1106,11 @@ public:
         uint32 GroundRuptureTimer;
         uint32 HamstringTimer;
         uint32 EvadeTimer;
-        uint64 Portal;
+        uint64 PortalGUID;
     
         void JustDied(Unit*)
         override {
-            Unit* p = ObjectAccessor::GetUnit(*me, Portal);
+            Unit* p = ObjectAccessor::GetUnit(*me, PortalGUID);
             if (p)
                 p->DealDamage(p, p->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, nullptr, false);
         }
@@ -1139,7 +1139,7 @@ public:
             {
                 if (EvadeTimer < diff)
                 {
-                    Unit* p = ObjectAccessor::GetUnit(*me, Portal);
+                    Unit* p = ObjectAccessor::GetUnit(*me, PortalGUID);
                     if (p)
                         p->DealDamage(p, me->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, nullptr, false);
     
@@ -1157,9 +1157,9 @@ public:
                     if (!target->HasAuraEffect(SPELL_DIGESTIVE_ACID, 0))
                     {
                         me->GetMap()->CreatureRelocation(me, target->GetPositionX(), target->GetPositionY(), target->GetPositionZ(), 0);
-                        Unit* p = DoSpawnCreature(MOB_SMALL_PORTAL,0,0,0,0,TEMPSUMMON_CORPSE_DESPAWN, 0);
-                        if (p)
-                            Portal = p->GetGUID();
+                        Unit* portal = DoSpawnCreature(MOB_SMALL_PORTAL,0,0,0,0,TEMPSUMMON_CORPSE_DESPAWN, 0);
+                        if (portal)
+                            PortalGUID = p->GetGUID();
     
                         GroundRuptureTimer = 500;
                         HamstringTimer = 2000;
@@ -1210,7 +1210,7 @@ public:
         {
             Unit* p = DoSpawnCreature(MOB_GIANT_PORTAL,0,0,0,0,TEMPSUMMON_CORPSE_DESPAWN, 0);
             if (p)
-                Portal = p->GetGUID();
+                PortalGUID = p->GetGUID();
     
             SetCombatMovementAllowed(false);
         }
@@ -1219,11 +1219,11 @@ public:
         uint32 ThrashTimer;
         uint32 HamstringTimer;
         uint32 EvadeTimer;
-        uint64 Portal;
+        uint64 PortalGUID;
     
         void JustDied(Unit*)
         override {
-            Unit* p = ObjectAccessor::GetUnit(*me, Portal);
+            Unit* p = ObjectAccessor::GetUnit(*me, PortalGUID);
             if (p)
                 p->DealDamage(p, p->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, nullptr, false);
         }
@@ -1253,7 +1253,7 @@ public:
             {
                 if (EvadeTimer < diff)
                 {
-                    Unit* p = ObjectAccessor::GetUnit(*me, Portal);
+                    Unit* p = ObjectAccessor::GetUnit(*me, PortalGUID);
                     if (p)
                         p->DealDamage(p, me->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, nullptr, false);
     
@@ -1273,7 +1273,7 @@ public:
                         me->GetMap()->CreatureRelocation(me, target->GetPositionX(), target->GetPositionY(), target->GetPositionZ(), 0);
                         Unit* p = DoSpawnCreature(MOB_GIANT_PORTAL,0,0,0,0,TEMPSUMMON_CORPSE_DESPAWN, 0);
                         if (p)
-                            Portal = p->GetGUID();
+                            PortalGUID = p->GetGUID();
     
                         GroundRuptureTimer = 500;
                         HamstringTimer = 2000;
@@ -1332,17 +1332,17 @@ public:
         {
             Unit* p = DoSpawnCreature(MOB_GIANT_PORTAL,0,0,0,0,TEMPSUMMON_CORPSE_DESPAWN, 0);
             if (p)
-                Portal = p->GetGUID();
+                PortalGUID = p->GetGUID();
     
             SetCombatMovementAllowed(false);
         }
     
         uint32 BeamTimer;
-        uint64 Portal;
+        uint64 PortalGUID;
     
         void JustDied(Unit*)
         override {
-            Unit* p = ObjectAccessor::GetUnit(*me, Portal);
+            Unit* p = ObjectAccessor::GetUnit(*me, PortalGUID);
             if (p)
                 p->DealDamage(p, p->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, nullptr, false);
         }

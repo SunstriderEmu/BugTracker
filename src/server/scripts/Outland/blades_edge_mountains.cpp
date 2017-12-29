@@ -797,9 +797,9 @@ public:
                 
                 // Check if 5 players are in circles
                 if (vimgol1 && vimgol2 && vimgol3 && vimgol4 && vimgol5) {
-                    Creature *vimgol = me->FindNearestCreature(22911, 45.0f, true);
-                    if (!vimgol) {
-                        me->SummonCreature(22911, 3279.770020, 4640.019531, 216.527039, 1.5874, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 60000);
+                    Creature* _vimgol = me->FindNearestCreature(22911, 45.0f, true);
+                    if (!_vimgol) {
+                        _vimgol = me->SummonCreature(22911, 3279.770020, 4640.019531, 216.527039, 1.5874, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 60000);
     
                         std::list<Creature*> visualBunnies;
     

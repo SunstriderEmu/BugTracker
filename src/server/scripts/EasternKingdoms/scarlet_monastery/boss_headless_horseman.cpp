@@ -568,7 +568,6 @@ public:
                 return nullptr;
     
             Map::PlayerList const& playerList = map->GetPlayers();
-            Map::PlayerList::const_iterator i;
             if (playerList.isEmpty())
                 return nullptr;
     
@@ -623,7 +622,6 @@ public:
                 return;
                 
             Map::PlayerList const& playerList = map->GetPlayers();
-            Map::PlayerList::const_iterator i;
             if (playerList.isEmpty())
                 return;
                 

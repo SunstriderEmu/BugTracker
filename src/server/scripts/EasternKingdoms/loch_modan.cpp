@@ -167,8 +167,7 @@ public:
             break;
             case 11:
                 DoScriptText(MIRAN_SAY_QUEST_END, me);
-                if (Player* pPlayer = GetPlayerForEscort())
-                    pPlayer->GroupEventHappens(QUEST_PROTECTING_THE_SHIPMENT, me);
+                pPlayer->GroupEventHappens(QUEST_PROTECTING_THE_SHIPMENT, me);
             break;
             }
         }

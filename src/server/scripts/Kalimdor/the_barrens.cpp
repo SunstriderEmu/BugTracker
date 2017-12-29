@@ -638,7 +638,6 @@ public:
         void WaypointReached(uint32 uiPointId, uint32 pathID)
         override {
             Player* pPlayer = GetPlayerForEscort();
-    
             if (!pPlayer)
                 return;
     
@@ -659,8 +658,7 @@ public:
                 break;
             case 24:
                 m_bIsPostEvent = true;
-                if (Player* pPlayer = GetPlayerForEscort())
-                    pPlayer->GroupEventHappens(QUEST_ESCAPE, me);
+                pPlayer->GroupEventHappens(QUEST_ESCAPE, me);
                 break;
             }
         }

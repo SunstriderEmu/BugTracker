@@ -167,10 +167,10 @@ public:
                 targets.erase(targets.begin()+rand()%targets.size());
     
             int i = 0;
-            for(auto itr = targets.begin(); itr!= targets.end(); ++itr, ++i)
+            for(auto itr2 = targets.begin(); itr2 != targets.end(); ++itr2, ++i)
             {
                 // Teleport the 3 targets to a location on the wall and summon a Web Wrap on them
-                Unit *target = *itr;
+                Unit *target = *itr2;
                 Creature* Wrap = nullptr;
                 if(target)
                 {
