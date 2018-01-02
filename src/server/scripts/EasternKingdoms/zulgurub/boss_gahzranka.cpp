@@ -58,7 +58,7 @@ public:
             Slam_Timer = 17000;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             if (pInstance)
                 pInstance->SetData(DATA_GAHZRANKA, IN_PROGRESS);

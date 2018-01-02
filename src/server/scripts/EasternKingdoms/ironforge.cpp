@@ -135,7 +135,7 @@ public:
             EV_STORM_BOLT = 3,
         };
 
-        void EnterCombat(Unit* victim) override 
+        void JustEngagedWith(Unit* victim) override 
         {
             me->PlayDirectSound(5896);
         }

@@ -52,7 +52,7 @@ public:
             Spirit_Timer = 24000;
         }
     
-        void EnterCombat(Unit *who) override {}
+        void JustEngagedWith(Unit *who) override {}
     
         void SummonSpirits(Unit* victim)
         {

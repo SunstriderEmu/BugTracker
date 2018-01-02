@@ -74,11 +74,11 @@ public:
             BossAI::JustDied(who);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             DoScriptText(SAY_AGGRO, me);
     
-            BossAI::EnterCombat(who);
+            BossAI::JustEngagedWith(who);
         }
     
         void UpdateAI(const uint32 diff)

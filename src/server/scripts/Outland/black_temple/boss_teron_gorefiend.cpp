@@ -101,7 +101,7 @@ public:
             me->GetMotionMaster()->MovePoint(0, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ() + 7);
         }
     
-        void EnterCombat(Unit *who) override { }
+        void JustEngagedWith(Unit *who) override { }
         void AttackStart(Unit* who) override { }
         void MoveInLineOfSight(Unit* who) override { }
     
@@ -575,7 +575,7 @@ public:
             ResetCheckTimer = 1500;
         }
 
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
 
         void DamageTaken(Unit* done_by, uint32 &damage)
             override {

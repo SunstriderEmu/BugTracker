@@ -47,7 +47,7 @@ public:
             MothersMilk_Timer = 10000;
         }
     
-        void EnterCombat(Unit *who) override { }
+        void JustEngagedWith(Unit *who) override { }
     
         void DamageTaken(Unit *done_by, uint32 &damage)
         override {

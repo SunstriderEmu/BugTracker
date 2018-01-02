@@ -63,7 +63,7 @@ public:
             me->CastSpell(me, SPELL_MAGMASPIT, TRIGGERED_FULL_MASK);
         }
         
-        void EnterCombat(Unit* /*victim*/)
+        void JustEngagedWith(Unit* /*victim*/)
         override {
             if (_instance)
                 _instance->SetData(DATA_MAGMADAR, IN_PROGRESS);

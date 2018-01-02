@@ -72,7 +72,7 @@ public:
             WingBuffet_Timer = 25000+rand()%10000;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             DoScriptText(SAY_AGGRO, me);
         }

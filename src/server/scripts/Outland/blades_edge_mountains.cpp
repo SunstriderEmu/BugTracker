@@ -72,7 +72,7 @@ public:
         override {
         }
     
-        void EnterCombat(Unit* pWho)
+        void JustEngagedWith(Unit* pWho)
         override {
         }
     
@@ -150,7 +150,7 @@ public:
             IntangiblePresence_Timer = 15000;
         }
     
-        void EnterCombat(Unit* pWho) override { }
+        void JustEngagedWith(Unit* pWho) override { }
     
         void SpellHit(Unit *caster, const SpellInfo *spell)
         override {
@@ -291,7 +291,7 @@ public:
         override {
         }
     
-        void EnterCombat(Unit* pWho)
+        void JustEngagedWith(Unit* pWho)
         override {
         }
     
@@ -576,7 +576,7 @@ public:
         public:
         npc_prophecy_questcreditAI(Creature *c) : ScriptedAI(c) {}
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         
         void Reset()
         override {
@@ -621,7 +621,7 @@ public:
         public:
         npc_grishna_falconwingAI(Creature *c) : ScriptedAI(c) {}
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         
         void JustDied(Unit *pKiller)
         override {
@@ -739,7 +739,7 @@ public:
             hasResetVisual = false;
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         
         void JustDied(Unit *pKiller)
         override {
@@ -850,7 +850,7 @@ public:
             DoCast(me, SPELL_SPAWN);
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         
         void JustDied(Unit *pKiller)
         override {
@@ -923,7 +923,7 @@ public:
             step5Timer = 0;
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         
         void JustDied(Unit *pKiller)
         override {
@@ -1055,7 +1055,7 @@ public:
             }
         }
         
-        void EnterCombat(Unit *pWho) override {}       // FIXME: Put summoner and his group in combat and stop it when entering phase 5 -> Maybe not needed if ogres have enough hp
+        void JustEngagedWith(Unit *pWho) override {}       // FIXME: Put summoner and his group in combat and stop it when entering phase 5 -> Maybe not needed if ogres have enough hp
         
         void IncrementOgresCounter()
         {
@@ -1145,7 +1145,7 @@ public:
             shadowBoltTimer = 3000;
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         
         void JustDied(Unit *pKiller)
         override {
@@ -1349,7 +1349,7 @@ public:
             stepTimer = 1;
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         
         uint32 SelectRandomBeam()
         {
@@ -1805,7 +1805,7 @@ public:
             stepTimer = 1;
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         
         uint32 SelectRandomBeam()
         {
@@ -2159,7 +2159,7 @@ public:
             panicTimer = 15000;
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         
         void UpdateAI(uint32 const diff)
         override {
@@ -2228,7 +2228,7 @@ public:
             sunderingCleaveTimer = 5000;
         }
         
-        void EnterCombat(Unit *pWho)
+        void JustEngagedWith(Unit *pWho)
         override {
             DoCast(pWho, SPELL_MIGHTY_CHARGE);
             mightyChargeTimer = 10000;
@@ -2302,7 +2302,7 @@ public:
             warStompTimer = 8000;
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         
         void UpdateAI(uint32 const diff)
         override {
@@ -2367,7 +2367,7 @@ public:
             felFlamesTimer = 2000;
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         
         void UpdateAI(uint32 const diff)
         override {
@@ -2425,7 +2425,7 @@ public:
             hasEmoted = false;
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         
         void SpellHit(Unit *pCaster, SpellInfo const *pSpell)
         override {
@@ -2487,7 +2487,7 @@ public:
             }
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         
         void MoveInLineOfSight(Unit *pWho)
         override {
@@ -2599,7 +2599,7 @@ public:
             flameBreathTimer = 12000;
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         
         void UpdateAI(uint32 const diff)
         override {
@@ -2699,7 +2699,7 @@ public:
             hellfireTimer = 15000;
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         
         void UpdateAI(uint32 const diff)
         override {
@@ -2792,7 +2792,7 @@ public:
             me->SetDisableGravity(true);
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         
         void UpdateAI(uint32 const diff)
         override {
@@ -2885,7 +2885,7 @@ public:
             wingBuffetTimer = 2000;
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         
         void UpdateAI(uint32 const diff)
         override {
@@ -2977,7 +2977,7 @@ public:
             me->AddAura(40857, me);
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
     };
 
     CreatureAI* GetAI(Creature* creature) const override
@@ -3032,7 +3032,7 @@ public:
             blueRayTimer = 0;
         }
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void StartEvent()
         {
@@ -3192,7 +3192,7 @@ public:
             }
         }
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void UpdateAI(uint32 const diff)
         override {
@@ -3274,7 +3274,7 @@ public:
                 me->GetMotionMaster()->MovePath(22114);
         }
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void UpdateAI(uint32 const diff) override {}
     };
@@ -3302,7 +3302,7 @@ public:
         public:
         npc_grishnaAI(Creature* c) : ScriptedAI(c) {}
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void JustDied(Unit* killer)
         override {

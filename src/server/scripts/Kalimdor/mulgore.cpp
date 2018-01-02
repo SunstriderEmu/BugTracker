@@ -109,7 +109,7 @@ public:
             me->SetDefaultMovementType(WAYPOINT_MOTION_TYPE);
             me->GetMotionMaster()->Initialize();
         }
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
     
         void SpellHit(Unit* pCaster, const SpellInfo* spell)
         override {   // we can feed him without any quest
@@ -269,7 +269,7 @@ struct npc_plains_visionAI  : public ScriptedAI
         amountWP  = 49;
     }
 
-    void EnterCombat(Unit* pWho) override {}
+    void JustEngagedWith(Unit* pWho) override {}
 
     void MovementInform(uint32 type, uint32 id)
     override {
@@ -329,7 +329,7 @@ public:
             amountWP  = 49;
         }
     
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
     
         void MovementInform(uint32 type, uint32 id)
         override {

@@ -108,7 +108,7 @@ public:
             Morphed_Timer = ANIM_TIMER;
         }
      
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             me->SetDisplayId(DISPLAYID_OURO);
             me->RemoveAurasDueToSpell(SPELL_SUBMERGE);
@@ -425,7 +425,7 @@ public:
             SetCombatMovementAllowed(false);
         }
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
      
         void UpdateAI(const uint32 diff)    
         override {

@@ -96,13 +96,13 @@ public:
             SummonChannelers();
         }
     
-        void EnterCombat(Unit *who) override 
+        void JustEngagedWith(Unit *who) override 
         {
             DoScriptText(SAY_WAKE, me);
             if (me->IsNonMeleeSpellCast(false))
                 me->InterruptNonMeleeSpells(true);
             DoStartMovement(who);
-            _EnterCombat();
+            _JustEngagedWith();
         }
         
         void MoveInLineOfSight(Unit* who) override 
@@ -329,7 +329,7 @@ public:
                 me->Kill(me);
         }
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             if(Creature *Kelidan = me->FindNearestCreature(ENTRY_KELIDAN, 100))
                 ((boss_kelidan_the_breaker::boss_kelidan_the_breakerAI*)Kelidan->AI())->ChannelerEngaged(who);

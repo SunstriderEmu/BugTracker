@@ -132,7 +132,7 @@ struct EredarTwin : public ScriptedAI
         }
     }
 
-    void EnterCombat(Unit *who)
+    void JustEngagedWith(Unit *who)
     override {
         DoZoneInCombat();
 
@@ -504,7 +504,7 @@ public:
                     if (!me->IsInCombat())
                     {
                         DoStartNoMovement(who);
-                        EnterCombat(who);
+                        JustEngagedWith(who);
                     }
                 }
             }

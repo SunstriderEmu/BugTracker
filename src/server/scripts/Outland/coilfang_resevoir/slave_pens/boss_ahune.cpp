@@ -91,7 +91,7 @@ public:
             }
         }
 
-        void EnterCombat(Unit* pWho) override
+        void JustEngagedWith(Unit* pWho) override
         {
             me->SummonCreature(NPC_AHUNITE_HAILSTONE, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation(), TEMPSUMMON_DEAD_DESPAWN, 0);
         
@@ -252,7 +252,7 @@ public:
             me->SetReactState(REACT_PASSIVE);
         }
         
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
         
         void JustDied(Unit* pKiller)
         override {
@@ -305,7 +305,7 @@ public:
             pulverizeTimer = 3000;
         }
         
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
         
         void JustDied(Unit* pKiller)
         override {
@@ -373,7 +373,7 @@ public:
             deathTimer = 99999;
         }
         
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
         
     
         void HandleIceSpear()

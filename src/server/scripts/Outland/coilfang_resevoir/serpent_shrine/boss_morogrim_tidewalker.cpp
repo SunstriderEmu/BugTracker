@@ -168,7 +168,7 @@ public:
                 pInstance->SetData(DATA_MOROGRIMTIDEWALKEREVENT, DONE);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             PlayerList = &((InstanceMap*)me->GetMap())->GetPlayers();
             Playercount = PlayerList->getSize();
@@ -320,7 +320,7 @@ public:
             me->SetFaction(FACTION_MONSTER);
         }
     
-        void EnterCombat(Unit *who) override {}
+        void JustEngagedWith(Unit *who) override {}
     
         void MoveInLineOfSight(Unit *who)
         override {

@@ -50,7 +50,7 @@ public:
                 pInstance->SetData(TYPE_GELIHAST, NOT_STARTED);
         }
     
-        void EnterCombat(Unit* pWho)
+        void JustEngagedWith(Unit* pWho)
         override {
             if (pInstance)
                 pInstance->SetData(TYPE_GELIHAST, IN_PROGRESS);

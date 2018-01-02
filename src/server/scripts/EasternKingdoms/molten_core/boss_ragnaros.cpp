@@ -256,7 +256,7 @@ class Boss_Ragnaros : public CreatureScript
                     _instance->SetData(DATA_RAGNAROS, DONE);
             }
 
-            void EnterCombat(Unit* /*victim*/)
+            void JustEngagedWith(Unit* /*victim*/)
             override {
                 if(_instance)
                     _instance->SetData(DATA_RAGNAROS, IN_PROGRESS);

@@ -105,7 +105,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             switch(rand()%3)
             {
@@ -113,7 +113,7 @@ public:
                 case 1: DoScriptText(SAY_AGGRO_2, me); break;
                 case 2: DoScriptText(SAY_AGGRO_3, me); break;
             }
-            _EnterCombat();
+            _JustEngagedWith();
         }
     
         void KilledUnit(Unit* victim)
@@ -225,7 +225,7 @@ public:
             ArcaneBolt_Timer = 1000;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         }

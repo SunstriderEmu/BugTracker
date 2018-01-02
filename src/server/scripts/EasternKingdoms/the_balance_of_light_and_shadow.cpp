@@ -132,7 +132,7 @@ public:
             EndPeasant = nullptr;
         }
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void UpdateAI(const uint32 diff)
         override {
@@ -344,7 +344,7 @@ public:
                     ((npc_eris_havenfire::npc_eris_havenfireAI*) Eris->AI())->DiedCount++;
         }
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void UpdateAI(const uint32 diff)
         override {
@@ -394,7 +394,7 @@ public:
             targetGUID = 0;
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void UpdateAI(const uint32 diff)
         override {

@@ -67,7 +67,7 @@ public:
             me->ApplySpellImmune(0, IMMUNITY_ID, 40381, true);
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
     };
 
     CreatureAI* GetAI(Creature* creature) const override

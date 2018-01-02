@@ -78,7 +78,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit* pWho)
+        void JustEngagedWith(Unit* pWho)
         override {
             Player* pPlayer = GetPlayerForEscort();
     

@@ -80,7 +80,7 @@ class Boss_Garr : public CreatureScript
                 }
             }
 
-            void EnterCombat(Unit* /*victim*/)
+            void JustEngagedWith(Unit* /*victim*/)
             override {
                 if (_instance)
                     _instance->SetData(DATA_GARR, IN_PROGRESS);
@@ -153,7 +153,7 @@ class Mob_FiresWorn : public CreatureScript
                 events.RescheduleEvent(EV_IMMOLATE, 4000);
             }
 
-            void EnterCombat(Unit* victim)
+            void JustEngagedWith(Unit* victim)
             override {
                 if (Creature* garr = _instance->instance->GetCreature(_instance->GetData64(DATA_GARR)))
                     if (!garr->GetVictim())

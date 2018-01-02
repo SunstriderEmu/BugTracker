@@ -35,7 +35,7 @@ public:
             waitTimer = WAITTIME;
         }
         
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {}
     
         void UpdateAI(uint32 const diff)
@@ -163,7 +163,7 @@ public:
             me->CastSpell(me, SPELL_VISUAL_BADABOUM, TRIGGERED_FULL_MASK);
         }
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {}
     };
 

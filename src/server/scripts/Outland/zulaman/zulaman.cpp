@@ -63,7 +63,7 @@ public:
     
         void Reset() override { }
     
-        void EnterCombat(Unit *who) override { }
+        void JustEngagedWith(Unit *who) override { }
     
         void DoSpawnRandom()
         {
@@ -137,7 +137,7 @@ public:
         bool IsLoot;
         uint64 PlayerGUID;
         void Reset() override {}
-        void EnterCombat(Unit *who) override {}
+        void JustEngagedWith(Unit *who) override {}
         void JustDied(Unit *)
         override {
             Player* player = ObjectAccessor::GetPlayer(*me, PlayerGUID);
@@ -243,7 +243,7 @@ public:
             deathTimer = 0;
         }
         
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
         
         bool IncreaseClick(uint64 pGUID)
         {
@@ -429,7 +429,7 @@ public:
                 pInstance->SetData(DATA_GAUNTLET, NOT_STARTED);
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         
         void MoveInLineOfSight(Unit *pWho)
         override {
@@ -496,7 +496,7 @@ public:
             thunderclapTimer = 3000;
         }
         
-        void EnterCombat(Unit *pWho)
+        void JustEngagedWith(Unit *pWho)
         override {
             if (pInstance && pInstance->GetData(DATA_GAUNTLET) == IN_PROGRESS)
                 pInstance->SetData(DATA_GAUNTLET, DONE);
@@ -551,7 +551,7 @@ public:
             MightyBlowTimer = 5000;
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         
         void UpdateAI(uint32 const diff) override {
             if (!UpdateVictim())
@@ -615,7 +615,7 @@ public:
             hasRunToDrum = false;
         }
         
-        void EnterCombat(Unit *pWho)
+        void JustEngagedWith(Unit *pWho)
         override {
             if (GameObject *amaniDrum = me->FindNearestGameObject(GO_AMANI_DRUM, 50.0f))
                 me->GetMotionMaster()->MovePoint(0, amaniDrum->GetPositionX(), amaniDrum->GetPositionY(), amaniDrum->GetPositionZ());
@@ -706,7 +706,7 @@ public:
         
         InstanceScript* pInstance;
         
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
         
         void MovementInform(uint32 type, uint32 id)
         override {

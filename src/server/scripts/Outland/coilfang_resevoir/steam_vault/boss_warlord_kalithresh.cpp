@@ -83,7 +83,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit *who) override { }
+        void JustEngagedWith(Unit *who) override { }
     
         void StartRageGen(Unit *caster)
         {
@@ -169,7 +169,7 @@ public:
                 pInstance->SetData(TYPE_WARLORD_KALITHRESH, NOT_STARTED);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             switch(rand()%3)
             {

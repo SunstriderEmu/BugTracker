@@ -45,7 +45,7 @@ public:
             addAuraTimer = 0;
         }
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void DamageTaken(Unit* doneBy, uint32& damage)
         override {
@@ -299,7 +299,7 @@ public:
                 ScriptedAI::MoveInLineOfSight(who);
         }
         
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             me->SetDisableGravity(false);
             me->SetHomePosition(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation());
@@ -459,7 +459,7 @@ public:
             me->SetReactState(REACT_PASSIVE);
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         bool sOnDummyEffect(Unit* caster, uint32 spellId, uint32 effIndex)
         override {

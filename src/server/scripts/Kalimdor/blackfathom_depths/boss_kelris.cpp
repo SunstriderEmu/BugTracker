@@ -61,7 +61,7 @@ public:
                 pInstance->SetData(TYPE_KELRIS, NOT_STARTED);
         }
         
-        void EnterCombat(Unit* pWho)
+        void JustEngagedWith(Unit* pWho)
         override {
             DoScriptText(SAY_AGGRO, me);
             if (pInstance)

@@ -74,7 +74,7 @@ public:
             DoScriptText(SAY_DEATH, me);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             if (rand()%2)
             {

@@ -70,7 +70,7 @@ public:
             ShieldWall2 = true;
         }
 
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             DoScriptText(SAY_BLAU_AGGRO, me);
         }
@@ -167,7 +167,7 @@ public:
         override {
         }
 
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             switch(rand()%3)
             {
@@ -246,7 +246,7 @@ public:
             ShieldWall2 = true;
         }
 
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             DoScriptText(SAY_KORT_AGGRO, me);
         }
@@ -351,7 +351,7 @@ public:
             ShieldWall2 = true;
         }
 
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             DoScriptText(SAY_ZELI_AGGRO, me);
         }

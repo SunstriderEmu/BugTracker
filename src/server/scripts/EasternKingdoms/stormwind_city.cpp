@@ -139,7 +139,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit *who) override {}
+        void JustEngagedWith(Unit *who) override {}
 
         virtual void QuestAccept(Player* player, Quest const* _Quest) override
         {
@@ -200,7 +200,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit *who) override {}
+        void JustEngagedWith(Unit *who) override {}
 
         virtual void QuestAccept(Player* player, Quest const* _Quest) override
         {

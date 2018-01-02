@@ -55,7 +55,7 @@ public:
             PowerWordShield_Timer = 60000;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             me->Yell(SAY_AGGRO,LANG_UNIVERSAL,nullptr);
             DoPlaySoundToSet(me,SOUND_AGGRO);

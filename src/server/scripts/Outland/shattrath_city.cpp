@@ -58,7 +58,7 @@ struct npc_raliq_the_drunkAI : public ScriptedAI
         me->SetFaction(FACTION_FRIENDLY_RD);
     }
 
-    void EnterCombat(Unit *who) override {}
+    void JustEngagedWith(Unit *who) override {}
 
     void UpdateAI(const uint32 diff)
     override {
@@ -152,7 +152,7 @@ public:
             me->SetFaction(FACTION_FRIENDLY_SA);
         }
     
-        void EnterCombat(Unit *who) override {}
+        void JustEngagedWith(Unit *who) override {}
     
         void DamageTaken(Unit *done_by, uint32 &damage)
         override {
@@ -418,7 +418,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void MoveInLineOfSight(Unit *who)
         override {
@@ -548,7 +548,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit* who)override {}
+        void JustEngagedWith(Unit* who)override {}
         
         void DamageTaken(Unit *pSource, uint32 &damage)
         override {

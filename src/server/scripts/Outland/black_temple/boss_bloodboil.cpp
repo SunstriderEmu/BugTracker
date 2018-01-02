@@ -131,7 +131,7 @@ public:
             me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_HASTE_SPELLS, true);
         }
     
-        void EnterCombat(Unit *who) override
+        void JustEngagedWith(Unit *who) override
         {
             DoZoneInCombat();
             DoScriptText(SAY_AGGRO, me);

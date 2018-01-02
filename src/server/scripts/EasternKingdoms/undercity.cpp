@@ -111,7 +111,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit *who) override {}
+        void JustEngagedWith(Unit *who) override {}
     
         void JustSummoned(Creature *summoned)
         override {
@@ -266,7 +266,7 @@ public:
             EventCast = true;
         }
     
-        void EnterCombat(Unit *who) override {}
+        void JustEngagedWith(Unit *who) override {}
     
         void UpdateAI(const uint32 diff)
         override {

@@ -60,7 +60,7 @@ public:
             me->CastSpell(me,SPELL_ICEARMOR, TRIGGERED_FULL_MASK);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
         }
     

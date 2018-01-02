@@ -118,9 +118,9 @@ public:
             SpawnAdds();
         }
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
-            _EnterCombat();
+            _JustEngagedWith();
     
             DoScriptText(SAY_AGGRO, me);
             AddsAttack();
@@ -357,7 +357,7 @@ struct boss_moroes_guestAI : public ScriptedAI
         pInstance->SetBossState(DATA_MOROES_EVENT, NOT_STARTED);
     }
 
-    void EnterCombat(Unit* who) override {}
+    void JustEngagedWith(Unit* who) override {}
 
     void AcquireGUID()
     {

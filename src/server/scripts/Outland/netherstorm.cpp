@@ -95,7 +95,7 @@ public:
             add = nullptr;
         }
     
-        void EnterCombat(Unit *who) override { return; }
+        void JustEngagedWith(Unit *who) override { return; }
     
         /*void SpellHit(Unit *caster, const SpellInfo *spell)
         {
@@ -427,7 +427,7 @@ public:
             isEvent = false;
         }
     
-        void EnterCombat(Unit *who) override { }
+        void JustEngagedWith(Unit *who) override { }
     
         void JustSummoned(Creature *summoned)
         override {
@@ -907,7 +907,7 @@ public:
             ManaBurnTimer = 5000 + (rand()%3 * 1000); // 5-8 sec cd
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             if(Player *player = who->GetCharmerOrOwnerPlayerOrPlayerItself())
                 PlayerGUID = player->GetGUID();
@@ -1064,7 +1064,7 @@ public:
             AttackStart(summoned);
         }
     
-        void EnterCombat(Unit* who)override {}
+        void JustEngagedWith(Unit* who)override {}
     
         void Reset()
         override {
@@ -1129,7 +1129,7 @@ public:
             uiTakeTimer = 3000;
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
     
         void WaypointReached(uint32 i, uint32 pathID)
         override {
@@ -1271,7 +1271,7 @@ public:
             SetCombatMovementAllowed(false);
         }
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void UpdateAI(const uint32 uiDiff)
         override {
@@ -1462,7 +1462,7 @@ public:
             DestroyingTimer = 60000;
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void SpawnImp()
         {

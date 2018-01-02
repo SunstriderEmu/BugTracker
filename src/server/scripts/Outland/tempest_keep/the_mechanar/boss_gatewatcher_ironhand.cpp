@@ -74,7 +74,7 @@ public:
             Jackhammer_CastTime = 0;
             Jackhammer_Progression = 0;
         }
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             DoScriptText(SAY_AGGRO_1, me);
         }

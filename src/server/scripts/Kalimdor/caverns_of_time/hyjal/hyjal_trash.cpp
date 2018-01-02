@@ -167,7 +167,7 @@ void hyjal_trashAI::DamageTaken(Unit *done_by, uint32 &damage)
     }
 }
 
-void hyjal_trashAI::EnterCombat(Unit *who){}
+void hyjal_trashAI::JustEngagedWith(Unit *who){}
 
 void hyjal_trashAI::UpdateAI(const uint32 diff)
 {
@@ -452,7 +452,7 @@ public:
             imol = false;
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void WaypointReached(uint32 i, uint32 pathID)
         override {
@@ -607,7 +607,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void UpdateAI(const uint32 diff)
         override {
@@ -715,7 +715,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void UpdateAI(const uint32 diff)
         override {
@@ -837,7 +837,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void UpdateAI(const uint32 diff)
         override {
@@ -939,7 +939,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void UpdateAI(const uint32 diff)
         override {
@@ -1044,7 +1044,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void UpdateAI(const uint32 diff)
         override {
@@ -1140,7 +1140,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void UpdateAI(const uint32 diff)
         override {
@@ -1248,7 +1248,7 @@ public:
             me->Relocate(x,y,z,0);
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
 
         void UpdateEscortAI(uint32 diff) override
         {

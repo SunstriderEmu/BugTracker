@@ -42,7 +42,7 @@ struct DragonOfNightmareAI_template : public ScriptedAI
     SimpleCooldown* SCDNoxiousBreath;
     SimpleCooldown* SCDSeepingFog;
     
-    void EnterCombat(Unit *Who)
+    void JustEngagedWith(Unit *Who)
     override {
     }
     
@@ -196,7 +196,7 @@ public:
             Dragon=ObjectAccessor::GetCreature(*me,me->GetOwnerGUID());
             setTargetFromDragon();
         }
-        void EnterCombat(Unit *who)override {}
+        void JustEngagedWith(Unit *who)override {}
         
         void Reset()
         override {
@@ -333,7 +333,7 @@ public:
             SCDTimerUpdateMovement = new SimpleCooldown(1000);
             SCDFreezeWhenJustSpawn = new SimpleCooldown(1500);
         }
-        void EnterCombat(Unit *who)override {}
+        void JustEngagedWith(Unit *who)override {}
 
         void JustDied(Unit *victim)
             override {
@@ -443,7 +443,7 @@ public:
             me->SetFloatValue(UNIT_FIELD_RANGEDATTACKTIME, 1.5f);
         }
         
-        void EnterCombat(Unit* u)
+        void JustEngagedWith(Unit* u)
         override {
             me->Yell(YELL_ON_AGGRO_LETHON,LANG_UNIVERSAL,nullptr);
             return;
@@ -580,7 +580,7 @@ public:
             SCDVolatileInfection = new SimpleCooldown (TIMER_VOLATILE_INFECTION_EMERISS,1000); // On lance une SB dès le début
         }
         
-        void EnterCombat(Unit* u)
+        void JustEngagedWith(Unit* u)
         override {
             me->Yell(YELL_ON_AGGRO_EMERISS,LANG_UNIVERSAL,nullptr);
             return;
@@ -708,7 +708,7 @@ public:
             SCDPoisonBreath->resetAtStart();
         }
 
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
             override {
         }
 
@@ -780,7 +780,7 @@ public:
             resetShadesPointer();
         }
         
-        void EnterCombat(Unit* u)
+        void JustEngagedWith(Unit* u)
         override {
             me->Yell(YELL_ON_AGGRO_TAERAR,LANG_UNIVERSAL,nullptr);
             return;
@@ -984,7 +984,7 @@ public:
             SCDSilence->resetAtStart();
         }
 
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
             override {
         }
 
@@ -1075,7 +1075,7 @@ public:
             SCDLightningWave->resetAtStart();
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             me->Yell(YELL_ON_AGGRO_YSONDRE,LANG_UNIVERSAL,nullptr);
         }

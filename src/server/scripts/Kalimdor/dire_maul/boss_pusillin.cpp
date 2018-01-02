@@ -105,7 +105,7 @@ public:
             step = currStep;
         }
         
-        void EnterCombat(Unit *pWho)
+        void JustEngagedWith(Unit *pWho)
         override {
             DoCast(me, SPELL_SPIRIT_OF_RUNN, false);
         }

@@ -421,7 +421,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit* pWho)
+        void JustEngagedWith(Unit* pWho)
         override {
             
         }

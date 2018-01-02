@@ -102,7 +102,7 @@ public:
             me->SetFaction(FACTION_FRIENDLY);
         }
     
-        void EnterCombat(Unit* who) override
+        void JustEngagedWith(Unit* who) override
         {
             DoScriptText(SAY_AGGRO, me, nullptr);
         }

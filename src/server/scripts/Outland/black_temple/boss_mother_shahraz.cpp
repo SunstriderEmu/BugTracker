@@ -117,7 +117,7 @@ public:
             Enraged = false;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             if(pInstance)
                 pInstance->SetData(DATA_MOTHERSHAHRAZEVENT, IN_PROGRESS);

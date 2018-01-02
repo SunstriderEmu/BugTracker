@@ -85,7 +85,7 @@ public:
                     break;
             }
         }
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             switch(rand()%2)
             {
@@ -188,7 +188,7 @@ public:
             uiShootTimer = 0;
         }
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void WaypointReached(uint32 uiPoint, uint32 pathID)
         override {

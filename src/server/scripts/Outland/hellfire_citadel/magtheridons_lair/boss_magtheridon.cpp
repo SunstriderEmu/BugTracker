@@ -122,7 +122,7 @@ public:
             }
         }
 
-        void EnterCombat(Unit*) override { DoZoneInCombat(); }
+        void JustEngagedWith(Unit*) override { DoZoneInCombat(); }
         void AttackStart(Unit *who) override { if (!trigger) ScriptedAI::AttackStart(who); }
         void MoveInLineOfSight(Unit *who) override { if (!trigger) ScriptedAI::MoveInLineOfSight(who); }
 
@@ -294,7 +294,7 @@ public:
                 ScriptedAI::AttackStart(who);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             if(pInstance)
                 pInstance->SetData(DATA_MAGTHERIDON_EVENT, IN_PROGRESS);
@@ -489,7 +489,7 @@ public:
             me->CastSpell(me, SPELL_SHADOW_GRASP_C, TRIGGERED_NONE);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             if(pInstance)
                 pInstance->SetData(DATA_CHANNELER_EVENT, IN_PROGRESS);

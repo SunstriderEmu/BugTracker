@@ -175,7 +175,7 @@ public:
             return 0;
         }
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             sCreatureTextMgr->SendChat(me, SAY_HELP, nullptr);
             //TODO don't use AddMessageEvent system since it stops updating creature death

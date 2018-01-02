@@ -69,7 +69,7 @@ class Boss_Shazzrah : public CreatureScript
                     _instance->SetData(DATA_SHAZZRAH, NOT_STARTED);
             }
 
-            void EnterCombat(Unit* /*victim*/)
+            void JustEngagedWith(Unit* /*victim*/)
             override {
                 if (_instance)
                     _instance->SetData(DATA_SHAZZRAH, IN_PROGRESS);

@@ -135,7 +135,7 @@ public:
             SetFollowPaused(false);
         }
     
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
     
         void UpdateFollowerAI(const uint32 uiDiff)
         override {
@@ -213,7 +213,7 @@ public:
     
         void Reset() override { }
         
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
     
         void MoveInLineOfSight(Unit* pWho)
         override {
@@ -371,7 +371,7 @@ public:
     
         void Reset() override {}
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             if (rand()%2)
                 DoScriptText(SAY_REM_AGGRO, me, who);
@@ -416,7 +416,7 @@ public:
     
         void Reset() override {}
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         bool sOnDummyEffect(Unit* caster, uint32 spellId, uint32 effIndex)
         override {
@@ -467,7 +467,7 @@ public:
         public:
         npc_tharnariun_treetenderAI(Creature* c) : ScriptedAI(c) {}
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void MoveInLineOfSight(Unit* who)
         override {
@@ -536,7 +536,7 @@ public:
             me->RemoveAurasDueToSpell(18373);
         }
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void MovementInform(uint32 type, uint32 id)
         override {

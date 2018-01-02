@@ -13,7 +13,7 @@ public:
         npc_interpreterAI(Creature *c) : ScriptedAI(c) 
         {}
     
-        void EnterCombat(Unit* /* who */) override {}
+        void JustEngagedWith(Unit* /* who */) override {}
 
         virtual bool GossipHello(Player* player) override
         {

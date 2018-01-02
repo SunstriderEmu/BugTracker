@@ -70,7 +70,7 @@ public:
             }
         }
 
-        void EnterCombat(Unit* /*victim*/)
+        void JustEngagedWith(Unit* /*victim*/)
         override {
             if (_instance)
                 _instance->SetData(DATA_GEHENNAS, IN_PROGRESS);

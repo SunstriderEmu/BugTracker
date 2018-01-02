@@ -110,7 +110,7 @@ public:
             me->ApplySpellImmune(1, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
         }
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             DoScriptText(SAY_AGGRO, me);
             DoZoneInCombat();

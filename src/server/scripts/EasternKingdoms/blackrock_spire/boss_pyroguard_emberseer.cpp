@@ -49,7 +49,7 @@ public:
             PyroBlast_Timer = 14000;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
         }
     

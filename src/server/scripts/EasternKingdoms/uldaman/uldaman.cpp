@@ -60,7 +60,7 @@ public:
             Cslumber_Timer = 2000;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
         }
     

@@ -166,7 +166,7 @@ struct npc_cooshcooshAI : public ScriptedAI
         me->SetFaction(FACTION_FRIENDLY_CO);
     }
 
-    void EnterCombat(Unit *who) override {}
+    void JustEngagedWith(Unit *who) override {}
 
     void UpdateAI(const uint32 diff)
     override {
@@ -392,7 +392,7 @@ public:
             me->SetFaction(1660);
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void JustSummoned(Creature *summoned)
         override 
@@ -485,7 +485,7 @@ public:
             SetCombatMovementAllowed(false);
         }
         
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
         
         void MoveInLineOfSight(Unit* pWho)
         override {

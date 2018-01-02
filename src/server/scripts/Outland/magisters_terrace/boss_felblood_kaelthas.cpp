@@ -241,7 +241,7 @@ public:
                 RemoveGravityLapse();                           // Remove Gravity Lapse so that players fall to ground if they kill him when in air.
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             DoScriptText(SAY_AGGRO, me);
             if(pInstance)
@@ -578,7 +578,7 @@ public:
             DoCast(me, SPELL_ARCANE_SPHERE_PASSIVE, true);
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void StalkTarget(Unit* target)
         {
@@ -662,7 +662,7 @@ public:
             end = false;
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void JustDied(Unit* slayer)
         override {
@@ -739,7 +739,7 @@ public:
         InstanceScript* pInstance;
         void Reset() override {   HatchTimer = 15000;   }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         void MoveInLineOfSight(Unit* who) override {}
         void UpdateAI(const uint32 diff)
         override {
@@ -796,7 +796,7 @@ public:
             DoCast(me, SPELL_FLAMESTRIKE2, true);
         }
     
-        void EnterCombat(Unit *who) override {}
+        void JustEngagedWith(Unit *who) override {}
         void MoveInLineOfSight(Unit *who) override {}
         void UpdateAI(const uint32 diff)
         override {

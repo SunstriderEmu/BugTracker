@@ -568,7 +568,7 @@ public:
                 _instance->SetData(DATA_ARCHIMONDEEVENT, DONE);
         }
         
-        void EnterCombat(Unit* /*victim*/)
+        void JustEngagedWith(Unit* /*victim*/)
         override {
             if (_instance)
                 _instance->SetData(DATA_ARCHIMONDEEVENT, IN_PROGRESS);

@@ -73,7 +73,7 @@ public:
             Cleave_Timer = 10000;
         }
     
-        void EnterCombat(Unit *who) override
+        void JustEngagedWith(Unit *who) override
         {
             DoScriptText(SAY_AGGRO, me);
         }

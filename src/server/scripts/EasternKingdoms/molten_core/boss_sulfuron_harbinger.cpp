@@ -89,7 +89,7 @@ class Boss_Sulfuron : public CreatureScript
                 }
             }
 
-            void EnterCombat(Unit* /*victim*/)
+            void JustEngagedWith(Unit* /*victim*/)
             override {
                 if (_instance)
                     _instance->SetData(DATA_SULFURON, IN_PROGRESS);

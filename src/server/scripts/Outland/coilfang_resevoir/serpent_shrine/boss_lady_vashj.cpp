@@ -263,7 +263,7 @@ public:
                 pInstance->SetData(DATA_LADYVASHJEVENT, IN_PROGRESS);
         }
 
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
             override {
             if (pInstance)
             {
@@ -672,7 +672,7 @@ public:
             Blast_Timer = 8000;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             DoCast(me,SPELL_PANIC,true);
         }
@@ -830,7 +830,7 @@ public:
                 Vashj = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_LADYVASHJ));
         }
     
-        void EnterCombat(Unit *who) override { return; }
+        void JustEngagedWith(Unit *who) override { return; }
     
         void MoveInLineOfSight(Unit *who)override {return;}
     
@@ -933,7 +933,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             me->GetThreatManager().AddThreat(who, 0.1f);
         }
@@ -1003,7 +1003,7 @@ public:
             Check_Timer = 1000;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
     
         }
@@ -1108,7 +1108,7 @@ public:
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         }
     
-        void EnterCombat(Unit *who) override { return; }
+        void JustEngagedWith(Unit *who) override { return; }
     
         void MoveInLineOfSight(Unit *who) override { return; }
     

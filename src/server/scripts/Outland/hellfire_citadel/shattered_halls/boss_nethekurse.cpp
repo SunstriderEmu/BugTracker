@@ -220,10 +220,10 @@ public:
             }
         }
     
-        void EnterCombat(Unit *who) override 
+        void JustEngagedWith(Unit *who) override 
         {
             DoScriptText(RAND(SAY_AGGRO_1, SAY_AGGRO_2, SAY_AGGRO_3), me);
-            _EnterCombat();
+            _JustEngagedWith();
         }
     
         void JustSummoned(Creature *summoned) override 
@@ -336,7 +336,7 @@ public:
             return;
         }
     
-        void EnterCombat(Unit* who) override 
+        void JustEngagedWith(Unit* who) override 
         {
             if (pInstance)
             {
@@ -408,7 +408,7 @@ public:
             Stop_Timer = 30000;
         }
     
-        void EnterCombat(Unit* who) override { }
+        void JustEngagedWith(Unit* who) override { }
     
         void MoveInLineOfSight(Unit *who) override { return; }
     

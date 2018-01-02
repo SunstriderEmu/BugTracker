@@ -108,7 +108,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             DoScriptText(SAY_AGGRO, me);
             if (pInstance)
@@ -213,7 +213,7 @@ public:
             slayer->CastSpell(slayer, SPELL_ENERGY_FEEDBACK, TRIGGERED_FULL_MASK, nullptr, nullptr, me->GetGUID());
         }
     
-        void EnterCombat(Unit *who)override {}
+        void JustEngagedWith(Unit *who)override {}
     
         void UpdateAI(const uint32 diff)
         override {

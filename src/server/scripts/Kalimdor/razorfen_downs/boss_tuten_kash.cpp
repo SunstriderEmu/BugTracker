@@ -52,7 +52,7 @@ public:
                     pInstance->SetData(DATA_TUTEN_KASH_EVENT, NOT_STARTED);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             if (pInstance)
                 pInstance->SetData(DATA_TUTEN_KASH_EVENT, IN_PROGRESS);

@@ -84,7 +84,7 @@ public:
             DoScriptText(SAY_DEATH, me);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             DoScriptText(SAY_AGGRO, me);
         }

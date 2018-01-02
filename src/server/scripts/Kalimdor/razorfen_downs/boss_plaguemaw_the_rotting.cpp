@@ -53,7 +53,7 @@ public:
                 pInstance->SetData(DATA_PLAGUEMAW_THE_ROTTING_EVENT, NOT_STARTED);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             if (pInstance)
                 pInstance->SetData(DATA_PLAGUEMAW_THE_ROTTING_EVENT, IN_PROGRESS);

@@ -433,7 +433,7 @@ public:
                 Timer[EVENT_FLIGHT_SEQUENCE] = 1000;
         }
 
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
             override {
             me->SetKeepActive(true);
             DoZoneInCombat();
@@ -1039,7 +1039,7 @@ public:
             me->CombatStop(true);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             if (!me->IsVisible())
                 me->CombatStop();
@@ -1826,7 +1826,7 @@ public:
             me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY + 2, 45738);
         }
     
-        void EnterCombat(Unit *who) override {}
+        void JustEngagedWith(Unit *who) override {}
         void MoveInLineOfSight(Unit *who) override {}
         void EnterEvadeMode(EvadeReason /* why */) override {}
         void GetIllidanGUID(uint64 guid) { IllidanGUID = guid; }
@@ -2038,7 +2038,7 @@ public:
             GlaiveGUID = 0;
         }
     
-        void EnterCombat(Unit *who) override {DoZoneInCombat();}
+        void JustEngagedWith(Unit *who) override {DoZoneInCombat();}
     
         void ChargeCheck()
         {
@@ -2164,7 +2164,7 @@ public:
             DespawnTimer = 0;
         }
     
-        void EnterCombat(Unit *who)override {}
+        void JustEngagedWith(Unit *who)override {}
     
         float DegreeToRadian(float degree) { return degree / (180/3.14159265); }
     
@@ -2238,7 +2238,7 @@ public:
     
         uint64 TargetGUID;
     
-        void EnterCombat(Unit *who) override {DoZoneInCombat();}
+        void JustEngagedWith(Unit *who) override {DoZoneInCombat();}
     
         void Reset()
         override {
@@ -2343,7 +2343,7 @@ public:
             DoCast(me, SPELL_SHADOWFIEND_PASSIVE, true);
         }
     
-        void EnterCombat(Unit* who) override { DoZoneInCombat(); }
+        void JustEngagedWith(Unit* who) override { DoZoneInCombat(); }
     
         void DoMeleeAttackIfReady() override
         {

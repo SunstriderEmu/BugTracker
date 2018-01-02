@@ -84,7 +84,7 @@ public:
                 pInstance->SetData(DATA_MOAM_EVENT, NOT_STARTED);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             DoScriptText(EMOTE_AGGRO, me);
     

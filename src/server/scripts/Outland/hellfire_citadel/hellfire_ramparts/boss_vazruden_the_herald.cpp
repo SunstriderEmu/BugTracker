@@ -273,9 +273,9 @@ public:
             return me->GetDistance2d(VazrudenMiddle.GetPositionX(), VazrudenMiddle.GetPositionY()) > 150.0f;
         }
 
-        void EnterCombat(Unit *who) override 
+        void JustEngagedWith(Unit *who) override 
         {
-            _EnterCombat();
+            _JustEngagedWith();
             DoScriptText(RAND(SAY_AGGRO_1, SAY_AGGRO_2, SAY_AGGRO_3), me);
         }
 
@@ -411,7 +411,7 @@ public:
             }
         }
 
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
             override {
             if (phase == PHASE_CIRCLING) {
                 phase = PHASE_INITIATING_FIGHT;

@@ -89,7 +89,7 @@ class Boss_Golemagg : public CreatureScript
                 me->CastSpell(me, SPELL_MAGMASPLASH, TRIGGERED_FULL_MASK);
             }
 
-            void EnterCombat(Unit* /*victim*/)
+            void JustEngagedWith(Unit* /*victim*/)
             override {
                 if (_instance)
                     _instance->SetData(DATA_GOLEMAGG, IN_PROGRESS);

@@ -114,9 +114,9 @@ public:
             me->SetKeepActive(false);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
-            BossAI::EnterCombat(who);
+            BossAI::JustEngagedWith(who);
     
             me->SetUnitMovementFlags(MOVEMENTFLAG_DISABLE_GRAVITY); // after enterevademode will be set walk movement
             DoZoneInCombat();
@@ -441,7 +441,7 @@ public:
         bool toDie;
     
         void Reset() override {toDie = false;}
-        void EnterCombat(Unit *who) override 
+        void JustEngagedWith(Unit *who) override 
         {
             DoZoneInCombat();
         }
@@ -506,7 +506,7 @@ public:
         public:
         mob_flame_patch_alarAI(Creature *c) : ScriptedAI(c) {}
         void Reset() override {}
-        void EnterCombat(Unit *who) override {}
+        void JustEngagedWith(Unit *who) override {}
         void AttackStart(Unit* who) override {}
         void MoveInLineOfSight(Unit* who) override {}
         void UpdateAI(const uint32 diff) override {}

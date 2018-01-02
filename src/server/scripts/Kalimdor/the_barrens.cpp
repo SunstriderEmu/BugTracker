@@ -154,7 +154,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit* pWho)
+        void JustEngagedWith(Unit* pWho)
         override {
             //not always use
             if (rand()%4)
@@ -308,7 +308,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit* pWho) override { }
+        void JustEngagedWith(Unit* pWho) override { }
     
         void UpdateAI(const uint32 diff)
         override {
@@ -415,7 +415,7 @@ public:
             BigWill = 0;
         }
     
-        void EnterCombat(Unit* pWho) override { }
+        void JustEngagedWith(Unit* pWho) override { }
     
         void MoveInLineOfSight(Unit* pWho)
         override {
@@ -633,7 +633,7 @@ public:
             }
         }
         
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
     
         void WaypointReached(uint32 uiPointId, uint32 pathID)
         override {
@@ -859,7 +859,7 @@ public:
             kromzar = false;
         }
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void JustSummoned(Creature* summoned)
         override {
@@ -1074,7 +1074,7 @@ public:
         
         bool completed;
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void Reset()
         override {

@@ -139,7 +139,7 @@ public:
             SPELL_THUNDER_CLAP=25599,
         };
         
-        void EnterCombat(Unit* victim)
+        void JustEngagedWith(Unit* victim)
         override {
             Talk(TALK_AGGRO);
             if (instance)

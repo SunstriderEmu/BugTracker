@@ -91,7 +91,7 @@ public:
                 me->SetDisplayId(22804);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             if(pInstance)
                 pInstance->SetData(DATA_NETHERMANCER, IN_PROGRESS);
@@ -228,7 +228,7 @@ public:
             me->SetSpeedRate(MOVE_RUN, HeroicMode ? 0.7f : 0.5f);
         }
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
         }
     

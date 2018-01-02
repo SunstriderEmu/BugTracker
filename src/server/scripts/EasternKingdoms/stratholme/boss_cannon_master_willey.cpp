@@ -92,7 +92,7 @@ public:
         
         void SummonedCreatureDespawn(Creature* pSummon) override { summons.Despawn(pSummon); }
     
-        void EnterCombat(Unit *who) override
+        void JustEngagedWith(Unit *who) override
         {
             if (InstanceScript* pInstance = ((InstanceScript*)me->GetInstanceScript()))
                 pInstance->SetData(TYPE_CANNONMASTER, IN_PROGRESS);

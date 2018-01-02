@@ -90,7 +90,7 @@ public:
             Summon_Timer = 8000;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             switch (rand()%3)
             {

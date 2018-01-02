@@ -69,7 +69,7 @@ public:
             }
         }
         
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
     
         void SpellHit(Unit *caster, const SpellInfo *spell)
         override {

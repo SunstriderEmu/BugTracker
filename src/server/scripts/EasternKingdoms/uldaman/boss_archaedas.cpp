@@ -103,7 +103,7 @@ public:
         }
     
     
-        void EnterCombat(Unit *who) override
+        void JustEngagedWith(Unit *who) override
         {
             me->SetFaction (14);
             me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -255,7 +255,7 @@ public:
             me->RemoveAllAuras();
         }
     
-        void EnterCombat(Unit *who) override
+        void JustEngagedWith(Unit *who) override
         {
             me->SetFaction (14);
             me->RemoveAllAuras();
@@ -419,7 +419,7 @@ public:
             me->RemoveAllAuras();
         }
     
-        void EnterCombat(Unit *who) override
+        void JustEngagedWith(Unit *who) override
         {
             me->SetFaction (14);
             me->RemoveFlag (UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);

@@ -84,7 +84,7 @@ public:
             me->SetUnitMovementFlags(MOVEMENTFLAG_DISABLE_GRAVITY);
         }
     
-        void EnterCombat(Unit *who) override
+        void JustEngagedWith(Unit *who) override
         {
             DoZoneInCombat();
         }
@@ -93,7 +93,7 @@ public:
         {
             if (!me->IsInCombat())
             {
-                EnterCombat(who);
+                JustEngagedWith(who);
             }
         }
     
@@ -219,7 +219,7 @@ public:
             me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
         }
     
-        void EnterCombat(Unit *who) override
+        void JustEngagedWith(Unit *who) override
         {
             me->Yell(SAY_ONAGGRO, LANG_UNIVERSAL, nullptr);
             DoPlaySoundToSet(me, SOUND_ONAGGRO);

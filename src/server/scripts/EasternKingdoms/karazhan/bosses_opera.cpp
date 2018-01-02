@@ -122,7 +122,7 @@ public:
             TitoDied = false;
         }
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             DoScriptText(SAY_DOROTHEE_AGGRO, me);
         }
@@ -239,7 +239,7 @@ public:
             ScriptedAI::MoveInLineOfSight(who);
         }
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             DoScriptText(SAY_STRAWMAN_AGGRO, me);
         }
@@ -330,7 +330,7 @@ public:
             RustCount   = 0;
         }
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             DoScriptText(SAY_TINHEAD_AGGRO, me);
         }
@@ -448,7 +448,7 @@ public:
             ScriptedAI::AttackStart(who);
         }
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             DoScriptText(SAY_ROAR_AGGRO, me);
         }
@@ -525,9 +525,9 @@ public:
             ChainLightningTimer = 10000;
         }
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
-            _EnterCombat();
+            _JustEngagedWith();
             switch(rand()%2)
             {
             case 0: DoScriptText(SAY_CRONE_AGGRO, me); break;
@@ -597,7 +597,7 @@ public:
             YipTimer = 10000;
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void JustDied(Unit* killer)
         override {
@@ -651,7 +651,7 @@ public:
             MoveTimer = 1000;
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void MoveInLineOfSight(Unit* who)
         override {
@@ -772,10 +772,10 @@ public:
             me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
         }
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override 
         {
-            _EnterCombat();
+            _JustEngagedWith();
             DoScriptText(SAY_WOLF_AGGRO, me);
         }
     
@@ -1017,9 +1017,9 @@ public:
             RomuloDead = false;
         }
     
-        void EnterCombat(Unit* who) override 
+        void JustEngagedWith(Unit* who) override 
         {
-            _EnterCombat();
+            _JustEngagedWith();
         }
     
         void AttackStart(Unit* who)
@@ -1110,7 +1110,7 @@ public:
     
         void DamageTaken(Unit* done_by, uint32 &damage) override;
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             DoScriptText(SAY_ROMULO_AGGRO, me);
             if(JulianneGUID)
@@ -1511,7 +1511,7 @@ public:
         bool RaidWiped;
         bool IsTalking;
 
-        void EnterCombat(Unit* who) override
+        void JustEngagedWith(Unit* who) override
         { }
 
         void Reset() override 

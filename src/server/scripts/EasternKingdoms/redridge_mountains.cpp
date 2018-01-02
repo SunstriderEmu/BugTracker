@@ -64,7 +64,7 @@ public:
             uiShieldBashTimer  = 8000;
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
     
         void WaypointReached(uint32 uiI, uint32 pathID)
         override {

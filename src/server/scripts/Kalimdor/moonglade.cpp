@@ -398,7 +398,7 @@ public:
             EscortAI::EnterEvadeMode(why);
         }
     
-        void EnterCombat(Unit* pWho)
+        void JustEngagedWith(Unit* pWho)
         override {
             uint32 rnd = rand()%2;
             switch(rnd)
@@ -880,7 +880,7 @@ public:
             me->SetReactState(REACT_DEFENSIVE);
         }
     
-        void EnterCombat(Unit*) override {}
+        void JustEngagedWith(Unit*) override {}
     
         void DespawnAll()
         {
@@ -1035,7 +1035,7 @@ public:
                 c->SetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID, 0);
                 c->SetInFront(era);
                 c->SendMovementFlagUpdate();
-                c->AI()->EnterCombat(era);
+                c->AI()->JustEngagedWith(era);
             }
             canBeRedeemed = true;
             Talk(21);
@@ -1489,7 +1489,7 @@ public:
             Fear_Timer = 15000 + urand(0, 3)*IN_MILLISECONDS;
         }
     
-        void EnterCombat(Unit*) override {}
+        void JustEngagedWith(Unit*) override {}
     
         void MoveInLineOfSight(Unit*) override {}
     
@@ -1588,7 +1588,7 @@ public:
             Bolt_Timer = 25000;
         }
     
-        void EnterCombat(Unit*) override {}
+        void JustEngagedWith(Unit*) override {}
     
         void JustDied(Unit*)
         override {
@@ -1721,7 +1721,7 @@ public:
             Heal_Timer = 3000;
         }
     
-        void EnterCombat(Unit*) override {}
+        void JustEngagedWith(Unit*) override {}
     
         void JustDied(Unit*)
         override {
@@ -1831,7 +1831,7 @@ public:
     
         void MoveInLineOfSight(Unit*) override {}
     
-        void EnterCombat(Unit* unit)
+        void JustEngagedWith(Unit* unit)
         override {
             if (unit->GetGUIDMid() == ERANIKUS)
             {

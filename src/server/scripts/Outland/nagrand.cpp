@@ -62,7 +62,7 @@ public:
             Spawn = false;
         }
     
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
     
         void SpellHit(Unit* pHitter, const SpellInfo* Spellkind)
         override {
@@ -159,7 +159,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit* pWho)
+        void JustEngagedWith(Unit* pWho)
         override {
             if (me->HasAuraEffect(SPELL_VISUAL_SLEEP))
                 me->RemoveAura(SPELL_VISUAL_SLEEP,0);
@@ -272,7 +272,7 @@ public:
             me->SetUInt32Value(UNIT_FIELD_BYTES_1,7);   // lay down
         }
     
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
     
         void SpellHit(Unit* pCaster, const SpellInfo* spell)
         override {
@@ -659,7 +659,7 @@ public:
     
         void Reset() override {}
     
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
     
         void MoveInLineOfSight(Unit* pWho)
         override {
@@ -731,7 +731,7 @@ public:
             ScriptedAI::AttackStart(pWho);
         }
     
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
     
         void MoveInLineOfSight(Unit* pWho)
         override {
@@ -882,7 +882,7 @@ public:
             m_uiFrostShockTimer = 6000;
         }
     
-        void EnterCombat(Unit* pWho)
+        void JustEngagedWith(Unit* pWho)
         override {
             DoCast(me, SPELL_EARTHBIND_TOTEM, false);
         }
@@ -1020,7 +1020,7 @@ public:
         public:
         npc_sharvakAI(Creature* c) : ScriptedAI(c) {}
         
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
         
         void MoveInLineOfSight(Unit* pWho)
         override {
@@ -1057,7 +1057,7 @@ public:
         public:
         npc_jheelAI(Creature* c) : ScriptedAI(c) {}
         
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
         
         void MoveInLineOfSight(Unit* pWho)
         override {
@@ -1101,7 +1101,7 @@ public:
             quest = false;
         }
         
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
         
         void SpellHit(Unit* pHitter, const SpellInfo* spell)
         override {
@@ -1192,7 +1192,7 @@ public:
             FrostShockTimer = 6000;
         }
     
-        void EnterCombat(Unit* /*who*/)
+        void JustEngagedWith(Unit* /*who*/)
         override {
             DoCast(me, SPELL_KUR_EARTHBIND_TOTEM, false);
         }

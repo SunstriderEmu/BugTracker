@@ -62,7 +62,7 @@ public:
             HasTaunted = false;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             switch (rand()%4)
             {

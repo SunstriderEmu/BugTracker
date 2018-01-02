@@ -406,7 +406,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             DoScriptText(SAY_AGGRO, me, who);
         }
@@ -802,7 +802,7 @@ public:
             me->SetReactState(REACT_PASSIVE);
         }
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void UpdateAI(const uint32 diff)
         override {

@@ -71,7 +71,7 @@ public:
                 pInstance->SetData(DATA_AYAMISS_EVENT, NOT_STARTED);
         }
     
-        void EnterCombat(Unit *who) override
+        void JustEngagedWith(Unit *who) override
         {
             pTarget = who;
     

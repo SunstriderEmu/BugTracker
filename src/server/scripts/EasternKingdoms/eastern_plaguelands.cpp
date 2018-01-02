@@ -50,7 +50,7 @@ public:
     
         void Reset() override { }
     
-        void EnterCombat(Unit* pWho) override { }
+        void JustEngagedWith(Unit* pWho) override { }
     
         void JustDied(Unit* pKiller)
         override {
@@ -141,7 +141,7 @@ public:
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         }
     
-        void EnterCombat(Unit* pWho) override { }
+        void JustEngagedWith(Unit* pWho) override { }
     
 
         virtual bool GossipHello(Player* pPlayer) override
@@ -276,7 +276,7 @@ public:
             uiPhase = 0;
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         
         void WaypointReached(uint32 uiPointId, uint32 pathID)
         override {

@@ -68,7 +68,7 @@ class Boss_Baron_Geddon : public CreatureScript
                     _instance->SetData(DATA_GEDDON, NOT_STARTED);
             }
 
-            void EnterCombat(Unit* /*victim*/)
+            void JustEngagedWith(Unit* /*victim*/)
             override {
                 if (_instance)
                     _instance->SetData(DATA_GEDDON, IN_PROGRESS);

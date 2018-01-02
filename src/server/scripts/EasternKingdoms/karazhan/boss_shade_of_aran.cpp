@@ -147,9 +147,9 @@ public:
                 TC_LOG_ERROR("scripts","Aran has been killed by NON-PLAYER unit with entry %u", victim->GetEntry());
         }
     
-        void EnterCombat(Unit *who) override 
+        void JustEngagedWith(Unit *who) override 
         {
-            _EnterCombat();
+            _JustEngagedWith();
             switch(rand()%3)
             {
             case 0: DoScriptText(SAY_AGGRO1, me); break;
@@ -525,7 +525,7 @@ public:
             CastTimer = 2000 + (rand()%3000);
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void UpdateAI(const uint32 diff)
         override {

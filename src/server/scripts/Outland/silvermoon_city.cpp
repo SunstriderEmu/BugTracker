@@ -61,7 +61,7 @@ public:
             spellHit = false;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
         }
     
@@ -120,7 +120,7 @@ public:
         public:
         npc_schweitzerAI(Creature* c) : ScriptedAI(c) {}
         
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
         
         void MoveInLineOfSight(Unit* pWho)
         override {

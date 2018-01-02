@@ -73,7 +73,7 @@ public:
             Attraction_Timer = 25000+rand()%10000;
         }
     
-        void EnterCombat(Unit *who) override
+        void JustEngagedWith(Unit *who) override
         {
             DoScriptText(SAY_AGGRO, me);
         }

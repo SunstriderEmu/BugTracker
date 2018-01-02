@@ -44,7 +44,7 @@ public:
             Strike_Timer = 12000;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
         }
     
@@ -123,7 +123,7 @@ public:
             Gouge_Timer = 6000;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
         }
     
@@ -204,7 +204,7 @@ public:
             Strike_Timer = 12000;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
         }
         
@@ -297,7 +297,7 @@ public:
             Shield_Timer = 3000;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
         }
         
@@ -391,7 +391,7 @@ public:
             me->CastSpell(me,SPELL_FROSTARMOR, TRIGGERED_FULL_MASK);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
         }
         
@@ -493,7 +493,7 @@ public:
             me->SetFaction(FACTION_NEUTRAL);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
         }
         
@@ -646,7 +646,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
         }
     

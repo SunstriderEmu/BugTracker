@@ -130,7 +130,7 @@ public:
             //ScriptedAI::AttackStart(who);
         }
     
-        void EnterCombat(Unit *who) override {}
+        void JustEngagedWith(Unit *who) override {}
     
         void SpellHit(Unit* caster, const SpellInfo* spell)
         override {
@@ -492,7 +492,7 @@ public:
             sandBreathTimer = 10000;
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         
         void UpdateAI(uint32 const diff) override {
             if (lifeTimer <= diff)

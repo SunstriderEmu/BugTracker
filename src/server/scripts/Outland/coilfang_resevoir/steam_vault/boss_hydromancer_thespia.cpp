@@ -95,7 +95,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             switch(rand()%3)
             {
@@ -176,7 +176,7 @@ public:
             WaterBoltVolley_Timer = 3000+rand()%3000;
         }
     
-        void EnterCombat(Unit *who) override { }
+        void JustEngagedWith(Unit *who) override { }
     
         void UpdateAI(const uint32 diff)
         override {

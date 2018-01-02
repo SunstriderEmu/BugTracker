@@ -1036,7 +1036,7 @@ public:
             }
             */
 
-            void EnterCombat(Unit* victim)
+            void JustEngagedWith(Unit* victim)
             override {
                 // DEBUG
                 char w[50];
@@ -1091,7 +1091,7 @@ public:
                                 if (me->GetDistance(plr) <= 50.0f && me->IsHostileTo(plr))
                                 {
                                     pInstance->SetData(DATA_KILJAEDEN_EVENT,IN_PROGRESS);
-                                    EnterCombat(plr);
+                                    JustEngagedWith(plr);
                                     break;
                                 }
                         combatCheckTimer = 2500;
@@ -1310,7 +1310,7 @@ public:
             Talk(SAY_KJ_SLAY);
         }
 
-        void EnterCombat(Unit* /*who*/)
+        void JustEngagedWith(Unit* /*who*/)
         override {
             DoZoneInCombat();
             Talk(SAY_KJ_EMERGE);
@@ -1609,7 +1609,7 @@ public:
                 Summons.DespawnAll();
             }
 
-            void EnterCombat(Unit* victim)
+            void JustEngagedWith(Unit* victim)
             override {
                 if(pInstance)
                 {

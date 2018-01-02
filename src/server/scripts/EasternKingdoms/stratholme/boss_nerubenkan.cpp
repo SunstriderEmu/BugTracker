@@ -62,7 +62,7 @@ public:
             RaiseUndeadScarab_Timer = 3000;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
         }
     

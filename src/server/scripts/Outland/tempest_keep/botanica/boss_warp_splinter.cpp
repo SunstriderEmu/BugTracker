@@ -81,7 +81,7 @@ public:
             check_Timer = 0;
         }
 
-        void EnterCombat(Unit *who) override {}
+        void JustEngagedWith(Unit *who) override {}
 
         void MoveInLineOfSight(Unit*) override {}
 
@@ -163,7 +163,7 @@ public:
         
         void SummonedCreatureDespawn(Creature* pSummon) override { summons.Despawn(pSummon); }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             DoScriptText(SAY_AGGRO, me);
         }

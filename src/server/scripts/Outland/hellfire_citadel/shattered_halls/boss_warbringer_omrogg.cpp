@@ -95,7 +95,7 @@ public:
         uint32 Death_Timer;
 
         void Reset() override {}
-        void EnterCombat(Unit* who) override { }
+        void JustEngagedWith(Unit* who) override { }
 
         void DoDeathYell()
         {
@@ -203,7 +203,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit *who) override 
+        void JustEngagedWith(Unit *who) override 
         {
             DoSpawnCreature(ENTRY_LEFT_HEAD, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 1800000);
             DoSpawnCreature(ENTRY_RIGHT_HEAD, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 1800000);
@@ -218,7 +218,7 @@ public:
                 AggroYell = true;
             }
     
-            _EnterCombat();
+            _JustEngagedWith();
         }
     
         void JustSummoned(Creature *summoned) override 

@@ -93,7 +93,7 @@ public:
             Summon_Timer = 10000;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
         }
     

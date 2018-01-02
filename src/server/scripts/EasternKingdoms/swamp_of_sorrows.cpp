@@ -62,7 +62,7 @@ public:
             m_uiPeriodicSay = 6000;
         }
     
-        void EnterCombat(Unit* pWho)
+        void JustEngagedWith(Unit* pWho)
         override {
             if (HasEscortState(STATE_ESCORT_ESCORTING))
                 DoScriptText(RAND(SAY_ATTACKED_1, SAY_ATTACKED_2), me, pWho);

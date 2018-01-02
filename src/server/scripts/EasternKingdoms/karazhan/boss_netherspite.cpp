@@ -253,9 +253,9 @@ public:
                 me->RemoveAurasDueToSpell(i);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
-            _EnterCombat();
+            _JustEngagedWith();
             me->AddAura(SPELL_NETHERBURN_AURA, me);
             
             SwitchToPortalPhase();

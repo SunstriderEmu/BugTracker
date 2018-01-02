@@ -63,7 +63,7 @@ public:
             Whirlwind_Timer = 60000;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             DoScriptText(SAY_AGGRO, me);
             DoCast(me,SPELL_RUSHINGCHARGE);
@@ -166,7 +166,7 @@ public:
 
         void WaypointReached(uint32, uint32) override {} //must be implemented because we inherit from EscortAI
 
-        void EnterCombat(Unit* who) override { }
+        void JustEngagedWith(Unit* who) override { }
     
         void UpdateAI(const uint32 diff)
         override {

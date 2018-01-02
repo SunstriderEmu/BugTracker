@@ -121,7 +121,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit* who) override { }
+        void JustEngagedWith(Unit* who) override { }
     };
 
     CreatureAI* GetAI(Creature* creature) const override
@@ -164,7 +164,7 @@ public:
             Tagged = false;
         }
     
-        void EnterCombat(Unit* who) override { }
+        void JustEngagedWith(Unit* who) override { }
     
         void SpellHit(Unit *caster, const SpellInfo *spell)
         override {
@@ -239,7 +239,7 @@ public:
             Tagged = false;
         }
     
-        void EnterCombat(Unit* who) override { }
+        void JustEngagedWith(Unit* who) override { }
     
         void SpellHit(Unit *caster, const SpellInfo *spell)
         override {

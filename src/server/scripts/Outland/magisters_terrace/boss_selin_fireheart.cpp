@@ -189,7 +189,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             me->SetPower(POWER_MANA, 0);
             DoScriptText(SAY_AGGRO, me);
@@ -355,7 +355,7 @@ public:
         mob_fel_crystalAI(Creature *c) : ScriptedAI(c) {}
     
         void Reset() override {}
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         void AttackStart(Unit* who) override {}
         void MoveInLineOfSight(Unit* who) override {}
         void UpdateAI(const uint32 diff) override {}

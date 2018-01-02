@@ -78,7 +78,7 @@ public:
             sacrificed = false;
         }
     
-        void EnterCombat(Unit *who)override {}
+        void JustEngagedWith(Unit *who)override {}
     
         void UpdateAI(const uint32 diff)
         override {
@@ -245,7 +245,7 @@ public:
             _JustDied();
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             switch(rand()%3)
             {
@@ -254,7 +254,7 @@ public:
                 case 2: DoScriptText(SAY_AGGRO3, me); break;
             }
             summonPortals();
-            _EnterCombat();
+            _JustEngagedWith();
         }
     
         void MoveInLineOfSight(Unit *who)

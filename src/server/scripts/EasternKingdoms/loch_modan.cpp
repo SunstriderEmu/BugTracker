@@ -147,7 +147,7 @@ public:
     
         void Reset() override {}
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
     
         void WaypointReached(uint32 uiPointId, uint32 pathID)
         override {

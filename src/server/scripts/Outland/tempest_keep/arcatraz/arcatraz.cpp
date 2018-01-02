@@ -320,13 +320,13 @@ public:
                 float attackRadius = me->GetAggroRange(who)/5;
                 if( me->IsWithinDistInMap(who, attackRadius) && me->IsWithinLOSInMap(who) )
                 {
-                    EnterCombat(who);
+                    JustEngagedWith(who);
                     aggroTarget = who->GetGUID();
                 }
             }
         }
     
-        void EnterCombat(Unit *who) override
+        void JustEngagedWith(Unit *who) override
         {
             DoScriptText(YELL_INTRO1, me);
             DoCast(me,SPELL_BUBBLE_VISUAL);

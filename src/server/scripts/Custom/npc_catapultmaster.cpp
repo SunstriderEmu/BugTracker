@@ -28,7 +28,7 @@ public:
             vertical_speed(-10.0f)
         {}
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {}
 
         virtual bool GossipHello(Player* player) override

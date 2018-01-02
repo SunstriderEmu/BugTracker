@@ -92,7 +92,7 @@ public:
             CastTimer = 5000;
         }
     
-        void EnterCombat(Unit* who) override { }
+        void JustEngagedWith(Unit* who) override { }
     
         void MoveInLineOfSight(Unit* who)
         override {
@@ -226,7 +226,7 @@ public:
             me->SetVisible(true);
         }
     
-        void EnterCombat(Unit* who) override { }
+        void JustEngagedWith(Unit* who) override { }
     
         void SpellHit(Unit* caster, const SpellInfo* spell)
         override {
@@ -359,7 +359,7 @@ public:
             SunderArmorTimer = 500;
         }
     
-        void EnterCombat(Unit* who) override { }
+        void JustEngagedWith(Unit* who) override { }
     
         void SpellHit(Unit* caster, const SpellInfo* spell)
         override {
@@ -878,7 +878,7 @@ public:
             me->SetUInt32Value(UNIT_NPC_FLAGS, 2);
         }
     
-        void EnterCombat(Unit* who)override {}
+        void JustEngagedWith(Unit* who)override {}
     
         void StartEvent()
         {
@@ -1134,7 +1134,7 @@ public:
     
         bool Completed;
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             Player* player = GetPlayerForEscort();
     
@@ -1410,7 +1410,7 @@ public:
             me->SetVisible(false);
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         void MoveInLineOfSight(Unit* who) override {}
         void AttackStart(Unit* who) override {}
         void SummonNextWave();
@@ -1578,7 +1578,7 @@ public:
             Timers = false;
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
 
         void JustDied(Unit *slayer) override
         {
@@ -1709,7 +1709,7 @@ public:
             me->SetUInt64Value(UNIT_FIELD_TARGET, 0);
         }
     
-        void EnterCombat(Unit* who)override {}
+        void JustEngagedWith(Unit* who)override {}
     
         void HandleAnimation()
         {
@@ -1893,7 +1893,7 @@ public:
     
         void Reset()   override { }
     
-        void EnterCombat(Unit *who)override {}
+        void JustEngagedWith(Unit *who)override {}
     
         void JustDied(Unit* killer)
         override {
@@ -1983,7 +1983,7 @@ public:
             checkTimer = 1000;
         }
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void UpdateAI(uint32 const diff)
         override {
@@ -2052,7 +2052,7 @@ public:
             ShadowBoltTimer = 2000;
             IncinerateTimer = 500;
         }
-        void EnterCombat(Unit *pWho)
+        void JustEngagedWith(Unit *pWho)
         override {
             me->InterruptNonMeleeSpells(true);
             me->RemoveAurasDueToSpell(SPELL_AUTO_AURA);
@@ -2108,7 +2108,7 @@ public:
         public:
         npc_invis_deathforge_casterAI(Creature *c) : ScriptedAI(c) {}
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         
         void UpdateAI(uint32 const diff)
         override {
@@ -2353,7 +2353,7 @@ public:
         
         void Reset() override {}
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void StartEvent()
         {
@@ -2667,7 +2667,7 @@ public:
             summonTimer = 0;
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void JustSummoned(Creature* summon)
         override {
@@ -2853,7 +2853,7 @@ public:
             summonTimer = 0;
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void JustSummoned(Creature* summon)
         override {
@@ -3029,7 +3029,7 @@ public:
             randomTauntTimer = 1000 + rand() % 5000;
         }
         
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             if (rand()%10 < 6)
                 return;
@@ -3119,7 +3119,7 @@ public:
             summonTimer = 15000;
         }
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void StartEvent()
         {

@@ -84,7 +84,7 @@ public:
                 me->SetDisplayId(15732);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
         }
     

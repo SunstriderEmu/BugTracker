@@ -143,7 +143,7 @@ public:
             else error_log(ERROR_INST_DATA);
         }
 
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
 
         void AttackStart(Unit* who) override {}
         void MoveInLineOfSight(Unit* who) override {}
@@ -260,7 +260,7 @@ public:
             me->SetDisplayId(11686);
         }
 
-        void EnterCombat(Unit *who) override {}
+        void JustEngagedWith(Unit *who) override {}
         void AttackStart(Unit* who) override {}
         void MoveInLineOfSight(Unit* who) override {}
 
@@ -398,7 +398,7 @@ struct boss_illidari_councilAI : public ScriptedAI
 
     bool LoadedGUIDs;
 
-    void EnterCombat(Unit* who)
+    void JustEngagedWith(Unit* who)
     override {
         if(pInstance)
         {

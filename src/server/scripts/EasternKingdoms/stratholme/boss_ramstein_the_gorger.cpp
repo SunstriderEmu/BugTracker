@@ -56,7 +56,7 @@ public:
             Knockout_Timer = 12000;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             DoScriptText(SAY_DUHAST, me);
         }

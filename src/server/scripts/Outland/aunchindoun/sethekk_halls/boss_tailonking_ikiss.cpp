@@ -96,10 +96,10 @@ public:
             }
         }
     
-        void EnterCombat(Unit *who) override 
+        void JustEngagedWith(Unit *who) override 
         {
             DoScriptText(RAND(SAY_AGGRO_1, SAY_AGGRO_2, SAY_AGGRO_3), me);
-            _EnterCombat();
+            _JustEngagedWith();
         }
     
         void JustDied(Unit* Killer)

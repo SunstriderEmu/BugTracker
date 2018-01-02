@@ -167,7 +167,7 @@ public:
             clawRageTargetGUID = 0;
         }
         
-        void EnterCombat(Unit* victim)
+        void JustEngagedWith(Unit* victim)
         override {
             if (instance)
                 instance->SetData(DATA_ZULJINEVENT, IN_PROGRESS);

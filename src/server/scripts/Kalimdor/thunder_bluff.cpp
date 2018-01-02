@@ -61,7 +61,7 @@ public:
             Uppercut_Timer = 10000;
         }
     
-        void EnterCombat(Unit *who) override {}
+        void JustEngagedWith(Unit *who) override {}
     
         void UpdateAI(const uint32 diff)
         override {

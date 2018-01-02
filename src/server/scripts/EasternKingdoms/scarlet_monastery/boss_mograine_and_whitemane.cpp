@@ -119,7 +119,7 @@ public:
     
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             DoScriptText(SAY_MO_AGGRO, me);
             DoCast(me,SPELL_RETRIBUTIONAURA3);
@@ -338,7 +338,7 @@ public:
             MindBlast6_Timer = 6000;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             DoScriptText(SAY_WH_INTRO, me);
         }

@@ -84,7 +84,7 @@ public:
                 me->SetDisplayId(22803);
         }
     
-        void EnterCombat(Unit *who) override
+        void JustEngagedWith(Unit *who) override
         {
             //This is not correct. Should taunt Thrall before engage in combat
             DoScriptText(SAY_TAUNT1, me);

@@ -60,7 +60,7 @@ public:
             Mages = false;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
         }
     

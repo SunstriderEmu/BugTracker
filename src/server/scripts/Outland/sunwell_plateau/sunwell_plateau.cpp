@@ -145,7 +145,7 @@ public:
                 me->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
         }
         
-        void EnterCombat(Unit *pWho)
+        void JustEngagedWith(Unit *pWho)
         override {
             me->RemoveAurasDueToSpell(25171);
             DoScriptText(YELL_AGGRO, me);
@@ -219,7 +219,7 @@ public:
             me->SetSpeedRate(MOVE_RUN, 2.0f);
         }
         
-        void EnterCombat(Unit *pWho)
+        void JustEngagedWith(Unit *pWho)
         override {
             pullerGUID = pWho->GetGUID();
             protector = me->FindNearestCreature(NPC_SUNBLADE_PROTEC, 60.0f, true);
@@ -345,7 +345,7 @@ public:
             slayingTimer = 8000;
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
     
         void UpdateAI(uint32 const diff)
         override {
@@ -409,7 +409,7 @@ public:
             fireNovaTimer = urand(5000, 10000);
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         
         void UpdateAI(uint32 const diff)
         override {
@@ -471,7 +471,7 @@ public:
             meltArmorTimer = 2000;
         }
         
-        void EnterCombat(Unit *pWho)
+        void JustEngagedWith(Unit *pWho)
         override {
             if (pInstance && pInstance->GetData(DATA_GAUNTLET_EVENT) == NOT_STARTED)
                 pInstance->SetData(DATA_GAUNTLET_EVENT, IN_PROGRESS);
@@ -542,7 +542,7 @@ public:
             drainManaTimer = 15000+rand()%5000;
         }
         
-        void EnterCombat(Unit *pWho)
+        void JustEngagedWith(Unit *pWho)
         override {
             if (pInstance && pInstance->GetData(DATA_GAUNTLET_EVENT) == NOT_STARTED)
                 pInstance->SetData(DATA_GAUNTLET_EVENT, IN_PROGRESS);
@@ -613,7 +613,7 @@ public:
             healthFunnelTimer = 18000+rand()%5000;
         }
         
-        void EnterCombat(Unit *pWho)
+        void JustEngagedWith(Unit *pWho)
         override {
             if (pInstance && pInstance->GetData(DATA_GAUNTLET_EVENT) == NOT_STARTED)
                 pInstance->SetData(DATA_GAUNTLET_EVENT, IN_PROGRESS);
@@ -687,7 +687,7 @@ public:
             despawnTimer = 0;
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         
         void MovementInform(uint32 type, uint32 i)
         override {
@@ -777,7 +777,7 @@ public:
             despawnTimer = 0;
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         
         void MovementInform(uint32 type, uint32 i)
         override {
@@ -866,7 +866,7 @@ public:
             me->ApplySpellImmune(0, IMMUNITY_ID, 14311, true);
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         
         void DamageTaken(Unit *done_by, uint32 &damage)
         override {
@@ -1096,7 +1096,7 @@ public:
             me->SetSpeedRate(MOVE_FLIGHT, 5.0f, true);
         }
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void MovementInform(uint32 type, uint32 id)
         override {
@@ -1214,7 +1214,7 @@ public:
             Summons.DespawnAll();
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void JustSummoned(Creature* summoned)
         override {

@@ -108,7 +108,7 @@ public:
             SummonSkeletons_Timer = 34000;
         }
     
-        void EnterCombat(Unit *who) override
+        void JustEngagedWith(Unit *who) override
         {
             if (pInstance)
                 pInstance->SetData(TYPE_BARON,IN_PROGRESS);

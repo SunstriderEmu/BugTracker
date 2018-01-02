@@ -171,7 +171,7 @@ public:
         
         InstanceScript* pInstance;
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void Reset()
         override {
@@ -1052,7 +1052,7 @@ public:
             Reset();
         }
 
-        void EnterCombat(Unit* pWho) // TODO
+        void JustEngagedWith(Unit* pWho) // TODO
             override {
             Unit* npc_medivh = ObjectAccessor::GetUnit(*me, pInstance->GetGuidData(DATA_CHESS_ECHO_OF_MEDIVH));
 

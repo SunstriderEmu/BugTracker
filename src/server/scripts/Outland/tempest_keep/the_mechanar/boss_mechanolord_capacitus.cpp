@@ -120,7 +120,7 @@ public:
             }
         }
         
-        void EnterCombat(Unit* pWho)
+        void JustEngagedWith(Unit* pWho)
         override {
             DoScriptText(SAY_AGGRO, me);
             pInstance->SetData(DATA_MECHLORD_CAPACITUS, IN_PROGRESS);
@@ -352,7 +352,7 @@ public:
             }
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         
         void UpdateAI(uint32 const diff) override {
             if (pulseTimer <= diff) {

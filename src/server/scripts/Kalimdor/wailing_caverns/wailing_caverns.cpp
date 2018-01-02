@@ -139,7 +139,7 @@ public:
     
         }
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             DoScriptText(SAY_ATTACKED, me, who);
         }

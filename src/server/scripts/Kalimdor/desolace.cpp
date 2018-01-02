@@ -57,7 +57,7 @@ public:
             m_uiDespawnTimer = 0;
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
     
         void MoveInLineOfSight(Unit* pWho)
         override {
@@ -196,7 +196,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit* /*pWho*/) override { }
+        void JustEngagedWith(Unit* /*pWho*/) override { }
     
         void Reset() override {}
     
@@ -276,7 +276,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit* /*pWho*/) override { }
+        void JustEngagedWith(Unit* /*pWho*/) override { }
     
         void Reset() override {}
     

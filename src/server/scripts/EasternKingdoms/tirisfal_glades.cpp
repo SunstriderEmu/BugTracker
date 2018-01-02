@@ -54,7 +54,7 @@ public:
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
         }
     
-        void EnterCombat(Unit* who) override { }
+        void JustEngagedWith(Unit* who) override { }
     
         void JustDied(Unit* Killer)
         override {

@@ -274,7 +274,7 @@ public:
                 damage = 0;
         }
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             me->SetStandState(PLAYER_STATE_NONE);
             DoScriptText(SAY_EVIL_AGGRO, me);
@@ -452,7 +452,7 @@ public:
                 pInstance->SetData(DATA_KALECGOS_EVENT, NOT_STARTED);
         }
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             Creature *Kalec = me->SummonCreature(MOB_KALEC, me->GetPositionX() + 10, me->GetPositionY() + 5, me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 0);
             if(Kalec)
@@ -847,7 +847,7 @@ public:
             isEnraged = false;
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void HealReceived(Unit* done_by, uint32& addhealth)
         override {

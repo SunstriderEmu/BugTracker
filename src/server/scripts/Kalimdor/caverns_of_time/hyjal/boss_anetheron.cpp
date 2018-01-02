@@ -70,7 +70,7 @@ public:
                 pInstance->SetData(DATA_ANETHERONEVENT, NOT_STARTED);
         }
     
-        void EnterCombat(Unit *who) override
+        void JustEngagedWith(Unit *who) override
         {
             if(pInstance && IsEvent)
                 pInstance->SetData(DATA_ANETHERONEVENT, IN_PROGRESS);

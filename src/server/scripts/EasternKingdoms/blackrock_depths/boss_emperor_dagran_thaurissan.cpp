@@ -66,7 +66,7 @@ public:
                 me->SetDisplayId(15735);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             me->Yell(SAY_AGGRO,LANG_UNIVERSAL,nullptr);
             //me->CallForHelp(VISIBLE_RANGE); //Not present in TC1 atm

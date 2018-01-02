@@ -152,7 +152,7 @@ public:
     
         void Reset()override {}
     
-        void EnterCombat(Unit* who)override {}
+        void JustEngagedWith(Unit* who)override {}
     
         void JustDied(Unit* killer)
         override {
@@ -214,7 +214,7 @@ public:
         uint8 count;
         uint64 pGUID;
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void Start(uint64 guid)
         {

@@ -69,7 +69,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             me->Yell(SAY_AGGRO1, LANG_UNIVERSAL, nullptr);
         }

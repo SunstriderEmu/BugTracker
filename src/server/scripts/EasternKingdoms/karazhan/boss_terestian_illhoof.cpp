@@ -75,7 +75,7 @@ public:
             AmplifyTimer = 0;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             Creature* Terestian = (ObjectAccessor::GetCreature(*me, pInstance->GetGuidData(DATA_TERESTIAN)));
             if(Terestian && !Terestian->GetVictim())
@@ -141,7 +141,7 @@ public:
             FireboltTimer = 3000;
         }
     
-        void EnterCombat(Unit *who) override {}
+        void JustEngagedWith(Unit *who) override {}
     
         void UpdateAI(const uint32 diff)
         override {
@@ -185,7 +185,7 @@ public:
             SacrificeGUID = 0;
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         void AttackStart(Unit* who) override {}
         void MoveInLineOfSight(Unit* who) override {}
     
@@ -271,9 +271,9 @@ public:
             Berserk             = false;
         }
     
-        void EnterCombat(Unit* who) override 
+        void JustEngagedWith(Unit* who) override 
         {
-            _EnterCombat();
+            _JustEngagedWith();
             DoScriptText(SAY_AGGRO, me);
     
             // Put Kil'rek in combat against our target so players don't skip him

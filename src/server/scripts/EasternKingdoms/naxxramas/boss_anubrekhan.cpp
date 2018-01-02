@@ -78,7 +78,7 @@ public:
              DoScriptText(SAY_SLAY, me);
         }
     
-        void EnterCombat(Unit *who) override
+        void JustEngagedWith(Unit *who) override
         {
             switch(rand()%3)
             {

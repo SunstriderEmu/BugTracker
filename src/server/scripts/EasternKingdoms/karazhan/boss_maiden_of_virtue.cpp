@@ -68,9 +68,9 @@ public:
             _JustDied();
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
-            _EnterCombat();
+            _JustEngagedWith();
              DoScriptText(SAY_AGGRO, me);
 
              DoCastSelf(SPELL_HOLYGROUND, true);

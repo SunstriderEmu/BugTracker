@@ -91,7 +91,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             DoScriptText(AGGRO_YELL_AQUE, me, who);
         }
@@ -226,7 +226,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit* who) override { }
+        void JustEngagedWith(Unit* who) override { }
         void Reset() override { }
     
         void UpdateAI(const uint32 diff)
@@ -503,7 +503,7 @@ public:
     
         void Reset() override {}
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             DoScriptText(RAND(SAY_CHICKEN_AGGRO_1, SAY_CHICKEN_AGGRO_2), me);
         }
@@ -725,7 +725,7 @@ public:
             TortaGUID = 0;
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
     
         void MoveInLineOfSight(Unit *pWho)
         override {
@@ -862,7 +862,7 @@ public:
         public:
         npc_trigger_quest10963AI(Creature* c) : ScriptedAI(c) {}
         
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
         
         void MoveInLineOfSight(Unit* pWho)
         override {

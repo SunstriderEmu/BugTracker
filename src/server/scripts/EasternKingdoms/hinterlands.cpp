@@ -89,7 +89,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit* pWho)
+        void JustEngagedWith(Unit* pWho)
         override {
             if (pWho->GetEntry() == NPC_MARAUDING_OWL || pWho->GetEntry() == NPC_VILE_AMBUSHER)
                 return;
@@ -199,7 +199,7 @@ public:
             EscortAI::JustAppeared();
         }
     
-        void EnterCombat(Unit* pWho)
+        void JustEngagedWith(Unit* pWho)
         override {
             if (HasEscortState(STATE_ESCORT_ESCORTING))
             {

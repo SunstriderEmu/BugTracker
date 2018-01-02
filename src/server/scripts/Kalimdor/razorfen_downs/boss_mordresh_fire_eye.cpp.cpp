@@ -80,7 +80,7 @@ public:
                     pInstance->SetData(DATA_MORDRESH_FIRE_EYE, NOT_STARTED);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             if (pInstance)
                 pInstance->SetData(DATA_MORDRESH_FIRE_EYE, IN_PROGRESS);

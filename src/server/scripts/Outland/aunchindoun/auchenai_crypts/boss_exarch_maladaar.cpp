@@ -198,7 +198,7 @@ public:
         }
     
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             switch (rand()%3)
             {
@@ -206,7 +206,7 @@ public:
                 case 1: DoScriptText(SAY_AGGRO_2, me); break;
                 case 2: DoScriptText(SAY_AGGRO_3, me); break;
             }
-            _EnterCombat();
+            _JustEngagedWith();
         }
     
         void JustSummoned(Creature *summoned)
@@ -341,7 +341,7 @@ public:
     //        sunderArmorTimer = ?;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
         }
     

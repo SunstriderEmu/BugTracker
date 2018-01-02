@@ -85,7 +85,7 @@ public:
             me->SetFaction(104);
         }
     
-        void EnterCombat(Unit* who)override {}
+        void JustEngagedWith(Unit* who)override {}
     
         void JustSummoned(Creature* summoned)
         override {
@@ -162,7 +162,7 @@ public:
            ChickenTimer = 0;
            }
     
-        void EnterCombat(Unit *who)override {}
+        void JustEngagedWith(Unit *who)override {}
     
         void TransformHuman(uint32 emoteid)
         {
@@ -310,7 +310,7 @@ public:
             me->SetReactState(REACT_PASSIVE);
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void UpdateAI(const uint32 diff)
         override {
@@ -356,7 +356,7 @@ public:
     
         void Reset() override {}
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
     
         void WaypointReached(uint32 uiPointId, uint32 pathID)
         override {
@@ -447,7 +447,7 @@ public:
     
         void Reset() override {}
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
     
         void WaypointReached(uint32 uiPointId, uint32 pathID)
         override {

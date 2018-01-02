@@ -84,7 +84,7 @@ public:
                 pInstance->SetData(DATA_KURINNAXX_EVENT, DONE);
         }
         
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             if (pInstance)
                 pInstance->SetData(DATA_KURINNAXX_EVENT, IN_PROGRESS);

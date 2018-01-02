@@ -61,7 +61,7 @@ public:
             Slow_Timer = 24000;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
         }
     

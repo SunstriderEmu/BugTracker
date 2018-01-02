@@ -2671,7 +2671,7 @@ public:
             CanTeleport = false;
         }
     
-        void EnterCombat(Unit *who) override {}
+        void JustEngagedWith(Unit *who) override {}
     
         void UpdateAI(const uint32 diff)
         override {
@@ -2873,7 +2873,7 @@ public:
             CanTeleport = false;
         }
     
-        void EnterCombat(Unit *who) override {}
+        void JustEngagedWith(Unit *who) override {}
     
         void UpdateAI(const uint32 diff)
         override {

@@ -71,7 +71,7 @@ public:
             IntangiblePresence_Timer = 5000;
         }
     
-        void EnterCombat(Unit* pWho) override { }
+        void JustEngagedWith(Unit* pWho) override { }
     
         void DamageTaken(Unit* pDoneBy, uint32 &damage)
         override {
@@ -168,7 +168,7 @@ public:
             me->SetFaction(894);
         }
     
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
 
         virtual bool GossipHello(Player* pPlayer) override
         {
@@ -232,7 +232,7 @@ public:
             EV_WATER_ELEMENTALS,
         };
 
-        void EnterCombat(Unit* victim) override
+        void JustEngagedWith(Unit* victim) override
         {
             me->PlayDirectSound(5882);
         }
@@ -415,7 +415,7 @@ public:
             me->GetThreatManager().ClearAllThreat();
         }
         
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
         
         void UpdateAI(const uint32 diff)
         override {
@@ -530,7 +530,7 @@ public:
             me->RestoreFaction();
         }
     
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
     
         void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
         override {
@@ -644,7 +644,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit* pWho)
+        void JustEngagedWith(Unit* pWho)
         override {
             DoScriptText(SAY_ATTACKED_1, me, pWho);
         }
@@ -805,7 +805,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit* pWho)
+        void JustEngagedWith(Unit* pWho)
         override {
             
         }
@@ -1017,7 +1017,7 @@ public:
             SetCombatMovementAllowed(false);
         }
     
-        void EnterCombat(Unit* pWho)
+        void JustEngagedWith(Unit* pWho)
         override {
         }
         
@@ -1062,7 +1062,7 @@ public:
             SCDBdf = new SimpleCooldown(TIMER_FIREBALL);
         }
         
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             if(who)
                 DoCast(who,SPELL_FIREBALL,false);

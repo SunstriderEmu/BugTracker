@@ -52,7 +52,7 @@ public:
             Heal_Timer = 1000;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             DoZoneInCombat();
         }

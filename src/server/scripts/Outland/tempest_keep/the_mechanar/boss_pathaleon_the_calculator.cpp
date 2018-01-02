@@ -90,7 +90,7 @@ public:
             Counter = 0;
             summons.DespawnAll();
         }
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             DoScriptText(SAY_AGGRO, me);
         }

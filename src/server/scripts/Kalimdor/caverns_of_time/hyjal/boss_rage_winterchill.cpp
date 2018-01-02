@@ -75,7 +75,7 @@ public:
                 pInstance->SetData(DATA_RAGEWINTERCHILLEVENT, NOT_STARTED);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             if(pInstance && IsEvent)
                 pInstance->SetData(DATA_RAGEWINTERCHILLEVENT, IN_PROGRESS);

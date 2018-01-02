@@ -53,7 +53,7 @@ public:
                 pInstance->SetData(TYPE_AKU_MAI, NOT_STARTED);
         }
         
-        void EnterCombat(Unit* pWho) override
+        void JustEngagedWith(Unit* pWho) override
         {
             if (pInstance)
                 pInstance->SetData(TYPE_AKU_MAI, IN_PROGRESS);

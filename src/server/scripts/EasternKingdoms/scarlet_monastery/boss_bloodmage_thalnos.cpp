@@ -66,7 +66,7 @@ public:
             FireNova_Timer = 10000;
         }
     
-        void EnterCombat(Unit *who) override
+        void JustEngagedWith(Unit *who) override
         {
             me->Yell(SAY_AGGRO,LANG_UNIVERSAL,nullptr);
             DoPlaySoundToSet(me,SOUND_AGGRO);

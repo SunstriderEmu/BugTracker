@@ -76,7 +76,7 @@ public:
                 pInstance->SetData(DATA_RAGGLESNOUT_EVENT, NOT_STARTED);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             if (pInstance)
                 pInstance->SetData(DATA_RAGGLESNOUT_EVENT, IN_PROGRESS);

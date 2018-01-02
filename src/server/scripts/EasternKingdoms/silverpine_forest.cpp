@@ -52,7 +52,7 @@ public:
             me->SetFaction(68);
         }
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
         }
     
@@ -174,7 +174,7 @@ public:
     
         void Reset() override {}
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             switch(rand()%2)
             {
@@ -270,7 +270,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit *who) override  
+        void JustEngagedWith(Unit *who) override  
         {}
     
         void JustSummoned(Creature *pSummoned) override

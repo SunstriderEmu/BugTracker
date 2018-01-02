@@ -82,7 +82,7 @@ public:
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         }
 
-        void EnterCombat(Unit * /*who*/)
+        void JustEngagedWith(Unit * /*who*/)
         override {
             if (pInstance)
                 pInstance->SetData(DATA_BURU_EVENT, IN_PROGRESS);
@@ -181,7 +181,7 @@ public:
             Summons.Despawn(unit);
         }
 
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             if (Creature* buru = pInstance->instance->GetCreature(pInstance->GetData64(DATA_BURU)))
                 if (!buru->IsInCombat())

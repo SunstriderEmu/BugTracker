@@ -139,7 +139,7 @@ public:
             else error_log(ERROR_INST_DATA);
         }
 
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
             override {
             DoScriptText(SAY_AGGRO, me);
             SetAddsInCombat(who);
@@ -381,7 +381,7 @@ struct boss_priestess_guestAI : public ScriptedAI
         ResetThreatTimer = 5000 + rand()%15000;             // These guys like to switch targets often, and are not meant to be tanked.
     }
 
-    void EnterCombat(Unit* who)
+    void JustEngagedWith(Unit* who)
     override {
         Creature* Delrissa = (ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_DELRISSA)));
         if(Delrissa)
@@ -573,13 +573,13 @@ public:
             boss_priestess_guestAI::Reset();
         }
         
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             for(auto & Add : Adds)
                 if(Unit* pAdd = ObjectAccessor::GetUnit(*me, Add->guid))
                     pAdd->GetThreatManager().AddThreat(who, 1.0f);
                     
-            boss_priestess_guestAI::EnterCombat(who);
+            boss_priestess_guestAI::JustEngagedWith(who);
         }
     
         void UpdateAI(const uint32 diff)
@@ -677,13 +677,13 @@ public:
             boss_priestess_guestAI::Reset();
         }
         
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             for(auto & Add : Adds)
                 if(Unit* pAdd = ObjectAccessor::GetUnit(*me, Add->guid))
                     pAdd->GetThreatManager().AddThreat(who, 1.0f);
                     
-            boss_priestess_guestAI::EnterCombat(who);
+            boss_priestess_guestAI::JustEngagedWith(who);
         }
     
         void JustDied(Unit* killer)
@@ -771,13 +771,13 @@ public:
             boss_priestess_guestAI::Reset();
         }
         
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             for(auto & Add : Adds)
                 if(Unit* pAdd = ObjectAccessor::GetUnit(*me, Add->guid))
                     pAdd->GetThreatManager().AddThreat(who, 1.0f);
                     
-            boss_priestess_guestAI::EnterCombat(who);
+            boss_priestess_guestAI::JustEngagedWith(who);
         }
     
         void UpdateAI(const uint32 diff)
@@ -849,13 +849,13 @@ public:
             boss_priestess_guestAI::Reset();
         }
         
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             for(auto & Add : Adds)
                 if(Unit* pAdd = ObjectAccessor::GetUnit(*me, Add->guid))
                     pAdd->GetThreatManager().AddThreat(who, 1.0f);
                     
-            boss_priestess_guestAI::EnterCombat(who);
+            boss_priestess_guestAI::JustEngagedWith(who);
         }
     
         void UpdateAI(const uint32 diff)
@@ -977,7 +977,7 @@ public:
             boss_priestess_guestAI::Reset();
         }
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             DoCast(me, SPELL_BATTLE_SHOUT);
             
@@ -985,7 +985,7 @@ public:
                 if(Unit* pAdd = ObjectAccessor::GetUnit(*me, Add->guid))
                     pAdd->GetThreatManager().AddThreat(who, 1.0f);
                     
-            boss_priestess_guestAI::EnterCombat(who);
+            boss_priestess_guestAI::JustEngagedWith(who);
         }
     
         void UpdateAI(const uint32 diff)
@@ -1097,13 +1097,13 @@ public:
             boss_priestess_guestAI::Reset();
         }
         
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             for(auto & Add : Adds)
                 if(Unit* pAdd = ObjectAccessor::GetUnit(*me, Add->guid))
                     pAdd->GetThreatManager().AddThreat(who, 1.0f);
                     
-            boss_priestess_guestAI::EnterCombat(who);
+            boss_priestess_guestAI::JustEngagedWith(who);
         }
     
         void JustDied(Unit* killer)
@@ -1223,13 +1223,13 @@ public:
             boss_priestess_guestAI::Reset();
         }
         
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             for(auto & Add : Adds)
                 if(Unit* pAdd = ObjectAccessor::GetUnit(*me, Add->guid))
                     pAdd->GetThreatManager().AddThreat(who, 1.0f);
                     
-            boss_priestess_guestAI::EnterCombat(who);
+            boss_priestess_guestAI::JustEngagedWith(who);
         }
     
         void UpdateAI(const uint32 diff)
@@ -1315,13 +1315,13 @@ public:
             boss_priestess_guestAI::Reset();
         }
         
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             for(auto & Add : Adds)
                 if(Unit* pAdd = ObjectAccessor::GetUnit(*me, Add->guid))
                     pAdd->GetThreatManager().AddThreat(who, 1.0f);
                     
-            boss_priestess_guestAI::EnterCombat(who);
+            boss_priestess_guestAI::JustEngagedWith(who);
         }
         
         void UpdateAI(const uint32 diff)

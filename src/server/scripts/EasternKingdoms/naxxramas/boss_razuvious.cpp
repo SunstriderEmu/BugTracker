@@ -96,7 +96,7 @@ public:
             DoPlaySoundToSet(me, SOUND_DEATH);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             switch (rand()%3)
             {

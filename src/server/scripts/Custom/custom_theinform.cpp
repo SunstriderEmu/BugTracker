@@ -46,7 +46,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit* /* who */) override {}
+        void JustEngagedWith(Unit* /* who */) override {}
     };
 
     CreatureAI* GetAI(Creature* creature) const override

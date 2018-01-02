@@ -47,7 +47,7 @@ public:
         InstanceScript *pInstance;
         
         void Reset() override {}
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         
         void MovementInform(uint32 type, uint32 id)
         override {

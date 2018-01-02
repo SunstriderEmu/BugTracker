@@ -87,7 +87,7 @@ public:
             PhaseTwo = false;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             DoScriptText(SAY_AGGRO, me);
             DoCast(me,SPELL_BAT_FORM);
@@ -251,7 +251,7 @@ public:
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         }
     
-        void EnterCombat(Unit *who) override {}
+        void JustEngagedWith(Unit *who) override {}
     
         void UpdateAI (const uint32 diff)
         override {

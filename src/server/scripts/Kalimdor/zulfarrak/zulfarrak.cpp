@@ -98,7 +98,7 @@ public:
             me->SetFaction(FACTION_FRIENDLY);
         }
     
-        void EnterCombat(Unit *who) override {}
+        void JustEngagedWith(Unit *who) override {}
     
         void JustDied(Unit *victim) override {}
     
@@ -316,7 +316,7 @@ public:
                 pInstance->SetData(0, NOT_STARTED);*/
         }
     
-        void EnterCombat(Unit *who) override {}
+        void JustEngagedWith(Unit *who) override {}
     
         void JustDied(Unit *victim) override {}
         

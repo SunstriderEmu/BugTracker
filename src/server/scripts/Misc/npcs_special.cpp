@@ -85,7 +85,7 @@ public:
             me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
         }
     
-        void EnterCombat(Unit *who) override {}
+        void JustEngagedWith(Unit *who) override {}
     
         void UpdateAI(const uint32 diff)
         override {
@@ -207,7 +207,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit* who)override {}
+        void JustEngagedWith(Unit* who)override {}
 
         virtual void ReceiveEmote(Player* player, uint32 emote) override
         {
@@ -382,7 +382,7 @@ public:
         void PatientSaved(Creature* soldier, Player* player, Location* Point);
         void UpdateAI(const uint32 diff) override;
     
-        void EnterCombat(Unit* who)override {}
+        void JustEngagedWith(Unit* who)override {}
 
         virtual void QuestAccept(Player* player, Quest const* quest) override
         {
@@ -445,7 +445,7 @@ public:
             }
         }
 
-        void EnterCombat(Unit* who)override {}
+        void JustEngagedWith(Unit* who)override {}
 
         void SpellHit(Unit *caster, const SpellInfo *spell)
             override {
@@ -686,7 +686,7 @@ public:
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             me->Yell(SAY_AGGRO,LANG_UNIVERSAL,nullptr);
         }
@@ -1071,7 +1071,7 @@ public:
         npc_steam_tonkAI(Creature *c) : ScriptedAI(c) {}
     
         void Reset() override {}
-        void EnterCombat(Unit *who) override {}
+        void JustEngagedWith(Unit *who) override {}
     
         void OnPossess(Unit* charmer, bool apply) override
         {
@@ -1120,7 +1120,7 @@ public:
             ExplosionTimer = 3000;
         }
     
-        void EnterCombat(Unit *who) override {}
+        void JustEngagedWith(Unit *who) override {}
         void AttackStart(Unit *who) override {}
         void MoveInLineOfSight(Unit *who) override {}
     
@@ -1249,7 +1249,7 @@ public:
         Unit *Owner;
         bool IsViper;
     
-        void EnterCombat(Unit *who) override {}
+        void JustEngagedWith(Unit *who) override {}
     
         void Reset()
         override {
@@ -1379,7 +1379,7 @@ public:
             me->SetSpeedRate(MOVE_RUN, 0.0f);
         }
         
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
         
         void JustDied(Unit* pKiller)
         override {
@@ -1446,7 +1446,7 @@ public:
         uint32 MorphTimer;      /* new hooks OwnerGainedAura and OwnerLostAura? Useless in this case, as morphed player may not be owner, but keep the idea. */
         uint64 PlayerGUID;
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
         void Reset()
         override {
             me->GetMotionMaster()->MoveFollow(me->GetOwner(), PET_FOLLOW_DIST, me->GetFollowAngle());
@@ -1524,7 +1524,7 @@ public:
             me->GetMotionMaster()->MoveFollow(me->GetOwner(), PET_FOLLOW_DIST, me->GetFollowAngle());
         }
         
-        void EnterCombat(Unit *pWho)
+        void JustEngagedWith(Unit *pWho)
         override {
             me->GetMotionMaster()->MoveChase(pWho);
         }
@@ -1579,7 +1579,7 @@ public:
             me->GetMotionMaster()->MoveFollow(me->GetOwner(), PET_FOLLOW_DIST, me->GetFollowAngle());
         }
         
-        void EnterCombat(Unit *pWho)
+        void JustEngagedWith(Unit *pWho)
         override {
             me->GetMotionMaster()->MoveChase(pWho);
         }
@@ -1729,7 +1729,7 @@ public:
                 me->GetMotionMaster()->MoveFollow(owner, PET_FOLLOW_DIST, me->GetFollowAngle());
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void MoveInLineOfSight(Unit* who)
         override {
@@ -1793,7 +1793,7 @@ public:
             }
         }
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void UpdateAI(uint32 const diff)
         override {
@@ -1894,7 +1894,7 @@ public:
             ++step;
         }
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     };
 
     CreatureAI* GetAI(Creature* creature) const override
@@ -1911,7 +1911,7 @@ public:
 struct lunar_large_spotlightAI: public ScriptedAI
 {
 
-    void EnterCombat(Unit* who) override {}
+    void JustEngagedWith(Unit* who) override {}
 
     void SpellHit(Unit* caster, const SpellInfo* spell)
     override {
@@ -1975,7 +1975,7 @@ public:
             SetCombatMovementAllowed(false);
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void SpellHit(Unit* caster, const SpellInfo* spell)
         override {
@@ -2056,7 +2056,7 @@ public:
             me->GetMotionMaster()->MoveFollow(me->GetOwner(), PET_FOLLOW_DIST, me->GetFollowAngle());
         }
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void OnSpellFinish(Unit* caster, uint32 spellId, Unit* target, bool ok)
         override {
@@ -2111,7 +2111,7 @@ public:
             unauraTimer = 0;
         }
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void SpellHit(Unit* caster, SpellInfo const* spell)
         override {

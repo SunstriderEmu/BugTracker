@@ -163,7 +163,7 @@ public:
             laugh = 15000 + rand()%16 * 1000;
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void SaySound(int32 textEntry, Unit* target = nullptr)
         {
@@ -323,7 +323,7 @@ public:
 
         void Reset() override {}
 
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
 
         void SetType(uint32 _type)
         {
@@ -527,7 +527,7 @@ public:
             ++id;
         }
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             if(pInstance)
                 pInstance->SetData(DATA_HORSEMAN_EVENT, IN_PROGRESS);
@@ -872,7 +872,7 @@ public:
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
         }
     
-        void EnterCombat(Unit* who)override {}
+        void JustEngagedWith(Unit* who)override {}
     
         void SpellHit(Unit* caster, const SpellInfo* spell)
         override {

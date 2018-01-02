@@ -250,7 +250,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit*) override {}
+        void JustEngagedWith(Unit*) override {}
     
         void UpdateAI(const uint32 diff) override
         {
@@ -409,7 +409,7 @@ public:
             MightyBlow_Timer = 15000;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
         }
     
@@ -691,7 +691,7 @@ struct npc_dughal_stormwingAI : public EscortAI
         }
     }
 
-    void EnterCombat(Unit* who) { }
+    void JustEngagedWith(Unit* who) { }
     void Reset() {}
 
     void JustDied(Unit* killer)
@@ -825,7 +825,7 @@ struct npc_marshal_windsorAI : public EscortAI
         }
     }
 
-    void EnterCombat(Unit* who)
+    void JustEngagedWith(Unit* who)
         {
         switch(rand()%3)
             {
@@ -1021,7 +1021,7 @@ struct npc_marshal_reginald_windsorAI : public EscortAI
         }
     }
 
-    void EnterCombat(Unit* who)
+    void JustEngagedWith(Unit* who)
         {
         switch(rand()%3)
             {
@@ -1137,7 +1137,7 @@ struct npc_tobias_seecherAI : public EscortAI
 {
     npc_tobias_seecherAI(Creature *c) :EscortAI(c) {}
 
-    void EnterCombat(Unit* who) { }
+    void JustEngagedWith(Unit* who) { }
     void Reset() {}
 
     void JustDied(Unit* killer)
@@ -1298,7 +1298,7 @@ public:
             BreakDoor_Timer = 0;
         }
     
-        void EnterCombat(Unit *who) override { }
+        void JustEngagedWith(Unit *who) override { }
     
         void DoGo(uint32 id, uint32 state)
         {
@@ -1480,7 +1480,7 @@ public:
         
         void Reset() override {}
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void KilledUnit(Unit* who)
         override {

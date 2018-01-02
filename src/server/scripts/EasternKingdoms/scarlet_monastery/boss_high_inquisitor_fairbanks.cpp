@@ -69,7 +69,7 @@ public:
             MindBlast5_Timer = 20000;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
         }
         

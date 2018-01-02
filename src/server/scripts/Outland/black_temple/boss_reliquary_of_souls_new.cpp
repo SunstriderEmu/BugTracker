@@ -140,7 +140,7 @@ public:
             //me->SetNoCallAssistance(true);
         }
         
-        void EnterCombat(Unit* victim)
+        void JustEngagedWith(Unit* victim)
         override {
             if(riftMarkers.size() == 0) findRifts();
             me->GetThreatManager().AddThreat(victim, 10000.0f);
@@ -399,7 +399,7 @@ public:
             }
         }
         
-        void EnterCombat(Unit* victim)
+        void JustEngagedWith(Unit* victim)
         override {
             Talk(TALK_SUFF_SAY_FREED);
             DoZoneInCombat();
@@ -538,7 +538,7 @@ public:
             }
         }
         
-        void EnterCombat(Unit* victim)
+        void JustEngagedWith(Unit* victim)
         override {
             Talk(TALK_DESI_SAY_FREED);
             DoZoneInCombat();
@@ -635,7 +635,7 @@ public:
             CreatureAI::EnterEvadeMode(why);
         }
         
-        void EnterCombat(Unit* victim)
+        void JustEngagedWith(Unit* victim)
         override {
             tankGUID = victim->GetGUID();
             victim->ApplySpellImmune(0, IMMUNITY_ID, SPELL_SPITE_TARGET, true); //else we would change target if it's casted on him

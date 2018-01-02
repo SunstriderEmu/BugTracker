@@ -137,7 +137,7 @@ public:
     
         void Reset() override {}
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void DoDie()
         {
@@ -226,7 +226,7 @@ public:
             SetCombatMovementAllowed(false);
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
     
         void MoveInLineOfSight(Unit* pWho)
         override {

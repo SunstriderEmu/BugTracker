@@ -79,7 +79,7 @@ public:
             Teleport_Timer = 5000;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             DoScriptText(SAY_AGGRO, me);
         }
@@ -208,7 +208,7 @@ public:
             Heal_Timer = 2000;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
         }
     
@@ -261,7 +261,7 @@ public:
             me->CastSpell(me, SPELL_INVISIBLE, TRIGGERED_FULL_MASK);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
         }
     

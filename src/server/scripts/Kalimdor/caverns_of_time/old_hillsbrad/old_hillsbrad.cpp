@@ -641,7 +641,7 @@ public:
             me->SetSpeedRate(MOVE_RUN, SPEED_RUN);
         }
 
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             switch(rand()%4)
             {
@@ -847,7 +847,7 @@ public:
         }
 
         void Reset() override {}
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void UpdateAI(const uint32 diff)
         override {

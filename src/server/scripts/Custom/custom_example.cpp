@@ -84,7 +84,7 @@ public:
     
         //*** HANDLED FUNCTION ***
         //Attack Start is called whenever someone hits us.
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             //Say some stuff
             me->Say(SAY_AGGRO, LANG_UNIVERSAL);
@@ -312,7 +312,7 @@ public:
             return true;
         }
 
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
             override {}
 
         void Reset()

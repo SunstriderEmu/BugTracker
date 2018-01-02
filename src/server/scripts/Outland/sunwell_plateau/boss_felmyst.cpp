@@ -249,7 +249,7 @@ public:
             }
         }
 
-        void EnterCombat(Unit* /*who*/)
+        void JustEngagedWith(Unit* /*who*/)
         override {
             me->SetWalk(false);
 
@@ -695,7 +695,7 @@ public:
             me->SetWalk(false);
         }
 
-        void EnterCombat(Unit* /*who*/)
+        void JustEngagedWith(Unit* /*who*/)
         override {
             startFollow = true;
             DoZoneInCombat();

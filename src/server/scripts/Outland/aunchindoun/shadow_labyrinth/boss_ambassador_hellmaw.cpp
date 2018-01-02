@@ -101,7 +101,7 @@ public:
             Intro = true;
         }
     
-        void EnterCombat(Unit *who) override
+        void JustEngagedWith(Unit *who) override
         {
             switch(rand()%3)
             {
@@ -109,7 +109,7 @@ public:
                 case 1: DoScriptText(SAY_AGGRO2, me); break;
                 case 2: DoScriptText(SAY_AGGRO3, me); break;
             }
-            _EnterCombat();
+            _JustEngagedWith();
         }
     
         void KilledUnit(Unit *victim) override

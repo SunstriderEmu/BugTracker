@@ -211,7 +211,7 @@ public:
             AttackStart(target);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
         }
     

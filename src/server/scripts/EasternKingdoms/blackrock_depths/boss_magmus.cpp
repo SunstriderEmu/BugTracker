@@ -49,7 +49,7 @@ public:
             WarStomp_Timer =0;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
         }
     

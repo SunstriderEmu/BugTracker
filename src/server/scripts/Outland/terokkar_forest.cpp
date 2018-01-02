@@ -80,7 +80,7 @@ public:
             me->SetFaction(FACTION_HOSTILE);
         }
     
-        void EnterCombat(Unit *who) override {}
+        void JustEngagedWith(Unit *who) override {}
     
         void DoNice()
         {
@@ -177,7 +177,7 @@ public:
         mob_infested_root_walkerAI(Creature *c) : ScriptedAI(c) {}
     
         void Reset() override { }
-        void EnterCombat(Unit *who) override { }
+        void JustEngagedWith(Unit *who) override { }
     
         void DamageTaken(Unit *done_by, uint32 &damage)
         override {
@@ -212,7 +212,7 @@ public:
         mob_rotting_forest_ragerAI(Creature *c) : ScriptedAI(c) {}
     
         void Reset() override { }
-        void EnterCombat(Unit *who) override { }
+        void JustEngagedWith(Unit *who) override { }
     
         void DamageTaken(Unit *done_by, uint32 &damage)
         override {
@@ -254,7 +254,7 @@ public:
         mob_netherweb_victimAI(Creature *c) : ScriptedAI(c) {}
     
         void Reset() override { }
-        void EnterCombat(Unit *who) override { }
+        void JustEngagedWith(Unit *who) override { }
         void MoveInLineOfSight(Unit *who) override { }
     
         void JustDied(Unit* Killer)
@@ -317,7 +317,7 @@ struct npc_floonAI : public ScriptedAI
         me->SetFaction(FACTION_FRIENDLY_FL);
     }
 
-    void EnterCombat(Unit *who) override {}
+    void JustEngagedWith(Unit *who) override {}
 
     void UpdateAI(const uint32 diff)
     override {
@@ -531,7 +531,7 @@ public:
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         }
     
-        void EnterCombat(Unit* who)override {}
+        void JustEngagedWith(Unit* who)override {}
     
         void JustDied(Unit* killer)
         override {
@@ -712,7 +712,7 @@ public:
             checkTimer = 5000; //check for creature every 5 sec
         }
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void UpdateAI(const uint32 diff)
         override {
@@ -767,7 +767,7 @@ public:
                 eggGO->ResetDoorOrButton();
         }
     
-        void EnterCombat(Unit *who) override {}
+        void JustEngagedWith(Unit *who) override {}
         void AttackStart(Unit* who) override {}
         void MoveInLineOfSight(Unit* who) override {}
         void UpdateAI(const uint32 diff) override {}
@@ -821,7 +821,7 @@ public:
         public:
         npc_trigger_quest10950AI(Creature* c) : ScriptedAI(c) {}
         
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
         
         void MoveInLineOfSight(Unit* pWho)
         override {
@@ -940,7 +940,7 @@ public:
                 despawnTimer = 10000;
         }
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void MovementInform(uint32 type, uint32 id)
         override {
@@ -1026,7 +1026,7 @@ public:
         
         void Reset() override {}
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void SummonedCreatureDespawn(Creature* summon)
         override {
@@ -1337,7 +1337,7 @@ public:
         
         void Reset() override {}
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void KilledUnit(Unit* victim)
         override {

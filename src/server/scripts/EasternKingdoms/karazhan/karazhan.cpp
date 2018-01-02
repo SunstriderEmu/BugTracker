@@ -182,7 +182,7 @@ public:
                 me->DespawnOrUnsummon();
             }
         }
-        void EnterCombat(Unit* who)override {}
+        void JustEngagedWith(Unit* who)override {}
     
         void MovementInform(uint32 type, uint32 id)
         override {
@@ -478,7 +478,7 @@ public:
             flagsset = false;
         }
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
       
         void UpdateAI(const uint32 diff)
         override {                
@@ -578,7 +578,7 @@ public:
             castedShield = false;
         }
     
-        void EnterCombat(Unit* who) 
+        void JustEngagedWith(Unit* who) 
         override {
             DoCast(me, ANOMALY_SPELL_MANA_SHIELD, true);
             castedShield = true;

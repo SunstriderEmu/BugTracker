@@ -166,7 +166,7 @@ public:
             fiery1 = fiery2 = true;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override { }
     
         void UpdateAI(const uint32 diff)

@@ -73,7 +73,7 @@ public:
             AryniaGUID = 0;
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
     
         void MoveInLineOfSight(Unit *pWho)
         override {

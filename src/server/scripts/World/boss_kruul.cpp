@@ -65,7 +65,7 @@ public:
             Hound_Timer = 8000;
         }
     
-        void EnterCombat(Unit *who) override
+        void JustEngagedWith(Unit *who) override
         {
         }
     

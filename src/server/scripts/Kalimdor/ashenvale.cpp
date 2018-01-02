@@ -135,7 +135,7 @@ public:
             Completed = false;
         }
     
-        void EnterCombat(Unit* who) override
+        void JustEngagedWith(Unit* who) override
         {
         }
     
@@ -219,7 +219,7 @@ public:
         
         bool completed;
     
-        void EnterCombat(Unit*) override {}
+        void JustEngagedWith(Unit*) override {}
     
         void WaypointReached(uint32 i, uint32 pathID) override
         {
@@ -421,7 +421,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit* pWho) override
+        void JustEngagedWith(Unit* pWho) override
         {
             if (HasEscortState(STATE_ESCORT_PAUSED))
             {
@@ -721,7 +721,7 @@ public:
             }
         }
         
-        void EnterCombat(Unit*) override {}
+        void JustEngagedWith(Unit*) override {}
     
         void UpdateAI(uint32 const diff)
         override {

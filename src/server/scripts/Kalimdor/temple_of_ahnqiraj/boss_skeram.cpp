@@ -121,7 +121,7 @@ public:
                 DoScriptText(SAY_DEATH, me);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             if (IsImage || Images75)
                 return;

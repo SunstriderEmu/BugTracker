@@ -107,7 +107,7 @@ public:
             DoScriptText(SAY_KILLTARGET, me, victim);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             DoCast(me,SPELL_ESSENCEOFTHERED);
             DoZoneInCombat();

@@ -67,7 +67,7 @@ public:
                 pInstance->SetData(DATA_KAZROGALEVENT, NOT_STARTED);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             if(pInstance && IsEvent)
                 pInstance->SetData(DATA_KAZROGALEVENT, IN_PROGRESS);

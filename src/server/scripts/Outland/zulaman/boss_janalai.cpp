@@ -172,7 +172,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             if(pInstance)
                 pInstance->SetData(DATA_JANALAIEVENT, IN_PROGRESS);
@@ -439,7 +439,7 @@ public:
                 me->CastSpell(me, SPELL_FIRE_BOMB_DUMMY, TRIGGERED_FULL_MASK);
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void AttackStart(Unit* who) override {}
     
@@ -520,7 +520,7 @@ public:
                 return true;
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         void AttackStart(Unit*) override {}
         void MoveInLineOfSight(Unit*) override {}
         void MovementInform(uint32, uint32)
@@ -658,7 +658,7 @@ public:
         public:
         mob_eggAI(Creature *c) : ScriptedAI(c){}
         void Reset() override {}
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         void AttackStart(Unit* who) override {}
         void MoveInLineOfSight(Unit* who) override {}
         void UpdateAI(const uint32 diff) override {}

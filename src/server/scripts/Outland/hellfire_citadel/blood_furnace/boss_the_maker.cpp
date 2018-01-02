@@ -51,9 +51,9 @@ public:
     
         bool HeroicMode;
     
-        void EnterCombat(Unit *who) override 
+        void JustEngagedWith(Unit *who) override 
         {
-            _EnterCombat();
+            _JustEngagedWith();
             switch(rand()%3)
             {
                 case 0: DoScriptText(SAY_AGGRO_1, me); break;

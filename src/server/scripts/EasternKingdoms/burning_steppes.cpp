@@ -72,7 +72,7 @@ public:
             ScriptedAI::MoveInLineOfSight(pWho);
         }
     
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
 
         virtual bool GossipHello(Player* pPlayer) override
         {

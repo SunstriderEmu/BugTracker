@@ -89,7 +89,7 @@ public:
             me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_HUMAN);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
         }
     

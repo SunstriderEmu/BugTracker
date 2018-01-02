@@ -84,7 +84,7 @@ public:
                 me->SetDisplayId(22805);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             DoScriptText(SAY_AGGRO, me);
         }

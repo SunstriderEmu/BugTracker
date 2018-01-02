@@ -34,7 +34,7 @@ public:
     
         void Reset() override { }
     
-        void EnterCombat(Unit* pWho) override { }
+        void JustEngagedWith(Unit* pWho) override { }
     
         void SpellHit(Unit* pCaster, const SpellInfo* spell)
         override {
@@ -96,7 +96,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
     
         void Reset()
         override {
@@ -235,7 +235,7 @@ public:
                 paladinGuid[i] = 0;
         }
 
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
 
         void UpdateAI(const uint32 diff) override; //defined later
 
@@ -373,7 +373,7 @@ public:
             }
         }
 
-        void EnterCombat(Unit* pWho) override { }
+        void JustEngagedWith(Unit* pWho) override { }
 
         void UpdateAI(const uint32 diff)
             override {
@@ -570,7 +570,7 @@ public:
             me->GetMotionMaster()->MoveTargetedHome();
         }
     
-        void EnterCombat(Unit* pWho)override {}
+        void JustEngagedWith(Unit* pWho)override {}
     
         void JustSummoned(Creature* pSummoned)
         override {

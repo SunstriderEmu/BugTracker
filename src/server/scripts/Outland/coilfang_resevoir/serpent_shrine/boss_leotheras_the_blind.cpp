@@ -97,7 +97,7 @@ public:
             }
         }
 
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
             override {
             if (!victimGUID) return;
         }
@@ -396,7 +396,7 @@ public:
                 pInstance->SetData(DATA_LEOTHERASTHEBLINDEVENT, DONE);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             if(me->HasAuraEffect(AURA_BANISH, 0))
             return;
@@ -637,7 +637,7 @@ public:
             me->CastSpell(me, 8149, TRIGGERED_FULL_MASK);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             StartEvent();
         }
@@ -714,7 +714,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             me->InterruptNonMeleeSpells(false);
             if(pInstance)

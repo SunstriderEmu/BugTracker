@@ -59,7 +59,7 @@ public:
                 pInstance->SetData(DATA_OSSIRIAN_EVENT, NOT_STARTED);
         }
         
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             if (pInstance)
                 pInstance->SetData(DATA_OSSIRIAN_EVENT, IN_PROGRESS);

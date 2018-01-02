@@ -127,12 +127,12 @@ public:
             ResetPrisonners();
         }
     
-        void EnterCombat(Unit *who) override
+        void JustEngagedWith(Unit *who) override
         {
             DoScriptText(SAY_AGGRO, me);
     
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-            _EnterCombat();
+            _JustEngagedWith();
 
             events.ScheduleEvent(EVENT_SLIME_SPRAY, 10000);
             events.ScheduleEvent(EVENT_POISON_BOLT, 7000);

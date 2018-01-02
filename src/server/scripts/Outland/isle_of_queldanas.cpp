@@ -133,7 +133,7 @@ public:
             return;
         }
         
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
     
         void UpdateAI(const uint32 diff)
         override {
@@ -236,7 +236,7 @@ public:
     
         uint64 PlayerGUID;
     
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
     
         void Reset()
         override {

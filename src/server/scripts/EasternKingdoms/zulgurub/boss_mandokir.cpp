@@ -133,7 +133,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
          DoScriptText(SAY_AGGRO, me);
         }
@@ -304,7 +304,7 @@ public:
             SunderArmor_Timer = 5000;
         }
     
-        void EnterCombat(Unit *who) override {}
+        void JustEngagedWith(Unit *who) override {}
     
         void JustDied(Unit* Killer)
         override {

@@ -523,7 +523,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit *who) override
+        void JustEngagedWith(Unit *who) override
         {
             if (pInstance && !pInstance->GetData(DATA_KAELTHAS_EVENT) && !Phase)
                 StartEvent();
@@ -1123,7 +1123,7 @@ public:
             DoScriptText(SAY_THALADRED_DEATH, me);
         }
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
                 return;
@@ -1221,7 +1221,7 @@ public:
             DoScriptText(SAY_SANGUINAR_DEATH, me);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
                 return;
@@ -1308,7 +1308,7 @@ public:
             }
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
                 return;
@@ -1423,7 +1423,7 @@ public:
              DoScriptText(SAY_TELONICUS_DEATH, me);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             if (me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE))
                 return;
@@ -1501,7 +1501,7 @@ public:
             me->SetFaction(FACTION_MONSTER);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             return;
         }
@@ -1581,7 +1581,7 @@ public:
             me->CastSpell(me,SPELL_BURN, TRIGGERED_FULL_MASK);
         }
     
-        void EnterCombat(Unit *who) override { }
+        void JustEngagedWith(Unit *who) override { }
     
         void DamageTaken(Unit* pKiller, uint32 &damage)
         override {
@@ -1652,7 +1652,7 @@ public:
         void MoveInLineOfSight(Unit* who) override
         { return; }
     
-        void EnterCombat(Unit *who) override
+        void JustEngagedWith(Unit *who) override
         { }
     
         void JustSummoned(Creature* summoned)

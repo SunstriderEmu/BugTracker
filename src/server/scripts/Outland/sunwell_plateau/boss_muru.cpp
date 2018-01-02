@@ -369,7 +369,7 @@ public:
             me->AddUnitState(UNIT_STATE_STUNNED);
         }
 
-        void EnterCombat(Unit * /*who*/)
+        void JustEngagedWith(Unit * /*who*/)
         override {
             if (pInstance)
                 pInstance->SetData(DATA_MURU_EVENT, IN_PROGRESS);
@@ -531,7 +531,7 @@ public:
                 entropius->DisappearAndDie();
         }
 
-        void EnterCombat(Unit* /*who*/)
+        void JustEngagedWith(Unit* /*who*/)
         override {
             me->CastSpell((Unit*)nullptr, SPELL_NEGATIVE_ENERGY, TRIGGERED_NONE);
 

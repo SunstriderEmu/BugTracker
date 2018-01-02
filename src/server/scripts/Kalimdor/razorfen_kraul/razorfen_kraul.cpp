@@ -115,7 +115,7 @@ public:
             complete = false;
         }
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             DoScriptText(SAY_AGGRO1, me, nullptr);
         }
@@ -181,7 +181,7 @@ public:
             QuillboarChanneling_Timer = 1500;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
         }
     

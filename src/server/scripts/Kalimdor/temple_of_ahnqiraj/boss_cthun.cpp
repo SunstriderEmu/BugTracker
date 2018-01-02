@@ -210,7 +210,7 @@ public:
                 pInst->SetData(DATA_CTHUN_PHASE, 0);
         }
     
-        void EnterCombat(Unit *who) override
+        void JustEngagedWith(Unit *who) override
         {
             DoZoneInCombat();
         }
@@ -543,7 +543,7 @@ public:
                 pInst->SetData(DATA_CTHUN_PHASE, 0);
         }
     
-        void EnterCombat(Unit *who) override
+        void JustEngagedWith(Unit *who) override
         {
             DoZoneInCombat();
         }
@@ -1045,7 +1045,7 @@ public:
             KillSelfTimer = 35000;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             DoZoneInCombat();
         }
@@ -1123,7 +1123,7 @@ public:
             EvadeTimer = 5000;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             DoZoneInCombat();
         }
@@ -1237,7 +1237,7 @@ public:
             EvadeTimer = 5000;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             DoZoneInCombat();
         }
@@ -1353,7 +1353,7 @@ public:
             BeamTimer = 500;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             DoZoneInCombat();
         }

@@ -126,7 +126,7 @@ public:
             EnterPhase(PHASE_LYNX);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             if(pInstance)
                 pInstance->SetData(DATA_HALAZZIEVENT, IN_PROGRESS);
@@ -399,7 +399,7 @@ public:
                 ScriptedAI::AttackStart(who);
         }
     
-        void EnterCombat(Unit *who) override {/*DoZoneInCombat();*/}
+        void JustEngagedWith(Unit *who) override {/*DoZoneInCombat();*/}
     
         void UpdateAI(const uint32 diff)
         override {
@@ -451,7 +451,7 @@ public:
             globalCD = 100;     // Begin after 100 ms and then every 1000 ms
         }
         
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
         
         void UpdateAI(const uint32 diff)
         override {

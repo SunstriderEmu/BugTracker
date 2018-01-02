@@ -75,7 +75,7 @@ public:
             ManaShield4_Timer = 70000;
         }
     
-        void EnterCombat(Unit *who) override
+        void JustEngagedWith(Unit *who) override
         {
             me->Yell(SAY_AGGRO,LANG_UNIVERSAL,nullptr);
             DoPlaySoundToSet(me,SOUND_AGGRO);

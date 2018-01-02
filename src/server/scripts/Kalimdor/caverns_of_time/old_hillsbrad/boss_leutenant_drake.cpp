@@ -142,7 +142,7 @@ public:
             ExplodingShout_Timer = 25000;
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             DoScriptText(SAY_AGGRO, me);
         }

@@ -93,9 +93,9 @@ class boss_curator : public CreatureScript
             DoScriptText(SAY_DEATH, me);
         }
         
-        void EnterCombat(Unit* /*victim*/)
+        void JustEngagedWith(Unit* /*victim*/)
         override {
-            _EnterCombat();
+            _JustEngagedWith();
             DoScriptText(SAY_AGGRO, me);
             DoZoneInCombat();
         }

@@ -50,7 +50,7 @@ public:
                 });
             }
 
-            void EnterCombat(Unit* victim)
+            void JustEngagedWith(Unit* victim)
             override {
                 me->Yell("Enter Combat", LANG_UNIVERSAL);
             }

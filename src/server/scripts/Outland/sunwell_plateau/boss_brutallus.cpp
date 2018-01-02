@@ -127,7 +127,7 @@ public:
             me->SetFullTauntImmunity(false);
         }
     
-        void EnterCombat(Unit *who) override
+        void JustEngagedWith(Unit *who) override
         {
             if (Intro || IsIntro)
                 return;

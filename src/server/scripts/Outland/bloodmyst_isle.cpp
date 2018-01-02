@@ -227,7 +227,7 @@ public:
             }
         }
         
-        void EnterCombat(Unit* who) override
+        void JustEngagedWith(Unit* who) override
         {
             me->SetDisableGravity(false);
             me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);

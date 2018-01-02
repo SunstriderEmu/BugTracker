@@ -257,7 +257,7 @@ class Boss_Majordomo : public CreatureScript
                 }
             }
 
-            void EnterCombat(Unit* /*victim*/)
+            void JustEngagedWith(Unit* /*victim*/)
             override {
                 if (_instance)
                     _instance->SetData(DATA_MAJORDOMO, IN_PROGRESS);

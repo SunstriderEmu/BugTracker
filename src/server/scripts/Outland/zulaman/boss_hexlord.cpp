@@ -185,7 +185,7 @@ struct boss_hexlord_addAI : public ScriptedAI
 
     void Reset() override {}
 
-    void EnterCombat(Unit* who) override {DoZoneInCombat();}
+    void JustEngagedWith(Unit* who) override {DoZoneInCombat();}
 
     void UpdateAI(const uint32 diff)
     override {
@@ -290,7 +290,7 @@ public:
             
         }
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {
             if(pInstance)
                 pInstance->SetData(DATA_HEXLORDEVENT, IN_PROGRESS);

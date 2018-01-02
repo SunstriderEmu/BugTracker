@@ -70,7 +70,7 @@ public:
                 me->SetDisplayId(15737);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
         }
     

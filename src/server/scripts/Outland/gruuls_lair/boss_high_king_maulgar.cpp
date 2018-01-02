@@ -193,10 +193,10 @@ public:
             }
         }
     
-        void EnterCombat(Unit *who) override 
+        void JustEngagedWith(Unit *who) override 
         {
             StartEvent(who);
-            _EnterCombat();
+            _JustEngagedWith();
         }
     
         void GetCouncil()
@@ -338,7 +338,7 @@ public:
                 pInstance->SetBossState(DATA_MAULGAR, NOT_STARTED);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             if(pInstance)
             {
@@ -455,7 +455,7 @@ public:
                 pInstance->SetBossState(DATA_MAULGAR, NOT_STARTED);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             if(pInstance)
             {
@@ -574,7 +574,7 @@ public:
                 pInstance->SetBossState(DATA_MAULGAR, NOT_STARTED);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             if(pInstance)
             {
@@ -678,7 +678,7 @@ public:
                 pInstance->SetBossState(DATA_MAULGAR, NOT_STARTED);
         }
     
-        void EnterCombat(Unit *who)
+        void JustEngagedWith(Unit *who)
         override {
             if(pInstance)
             {

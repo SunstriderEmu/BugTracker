@@ -95,7 +95,7 @@ public:
             DoScriptText(SAY_SUMMON, me);
         }
     
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
     
         void UpdateAI(const uint32 diff)
         override {
@@ -422,7 +422,7 @@ public:
                 me->SetFaction(1604);
         }
     
-        void EnterCombat(Unit* pWho)
+        void JustEngagedWith(Unit* pWho)
         override {
             if (HasEscortState(STATE_ESCORT_ESCORTING))
                 DoScriptText(SAY_ELF_AGGRO, me);
@@ -505,7 +505,7 @@ public:
             checkTimer = 5000; //check for creature every 5 sec
         }
         
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
         
         void UpdateAI(const uint32 diff)
         override {
@@ -564,7 +564,7 @@ public:
             berserker = nullptr;
         }
         
-        void EnterCombat(Unit* pWho) override {}
+        void JustEngagedWith(Unit* pWho) override {}
         
         void UpdateAI(const uint32 diff)
         override {
@@ -715,7 +715,7 @@ public:
             SummonTrigger = false;
         }
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void DoSpawnGoliathon()
         {
@@ -1066,7 +1066,7 @@ public:
             uiCheckTimer = 5000;
         }
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void UpdateAI(const uint32 uiDiff)
         override {
@@ -1129,7 +1129,7 @@ public:
             DoSpawn();
         }
     
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void DoSpawn()
         {
@@ -1196,7 +1196,7 @@ public:
             uiSteps = 0;
         }
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
     
         void DoSpawnEscort()
         {
@@ -1733,7 +1733,7 @@ public:
             uiChTimer = 4000;
         }
         
-        void EnterCombat(Unit* who) override {}
+        void JustEngagedWith(Unit* who) override {}
         
         void JustDied(Unit* pWho)
         override {

@@ -100,7 +100,7 @@ public:
           DEMORALIZINGSHOUT_Timer = 5000;
         }
     
-        void EnterCombat(Unit* who)
+        void JustEngagedWith(Unit* who)
         override {}
     
         void JustSummoned(Creature* summoned)
@@ -213,7 +213,7 @@ public:
             SpraggleGUID = 0;
         }
         
-        void EnterCombat(Unit *pWho) override {}
+        void JustEngagedWith(Unit *pWho) override {}
     
         void MoveInLineOfSight(Unit *pWho)
         override {
