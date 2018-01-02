@@ -826,7 +826,7 @@ public:
         void MoveInLineOfSight(Unit* pWho)
         override {
             if (me->GetDistance(pWho) <= 10.0f && pWho->GetTypeId() == TYPEID_PLAYER) {
-                if (uint64 critter_guid = pWho->ToPlayer()->GetCritterGUID())
+                if (ObjectGuid critter_guid = pWho->ToPlayer()->GetCritterGUID())
                     if (Creature* pet = pWho->GetMap()->GetCreature(critter_guid)) {
                         if (pWho->ToPlayer()->GetQuestStatus(10950) == QUEST_STATUS_INCOMPLETE && pet->GetEntry() == 22818)
                             pWho->ToPlayer()->AreaExploredOrEventHappens(10950);
@@ -1020,9 +1020,9 @@ public:
         uint32 timer;
         uint32 step;
         
-        uint64 playerGUID;
+        ObjectGuid playerGUID;
         
-        std::vector<uint64> researchers;
+        std::vector<ObjectGuid> researchers;
         
         void Reset() override {}
         
@@ -1105,7 +1105,7 @@ public:
             }
         }
         
-        void StartEvent(uint64 pGUID)
+        void StartEvent(ObjectGuid pGUID)
         {
             playerGUID = pGUID;
             step = 0;

@@ -100,7 +100,7 @@ public:
         {
             if (pInst && player)
             {
-                Unit *kael = ObjectAccessor::GetUnit((*me), pInst->GetData64(DATA_KAEL));
+                Unit *kael = ObjectAccessor::GetUnit((*me), ObjectGuid(pInst->GetData64(DATA_KAEL)));
                 if (kael && kael->IsDead())
                     player->TeleportTo(530, 12888, -6876, 9, 0.3);
             }
@@ -463,10 +463,12 @@ public:
                                     FirstGravityLapse = false;
                                     if(pInstance)
                                     {
-                                        GameObject* KaelLeft = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_KAEL_STATUE_LEFT));
-                                        if(KaelLeft) KaelLeft->UseDoorOrButton();
-                                        GameObject* KaelRight = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_KAEL_STATUE_RIGHT));
-                                        if (KaelRight) KaelRight->UseDoorOrButton();
+                                        GameObject* KaelLeft = GameObject::GetGameObject(*me, ObjectGuid(pInstance->GetData64(DATA_KAEL_STATUE_LEFT)));
+                                        if(KaelLeft) 
+                                            KaelLeft->UseDoorOrButton();
+                                        GameObject* KaelRight = GameObject::GetGameObject(*me, ObjectGuid(pInstance->GetData64(DATA_KAEL_STATUE_RIGHT)));
+                                        if (KaelRight)
+                                            KaelRight->UseDoorOrButton();
                                     }
                                 }else
                                 {
@@ -613,7 +615,7 @@ public:
             {
                 if (pInstance)
                 {
-                    Creature *boss = ObjectAccessor::GetCreature((*me),pInstance->GetData64(DATA_KAEL));
+                    Creature *boss = ObjectAccessor::GetCreature((*me), ObjectGuid(pInstance->GetData64(DATA_KAEL)));
                     if(boss)
                     {
                         if(!((boss_felblood_kaelthas::boss_felblood_kaelthasAI*)boss->AI())->Phase || boss->IsDead())
@@ -677,7 +679,7 @@ public:
             {
                 if (pInstance)
                 {
-                    Creature *boss = (ObjectAccessor::GetCreature((*me),pInstance->GetData64(DATA_KAEL)));
+                    Creature *boss = (ObjectAccessor::GetCreature((*me), ObjectGuid(pInstance->GetData64(DATA_KAEL))));
                     if (boss)
                     {
                         phase = ((boss_felblood_kaelthas::boss_felblood_kaelthasAI*)boss->AI())->Phase;
@@ -749,7 +751,7 @@ public:
                 Creature *bird = DoSpawnCreature(CREATURE_PHOENIX, 0, 0, 0, 0, TEMPSUMMON_CORPSE_DESPAWN, 60000);
                 if (bird)
                 {
-                    Unit *boss = ObjectAccessor::GetUnit((*me),pInstance->GetData64(DATA_KAEL));
+                    Unit *boss = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_KAEL)));
                     if (boss && boss->GetVictim())
                     {
                         bird->GetThreatManager().AddThreat(boss->GetVictim(),100);

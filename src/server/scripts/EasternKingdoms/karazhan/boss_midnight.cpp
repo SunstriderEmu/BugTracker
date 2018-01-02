@@ -39,7 +39,7 @@ public:
         {
         }
     
-        uint64 Attumen;
+        ObjectGuid Attumen;
         uint8 Phase;
         uint32 Mount_Timer;
         uint32 KnockDownTimer;
@@ -54,7 +54,7 @@ public:
         {
             _Reset();
             Phase = 1;
-            Attumen = 0;
+            Attumen = ObjectGuid::Empty;
             Mount_Timer = 0;
             KnockDownTimer = urand(20000, 25000);
     
@@ -195,7 +195,7 @@ public:
         }
     
         bool mounted;
-        uint64 _midnightGUID;
+        ObjectGuid _midnightGUID;
         uint8 Phase;
         uint32 CleaveTimer;
         uint32 CurseTimer;
@@ -242,7 +242,7 @@ public:
                 pMidnight->DealDamage(pMidnight, pMidnight->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
         }
 
-        void SetGUID(uint64 guid, int32 data) override
+        void SetGUID(ObjectGuid guid, int32 data) override
         {
             if (data == NPC_MIDNIGHT)
                 _midnightGUID = guid;

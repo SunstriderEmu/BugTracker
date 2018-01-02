@@ -91,7 +91,7 @@ public:
     
         }
     
-        void ActivateMinion (uint64 guid, bool flag)
+        void ActivateMinion (ObjectGuid guid, bool flag)
         {
             Unit *minion = ObjectAccessor::GetUnit(*me, guid);
     
@@ -137,7 +137,7 @@ public:
                 return;        // dont do anything until we are done
             } else if (wakingUp && Awaken_Timer <= 0) {
                 wakingUp = false;
-                AttackStart(ObjectAccessor::GetUnit(*me, pInstance->GetData64(0)));
+                AttackStart(ObjectAccessor::GetUnit(*me, ObjectGuid(pInstance->GetData64(0))));
                 return;     // dont want to continue until we finish the AttackStart method
             }
     
@@ -155,12 +155,12 @@ public:
     
             //If we are <66 summon the guardians
             if ( !guardiansAwake && me->GetHealthPct() <= 66) {
-                ActivateMinion(pInstance->GetData64(5),true);   // EarthenGuardian1
-                ActivateMinion(pInstance->GetData64(6),true);   // EarthenGuardian2
-                ActivateMinion(pInstance->GetData64(7),true);   // EarthenGuardian3
-                ActivateMinion(pInstance->GetData64(8),true);   // EarthenGuardian4
-                ActivateMinion(pInstance->GetData64(9),true);   // EarthenGuardian5
-                ActivateMinion(pInstance->GetData64(10),false); // EarthenGuardian6
+                ActivateMinion(ObjectGuid(pInstance->GetData64(5)),true);   // EarthenGuardian1
+                ActivateMinion(ObjectGuid(pInstance->GetData64(6)),true);   // EarthenGuardian2
+                ActivateMinion(ObjectGuid(pInstance->GetData64(7)),true);   // EarthenGuardian3
+                ActivateMinion(ObjectGuid(pInstance->GetData64(8)),true);   // EarthenGuardian4
+                ActivateMinion(ObjectGuid(pInstance->GetData64(9)),true);   // EarthenGuardian5
+                ActivateMinion(ObjectGuid(pInstance->GetData64(10)),false); // EarthenGuardian6
                 me->Yell(SAY_SUMMON,LANG_UNIVERSAL, nullptr);
                 DoPlaySoundToSet(me, SOUND_SUMMON);
                 guardiansAwake = true;
@@ -168,10 +168,10 @@ public:
     
             //If we are <33 summon the vault walkers
             if ( !vaultWalkersAwake && me->GetHealthPct() <= 33) {
-                ActivateMinion(pInstance->GetData64(1),true);    // VaultWalker1
-                ActivateMinion(pInstance->GetData64(2),true);    // VaultWalker2
-                ActivateMinion(pInstance->GetData64(3),true);    // VaultWalker3
-                ActivateMinion(pInstance->GetData64(4),false);    // VaultWalker4
+                ActivateMinion(ObjectGuid(pInstance->GetData64(1)),true);    // VaultWalker1
+                ActivateMinion(ObjectGuid(pInstance->GetData64(2)),true);    // VaultWalker2
+                ActivateMinion(ObjectGuid(pInstance->GetData64(3)),true);    // VaultWalker3
+                ActivateMinion(ObjectGuid(pInstance->GetData64(4)),false);    // VaultWalker4
                 me->Yell(SAY_SUMMON2, LANG_UNIVERSAL, nullptr);
                 DoPlaySoundToSet(me, SOUND_SUMMON2);
                 vaultWalkersAwake = true;
@@ -288,7 +288,7 @@ public:
             } else if (wakingUp && Awaken_Timer <= 0) {
                 wakingUp = false;
                 amIAwake = true;
-                AttackStart(ObjectAccessor::GetUnit(*me, pInstance->GetData64(0))); // whoWokeArchaedasGUID
+                AttackStart(ObjectAccessor::GetUnit(*me, ObjectGuid(pInstance->GetData64(0)))); // whoWokeArchaedasGUID
                 return;     // dont want to continue until we finish the AttackStart method
             }
     
@@ -322,9 +322,6 @@ EndScriptData */
 
 #define SPELL_BOSS_OBJECT_VISUAL    11206
 
-uint64 altarOfArchaedasCount[5];
-int32 altarOfArchaedasCounter=0;
-
 class AltarOfArcheadas : public GameObjectScript
 {
 public:
@@ -333,7 +330,12 @@ public:
 
     struct AltarOfArcheadasAI : public GameObjectAI
     {
-        AltarOfArcheadasAI(GameObject* obj) : GameObjectAI(obj) { }
+        AltarOfArcheadasAI(GameObject* obj) : GameObjectAI(obj) 
+        {
+        }
+
+        int32 altarOfArchaedasCounter = 0;
+        ObjectGuid altarOfArchaedasCount[5];
 
         bool GossipHello(Player* player) override
         {
@@ -341,8 +343,10 @@ public:
             me->AddUse();
 
             alreadyUsed = false;
-            for (uint64 loop : altarOfArchaedasCount) {
-                if (loop == player->GetGUID()) alreadyUsed = true;
+            for (ObjectGuid loop : altarOfArchaedasCount) 
+            {
+                if (loop == player->GetGUID()) 
+                    alreadyUsed = true;
             }
             if (!alreadyUsed)
                 altarOfArchaedasCount[altarOfArchaedasCounter++] = player->GetGUID();
@@ -464,9 +468,6 @@ EndScriptData */
 
 #define NUMBER_NEEDED_TO_ACTIVATE 3
 
-static uint64 altarOfTheKeeperCount[5];
-static uint32 altarOfTheKeeperCounter=0;
-
 class AltarOfTheKeepers : public GameObjectScript
 {
 public:
@@ -475,6 +476,9 @@ public:
 
     struct AltarOfTheKeepersAI : public GameObjectAI
     {
+        ObjectGuid altarOfTheKeeperCount[5];
+        uint32 altarOfTheKeeperCounter = 0;
+
         AltarOfTheKeepersAI(GameObject* obj) : GameObjectAI(obj), pInstance(obj->GetInstanceScript()) { }
 
         InstanceScript* pInstance;
@@ -507,7 +511,7 @@ public:
             // Check to make sure at least three people are still casting
             uint32 count = 0;
             Unit *pTarget;
-            for (uint64 x : altarOfTheKeeperCount)
+            for (ObjectGuid x : altarOfTheKeeperCount)
             {
                 pTarget = ObjectAccessor::GetUnit(*player, x);
                 //error_log ("number of people currently activating it: %d", x+1);

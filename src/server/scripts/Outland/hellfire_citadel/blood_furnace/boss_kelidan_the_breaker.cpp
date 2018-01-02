@@ -66,7 +66,6 @@ public:
         boss_kelidan_the_breakerAI(Creature* creature) : BossAI(creature, DATA_KELIDAN_THE_BREAKER)
         {
             HeroicMode = me->GetMap()->IsHeroic();
-            for(uint64 & Channeler : Channelers) Channeler = 0;
         }
     
         bool HeroicMode;
@@ -78,7 +77,7 @@ public:
         uint32 check_Timer;
         bool Firenova;
         bool addYell;
-        uint64 Channelers[5];
+        ObjectGuid Channelers[5];
     
         void Reset() override 
         {
@@ -131,7 +130,7 @@ public:
                     default: DoScriptText(SAY_ADD_AGGRO_3, me); break;
                 }*/
             }
-            for(uint64 Channeler : Channelers)
+            for(ObjectGuid Channeler : Channelers)
             {
                 Creature *channeler = ObjectAccessor::GetCreature(*me, Channeler);
                 if(who && channeler && !channeler->IsInCombat())
@@ -141,7 +140,7 @@ public:
     
         void ChannelerDied(Unit* killer)
         {
-            for(uint64 Channeler : Channelers)
+            for(ObjectGuid& Channeler : Channelers)
             {
                 Creature *channeler = ObjectAccessor::GetCreature(*me, Channeler);
                 if(channeler && channeler->IsAlive())
@@ -157,11 +156,11 @@ public:
             }
         }
     
-        uint64 GetChanneled(Creature *channeler1)
+        ObjectGuid GetChanneled(Creature *channeler1)
         {
             SummonChannelers();
-            if(!channeler1) 
-                return 0;
+            if (!channeler1)
+                return ObjectGuid::Empty;
     
             int i;
             for(i=0; i<5; ++i)
@@ -183,10 +182,10 @@ public:
                 Creature *channeler = ObjectAccessor::GetCreature(*me, Channelers[i]);
                 if(!channeler || channeler->IsDead())
                     channeler = me->SummonCreature(ENTRY_CHANNELER,ShadowmoonChannelers[i][0],ShadowmoonChannelers[i][1],ShadowmoonChannelers[i][2],ShadowmoonChannelers[i][3],TEMPSUMMON_CORPSE_TIMED_DESPAWN,300000);
-                if(channeler)
+                if (channeler)
                     Channelers[i] = channeler->GetGUID();
                 else
-                    Channelers[i] = 0;
+                    Channelers[i].Clear();
             }
         }
     
@@ -357,7 +356,7 @@ public:
                     if (!me->IsNonMeleeSpellCast(false))
                         if(Creature *Kelidan = me->FindNearestCreature(ENTRY_KELIDAN, 100))
                         {
-                            uint64 channeler = ((boss_kelidan_the_breaker::boss_kelidan_the_breakerAI*)Kelidan->AI())->GetChanneled(me);
+                            ObjectGuid channeler = ((boss_kelidan_the_breaker::boss_kelidan_the_breakerAI*)Kelidan->AI())->GetChanneled(me);
                             if(Unit *channeled = ObjectAccessor::GetUnit(*me, channeler))
                                 DoCast(channeled,SPELL_CHANNELING);
                         }

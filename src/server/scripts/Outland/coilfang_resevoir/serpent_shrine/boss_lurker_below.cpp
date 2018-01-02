@@ -323,7 +323,7 @@ class Boss_Lurker_Below : public CreatureScript
 
                             if(me->GetVictim())
                             {
-                                me->SetUInt64Value(UNIT_FIELD_TARGET, me->GetVictim()->GetGUID());
+                                me->SetGuidValue(UNIT_FIELD_TARGET, me->GetVictim()->GetGUID());
                                 me->SetInFront(me->GetVictim());
                                 me->StopMoving();
                             }
@@ -352,7 +352,7 @@ class Boss_Lurker_Below : public CreatureScript
                         else
                             rotateStateTimer -= diff;
 
-                        me->SetUInt64Value(UNIT_FIELD_TARGET, 0);
+                        me->SetTarget(ObjectGuid::Empty);
 
                         if (rotateState == 1)
                         {

@@ -42,7 +42,7 @@ public:
         bool DemonicShieldCasted;
         uint32 Shadowbolt_Timer;
         uint32 Summon_Timer;
-        uint64 orbitarStrikeTargetGUID;
+        ObjectGuid orbitarStrikeTargetGUID;
         bool CanPullBack;
     
         void Reset() override 
@@ -56,7 +56,7 @@ public:
             DemonicShieldCasted = false;
             Shadowbolt_Timer = 500;
             Summon_Timer = 25000;
-            orbitarStrikeTargetGUID = 0;
+            orbitarStrikeTargetGUID.Clear();
             CanPullBack = false;
         }
     
@@ -122,7 +122,7 @@ public:
                         if (temp->HasUnitMovementFlag(MOVEMENTFLAG_JUMPING_OR_FALLING))
                             DoCast(temp,SPELL_SHADOW_WHIP, true);
                     }
-                    orbitarStrikeTargetGUID = 0;
+                    orbitarStrikeTargetGUID.Clear();
                     ShadowWhip_Timer = 2000;
                     CanPullBack = false;
                 } else ShadowWhip_Timer -= diff;

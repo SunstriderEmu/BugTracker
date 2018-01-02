@@ -42,13 +42,13 @@ float playerTeleportPosition[4] = { -11107.241211f, -1842.897461f, 229.625198f, 
 
 typedef struct boardCell
 {
-    uint64 triggerGUID;
-    uint64 pieceGUID;
+    ObjectGuid triggerGUID;
+    ObjectGuid pieceGUID;
     uint32 pieceEntry;
     uint8 row;
     uint8 col;
     
-    void setData(uint64 _triggerGUID, uint8 _row, uint8 _col)
+    void setData(ObjectGuid _triggerGUID, uint8 _row, uint8 _col)
     {
         triggerGUID = _triggerGUID;
         row = _row;
@@ -57,7 +57,7 @@ typedef struct boardCell
     
     void reset()
     {
-        pieceGUID = 0;
+        pieceGUID = ObjectGuid::Empty;
         pieceEntry = 0;
     }
     
@@ -186,7 +186,7 @@ public:
             // Buffs
             for (auto & row : board) {
                 for (uint8 col = 0; col < 8; col++) {
-                    if (uint64 guid = row[col]->pieceGUID) {
+                    if (ObjectGuid guid = row[col]->pieceGUID) {
                         if (Creature* piece = ObjectAccessor::GetCreature(*me, guid))
                             piece->RemoveAurasDueToSpell(39339);
                     }
@@ -563,7 +563,7 @@ public:
             return 0;
         }
         
-        bool HandlePieceMove(Creature* piece, uint64 trigger)
+        bool HandlePieceMove(Creature* piece, ObjectGuid trigger)
         {
             bool res = false;
             bool foundOld = false;

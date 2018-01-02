@@ -187,7 +187,7 @@ public:
                     uint32 pct = pInstance->GetData(DATA_SHIELD);
                     
                     //check if DATA_SHIELD needs to be updated
-                    Unit *temp = ObjectAccessor::GetUnit(*me,pInstance->GetData64(DATA_MEDIVH));
+                    Unit *temp = ObjectAccessor::GetUnit(*me, ObjectGuid(pInstance->GetData64(DATA_MEDIVH)));
                     if (temp)
                     {
                         uint32 currentHealth = temp->GetHealth();
@@ -331,7 +331,7 @@ public:
     
             if (Summon)
             {
-                if (Unit *temp = ObjectAccessor::GetUnit(*me,pInstance->GetData64(DATA_MEDIVH)))
+                if (Unit *temp = ObjectAccessor::GetUnit(*me, ObjectGuid(pInstance->GetData64(DATA_MEDIVH))))
                 {
                     Summon->GetThreatManager().AddThreat(temp,0.0f);
                     (Summon->ToCreature())->AI()->AttackStart(temp); //force them to attack Medivh

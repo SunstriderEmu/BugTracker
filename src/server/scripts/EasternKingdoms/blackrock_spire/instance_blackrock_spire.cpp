@@ -33,9 +33,9 @@ public:
 
         uint32 Encounters[MAX_ENCOUNTER];
 
-        uint64 firstDoorGUID;
+        ObjectGuid firstDoorGUID;
 
-        uint64 runesGUID[7];
+        ObjectGuid runesGUID[7];
 
         bool isEventActive()
         {

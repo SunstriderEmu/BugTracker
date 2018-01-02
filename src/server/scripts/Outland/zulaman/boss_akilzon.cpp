@@ -58,8 +58,6 @@ EndScriptData */
 #define SE_LOC_Y_MAX 1435
 #define SE_LOC_Y_MIN 1370
 
-
-
 //Soaring Eagle
 class mob_akilzon_eagle : public CreatureScript
 {
@@ -74,13 +72,13 @@ public:
     
         uint32 EagleSwoop_Timer;
         bool arrived;
-        uint32 TargetGUID;
+        ObjectGuid TargetGUID;
     
         void Reset()
         override {
             EagleSwoop_Timer = 5000 + rand()%5000;
             arrived = true;
-            TargetGUID = 0;
+            TargetGUID = ObjectGuid::Empty;
             me->SetUnitMovementFlags(MOVEMENTFLAG_DISABLE_GRAVITY);
         }
     
@@ -107,7 +105,7 @@ public:
             {
                 if(Unit* target = ObjectAccessor::GetUnit(*me, TargetGUID))
                     me->CastSpell(target, SPELL_EAGLE_SWOOP, TRIGGERED_FULL_MASK);
-                TargetGUID = 0;
+                TargetGUID = ObjectGuid::Empty;
                 me->SetSpeedRate(MOVE_RUN, 1.2f);
                 EagleSwoop_Timer = 5000 + rand()%5000;
             }
@@ -173,10 +171,10 @@ public:
         }
         InstanceScript *pInstance;
     
-        uint64 BirdGUIDs[8];
-        uint64 TargetGUID;
-        uint64 CycloneGUID;
-        uint64 CloudGUID;
+        ObjectGuid BirdGUIDs[8];
+        ObjectGuid TargetGUID;
+        ObjectGuid CycloneGUID;
+        ObjectGuid CloudGUID;
     
         uint32 StaticDisruption_Timer;
         uint32 GustOfWind_Timer;
@@ -202,12 +200,12 @@ public:
             Enrage_Timer = 10*60*IN_MILLISECONDS; //10 minutes till enrage(bosskillers)
             SummonEagles_Timer = 99999;
     
-            TargetGUID = 0;
-            CloudGUID = 0;
-            CycloneGUID = 0;
+            TargetGUID = ObjectGuid::Empty;
+            CloudGUID = ObjectGuid::Empty;
+            CycloneGUID = ObjectGuid::Empty;
             DespawnSummons();
-            for(uint64 & BirdGUID : BirdGUIDs)
-                BirdGUID = 0;
+            for(ObjectGuid & BirdGUID : BirdGUIDs)
+                BirdGUID = ObjectGuid::Empty;
     
             StormCount = 0;
             StormSequenceTimer = 0;
@@ -254,9 +252,9 @@ public:
     
         void DespawnSummons()
         {
-            for (uint64 BirdGUID : BirdGUIDs)
+            for (ObjectGuid BirdGUID : BirdGUIDs)
             {
-                Unit* bird = ObjectAccessor::GetUnit(*me,BirdGUID);
+                Unit* bird = ObjectAccessor::GetUnit(*me, BirdGUID);
                 if(bird && bird->IsAlive())
                 {
                     bird->SetVisible(false);
@@ -348,7 +346,7 @@ public:
                 StormCount = 0; // finish
                 SummonEagles_Timer = 5000;
                 me->InterruptNonMeleeSpells(false);
-                CloudGUID = 0;
+                CloudGUID = ObjectGuid::Empty;
                 if (Cloud)
                     Cloud->DealDamage(Cloud, Cloud->GetHealth(),nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
                 SetWeather(WEATHER_STATE_FINE, 0.0f);
@@ -466,7 +464,7 @@ public:
                 float x, y, z;
                 me->GetPosition(x, y, z);
     
-                for (uint64 & BirdGUID : BirdGUIDs)
+                for (ObjectGuid & BirdGUID : BirdGUIDs)
                 {
                     Unit* bird = ObjectAccessor::GetUnit(*me,BirdGUID);
                     if(!bird)//they despawned on die

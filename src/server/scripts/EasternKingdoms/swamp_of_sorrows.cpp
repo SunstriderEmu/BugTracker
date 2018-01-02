@@ -50,11 +50,10 @@ public:
         public:
         npc_galen_goodwardAI(Creature* pCreature) : EscortAI(pCreature)
         {
-            m_uiGalensCageGUID = 0;
             Reset();
         }
     
-        uint64 m_uiGalensCageGUID;
+        ObjectGuid m_uiGalensCageGUID;
         uint32 m_uiPeriodicSay;
     
         void Reset()

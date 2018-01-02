@@ -40,7 +40,7 @@ public:
 
         //Lord Alexei Barov, Doctor Theolen Krastinov, The Ravenian, Lorekeeper Polkelt, Instructor Malicia and the Lady Illucia Barov.
         bool IsBossDied[6];
-        uint64 KirtonosDoorGUID;
+        ObjectGuid KirtonosDoorGUID;
 
         void Initialize()
             override {
@@ -50,8 +50,6 @@ public:
             IsBossDied[3] = false;
             IsBossDied[4] = false;
             IsBossDied[5] = false;
-
-            KirtonosDoorGUID = 0;
         }
 
         void OnGameObjectCreate(GameObject* pGo)

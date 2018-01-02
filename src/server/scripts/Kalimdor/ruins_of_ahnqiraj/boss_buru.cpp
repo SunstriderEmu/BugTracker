@@ -183,7 +183,7 @@ public:
 
         void JustEngagedWith(Unit* who)
         override {
-            if (Creature* buru = pInstance->instance->GetCreature(pInstance->GetData64(DATA_BURU)))
+            if (Creature* buru = pInstance->instance->GetCreature(ObjectGuid(pInstance->GetData64(DATA_BURU))))
                 if (!buru->IsInCombat())
                     buru->AI()->AttackStart(who);
         }
@@ -192,7 +192,7 @@ public:
         override {
             me->CastSpell((Unit*)nullptr, SPELL_EGG_EXPLOSION, TRIGGERED_NONE);
             me->CastSpell(me, SPELL_SUMMON_HIVE_HATCHALING, TRIGGERED_NONE);
-            if (Creature* buru = pInstance->instance->GetCreature(pInstance->GetData64(DATA_BURU)))
+            if (Creature* buru = pInstance->instance->GetCreature(ObjectGuid(pInstance->GetData64(DATA_BURU))))
                 buru->AI()->AttackStart(SelectTarget(SELECT_TARGET_RANDOM, 1, 100.0f, false));
         }
     };

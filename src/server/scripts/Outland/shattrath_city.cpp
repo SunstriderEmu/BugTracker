@@ -487,7 +487,7 @@ public:
         bool Attack;
         bool Done;
     
-        uint64 PlayerGUID;
+        ObjectGuid PlayerGUID;
     
         uint32 SayTimer;
         uint32 Step;
@@ -498,7 +498,7 @@ public:
             Attack = false;
             Done = false;
     
-            PlayerGUID = 0;
+            PlayerGUID = ObjectGuid::Empty;
             SayTimer = 0;
             Step = 0;
     

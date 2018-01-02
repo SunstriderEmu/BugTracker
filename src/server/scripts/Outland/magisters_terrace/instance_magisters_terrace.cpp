@@ -53,17 +53,17 @@ public:
         uint32 Encounters[NUMBER_OF_ENCOUNTERS];
         uint32 DelrissaDeathCount;
 
-        std::list<uint64> FelCrystals;
-        std::list<uint64>::iterator CrystalItr;
+        std::list<ObjectGuid> FelCrystals;
+        std::list<ObjectGuid>::iterator CrystalItr;
 
-        uint64 KaelGUID;
-        uint64 SelinGUID;
-        uint64 DelrissaGUID;
-        uint64 VexallusDoorGUID;
-        uint64 SelinDoorGUID;
-        uint64 SelinEncounterDoorGUID;
-        uint64 DelrissaDoorGUID;
-        uint64 KaelStatue[2];
+        ObjectGuid KaelGUID;
+        ObjectGuid SelinGUID;
+        ObjectGuid DelrissaGUID;
+        ObjectGuid VexallusDoorGUID;
+        ObjectGuid SelinDoorGUID;
+        ObjectGuid SelinEncounterDoorGUID;
+        ObjectGuid DelrissaDoorGUID;
+        ObjectGuid KaelStatue[2];
 
         bool InitializedItr;
 
@@ -80,16 +80,6 @@ public:
             hasDelrissaSummoned = false;
 
             DelrissaDeathCount = 0;
-
-            KaelGUID = 0;
-            SelinGUID = 0;
-            DelrissaGUID = 0;
-            VexallusDoorGUID = 0;
-            SelinDoorGUID = 0;
-            SelinEncounterDoorGUID = 0;
-            DelrissaDoorGUID = 0;
-            KaelStatue[0] = 0;
-            KaelStatue[1] = 0;
 
             InitializedItr = false;
         }
@@ -253,7 +243,7 @@ public:
 
                 const_cast<instance_magisters_terrace_script*>(this)->InitCristalItr();
 
-                uint64 guid = 0;
+                ObjectGuid guid;
                 if (CrystalItr != FelCrystals.end())
                 {
                     guid = *CrystalItr;

@@ -89,7 +89,7 @@ public:
             pos = i;
             if (i == 7 && pInstance)
             {
-                Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
+                Unit* target = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_THRALL)));
                 if (target && target->IsAlive())
                     me->GetThreatManager().AddThreat(target,0.0);
             }
@@ -144,7 +144,7 @@ public:
                         ((EscortAI*)(me->AI()))->AddWaypoint(5, 5508.16,    -2659.2,    1480.15);
                         ((EscortAI*)(me->AI()))->AddWaypoint(6, 5489.62,    -2704.05,    1482.18);
                         ((EscortAI*)(me->AI()))->AddWaypoint(7, 5457.04,    -2726.26,    1485.10);
-                        ((EscortAI*)(me->AI()))->Start(false, true, true);
+                        ((EscortAI*)(me->AI()))->Start(true, true);
                         ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                     }
                 }
@@ -219,16 +219,14 @@ public:
         mob_lesser_doomguardAI(Creature *c) : hyjal_trashAI(c)
         {
             pInstance = ((InstanceScript*)c->GetInstanceScript());
-            if(pInstance)
-                AzgalorGUID = pInstance->GetData64(DATA_AZGALOR);
-            else
-                AzgalorGUID = 0;
+            if (pInstance)
+                AzgalorGUID = ObjectGuid(pInstance->GetData64(DATA_AZGALOR));
         }
     
         uint32 CrippleTimer;
         uint32 WarstompTimer;
         uint32 CheckTimer;
-        uint64 AzgalorGUID;
+        ObjectGuid AzgalorGUID;
         InstanceScript* pInstance;
     
         void WaypointReached(uint32, uint32) override {} //must be implemented because we inherit from EscortAI

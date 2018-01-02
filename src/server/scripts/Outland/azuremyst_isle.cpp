@@ -548,7 +548,7 @@ public:
     
         std::list<GameObject*> FlagList;
     
-        uint64 SparkGUID;
+        ObjectGuid SparkGUID;
     
         uint32 Step;
         uint32 SayTimer;
@@ -557,7 +557,7 @@ public:
     
         void Reset() override
         {
-            SparkGUID = 0;
+            SparkGUID = ObjectGuid::Empty;
             Step = 0;
             StartEvent();
         }
@@ -678,13 +678,13 @@ public:
         mob_nestlewood_owlkinAI(Creature *c) : ScriptedAI(c) {}
     
         uint32 ChannelTimer;
-        uint64 PlayerGUID;
+        ObjectGuid PlayerGUID;
         bool Channeled;
         bool Hitted;
     
         void Reset()
         override {
-            PlayerGUID = 0;
+            PlayerGUID = ObjectGuid::Empty;
             ChannelTimer = 0;
             Channeled = false;
             Hitted = false;
@@ -941,7 +941,7 @@ public:
         void MoveInLineOfSight(Unit* pWho)
         override {
             if (me->GetDistance(pWho) <= 15.0f && pWho->GetTypeId() == TYPEID_PLAYER) {
-                if (uint64 critter_guid = pWho->ToPlayer()->GetCritterGUID())
+                if (ObjectGuid critter_guid = pWho->ToPlayer()->GetCritterGUID())
                     if (Creature* pet = pWho->GetMap()->GetCreature(critter_guid)) {
                         if (pWho->ToPlayer()->GetQuestStatus(10956) == QUEST_STATUS_INCOMPLETE && pet->GetEntry() == 22818)
                             pWho->ToPlayer()->AreaExploredOrEventHappens(10956);

@@ -68,13 +68,12 @@ public:
     public:
         mob_inner_demonAI(Creature *c) : ScriptedAI(c)
         {
-            victimGUID = 0;
         }
 
         uint32 ShadowBolt_Timer;
 
         uint32 Link_Timer;
-        uint64 victimGUID;
+        ObjectGuid victimGUID;
 
         void Reset()
             override {
@@ -158,10 +157,6 @@ public:
         {
             me->GetPosition(x,y,z);
             pInstance = ((InstanceScript*)c->GetInstanceScript());
-            Demon = 0;
-    
-            for(uint64 & i : SpellBinderGUID)//clear guids
-                i = 0;
         }
     
         InstanceScript *pInstance;
@@ -181,13 +176,15 @@ public:
         bool EnrageUsed;
         float x,y,z;
     
-        uint64 InnderDemon[5];
+        ObjectGuid InnderDemon[5];
         uint32 InnderDemon_Count;
-        uint64 Demon;
-        uint64 SpellBinderGUID[3];
+        ObjectGuid Demon;
+        ObjectGuid SpellBinderGUID[3];
     
         void Reset()
         override {
+            for (ObjectGuid & i : SpellBinderGUID)//clear guids
+                i = ObjectGuid::Empty;
             CheckChannelers();
             BanishTimer = 1000;
             Whirlwind_Timer = 15000;
@@ -267,7 +264,7 @@ public:
         void CheckBanish()
         {
             uint8 AliveChannelers = 0;
-            for(uint64 i : SpellBinderGUID)
+            for(ObjectGuid i : SpellBinderGUID)
             {
                 Unit *add = ObjectAccessor::GetUnit(*me,i);
                 if (add && add->IsAlive())
@@ -292,7 +289,7 @@ public:
                 if(pInstance && pInstance->GetData64(DATA_LEOTHERAS_EVENT_STARTER))
                 {
                     Unit *victim = nullptr;
-                    victim = ObjectAccessor::GetUnit(*me, pInstance->GetData64(DATA_LEOTHERAS_EVENT_STARTER));
+                    victim = ObjectAccessor::GetUnit(*me, ObjectGuid(pInstance->GetData64(DATA_LEOTHERAS_EVENT_STARTER)));
                     if(victim)
                         me->GetThreatManager().addThreat(victim, 1);
                     StartEvent();
@@ -317,17 +314,17 @@ public:
         //Despawn all Inner Demon summoned
         void DespawnDemon()
         {
-            for(uint64 & i : InnderDemon)
+            for(ObjectGuid & i : InnderDemon)
             {
                 if(i)
                 {
-                        //delete creature
-                        Unit* pUnit = ObjectAccessor::GetUnit((*me), i);
-                        if (pUnit && pUnit->IsAlive())
-                        {
-                            pUnit->DealDamage(pUnit, pUnit->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-                        }
-                        i = 0;
+                    //delete creature
+                    Unit* pUnit = ObjectAccessor::GetUnit((*me), i);
+                    if (pUnit && pUnit->IsAlive())
+                    {
+                        pUnit->DealDamage(pUnit, pUnit->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                    }
+                    i = ObjectGuid::Empty;
                 }
             }
     
@@ -336,7 +333,7 @@ public:
     
         void CastConsumingMadness() //remove this once SPELL_INSIDIOUS_WHISPER is supported by core
         {
-            for(uint64 i : InnderDemon)
+            for(ObjectGuid i : InnderDemon)
             {
                 if(i > 0 )
                 {
@@ -685,14 +682,13 @@ public:
         public:
         mob_greyheart_spellbinderAI(Creature *c) : ScriptedAI(c)
         {
-            pInstance = ((InstanceScript *)c->GetInstanceScript());;
-            leotherasGUID = 0;
+            pInstance = ((InstanceScript *)c->GetInstanceScript());
             AddedBanish = false;
         }
     
         InstanceScript *pInstance;
     
-        uint64 leotherasGUID;
+        ObjectGuid leotherasGUID;
     
         uint32 Mindblast_Timer;
         uint32 Earthshock_Timer;
@@ -745,12 +741,12 @@ public:
             if(pInstance)
             {
                 if(!leotherasGUID)
-                    leotherasGUID = pInstance->GetData64(DATA_LEOTHERAS);
+                    leotherasGUID = ObjectGuid(pInstance->GetData64(DATA_LEOTHERAS));
     
                 if(!me->IsInCombat() && pInstance->GetData64(DATA_LEOTHERAS_EVENT_STARTER))
                 {
                     Unit *victim = nullptr;
-                    victim = ObjectAccessor::GetUnit(*me, pInstance->GetData64(DATA_LEOTHERAS_EVENT_STARTER));
+                    victim = ObjectAccessor::GetUnit(*me, ObjectGuid(pInstance->GetData64(DATA_LEOTHERAS_EVENT_STARTER)));
                     if(victim)
                         AttackStart(victim);
                 }

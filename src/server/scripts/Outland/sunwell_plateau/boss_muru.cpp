@@ -113,7 +113,7 @@ float Humanoides[6][5] =
 };
 
 typedef std::map<uint64, uint32> GuidMapCD;
-typedef std::set<uint64> GuidSet;
+typedef std::set<ObjectGuid> GuidSet;
 
 class npc_blackhole : public CreatureScript
 {
@@ -338,7 +338,7 @@ public:
         {
             pInstance = ((InstanceScript*)creature->GetInstanceScript());
 
-            if (Creature* muru = pInstance->instance->GetCreature(pInstance->GetData64(DATA_MURU)))
+            if (Creature* muru = pInstance->instance->GetCreature(ObjectGuid(pInstance->GetData64(DATA_MURU))))
                 muru->AttackStop();
 
             if (pInstance)
@@ -527,7 +527,7 @@ public:
                 pInstance->SetData(DATA_MURU_TO_ENTROPIUS, NOT_STARTED);
             }
 
-            if (Creature* entropius = pInstance->instance->GetCreature(pInstance->GetData64(DATA_ENTROPIUS)))
+            if (Creature* entropius = pInstance->instance->GetCreature(ObjectGuid(pInstance->GetData64(DATA_ENTROPIUS))))
                 entropius->DisappearAndDie();
         }
 
@@ -600,7 +600,7 @@ public:
                 return;
             }
                 
-            me->SetUInt64Value(UNIT_FIELD_TARGET, 0);
+            me->SetTarget(ObjectGuid::Empty);
 
             if (me->HasUnitState(UNIT_STATE_CASTING))
                 return;
@@ -649,7 +649,7 @@ public:
                                 break;
                             case IN_PROGRESS:
                                 if (!EnrageTimerTransmitted) {
-                                    if (Creature* entropius = pInstance->instance->GetCreature(pInstance->GetData64(DATA_ENTROPIUS)))
+                                    if (Creature* entropius = pInstance->instance->GetCreature(ObjectGuid(pInstance->GetData64(DATA_ENTROPIUS))))
                                     {
                                         entropius->AI()->message(1, EnrageTimer);
                                         EnrageTimerTransmitted = true;
@@ -816,7 +816,7 @@ public:
                 {
                     if (switchTimer <= diff)
                     {
-                        if (Creature* muru = pInstance->instance->GetCreature(pInstance->GetData64(DATA_MURU)))
+                        if (Creature* muru = pInstance->instance->GetCreature(ObjectGuid(pInstance->GetData64(DATA_MURU))))
                         {
                             me->CastSpell(muru, switchState ? 46178 : 46208, TRIGGERED_FULL_MASK);
                             switchState = 1 - switchState;
@@ -997,7 +997,7 @@ public:
             {
                 if (WaitTimer <= diff)
                 {
-                    if (Creature* entropius = pInstance->instance->GetCreature(pInstance->GetData64(DATA_ENTROPIUS)))
+                    if (Creature* entropius = pInstance->instance->GetCreature(ObjectGuid(pInstance->GetData64(DATA_ENTROPIUS))))
                         entropius->SummonCreature(CREATURE_DARK_FIENDS, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation(), TEMPSUMMON_CORPSE_DESPAWN, 0);
 
                     Spawned = true;

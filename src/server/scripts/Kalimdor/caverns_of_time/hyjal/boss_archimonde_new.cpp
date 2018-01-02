@@ -113,7 +113,7 @@ public:
 
             if (!aggro)
             {
-                if (Creature* archimonde = _instance->instance->GetCreature(_instance->GetData64(DATA_ARCHIMONDE)))
+                if (Creature* archimonde = _instance->instance->GetCreature(ObjectGuid(_instance->GetData64(DATA_ARCHIMONDE))))
                 {
                     AttackStart(archimonde);
                     me->GetThreatManager().AddThreat(archimonde, 1000000.0f);
@@ -128,7 +128,7 @@ public:
             case 0:
                 break;
             case EV_CHECK:
-                if (Creature* archimonde = _instance->instance->GetCreature(_instance->GetData64(DATA_ARCHIMONDE)))
+                if (Creature* archimonde = _instance->instance->GetCreature(ObjectGuid(_instance->GetData64(DATA_ARCHIMONDE))))
                 {
                     if (archimonde->IsBelowHPPercent(2.0f) || archimonde->IsDead())
                         me->CastSpell(me, SPELL_DENOUEMENT_WISP);
@@ -191,7 +191,7 @@ public:
                 }
             } else {
                 if (_instance)
-                    _archimondeGUID = _instance->GetData64(DATA_ARCHIMONDE);
+                    _archimondeGUID = ObjectGuid(_instance->GetData64(DATA_ARCHIMONDE));
             }
             _lifeTime -= diff;
         }
@@ -217,7 +217,7 @@ public:
 
     private:
         InstanceScript* _instance;
-        uint64 _archimondeGUID;
+        ObjectGuid _archimondeGUID;
         uint32 _refreshTimer;
         uint32 _lifeTime;
     };
@@ -255,12 +255,12 @@ public:
             _SummonTimer = DOOMFIRE_SUMMONTIMER;
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->CastSpell(me, SPELL_DOOMFIRE_SPAWN, TRIGGERED_FULL_MASK);
-            _archimondeGUID = 0;
+            _archimondeGUID = ObjectGuid::Empty;
             _Archimonde = nullptr;
 
             if (_instance)
             {
-                _archimondeGUID = _instance->GetData64(DATA_ARCHIMONDE);
+                _archimondeGUID = ObjectGuid(_instance->GetData64(DATA_ARCHIMONDE));
                 if (_archimondeGUID)
                 {
                     _Archimonde = ObjectAccessor::GetUnit((*me), _archimondeGUID);
@@ -346,7 +346,7 @@ public:
                 }
             } else {
                 if (_instance)
-                    _archimondeGUID = _instance->GetData64(DATA_ARCHIMONDE);
+                    _archimondeGUID = ObjectGuid(_instance->GetData64(DATA_ARCHIMONDE));
                 else
                     _instance = ((InstanceScript*)me->GetInstanceScript());
             }
@@ -432,7 +432,7 @@ public:
     private:
         InstanceScript* _instance;
         uint32 _SummonTimer;
-        uint64 _archimondeGUID;
+        ObjectGuid _archimondeGUID;
         Unit* _Archimonde;
 
         float _CurrentX;

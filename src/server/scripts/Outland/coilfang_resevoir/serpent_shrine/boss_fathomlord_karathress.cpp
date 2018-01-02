@@ -110,9 +110,6 @@ public:
         boss_fathomlord_karathressAI(Creature *c) : ScriptedAI(c)
         {
             pInstance = ((InstanceScript*)c->GetInstanceScript());
-            Advisors[0] = 0;
-            Advisors[1] = 0;
-            Advisors[2] = 0;
         }
     
         InstanceScript* pInstance;
@@ -123,7 +120,7 @@ public:
     
         bool BlessingOfTides;
     
-        uint64 Advisors[3];
+        ObjectGuid Advisors[3];
     
         void Reset()
         override {
@@ -137,24 +134,23 @@ public:
     
             if(pInstance)
             {
-                uint64 RAdvisors[3];
-                RAdvisors[0] = pInstance->GetData64(DATA_SHARKKIS);
-                RAdvisors[1] = pInstance->GetData64(DATA_TIDALVESS);
-                RAdvisors[2] = pInstance->GetData64(DATA_CARIBDIS);
+                ObjectGuid RAdvisors[3];
+                RAdvisors[0] = ObjectGuid(pInstance->GetData64(DATA_SHARKKIS));
+                RAdvisors[1] = ObjectGuid(pInstance->GetData64(DATA_TIDALVESS));
+                RAdvisors[2] = ObjectGuid(pInstance->GetData64(DATA_CARIBDIS));
                 //Respawn of the 3 Advisors
                 Creature* pAdvisor = nullptr;
-                for(uint64 RAdvisor : RAdvisors)
-    
-                if(RAdvisor)
-                {
-                    pAdvisor = (ObjectAccessor::GetCreature((*me), RAdvisor));
-                    if(pAdvisor && !pAdvisor->IsAlive())
+                for(ObjectGuid RAdvisor : RAdvisors)
+                    if(RAdvisor)
                     {
-                        pAdvisor->Respawn();
-                        pAdvisor->AI()->EnterEvadeMode();
-                        pAdvisor->GetMotionMaster()->MoveTargetedHome();
+                        pAdvisor = (ObjectAccessor::GetCreature((*me), RAdvisor));
+                        if(pAdvisor && !pAdvisor->IsAlive())
+                        {
+                            pAdvisor->Respawn();
+                            pAdvisor->AI()->EnterEvadeMode();
+                            pAdvisor->GetMotionMaster()->MoveTargetedHome();
+                        }
                     }
-                }
                 pInstance->SetData(DATA_KARATHRESSEVENT, NOT_STARTED);
             }
     
@@ -184,9 +180,9 @@ public:
             if (!pInstance)
                 return;
     
-            Advisors[0] = pInstance->GetData64(DATA_SHARKKIS);
-            Advisors[1] = pInstance->GetData64(DATA_TIDALVESS);
-            Advisors[2] = pInstance->GetData64(DATA_CARIBDIS);
+            Advisors[0] = ObjectGuid(pInstance->GetData64(DATA_SHARKKIS));
+            Advisors[1] = ObjectGuid(pInstance->GetData64(DATA_TIDALVESS));
+            Advisors[2] = ObjectGuid(pInstance->GetData64(DATA_CARIBDIS));
         }
     
         void StartEvent(Unit *who) 
@@ -234,7 +230,7 @@ public:
             //Only if not incombat check if the event is started
             if (!me->IsInCombat() && pInstance && pInstance->GetData(DATA_KARATHRESSEVENT))
             {
-                Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_KARATHRESSEVENT_STARTER));
+                Unit* target = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_KARATHRESSEVENT_STARTER)));
     
                 if (target)
                 {
@@ -344,8 +340,7 @@ public:
     
         bool pet;
     
-        uint64 SummonedPet;
-    
+        ObjectGuid SummonedPet;
     
         void Reset() override
         {
@@ -362,7 +357,7 @@ public:
                 Pet->DealDamage( Pet, Pet->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false );
             }
     
-            SummonedPet = 0;
+            SummonedPet = ObjectGuid::Empty;
     
             if( pInstance )
                 pInstance->SetData(DATA_KARATHRESSEVENT, NOT_STARTED);
@@ -373,7 +368,7 @@ public:
             if (pInstance)
             {
                 Creature *Karathress = nullptr;
-                Karathress = (Creature*)(ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_KARATHRESS)));
+                Karathress = (Creature*)(ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_KARATHRESS))));
     
                 if (Karathress)
                     ((boss_fathomlord_karathress::boss_fathomlord_karathressAI*)Karathress->AI())->EventSharkkisDeath();
@@ -395,7 +390,7 @@ public:
             //Only if not incombat check if the event is started
             if (!me->IsInCombat() && pInstance && pInstance->GetData(DATA_KARATHRESSEVENT))
             {
-                Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_KARATHRESSEVENT_STARTER));
+                Unit* target = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_KARATHRESSEVENT_STARTER)));
     
                 if (target)
                 {
@@ -515,7 +510,7 @@ public:
             if (pInstance)
             {
                 Creature *Karathress = nullptr;
-                Karathress = (Creature*)(ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_KARATHRESS)));
+                Karathress = (Creature*)(ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_KARATHRESS))));
     
                 if (Karathress)
                     if(!me->IsAlive() && Karathress)
@@ -538,7 +533,7 @@ public:
             //Only if not incombat check if the event is started
             if (!me->IsInCombat() && pInstance && pInstance->GetData(DATA_KARATHRESSEVENT))
             {
-                Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_KARATHRESSEVENT_STARTER));
+                Unit* target = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_KARATHRESSEVENT_STARTER)));
     
                 if (target)
                 {
@@ -573,11 +568,10 @@ public:
             if(Spitfire_Timer < diff)
             {
                 DoCast(me, SPELL_SPITFIRE_TOTEM);
-                Unit *SpitfireTotem = ObjectAccessor::GetUnit( *me, CREATURE_SPITFIRE_TOTEM );
+                Unit *SpitfireTotem = me->FindNearestCreature(CREATURE_SPITFIRE_TOTEM, 50.0f, true);
                 if( SpitfireTotem )
-                {
                     (SpitfireTotem->ToCreature())->AI()->AttackStart( me->GetVictim() );
-                }
+
                 Spitfire_Timer = 60000;
             }else Spitfire_Timer -= diff;
     
@@ -643,7 +637,7 @@ public:
             if (pInstance)
             {
                 Creature *Karathress = nullptr;
-                Karathress = (Creature*)(ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_KARATHRESS)));
+                Karathress = (Creature*)(ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_KARATHRESS))));
     
                 if (Karathress)
                     if(!me->IsAlive() && Karathress)
@@ -665,7 +659,7 @@ public:
             //Only if not incombat check if the event is started
             if (!me->IsInCombat() && pInstance && pInstance->GetData(DATA_KARATHRESSEVENT))
             {
-                Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_KARATHRESSEVENT_STARTER));
+                Unit* target = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_KARATHRESSEVENT_STARTER)));
     
                 if (target)
                 {
@@ -748,13 +742,13 @@ public:
                 switch(rand()%4)
                 {
                 case 0:
-                    pUnit = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_KARATHRESS));
+                    pUnit = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_KARATHRESS)));
                     break;
                 case 1:
-                    pUnit = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_SHARKKIS));
+                    pUnit = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_SHARKKIS)));
                     break;
                 case 2:
-                    pUnit = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_TIDALVESS));
+                    pUnit = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_TIDALVESS)));
                     break;
                 case 3:
                     pUnit = me;

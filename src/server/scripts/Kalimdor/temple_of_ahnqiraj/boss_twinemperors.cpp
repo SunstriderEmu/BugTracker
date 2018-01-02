@@ -96,7 +96,7 @@ struct boss_twinemperorsAI : public ScriptedAI
     {
         if(pInstance)
         {
-            return (Creature*)ObjectAccessor::GetUnit((*me), pInstance->GetData64(IAmVeklor() ? DATA_VEKNILASH : DATA_VEKLOR));
+            return (Creature*)ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(IAmVeklor() ? DATA_VEKNILASH : DATA_VEKLOR)));
         }
         else
         {

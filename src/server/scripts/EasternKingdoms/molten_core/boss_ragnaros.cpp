@@ -571,7 +571,7 @@ class Son_Of_Flame : public CreatureScript
 
             void JustDied(Unit* /*killer*/)
             override {
-                if (Creature* ragnaros = _instance->instance->GetCreature(_instance->GetData64(DATA_RAGNAROS)))
+                if (Creature* ragnaros = _instance->instance->GetCreature(ObjectGuid(_instance->GetData64(DATA_RAGNAROS))))
                     ((Boss_Ragnaros::Boss_RagnarosAI*)ragnaros->AI())->AddCount--;
             }
 

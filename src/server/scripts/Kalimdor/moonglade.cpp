@@ -355,7 +355,7 @@ public:
         uint32 Event_Timer;
         uint32 checkPlayer_Timer;
     
-        uint64 PlayerGUID;
+        ObjectGuid PlayerGUID;
     
         bool Event_onWait;
     
@@ -366,7 +366,7 @@ public:
                 Step = 0;
                 CurrWP = 0;
                 Event_Timer = 0;
-                PlayerGUID = 0;
+                PlayerGUID = ObjectGuid::Empty;
                 checkPlayer_Timer = 1000;
                 Event_onWait = false;
             }
@@ -381,7 +381,7 @@ public:
             if(player && player->GetQuestStatus(10965) == QUEST_STATUS_INCOMPLETE)
             {
                 player->FailQuest(10965);
-                PlayerGUID = 0;
+                PlayerGUID = ObjectGuid::Empty;
                 Reset();
             }
         }
@@ -574,7 +574,7 @@ public:
                                 break;
                             case 2:
                                 player->TalkedToCreature(me->GetEntry(), me->GetGUID());
-                                PlayerGUID = 0;
+                                PlayerGUID = ObjectGuid::Empty;
                                 Reset();
                                 me->SetDeathState(JUST_DIED);
                                 break;
@@ -830,7 +830,7 @@ public:
         npc_keeper_remulosAI(Creature *c) : ScriptedAI(c) {}
     
         bool EventRunning;
-        uint64 HolderGUID;
+        ObjectGuid HolderGUID;
         PhaseRemulos Phase;
         EventRemulos Event;
     
@@ -842,18 +842,18 @@ public:
         uint32 WaveId;
         uint32 KilledNightmares;
     
-        uint64 EranikusGUID;
-        uint64 RedeemedGUID;
-        uint64 TyrandeGUID;
+        ObjectGuid EranikusGUID;
+        ObjectGuid RedeemedGUID;
+        ObjectGuid TyrandeGUID;
     
-        uint64 PriestessGUIDs[8];
+        ObjectGuid PriestessGUIDs[8];
     
         bool canBeRedeemed;
     
         void Reset()
         override {
             EventRunning = false;
-            HolderGUID = 0;
+            HolderGUID.Clear();
             Phase = PHASE_NULL;
             Event = EVENT_NULL;
     
@@ -864,14 +864,14 @@ public:
             WaveId = 0;
             KilledNightmares = 0;
     
-            EranikusGUID = 0;
-            RedeemedGUID = 0;
-            TyrandeGUID = 0;
+            EranikusGUID.Clear();
+            RedeemedGUID.Clear();
+            TyrandeGUID.Clear();
     
             for (uint32 & i : Timer)
                 i = 0;
-            for (uint64 & PriestessGUID : PriestessGUIDs)
-                PriestessGUID = 0;
+            for (ObjectGuid & PriestessGUID : PriestessGUIDs)
+                PriestessGUID.Clear();
     
             canBeRedeemed = false;
     
@@ -897,7 +897,7 @@ public:
             c = ObjectAccessor::GetCreature(*me, TyrandeGUID);
             if (c)
                 c->DisappearAndDie();
-            for (uint64 PriestessGUID : PriestessGUIDs)
+            for (ObjectGuid PriestessGUID : PriestessGUIDs)
             {
                 c = ObjectAccessor::GetCreature(*me, PriestessGUID);
                 if (c)
@@ -969,7 +969,7 @@ public:
             }
         }
     
-        void StartEvent(uint64 guid)
+        void StartEvent(ObjectGuid guid)
         {
             if (me->GetZoneId() != 493)
                 return;
@@ -1027,7 +1027,7 @@ public:
             tyr->SetInFront(era);
             tyr->SendMovementFlagUpdate();
     
-            for (uint64 PriestessGUID : PriestessGUIDs)
+            for (ObjectGuid PriestessGUID : PriestessGUIDs)
             {
                 c = ObjectAccessor::GetCreature(*me, PriestessGUID);
                 if (!c)
@@ -1218,7 +1218,7 @@ public:
                 if (redeemed)
                     redeemed->DisappearAndDie();
     
-                for (uint64 PriestessGUID : PriestessGUIDs)
+                for (ObjectGuid PriestessGUID : PriestessGUIDs)
                 {
                     cre = ObjectAccessor::GetCreature(*me, PriestessGUID);
                     if (cre)
@@ -1833,7 +1833,7 @@ public:
     
         void JustEngagedWith(Unit* unit)
         override {
-            if (unit->GetGUIDMid() == ERANIKUS)
+            if (unit->GetEntry() == ERANIKUS)
             {
                 me->SetReactState(REACT_AGGRESSIVE);
                 AttackStart(unit, false);

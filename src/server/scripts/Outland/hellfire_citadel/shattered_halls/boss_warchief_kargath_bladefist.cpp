@@ -41,8 +41,8 @@ public:
     
         bool HeroicMode;
     
-        std::vector<uint64> adds;
-        std::vector<uint64> assassins;
+        std::vector<ObjectGuid> adds;
+        std::vector<ObjectGuid> assassins;
     
         uint32 Charge_timer;
         uint32 Blade_Dance_Timer;
@@ -152,7 +152,7 @@ public:
     
         void removeAdds()
         {
-            for(uint64 & add : adds)
+            for(ObjectGuid & add : adds)
             {
                 Creature* c = ObjectAccessor::GetCreature((*me),add);
                 if (c)
@@ -163,7 +163,7 @@ public:
             }
             adds.clear();
     
-            for(uint64 & assassin : assassins)
+            for(ObjectGuid & assassin : assassins)
             {
                 Creature* c = ObjectAccessor::GetCreature((*me), assassin);
                 if (c)

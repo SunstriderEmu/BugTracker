@@ -94,9 +94,9 @@ public:
         bool HeroicMode;
         EventPhase prisonPhase = PHASE_NOT_STARTED; //0 is not started, 1/2/3/4 are doors, 5 is boss
         
-        std::vector<uint64> prisonnersGUID[4];
+        std::vector<ObjectGuid> prisonnersGUID[4];
 
-        void SpawnPrisonners(std::vector<Prisoner> prisonners, std::vector<uint64>& container)
+        void SpawnPrisonners(std::vector<Prisoner> prisonners, std::vector<ObjectGuid>& container)
         {
             container.clear();
             for (auto p : prisonners)
@@ -230,7 +230,7 @@ public:
             }
         }
 
-        void SendCellAttackers(std::vector<uint64>& attackers)
+        void SendCellAttackers(std::vector<ObjectGuid>& attackers)
         {
             for (auto itr : attackers)
                 if (Creature* prisoner = me->GetMap()->GetCreature(itr))
@@ -242,7 +242,7 @@ public:
                 }
         }
 
-        void HandleStartPhase(std::vector<uint64>& attackers, BFDataTypes door)
+        void HandleStartPhase(std::vector<ObjectGuid>& attackers, BFDataTypes door)
         {
             eventPhaseTimer = HeroicMode ? 2 * MINUTE * IN_MILLISECONDS : 0;
             instance->SetData(DATA_ACTIVATE_CELL, door);
@@ -282,7 +282,7 @@ public:
             prisonPhase = phase;
         }
 
-        bool CellPackCleaned(std::vector<uint64>& attackers) const 
+        bool CellPackCleaned(std::vector<ObjectGuid>& attackers) const
         {
             for (auto itr : attackers)
                 if (Creature* prisoner = me->GetMap()->GetCreature(itr))
@@ -330,7 +330,7 @@ public:
             return false;
         }
 
-        void HandleUpdateEvent(std::vector<uint64>& pack, EventPhase nextPhase, uint32 diff)
+        void HandleUpdateEvent(std::vector<ObjectGuid>& pack, EventPhase nextPhase, uint32 diff)
         {
             if (CellPackCleaned(pack) || UpdatePhaseTimer(diff))
                 StartPhase(nextPhase);

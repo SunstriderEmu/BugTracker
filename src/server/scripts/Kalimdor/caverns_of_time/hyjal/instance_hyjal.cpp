@@ -48,16 +48,16 @@ public:
     {
         instance_mount_hyjal_script(Map *map) : InstanceScript(map) { Initialize(); };
 
-        uint64 RageWinterchill;
-        uint64 Anetheron;
-        uint64 Kazrogal;
-        uint64 Azgalor;
-        uint64 Archimonde;
-        uint64 JainaProudmoore;
-        uint64 Thrall;
-        uint64 TyrandeWhisperwind;
-        uint64 HordeGate;
-        uint64 ElfGate;
+        ObjectGuid RageWinterchill;
+        ObjectGuid Anetheron;
+        ObjectGuid Kazrogal;
+        ObjectGuid Azgalor;
+        ObjectGuid Archimonde;
+        ObjectGuid JainaProudmoore;
+        ObjectGuid Thrall;
+        ObjectGuid TyrandeWhisperwind;
+        ObjectGuid HordeGate;
+        ObjectGuid ElfGate;
 
         uint32 Trash;
         uint32 Encounters[ENCOUNTERS];
@@ -69,20 +69,10 @@ public:
         uint32 RaidDamage;
         uint32 currentWave;
 
-        std::list<uint64> allianceArmy;
+        std::list<ObjectGuid> allianceArmy;
 
-        void Initialize()
-            override {
-            RageWinterchill = 0;
-            Anetheron = 0;
-            Kazrogal = 0;
-            Azgalor = 0;
-            Archimonde = 0;
-            JainaProudmoore = 0;
-            Thrall = 0;
-            TyrandeWhisperwind = 0;
-            HordeGate = 0;
-            ElfGate = 0;
+        void Initialize() override
+        {
             ArchiYell = false;
             RaidDamage = 0;
 
@@ -125,7 +115,7 @@ public:
             }
         }
 
-        void OpenDoor(uint64 DoorGUID, bool open)
+        void OpenDoor(ObjectGuid DoorGUID, bool open)
         {
             if (GameObject *Door = instance->GetGameObject(DoorGUID))
                 Door->SetUInt32Value(GAMEOBJECT_STATE, open ? 0 : 1);
@@ -210,7 +200,7 @@ public:
                         if (!map)
                             break;
 
-                        Creature* archimonde = map->GetCreature(GetData64(DATA_ARCHIMONDE));
+                        Creature* archimonde = map->GetCreature(ObjectGuid(GetData64(DATA_ARCHIMONDE)));
                         if (!archimonde)
                             break;
 

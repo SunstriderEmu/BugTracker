@@ -34,16 +34,6 @@ public:
             SetHeaders(DataHeader);
             SetBossNumber(EncounterCount);
 
-            FirstDoorGUID = 0;
-            SecondDoorGUID = 0;
-            NethekurseGUID = 0;
-            executionerGUID = 0;
-            kargathGUID = 0;
-
-            victimsGUID[0] = 0;
-            victimsGUID[1] = 0;
-            victimsGUID[2] = 0;
-
             executionTimer = 0;
             SaveIntervalTimer = 30000;
 
@@ -82,12 +72,12 @@ public:
             case GO_GRAND_WARLOCK_CHAMBER_DOOR_1:
                 FirstDoorGUID = pGo->GetGUID();
                 if(GetBossState(DATA_NETHEKURSE) == DONE)
-                    HandleGameObject(0, true, pGo);
+                    HandleGameObject(ObjectGuid::Empty, true, pGo);
                 break;
             case GO_GRAND_WARLOCK_CHAMBER_DOOR_2:
                 SecondDoorGUID = pGo->GetGUID();
                 if (GetBossState(DATA_NETHEKURSE) == DONE)
-                    HandleGameObject(0, true, pGo);
+                    HandleGameObject(ObjectGuid::Empty, true, pGo);
                 break;
             }
         }
@@ -310,7 +300,7 @@ public:
                 return victimsGUID[data - DATA_FIRST_PRISONER];
             }
 
-            return 0;
+            return ObjectGuid::Empty;
         }
 
         virtual void ReadSaveDataMore(std::istringstream& data) override

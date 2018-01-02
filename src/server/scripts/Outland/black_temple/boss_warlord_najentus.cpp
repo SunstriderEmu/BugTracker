@@ -85,7 +85,7 @@ public:
         uint32 TidalShieldTimer;
         uint32 ImpalingSpineTimer;
     
-        uint64 SpineTargetGUID;
+        ObjectGuid SpineTargetGUID;
     
         void Reset()
         override {
@@ -96,7 +96,7 @@ public:
             NeedleSpineTimer = TIMER_NEEDLE_SPINE_START;
             ImpalingSpineTimer = TIMER_IMPALING_SPINE;
     
-            SpineTargetGUID = 0;
+            SpineTargetGUID.Clear();
     
             if(pInstance && me->IsAlive())
                 pInstance->SetData(DATA_HIGHWARLORDNAJENTUSEVENT, NOT_STARTED);
@@ -153,7 +153,7 @@ public:
             Unit* target = ObjectAccessor::GetUnit(*me, SpineTargetGUID);
             if(target && target->HasAuraEffect(SPELL_IMPALING_SPINE, 1))
                 target->RemoveAurasDueToSpell(SPELL_IMPALING_SPINE);
-            SpineTargetGUID=0;
+            SpineTargetGUID.Clear();
             return true;
         }
     
@@ -249,7 +249,7 @@ public:
             if (!pInstance)
                 return true;
 
-            if (Creature* Najentus = ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_HIGHWARLORDNAJENTUS)))
+            if (Creature* Najentus = ObjectAccessor::GetCreature(*me, ObjectGuid(pInstance->GetData64(DATA_HIGHWARLORDNAJENTUS))))
                 if (((boss_najentus::boss_najentusAI*)Najentus->AI())->RemoveImpalingSpine())
                 {
                     player->CastSpell(player, SPELL_CREATE_NAJENTUS_SPINE, TRIGGERED_FULL_MASK);

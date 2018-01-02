@@ -154,8 +154,8 @@ public:
     
         InstanceScript* pInstance;
     
-        std::list<uint64> channelers;
-        uint64 akamaGUID;
+        std::list<ObjectGuid> channelers;
+        ObjectGuid akamaGUID;
     
         uint32 summonPackTimer;
         uint32 defenderTimer;       
@@ -304,7 +304,7 @@ public:
             if(Sorcerer)
             {
                 Sorcerer->AI()->message(ChannelerMessages::MESSAGE_SHADE_GUID,me->GetGUID());
-                Sorcerer->SetUInt64Value(UNIT_FIELD_TARGET, me->GetGUID());
+                Sorcerer->SetGuidValue(UNIT_FIELD_TARGET, me->GetGUID());
                 channelers.push_back(Sorcerer->GetGUID());
                 //avoir channelers packing
                 /*
@@ -366,7 +366,7 @@ public:
                 RewardRepFromAkamaDeath(); // Still reward players with 250 reputation
                 break;
             case MESSAGE_AKAMA_GUID:
-                akamaGUID = data;
+                akamaGUID = ObjectGuid(data);
                 break;
             }
             return 0;
@@ -444,18 +444,17 @@ public:
         public:
         mob_ashtongue_channelerAI(Creature* c) : 
             ScriptedAI(c),
-            shadeGUID(0),
             updateTimer(0)
         { }
     
-        uint64 shadeGUID;
+        ObjectGuid shadeGUID;
         uint32 updateTimer;
        
         uint64 message(uint32 id, uint64 data) 
         override {
             if(id == MESSAGE_SHADE_GUID)
-                shadeGUID = data;        
-                
+                shadeGUID = ObjectGuid(data);                
+
             return 0;     
         }
     
@@ -560,11 +559,11 @@ public:
             summons(me)
         {
             pInstance = ((InstanceScript*)me->GetInstanceScript());
-            if(pInstance) shadeGUID = pInstance->GetData64(DATA_SHADEOFAKAMA);
+            if(pInstance) shadeGUID = ObjectGuid(pInstance->GetData64(DATA_SHADEOFAKAMA));
         }
     
         InstanceScript* pInstance;
-        uint64 shadeGUID;
+        ObjectGuid shadeGUID;
         
         bool eventBegun; // Players started event
         bool startedMeleeCombat; // shade reached akama
@@ -643,7 +642,7 @@ public:
         void BeginEvent()
         {
             if(pInstance)
-                shadeGUID = pInstance->GetData64(DATA_SHADEOFAKAMA);
+                shadeGUID = ObjectGuid(pInstance->GetData64(DATA_SHADEOFAKAMA));
     
             if(!shadeGUID)
                 return;
@@ -831,7 +830,7 @@ public:
             case 4:
                 if(Creature* shade = me->GetMap()->GetCreature(shadeGUID))
                 {
-                    me->SetUInt64Value(UNIT_FIELD_TARGET, shadeGUID);
+                    me->SetGuidValue(UNIT_FIELD_TARGET, shadeGUID);
                     DoCast(shade, SPELL_AKAMA_SOUL_RETRIEVE,true);
                     outroWaitTimer = 16000; // SPELL_AKAMA_SOUL_RETRIEVE duration + 1000
                 }

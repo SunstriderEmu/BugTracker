@@ -55,39 +55,38 @@ public:
         uint32 Encounters[ENCOUNTERS];
 
         /** Creatures **/
-        uint64 Kalecgos_Dragon;
-        uint64 Kalecgos_Human;
-        uint64 Sathrovarr;
-        uint64 Brutallus;
-        uint64 Madrigosa;
-        uint64 Felmyst;
-        uint64 Alythess;
-        uint64 Sacrolash;
-        uint64 Muru;
-        uint64 BlackHole;
-        uint64 Entropius;
-        uint64 KilJaeden;
-        uint64 KilJaedenController;
-        uint64 Anveena;
-        uint64 KalecgosKJ;
-        uint64 FlightLeft;
-        uint64 FlightRight;
-        uint64 CommanderGUID;
-        uint32 SpectralPlayers;
-        uint64 BarrierTriggerGUID;
-        std::vector<uint64> northList, centerList, southList;
+        ObjectGuid Kalecgos_Dragon;
+        ObjectGuid Kalecgos_Human;
+        ObjectGuid Sathrovarr;
+        ObjectGuid Brutallus;
+        ObjectGuid Madrigosa;
+        ObjectGuid Felmyst;
+        ObjectGuid Alythess;
+        ObjectGuid Sacrolash;
+        ObjectGuid Muru;
+        ObjectGuid BlackHole;
+        ObjectGuid Entropius;
+        ObjectGuid KilJaeden;
+        ObjectGuid KilJaedenController;
+        ObjectGuid Anveena;
+        ObjectGuid KalecgosKJ;
+        ObjectGuid FlightLeft;
+        ObjectGuid FlightRight;
+        ObjectGuid CommanderGUID;
+        ObjectGuid BarrierTriggerGUID;
+        std::vector<ObjectGuid> northList, centerList, southList;
 
         /** GameObjects **/
-        uint64 ForceField;                                      // Kalecgos Encounter
-        uint64 KalecgosWall[2];
-        uint64 FireBarrier;                                     // Felmysts Encounter
-        uint64 MurusGate[2];                                    // Murus Encounter
-        uint64 IceBarrier;
-        uint64 SecondGate; // Just after the Twins
+        ObjectGuid ForceField;                                      // Kalecgos Encounter
+        ObjectGuid KalecgosWall[2];
+        ObjectGuid FireBarrier;                                     // Felmysts Encounter
+        ObjectGuid MurusGate[2];                                    // Murus Encounter
+        ObjectGuid IceBarrier;
+        ObjectGuid SecondGate; // Just after the Twins
 
         /*** Misc ***/
         uint32 SpectralRealmTimer;
-        std::vector<uint64> SpectralRealmList;
+        std::vector<ObjectGuid> SpectralRealmList;
         uint32 GauntletStatus;
         uint32 BringersTimer;
         uint32 FiendTimer;
@@ -101,36 +100,9 @@ public:
             memset(&Encounters, 0, sizeof(Encounters));
 
             /*** Creatures ***/
-            Kalecgos_Dragon = 0;
-            Kalecgos_Human = 0;
-            Sathrovarr = 0;
-            Brutallus = 0;
-            Madrigosa = 0;
-            Felmyst = 0;
-            Alythess = 0;
-            Sacrolash = 0;
-            Muru = 0;
-            BlackHole = 0;
-            Entropius = 0;
-            KilJaeden = 0;
-            KilJaedenController = 0;
-            Anveena = 0;
-            KalecgosKJ = 0;
-            CommanderGUID = 0;
-            SpectralPlayers = 0;
-            BarrierTriggerGUID = 0;
             northList.clear();
             centerList.clear();
             southList.clear();
-
-            /*** GameObjects ***/
-            ForceField = 0;
-            FireBarrier = 0;
-            MurusGate[0] = 0;
-            MurusGate[1] = 0;
-            KalecgosWall[0] = 0;
-            KalecgosWall[1] = 0;
-            IceBarrier = 0;
 
             /*** Misc ***/
             SpectralRealmTimer = 5000;
@@ -257,13 +229,13 @@ public:
             case 188524: KalecgosWall[1] = pGo->GetGUID(); break;
             case 188075:
                 if (Encounters[2] == DONE)
-                    HandleGameObject(0, true, pGo);
+                    HandleGameObject(ObjectGuid::Empty, true, pGo);
                 FireBarrier = pGo->GetGUID();
                 break;
             case 187990: MurusGate[0] = pGo->GetGUID(); break;
             case 188118:
                 if (Encounters[4] == DONE)
-                    HandleGameObject(0, true, pGo);
+                    HandleGameObject(ObjectGuid::Empty, true, pGo);
                 MurusGate[1] = pGo->GetGUID();
                 break;
                 /*case 187766:    // The first gate FIXME: Always closed for now, will change later
@@ -271,11 +243,11 @@ public:
                     break;*/
             case 187764:    // The second gate FIXME: Always closed for now, will change later
                 if (GetData(DATA_EREDAR_TWINS_EVENT) != DONE)
-                    HandleGameObject(0, false, pGo);
+                    HandleGameObject(ObjectGuid::Empty, false, pGo);
                 SecondGate = pGo->GetGUID();
                 break;
             case 187765:    // The third gate FIXME: Always closed for now, will change later
-                HandleGameObject(0, false, pGo);
+                HandleGameObject(ObjectGuid::Empty, false, pGo);
                 break;
             case 188119:
                 IceBarrier = pGo->GetGUID();
@@ -398,7 +370,7 @@ public:
                 Encounters[4] = data; break;
             case DATA_KILJAEDEN_EVENT:     Encounters[5] = data; break;
             case DATA_ACTIVATE_NORTH_TO_LEFT:
-                for (uint64 & itr : northList) {
+                for (ObjectGuid & itr : northList) {
                     if (Creature *trigger = instance->GetCreature(itr)) {
                         if (trigger->GetPositionY() > data)
                             trigger->CastSpell(trigger, 45582, TRIGGERED_FULL_MASK);
@@ -406,7 +378,7 @@ public:
                 }
                 break;
             case DATA_ACTIVATE_CENTER_TO_LEFT:
-                for (uint64 & itr : centerList) {
+                for (ObjectGuid & itr : centerList) {
                     if (Creature *trigger = instance->GetCreature(itr)) {
                         if (trigger->GetPositionY() > data)
                             trigger->CastSpell(trigger, 45582, TRIGGERED_FULL_MASK);
@@ -414,7 +386,7 @@ public:
                 }
                 break;
             case DATA_ACTIVATE_SOUTH_TO_LEFT:
-                for (uint64 & itr : southList) {
+                for (ObjectGuid & itr : southList) {
                     if (Creature *trigger = instance->GetCreature(itr)) {
                         if (trigger->GetPositionY() > data)
                             trigger->CastSpell(trigger, 45582, TRIGGERED_FULL_MASK);
@@ -422,7 +394,7 @@ public:
                 }
                 break;
             case DATA_ACTIVATE_NORTH_TO_RIGHT:
-                for (uint64 & itr : northList) {
+                for (ObjectGuid & itr : northList) {
                     if (Creature *trigger = instance->GetCreature(itr)) {
                         if (trigger->GetPositionY() < data)
                             trigger->CastSpell(trigger, 45582, TRIGGERED_FULL_MASK);
@@ -430,7 +402,7 @@ public:
                 }
                 break;
             case DATA_ACTIVATE_CENTER_TO_RIGHT:
-                for (uint64 & itr : centerList) {
+                for (ObjectGuid & itr : centerList) {
                     if (Creature *trigger = instance->GetCreature(itr)) {
                         if (trigger->GetPositionY() < data)
                             trigger->CastSpell(trigger, 45582, TRIGGERED_FULL_MASK);
@@ -438,7 +410,7 @@ public:
                 }
                 break;
             case DATA_ACTIVATE_SOUTH_TO_RIGHT:
-                for (uint64 & itr : southList) {
+                for (ObjectGuid & itr : southList) {
                     if (Creature *trigger = instance->GetCreature(itr)) {
                         if (trigger->GetPositionY() < data)
                             trigger->CastSpell(trigger, 45582, TRIGGERED_FULL_MASK);

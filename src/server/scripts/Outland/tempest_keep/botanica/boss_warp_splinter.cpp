@@ -70,10 +70,9 @@ public:
     public:
         mob_treantAI(Creature *c) : ScriptedAI(c)
         {
-            WarpGuid = 0;
         }
 
-        uint64 WarpGuid;
+        ObjectGuid WarpGuid;
         uint32 check_Timer;
 
         void Reset()

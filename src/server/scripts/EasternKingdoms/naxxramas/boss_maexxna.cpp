@@ -60,11 +60,12 @@ public:
         public:
         mob_webwrapAI(Creature *c) : ScriptedAI(c) {}
     
-        uint64 victimGUID;
+        ObjectGuid victimGUID;
     
         void Reset()
-        override {
-            victimGUID = 0;
+        override 
+        {
+            victimGUID.Clear();
         }
     
         void SetVictim(Unit* victim)

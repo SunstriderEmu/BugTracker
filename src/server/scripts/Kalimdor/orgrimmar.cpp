@@ -98,7 +98,7 @@ public:
         bool CanEmote;
         uint32 Salute_Timer;
         uint32 Reset_Timer;
-        uint64 playerGUID;
+        ObjectGuid playerGUID;
     
         void Reset()
         override {
@@ -106,7 +106,7 @@ public:
             CanEmote = false;
             Salute_Timer = 6000;
             Reset_Timer = 0;
-            playerGUID = 0;
+            playerGUID = ObjectGuid::Empty;
         }
     
         void JustEngagedWith(Unit* who) override { }
@@ -233,7 +233,7 @@ public:
         uint32 Shock_Timer;
         uint32 messengerEventStep;
         EventMap events;
-        uint64 EitriggGUID;
+        ObjectGuid EitriggGUID;
 
         uint64 message(uint32 id, uint64 data) override
         {
@@ -260,7 +260,7 @@ public:
             messengerEventStep = 0;
             me->SetSheath(SHEATH_STATE_MELEE);
             me->SetStandState(UNIT_STAND_STATE_SIT);
-            EitriggGUID = 0;
+            EitriggGUID = ObjectGuid::Empty;
         }
 
         void UpdateAI(const uint32 diff)

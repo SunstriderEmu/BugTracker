@@ -70,11 +70,11 @@ bool CheckAllBossDied(InstanceScript* pInstance, Creature* me)
     if(!pInstance || !me)
         return false;
 
-    uint64 MaulgarGUID = 0;
-    uint64 KigglerGUID = 0;
-    uint64 BlindeyeGUID = 0;
-    uint64 OlmGUID = 0;
-    uint64 KroshGUID = 0;
+    ObjectGuid MaulgarGUID = ObjectGuid::Empty;
+    ObjectGuid KigglerGUID = ObjectGuid::Empty;
+    ObjectGuid BlindeyeGUID = ObjectGuid::Empty;
+    ObjectGuid OlmGUID = ObjectGuid::Empty;
+    ObjectGuid KroshGUID = ObjectGuid::Empty;
 
     Creature* Maulgar = nullptr;
     Creature* Kiggler = nullptr;
@@ -103,16 +103,6 @@ bool CheckAllBossDied(InstanceScript* pInstance, Creature* me)
     return false;
 }
 
-//High King Maulgar AI
-
-//Olm The Summoner AI
-
-//Kiggler The Crazed AI
-
-//Blindeye The Seer AI
-
-//Krosh Firehand AI
-
 class boss_high_king_maulgar : public CreatureScript
 {
 public:
@@ -124,8 +114,6 @@ public:
         public:
         boss_high_king_maulgarAI(Creature* c) : BossAI(c, DATA_MAULGAR)
         {
-            for(uint64 & i : Council)
-                i = 0;
         }
     
         uint32 ArcingSmash_Timer;
@@ -136,7 +124,7 @@ public:
     
         bool Phase2;
     
-        uint64 Council[4];
+        ObjectGuid Council[4];
     
         void Reset() override
         {
@@ -151,7 +139,7 @@ public:
             Phase2 = false;
     
             Creature *pCreature = nullptr;
-            for(uint64 i : Council)
+            for(ObjectGuid i : Council)
             {
                 if(i)
                 {

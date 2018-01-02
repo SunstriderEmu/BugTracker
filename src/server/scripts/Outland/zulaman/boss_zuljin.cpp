@@ -164,7 +164,7 @@ public:
                 events.CancelEvent(EV_CLAW_RAGE_RESET);
             
             overpowerReady = false;
-            clawRageTargetGUID = 0;
+            clawRageTargetGUID = ObjectGuid::Empty;
         }
         
         void JustEngagedWith(Unit* victim)
@@ -281,7 +281,7 @@ public:
                     spiritGUIDs[i] = spirit->GetGUID();
                 }
             }
-            spiritGUIDs[0] = 0;
+            spiritGUIDs[0] = ObjectGuid::Empty;
         }
         
         //ugly hack to get SPELL_OVERPOWER to activate when melee misses (this is wrong since we need to do it only on dodge)
@@ -363,7 +363,7 @@ public:
                     if (Unit* clawRageTarget = ObjectAccessor::GetUnit(*me, clawRageTargetGUID))
                         me->GetThreatManager().AddThreat(clawRageTarget, -1000000);
 
-                    clawRageTargetGUID = 0;
+                    clawRageTargetGUID = ObjectGuid::Empty;
                     events.CancelEvent(EV_CLAW_RAGE_RESET);
                     break;
                 case EV_LYNX_RUSH:
@@ -398,8 +398,8 @@ public:
         }
         
     private:
-        uint64 spiritGUIDs[5];
-        uint64 clawRageTargetGUID;
+        ObjectGuid spiritGUIDs[5];
+        ObjectGuid clawRageTargetGUID;
         
         bool overpowerReady;
     };

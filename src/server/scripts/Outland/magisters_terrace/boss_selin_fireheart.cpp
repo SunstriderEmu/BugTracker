@@ -71,7 +71,7 @@ public:
                 uint32 size = pInstance->GetData(DATA_FEL_CRYSTAL_SIZE);
                 for(uint8 i = 0; i < size; ++i)
                 {
-                    uint64 guid = pInstance->GetData64(DATA_FEL_CRYSTAL);
+                    ObjectGuid guid = ObjectGuid(pInstance->GetData64(DATA_FEL_CRYSTAL));
                     Crystals.push_back(guid);
                 }
             }
@@ -80,7 +80,7 @@ public:
     
         InstanceScript* pInstance;
     
-        std::vector<uint64> Crystals;
+        std::vector<ObjectGuid> Crystals;
     
         uint32 DrainLifeTimer;
         uint32 DrainManaTimer;
@@ -91,14 +91,14 @@ public:
         bool IsDraining;
         bool DrainingCrystal;
         bool Heroic;
-        uint64 CrystalGUID;                                     // This will help us create a pointer to the crystal we are draining. We store GUIDs, never units in case unit is deleted/offline (offline if player of course).
+        ObjectGuid CrystalGUID;                                     // This will help us create a pointer to the crystal we are draining. We store GUIDs, never units in case unit is deleted/offline (offline if player of course).
     
         void Reset()
         override {
             if(pInstance)
             {
                 //for(uint8 i = 0; i < CRYSTALS_NUMBER; ++i)
-                for(uint64 & Crystal : Crystals)
+                for(ObjectGuid & Crystal : Crystals)
                 {
                     //Unit* pUnit = ObjectAccessor::GetUnit(*me, FelCrystals[i]);
                     Unit* pUnit = ObjectAccessor::GetUnit(*me, Crystal);
@@ -111,7 +111,7 @@ public:
                         pUnit->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                     }
                 }
-                GameObject* Door = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_SELIN_ENCOUNTER_DOOR));
+                GameObject* Door = GameObject::GetGameObject(*me, ObjectGuid(pInstance->GetData64(DATA_SELIN_ENCOUNTER_DOOR)));
                 if (Door)
                     Door->UseDoorOrButton();                        // Open the big encounter door. Close it in Aggro and open it only in JustDied(and here)
                                                                 // Small door opened after event are expected to be closed by default
@@ -130,7 +130,7 @@ public:
     
             IsDraining = false;
             DrainingCrystal = false;
-            CrystalGUID = 0;
+            CrystalGUID = ObjectGuid::Empty;
         }
     
         void SelectNearestCrystal()
@@ -139,11 +139,11 @@ public:
                 return;
     
             float ShortestDistance = 0;
-            CrystalGUID = 0;
+            CrystalGUID = ObjectGuid::Empty;
             Unit* pCrystal = nullptr;
             Unit* CrystalChosen = nullptr;
             //for(uint8 i =  0; i < CRYSTALS_NUMBER; ++i)
-            for(uint64 & Crystal : Crystals)
+            for(ObjectGuid & Crystal : Crystals)
             {
                 pCrystal = nullptr;
                 //pCrystal = ObjectAccessor::GetUnit(*me, FelCrystals[i]);
@@ -180,7 +180,7 @@ public:
                 return;
     
             //for(uint8 i = 0; i < CRYSTALS_NUMBER; ++i)
-            for(uint64 & Crystal : Crystals)
+            for(ObjectGuid & Crystal : Crystals)
             {
                 //Creature* pCrystal = (ObjectAccessor::GetCreature(*me, FelCrystals[i]));
                 Creature* pCrystal = (ObjectAccessor::GetCreature(*me, Crystal));
@@ -196,7 +196,7 @@ public:
     
             if( pInstance )
             {
-                GameObject* EncounterDoor = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_SELIN_ENCOUNTER_DOOR));
+                GameObject* EncounterDoor = GameObject::GetGameObject(*me, ObjectGuid(pInstance->GetData64(DATA_SELIN_ENCOUNTER_DOOR)));
                 if( EncounterDoor )
                     EncounterDoor->ResetDoorOrButton();               //Close the encounter door, open it in JustDied/Reset
             }
@@ -242,11 +242,11 @@ public:
     
             pInstance->SetData(DATA_SELIN_EVENT, DONE);         // Encounter complete!
     
-            GameObject* EncounterDoor = GameObject::GetGameObject((*me), pInstance->GetData64(DATA_SELIN_ENCOUNTER_DOOR));
+            GameObject* EncounterDoor = GameObject::GetGameObject((*me), ObjectGuid(pInstance->GetData64(DATA_SELIN_ENCOUNTER_DOOR)));
             if( EncounterDoor )
                 EncounterDoor->UseDoorOrButton();                   // Open the encounter door
     
-            GameObject* ContinueDoor = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_SELIN_DOOR));
+            GameObject* ContinueDoor = GameObject::GetGameObject(*me, ObjectGuid(pInstance->GetData64(DATA_SELIN_DOOR)));
             if (ContinueDoor)
                 ContinueDoor->UseDoorOrButton();                    // Open the door leading further in
     
@@ -321,7 +321,7 @@ public:
                                 if( CrystalChosen->IsAlive() )
                                     // Use Deal Damage to kill it, not setDeathState.
                                     CrystalChosen->DealDamage(CrystalChosen, CrystalChosen->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-                                CrystalGUID = 0;
+                                CrystalGUID = ObjectGuid::Empty;
     
                                 me->GetMotionMaster()->Clear();
                                 me->GetMotionMaster()->MoveChase(me->GetVictim());
@@ -365,7 +365,7 @@ public:
             me->RemoveAurasDueToSpell(SPELL_MANA_RAGE);
             if(InstanceScript* pInstance = ((InstanceScript*)me->GetInstanceScript()))
             {
-                Creature* Selin = (ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_SELIN)));
+                Creature* Selin = (ObjectAccessor::GetCreature(*me, ObjectGuid(pInstance->GetData64(DATA_SELIN))));
                 if(Selin && Selin->IsAlive())
                 {
                     if(((boss_selin_fireheart::boss_selin_fireheartAI*)Selin->AI())->CrystalGUID == me->GetGUID())

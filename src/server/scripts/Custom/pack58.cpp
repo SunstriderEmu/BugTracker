@@ -97,7 +97,7 @@ public:
             originalFaction = me->GetFaction();
         }
     
-        uint64 PlayerGUID;
+        ObjectGuid PlayerGUID;
         uint32 originalFaction;
     
         uint64 message(uint32 id, uint64 data) 
@@ -105,7 +105,7 @@ public:
             switch(id)
             {
             case MESSAGE_START_DUEL:
-                PlayerGUID = data;
+                PlayerGUID = ObjectGuid(data);
     
                 me->SetFaction(FACTION_MONSTER);
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -132,7 +132,7 @@ public:
     
         void Reset()
         override {
-            PlayerGUID = 0;
+            PlayerGUID = ObjectGuid::Empty;
     
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             me->SetFaction(originalFaction);

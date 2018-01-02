@@ -45,8 +45,8 @@ public:
 
         uint32 Encounters[ENCOUNTERS];
 
-        uint64 MoargDoor1;
-        uint64 MoargDoor2;
+        ObjectGuid MoargDoor1;
+        ObjectGuid MoargDoor2;
 
         void OnGameObjectCreate(GameObject* go) override
         {
@@ -55,20 +55,18 @@ public:
             case MOARGDOOR1:
                 MoargDoor1 = go->GetGUID();
                 if (Encounters[0] == DONE)
-                    HandleGameObject(0, true, go);
+                    HandleGameObject(ObjectGuid::Empty, true, go);
                 break;
             case MOARGDOOR2:
                 MoargDoor2 = go->GetGUID();
                 if (Encounters[1] == DONE)
-                    HandleGameObject(0, true, go);
+                    HandleGameObject(ObjectGuid::Empty, true, go);
                 break;
             }
         }
 
         void Initialize()
             override {
-            MoargDoor1 = 0;
-            MoargDoor2 = 0;
 
             for (uint32 & Encounter : Encounters)
                 Encounter = NOT_STARTED;

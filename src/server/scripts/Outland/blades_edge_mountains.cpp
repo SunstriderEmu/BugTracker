@@ -1035,7 +1035,7 @@ public:
             SetCombatMovementAllowed(false);
         }
         
-        uint64 skullocGUID;
+        ObjectGuid skullocGUID;
         uint32 summonTimer;
         uint32 ogresKilled;
         
@@ -1310,7 +1310,7 @@ public:
         public:
         npc_simon_bunnyAI(Creature *c) : ScriptedAI(c) {}
         
-        uint64 playerGUID;
+        ObjectGuid playerGUID;
         
         uint8 step;
         uint8 level;
@@ -1766,7 +1766,7 @@ public:
         public:
         npc_simon_bunny_largeAI(Creature *c) : ScriptedAI(c) {}
         
-        uint64 playerGUID;
+        ObjectGuid playerGUID;
         
         uint8 step;
         uint8 level;
@@ -3011,9 +3011,7 @@ public:
         npc_rally_zapnabberAI(Creature* c) : ScriptedAI(c)
         {
             isEvent = false;
-            playerGUID = 0;
             lightningCount = 0;
-            triggerGUID = 0;
             quest= 0;
         }
         
@@ -3024,8 +3022,8 @@ public:
         uint32 blueRayTimer;
         uint32 quest;
         
-        uint64 playerGUID;
-        uint64 triggerGUID;
+        ObjectGuid playerGUID;
+        ObjectGuid triggerGUID;
         
         void Reset()
         override {
@@ -3051,12 +3049,12 @@ public:
         void EndEvent()
         {
             isEvent = false;
-            playerGUID = 0;
+            playerGUID = ObjectGuid::Empty;
             blueRayTimer = 0;
             lightningCount = 0;
             if (Creature* trigger = ObjectAccessor::GetCreature(*me, triggerGUID))
                 trigger->DespawnOrUnsummon();
-            triggerGUID = 0;
+            triggerGUID = ObjectGuid::Empty;
             quest = 0;
         }
         
@@ -3168,7 +3166,7 @@ public:
         uint32 grievousWoundTimer;
         uint32 killHufferTimer;
         
-        uint64 hufferGUID;
+        ObjectGuid hufferGUID;
         
         void Reset()
         override {
@@ -3176,7 +3174,7 @@ public:
             crushArmorTimer = 7000;
             grievousWoundTimer = 10000;
             killHufferTimer = 0;
-            hufferGUID = 0;
+            hufferGUID.Clear();
         }
         
         void MoveInLineOfSight(Unit* who)

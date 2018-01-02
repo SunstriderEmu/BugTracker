@@ -361,7 +361,7 @@ public:
     class npc_doctorAI : public ScriptedAI
     {
         public:
-        uint64 Playerguid;
+        ObjectGuid Playerguid;
     
         uint32 SummonPatient_Timer;
         uint32 SummonPatientCount;
@@ -370,7 +370,7 @@ public:
     
         bool Event;
     
-        std::list<uint64> Patients;
+        std::list<ObjectGuid> Patients;
         std::vector<Location*> Coordinates;
     
         npc_doctorAI(Creature *c) : ScriptedAI(c) {}
@@ -410,13 +410,13 @@ public:
     public:
         npc_injured_patientAI(Creature *c) : ScriptedAI(c) {}
 
-        uint64 Doctorguid;
+        ObjectGuid Doctorguid;
 
         Location* Coord;
 
         void Reset()
             override {
-            Doctorguid = 0;
+            Doctorguid.Clear();
 
             Coord = nullptr;
             //no select
@@ -580,7 +580,7 @@ void npc_doctor::npc_doctorAI::PatientSaved(Creature* soldier, Player* player, L
             {
                 if (!Patients.empty())
                 {
-                    std::list<uint64>::iterator itr;
+                    std::list<ObjectGuid>::iterator itr;
                     for (itr = Patients.begin(); itr != Patients.end(); ++itr)
                     {
                         Creature* Patient = (ObjectAccessor::GetCreature((*me), *itr));
@@ -1444,27 +1444,27 @@ public:
         npc_mojoAI(Creature *c) : PetAI(c) {}
         
         uint32 MorphTimer;      /* new hooks OwnerGainedAura and OwnerLostAura? Useless in this case, as morphed player may not be owner, but keep the idea. */
-        uint64 PlayerGUID;
+        ObjectGuid playerGUID;
         
         void JustEngagedWith(Unit *pWho) override {}
         void Reset()
         override {
             me->GetMotionMaster()->MoveFollow(me->GetOwner(), PET_FOLLOW_DIST, me->GetFollowAngle());
             MorphTimer = 0;
-            PlayerGUID = 0;
+            playerGUID = ObjectGuid::Empty;
         }
         
         void UpdateAI(uint32 const diff)
         override {
             PetAI::Minipet_DistanceCheck(diff);
             if (MorphTimer) {
-                if (Player *plr = ObjectAccessor::GetPlayer(*me, PlayerGUID))
+                if (Player *plr = ObjectAccessor::GetPlayer(*me, playerGUID))
                     me->SetInFront(plr);
                 if (MorphTimer <= diff) {
                     me->RemoveAurasDueToSpell(SPELL_HEARTS);
                     me->GetMotionMaster()->MoveFollow(me->GetOwner(), PET_FOLLOW_DIST, me->GetFollowAngle());
                     MorphTimer = 0;
-                    PlayerGUID = 0;
+                    playerGUID = ObjectGuid::Empty;
                 }
                 else
                     MorphTimer -= diff;
@@ -1476,12 +1476,12 @@ public:
             if (me->GetOwner()->GetTypeId() == TYPEID_PLAYER && pPlayer->GetTeam() != me->GetOwner()->ToPlayer()->GetTeam())
                 return;
                 
-            if (((npc_mojo::npc_mojoAI*)me->AI())->PlayerGUID != 0)
+            if (((npc_mojo::npc_mojoAI*)me->AI())->playerGUID != 0)
                 return;
             
             if (emote == TEXTEMOTE_KISS) {
                 ((npc_mojo::npc_mojoAI*)me->AI())->MorphTimer = 15000;
-                ((npc_mojo::npc_mojoAI*)me->AI())->PlayerGUID = pPlayer->GetGUID();
+                ((npc_mojo::npc_mojoAI*)me->AI())->playerGUID = pPlayer->GetGUID();
                 me->AddAura(SPELL_HEARTS, me);
                 if (!pPlayer->IsInCombat())
                     pPlayer->CastSpell(pPlayer, SPELL_FEELING_FROGGY, TRIGGERED_FULL_MASK);

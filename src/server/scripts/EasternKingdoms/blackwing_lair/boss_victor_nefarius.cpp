@@ -79,7 +79,6 @@ public:
         public:
         boss_victor_nefariusAI(Creature *c) : ScriptedAI(c)
         {
-            NefarianGUID = 0;
             srand(time(nullptr));
             switch (rand()%20)
             {
@@ -174,7 +173,7 @@ public:
         uint32 ResetTimer;
         uint32 DrakType1;
         uint32 DrakType2;
-        uint64 NefarianGUID;
+        ObjectGuid NefarianGUID;
         uint32 NefCheckTime;
     
         void Reset()
@@ -184,7 +183,7 @@ public:
             ShadowBoltTimer = 5000;
             FearTimer = 8000;
             ResetTimer = 900000;                                //On official it takes him 15 minutes(900 seconds) to reset. We are only doing 1 minute to make testing easier
-            NefarianGUID = 0;
+            NefarianGUID = ObjectGuid::Empty;
             NefCheckTime = 2000;
     
             me->SetUInt32Value(UNIT_NPC_FLAGS,1);
@@ -344,7 +343,7 @@ public:
                     //and cannot repeat the event
                     if (!Nefarian || !Nefarian->IsAlive())
                     {
-                        NefarianGUID = 0;
+                        NefarianGUID = ObjectGuid::Empty;
                         me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
                     }
     

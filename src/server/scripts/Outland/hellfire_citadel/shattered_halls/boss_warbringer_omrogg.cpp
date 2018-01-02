@@ -139,8 +139,8 @@ public:
     
         bool HeroicMode;
     
-        uint64 LeftHead;
-        uint64 RightHead;
+        ObjectGuid LeftHead;
+        ObjectGuid RightHead;
         int iaggro;
         int ithreat;
         int ikilling;
@@ -163,8 +163,8 @@ public:
             me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
             me->ApplySpellImmune(0, IMMUNITY_EFFECT,SPELL_EFFECT_ATTACK_ME, true);
     
-            LeftHead = 0;
-            RightHead = 0;
+            LeftHead = ObjectGuid::Empty;
+            RightHead = ObjectGuid::Empty;
     
             AggroYell = false;
             ThreatYell = false;

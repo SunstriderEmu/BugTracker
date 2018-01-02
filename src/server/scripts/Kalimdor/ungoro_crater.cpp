@@ -203,14 +203,14 @@ public:
         uint32 m_uiEndEventProgress;
         uint32 m_uiEndEventTimer;
     
-        uint64 SpraggleGUID;
+        ObjectGuid SpraggleGUID;
     
         void Reset()
         override {
             m_uiFaintTimer = urand(30000, 60000);
             m_uiEndEventProgress = 0;
             m_uiEndEventTimer = 1000;
-            SpraggleGUID = 0;
+            SpraggleGUID = ObjectGuid::Empty;
         }
         
         void JustEngagedWith(Unit *pWho) override {}

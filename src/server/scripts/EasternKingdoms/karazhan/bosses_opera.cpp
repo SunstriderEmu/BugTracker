@@ -586,13 +586,13 @@ public:
         public:
         mob_titoAI(Creature* c) : ScriptedAI(c) {}
     
-        uint64 DorotheeGUID;
+        ObjectGuid DorotheeGUID;
     
         uint32 YipTimer;
     
         void Reset()
         override {
-            DorotheeGUID = 0;
+            DorotheeGUID = ObjectGuid::Empty;
     
             YipTimer = 10000;
         }
@@ -751,7 +751,7 @@ public:
         uint32 FearTimer;
         uint32 SwipeTimer;
     
-        uint64 HoodGUID;
+        ObjectGuid HoodGUID;
         float TempThreat;
     
         bool IsChasing;
@@ -764,7 +764,7 @@ public:
             FearTimer = 25000 + rand()%10000;
             SwipeTimer = 5000;
     
-            HoodGUID = 0;
+            HoodGUID.Clear();
             TempThreat = 0;
     
             IsChasing = false;
@@ -820,7 +820,7 @@ public:
                     Unit* target = ObjectAccessor::GetUnit((*me), HoodGUID);
                     if(target)
                     {
-                        HoodGUID = 0;
+                        HoodGUID = ObjectGuid::Empty;
                         if(me->GetThreat(target))
                             DoModifyThreatPercent(target, -100);
                         me->GetThreatManager().AddThreat(target, TempThreat);
@@ -912,7 +912,7 @@ void PretendToDie(Creature* _Creature)
     _Creature->ModifyAuraState(AURA_STATE_HEALTHLESS_35_PERCENT, false);
     _Creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     _Creature->ClearAllReactives();
-    _Creature->SetUInt64Value(UNIT_FIELD_TARGET,0);
+    _Creature->SetGuidValue(UNIT_FIELD_TARGET, ObjectGuid::Empty);
     _Creature->GetMotionMaster()->Clear();
     _Creature->GetMotionMaster()->MoveIdle();
     _Creature->SetUInt32Value(UNIT_FIELD_BYTES_1,PLAYER_STATE_DEAD);
@@ -926,7 +926,7 @@ void Resurrect(Creature* target)
     target->CastSpell(target, SPELL_RES_VISUAL, TRIGGERED_FULL_MASK);
     if(target->GetVictim())
     {
-        target->SetUInt64Value(UNIT_FIELD_TARGET, target->GetVictim()->GetGUID());
+        target->SetGuidValue(UNIT_FIELD_TARGET, target->GetVictim()->GetGUID());
         target->GetMotionMaster()->MoveChase(target->GetVictim());
         target->AI()->AttackStart(target->GetVictim());
     }
@@ -971,7 +971,7 @@ public:
             AggroYellTimer = 10000;
         }
     
-        uint64 RomuloGUID;
+        ObjectGuid RomuloGUID;
     
         uint32 Phase;
     
@@ -999,7 +999,7 @@ public:
                     Romulo->DealDamage(Romulo, Romulo->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
                 }
     
-                RomuloGUID = 0;
+                RomuloGUID = ObjectGuid::Empty;
             }
     
             Phase = PHASE_JULIANNE;
@@ -1075,7 +1075,7 @@ public:
             AggroYellTimer = 15000;
         }
     
-        uint64 JulianneGUID;
+        ObjectGuid JulianneGUID;
     
         uint32 Phase;
     
@@ -1092,7 +1092,7 @@ public:
     
         void Reset()
         override {
-            JulianneGUID = 0;
+            JulianneGUID.Clear();
     
             Phase = PHASE_ROMULO;
     
@@ -1499,7 +1499,7 @@ public:
 
         InstanceScript* pInstance;
 
-        uint64 SpotlightGUID;
+        ObjectGuid SpotlightGUID;
 
         uint32 TalkCount;
         uint32 TalkTimer;
@@ -1709,7 +1709,7 @@ public:
             me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
             SetDespawnAtEnd(false);
-            Start(false, false, false);
+            Start(false, false, ObjectGuid::Empty);
         }
 
         void PrepareStageSet()

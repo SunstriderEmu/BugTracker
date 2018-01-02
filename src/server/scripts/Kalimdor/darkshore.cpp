@@ -412,7 +412,7 @@ public:
         public:
         npc_rabid_thistle_bearAI(Creature* pCreature) : ScriptedAI(pCreature) {}
         
-        uint64 guid;
+        ObjectGuid guid;
     
         void Reset() override {}
     

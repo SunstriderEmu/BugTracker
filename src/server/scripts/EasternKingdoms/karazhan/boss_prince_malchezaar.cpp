@@ -188,8 +188,8 @@ public:
         std::vector<uint64> infernals; //spawned infernal guids
         std::vector<InfernalPoint> positions; //free infernal positions
     
-        uint64 axes[2];
-        uint64 enfeeble_targets[5];
+        ObjectGuid axes[2];
+        ObjectGuid enfeeble_targets[5];
         uint64 enfeeble_health[5];
     
         uint32 phase;
@@ -221,8 +221,8 @@ public:
             ClearWeapons();
             InfernalCleanup();
     
-            for(uint64 & enfeeble_target : enfeeble_targets)
-                enfeeble_target = 0;
+            for(ObjectGuid & enfeeble_target : enfeeble_targets)
+                enfeeble_target = ObjectGuid::Empty;
     
             EnfeebleTimer = 30000;
             EnfeebleResetTimer = 38000;
@@ -287,12 +287,12 @@ public:
     
         void AxesCleanup()
         {
-            for(uint64 & i : axes)
+            for(ObjectGuid & i : axes)
             {
                 Unit *axe = ObjectAccessor::GetUnit(*me, i);
                 if(axe && axe->IsAlive())
                     axe->DealDamage(axe, axe->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-                i = 0;
+                i = ObjectGuid::Empty;
             }
         }
     
@@ -361,7 +361,7 @@ public:
                 Unit *target = ObjectAccessor::GetUnit(*me, enfeeble_targets[i]);
                 if(target && target->IsAlive())
                     target->SetHealth(enfeeble_health[i]);
-                enfeeble_targets[i] = 0;
+                enfeeble_targets[i].Clear();
                 enfeeble_health[i] = 0;
             }
         }
@@ -384,8 +384,8 @@ public:
             if(me->HasUnitState(UNIT_STATE_STUNNED))     //While shifting to phase 2 malchezaar stuns himself
                 return;
     
-            if(me->GetUInt64Value(UNIT_FIELD_TARGET)!=me->GetVictim()->GetGUID())
-                me->SetUInt64Value(UNIT_FIELD_TARGET, me->GetVictim()->GetGUID());
+            if(me->GetGuidValue(UNIT_FIELD_TARGET)!=me->GetVictim()->GetGUID())
+                me->SetGuidValue(UNIT_FIELD_TARGET, me->GetVictim()->GetGUID());
     
             if(phase == 1)
             {
@@ -440,7 +440,7 @@ public:
                     DoScriptText(SAY_AXE_TOSS2, me);
     
                     Unit *target = SelectTarget(SELECT_TARGET_RANDOM, 0);
-                    for(uint64 & i : axes)
+                    for(ObjectGuid & i : axes)
                     {
                         Creature *axe = me->SummonCreature(MALCHEZARS_AXE, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 1000);
                         if(axe)
@@ -482,7 +482,7 @@ public:
                     Unit *target = SelectTarget(SELECT_TARGET_RANDOM, 0);
                     if(target)
                     {
-                        for(uint64 i : axes)
+                        for(ObjectGuid& i : axes)
                         {
                             Unit *axe = ObjectAccessor::GetUnit(*me, i);
                             if(axe)

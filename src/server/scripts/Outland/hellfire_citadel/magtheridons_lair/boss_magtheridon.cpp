@@ -71,7 +71,7 @@ static Yell RandomTaunt[]=
 // count of clickers needed to interrupt blast nova
 #define CLICKERS_COUNT              5
 
-typedef std::map<uint64, uint64> CubeMap;
+typedef std::map<ObjectGuid, ObjectGuid> CubeMap;
 
 
 
@@ -226,10 +226,10 @@ public:
             me->CastSpell(me, SPELL_SHADOW_CAGE_C, TRIGGERED_FULL_MASK);
         }
     
-        void SetClicker(uint64 cubeGUID, uint64 clickerGUID)
+        void SetClicker(ObjectGuid cubeGUID, ObjectGuid clickerGUID)
         {
             // to avoid multiclicks from 1 cube
-            if(uint64 guid = Cube[cubeGUID])
+            if(ObjectGuid guid = Cube[cubeGUID])
                 DebuffClicker(ObjectAccessor::GetUnit(*me, guid));
             Cube[cubeGUID] = clickerGUID;
             NeedCheckCube = true;
@@ -257,7 +257,7 @@ public:
                 if(!clicker || !clicker->HasAuraEffect(SPELL_SHADOW_GRASP, 1))
                 {
                     DebuffClicker(clicker);
-                    i.second = 0;
+                    i.second.Clear();
                 }else ClickerNum++;
             }
     
@@ -428,7 +428,7 @@ public:
             if (!pInstance)
                 return true;
             if (pInstance->GetData(DATA_MAGTHERIDON_EVENT) != IN_PROGRESS) return true;
-            Creature *Magtheridon = ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_MAGTHERIDON));
+            Creature *Magtheridon = ObjectAccessor::GetCreature(*me, ObjectGuid(pInstance->GetData64(DATA_MAGTHERIDON)));
             if (!Magtheridon || !Magtheridon->IsAlive()) return true;
 
             // if exhausted or already channeling return

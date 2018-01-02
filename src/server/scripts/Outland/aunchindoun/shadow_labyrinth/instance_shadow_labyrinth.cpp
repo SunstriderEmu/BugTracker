@@ -52,12 +52,11 @@ public:
         instance_shadow_labyrinth_script(Map *map) : InstanceScript(map) { Initialize(); };
 
         ObjectGuid AmbassadorHellmawGUID;
-        uint64 GrandmasterVorpilGUID;
+        ObjectGuid GrandmasterVorpilGUID;
         uint32 FelOverseerCount;
 
         void Initialize() override
         {
-            GrandmasterVorpilGUID = 0;
             FelOverseerCount = 0;
         }
 

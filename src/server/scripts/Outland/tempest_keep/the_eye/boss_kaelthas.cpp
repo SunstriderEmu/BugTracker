@@ -254,7 +254,7 @@ struct advisorbase_ai : public ScriptedAI
             me->ModifyAuraState(AURA_STATE_HEALTHLESS_35_PERCENT, false);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->ClearAllReactives();
-            me->SetUInt64Value(UNIT_FIELD_TARGET,0);
+            me->SetGuidValue(UNIT_FIELD_TARGET,0);
             me->GetMotionMaster()->Clear();
             me->GetMotionMaster()->MoveIdle();
             me->SetUInt32Value(UNIT_FIELD_BYTES_1,PLAYER_STATE_DEAD);
@@ -346,8 +346,8 @@ public:
         bool IsCastingFireball;
         bool ChainPyros;
     
-        uint64 AdvisorGuid[4];
-        uint64 WeaponGuid[7];
+        ObjectGuid AdvisorGuid[4];
+        ObjectGuid WeaponGuid[7];
         SummonList summons;
 
         void SetRoomState(GOState state)

@@ -51,8 +51,6 @@ public:
             SetHeaders(DataHeader);
             SetBossNumber(EncounterCount);
             LoadDoorData(doorData);
-
-            summonerGUID = 0;
         };
 
         void OnCreatureCreate(Creature* creature) override
@@ -66,7 +64,7 @@ public:
             }
         }
 
-        uint64 summonerGUID;
+        ObjectGuid summonerGUID;
 
         bool SetBossState(uint32 type, EncounterState state) override
         {
@@ -101,7 +99,7 @@ public:
             case ANZU_SUMMONER_GUID:
                 return summonerGUID;
             default:
-                return 0;
+                return ObjectGuid::Empty;
             }
         }
     };

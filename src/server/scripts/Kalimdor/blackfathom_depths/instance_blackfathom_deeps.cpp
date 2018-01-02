@@ -55,14 +55,14 @@ public:
     {
         instance_blackfathom_deeps_script(Map* pMap) : InstanceScript(pMap) { Initialize(); };
 
-        uint64 m_uiTwilightLordKelrisGUID;
-        uint64 m_uiShrine1GUID;
-        uint64 m_uiShrine2GUID;
-        uint64 m_uiShrine3GUID;
-        uint64 m_uiShrine4GUID;
-        uint64 m_uiShrineOfGelihastGUID;
-        uint64 m_uiAltarOfTheDeepsGUID;
-        uint64 m_uiMainDoorGUID;
+        ObjectGuid m_uiTwilightLordKelrisGUID;
+        ObjectGuid m_uiShrine1GUID;
+        ObjectGuid m_uiShrine2GUID;
+        ObjectGuid m_uiShrine3GUID;
+        ObjectGuid m_uiShrine4GUID;
+        ObjectGuid m_uiShrineOfGelihastGUID;
+        ObjectGuid m_uiAltarOfTheDeepsGUID;
+        ObjectGuid m_uiMainDoorGUID;
 
         uint8 m_auiEncounter[MAX_ENCOUNTER];
         uint8 m_uiCountFires;
@@ -71,14 +71,6 @@ public:
             override {
             memset(&m_auiEncounter, 0, sizeof(m_auiEncounter));
 
-            m_uiTwilightLordKelrisGUID = 0;
-            m_uiShrine1GUID = 0;
-            m_uiShrine2GUID = 0;
-            m_uiShrine3GUID = 0;
-            m_uiShrine4GUID = 0;
-            m_uiShrineOfGelihastGUID = 0;
-            m_uiAltarOfTheDeepsGUID = 0;
-            m_uiMainDoorGUID = 0;
             m_uiCountFires = 0;
         }
 
@@ -132,7 +124,7 @@ public:
                 break;
             case GO_AKU_MAI_DOOR:
                 if (m_auiEncounter[2] == DONE)
-                    HandleGameObject(0, true, pGo);
+                    HandleGameObject(ObjectGuid::Empty, true, pGo);
                 m_uiMainDoorGUID = pGo->GetGUID();
                 break;
             }

@@ -570,7 +570,7 @@ public:
                     if (pInstance)
                     {
                         //are 5 minutes expected? go template may have data to despawn when used at quest
-                        pInstance->DoRespawnGameObject(pInstance->GetData64(DATA_GO_CHALICE),MINUTE*5);
+                        pInstance->DoRespawnGameObject(ObjectGuid(pInstance->GetData64(DATA_GO_CHALICE)),MINUTE*5);
                     }
                     break;
             }

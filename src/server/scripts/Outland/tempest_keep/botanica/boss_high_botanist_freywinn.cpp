@@ -54,7 +54,7 @@ public:
         public:
         boss_high_botanist_freywinnAI(Creature *c) : ScriptedAI(c) {}
     
-        std::list<uint64> Adds_List;
+        std::list<ObjectGuid> Adds_List;
     
         uint32 SummonSeedling_Timer;
         uint32 TreeForm_Timer;

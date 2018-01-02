@@ -128,7 +128,7 @@ public:
     
         bool isFlameBreathing;
     
-        uint64 FireBombGUIDs[40];
+        ObjectGuid FireBombGUIDs[40];
     
         void Reset()
         override {
@@ -149,8 +149,8 @@ public:
     
             isFlameBreathing = false;
     
-            for(uint64 & FireBombGUID : FireBombGUIDs)
-                FireBombGUID = 0;
+            for (ObjectGuid & FireBombGUID : FireBombGUIDs)
+                FireBombGUID.Clear();
     
             HatchAllEggs(1);
         }
@@ -215,7 +215,7 @@ public:
         void SpawnBombs()
         {
             float dx, dy;
-            for(uint64 & FireBombGUID : FireBombGUIDs)
+            for(ObjectGuid & FireBombGUID : FireBombGUIDs)
             {
                 dx =(rand()%(area_dx))-(area_dx/2);
                 dy =(rand()%(area_dy))-(area_dy/2);

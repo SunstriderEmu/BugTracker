@@ -6,7 +6,7 @@ SDComment: Custom NPC Training Dummy, like in Wotlk
 SDCategory: Custom
 EndScriptData */
 
-typedef std::unordered_map<uint64, uint32> AttackerMap;
+typedef std::unordered_map<ObjectGuid, uint32> AttackerMap;
 
 
 class npc_training_dummy : public CreatureScript

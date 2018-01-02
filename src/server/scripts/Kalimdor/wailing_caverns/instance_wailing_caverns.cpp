@@ -43,14 +43,14 @@ public:
         uint32 m_auiEncounter[MAX_ENCOUNTER];
 
         bool yelled;
-        uint64 NaralexGUID;
+        ObjectGuid NaralexGUID;
 
         void Initialize() override
         {
             memset(&m_auiEncounter, 0, sizeof(m_auiEncounter));
 
             yelled = false;
-            NaralexGUID = 0;
+            NaralexGUID.Clear();
         }
 
         void OnCreatureCreate(Creature* pCreature) override

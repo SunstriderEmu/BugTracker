@@ -128,7 +128,7 @@ public:
             auto& m_threatlist = me->GetThreatManager().getThreatList();
             for (auto i : m_threatlist)
             {
-                if(!IS_PLAYER_GUID(i->getUnitGuid()))
+                if(!i->getUnitGuid().IsPlayer())
                     continue;
     
                 me->GetThreatManager().AddThreat(nullptr,0);
@@ -270,14 +270,13 @@ public:
     {
         public:
         InstanceScript* pInstance;
-        uint64 currentTargetGUID;
+        ObjectGuid currentTargetGUID;
         
         float x, y, z, groundZ;
     
         molten_flameAI(Creature *c) : ScriptedAI(c)
         {
             pInstance = ((InstanceScript*)c->GetInstanceScript());
-            currentTargetGUID = 0;
         }
         
         void UndermapCheck()
@@ -307,7 +306,7 @@ public:
                 return;
     
             DoZoneInCombat();
-            Creature* supremus = me->GetMap()->GetCreature(pInstance->GetData64(DATA_SUPREMUS));
+            Creature* supremus = me->GetMap()->GetCreature(ObjectGuid(pInstance->GetData64(DATA_SUPREMUS)));
             if(!supremus) 
                 return;
             

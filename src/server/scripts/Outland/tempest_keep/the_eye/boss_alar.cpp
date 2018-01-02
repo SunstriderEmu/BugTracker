@@ -154,7 +154,7 @@ public:
                     me->RemoveAllAuras();
                     me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     me->AttackStop();
-                    me->SetUInt64Value(UNIT_FIELD_TARGET, 0);
+                    me->SetTarget(ObjectGuid::Empty);
                     me->SetSpeedRate(MOVE_RUN, 5.0f);
                     me->GetMotionMaster()->Clear();
                     me->GetMotionMaster()->MovePoint(0, waypoint[5][0], waypoint[5][1], waypoint[5][2]);
@@ -457,7 +457,7 @@ public:
                 me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 if(pInstance/* && pInstance->GetData(DATA_ALAREVENT) == 2*/)
                 {
-                    if(Unit* Alar = ObjectAccessor::GetUnit((*me), pInstance->GetData64(NPC_ALAR)))
+                    if(Unit* Alar = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(NPC_ALAR))))
                     {
                         int AlarHealth = Alar->GetHealth() - Alar->GetMaxHealth()*0.03;
                         if(AlarHealth > 0)

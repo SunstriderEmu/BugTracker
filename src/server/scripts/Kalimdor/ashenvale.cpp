@@ -370,7 +370,7 @@ public:
         bool m_bIsBrazierExtinguished;
         bool m_completed;
         
-        uint64 playerGUID;
+        ObjectGuid playerGUID;
     
         void JustSummoned(Creature* pSummoned)
         override {

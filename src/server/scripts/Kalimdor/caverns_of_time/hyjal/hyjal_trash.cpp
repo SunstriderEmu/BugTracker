@@ -208,7 +208,7 @@ void hyjal_trashAI::UpdateAI(const uint32 diff)
                         me->SetHomePosition(AllianceOverrunWP[43][0]+irand(-3,3), AllianceOverrunWP[43][1]+irand(-3,3), AllianceOverrunWP[43][2],0);
                         SetDespawnAtEnd(false);
                         LastOverronPos = 18;
-                        Start(true, true, true);
+                        Start(true, true, ObjectGuid::Empty);
                         break;
                      case 1:
                         AddWaypoint( 4, AllianceOverrunWP[22][0]+irand(-3,3), AllianceOverrunWP[22][1]+irand(-3,3), AllianceOverrunWP[22][2]);
@@ -230,7 +230,7 @@ void hyjal_trashAI::UpdateAI(const uint32 diff)
                         me->SetHomePosition(AllianceOverrunWP[44][0]+irand(-3,3), AllianceOverrunWP[44][1]+irand(-3,3), AllianceOverrunWP[44][2],0);
                         SetDespawnAtEnd(false);
                         LastOverronPos = 18;
-                        Start(true, true, true);
+                        Start(true, true, ObjectGuid::Empty);
                         break;
                     default:
                         for(uint8 i = 22; i < 36; i++)
@@ -238,7 +238,7 @@ void hyjal_trashAI::UpdateAI(const uint32 diff)
 
                         SetDespawnAtEnd(true);
                         LastOverronPos = 17;
-                        Start(true, true, true);
+                        Start(true, true, ObjectGuid::Empty);
                         break;
                 }
             }
@@ -255,7 +255,7 @@ void hyjal_trashAI::UpdateAI(const uint32 diff)
                         me->SetHomePosition(AllianceOverrunWP[2][0]+irand(-3,3), AllianceOverrunWP[2][1]+irand(-3,3), AllianceOverrunWP[2][2],0);
                         SetDespawnAtEnd(false);
                         LastOverronPos = 5;
-                        Start(true, true, true);
+                        Start(true, true, ObjectGuid::Empty);
                         break;
                     case 1:
                         AddWaypoint(4, AllianceOverrunWP[3][0]+irand(-3,3), AllianceOverrunWP[3][1]+irand(-3,3), AllianceOverrunWP[3][2]);
@@ -264,7 +264,7 @@ void hyjal_trashAI::UpdateAI(const uint32 diff)
                         me->SetHomePosition(AllianceOverrunWP[5][0]+irand(-3,3), AllianceOverrunWP[5][1]+irand(-3,3), AllianceOverrunWP[5][2],0);
                         SetDespawnAtEnd(false);
                         LastOverronPos = 6;
-                        Start(true, true, true);
+                        Start(true, true, ObjectGuid::Empty);
                         break;
                     case 2:
                         AddWaypoint(4, AllianceOverrunWP[6][0]+irand(-3,3), AllianceOverrunWP[6][1]+irand(-3,3), AllianceOverrunWP[6][2]);
@@ -274,7 +274,7 @@ void hyjal_trashAI::UpdateAI(const uint32 diff)
                         me->SetHomePosition(AllianceOverrunWP[9][0]+irand(-3,3), AllianceOverrunWP[9][1]+irand(-3,3), AllianceOverrunWP[9][2],0);
                         SetDespawnAtEnd(false);
                         LastOverronPos = 7;
-                        Start(true, true, true);
+                        Start(true, true, ObjectGuid::Empty);
                         break;
                     case 3:
                         AddWaypoint(4, AllianceOverrunWP[10][0]+irand(-3,3), AllianceOverrunWP[10][1]+irand(-3,3), AllianceOverrunWP[10][2]);
@@ -283,7 +283,7 @@ void hyjal_trashAI::UpdateAI(const uint32 diff)
                         me->SetHomePosition(AllianceOverrunWP[12][0]+irand(-3,3), AllianceOverrunWP[12][1]+irand(-3,3), AllianceOverrunWP[12][2],0);
                         SetDespawnAtEnd(false);
                         LastOverronPos = 6;
-                        Start(true, true, true);
+                        Start(true, true, ObjectGuid::Empty);
                         break;
                     case 4:
                         AddWaypoint(4, AllianceOverrunWP[13][0]+irand(-3,3), AllianceOverrunWP[13][1]+irand(-3,3), AllianceOverrunWP[13][2]);
@@ -292,7 +292,7 @@ void hyjal_trashAI::UpdateAI(const uint32 diff)
                         me->SetHomePosition(AllianceOverrunWP[15][0]+irand(-3,3), AllianceOverrunWP[15][1]+irand(-3,3), AllianceOverrunWP[15][2],0);
                         SetDespawnAtEnd(false);
                         LastOverronPos = 6;
-                        Start(true, true, true);
+                        Start(true, true, ObjectGuid::Empty);
                         break;
                     case 5:
                         AddWaypoint(4, AllianceOverrunWP[16][0]+irand(-3,3), AllianceOverrunWP[16][1]+irand(-3,3), AllianceOverrunWP[16][2]);
@@ -304,14 +304,14 @@ void hyjal_trashAI::UpdateAI(const uint32 diff)
                         me->SetHomePosition(AllianceOverrunWP[21][0]+irand(-3,3), AllianceOverrunWP[21][1]+irand(-3,3), AllianceOverrunWP[21][2],0);
                         SetDespawnAtEnd(false);
                         LastOverronPos = 9;
-                        Start(true, true, true);
+                        Start(true, true, ObjectGuid::Empty);
                         break;
                     default:
                         for(uint8 i = 22; i < 36; i++)
                             AddWaypoint( i-18, AllianceOverrunWP[i][0]+irand(-3,3), AllianceOverrunWP[i][1]+irand(-3,3), AllianceOverrunWP[i][2]);
                         SetDespawnAtEnd(true);
                         LastOverronPos = 17;
-                        Start(true, true, true);
+                        Start(true, true, ObjectGuid::Empty);
                         break;
                 }
             }
@@ -332,7 +332,7 @@ void hyjal_trashAI::UpdateAI(const uint32 diff)
                         me->SetHomePosition(HordeOverrunWP[19][0], HordeOverrunWP[19][1], HordeOverrunWP[19][2],0);
                         SetDespawnAtEnd(false);
                         LastOverronPos = 8;
-                        Start(true, true, true);
+                        Start(true, true, ObjectGuid::Empty);
                         break;
                     case 1:
                         AddWaypoint( 5, HordeOverrunWP[16][0]+irand(-10,10), HordeOverrunWP[16][1]+irand(-10,10), HordeOverrunWP[16][2]);
@@ -342,14 +342,14 @@ void hyjal_trashAI::UpdateAI(const uint32 diff)
                         me->SetHomePosition(HordeOverrunWP[20][0], HordeOverrunWP[20][1], HordeOverrunWP[20][2],0);
                         SetDespawnAtEnd(false);
                         LastOverronPos = 8;
-                        Start(true, true, true);
+                        Start(true, true, ObjectGuid::Empty);
                         break;
                     default:
                         for(uint8 i = 0; i < 16; i++)
                             AddWaypoint( i+6, HordeOverrunWP[i][0]+irand(-10,10), HordeOverrunWP[i][1]+irand(-10,10), HordeOverrunWP[i][2]);
                         SetDespawnAtEnd(true);
                         LastOverronPos = 21;
-                        Start(true, true, true);
+                        Start(true, true, ObjectGuid::Empty);
                         break;
                 }
             }
@@ -361,7 +361,7 @@ void hyjal_trashAI::UpdateAI(const uint32 diff)
                     AddWaypoint( i+6, HordeOverrunWP[i][0]+irand(-10,10), HordeOverrunWP[i][1]+irand(-10,10), HordeOverrunWP[i][2]);
                 SetDespawnAtEnd(true);
                 LastOverronPos = 21;
-                Start(true, true, true);
+                Start(true, true, ObjectGuid::Empty);
             }
         }
     }
@@ -461,7 +461,7 @@ public:
             {
                 if (pInstance->GetData(DATA_ALLIANCE_RETREAT))//2.alliance boss down, attack thrall
                 {
-                    Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
+                    Unit* target = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_THRALL)));
                     if (target && target->IsAlive())
                         me->GetThreatManager().AddThreat(target,0.0);
                 }
@@ -502,7 +502,7 @@ public:
                     {
                         if (pInstance->GetData(DATA_ALLIANCE_RETREAT) && !pInstance->GetData(DATA_HORDE_RETREAT))
                         {
-                            Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
+                            Unit* target = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_THRALL)));
                             if (target && target->IsAlive())
                                 me->GetThreatManager().AddThreat(target,0.0);
                         }else if (pInstance->GetData(DATA_ALLIANCE_RETREAT) && pInstance->GetData(DATA_HORDE_RETREAT)){
@@ -523,7 +523,7 @@ public:
                     if(pInstance)
                     {
                         ((EscortAI*)(me->AI()))->AddWaypoint(0, HordeWPs[7][0]+irand(-3,3),    HordeWPs[7][1]+irand(-3,3),    HordeWPs[7][2]);//HordeWPs[7] infront of thrall
-                        ((EscortAI*)(me->AI()))->Start(true, true, true);
+                        ((EscortAI*)(me->AI()))->Start(true, true, ObjectGuid::Empty);
                         ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                     }
                 }
@@ -589,11 +589,11 @@ public:
             {
                 if (pInstance->GetData(DATA_ALLIANCE_RETREAT))//2.alliance boss down, attack thrall
                 {
-                    Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
+                    Unit* target = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_THRALL)));
                     if (target && target->IsAlive())
                         me->GetThreatManager().AddThreat(target,0.0);
                 }else{
-                    Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
+                    Unit* target = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_JAINAPROUDMOORE)));
                     if (target && target->IsAlive())
                         me->GetThreatManager().AddThreat(target,0.0);
                 }
@@ -625,13 +625,13 @@ public:
                         {
                             for (uint8 i = 0; i < 8; ++i)
                                 ((EscortAI*)(me->AI()))->AddWaypoint(i, HordeWPs[i][0]+irand(-3,3),    HordeWPs[i][1]+irand(-3,3),    HordeWPs[i][2]);
-                            ((EscortAI*)(me->AI()))->Start(false, true, true);
+                            ((EscortAI*)(me->AI()))->Start(false, true);
                             ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }else//use alliance WPs
                         {
                             for (uint8 i = 0; i < 8; ++i)
                                 ((EscortAI*)(me->AI()))->AddWaypoint(i, AllianceWPs[i][0]+irand(-3,3),    AllianceWPs[i][1]+irand(-3,3),    AllianceWPs[i][2]);
-                            ((EscortAI*)(me->AI()))->Start(false, true, true);
+                            ((EscortAI*)(me->AI()))->Start(false, true);
                             ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }
                     }
@@ -695,11 +695,11 @@ public:
             {
                 if (pInstance->GetData(DATA_ALLIANCE_RETREAT))//2.alliance boss down, attack thrall
                 {
-                    Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
+                    Unit* target = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_THRALL)));
                     if (target && target->IsAlive())
                         me->GetThreatManager().AddThreat(target,0.0);
                 }else{
-                    Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
+                    Unit* target = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_JAINAPROUDMOORE)));
                     if (target && target->IsAlive())
                         me->GetThreatManager().AddThreat(target,0.0);
                 }
@@ -733,13 +733,13 @@ public:
                         {
                             for (uint8 i = 0; i < 8; ++i)
                                 ((EscortAI*)(me->AI()))->AddWaypoint(i, HordeWPs[i][0]+irand(-3,3),    HordeWPs[i][1]+irand(-3,3),    HordeWPs[i][2]);
-                            ((EscortAI*)(me->AI()))->Start(false, true, true);
+                            ((EscortAI*)(me->AI()))->Start(false, true);
                             ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }else//use alliance WPs
                         {
                             for (uint8 i = 0; i < 8; ++i)
                                 ((EscortAI*)(me->AI()))->AddWaypoint(i, AllianceWPs[i][0]+irand(-3,3),    AllianceWPs[i][1]+irand(-3,3),    AllianceWPs[i][2]);
-                            ((EscortAI*)(me->AI()))->Start(false, true, true);
+                            ((EscortAI*)(me->AI()))->Start(false, true);
                             ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }
                     }
@@ -805,11 +805,11 @@ public:
             {
                 if (pInstance->GetData(DATA_ALLIANCE_RETREAT))//2.alliance boss down, attack thrall
                 {
-                    Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
+                    Unit* target = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_THRALL)));
                     if (target && target->IsAlive())
                         me->GetThreatManager().AddThreat(target,0.0);
                 }else{
-                    Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
+                    Unit* target = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_JAINAPROUDMOORE)));
                     if (target && target->IsAlive())
                         me->GetThreatManager().AddThreat(target,0.0);
                 }
@@ -855,13 +855,13 @@ public:
                         {
                             for (uint8 i = 0; i < 8; ++i)
                                 ((EscortAI*)(me->AI()))->AddWaypoint(i, HordeWPs[i][0]+irand(-3,3),    HordeWPs[i][1]+irand(-3,3),    HordeWPs[i][2]);
-                            ((EscortAI*)(me->AI()))->Start(true, true, true);
+                            ((EscortAI*)(me->AI()))->Start(true, true);
                             ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }else//use alliance WPs
                         {
                             for (uint8 i = 0; i < 8; ++i)
                                 ((EscortAI*)(me->AI()))->AddWaypoint(i, AllianceWPs[i][0]+irand(-3,3),    AllianceWPs[i][1]+irand(-3,3),    AllianceWPs[i][2]);
-                            ((EscortAI*)(me->AI()))->Start(true, true, true);
+                            ((EscortAI*)(me->AI()))->Start(true, true);
                             ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }
                     }
@@ -928,11 +928,11 @@ public:
             {
                 if (pInstance->GetData(DATA_ALLIANCE_RETREAT))//2.alliance boss down, attack thrall
                 {
-                    Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
+                    Unit* target = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_THRALL)));
                     if (target && target->IsAlive())
                         me->GetThreatManager().AddThreat(target,0.0);
                 }else{
-                    Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
+                    Unit* target = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_JAINAPROUDMOORE)));
                     if (target && target->IsAlive())
                         me->GetThreatManager().AddThreat(target,0.0);
                 }
@@ -957,13 +957,13 @@ public:
                         {
                             for (uint8 i = 0; i < 8; ++i)
                                 ((EscortAI*)(me->AI()))->AddWaypoint(i, HordeWPs[i][0]+irand(-3,3),    HordeWPs[i][1]+irand(-3,3),    HordeWPs[i][2]);
-                            ((EscortAI*)(me->AI()))->Start(false, true, true);
+                            ((EscortAI*)(me->AI()))->Start(false, true);
                             ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }else//use alliance WPs
                         {
                             for (uint8 i = 0; i < 8; ++i)
                                 ((EscortAI*)(me->AI()))->AddWaypoint(i, AllianceWPs[i][0]+irand(-3,3),    AllianceWPs[i][1]+irand(-3,3),    AllianceWPs[i][2]);
-                            ((EscortAI*)(me->AI()))->Start(false, true, true);
+                            ((EscortAI*)(me->AI()))->Start(false, true);
                             ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }
                     }
@@ -1033,11 +1033,11 @@ public:
             {
                 if (pInstance->GetData(DATA_ALLIANCE_RETREAT))//2.alliance boss down, attack thrall
                 {
-                    Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
+                    Unit* target = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_THRALL)));
                     if (target && target->IsAlive())
                         me->GetThreatManager().AddThreat(target,0.0);
                 }else{
-                    Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
+                    Unit* target = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_JAINAPROUDMOORE)));
                     if (target && target->IsAlive())
                         me->GetThreatManager().AddThreat(target,0.0);
                 }
@@ -1062,13 +1062,13 @@ public:
                         {
                             for (uint8 i = 0; i < 8; ++i)
                                 ((EscortAI*)(me->AI()))->AddWaypoint(i, HordeWPs[i][0]+irand(-3,3),    HordeWPs[i][1]+irand(-3,3),    HordeWPs[i][2]);
-                            ((EscortAI*)(me->AI()))->Start(false, true, true);
+                            ((EscortAI*)(me->AI()))->Start(false, true);
                             ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }else//use alliance WPs
                         {
                             for (uint8 i = 0; i < 8; ++i)
                                 ((EscortAI*)(me->AI()))->AddWaypoint(i, AllianceWPs[i][0]+irand(-3,3),    AllianceWPs[i][1]+irand(-3,3),    AllianceWPs[i][2]);
-                            ((EscortAI*)(me->AI()))->Start(false, true, true);
+                            ((EscortAI*)(me->AI()))->Start(false, true);
                             ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }
     
@@ -1129,11 +1129,11 @@ public:
             {
                 if (pInstance->GetData(DATA_ALLIANCE_RETREAT))//2.alliance boss down, attack thrall
                 {
-                    Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
+                    Unit* target = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_THRALL)));
                     if (target && target->IsAlive())
                         me->GetThreatManager().AddThreat(target,0.0);
                 }else{
-                    Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
+                    Unit* target = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_JAINAPROUDMOORE)));
                     if (target && target->IsAlive())
                         me->GetThreatManager().AddThreat(target,0.0);
                 }
@@ -1158,13 +1158,13 @@ public:
                         {
                             for (uint8 i = 0; i < 8; ++i)
                                 ((EscortAI*)(me->AI()))->AddWaypoint(i, HordeWPs[i][0]+irand(-3,3),    HordeWPs[i][1]+irand(-3,3),    HordeWPs[i][2]);
-                            ((EscortAI*)(me->AI()))->Start(false, true, true);
+                            ((EscortAI*)(me->AI()))->Start(false, true);
                             ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }else//use alliance WPs
                         {
                             for (uint8 i = 0; i < 8; ++i)
                                 ((EscortAI*)(me->AI()))->AddWaypoint(i, AllianceWPs[i][0]+irand(-3,3),    AllianceWPs[i][1]+irand(-3,3),    AllianceWPs[i][2]);
-                            ((EscortAI*)(me->AI()))->Start(false, true, true);
+                            ((EscortAI*)(me->AI()))->Start(false, true);
                             ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }
     
@@ -1227,7 +1227,7 @@ public:
             pos = i;
             if (i == 2 && pInstance && !IsOverrun)
             {
-                Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
+                Unit* target = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_THRALL)));
                 if (target && target->IsAlive())
                 {
                     me->GetThreatManager().AddThreat(target,0.0);
@@ -1273,13 +1273,13 @@ public:
                             for (uint8 i = 0; i < 3; ++i)
                                 ((EscortAI*)(me->AI()))->AddWaypoint(i, FrostWyrmWPs[i][0],    FrostWyrmWPs[i][1],    FrostWyrmWPs[i][2]);
 
-                            ((EscortAI*)(me->AI()))->Start(false, true, true);
+                            ((EscortAI*)(me->AI()))->Start(false, true);
                             ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         } else { //fly path FlyPathWPs
                             for (uint8 i = 0; i < 3; ++i)
                                 ((EscortAI*)(me->AI()))->AddWaypoint(i, FlyPathWPs[i][0]+irand(-10,10),    FlyPathWPs[i][1]+irand(-10,10),    FlyPathWPs[i][2]);
 
-                            ((EscortAI*)(me->AI()))->Start(false, true, true);
+                            ((EscortAI*)(me->AI()))->Start(false, true);
                             ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }
                     }
@@ -1361,7 +1361,7 @@ public:
             pos = i;
             if (i == 2 && pInstance && !IsOverrun)
             {
-                Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_THRALL));
+                Unit* target = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_THRALL)));
                 if (target && target->IsAlive())
                 {
                     me->GetThreatManager().AddThreat(target,0.0);
@@ -1407,13 +1407,13 @@ public:
                             for (uint8 i = 0; i < 3; ++i)
                                 ((EscortAI*)(me->AI()))->AddWaypoint(i, GargoyleWPs[i][0]+irand(-10,10), GargoyleWPs[i][1]+irand(-10,10), GargoyleWPs[i][2]);
 
-                            ((EscortAI*)(me->AI()))->Start(false, true, true);
+                            ((EscortAI*)(me->AI()))->Start(false, true);
                             ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }else{//fly path FlyPathWPs
                             for (uint8 i = 0; i < 3; ++i)
                                 ((EscortAI*)(me->AI()))->AddWaypoint(i, FlyPathWPs[i][0]+irand(-10,10),    FlyPathWPs[i][1]+irand(-10,10),    FlyPathWPs[i][2]);
 
-                            ((EscortAI*)(me->AI()))->Start(false, true, true);
+                            ((EscortAI*)(me->AI()))->Start(false, true);
                             ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                         }
                     }

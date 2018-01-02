@@ -212,11 +212,11 @@ public:
         npc_piznikAI(Creature* c) : ScriptedAI(c) {}
         
         uint8 count;
-        uint64 pGUID;
+        ObjectGuid pGUID;
         
         void JustEngagedWith(Unit* who) override {}
         
-        void Start(uint64 guid)
+        void Start(ObjectGuid guid)
         {
             count = 0;
             pGUID = guid;

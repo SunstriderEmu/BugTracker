@@ -174,7 +174,7 @@ public:
             {
                 if (Start_Timer < diff)
                 {
-                    Start(true,true,true);
+                    Start(true,true, ObjectGuid::Empty);
                     Start_Timer = 0;
                 } else Start_Timer -= diff;
             }

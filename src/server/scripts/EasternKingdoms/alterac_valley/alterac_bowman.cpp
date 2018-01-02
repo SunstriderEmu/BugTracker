@@ -22,8 +22,8 @@ public:
         }
     
         uint16 shoot_timer;
-        uint64 rangedTargetGUID;
-        uint64 lastMeleeUnitGUID;
+        ObjectGuid rangedTargetGUID;
+        ObjectGuid lastMeleeUnitGUID;
     
         void JustReachedHome() override 
         {
@@ -32,7 +32,7 @@ public:
     
         void Reset() override 
         {   
-            rangedTargetGUID = 0;
+            rangedTargetGUID = ObjectGuid::Empty;
         }
 
         void UpdateAI(const uint32 diff) override 
@@ -58,7 +58,7 @@ public:
                             return;
                         }
                     }
-                    lastMeleeUnitGUID = 0;
+                    lastMeleeUnitGUID = ObjectGuid::Empty;
                 }
             }
 
@@ -70,7 +70,7 @@ public:
                 if (!rangedTarget || !IsValidRangedTarget(rangedTarget))
                 {
                     rangedTarget = nullptr;
-                    rangedTargetGUID = 0;
+                    rangedTargetGUID = ObjectGuid::Empty;
                 }
 
                 if (rangedTarget)
@@ -83,7 +83,7 @@ public:
                             if (!attackOk)
                             {
                                 rangedTarget = nullptr;
-                                rangedTargetGUID = 0;
+                                rangedTargetGUID = ObjectGuid::Empty;
                                 return;
                             }
                         }
@@ -96,7 +96,7 @@ public:
                         else 
                         {
                             rangedTarget = nullptr;
-                            rangedTargetGUID = 0;
+                            rangedTargetGUID = ObjectGuid::Empty;
                         }
                     }
                     else

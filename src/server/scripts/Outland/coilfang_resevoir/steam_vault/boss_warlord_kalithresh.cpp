@@ -103,7 +103,7 @@ public:
             {
                 if(checkDistanceTimer <= diff)
                 {
-                    if(Creature* boss = pInstance->instance->GetCreature(pInstance->GetData64(DATA_KALITRESH)))
+                    if(Creature* boss = pInstance->instance->GetCreature(ObjectGuid(pInstance->GetData64(DATA_KALITRESH))))
                     {
                         if(me->GetDistance(boss) < 5.0f)
                         {

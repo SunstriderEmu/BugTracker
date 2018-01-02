@@ -172,7 +172,7 @@ public:
                             break;
                         case 2:
                             DoScriptText(SAY_AGGRO, me);
-                            if( Unit *mellic = ObjectAccessor::GetUnit(*me,instance->GetData64(DATA_MELLICHAR)) )
+                            if( Unit *mellic = ObjectAccessor::GetUnit(*me, instance->GetGuidData(DATA_MELLICHAR)) )
                             {
                                 //should have a better way to do this. possibly spell exist.
                                 mellic->SetDeathState(JUST_DIED);

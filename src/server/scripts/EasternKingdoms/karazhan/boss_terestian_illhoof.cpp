@@ -86,7 +86,7 @@ public:
         override {
             if(pInstance)
             {
-                uint64 terestianGUID = pInstance->GetGuidData(DATA_TERESTIAN);
+                ObjectGuid terestianGUID = pInstance->GetGuidData(DATA_TERESTIAN);
                 if(terestianGUID)
                 {
                     Unit* Terestian = ObjectAccessor::GetUnit((*me), terestianGUID);
@@ -176,13 +176,13 @@ public:
         public:
         mob_demon_chainAI(Creature *c) : ScriptedAI(c) {}
     
-        uint64 SacrificeGUID;
+        ObjectGuid SacrificeGUID;
         uint32 checkTimer;
     
         void Reset()
         override {
             checkTimer = 1000;
-            SacrificeGUID = 0;
+            SacrificeGUID = ObjectGuid::Empty;
         }
     
         void JustEngagedWith(Unit* who) override {}
@@ -192,7 +192,7 @@ public:
         void JustDied(Unit *killer)
         override {
             if(SacrificeGUID)
-                if(Unit* Sacrifice = ObjectAccessor::GetUnit((*me),SacrificeGUID))
+                if(Unit* Sacrifice = ObjectAccessor::GetUnit((*me), SacrificeGUID))
                     Sacrifice->RemoveAurasDueToSpell(SPELL_SACRIFICE);
         }
     
@@ -228,8 +228,8 @@ public:
         {
         }
     
-        uint64 KilrekGUID;
-        uint64 PortalGUID[2];
+        ObjectGuid KilrekGUID;
+        ObjectGuid PortalGUID[2];
     
         uint32 CheckKilrekTimer;
         uint32 SacrificeTimer;
@@ -243,7 +243,7 @@ public:
     
         void DespawnPortals()
         {
-            for (uint64 & i : PortalGUID)
+            for (ObjectGuid & i : PortalGUID)
             {
                 if (i)
                 {
@@ -251,7 +251,7 @@ public:
                     if (Portal)
                         Portal->DespawnOrUnsummon();
 
-                    i = 0;
+                    i = ObjectGuid::Empty;
                 }
             }
         }

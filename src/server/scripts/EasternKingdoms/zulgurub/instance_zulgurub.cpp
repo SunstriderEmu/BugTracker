@@ -42,10 +42,10 @@ public:
         bool IsBossDied[9];
 
         //Storing Lorkhan, Zath and Thekal because we need to cast on them later. Jindo is needed for healfunction too.
-        uint64 LorKhanGUID;
-        uint64 ZathGUID;
-        uint64 ThekalGUID;
-        uint64 JindoGUID;
+        ObjectGuid LorKhanGUID;
+        ObjectGuid ZathGUID;
+        ObjectGuid ThekalGUID;
+        ObjectGuid JindoGUID;
 
         uint32 GahzrankaStatus;
 

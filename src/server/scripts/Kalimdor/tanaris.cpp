@@ -714,7 +714,7 @@ public:
         uint32 m_uiPostEventTimer;
         uint32 m_uiPhasePostEvent;
     
-        uint64 TortaGUID;
+        ObjectGuid TortaGUID;
     
         void Reset()
         override {
@@ -722,7 +722,7 @@ public:
             m_uiPostEventTimer = 1000;
             m_uiPhasePostEvent = 0;
     
-            TortaGUID = 0;
+            TortaGUID.Clear();
         }
         
         void JustEngagedWith(Unit *pWho) override {}
@@ -867,7 +867,7 @@ public:
         void MoveInLineOfSight(Unit* pWho)
         override {
             if (me->GetDistance(pWho) <= 10.0f && pWho->GetTypeId() == TYPEID_PLAYER) {
-                if (uint64 critter_guid = pWho->ToPlayer()->GetCritterGUID())
+                if (ObjectGuid critter_guid = pWho->ToPlayer()->GetCritterGUID())
                     if (Creature* pet = pWho->GetMap()->GetCreature(critter_guid)) {
                         if (pWho->ToPlayer()->GetQuestStatus(10963) == QUEST_STATUS_INCOMPLETE && pet->GetEntry() == 22817)
                             pWho->ToPlayer()->AreaExploredOrEventHappens(10963);

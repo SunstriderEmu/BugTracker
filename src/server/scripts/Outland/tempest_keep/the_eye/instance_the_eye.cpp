@@ -18,32 +18,21 @@ public:
             Initialize(); 
         };
 
-        uint64 ThaladredTheDarkener;
-        uint64 LordSanguinar;
-        uint64 GrandAstromancerCapernian;
-        uint64 MasterEngineerTelonicus;
-        uint64 Kaelthas;
-        uint64 Astromancer;
-        uint64 Alar;
-        uint64 BridgeWindowGUID;
-        uint64 KaelStateRightGUID;
-        uint64 KaelStateLeftGUID;
+        ObjectGuid ThaladredTheDarkener;
+        ObjectGuid LordSanguinar;
+        ObjectGuid GrandAstromancerCapernian;
+        ObjectGuid MasterEngineerTelonicus;
+        ObjectGuid Kaelthas;
+        ObjectGuid Astromancer;
+        ObjectGuid Alar;
+        ObjectGuid BridgeWindowGUID;
+        ObjectGuid KaelStateRightGUID;
+        ObjectGuid KaelStateLeftGUID;
 
         uint32 Encounters[MAX_ENCOUNTER];
 
         void Initialize() override
         {
-            ThaladredTheDarkener = 0;
-            LordSanguinar = 0;
-            GrandAstromancerCapernian = 0;
-            MasterEngineerTelonicus = 0;
-            Kaelthas = 0;
-            Astromancer = 0;
-            Alar = 0;
-            BridgeWindowGUID = 0;
-            KaelStateRightGUID = 0;
-            KaelStateLeftGUID = 0;
-
             for (uint32 & Encounter : Encounters)
                 Encounter = NOT_STARTED;
         }

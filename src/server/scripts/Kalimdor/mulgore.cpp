@@ -101,7 +101,7 @@ public:
     
         int STATE;
         uint32 wait;
-        uint64 player;
+        ObjectGuid player;
     
         void Reset()
         override {

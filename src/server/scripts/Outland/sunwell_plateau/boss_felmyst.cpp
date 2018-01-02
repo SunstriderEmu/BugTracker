@@ -134,7 +134,7 @@ public:
         uint8 phase;
         bool firstInit = true;
 
-        uint64 encapsTargetGUID;
+        ObjectGuid encapsTargetGUID;
 
         void Reset()
         override {
@@ -142,7 +142,7 @@ public:
             direction = false;
             inChaseOnFlight = false;
             chosenLane = 0;
-            encapsTargetGUID = 0;
+            encapsTargetGUID = ObjectGuid::Empty;
             flightPhaseTimer = 60000;
             flightPhase = 0;
             introPhaseTimer = 0;
@@ -260,7 +260,7 @@ public:
 
             if (pInstance)
             {
-                if (Creature* brutallus = ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_BRUTALLUS))) {
+                if (Creature* brutallus = ObjectAccessor::GetCreature(*me, ObjectGuid(pInstance->GetData64(DATA_BRUTALLUS)))) {
                     if (!brutallus->HasFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE))
                         brutallus->SetVisible(false);
                 }
@@ -310,7 +310,7 @@ public:
         void SummonedCreatureDespawn(Creature* unit)
         override {
             if (unit->GetEntry() == MOB_VAPOR)
-                me->SetTarget(0);
+                me->SetTarget(ObjectGuid::Empty);
 
             Summons.Despawn(unit);
         }
@@ -562,7 +562,7 @@ public:
                     break;
                 case PHASE_FLIGHT:
                     if (flightPhase >= 2)
-                        me->SetTarget(0);
+                        me->SetTarget(ObjectGuid::Empty);
 
                     handleFlight(diff);
                     break;

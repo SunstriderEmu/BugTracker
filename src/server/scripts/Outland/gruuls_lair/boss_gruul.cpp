@@ -198,7 +198,7 @@ public:
                             if(victim)
                             {
                                 me->GetMotionMaster()->MoveChase(victim);
-                                me->SetUInt64Value(UNIT_FIELD_TARGET, victim->GetGUID());
+                                me->SetGuidValue(UNIT_FIELD_TARGET, victim->GetGUID());
                             }
     
                             PerformingGroundSlam = false;
@@ -254,7 +254,7 @@ public:
                 {
                     me->GetMotionMaster()->Clear();
                     me->GetMotionMaster()->MoveIdle();
-                    me->SetUInt64Value(UNIT_FIELD_TARGET, 0);
+                    me->SetTarget(ObjectGuid::Empty);
     
                     PerformingGroundSlam= true;
                     GroundSlamTimer = 0;

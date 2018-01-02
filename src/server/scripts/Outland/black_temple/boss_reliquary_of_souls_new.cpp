@@ -80,7 +80,6 @@ public:
         Boss_reliquary_of_soulsAI(Creature* creature) : ScriptedAI(creature)
         {
             instance = ((InstanceScript*)creature->GetInstanceScript());
-            essenceGUID = 0;
             phase = PHASE_NONE;
             step = 0;
             timer = 0;
@@ -120,12 +119,12 @@ public:
             if (instance && instance->GetData(DATA_RELIQUARYOFSOULSEVENT) != DONE)
                 instance->SetData(DATA_RELIQUARYOFSOULSEVENT, NOT_STARTED);
 
-            if (essenceGUID != 0) {
+            if (essenceGUID != ObjectGuid::Empty) {
                 Creature* essence = ObjectAccessor::GetCreature(*me, essenceGUID);
                 if (essence)
                     essence->DisappearAndDie();
                     
-                essenceGUID = 0;
+                essenceGUID = ObjectGuid::Empty;
             }
 
             phase = PHASE_NONE;
@@ -181,7 +180,7 @@ public:
             case DATA_SOUL_SPAWN:
                 {
                 soulCount++;
-                Creature* soul = me->GetMap()->GetCreature(MAKE_NEW_GUID(data, CREATURE_ENSLAVED_SOUL, HighGuid::Unit));
+                Creature* soul = me->GetMap()->GetCreature(ObjectGuid(HighGuid::Unit, CREATURE_ENSLAVED_SOUL, uint32(data)));
                 if (soul)
                 {
                     Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0,200.0f,true);
@@ -299,7 +298,7 @@ public:
                     essence->SetVisible(false);
                     essence->SetDeathState(DEAD);
                     me->SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
-                    essenceGUID = 0;
+                    essenceGUID = ObjectGuid::Empty;
                     soulCount = 0;
                     soulDeathCount = 0;
                     timer = 3000;
@@ -333,9 +332,9 @@ public:
         
     private:
         InstanceScript* instance;
-        std::list<uint64> riftMarkers;
+        std::list<ObjectGuid> riftMarkers;
 
-        uint64 essenceGUID;
+        ObjectGuid essenceGUID;
         
         uint32 timer;
         uint32 soulCount;
@@ -478,7 +477,7 @@ public:
         //Debugging 
         void JustDied(Unit* killer) 
         override {
-            TC_LOG_ERROR("scripts","essence of desire died killed by a %s (guid : %u)",killer->ToCreature() ? "creature" : "player",killer->GetGUIDLow());
+            TC_LOG_ERROR("scripts","essence of desire died killed by a %s (guid : %u)",killer->ToCreature() ? "creature" : "player",killer->GetGUID().GetCounter());
         }
 
         enum events {
@@ -622,7 +621,7 @@ public:
             events.RescheduleEvent(EV_SOUL_SCREAM, 10000);
             events.RescheduleEvent(EV_SPITE, 20000);
             
-            tankGUID = 0;
+            tankGUID = ObjectGuid::Empty;
             spiteGUIDs.clear();
             //me->SetNoCallAssistance(true);
         }
@@ -705,9 +704,9 @@ public:
         }
         
     private:
-        uint64 tankGUID;
+        ObjectGuid tankGUID;
         
-        std::list<uint64> spiteGUIDs;
+        std::list<ObjectGuid> spiteGUIDs;
     };
     
     CreatureAI* GetAI(Creature* creature) const
@@ -728,13 +727,13 @@ public:
         { 
             instance = ((InstanceScript*)creature->GetInstanceScript());
             if(instance)
-                reliquaryGUID = instance->GetData64(DATA_RELIQUARY_OF_SOULS);
+                reliquaryGUID = ObjectGuid(instance->GetData64(DATA_RELIQUARY_OF_SOULS));
 
             me->CastSpell(me, ENSLAVED_SOUL_PASSIVE, TRIGGERED_FULL_MASK);
             me->CastSpell(me, SPELL_SELFSTUN, TRIGGERED_FULL_MASK); //2.5s inactivity
             Creature* reliquary = me->GetMap()->GetCreature(reliquaryGUID);
             if (reliquary)
-                reliquary->AI()->message(DATA_SOUL_SPAWN, me->GetGUIDLow());
+                reliquary->AI()->message(DATA_SOUL_SPAWN, me->GetGUID().GetCounter());
         }
         
         void Reset()
@@ -753,7 +752,7 @@ public:
         }        
     private:
         InstanceScript* instance;
-        uint64 reliquaryGUID;
+        ObjectGuid reliquaryGUID;
     };
 
     CreatureAI* GetAI(Creature* creature) const 

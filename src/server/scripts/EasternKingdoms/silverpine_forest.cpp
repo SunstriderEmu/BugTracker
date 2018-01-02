@@ -252,7 +252,7 @@ public:
         uint32 Phase;
         int KillCount;
         uint32 WaitTimer;
-        uint64 PlayerGUID;
+        ObjectGuid PlayerGUID;
         SummonList Summons;
     
         bool QuestInProgress;
@@ -265,7 +265,7 @@ public:
             {
                 Phase = 0;
                 KillCount = 0;
-                PlayerGUID = 0;
+                PlayerGUID = ObjectGuid::Empty;
                 Summons.DespawnAll();
             }
         }

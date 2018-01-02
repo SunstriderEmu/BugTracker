@@ -88,7 +88,7 @@ public:
             pos = i;
             if (i == 7 && pInstance)
             {
-                Unit* target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_JAINAPROUDMOORE));
+                Unit* target = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_JAINAPROUDMOORE)));
                 if (target && target->IsAlive())
                     me->GetThreatManager().AddThreat(target,0.0);
             }
@@ -122,7 +122,7 @@ public:
                         ((EscortAI*)(me->AI()))->AddWaypoint(5, 5026.27,    -1736.89,    1323.02);
                         ((EscortAI*)(me->AI()))->AddWaypoint(6, 5037.77,    -1770.56,    1324.36);
                         ((EscortAI*)(me->AI()))->AddWaypoint(7, 5067.23,    -1789.95,    1321.17);
-                        ((EscortAI*)(me->AI()))->Start(false, true, true);
+                        ((EscortAI*)(me->AI()))->Start(true, true, ObjectGuid::Empty);
                         ((EscortAI*)(me->AI()))->SetDespawnAtEnd(false);
                     }
                 }
@@ -199,12 +199,12 @@ public:
         {
             pInstance = ((InstanceScript*)c->GetInstanceScript());
             if(pInstance)
-                AnetheronGUID = pInstance->GetData64(DATA_ANETHERON);
+                AnetheronGUID = ObjectGuid(pInstance->GetData64(DATA_ANETHERON));
         }
     
         uint32 ImmolationTimer;
         uint32 CheckTimer;
-        uint64 AnetheronGUID;
+        ObjectGuid AnetheronGUID;
         InstanceScript* pInstance;
     
         void Reset() override
@@ -239,7 +239,7 @@ public:
             {
                 if(AnetheronGUID)
                 {
-                    Creature* boss = ObjectAccessor::GetCreature((*me),AnetheronGUID);
+                    Creature* boss = ObjectAccessor::GetCreature((*me), AnetheronGUID);
                     if(!boss || (boss && boss->IsDead()))
                     {
                         me->DespawnOrUnsummon();

@@ -117,12 +117,12 @@ std::string GetGamesStringData(Battleground *arena)
     return data;
 }
 
-uint64 GetFirstPlayerGuid(Battleground *arena)
+ObjectGuid GetFirstPlayerGuid(Battleground *arena)
 {
     for (const auto & itr : arena->GetPlayers())
         if (Player* player = ObjectAccessor::FindPlayer(itr.first))
             return itr.first;
-    return 0;
+    return ObjectGuid::Empty;
 }
 
 void ShowPage(Player *player, uint32 page, ArenaType type)
@@ -192,7 +192,7 @@ void ShowPage(Player *player, uint32 page, ArenaType type)
     player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Refresh", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3 + type);
 }
 
-void spectate(Player* player, uint64 targetGuid, Creature *mobArena)
+void spectate(Player* player, ObjectGuid targetGuid, Creature *mobArena)
 {
     if (Player* target = ObjectAccessor::FindPlayer(targetGuid))
     {
@@ -424,7 +424,7 @@ public:
             else if (action >= NPC_SPECTATOR_ACTION_SELECTED_PLAYER)
             {
                 player->CLOSE_GOSSIP_MENU();
-                uint64 targetGuid = action - NPC_SPECTATOR_ACTION_SELECTED_PLAYER;
+                ObjectGuid targetGuid = ObjectGuid(uint64(action - NPC_SPECTATOR_ACTION_SELECTED_PLAYER));
                 spectate(player, targetGuid, me);
             }
 

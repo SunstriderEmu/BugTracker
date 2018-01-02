@@ -295,7 +295,7 @@ public:
         uint32 Must_Die_Timer;
         uint32 CurrWP;
     
-        uint64 PlayerGUID;
+        ObjectGuid PlayerGUID;
     
         bool Must_Die;
         bool Escape;
@@ -311,7 +311,7 @@ public:
             Must_Die_Timer = 3000;
             CurrWP = 0;
     
-            PlayerGUID = 0;
+            PlayerGUID = ObjectGuid::Empty;
     
             Must_Die = false;
             Escape = false;

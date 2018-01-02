@@ -85,23 +85,16 @@ public:
 
         uint32 Encounter[ENCOUNTERS];
 
-        uint64 ThespiaGUID;
-        uint64 MekgineerGUID;
-        uint64 KalithreshGUID;
+        ObjectGuid ThespiaGUID;
+        ObjectGuid MekgineerGUID;
+        ObjectGuid KalithreshGUID;
 
-        uint64 MainChambersDoor;
-        uint64 AccessPanelHydro;
-        uint64 AccessPanelMek;
+        ObjectGuid MainChambersDoor;
+        ObjectGuid AccessPanelHydro;
+        ObjectGuid AccessPanelMek;
 
         void Initialize() override
         {
-            ThespiaGUID = 0;
-            MekgineerGUID = 0;
-            KalithreshGUID = 0;
-            MainChambersDoor = 0;
-            AccessPanelHydro = 0;
-            AccessPanelMek = 0;
-
             for (uint32 & i : Encounter)
                 i = NOT_STARTED;
         }

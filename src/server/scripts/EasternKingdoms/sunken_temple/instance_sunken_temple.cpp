@@ -41,13 +41,13 @@ public:
             Initialize();
         };
 
-        uint64 GOAtalaiStatue1;
-        uint64 GOAtalaiStatue2;
-        uint64 GOAtalaiStatue3;
-        uint64 GOAtalaiStatue4;
-        uint64 GOAtalaiStatue5;
-        uint64 GOAtalaiStatue6;
-        uint64 GOAtalaiIdol;
+        ObjectGuid GOAtalaiStatue1;
+        ObjectGuid GOAtalaiStatue2;
+        ObjectGuid GOAtalaiStatue3;
+        ObjectGuid GOAtalaiStatue4;
+        ObjectGuid GOAtalaiStatue5;
+        ObjectGuid GOAtalaiStatue6;
+        ObjectGuid GOAtalaiIdol;
 
         uint32 State;
 
@@ -58,19 +58,12 @@ public:
         bool s5;
         bool s6;
 
-        uint64 GOForceField;
+        ObjectGuid GOForceField;
 
         bool tbd1, tbd2, tbd3, tbd4, tbd5, tbd6;
 
         void Initialize()
             override {
-            GOAtalaiStatue1 = 0;
-            GOAtalaiStatue2 = 0;
-            GOAtalaiStatue3 = 0;
-            GOAtalaiStatue4 = 0;
-            GOAtalaiStatue5 = 0;
-            GOAtalaiStatue6 = 0;
-            GOAtalaiIdol = 0;
             State = 0;
 
             s1 = false;
@@ -79,9 +72,7 @@ public:
             s4 = false;
             s5 = false;
             s6 = false;
-
-            GOForceField = 0;
-
+            
             tbd1 = false;
             tbd2 = false;
             tbd3 = false;

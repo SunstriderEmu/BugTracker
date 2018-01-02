@@ -393,9 +393,9 @@ public:
         uint32 Wave;
         uint32 Wave_Timer;
         uint32 Challenger_checker;
-        uint64 PlayerGUID;
-        uint64 AffrayChallenger[6];
-        uint64 BigWill;
+        ObjectGuid PlayerGUID;
+        ObjectGuid AffrayChallenger[6];
+        ObjectGuid BigWill;
     
         void Reset()
         override {
@@ -405,14 +405,14 @@ public:
             Wave_Timer = 600000;
             Challenger_checker = 0;
             Wave = 0;
-            PlayerGUID = 0;
+            PlayerGUID.Clear();
     
             for(uint8 i = 0; i < 6; ++i)
             {
-                AffrayChallenger[i] = 0;
+                AffrayChallenger[i].Clear();
                 Challenger_down[i] = false;
             }
-            BigWill = 0;
+            BigWill.Clear();
         }
     
         void JustEngagedWith(Unit* pWho) override { }
@@ -460,7 +460,7 @@ public:
                                 }
                             }
                         }
-                        AffrayChallenger[i] = 0;
+                        AffrayChallenger[i].Clear();
                         Challenger_down[i] = false;
                     }
     
@@ -475,7 +475,7 @@ public:
                             }
                         }
                     }
-                    BigWill = 0;
+                    BigWill.Clear();
                 }
     
                 if (!EventGrate && EventInProgress)
@@ -561,7 +561,7 @@ public:
                                 EventInProgress = false;
                                 EventBigWill = false;
                                 EventGrate = false;
-                                PlayerGUID = 0;
+                                PlayerGUID = ObjectGuid::Empty;
                                 Wave = 0;
                             }
                         }
@@ -842,7 +842,7 @@ public:
         uint32 defendersTimer;
         uint32 attackersTimer;
         
-        uint64 starterGUID;
+        ObjectGuid starterGUID;
         
         SummonList summons;
         
@@ -851,7 +851,7 @@ public:
             maxDefenders = 15;
             maxAttackers = 20;
             despawnAllTimer = 0;
-            starterGUID = 0;
+            starterGUID = ObjectGuid::Empty;
             eventRunning = false;
             lantigahYelled = false;
             killsNeeded = 0;
@@ -911,7 +911,7 @@ public:
             }
         }
         
-        void StartEvent(uint64 playerGUID)
+        void StartEvent(ObjectGuid playerGUID)
         {
             if (eventRunning)
                 return;

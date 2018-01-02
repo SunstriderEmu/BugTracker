@@ -198,7 +198,7 @@ public:
         
         uint32 sinisterStrikeTimer;
         
-        uint64 pullerGUID;
+        ObjectGuid pullerGUID;
         Creature *protector;
         
         bool hasActivated;
@@ -209,7 +209,7 @@ public:
             DoCast(me, SPELL_SW_RADIANCE);
             DoCast(me, SPELL_DUAL_WIELD, true);
             sinisterStrikeTimer = 0;
-            pullerGUID = 0;
+            pullerGUID = ObjectGuid::Empty;
             protector = nullptr;
             hasActivated = false;
             startedRunning = false;
@@ -232,7 +232,7 @@ public:
             if (spellId == 46475 && ok) {
                 if (Unit* puller = ObjectAccessor::GetUnit(*me, pullerGUID)) {
                     //puller = SelectTarget(SELECT_TARGET_RANDOM, 0);
-                    me->SetUInt64Value(UNIT_FIELD_TARGET, puller->GetGUID());
+                    me->SetGuidValue(UNIT_FIELD_TARGET, puller->GetGUID());
                     me->SetReactState(REACT_AGGRESSIVE);
                     me->ClearUnitState(UNIT_STATE_ROOT);
                     if (target->ToCreature()) {
@@ -273,7 +273,7 @@ public:
                         me->SetReactState(REACT_PASSIVE);
                         me->SetUnitMovementFlags(MOVE_RUN);
                         me->GetMotionMaster()->MovePoint(0, protector->GetPositionX(), protector->GetPositionY(), protector->GetPositionZ());
-                        me->SetUInt64Value(UNIT_FIELD_TARGET, protector->GetGUID());
+                        me->SetGuidValue(UNIT_FIELD_TARGET, protector->GetGUID());
                     }
     
                     if (me->GetDistance(protector) <= 15.0f) {
@@ -1137,7 +1137,8 @@ public:
                         if (!pInstance)
                             break;
     
-                        if (Creature* felmyst = ObjectAccessor::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_FELMYST) : 0)) {
+                        if (Creature* felmyst = ObjectAccessor::GetCreature(*me, ObjectGuid(pInstance->GetData64(DATA_FELMYST)))) 
+                        {
                             float x, y, z;
                             felmyst->GetPosition(x, y, z);
                             me->GetMotionMaster()->MovePoint(1, x, y, z+8, false);
@@ -1159,7 +1160,7 @@ public:
                     case 3: // Breathe on fire wall
                         DoCast(me, 46650);
                         if (pInstance)
-                            pInstance->HandleGameObject(pInstance->GetData64(DATA_GO_FIRE_BARRIER), true);
+                            pInstance->HandleGameObject(ObjectGuid(pInstance->GetData64(DATA_GO_FIRE_BARRIER)), true);
                         waitTimer = 4000;
                         phase++;
                         break;

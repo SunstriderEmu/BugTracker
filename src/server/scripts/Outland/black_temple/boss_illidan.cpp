@@ -389,10 +389,10 @@ public:
 
         uint32 HoverPoint;
 
-        uint64 AkamaGUID;
-        uint64 MaievGUID;
-        uint64 FlameGUID[2];
-        uint64 GlaiveGUID[2];
+        ObjectGuid AkamaGUID;
+        ObjectGuid MaievGUID;
+        ObjectGuid FlameGUID[2];
+        ObjectGuid GlaiveGUID[2];
 
         SummonList Summons;
 
@@ -404,9 +404,9 @@ public:
             override {
             if (summon->GetCreatureTemplate()->Entry == FLAME_OF_AZZINOTH)
             {
-                for (uint64 & i : FlameGUID)
+                for (ObjectGuid & i : FlameGUID)
                     if (summon->GetGUID() == i)
-                        i = 0;
+                        i = ObjectGuid::Empty;
 
                 if (!FlameGUID[0] && !FlameGUID[1] && Phase == PHASE_FLIGHT)
                 {
@@ -463,7 +463,7 @@ public:
 
             for (uint8 i = DATA_GAMEOBJECT_ILLIDAN_DOOR_R; i < DATA_GAMEOBJECT_ILLIDAN_DOOR_L + 1; ++i)
             {
-                GameObject* Door = GameObject::GetGameObject((*me), pInstance->GetData64(i));
+                GameObject* Door = GameObject::GetGameObject((*me), ObjectGuid(pInstance->GetData64(i)));
                 if (Door)
                     Door->UseDoorOrButton(); // Open Doors
             }
@@ -499,7 +499,7 @@ public:
             }
         }
 
-        void DeleteFromThreatList(uint64 TargetGUID)
+        void DeleteFromThreatList(ObjectGuid TargetGUID)
         {
             for (auto & itr : me->GetThreatManager().getThreatList())
             {
@@ -605,7 +605,7 @@ public:
                 Timer[EVENT_FLIGHT_SEQUENCE] = 0;
                 break;
             case 9://glaive return
-                for (uint64 i : GlaiveGUID)
+                for (ObjectGuid i : GlaiveGUID)
                 {
                     if (i)
                     {
@@ -623,7 +623,7 @@ public:
                 me->SetDisableGravity(false);
                 me->StopMoving();
                 me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
-                for (uint64 & i : GlaiveGUID)
+                for (ObjectGuid & i : GlaiveGUID)
                 {
                     if (i)
                     {
@@ -632,7 +632,7 @@ public:
                             Glaive->SetVisible(false);
                             Glaive->SetDeathState(JUST_DIED); // Despawn the Glaive
                         }
-                        i = 0;
+                        i = ObjectGuid::Empty;
                     }
                 }
                 Timer[EVENT_FLIGHT_SEQUENCE] = 4000;
@@ -951,11 +951,11 @@ public:
         bool Event;
         uint32 Timer;
     
-        uint64 IllidanGUID;
-        uint64 ChannelGUID;
-        uint64 SpiritGUID[2];
-        uint64 GateGUID; //below stairs
-        uint64 DoorGUID[2]; //upstairs
+        ObjectGuid IllidanGUID;
+        ObjectGuid ChannelGUID;
+        ObjectGuid SpiritGUID[2];
+        ObjectGuid GateGUID; //below stairs
+        ObjectGuid DoorGUID[2]; //upstairs
     
         uint32 CouncilIntroCount;
         uint32 ChannelCount;
@@ -972,37 +972,37 @@ public:
             {
                 pInstance->SetData(DATA_ILLIDANSTORMRAGEEVENT, NOT_STARTED);
     
-                IllidanGUID = pInstance->GetData64(DATA_ILLIDANSTORMRAGE);
-                GateGUID = pInstance->GetData64(DATA_GAMEOBJECT_ILLIDAN_GATE);
-                DoorGUID[0] = pInstance->GetData64(DATA_GAMEOBJECT_ILLIDAN_DOOR_R);
-                DoorGUID[1] = pInstance->GetData64(DATA_GAMEOBJECT_ILLIDAN_DOOR_L);
+                IllidanGUID = ObjectGuid(pInstance->GetData64(DATA_ILLIDANSTORMRAGE));
+                GateGUID = ObjectGuid(pInstance->GetData64(DATA_GAMEOBJECT_ILLIDAN_GATE));
+                DoorGUID[0] = ObjectGuid(pInstance->GetData64(DATA_GAMEOBJECT_ILLIDAN_DOOR_R));
+                DoorGUID[1] = ObjectGuid(pInstance->GetData64(DATA_GAMEOBJECT_ILLIDAN_DOOR_L));
     
                 if(JustCreated)//close all doors at create
                 {
                     pInstance->HandleGameObject(GateGUID, false);
     
-                    for (uint64 i : DoorGUID)
+                    for (ObjectGuid i : DoorGUID)
                         pInstance->HandleGameObject(i, false);
                     JustCreated = false;
                 }else
                 {//open all doors, raid wiped
                     pInstance->HandleGameObject(GateGUID, true);
                     WalkCount = 1;//skip first wp
-                    for (uint64 i : DoorGUID)
+                    for (ObjectGuid i : DoorGUID)
                         pInstance->HandleGameObject(i, true);
                 }
             }
             else
             {
-                IllidanGUID = 0;
-                GateGUID = 0;
-                DoorGUID[0] = 0;
-                DoorGUID[1] = 0;
+                IllidanGUID = ObjectGuid::Empty;
+                GateGUID = ObjectGuid::Empty;
+                DoorGUID[0] = ObjectGuid::Empty;
+                DoorGUID[1] = ObjectGuid::Empty;
             }
     
-            ChannelGUID = 0;
-            SpiritGUID[0] = 0;
-            SpiritGUID[1] = 0;
+            ChannelGUID = ObjectGuid::Empty;
+            SpiritGUID[0] = ObjectGuid::Empty;
+            SpiritGUID[1] = ObjectGuid::Empty;
     
             if(introDone)
                 Phase = PHASE_READY;
@@ -1079,7 +1079,7 @@ public:
             if(pInstance)
                 pInstance->SetData(DATA_ILLIDANSTORMRAGEEVENT, IN_PROGRESS);
     
-            for(uint64 i : DoorGUID)
+            for(ObjectGuid i : DoorGUID)
                 if(GETGO(Door, i))
                     Door->SetUInt32Value(GAMEOBJECT_STATE, 1);
     
@@ -1097,16 +1097,16 @@ public:
     
         void OpenUpperDoors()
         {
-            for(uint64 i : DoorGUID)
+            for(ObjectGuid i : DoorGUID)
                 if(GETGO(Door, i))
                     Door->UseDoorOrButton();
         }
     
         void BeginChannel()
         {
-            GateGUID = pInstance->GetData64(DATA_GAMEOBJECT_ILLIDAN_GATE);
-            DoorGUID[0] = pInstance->GetData64(DATA_GAMEOBJECT_ILLIDAN_DOOR_R);
-            DoorGUID[1] = pInstance->GetData64(DATA_GAMEOBJECT_ILLIDAN_DOOR_L);
+            GateGUID = ObjectGuid(pInstance->GetData64(DATA_GAMEOBJECT_ILLIDAN_GATE));
+            DoorGUID[0] = ObjectGuid(pInstance->GetData64(DATA_GAMEOBJECT_ILLIDAN_DOOR_R));
+            DoorGUID[1] = ObjectGuid(pInstance->GetData64(DATA_GAMEOBJECT_ILLIDAN_DOOR_L));
     
             OpenUpperDoors();
     
@@ -1532,14 +1532,14 @@ void boss_illidan_stormrage::boss_illidan_stormrageAI::Reset()
                 ((npc_akama_illidan::npc_akama_illidanAI*)Akama->AI())->Reset();
             }
         }
-        AkamaGUID = 0;
+        AkamaGUID.Clear();
     }
 
-    MaievGUID = 0;
+    MaievGUID.Clear();
     for(int i = 0; i < 2; ++i)
     {
-        FlameGUID[i] = 0;
-        GlaiveGUID[i] = 0;
+        FlameGUID[i].Clear();
+        GlaiveGUID[i].Clear();
     }
 
     Phase = PHASE_ILLIDAN_NULL;
@@ -1686,7 +1686,7 @@ bool boss_illidan_stormrage::boss_illidan_stormrageAI::CastEyeBlast()
     Trigger->GetMotionMaster()->MovePoint(0, final.x, final.y, final.z);
 
     //Trigger->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-    me->SetUInt64Value(UNIT_FIELD_TARGET, Trigger->GetGUID());
+    me->SetGuidValue(UNIT_FIELD_TARGET, Trigger->GetGUID());
     //SPELL_DEMON_FIRE is cast via creature_template
     if(DoCast(Trigger, SPELL_EYE_BLAST) == SPELL_CAST_OK)
     {
@@ -1806,7 +1806,7 @@ public:
         public:
         boss_maievAI(Creature *c) : ScriptedAI(c) {};
     
-        uint64 IllidanGUID;
+        ObjectGuid IllidanGUID;
     
         PhaseIllidan Phase;
         EventMaiev Event;
@@ -1817,7 +1817,7 @@ public:
         override {
             MaxTimer = 0;
             Phase = PHASE_NORMAL_MAIEV;
-            IllidanGUID = 0;
+            IllidanGUID.Clear();
             Timer[EVENT_MAIEV_STEALTH] = 0;
             Timer[EVENT_MAIEV_TAUNT] = 22000 + rand()%21 * 1000;
             Timer[EVENT_MAIEV_SHADOW_STRIKE] = 30000;
@@ -1829,7 +1829,7 @@ public:
         void JustEngagedWith(Unit *who) override {}
         void MoveInLineOfSight(Unit *who) override {}
         void EnterEvadeMode(EvadeReason /* why */) override {}
-        void GetIllidanGUID(uint64 guid) { IllidanGUID = guid; }
+        void GetIllidanGUID(ObjectGuid guid) { IllidanGUID = guid; }
     
         void DamageTaken(Unit *done_by, uint32 &damage)
         override {
@@ -1883,7 +1883,7 @@ public:
                 me->InterruptNonMeleeSpells(false);
                 me->GetMotionMaster()->Clear(false);
                 me->AttackStop();
-                me->SetUInt64Value(UNIT_FIELD_TARGET, IllidanGUID);
+                me->SetGuidValue(UNIT_FIELD_TARGET, IllidanGUID);
                 MaxTimer = 0;
                 break;
             case PHASE_TRANSFORM_SEQUENCE:
@@ -2029,13 +2029,13 @@ public:
     
         uint32 FlameBlastTimer;
         uint32 CheckTimer;
-        uint64 GlaiveGUID;
+        ObjectGuid GlaiveGUID;
     
         void Reset()
         override {
             FlameBlastTimer = 15000;
             CheckTimer = 5000;
-            GlaiveGUID = 0;
+            GlaiveGUID.Clear();
         }
     
         void JustEngagedWith(Unit *who) override {DoZoneInCombat();}
@@ -2078,7 +2078,7 @@ public:
             }
         }
     
-        void SetGlaiveGUID(uint64 guid){ GlaiveGUID = guid; }
+        void SetGlaiveGUID(ObjectGuid guid){ GlaiveGUID = guid; }
     
         void UpdateAI(const uint32 diff)
         override {
@@ -2145,20 +2145,20 @@ public:
     
         InstanceScript* pInstance;
     
-        uint64 IllidanGUID;
+        ObjectGuid IllidanGUID;
         uint32 DespawnTimer;
-        uint64 CageTrapGUID;
+        ObjectGuid CageTrapGUID;
     
         bool Active;
     
         void Reset()
         override {
             if(pInstance)
-                IllidanGUID = pInstance->GetData64(DATA_ILLIDANSTORMRAGE);
+                IllidanGUID = ObjectGuid(pInstance->GetData64(DATA_ILLIDANSTORMRAGE));
             else
                 me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
     
-            CageTrapGUID = 0;
+            CageTrapGUID.Clear();
             Active = false;
     
             DespawnTimer = 0;
@@ -2236,13 +2236,13 @@ public:
             DoZoneInCombat();
         }
     
-        uint64 TargetGUID;
+        ObjectGuid TargetGUID;
     
         void JustEngagedWith(Unit *who) override {DoZoneInCombat();}
     
         void Reset()
         override {
-            TargetGUID = 0;
+            TargetGUID = ObjectGuid::Empty;
             me->CastSpell(me, SPELL_SHADOW_DEMON_PASSIVE, TRIGGERED_FULL_MASK);
             SelectRandomTarget();
         }
@@ -2329,15 +2329,15 @@ public:
         }
     
         InstanceScript* pInstance;
-        uint64 IllidanGUID;
+        ObjectGuid IllidanGUID;
         uint32 CheckTimer;
     
         void Reset()
         override {
-            if(pInstance)
-                IllidanGUID = pInstance->GetData64(DATA_ILLIDANSTORMRAGE);
+            if (pInstance)
+                IllidanGUID = ObjectGuid(pInstance->GetData64(DATA_ILLIDANSTORMRAGE));
             else
-                IllidanGUID = 0;
+                IllidanGUID = ObjectGuid::Empty;
     
             CheckTimer = 5000;
             DoCast(me, SPELL_SHADOWFIEND_PASSIVE, true);

@@ -80,8 +80,8 @@ public:
         uint32 Wave_Timer;
         uint32 Phase;
         bool Wave;
-        uint64 someplayer;
-        uint64 goConsole;
+        ObjectGuid someplayer;
+        ObjectGuid goConsole;
         Creature* add;
     
         void Reset()
@@ -90,8 +90,8 @@ public:
             Wave_Timer = 0;
             Phase = 1;
             Wave = false;
-            someplayer = 0;
-            goConsole = 0;
+            someplayer = ObjectGuid::Empty;
+            goConsole = ObjectGuid::Empty;
             add = nullptr;
         }
     
@@ -401,11 +401,9 @@ public:
         public:
         npc_commander_dawnforgeAI(Creature *c) : ScriptedAI(c) { Reset (); }
     
-    
-        uint64 playerGUID;
-        uint64 ardonisGUID;
-        uint64 pathaleonGUID;
-    
+        ObjectGuid playerGUID;
+        ObjectGuid ardonisGUID;
+        ObjectGuid pathaleonGUID;
     
         uint32 Phase;
         uint32 PhaseSubphase;
@@ -417,9 +415,9 @@ public:
     
         void Reset()
         override {
-            playerGUID = 0;
-            ardonisGUID = 0;
-            pathaleonGUID = 0;
+            playerGUID = ObjectGuid::Empty;
+            ardonisGUID = ObjectGuid::Empty;
+            pathaleonGUID = ObjectGuid::Empty;
     
             Phase = 1;
             PhaseSubphase = 0;
@@ -890,7 +888,7 @@ public:
         bool Drained;
     
         int WeakPercent;
-        uint64 PlayerGUID;
+        ObjectGuid PlayerGUID;
         uint32 Health;
         uint32 Level;
         uint32 PhaseSlipVulnerabilityTimer;
@@ -903,7 +901,7 @@ public:
             Drained = false;
     
             WeakPercent = 20;
-            PlayerGUID = 0;
+            PlayerGUID = ObjectGuid::Empty;
             ManaBurnTimer = 5000 + (rand()%3 * 1000); // 5-8 sec cd
         }
     
@@ -1260,7 +1258,7 @@ public:
         public:
         npc_dr_boomAI(Creature *pCreature) : ScriptedAI(pCreature) {}
     
-        std::vector<uint64> targetGUID;
+        std::vector<ObjectGuid> targetGUID;
         uint32 SummonTimer;
         uint32 InitTimer;
     

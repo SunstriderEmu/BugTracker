@@ -153,13 +153,13 @@ public:
         public:
         mob_restless_soulAI(Creature *c) : ScriptedAI(c) {}
     
-        uint64 Tagger;
+        ObjectGuid Tagger;
         uint32 Die_Timer;
         bool Tagged;
     
         void Reset()
         override {
-            Tagger = 0;
+            Tagger = ObjectGuid::Empty;
             Die_Timer = 5000;
             Tagged = false;
         }

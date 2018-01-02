@@ -535,7 +535,7 @@ public:
                     break;
                 case 94:
                     SetRun(false);
-                    if (uint64 tarethaGUID = pInstance->GetData64(DATA_TARETHA))
+                    if (ObjectGuid tarethaGUID = ObjectGuid(pInstance->GetData64(DATA_TARETHA)))
                     {
                         if (Unit* Taretha = ObjectAccessor::GetUnit((*me), tarethaGUID))
                             DoScriptText(SAY_TA_ESCAPED, Taretha, me);
@@ -562,7 +562,7 @@ public:
                 case 106:
                     {
                         //trigger taretha to run down outside
-                        if (uint64 tarethaGUID = pInstance->GetData64(DATA_TARETHA))
+                        if (ObjectGuid tarethaGUID = ObjectGuid(pInstance->GetData64(DATA_TARETHA)))
                         {
                             if (Creature* Taretha = (ObjectAccessor::GetCreature(*me, tarethaGUID)))
                                 if (Player* player = GetPlayerForEscort())
@@ -887,7 +887,7 @@ public:
                     if(pInstance->GetData64(DATA_EPOCH) == 0)
                          me->SummonCreature(ENTRY_EPOCH,2639.13,698.55,65.43,4.59,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,120000);
 
-                     if (uint64 ThrallGUID = pInstance->GetData64(DATA_THRALL))
+                     if (ObjectGuid ThrallGUID = ObjectGuid(pInstance->GetData64(DATA_THRALL)))
                      {
                          Creature* Thrall = (ObjectAccessor::GetCreature((*me), ThrallGUID));
                          if(Thrall)

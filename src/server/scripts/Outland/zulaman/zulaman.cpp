@@ -135,7 +135,7 @@ public:
         public:
         npc_zulaman_hostageAI(Creature *c) : ScriptedAI(c) {IsLoot = false;}
         bool IsLoot;
-        uint64 PlayerGUID;
+        ObjectGuid PlayerGUID;
         void Reset() override {}
         void JustEngagedWith(Unit *who) override {}
         void JustDied(Unit *)
@@ -245,7 +245,7 @@ public:
         
         void JustEngagedWith(Unit* pWho) override {}
         
-        bool IncreaseClick(uint64 pGUID)
+        bool IncreaseClick(ObjectGuid pGUID)
         {
             // Don't allow the same player to click several times
             for (std::vector<uint64>::const_iterator itr = clickGUIDs.begin(); itr != clickGUIDs.end(); itr++) {
@@ -679,7 +679,7 @@ public:
             break;
         }
 
-        pPlayer->KilledMonsterCredit(cEntry, 0);
+        pPlayer->KilledMonsterCredit(cEntry, ObjectGuid::Empty);
 
         return true;
     }

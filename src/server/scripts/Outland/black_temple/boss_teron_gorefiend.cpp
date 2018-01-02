@@ -166,7 +166,7 @@ public:
         uint32 RandomYellTimer;
         uint32 AggroTimer;
     
-        uint64 AggroTargetGUID;
+        ObjectGuid AggroTargetGUID;
     
         SummonList Summons;
     
@@ -428,7 +428,7 @@ public:
             if(ShadowOfDeathTimer < diff)
             {
                 if (Unit* pShadowVictim = SelectTarget(1, 0.0f, 100.0f, true, true, true, SPELL_SHADOW_OF_DEATH, 1)) {
-                    if (pShadowVictim->GetGUIDLow() == me->GetVictim()->GetGUIDLow()) //not tank?
+                    if (pShadowVictim->GetGUID().GetCounter() == me->GetVictim()->GetGUID().GetCounter()) //not tank?
                         ShadowOfDeathTimer = 100;       // Delay to next world tick
                     else {
                         if(DoCast(pShadowVictim, SPELL_SHADOW_OF_DEATH))
@@ -537,7 +537,7 @@ public:
         uint32 AtrophyTimer;
         uint32 AttackTimer;
         uint32 ResetCheckTimer;
-        uint64 TeronGUID;
+        ObjectGuid TeronGUID;
 
         bool SetAggro;
 
@@ -555,7 +555,7 @@ public:
             SetAggro = false;
             AttackTimer = 3000;
             if (pInstance)
-                TeronGUID = pInstance->GetData64(DATA_TERON);
+                TeronGUID = ObjectGuid(pInstance->GetData64(DATA_TERON));
 
             /*if (Creature *pTeron = me->FindNearestCreature(22871, 80.0f, true)) {
             if (Unit *pTarget = ((boss_teron_gorefiend::boss_teron_gorefiendAI*)pTeron->AI())->GetConstructTarget())

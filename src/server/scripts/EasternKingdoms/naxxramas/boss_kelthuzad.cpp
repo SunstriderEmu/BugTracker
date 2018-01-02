@@ -161,15 +161,10 @@ public:
         public:
         boss_kelthuzadAI(Creature* c) : ScriptedAI(c)
         {
-            GuardiansOfIcecrown[0] = 0;
-            GuardiansOfIcecrown[1] = 0;
-            GuardiansOfIcecrown[2] = 0;
-            GuardiansOfIcecrown[3] = 0;
-            GuardiansOfIcecrown[4] = 0;
             GuardiansOfIcecrown_Count = 0;
         }
     
-        uint64 GuardiansOfIcecrown[5];
+        ObjectGuid GuardiansOfIcecrown[5];
         uint32 GuardiansOfIcecrown_Count;
         uint32 GuardiansOfIcecrown_Timer;
         uint32 FrostBolt_Timer;
@@ -193,16 +188,16 @@ public:
             FrostBlast_Timer = (rand()%30+30)*IN_MILLISECONDS;             //Random time between 30-60 seconds
             GuardiansOfIcecrown_Timer = 5000;                   //5 seconds for summoning each Guardian of Icecrown in phase 3
     
-            for(uint64 & i : GuardiansOfIcecrown)
+            for(ObjectGuid & i : GuardiansOfIcecrown)
             {
                 if(i)
-            {
-                //delete creature
-                Unit* pUnit = ObjectAccessor::GetUnit((*me), i);
-                if (pUnit && pUnit->IsAlive())
-                    pUnit->DealDamage(pUnit, pUnit->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-                i = 0;
-            }
+                {
+                    //delete creature
+                    Unit* pUnit = ObjectAccessor::GetUnit((*me), i);
+                    if (pUnit && pUnit->IsAlive())
+                        pUnit->DealDamage(pUnit, pUnit->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                    i = ObjectGuid::Empty;
+                }
             }
     
             Phase1_Timer = 310000;                              //Phase 1 lasts 5 minutes and 10 seconds
@@ -221,19 +216,20 @@ public:
         void JustDied(Unit* Killer) override
         {
             DoScriptText(SAY_DEATH, me);
-            for(uint64 i : GuardiansOfIcecrown)
-                if(i)
+            for (ObjectGuid i : GuardiansOfIcecrown)
             {
-                Unit* pUnit = ObjectAccessor::GetUnit((*me), i);
-                if (!pUnit || !pUnit->IsAlive())
-                    continue;
-    
-                pUnit->CombatStop();
-                float Walk_Pos_X;
-                float Walk_Pos_Y;
-                float Walk_Pos_Z;
-                switch(rand()%6)
+                if (i)
                 {
+                    Unit* pUnit = ObjectAccessor::GetUnit((*me), i);
+                    if (!pUnit || !pUnit->IsAlive())
+                        continue;
+
+                    pUnit->CombatStop();
+                    float Walk_Pos_X;
+                    float Walk_Pos_Y;
+                    float Walk_Pos_Z;
+                    switch (rand() % 6)
+                    {
                     case 0:
                         Walk_Pos_X = ADDX_LEFT_FAR;
                         Walk_Pos_Y = ADDY_LEFT_FAR;
@@ -266,8 +262,9 @@ public:
                         break;
                     default:
                         return; //will never happen but will silence compiler warning
+                    }
+                    pUnit->MonsterMoveWithSpeed(Walk_Pos_X, Walk_Pos_Y, Walk_Pos_Z, 0);
                 }
-                pUnit->MonsterMoveWithSpeed(Walk_Pos_X, Walk_Pos_Y, Walk_Pos_Z, 0);
             }
         }
     

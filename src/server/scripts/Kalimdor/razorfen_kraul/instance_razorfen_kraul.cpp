@@ -42,13 +42,12 @@ public:
     {
         instance_razorfen_kraul_script(Map *map) : InstanceScript(map) { Initialize(); };
 
-        uint64 DoorWardGUID;
+        ObjectGuid DoorWardGUID;
         int WardKeeperAlive;
 
         void Initialize()
             override {
             WardKeeperAlive = 0;
-            DoorWardGUID = 0;
         }
 
         void OnGameObjectCreate(GameObject *go)

@@ -225,14 +225,14 @@ public:
         uint8  paladinPhase;
         uint32 timer;
 
-        uint64 paladinGuid[4];
+        ObjectGuid paladinGuid[4];
 
         void Reset() override {
             questPhase = 0;
             timer = 60 * SECOND * IN_MILLISECONDS;
             paladinPhase = 0;
             for (uint8 i = 0; i < 4; i++)
-                paladinGuid[i] = 0;
+                paladinGuid[i].Clear();
         }
 
         void JustEngagedWith(Unit* pWho) override {}
@@ -322,7 +322,7 @@ public:
 
         uint32 timer;
         uint8  questPhase;
-        uint64 summonerGuid;
+        ObjectGuid summonerGuid;
 
         bool spellFlashLight;
         bool spellJustice;
@@ -339,7 +339,7 @@ public:
 
             timer = 2000;
             questPhase = 0;
-            summonerGuid = 0;
+            summonerGuid.Clear();
 
             me->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_KNEEL);
             me->SetFaction(FACTION_CREATURE);
@@ -486,7 +486,7 @@ public:
             }
         }
 
-        void Activate(uint64 summonerguid)
+        void Activate(ObjectGuid summonerguid)
         {
             questPhase = 1;
             summonerGuid = summonerguid;
@@ -555,7 +555,7 @@ public:
         npc_apprentice_mirvedaAI(Creature* c) : ScriptedAI(c), Summons(me) {}
     
         uint32 KillCount;
-        uint64 PlayerGUID;
+        ObjectGuid PlayerGUID;
         bool Summon;
         bool Validated;
         SummonList Summons;
@@ -563,7 +563,7 @@ public:
         void Reset()
         override {
             KillCount = 0;
-            PlayerGUID = 0;
+            PlayerGUID = ObjectGuid::Empty;
             Summons.DespawnAll();
             Summon = false;
             Validated = false;
@@ -737,14 +737,14 @@ public:
         uint32 WaveTimer;
         bool Completed;
         bool Progress;
-        uint64 PlayerGUID;
+        ObjectGuid PlayerGUID;
     
         void Reset()
         override {
             EndTimer = 0;
             Completed = false;
             Progress = false;
-            PlayerGUID = 0;
+            PlayerGUID = ObjectGuid::Empty;
             WaveTimer = 0;
         }
     
@@ -799,11 +799,11 @@ public:
                             if (!pGroupGuy->IsAtGroupRewardDistance(player))
                                 continue;
                                 
-                            pGroupGuy->KilledMonsterCredit(16364, 0);
+                            pGroupGuy->KilledMonsterCredit(16364, ObjectGuid::Empty);
                         }
                     }
                     else
-                        player->KilledMonsterCredit(16364, 0);
+                        player->KilledMonsterCredit(16364, ObjectGuid::Empty);
                 }
                 me->DespawnOrUnsummon();
             } else EndTimer -= diff;

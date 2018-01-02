@@ -73,18 +73,18 @@ public:
     {
         instance_zulaman_script(Map *map) : InstanceScript(map) { Initialize(); };
 
-        uint64 HarkorsSatchelGUID;
-        uint64 TanzarsTrunkGUID;
-        uint64 AshlisBagGUID;
-        uint64 KrazsPackageGUID;
-        uint64 AmanishiLookoutGUID;
+        ObjectGuid HarkorsSatchelGUID;
+        ObjectGuid TanzarsTrunkGUID;
+        ObjectGuid AshlisBagGUID;
+        ObjectGuid KrazsPackageGUID;
+        ObjectGuid AmanishiLookoutGUID;
 
-        uint64 HexLordGateGUID;
-        uint64 HexLordDoorGUID;     // Located just in his back
-        uint64 ZulJinGateGUID;
-        uint64 AkilzonDoorGUID;
-        uint64 ZulJinDoorGUID;
-        uint64 HalazziDoorGUID;
+        ObjectGuid HexLordGateGUID;
+        ObjectGuid HexLordDoorGUID;     // Located just in his back
+        ObjectGuid ZulJinGateGUID;
+        ObjectGuid AkilzonDoorGUID;
+        ObjectGuid ZulJinDoorGUID;
+        ObjectGuid HalazziDoorGUID;
 
         uint32 QuestTimer;
         uint32 GauntletWarriorsTimer;
@@ -102,19 +102,6 @@ public:
 
         void Initialize() override
         {
-            HarkorsSatchelGUID = 0;
-            TanzarsTrunkGUID = 0;
-            AshlisBagGUID = 0;
-            KrazsPackageGUID = 0;
-            AmanishiLookoutGUID = 0;
-
-            HexLordGateGUID = 0;
-            HexLordDoorGUID = 0;
-            ZulJinGateGUID = 0;
-            AkilzonDoorGUID = 0;
-            HalazziDoorGUID = 0;
-            ZulJinDoorGUID = 0;
-
             QuestTimer = 0;
             GauntletWarriorsTimer = 0;
             GauntletEaglesTimer = 0;
@@ -161,13 +148,13 @@ public:
             case 186303:
                 HalazziDoorGUID = go->GetGUID();
                 if (GetData(DATA_HALAZZIEVENT) != DONE)
-                    HandleGameObject(0, false, go);
+                    HandleGameObject(ObjectGuid::Empty, false, go);
                 break;
             case 186304: ZulJinGateGUID = go->GetGUID(); break;
             case 186305: HexLordGateGUID = go->GetGUID(); break;
             case 186306: HexLordDoorGUID = go->GetGUID(); break;
-            case 186858: AkilzonDoorGUID = go->GetGUID(); HandleGameObject(0, true, go); break;
-            case 186859: ZulJinDoorGUID = go->GetGUID(); HandleGameObject(0, true, go); break;
+            case 186858: AkilzonDoorGUID = go->GetGUID(); HandleGameObject(ObjectGuid::Empty, true, go); break;
+            case 186859: ZulJinDoorGUID = go->GetGUID(); HandleGameObject(ObjectGuid::Empty, true, go); break;
 
             case 187021: HarkorsSatchelGUID = go->GetGUID(); break;
             case 186648: TanzarsTrunkGUID = go->GetGUID(); break;
@@ -183,7 +170,7 @@ public:
             CheckInstanceStatus();
         }
 
-        void OpenDoor(uint64 DoorGUID, bool open)
+        void OpenDoor(ObjectGuid DoorGUID, bool open)
         {
             if (GameObject *Door = instance->GetGameObject(DoorGUID))
                 Door->SetUInt32Value(GAMEOBJECT_STATE, open ? 0 : 1);

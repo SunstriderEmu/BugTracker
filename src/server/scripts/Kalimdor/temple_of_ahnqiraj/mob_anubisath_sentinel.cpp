@@ -331,7 +331,7 @@ Unit* SentinelAbilityAura::GetTriggerTarget() const
             if (!aOwner->AI())
                 return nullptr;
 
-            uint64 guid = aOwner->AI()->message(MESSAGE_GET_HATED_MANA_USER, 0);
+            ObjectGuid guid = ObjectGuid(aOwner->AI()->message(MESSAGE_GET_HATED_MANA_USER, 0));
             Unit* target = ObjectAccessor::GetUnit(*aOwner, guid);
             return target;
         }

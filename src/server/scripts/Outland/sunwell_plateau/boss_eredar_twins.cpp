@@ -138,7 +138,7 @@ struct EredarTwin : public ScriptedAI
 
         if(pInstance)
         {
-            Unit* Sister = ObjectAccessor::GetUnit((*me),pInstance->GetData64(isSacrolash ? DATA_ALYTHESS : DATA_SACROLASH));
+            Unit* Sister = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(isSacrolash ? DATA_ALYTHESS : DATA_SACROLASH)));
             if (Sister && Sister->IsAlive() && !(Sister->GetVictim()))
                 (Sister->ToCreature())->AI()->AttackStart(who);
 
@@ -201,7 +201,7 @@ struct EredarTwin : public ScriptedAI
         if (pInstance) {
             if (pInstance->GetData(DATA_EREDAR_TWINS_EVENT) != DONE) 
             {
-                Unit* Sister = ObjectAccessor::GetUnit((*me),pInstance->GetData64(isSacrolash ? DATA_ALYTHESS : DATA_SACROLASH));
+                Unit* Sister = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(isSacrolash ? DATA_ALYTHESS : DATA_SACROLASH)));
                 if (Sister)
                 {
                     if (Sister->IsDead())
@@ -220,7 +220,7 @@ struct EredarTwin : public ScriptedAI
                 pInstance->SetData(DATA_EREDAR_TWINS_EVENT, NOT_STARTED);
             else
             {
-                if (Creature* muru = pInstance->instance->GetCreature(pInstance->GetData64(DATA_MURU)))
+                if (Creature* muru = pInstance->instance->GetCreature(ObjectGuid(pInstance->GetData64(DATA_MURU))))
                      muru->SetReactState(REACT_AGGRESSIVE);
             }
         }
@@ -243,7 +243,7 @@ struct EredarTwin : public ScriptedAI
         {
             if (pInstance)
             {
-                Unit* Sister = ObjectAccessor::GetUnit((*me),pInstance->GetData64(isSacrolash ? DATA_ALYTHESS : DATA_SACROLASH));
+                Unit* Sister = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(isSacrolash ? DATA_ALYTHESS : DATA_SACROLASH)));
                 if (Sister && Sister->IsDead())
                 {
                     DoScriptText(isSacrolash ? YELL_SISTER_ALYTHESS_DEAD : YELL_SISTER_SACROLASH_DEAD, me);
@@ -266,7 +266,7 @@ struct EredarTwin : public ScriptedAI
 
             //pick a target within the top5 top aggro of our sister, OUR tank excepted
             if(!SisterDead)
-                if(Creature* Sister = ObjectAccessor::GetCreature((*me),pInstance->GetData64(isSacrolash ? DATA_ALYTHESS : DATA_SACROLASH)))
+                if(Creature* Sister = ObjectAccessor::GetCreature((*me), ObjectGuid(pInstance->GetData64(isSacrolash ? DATA_ALYTHESS : DATA_SACROLASH))))
                     target = SelectConflagOrNovaTarget(Sister);
 
             //if no target found pick it ourselves
@@ -521,7 +521,7 @@ public:
         uint32 IntroStep(uint32 step)
         {
             if(!pInstance) return 0; // Should return
-            Creature* Sacrolash = ObjectAccessor::GetCreature(*me,pInstance->GetData64(DATA_SACROLASH));
+            Creature* Sacrolash = ObjectAccessor::GetCreature(*me, ObjectGuid(pInstance->GetData64(DATA_SACROLASH)));
             if(!Sacrolash) return 0;
             switch (step)
             {

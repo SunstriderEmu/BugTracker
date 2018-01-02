@@ -605,7 +605,7 @@ public:
         bool GossipHello(Player* pPlayer) override
         {
             if (pPlayer->GetQuestStatus(QUEST_SURVIVORS) == QUEST_STATUS_INCOMPLETE)
-                pPlayer->KilledMonsterCredit(MAGHAR_PRISONER, 0);
+                pPlayer->KilledMonsterCredit(MAGHAR_PRISONER, ObjectGuid::Empty);
 
             return false;
         }

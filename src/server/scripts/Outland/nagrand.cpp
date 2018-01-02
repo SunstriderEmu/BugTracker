@@ -713,14 +713,14 @@ public:
         mob_sparrowhawkAI(Creature* c) : ScriptedAI(c) {}
     
         uint32 Check_Timer;
-        uint64 PlayerGUID;
+        ObjectGuid PlayerGUID;
         bool fleeing;
     
         void Reset()
         override {
             me->RemoveAurasDueToSpell(SPELL_SPARROWHAWK_NET);
             Check_Timer = 1000;
-            PlayerGUID = 0;
+            PlayerGUID = ObjectGuid::Empty;
             fleeing = false;
         }
         void AttackStart(Unit* pWho)
@@ -769,7 +769,7 @@ public:
                     else if(fleeing)
                     {
                         me->GetMotionMaster()->MovementExpired(false);
-                        PlayerGUID = 0;
+                        PlayerGUID = ObjectGuid::Empty;
                         fleeing = false;
                     }
                 }
@@ -1025,7 +1025,7 @@ public:
         void MoveInLineOfSight(Unit* pWho)
         override {
             if (me->GetDistance(pWho) <= 5.0f && pWho->GetTypeId() == TYPEID_PLAYER) {
-                if (uint64 critter_guid = pWho->ToPlayer()->GetCritterGUID())
+                if (ObjectGuid critter_guid = pWho->ToPlayer()->GetCritterGUID())
                     if (Creature* pet = me->GetMap()->GetCreature(critter_guid)) {
                         if (pWho->ToPlayer()->GetQuestStatus(10953) == QUEST_STATUS_INCOMPLETE && pet->GetEntry() == 22817)
                             pWho->ToPlayer()->AreaExploredOrEventHappens(10953);
@@ -1062,7 +1062,7 @@ public:
         void MoveInLineOfSight(Unit* pWho)
         override {
             if (me->GetDistance(pWho) <= 5.0f && pWho->GetTypeId() == TYPEID_PLAYER) {
-                if (uint64 critter_guid = pWho->ToPlayer()->GetCritterGUID())
+                if (ObjectGuid critter_guid = pWho->ToPlayer()->GetCritterGUID())
                     if (Creature* pet = me->GetMap()->GetCreature(critter_guid)) {
                         if (pWho->ToPlayer()->GetQuestStatus(10954) == QUEST_STATUS_INCOMPLETE && pet->GetEntry() == 22818)
                             pWho->ToPlayer()->AreaExploredOrEventHappens(10954);

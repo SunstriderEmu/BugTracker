@@ -201,9 +201,9 @@ struct hyjalAI : public EscortAI
     public:
         InstanceScript* pInstance;
 
-        uint64 PlayerGUID;
-        uint64 BossGUID[2];
-        uint64 VeinGUID[14];
+        ObjectGuid PlayerGUID;
+        ObjectGuid BossGUID[2];
+        ObjectGuid VeinGUID[14];
 
         uint32 NextWaveTimer;
         uint32 WaveCount;
@@ -233,7 +233,7 @@ struct hyjalAI : public EscortAI
         bool IsDummy; //mob is preparing to retreat
         uint32 MassTeleportTimer;
         bool DoMassTeleport;
-        uint64 DummyGuid;
+        ObjectGuid DummyGuid;
         bool Wipe;
 
         struct Spell

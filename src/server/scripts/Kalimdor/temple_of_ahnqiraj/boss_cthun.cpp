@@ -121,15 +121,15 @@ public:
     class flesh_tentacleAI : public ScriptedAI
     {
     public:
-        flesh_tentacleAI(Creature *c) : ScriptedAI(c), Parent(0)
+        flesh_tentacleAI(Creature *c) : ScriptedAI(c)
         {
             SetCombatMovementAllowed(false);
         }
 
-        uint64 Parent;
+        ObjectGuid Parent;
         uint32 CheckTimer;
 
-        void SpawnedByCthun(uint64 p)
+        void SpawnedByCthun(ObjectGuid p)
         {
             Parent = p;
         }
@@ -255,7 +255,7 @@ public:
                             DoCast(target,SPELL_GREEN_BEAM);
     
                             //Correctly update our target
-                            me->SetUInt64Value(UNIT_FIELD_TARGET, target->GetGUID());
+                            me->SetGuidValue(UNIT_FIELD_TARGET, target->GetGUID());
                         }
     
                         //Beam every 3 seconds
@@ -316,7 +316,7 @@ public:
                         if (target)
                         {
                             //Correctly update our target
-                            me->SetUInt64Value(UNIT_FIELD_TARGET, target->GetGUID());
+                            me->SetGuidValue(UNIT_FIELD_TARGET, target->GetGUID());
     
                             //Face our target
                             DarkGlareAngle = me->GetAngle(target);
@@ -345,7 +345,7 @@ public:
                         if (DarkGlareTickTimer < diff)
                         {
                             //Remove any target
-                            me->SetUInt64Value(UNIT_FIELD_TARGET, 0);
+                            me->SetTarget(ObjectGuid::Empty);
     
                             //Set angle and cast
                             if (ClockWise)
@@ -393,7 +393,7 @@ public:
                 case 2:
                 {
                     //Remove any target
-                    me->SetUInt64Value(UNIT_FIELD_TARGET, 0);
+                    me->SetTarget(ObjectGuid::Empty);
                     me->SetHealth(0);
                 }
     
@@ -431,7 +431,7 @@ public:
                     me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE);
     
                     //Remove Target field
-                    me->SetUInt64Value(UNIT_FIELD_TARGET, 0);
+                    me->SetTarget(ObjectGuid::Empty);
     
                     //Death animation/respawning;
                     pInst->SetData(DATA_CTHUN_PHASE, 2);
@@ -506,10 +506,10 @@ public:
         uint32 StomachAcidTimer;
         uint32 StomachEnterTimer;
         uint32 StomachEnterVisTimer;
-        uint64 StomachEnterTarget;
+        ObjectGuid StomachEnterTarget;
     
         //Stomach map, bool = true then in stomach
-        std::unordered_map<uint64, bool> Stomach_Map;
+        std::unordered_map<ObjectGuid, bool> Stomach_Map;
     
         void Reset() override
         {
@@ -530,7 +530,7 @@ public:
             StomachAcidTimer = 4000;                            //Every 4 seconds
             StomachEnterTimer = 10000;                          //Every 10 seconds
             StomachEnterVisTimer = 0;                           //Always 3.5 seconds after Stomach Enter Timer
-            StomachEnterTarget = 0;                             //Target to be teleported to stomach
+            StomachEnterTarget.Clear();                             //Target to be teleported to stomach
     
             //Clear players in stomach and outside
             Stomach_Map.clear();
@@ -628,7 +628,7 @@ public:
                 return;
             }
     
-            me->SetUInt64Value(UNIT_FIELD_TARGET, 0);
+            me->SetTarget(ObjectGuid::Empty);
     
             //No instance
             if (!pInst)
@@ -696,7 +696,7 @@ public:
                 case 3:
                 {
                     //Remove Target field
-                    me->SetUInt64Value(UNIT_FIELD_TARGET, 0);
+                    me->SetTarget(ObjectGuid::Empty);
     
                     //Weaken
                     if (FleshTentaclesKilled > 1)
@@ -805,7 +805,7 @@ public:
                                 DoTeleportPlayer(pUnit, STOMACH_X, STOMACH_Y, STOMACH_Z, STOMACH_O);
                             }
     
-                            StomachEnterTarget = 0;
+                            StomachEnterTarget.Clear();
                             StomachEnterVisTimer = 0;
                         }else StomachEnterVisTimer -= diff;
                     }
@@ -979,7 +979,7 @@ void mob_giant_flesh_tentacle::flesh_tentacleAI::UpdateAI(const uint32 diff)
 
             if (!pUnit || !pUnit->IsAlive() || !pUnit->IsInCombat())
             {
-                Parent = 0;
+                Parent.Clear();
                 me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, nullptr, false);
                 return;
             }
@@ -1027,7 +1027,7 @@ public:
     
         uint32 MindflayTimer;
         uint32 KillSelfTimer;
-        uint64 PortalGUID;
+        ObjectGuid PortalGUID;
     
         void JustDied(Unit*)
         override {
@@ -1106,7 +1106,7 @@ public:
         uint32 GroundRuptureTimer;
         uint32 HamstringTimer;
         uint32 EvadeTimer;
-        uint64 PortalGUID;
+        ObjectGuid PortalGUID;
     
         void JustDied(Unit*)
         override {
@@ -1219,7 +1219,7 @@ public:
         uint32 ThrashTimer;
         uint32 HamstringTimer;
         uint32 EvadeTimer;
-        uint64 PortalGUID;
+        ObjectGuid PortalGUID;
     
         void JustDied(Unit*)
         override {
@@ -1338,7 +1338,7 @@ public:
         }
     
         uint32 BeamTimer;
-        uint64 PortalGUID;
+        ObjectGuid PortalGUID;
     
         void JustDied(Unit*)
         override {

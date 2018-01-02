@@ -166,8 +166,8 @@ public:
         uint8 MobCount;
         uint32 MobDeath_Timer;
     
-        uint64 RingMobGUID[4];
-        uint64 RingBossGUID;
+        ObjectGuid RingMobGUID[4];
+        ObjectGuid RingBossGUID;
     
         bool CanWalk;
     
@@ -181,17 +181,14 @@ public:
             MobCount = 0;
             MobDeath_Timer = 0;
     
-            for(uint64 & i : RingMobGUID)
-                i = 0;
-    
-            RingBossGUID = 0;
+            RingBossGUID = ObjectGuid::Empty;
     
             CanWalk = false;
         }
     
         void DoGate(uint32 id, uint32 state)
         {
-            if (GameObject *go = GameObject::GetGameObject(*me,pInstance->GetData64(id)))
+            if (GameObject *go = GameObject::GetGameObject(*me,ObjectGuid(pInstance->GetData64(id))))
                 go->SetGoState(GOState(state));
         }
     
@@ -268,7 +265,7 @@ public:
                         Creature *boss = ObjectAccessor::GetCreature(*me,RingBossGUID);
                         if (boss && !boss->IsAlive() && boss->IsDead())
                         {
-                            RingBossGUID = 0;
+                            RingBossGUID.Clear();
                             Event_Timer = 5000;
                             MobDeath_Timer = 0;
                             return;
@@ -276,12 +273,12 @@ public:
                         return;
                     }
     
-                    for(uint64 & i : RingMobGUID)
+                    for(ObjectGuid & i : RingMobGUID)
                     {
                         Creature *mob = ObjectAccessor::GetCreature(*me,i);
                         if (mob && !mob->IsAlive() && mob->IsDead())
                         {
-                            i = 0;
+                            i = ObjectGuid::Empty;
                             --MobCount;
     
                             //seems all are gone, so set timer to continue and discontinue this
@@ -304,7 +301,7 @@ public:
                     case 0:
                         DoScriptText(-1000000, me);//1
                         DoGate(DATA_ARENA4,1);
-                        Start(false, false, false);
+                        Start(false, false, ObjectGuid::Empty);
                         CanWalk = true;
                         Event_Timer = 0;
                         break;
@@ -1302,7 +1299,7 @@ public:
     
         void DoGo(uint32 id, uint32 state)
         {
-            if (GameObject *go = GameObject::GetGameObject(*me,pInstance->GetData64(id)))
+            if (GameObject *go = GameObject::GetGameObject(*me, ObjectGuid(pInstance->GetData64(id))))
                 go->SetGoState(GOState(state));
         }
     
@@ -1355,7 +1352,7 @@ public:
                     DoGo(DATA_GO_BAR_KEG_TRAP,0);               //doesn't work very well, leaving code here for future
                     //spell by trap has effect61, this indicate the bar go hostile
     
-                    if (Unit *tmp = ObjectAccessor::GetUnit(*me,pInstance->GetData64(DATA_PHALANX)))
+                    if (Unit *tmp = ObjectAccessor::GetUnit(*me, ObjectGuid(pInstance->GetData64(DATA_PHALANX))))
                         tmp->SetFaction(FACTION_MONSTER);
     
                     //for later, this event(s) has alot more to it.
@@ -1389,7 +1386,7 @@ public:
                 {
                     DoScriptText(SAY_GOT_BEER, me);
                     me->CastSpell(me,SPELL_DRUNKEN_RAGE, TRIGGERED_NONE);
-                    ((EscortAI*)(me->AI()))->Start(false, false, false);
+                    ((EscortAI*)(me->AI()))->Start(false, false, ObjectGuid::Empty);
                 }
             }
         }

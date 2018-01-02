@@ -91,7 +91,7 @@ public:
                 i = 0;
         }
 
-        uint64 AddGUID[4];
+        ObjectGuid AddGUID[4];
     
         uint32 Vanish_Timer;
         uint32 Blind_Timer;
@@ -212,7 +212,7 @@ public:
     
         void DeSpawnAdds()
         {
-            for(uint64 i : AddGUID)
+            for(ObjectGuid i : AddGUID)
             {
                 Creature* Temp = nullptr;
                 if (i)
@@ -230,7 +230,7 @@ public:
     
         void AddsAttack()
         {
-            for(uint64 i : AddGUID)
+            for(ObjectGuid i : AddGUID)
             {
                 Creature* Temp = nullptr;
                 if (i)
@@ -266,7 +266,7 @@ public:
     
             if (CheckAdds_Timer < diff)
             {
-                for (uint64 i : AddGUID)
+                for (ObjectGuid i : AddGUID)
                 {
                     Creature* Temp = nullptr;
                     if (i)
@@ -341,13 +341,10 @@ struct boss_moroes_guestAI : public ScriptedAI
 {
     InstanceScript* pInstance;
 
-    uint64 GuestGUID[4];
+    ObjectGuid GuestGUID[4];
 
     boss_moroes_guestAI(Creature* c) : ScriptedAI(c)
     {
-        for (auto& i : GuestGUID)
-            i = 0;
-
         pInstance = ((InstanceScript*)c->GetInstanceScript());
     }
 
@@ -367,7 +364,7 @@ struct boss_moroes_guestAI : public ScriptedAI
         {
             for (uint8 i = 0; i < 3; ++i)
             {
-                uint64 GUID = ((boss_moroes::boss_moroesAI*)Moroes->AI())->AddGUID[i];
+                ObjectGuid GUID = ((boss_moroes::boss_moroesAI*)Moroes->AI())->AddGUID[i];
                 if (GUID && GUID != me->GetGUID())
                     GuestGUID[i + 1] = GUID;
             }
@@ -376,7 +373,7 @@ struct boss_moroes_guestAI : public ScriptedAI
 
     Unit* SelectRandomGuest()
     {
-        uint64 TempGUID = GuestGUID[rand() % 5];
+        ObjectGuid TempGUID = GuestGUID[rand() % 5];
         if (TempGUID)
         {
             Unit* pUnit = ObjectAccessor::GetUnit((*me), TempGUID);

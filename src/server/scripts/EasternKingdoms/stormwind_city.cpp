@@ -107,14 +107,14 @@ public:
         public:
         npc_bartlebyAI(Creature *c) : ScriptedAI(c) {}
     
-        uint64 PlayerGUID;
+        ObjectGuid PlayerGUID;
     
         void Reset()
         override {
             me->SetFaction(11);
             me->SetEmoteState(EMOTE_ONESHOT_EAT);
     
-            PlayerGUID = 0;
+            PlayerGUID.Clear();
         }
     
         void JustDied(Unit *who)

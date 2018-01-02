@@ -43,16 +43,12 @@ public:
         uint32 Encounters[ENCOUNTERS];
         std::string str_data;
 
-        uint64 DoorCourtyardGUID;
-        uint64 DoorSorcererGUID;
-        uint64 DoorArugalGUID;
+        ObjectGuid DoorCourtyardGUID;
+        ObjectGuid DoorSorcererGUID;
+        ObjectGuid DoorArugalGUID;
 
         void Initialize() override
         {
-            DoorCourtyardGUID = 0;
-            DoorSorcererGUID = 0;
-            DoorArugalGUID = 0;
-
             for (uint32 & Encounter : Encounters)
                 Encounter = NOT_STARTED;
         }
@@ -62,11 +58,11 @@ public:
             switch (go->GetEntry())
             {
             case 18895: DoorCourtyardGUID = go->GetGUID();
-                if (Encounters[0] == DONE) HandleGameObject(0, true, go); break;
+                if (Encounters[0] == DONE) HandleGameObject(ObjectGuid::Empty, true, go); break;
             case 18972: DoorSorcererGUID = go->GetGUID();
-                if (Encounters[2] == DONE) HandleGameObject(0, true, go); break;
+                if (Encounters[2] == DONE) HandleGameObject(ObjectGuid::Empty, true, go); break;
             case 18971: DoorArugalGUID = go->GetGUID();
-                if (Encounters[3] == DONE) HandleGameObject(0, true, go); break;
+                if (Encounters[3] == DONE) HandleGameObject(ObjectGuid::Empty, true, go); break;
 
             }
         }

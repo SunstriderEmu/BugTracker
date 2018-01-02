@@ -261,7 +261,7 @@ public:
                         for (int ici = 0; ici < TARGETICONCOUNT; ici++)
                         {
                             //if (grp ->m_targetIcons[ici] == me->GetGUID()) -- private member:(
-                            grp->SetTargetIcon(ici, 0);
+                            grp->SetTargetIcon(ici, ObjectGuid::Empty);
                         }
                     }
                     break;

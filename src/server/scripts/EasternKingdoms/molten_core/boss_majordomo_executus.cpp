@@ -314,7 +314,7 @@ class Boss_Majordomo : public CreatureScript
                 {
                     uint32 spellID = rand() % 2 ? SPELL_MAGIC_REFLECTION : SPELL_DAMAGE_REFLECTION;
                     Creature* NagaFriend;
-                    for (uint64 & Summon : Summons)
+                    for (ObjectGuid & Summon : Summons)
                     {
                         NagaFriend = ObjectAccessor::GetCreature((*me), Summon);
                         if (NagaFriend && NagaFriend->IsAlive())
@@ -436,7 +436,7 @@ class Mob_FlameWalker_Healer : public CreatureScript
 
                 if (!domoAI)
                 {
-                    if (Creature* domo = _instance->instance->GetCreature(_instance->GetData64(DATA_MAJORDOMO)))
+                    if (Creature* domo = _instance->instance->GetCreature(ObjectGuid(_instance->GetData64(DATA_MAJORDOMO))))
                         domoAI = (Boss_Majordomo::Boss_MajordomoAI*)domo->AI();
                 }
                 else
@@ -519,7 +519,7 @@ class Mob_FlameWalker_Elite : public CreatureScript
 
                 if (!domoAI)
                 {
-                    if (Creature* domo = _instance->instance->GetCreature(_instance->GetData64(DATA_MAJORDOMO)))
+                    if (Creature* domo = _instance->instance->GetCreature(ObjectGuid(_instance->GetData64(DATA_MAJORDOMO))))
                         domoAI = (Boss_Majordomo::Boss_MajordomoAI*)domo->AI();
                 }
                 else
@@ -527,7 +527,7 @@ class Mob_FlameWalker_Elite : public CreatureScript
                     if (domoAI->guardCount <= 4 && !me->HasAuraEffect(SPELL_SEPARATION_ANXIETY, 0))
                         me->CastSpell(me, SPELL_SEPARATION_ANXIETY, TRIGGERED_FULL_MASK);
 
-                    if (Creature* domo = _instance->instance->GetCreature(_instance->GetData64(DATA_MAJORDOMO)))
+                    if (Creature* domo = _instance->instance->GetCreature(ObjectGuid(_instance->GetData64(DATA_MAJORDOMO))))
                         domo->GetThreatManager().AddThreat(me->GetVictim(), 0);
                 }
             

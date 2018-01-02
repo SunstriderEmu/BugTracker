@@ -38,12 +38,6 @@ public:
             IsWipe = false;
             waves = 0;
             creatureCredit = 0;
-            tuten_kashGUID = 0;
-            mordresh_fire_eyeGUID = 0;
-            plaguemaw_the_rottingGUID = 0;
-            ragglesnoutGUID = 0;
-            gluttonGUID = 0;
-            amnennar_the_coldbringerGUID = 0;
 
             for (uint32 & Encounter : Encounters)
                 Encounter = NOT_STARTED;
@@ -51,12 +45,12 @@ public:
 
         uint32 waves;
         uint32 creatureCredit;
-        uint64 tuten_kashGUID;
-        uint64 mordresh_fire_eyeGUID;
-        uint64 plaguemaw_the_rottingGUID;
-        uint64 ragglesnoutGUID;
-        uint64 gluttonGUID;
-        uint64 amnennar_the_coldbringerGUID;
+        ObjectGuid tuten_kashGUID;
+        ObjectGuid mordresh_fire_eyeGUID;
+        ObjectGuid plaguemaw_the_rottingGUID;
+        ObjectGuid ragglesnoutGUID;
+        ObjectGuid gluttonGUID;
+        ObjectGuid amnennar_the_coldbringerGUID;
 
         uint32 Encounters[ENCOUNTERS];
         std::string str_data;

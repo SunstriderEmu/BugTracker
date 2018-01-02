@@ -52,10 +52,10 @@ public:
 
         uint32 Encounters[ENCOUNTERS];
 
-        uint64 MagtheridonGUID;
-        std::set<uint64> ChannelerGUID;
-        uint64 DoorGUID;
-        std::set<uint64> ColumnGUID;
+        ObjectGuid MagtheridonGUID;
+        std::set<ObjectGuid> ChannelerGUID;
+        ObjectGuid DoorGUID;
+        std::set<ObjectGuid> ColumnGUID;
 
         uint32 CageTimer;
         uint32 RespawnTimer;
@@ -64,12 +64,7 @@ public:
             override {
             for (uint32 & Encounter : Encounters)
                 Encounter = NOT_STARTED;
-
-            MagtheridonGUID = 0;
-            ChannelerGUID.clear();
-            DoorGUID = 0;
-            ColumnGUID.clear();
-
+            
             CageTimer = 0;
             RespawnTimer = 0;
         }
@@ -147,7 +142,7 @@ public:
                     if (Encounters[1] != NOT_STARTED)
                     {
                         Encounters[1] = NOT_STARTED;
-                        for (uint64 i : ChannelerGUID)
+                        for (ObjectGuid i : ChannelerGUID)
                         {
                             if (Creature *Channeler = instance->GetCreature(i))
                             {
@@ -166,7 +161,7 @@ public:
                     {
                         Encounters[1] = IN_PROGRESS;
                         // Let all five channelers aggro.
-                        for (uint64 i : ChannelerGUID)
+                        for (ObjectGuid i : ChannelerGUID)
                         {
                             Creature *Channeler = instance->GetCreature(i);
                             if (Channeler && Channeler->IsAlive())
@@ -183,7 +178,7 @@ public:
                             Door->ResetDoorOrButton();
                     }break;
                 case DONE: // Add buff and check if all channelers are dead.
-                    for (uint64 i : ChannelerGUID)
+                    for (ObjectGuid i : ChannelerGUID)
                     {
                         Creature *Channeler = instance->GetCreature(i);
                         if (Channeler && Channeler->IsAlive())
@@ -198,7 +193,7 @@ public:
                 break;
             case DATA_COLLAPSE:
                 // true - collapse / false - reset
-                for (uint64 i : ColumnGUID)
+                for (ObjectGuid i : ColumnGUID)
                 {
                     if (GameObject *Column = instance->GetGameObject(i))
                         Column->SetGoState(GOState(!data));
@@ -237,7 +232,7 @@ public:
             {
                 if (RespawnTimer <= diff)
                 {
-                    for (uint64 i : ChannelerGUID)
+                    for (ObjectGuid i : ChannelerGUID)
                     {
                         if (Creature *Channeler = instance->GetCreature(i))
                         {

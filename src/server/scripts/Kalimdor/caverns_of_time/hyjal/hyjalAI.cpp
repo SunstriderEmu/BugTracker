@@ -315,8 +315,6 @@ hyjalAI::hyjalAI(Creature *c) : EscortAI(c), Summons(me)
     pInstance = ((InstanceScript*)c->GetInstanceScript());
     VeinsSpawned[0] = false;
     VeinsSpawned[1] = false;
-    for(uint64 & i : VeinGUID)
-        i = 0;
     InfernalCount = 0;
     TeleportTimer = 1000;
     Overrun = false;
@@ -350,9 +348,9 @@ void hyjalAI::Reset()
     IsDummy = false;
     me->SetKeepActive(true);
     // GUIDs
-    PlayerGUID = 0;
-    BossGUID[0] = 0;
-    BossGUID[1] = 0;
+    PlayerGUID.Clear();
+    BossGUID[0].Clear();
+    BossGUID[1].Clear();
 
     // Timers
     NextWaveTimer = 10000;
@@ -693,7 +691,7 @@ void hyjalAI::Retreat()
             pInstance->SetData(DATA_ALLIANCE_RETREAT, 1);
             AddWaypoint(0,JainaWPs[0][0],JainaWPs[0][1],JainaWPs[0][2]);
             AddWaypoint(1,JainaWPs[1][0],JainaWPs[1][1],JainaWPs[1][2]);
-            Start(false, false, false);
+            Start(false, false);
             SetDespawnAtEnd(false);//move to center of alliance base
             Talk(SUCCESS);
         }
@@ -708,9 +706,9 @@ void hyjalAI::Retreat()
                 DummyGuid = JainaDummy->GetGUID();
             }
             AddWaypoint(0,JainaDummySpawn[1][0],JainaDummySpawn[1][1],JainaDummySpawn[1][2]);
-            Start(false, false, false);
+            Start(false, false);
             SetDespawnAtEnd(false);//move to center of horde base
-            if(Creature* archimonde = me->GetMap()->GetCreature(pInstance->GetData64(DATA_ARCHIMONDE)))
+            if(Creature* archimonde = me->GetMap()->GetCreature(ObjectGuid(pInstance->GetData64(DATA_ARCHIMONDE))))
                 DoScriptText(TEXT_ARCHIMONDE_AT_HORDE_RETREAT, archimonde); //Not ok, not enough range
         }
     }
@@ -750,7 +748,7 @@ void hyjalAI::DeSpawnVeins()
     if(!pInstance)return;
     if(Faction == 1)
     {
-        Creature* pUnit=ObjectAccessor::GetCreature((*me),pInstance->GetData64(DATA_JAINAPROUDMOORE));
+        Creature* pUnit=ObjectAccessor::GetCreature((*me), ObjectGuid(pInstance->GetData64(DATA_JAINAPROUDMOORE)));
         if (!pUnit)return;
         hyjalAI* ai = ((hyjalAI*)pUnit->AI());
         if(!ai)return;
@@ -762,7 +760,7 @@ void hyjalAI::DeSpawnVeins()
         }
     }else if (Faction)
     {
-        Creature* pUnit=ObjectAccessor::GetCreature((*me),pInstance->GetData64(DATA_THRALL));
+        Creature* pUnit=ObjectAccessor::GetCreature((*me), ObjectGuid(pInstance->GetData64(DATA_THRALL)));
         if (!pUnit)return;
         hyjalAI* ai = ((hyjalAI*)pUnit->AI());
         if(!ai)return;
@@ -889,7 +887,7 @@ void hyjalAI::UpdateAI(const uint32 diff)
          
     if(CheckTimer < diff)
     {
-        for(uint64 & i : BossGUID)
+        for(ObjectGuid & i : BossGUID)
         {
             if(i)
             {
@@ -908,7 +906,7 @@ void hyjalAI::UpdateAI(const uint32 diff)
                     EventBegun = false;
                     CheckTimer = 0;
                     me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP); 
-                    i = 0;
+                    i = ObjectGuid::Empty;
                     UpdateWorldState(WORLD_STATE_ENEMY, 0); // Reset world state for enemies to disable it
                 }
             }

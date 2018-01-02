@@ -497,7 +497,7 @@ public:
         npc_fel_guard_houndAI(Creature* c) : ScriptedAI(c) {}
         
         uint32 checkTimer;
-        uint64 lastHelboar; //store last helboar GUID to prevent multiple spawns of poo with the same mob
+        ObjectGuid lastHelboar; //store last helboar GUID to prevent multiple spawns of poo with the same mob
         
         void Reset()
         override {
@@ -621,7 +621,7 @@ public:
         public:
         npc_living_flareAI(Creature* pCreature) : ScriptedAI(pCreature) {}
         uint32 uiCheckTimer;
-        uint64 uiSparkGUID;
+        ObjectGuid uiSparkGUID;
         uint32 Count;
     
         void Reset()
@@ -629,7 +629,7 @@ public:
             DoCast(me, SPELL_COSMETIC);
             me->GetMotionMaster()->MoveFollow(me->GetOwner(), PET_FOLLOW_DIST, me->GetFollowAngle());
             uiCheckTimer = 8000;
-            uiSparkGUID = 0;
+            uiSparkGUID = ObjectGuid::Empty;
             Count = 0;
         }
     
@@ -1426,7 +1426,7 @@ public:
     
         bool Exorcim;
     
-        uint64 uiPlayerGUID;
+        ObjectGuid uiPlayerGUID;
     
         uint32 uiStepsTimer;
         uint32 uiSteps;
@@ -1438,7 +1438,7 @@ public:
             Exorcim = false;
             uiStepsTimer = 0;
             uiSteps = 0;
-            uiPlayerGUID = 0;
+            uiPlayerGUID.Clear();
         }
         
         void DoSpawnDarkness()
@@ -1989,7 +1989,7 @@ public:
     {
         Position const pos;
         uint32 const npcId;
-        uint64 guid;
+        ObjectGuid guid;
         bool dead;
     };
     
@@ -2032,26 +2032,26 @@ public:
         // 19005 : wrath master
         std::vector<DemonSummonInfo> demonSummons
         {
-            { Position(-198.475, 1152.46, 41.5387, 4.649050), 18944, 0, false },
-            { Position(-204.212, 1163.39, 42.7747, 4.649050), 18944, 0, false },
-            { Position(-209.724, 1153.05, 41.5781, 4.649050), 18944, 0, false },
-            { Position(-209.911, 1171.92, 42.4926, 4.649050), 18944, 0, false },
-            { Position(-215.193, 1164.25, 42.3766, 4.649050), 18944, 0, false },
-            { Position(-220.91, 1172.25, 41.6198, 4.649050), 18944, 0, false },
-            { Position(-231.111, 1172.32, 41.5725, 4.649050), 19005, 0, false },
-            { Position(-241.049, 1150.11, 41.651, 4.649050), 18944, 0, false },
-            { Position(-250.012, 1150.5, 41.651, 4.649050), 18944, 0, false },
-            { Position(-259.584, 1150.61, 41.651, 4.649050), 18944, 0, false },
-            { Position(-267.838, 1170.1, 41.6599, 4.649050), 19005, 0, false },
-            { Position(-278.802, 1169.95, 41.7551, 4.649050), 18944, 0, false },
-            { Position(-283.887, 1162.71, 41.2736, 4.649050), 18944, 0, false },
-            { Position(-289.163, 1155.73, 41.2988, 4.649050), 18944, 0, false },
-            { Position(-290.59, 1170.37, 41.7875, 4.649050), 18944, 0, false },
-            { Position(-295.487, 1162.31, 41.0212, 4.649050), 18944, 0, false },
-            { Position(-300.381, 1155.92, 41.223, 4.649050), 18944, 0, false },
+            { Position(-198.475, 1152.46, 41.5387, 4.649050), 18944, ObjectGuid::Empty, false },
+            { Position(-204.212, 1163.39, 42.7747, 4.649050), 18944, ObjectGuid::Empty, false },
+            { Position(-209.724, 1153.05, 41.5781, 4.649050), 18944, ObjectGuid::Empty, false },
+            { Position(-209.911, 1171.92, 42.4926, 4.649050), 18944, ObjectGuid::Empty, false },
+            { Position(-215.193, 1164.25, 42.3766, 4.649050), 18944, ObjectGuid::Empty, false },
+            { Position(-220.91, 1172.25, 41.6198, 4.649050),  18944, ObjectGuid::Empty, false },
+            { Position(-231.111, 1172.32, 41.5725, 4.649050), 19005, ObjectGuid::Empty, false },
+            { Position(-241.049, 1150.11, 41.651, 4.649050),  18944, ObjectGuid::Empty, false },
+            { Position(-250.012, 1150.5, 41.651, 4.649050),   18944, ObjectGuid::Empty, false },
+            { Position(-259.584, 1150.61, 41.651, 4.649050),  18944, ObjectGuid::Empty, false },
+            { Position(-267.838, 1170.1, 41.6599, 4.649050),  19005, ObjectGuid::Empty, false },
+            { Position(-278.802, 1169.95, 41.7551, 4.649050), 18944, ObjectGuid::Empty, false },
+            { Position(-283.887, 1162.71, 41.2736, 4.649050), 18944, ObjectGuid::Empty, false },
+            { Position(-289.163, 1155.73, 41.2988, 4.649050), 18944, ObjectGuid::Empty, false },
+            { Position(-290.59, 1170.37, 41.7875, 4.649050),  18944, ObjectGuid::Empty, false },
+            { Position(-295.487, 1162.31, 41.0212, 4.649050), 18944, ObjectGuid::Empty, false },
+            { Position(-300.381, 1155.92, 41.223, 4.649050),  18944, ObjectGuid::Empty, false },
         };
         
-        DemonSummonInfo pitlordInfo = { Position(-248.82f, 1176.17f, 41.6652f, 4.69f), 18945, 0, false };
+        DemonSummonInfo pitlordInfo = { Position(-248.82f, 1176.17f, 41.6652f, 4.69f), 18945, ObjectGuid::Empty, false };
 
         EventMap events;
 
@@ -2075,7 +2075,7 @@ public:
                 if (Creature* c = me->GetMap()->GetCreature(summonInfo.guid))
                     c->DisappearAndDie();
 
-                summonInfo.guid = 0;
+                summonInfo.guid = ObjectGuid::Empty;
                 summonInfo.dead = true;
             }
         }
@@ -2126,7 +2126,7 @@ public:
             }
 
             Creature* leader = justSummoned[0];
-            sCreatureGroupMgr->AddCreatureToGroup(leader->GetGUIDLow(), leader);
+            sCreatureGroupMgr->AddCreatureToGroup(leader->GetGUID().GetCounter(), leader);
             //spawn other in wedge formation
             for (uint8 i = 1; i < justSummoned.size(); i++)
             {
@@ -2134,7 +2134,7 @@ public:
                 MemberPosition pos;
                 pos.follow_dist = i == 1 ? 6.0f : 6.0f * ((i-1) / 2 + 1);
                 pos.follow_angle = i % 2 ? 2.1f : 4.2f; //a little behind, to the left or to the right
-                sCreatureGroupMgr->AddCreatureToGroup(leader->GetGUIDLow(), member, &pos);
+                sCreatureGroupMgr->AddCreatureToGroup(leader->GetGUID().GetCounter(), member, &pos);
             }
 
             uint64 message = DarkPortalEventController::DEMON_COMMON_PATH;

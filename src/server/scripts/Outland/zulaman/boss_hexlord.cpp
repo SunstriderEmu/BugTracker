@@ -244,16 +244,14 @@ public:
         {
             pInstance = ((InstanceScript*)c->GetInstanceScript());
             SelectAddEntry();
-            for(uint64 & i : AddGUID)
-                i = 0;
         }
     
         InstanceScript *pInstance;
     
-        uint64 AddGUID[4];
+        ObjectGuid AddGUID[4];
         uint32 AddEntry[4];
     
-        uint64 PlayerGUID;
+        ObjectGuid PlayerGUID;
     
         uint32 SpiritBolts_Timer;
         uint32 DrainPower_Timer;
@@ -299,7 +297,7 @@ public:
             me->Yell(YELL_AGGRO, LANG_UNIVERSAL, nullptr);
             DoPlaySoundToSet(me, SOUND_YELL_AGGRO);
     
-            for(uint64 i : AddGUID)
+            for(ObjectGuid i : AddGUID)
             {
                 Unit* Temp = ObjectAccessor::GetUnit((*me),i);
                 if(Temp && Temp->IsAlive())
@@ -335,7 +333,7 @@ public:
             me->Yell(YELL_DEATH, LANG_UNIVERSAL, nullptr);
             DoPlaySoundToSet(me, SOUND_YELL_DEATH);
     
-            for(uint64 i : AddGUID)
+            for(ObjectGuid i : AddGUID)
             {
                 Unit* Temp = ObjectAccessor::GetUnit((*me),i);
                 if(Temp && Temp->IsAlive())
@@ -401,7 +399,7 @@ public:
     
             if(CheckAddState_Timer < diff)
             {
-                for(uint64 i : AddGUID)
+                for(ObjectGuid i : AddGUID)
                 {
                     Unit* Temp = ObjectAccessor::GetUnit((*me),i);
                     if(Temp && Temp->IsAlive() && !Temp->GetVictim())
@@ -465,7 +463,7 @@ public:
                     trigger->GetMotionMaster()->MoveChase(me);
     
                     //me->CastSpell(target, SPELL_SIPHON_SOUL, TRIGGERED_FULL_MASK);
-                    //me->SetUInt64Value(UNIT_FIELD_CHANNEL_OBJECT, target->GetGUID());
+                    //me->SetGuidValue(UNIT_FIELD_CHANNEL_OBJECT, target->GetGUID());
                     //me->SetUInt32Value(UNIT_CHANNEL_SPELL, SPELL_SIPHON_SOUL);
     
                     PlayerGUID = target->GetGUID();

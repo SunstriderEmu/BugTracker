@@ -80,24 +80,6 @@ public:
             OperaEvent = urand(1, 3);                   // 1 - OZ, 2 - HOOD, 3 - RAJ, this never gets altered (expect when loading from DB)
             OzDeathCount = 0;
 
-            CurtainGUID = 0;
-            StageDoorLeftGUID = 0;
-            StageDoorRightGUID = 0;
-
-            KilrekGUID = 0;
-            TerestianGUID = 0;
-            MoroesGUID = 0;
-            MalchezaarGUID = 0;
-
-            LibraryDoor = 0;
-            MassiveDoor = 0;
-            GamesmansDoor = 0;
-            GamesmansExitDoor = 0;
-            NetherspaceDoor = 0;
-            SideEntranceDoor = 0;
-            MastersTerraceDoor[0] = 0;
-            MastersTerraceDoor[1] = 0;
-            ChessMedivhGUID = 0;
             ChessTeam = 0;
 
             ChessPieces.resize(0);
@@ -179,12 +161,12 @@ public:
             case DATA_MALCHEZAAR:                  return MalchezaarGUID;
             }
 
-            return 0;
+            return ObjectGuid::Empty;
         }
 
         void ReinitChestPieces()
         {
-            for (uint64 ChessPiece : ChessPieces)
+            for (ObjectGuid ChessPiece : ChessPieces)
             {
                 if (Creature* piece = instance->GetCreature(ChessPiece))
                 {
@@ -201,7 +183,7 @@ public:
                     piece->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 }
             }
-            for (uint64 MedivhCheatFire : MedivhCheatFires) {
+            for (ObjectGuid MedivhCheatFire : MedivhCheatFires) {
                 if (Creature* fire = instance->GetCreature(MedivhCheatFire))
                     fire->DisappearAndDie();
             }
@@ -256,7 +238,7 @@ public:
                 CastOnAllPlayers(39331);*/
                 break;
             case DATA_CHESS_CHECK_PIECES_ALIVE:
-                for (uint64 ChessPiece : ChessPieces) {
+                for (ObjectGuid ChessPiece : ChessPieces) {
                     if (Creature* piece = instance->GetCreature(ChessPiece)) {
                         if (!piece->IsAlive()) {
                             piece->SetDeathState(JUST_RESPAWNED);
@@ -357,27 +339,27 @@ public:
             uint32 OzDeathCount;
             uint32 ChessTeam;
 
-            uint64 CurtainGUID;
-            uint64 StageDoorLeftGUID;
-            uint64 StageDoorRightGUID;
-            uint64 KilrekGUID;
-            uint64 TerestianGUID;
-            uint64 MoroesGUID;
-            uint64 MalchezaarGUID;
-            uint64 LibraryDoor;                                     // Door at Shade of Aran
-            uint64 MassiveDoor;                                     // Door at Netherspite
-            uint64 GamesmansDoor;                                   // Door before Chess
-            uint64 GamesmansExitDoor;                               // Door after Chess
-            uint64 NetherspaceDoor;                                // Door at Malchezaar
-            uint64 SideEntranceDoor;                                // Inside top entrance door
-            uint64 MastersTerraceDoor[2];
-            uint64 NightbaneMedivhGUID;
-            uint64 ChessMedivhGUID;
+            ObjectGuid CurtainGUID;
+            ObjectGuid StageDoorLeftGUID;
+            ObjectGuid StageDoorRightGUID;
+            ObjectGuid KilrekGUID;
+            ObjectGuid TerestianGUID;
+            ObjectGuid MoroesGUID;
+            ObjectGuid MalchezaarGUID;
+            ObjectGuid LibraryDoor;                                     // Door at Shade of Aran
+            ObjectGuid MassiveDoor;                                     // Door at Netherspite
+            ObjectGuid GamesmansDoor;                                   // Door before Chess
+            ObjectGuid GamesmansExitDoor;                               // Door after Chess
+            ObjectGuid NetherspaceDoor;                                // Door at Malchezaar
+            ObjectGuid SideEntranceDoor;                                // Inside top entrance door
+            ObjectGuid MastersTerraceDoor[2];
+            ObjectGuid NightbaneMedivhGUID;
+            ObjectGuid ChessMedivhGUID;
 
             uint32 ChessGamePhase;
 
-            std::vector<uint64> ChessPieces;
-            std::vector<uint64> MedivhCheatFires;
+            std::vector<ObjectGuid> ChessPieces;
+            std::vector<ObjectGuid> MedivhCheatFires;
     };
 };
 

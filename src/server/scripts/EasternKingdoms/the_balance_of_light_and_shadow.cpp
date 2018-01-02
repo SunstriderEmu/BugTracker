@@ -200,7 +200,7 @@ public:
                         if (summon == CREATURE_PEASANTT1) 
                             Peasant->CastSpell(Peasant, SPELL_SEETHINGPLAGUE, TRIGGERED_FULL_MASK);
     
-                        for (uint64 & Summon : Summons) {
+                        for (ObjectGuid & Summon : Summons) {
                             if (Creature* BadGuy = ObjectAccessor::GetCreature((*me), Summon))
                                 BadGuy->GetThreatManager().AddThreat(Peasant, 0);
                         }
@@ -386,12 +386,12 @@ public:
             SetCombatMovementAllowed(false);
         }
         int Arrow_Timer;
-        uint64 targetGUID;
+        ObjectGuid targetGUID;
     
         void Reset()
         override {
             Arrow_Timer = 2700;
-            targetGUID = 0;
+            targetGUID = ObjectGuid::Empty;
         }
     
         void JustEngagedWith(Unit* who) override {}

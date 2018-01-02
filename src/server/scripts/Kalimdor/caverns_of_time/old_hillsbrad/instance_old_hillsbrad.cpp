@@ -38,17 +38,14 @@ public:
         uint32 mBarrelCount;
         uint32 mThrallEventCount;
 
-        uint64 ThrallGUID;
-        uint64 TarethaGUID;
-        uint64 EpochGUID;
+        ObjectGuid ThrallGUID;
+        ObjectGuid TarethaGUID;
+        ObjectGuid EpochGUID;
 
         void Initialize()
             override {
             mBarrelCount = 0;
             mThrallEventCount = 0;
-            ThrallGUID = 0;
-            TarethaGUID = 0;
-            EpochGUID = 0;
 
             for (uint32 & i : Encounter) {
                 if (i != DONE)
@@ -69,7 +66,7 @@ public:
                         player->SendUpdateWorldState(WORLD_STATE_OH, mBarrelCount);
 
                         if (mBarrelCount == 5)
-                            player->KilledMonsterCredit(LODGE_QUEST_TRIGGER, 0);
+                            player->KilledMonsterCredit(LODGE_QUEST_TRIGGER, ObjectGuid::Empty);
                     }
                 }
             }

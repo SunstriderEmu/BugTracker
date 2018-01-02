@@ -102,7 +102,7 @@ public:
                 pInstance->SetData(DATA_VEXALLUS_EVENT, DONE);
     
                 GameObject* Door = nullptr;
-                Door = GameObject::GetGameObject((*me), pInstance->GetData64(DATA_VEXALLUS_DOOR));
+                Door = GameObject::GetGameObject((*me), ObjectGuid(pInstance->GetData64(DATA_VEXALLUS_DOOR)));
                 if (Door)
                     Door->UseDoorOrButton();
             }

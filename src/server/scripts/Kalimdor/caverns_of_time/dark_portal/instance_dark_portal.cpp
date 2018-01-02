@@ -84,7 +84,7 @@ public:
 
         uint32 NextPortal_Timer;
 
-        uint64 MedivhGUID;
+        ObjectGuid MedivhGUID;
         uint8 CurrentRiftId;
 
         bool bIsInstanceBossInProgress;
@@ -92,7 +92,6 @@ public:
         void Initialize()
             override {
             bIsInstanceBossInProgress = false;
-            MedivhGUID = 0;
             Clear();
             SetData(DATA_INSTANCE_BOSS, NOT_STARTED);
             for (uint32 & i : Encounter)

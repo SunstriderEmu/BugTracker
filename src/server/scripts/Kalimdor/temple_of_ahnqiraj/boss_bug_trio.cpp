@@ -107,8 +107,8 @@ public:
             {
                 if(pInstance)
                 {
-                    Unit *pKri = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_KRI));
-                    Unit *pVem = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_VEM));
+                    Unit *pKri = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_KRI)));
+                    Unit *pVem = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_VEM)));
     
                     switch(rand()%3)
                     {

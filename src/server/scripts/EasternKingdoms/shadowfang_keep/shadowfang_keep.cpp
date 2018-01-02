@@ -101,7 +101,7 @@ public:
             if (action == GOSSIP_ACTION_INFO_DEF+1)
             {
                 player->CLOSE_GOSSIP_MENU();
-                ((EscortAI*)(me->AI()))->Start(false, false, false);
+                ((EscortAI*)(me->AI()))->Start(false, false, ObjectGuid::Empty);
             }
             return true;
 

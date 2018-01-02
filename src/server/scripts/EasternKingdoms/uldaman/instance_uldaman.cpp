@@ -1,18 +1,3 @@
-/* Copyright (C) 2006,2007 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
 
 /* ScriptData
 SDName: instance_uldaman
@@ -56,44 +41,32 @@ public:
 
         void Initialize() override
         {
-            archaedasGUID = 0;
-            ironayaGUID = 0;
-            whoWokeArchaedasGUID = 0;
-
-            altarOfTheKeeperTempleDoor = 0;
-            archaedasTempleDoor = 0;
-            ancientVaultDoor = 0;
-            ironayaSealDoor = 0;
-
-            keystoneGUID = 0;
-
             ironayaSealDoorTimer = 26000;
             keystoneCheck = false;
 
             for (uint32 & Encounter : Encounters)
                 Encounter = NOT_STARTED;
-
         }
 
-        uint64 archaedasGUID;
-        uint64 ironayaGUID;
-        uint64 whoWokeArchaedasGUID;
+        ObjectGuid archaedasGUID;
+        ObjectGuid ironayaGUID;
+        ObjectGuid whoWokeArchaedasGUID;
 
-        uint64 altarOfTheKeeperTempleDoor;
-        uint64 archaedasTempleDoor;
-        uint64 ancientVaultDoor;
-        uint64 ironayaSealDoor;
+        ObjectGuid altarOfTheKeeperTempleDoor;
+        ObjectGuid archaedasTempleDoor;
+        ObjectGuid ancientVaultDoor;
+        ObjectGuid ironayaSealDoor;
 
-        uint64 keystoneGUID;
+        ObjectGuid keystoneGUID;
 
         uint32 ironayaSealDoorTimer;
         bool keystoneCheck;
 
-        std::vector<uint64> stoneKeeper;
-        std::vector<uint64> altarOfTheKeeperCount;
-        std::vector<uint64> vaultWalker;
-        std::vector<uint64> earthenGuardian;
-        std::vector<uint64> archaedasWallMinions;    // minions lined up around the wall
+        std::vector<ObjectGuid> stoneKeeper;
+        std::vector<ObjectGuid> altarOfTheKeeperCount;
+        std::vector<ObjectGuid> vaultWalker;
+        std::vector<ObjectGuid> earthenGuardian;
+        std::vector<ObjectGuid> archaedasWallMinions;    // minions lined up around the wall
 
         uint32 Encounters[ENCOUNTERS];
         std::string str_data;
@@ -106,14 +79,14 @@ public:
                 altarOfTheKeeperTempleDoor = go->GetGUID();
 
                 if (Encounters[0] == DONE)
-                    HandleGameObject(0, true, go);
+                    HandleGameObject(ObjectGuid::Empty, true, go);
                 break;
 
             case ARCHAEDAS_TEMPLE_DOOR:
                 archaedasTempleDoor = go->GetGUID();
 
                 if (Encounters[0] == DONE)
-                    HandleGameObject(0, true, go);
+                    HandleGameObject(ObjectGuid::Empty, true, go);
                 break;
 
             case ANCIENT_VAULT_DOOR:
@@ -122,14 +95,14 @@ public:
                 ancientVaultDoor = go->GetGUID();
 
                 if (Encounters[1] == DONE)
-                    HandleGameObject(0, true, go);
+                    HandleGameObject(ObjectGuid::Empty, true, go);
                 break;
 
             case IRONAYA_SEAL_DOOR:
                 ironayaSealDoor = go->GetGUID();
 
                 if (Encounters[2] == DONE)
-                    HandleGameObject(0, true, go);
+                    HandleGameObject(ObjectGuid::Empty, true, go);
                 break;
 
             case KEYSTONE_GO:
@@ -137,7 +110,7 @@ public:
 
                 if (Encounters[2] == DONE)
                 {
-                    HandleGameObject(0, true, go);
+                    HandleGameObject(ObjectGuid::Empty, true, go);
                     go->SetUInt32Value(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND);
                 }
                 break;
@@ -153,16 +126,16 @@ public:
             creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_REMOVE_CLIENT_CONTROL);
         }
 
-        void SetDoor(uint64 guid, bool open)
+        void SetDoor(ObjectGuid guid, bool open)
         {
             GameObject *go = instance->GetGameObject(guid);
             if (!go)
                 return;
 
-            HandleGameObject(0, open, go);
+            HandleGameObject(ObjectGuid::Empty, open, go);
         }
 
-        void BlockGO(uint64 guid)
+        void BlockGO(ObjectGuid guid)
         {
             GameObject *go = instance->GetGameObject(guid);
             if (!go)
@@ -173,7 +146,7 @@ public:
 
         void ActivateStoneKeepers()
         {
-            for (uint64 & i : stoneKeeper)
+            for (ObjectGuid & i : stoneKeeper)
             {
                 Creature *target = instance->GetCreature(i);
                 if (!target || !target->IsAlive() || target->GetFaction() == 14)
@@ -194,7 +167,7 @@ public:
             if (!archaedas)
                 return;
 
-            for (uint64 & archaedasWallMinion : archaedasWallMinions)
+            for (ObjectGuid & archaedasWallMinion : archaedasWallMinions)
             {
                 Creature *target = instance->GetCreature(archaedasWallMinion);
                 if (!target || !target->IsAlive() || target->GetFaction() == 14)
@@ -209,7 +182,7 @@ public:
         void DeActivateMinions()
         {
             // first despawn any aggroed wall minions
-            for (uint64 & archaedasWallMinion : archaedasWallMinions)
+            for (ObjectGuid & archaedasWallMinion : archaedasWallMinions)
             {
                 Creature *target = instance->GetCreature(archaedasWallMinion);
                 if (!target || target->IsDead() || target->GetFaction() != 14)
@@ -218,7 +191,7 @@ public:
             }
 
             // Vault Walkers
-            for (uint64 & i : vaultWalker)
+            for (ObjectGuid & i : vaultWalker)
             {
                 Creature *target = instance->GetCreature(i);
                 if (!target || target->IsDead() || target->GetFaction() != 14)
@@ -227,7 +200,7 @@ public:
             }
 
             // Earthen Guardians
-            for (uint64 & i : earthenGuardian)
+            for (ObjectGuid & i : earthenGuardian)
             {
                 Creature *target = instance->GetCreature(i);
                 if (!target || target->IsDead() || target->GetFaction() != 14)
@@ -236,7 +209,7 @@ public:
             }
         }
 
-        void ActivateArchaedas(uint64 target)
+        void ActivateArchaedas(ObjectGuid target)
         {
             Creature *archaedas = instance->GetCreature(archaedasGUID);
             if (!archaedas)
@@ -263,7 +236,7 @@ public:
         void RespawnMinions()
         {
             // first respawn any aggroed wall minions
-            for (uint64 & archaedasWallMinion : archaedasWallMinions)
+            for (ObjectGuid & archaedasWallMinion : archaedasWallMinions)
             {
                 Creature *target = instance->GetCreature(archaedasWallMinion);
                 if (target && target->IsDead())
@@ -275,7 +248,7 @@ public:
             }
 
             // Vault Walkers
-            for (uint64 & i : vaultWalker)
+            for (ObjectGuid & i : vaultWalker)
             {
                 Creature *target = instance->GetCreature(i);
                 if (target && target->IsDead())
@@ -287,7 +260,7 @@ public:
             }
 
             // Earthen Guardians
-            for (uint64 & i : earthenGuardian)
+            for (ObjectGuid & i : earthenGuardian)
             {
                 Creature *target = instance->GetCreature(i);
                 if (target && target->IsDead())
@@ -389,7 +362,7 @@ public:
             // Archaedas
             if (type == 0)
             {
-                ActivateArchaedas(data);
+                ActivateArchaedas(ObjectGuid(data));
                 SetDoor(archaedasTempleDoor, false); //close when event is started
             }
         }

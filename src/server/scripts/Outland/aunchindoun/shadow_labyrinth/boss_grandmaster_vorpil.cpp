@@ -152,7 +152,7 @@ public:
         uint32 DrawShadows_Timer;
         uint32 summonTraveler_Timer;
         uint32 banish_Timer;
-        uint64 PortalsGuid[5];
+        ObjectGuid PortalsGuid[5];
         
         bool isEventActive()
         {
@@ -200,12 +200,12 @@ public:
         {
             if(sumportals)
             {
-                for (uint64 & i : PortalsGuid)
+                for (ObjectGuid & i : PortalsGuid)
                 {
                     Unit *Portal = ObjectAccessor::GetUnit((*me), i);
                     if (Portal && Portal->IsAlive())
                         Portal->DealDamage(Portal, Portal->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-                    i = 0;
+                    i = ObjectGuid::Empty;
                 }
                 sumportals = false;
             }

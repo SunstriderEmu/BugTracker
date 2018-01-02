@@ -40,27 +40,17 @@ public:
             SetHeaders(DataHeader);
             SetBossNumber(EncounterCount);
             LoadDoorData(doorData);
-
-            MaulgarEvent_Tank = 0;
-            KigglerTheCrazed = 0;
-            BlindeyeTheSeer = 0;
-            OlmTheSummoner = 0;
-            KroshFirehand = 0;
-            Maulgar = 0;
-
-            MaulgarDoor = 0;
-            GruulDoor = 0;
         };
 
-        uint64 MaulgarEvent_Tank;
-        uint64 KigglerTheCrazed;
-        uint64 BlindeyeTheSeer;
-        uint64 OlmTheSummoner;
-        uint64 KroshFirehand;
-        uint64 Maulgar;
+        ObjectGuid MaulgarEvent_Tank;
+        ObjectGuid KigglerTheCrazed;
+        ObjectGuid BlindeyeTheSeer;
+        ObjectGuid OlmTheSummoner;
+        ObjectGuid KroshFirehand;
+        ObjectGuid Maulgar;
 
-        uint64 MaulgarDoor;
-        uint64 GruulDoor;
+        ObjectGuid MaulgarDoor;
+        ObjectGuid GruulDoor;
 
         void OnCreatureCreate(Creature *creature) override
         {
@@ -114,7 +104,7 @@ public:
             case DATA_GRUULDOOR_GUID:            return GruulDoor;
             case DATA_MAULGAR_GUID:              return Maulgar;
             }
-            return 0;
+            return ObjectGuid::Empty;
         }
     };
 };

@@ -58,7 +58,6 @@ public:
         boss_nazanAI(Creature* creature) : BossAI(creature, DATA_NAZAN)
         {
             HeroicMode = me->GetMap()->IsHeroic();
-            VazrudenGUID = 0;
         }
 
         EventMap events;
@@ -88,7 +87,7 @@ public:
         };
 
         uint8 lastWaypoint;
-        uint64 VazrudenGUID;
+        ObjectGuid VazrudenGUID;
         bool HeroicMode;
 
         void Reset() override 
@@ -154,7 +153,7 @@ public:
             switch (id)
             {
             case MESSAGE_SET_VAZRUDEN_GUID:
-                VazrudenGUID = data;
+                VazrudenGUID = ObjectGuid(data);
                 break;
             }
             return 0;
@@ -352,15 +351,13 @@ public:
         boss_vazruden_the_heraldAI(Creature *c) : ScriptedAI(c)
         {
             summoned = false;
-            NazanGUID = 0;
-            VazrudenGUID = 0;
             HeroicMode = me->GetMap() ? me->GetMap()->IsHeroic() : true;
         }
 
         uint32 phase;
         uint32 checkTimer;
-        uint64 NazanGUID;
-        uint64 VazrudenGUID;
+        ObjectGuid NazanGUID;
+        ObjectGuid VazrudenGUID;
         bool summoned;
         bool HeroicMode;
 
@@ -383,12 +380,12 @@ public:
                 if (Nazan || (Nazan = me->FindNearestCreature(NPC_NAZAN, 500.0f)) )
                 {
                     Nazan->DisappearAndDie();
-                    NazanGUID = 0;
+                    NazanGUID = ObjectGuid::Empty;
                 }
                 if (Vazruden || (Vazruden = me->FindNearestCreature(NPC_VAZRUDEN, 500.0f)) )
                 {
                     Vazruden->DisappearAndDie();
-                    VazrudenGUID = 0;
+                    VazrudenGUID = ObjectGuid::Empty;
                 }
                 summoned = false;
                 me->ClearUnitState(UNIT_STATE_ROOT);
@@ -445,7 +442,7 @@ public:
                 {
                     bool aliveSentry = me->FindNearestCreature(NPC_HELLFIRE_SENTRY, 150.0f, true);
                     if (!aliveSentry)
-                        if (Unit* killer = me->GetMap()->GetPlayer(data))
+                        if (Unit* killer = me->GetMap()->GetPlayer(ObjectGuid(data)))
                             AttackStart(killer);
                 } break;
             }

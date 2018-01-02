@@ -78,7 +78,7 @@ public:
         bool RaptorDead;
         bool CombatStart;
     
-        uint64 WatchTarget;
+        ObjectGuid WatchTarget;
     
         void Reset()
         override {
@@ -95,7 +95,7 @@ public:
             targetZ = 0.0;
             TargetInRange = 0;
     
-            WatchTarget = 0;
+            WatchTarget = ObjectGuid::Empty;
     
             someWatched = false;
             endWatch = false;
@@ -117,7 +117,7 @@ public:
     
                     if (pInstance)
                     {
-                        uint64 JindoGUID = pInstance->GetData64(DATA_JINDO);
+                        ObjectGuid JindoGUID = ObjectGuid(pInstance->GetData64(DATA_JINDO));
                         if (JindoGUID)
                         {
                             if (Unit* jTemp = ObjectAccessor::GetUnit(*me,JindoGUID))

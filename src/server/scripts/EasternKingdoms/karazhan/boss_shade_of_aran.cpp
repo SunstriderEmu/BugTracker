@@ -89,7 +89,7 @@ public:
     
         uint32 FlameWreathTimer;
         uint32 FlameWreathCheckTime;
-        uint64 FlameWreathTarget[3];
+        ObjectGuid FlameWreathTarget[3];
         float FWTargPosX[3];
         float FWTargPosY[3];
     
@@ -377,9 +377,9 @@ public:
                         FlameWreathTimer = 20000;
                         FlameWreathCheckTime = 500;
     
-                        FlameWreathTarget[0] = 0;
-                        FlameWreathTarget[1] = 0;
-                        FlameWreathTarget[2] = 0;
+                        FlameWreathTarget[0].Clear();
+                        FlameWreathTarget[1].Clear();
+                        FlameWreathTarget[2].Clear();
     
                         FlameWreathEffect();
                         break;
@@ -457,7 +457,7 @@ public:
                         {
                             pUnit->CastSpell(pUnit, 20476, TRIGGERED_FULL_MASK, nullptr, nullptr, me->GetGUID());
                             pUnit->CastSpell(pUnit, 11027, TRIGGERED_FULL_MASK);
-                            FlameWreathTarget[i] = 0;
+                            FlameWreathTarget[i].Clear();
                         }
                     }
                     FlameWreathCheckTime = 500;

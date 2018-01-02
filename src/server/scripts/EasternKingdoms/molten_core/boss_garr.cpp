@@ -155,14 +155,14 @@ class Mob_FiresWorn : public CreatureScript
 
             void JustEngagedWith(Unit* victim)
             override {
-                if (Creature* garr = _instance->instance->GetCreature(_instance->GetData64(DATA_GARR)))
+                if (Creature* garr = _instance->instance->GetCreature(ObjectGuid(_instance->GetData64(DATA_GARR))))
                     if (!garr->GetVictim())
                         garr->AI()->AttackStart(victim);
             }
 
             void JustDied(Unit* /*killer*/)
             override {
-                if (Creature* garr = _instance->instance->GetCreature(_instance->GetData64(DATA_GARR)))
+                if (Creature* garr = _instance->instance->GetCreature(ObjectGuid(_instance->GetData64(DATA_GARR))))
                     if (garr->IsAlive())
                         garr->CastSpell(garr, SPELL_FRENZY, TRIGGERED_NONE);
             }

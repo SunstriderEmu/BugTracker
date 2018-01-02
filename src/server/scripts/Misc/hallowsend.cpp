@@ -444,7 +444,7 @@ public:
             SetCombatMovementAllowed(false);
         }
         
-        uint64 shadeGUID;
+        ObjectGuid shadeGUID;
         
         uint32 growTimer;
         uint32 checkEventTimer;
@@ -455,7 +455,7 @@ public:
         override {
             growTimer = 30000;
             checkEventTimer = 10000 + rand() % 15000;
-            shadeGUID = 0;
+            shadeGUID.Clear();
             me->SetReactState(REACT_PASSIVE);
         }
     

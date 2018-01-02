@@ -45,28 +45,21 @@ public:
     {
         instance_scarlet_monastery_script(Map *Map) : InstanceScript(Map) { Initialize(); };
 
-        uint64 PumpkinShrineGUID;
-        uint64 HorsemanGUID;
-        uint64 HeadGUID;
-        std::set<uint64> HorsemanAdds;
+        ObjectGuid PumpkinShrineGUID;
+        ObjectGuid HorsemanGUID;
+        ObjectGuid HeadGUID;
+        std::set<ObjectGuid> HorsemanAdds;
 
-        uint64 MograineGUID;
-        uint64 WhitemaneGUID;
-        uint64 DoorHighInquisitorGUID;
+        ObjectGuid MograineGUID;
+        ObjectGuid WhitemaneGUID;
+        ObjectGuid DoorHighInquisitorGUID;
 
         uint32 Encounter[ENCOUNTERS];
 
         void Initialize()
             override {
-            PumpkinShrineGUID = 0;
-            HorsemanGUID = 0;
-            HeadGUID = 0;
             HorsemanAdds.clear();
-
-            MograineGUID = 0;
-            WhitemaneGUID = 0;
-            DoorHighInquisitorGUID = 0;
-
+            
             for (uint32 & i : Encounter)
                 i = NOT_STARTED;
         }
@@ -106,7 +99,7 @@ public:
             case DATA_HORSEMAN_EVENT:
                 if (data == DONE)
                 {
-                    for (uint64 HorsemanAdd : HorsemanAdds)
+                    for (ObjectGuid HorsemanAdd : HorsemanAdds)
                     {
                         Creature* add = instance->GetCreature(HorsemanAdd);
                         if (add && add->IsAlive())

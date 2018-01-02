@@ -144,7 +144,7 @@ public:
         public:
         mob_headAI(Creature* c) : ScriptedAI(c) {}
     
-        uint64 bodyGUID;
+        ObjectGuid bodyGUID;
     
         uint32 Phase;
         uint32 laugh;
@@ -156,7 +156,7 @@ public:
         void Reset()
         override {
             Phase = 0;
-            bodyGUID = 0;
+            bodyGUID = ObjectGuid::Empty;
             die = false;
             withbody = true;
             wait = 1000;
@@ -408,8 +408,8 @@ public:
     
         InstanceScript *pInstance;
     
-        uint64 headGUID;
-        uint64 playerGUID;
+        ObjectGuid headGUID;
+        ObjectGuid playerGUID;
     
         uint32 Phase;
         uint32 id;
@@ -455,7 +455,7 @@ public:
                     Head->SetDeathState(JUST_DIED);
                 }
     
-                headGUID = 0;
+                headGUID = ObjectGuid::Empty;
             }
     
             if (pInstance)
@@ -849,7 +849,7 @@ public:
         mob_pulsing_pumpkinAI(Creature* c) : ScriptedAI(c) {}
     
         bool sprouted;
-        uint64 debuffGUID;
+        ObjectGuid debuffGUID;
     
         void Reset()
         override {
@@ -894,7 +894,7 @@ public:
             Unit* debuff = ObjectAccessor::GetUnit((*me), debuffGUID);
             if (debuff) {
                 debuff->SetVisible(false);
-                debuffGUID = 0;
+                debuffGUID = ObjectGuid::Empty;
             }
         }
     

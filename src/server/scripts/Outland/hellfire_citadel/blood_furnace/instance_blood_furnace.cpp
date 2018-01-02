@@ -47,14 +47,11 @@ public:
             PrisonerCounter6 = 0;
             PrisonerCounter7 = 0;
             PrisonerCounter8 = 0;
-
-            PrisonDoor4GUID = 0;
-            BroggokLeverGUID = 0;
         };
 
-        uint64 BroggokGUID;
-        uint64 PrisonDoor4GUID;
-        uint64 BroggokLeverGUID;
+        ObjectGuid BroggokGUID;
+        ObjectGuid PrisonDoor4GUID;
+        ObjectGuid BroggokLeverGUID;
 
         ObjectGuid PrisonCellGUIDs[8];
 
@@ -151,7 +148,7 @@ public:
                 return BroggokLeverGUID;
             }
 
-            return 0;
+            return ObjectGuid::Empty;
         }
 
         void ResetPrisons()

@@ -197,7 +197,7 @@ class boss_kaelthas : public CreatureScript
             {
                 summons.DespawnAll();
                 for (uint8 i = DATA_THALADREDTHEDARKENER; i <= DATA_MASTERENGINEERTELONICUS; ++i)
-                    if (Creature* advisor = ObjectAccessor::GetCreature(*me, instance->GetData64(i)))
+                    if (Creature* advisor = ObjectAccessor::GetCreature(*me, ObjectGuid(instance->GetData64(i))))
                     {
                         advisor->Respawn(true);
                         advisor->StopMovingOnCurrentPos();
@@ -225,11 +225,11 @@ class boss_kaelthas : public CreatureScript
 
             void SetRoomState(GOState state)
             {
-                if (GameObject* window = ObjectAccessor::GetGameObject(*me, instance->GetData64(GO_BRIDGE_WINDOW)))
+                if (GameObject* window = ObjectAccessor::GetGameObject(*me, ObjectGuid(instance->GetData64(GO_BRIDGE_WINDOW))))
                     window->SetGoState(state);
-                if (GameObject* window = ObjectAccessor::GetGameObject(*me, instance->GetData64(GO_KAEL_STATUE_RIGHT)))
+                if (GameObject* window = ObjectAccessor::GetGameObject(*me, ObjectGuid(instance->GetData64(GO_KAEL_STATUE_RIGHT))))
                     window->SetGoState(state);
-                if (GameObject* window = ObjectAccessor::GetGameObject(*me, instance->GetData64(GO_KAEL_STATUE_LEFT)))
+                if (GameObject* window = ObjectAccessor::GetGameObject(*me, ObjectGuid(instance->GetData64(GO_KAEL_STATUE_LEFT))))
                     window->SetGoState(state);
             }
 
@@ -505,19 +505,19 @@ class boss_kaelthas : public CreatureScript
                         events.ScheduleEvent(EVENT_CHECK_HEALTH, 1000);
                         break;
                     case EVENT_SCENE_1:
-                        me->SetTarget(0);
+                        me->SetTarget(ObjectGuid::Empty);
                         me->SetFacingTo(M_PI);
                         me->SetWalk(true);
                         Talk(SAY_PHASE5_NUTS);
                         break;
                     case EVENT_SCENE_2:
-                        me->SetTarget(0);
+                        me->SetTarget(ObjectGuid::Empty);
                         me->CastSpell(me, SPELL_KAEL_EXPLODES1, TRIGGERED_FULL_MASK);
                         me->CastSpell(me, SPELL_KAEL_GAINING_POWER, TRIGGERED_NONE);
                         me->SetDisableGravity(true);
                         break;
                     case EVENT_SCENE_3:
-                        me->SetTarget(0);
+                        me->SetTarget(ObjectGuid::Empty);
                         for (uint8 i = 0; i < 2; ++i)
                             if (Creature* trigger = me->SummonCreature(WORLD_TRIGGER, triggersPos[i], TEMPSUMMON_TIMED_DESPAWN, 60 * SECOND))
                                 trigger->CastSpell(me, SPELL_NETHERBEAM1+i, TRIGGERED_NONE);
@@ -525,7 +525,7 @@ class boss_kaelthas : public CreatureScript
                         me->CastSpell(me, SPELL_GROW, TRIGGERED_FULL_MASK);
                         break;
                     case EVENT_SCENE_4:
-                        me->SetTarget(0);
+                        me->SetTarget(ObjectGuid::Empty);
                         me->CastSpell(me, SPELL_GROW, TRIGGERED_FULL_MASK);
                         me->CastSpell(me, SPELL_KAEL_EXPLODES2, TRIGGERED_FULL_MASK);
                         me->CastSpell(me, SPELL_NETHERBEAM_AURA1, TRIGGERED_FULL_MASK);
@@ -534,7 +534,7 @@ class boss_kaelthas : public CreatureScript
                                 trigger->CastSpell(me, SPELL_NETHERBEAM1+i, TRIGGERED_NONE);
                         break;
                     case EVENT_SCENE_5:
-                        me->SetTarget(0);
+                        me->SetTarget(ObjectGuid::Empty);
                         me->CastSpell(me, SPELL_GROW, TRIGGERED_FULL_MASK);
                         me->CastSpell(me, SPELL_KAEL_EXPLODES3, TRIGGERED_FULL_MASK);
                         me->CastSpell(me, SPELL_NETHERBEAM_AURA2, TRIGGERED_FULL_MASK);
@@ -695,7 +695,7 @@ class boss_kaelthas : public CreatureScript
                         events.ScheduleEvent(EVENT_SPELL_NETHER_VAPOR, 0);
                         me->CastSpell(me, SPELL_SHOCK_BARRIER, TRIGGERED_NONE);
                         me->CastSpell(me, SPELL_GRAVITY_LAPSE, TRIGGERED_NONE);
-                        me->SetTarget(0);
+                        me->SetTarget(ObjectGuid::Empty);
                         me->GetMotionMaster()->Clear();
                         me->StopMoving();
                         Talk(SAY_GRAVITYLAPSE);
@@ -743,7 +743,7 @@ class spell_kaelthas_kael_phase_two : public SpellScriptLoader
             {
                 if (GetCaster()->GetTypeId() == TYPEID_UNIT)
                     if (InstanceScript* instance = GetCaster()->GetInstanceScript())
-                        if (Creature* kael = ObjectAccessor::GetCreature(*GetCaster(), instance->GetData64(NPC_KAELTHAS)))
+                        if (Creature* kael = ObjectAccessor::GetCreature(*GetCaster(), ObjectGuid(instance->GetData64(NPC_KAELTHAS))))
                             kael->AI()->SummonedCreatureDies(GetCaster()->ToCreature(), nullptr);
                 return true;
             }

@@ -88,7 +88,7 @@ public:
         uint32 ShieldBash_Timer;
         uint32 Revenge_Timer;                                   //this is wrong, spell should never be used unless me->GetVictim() dodge, parry or block attack. Trinity support required.
     
-        uint64 gossipPlayerGUID;
+        ObjectGuid gossipPlayerGUID;
     
         void Reset()
         override {
@@ -112,7 +112,7 @@ public:
                         //weegli doesn't fight - he goes & blows up the door
                         if (pInstance)
                         {
-                            if (Creature* weegli = pInstance->instance->GetCreature(pInstance->GetData64(ENTRY_WEEGLI))) {
+                            if (Creature* weegli = pInstance->instance->GetCreature(ObjectGuid(pInstance->GetData64(ENTRY_WEEGLI)))) {
                                 weegli->AI()->DoAction(BLY_INITIATED);
                             }
                         }
@@ -161,7 +161,7 @@ public:
             if (!pInstance)
                  return;
     
-           if (Creature* crew = pInstance->instance->GetCreature(pInstance->GetData64(entry))) {
+           if (Creature* crew = pInstance->instance->GetCreature(ObjectGuid(pInstance->GetData64(entry)))) {
                if (crew->IsAlive()) {
                     crew->SetFaction(FACTION_HOSTILE);
                     crew->SetHealth(crew->GetMaxHealth());

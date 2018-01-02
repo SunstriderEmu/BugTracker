@@ -245,7 +245,7 @@ public:
             {
                 if (pInstance && pInstance->GetData64(DATA_MEKGINEERSTEAMRIGGER) && pInstance->GetData(TYPE_MEKGINEER_STEAMRIGGER) == IN_PROGRESS)
                 {
-                    if (Unit* pMekgineer = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_MEKGINEERSTEAMRIGGER)))
+                    if (Unit* pMekgineer = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_MEKGINEERSTEAMRIGGER))))
                     {
                         if (me->IsWithinDistInMap(pMekgineer, MAX_REPAIR_RANGE))
                         {

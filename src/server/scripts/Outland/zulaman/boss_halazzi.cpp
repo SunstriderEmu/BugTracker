@@ -109,7 +109,7 @@ public:
     
         PhaseHalazzi Phase;
     
-        uint64 LynxGUID;
+        ObjectGuid LynxGUID;
     
         void Reset()
         override {

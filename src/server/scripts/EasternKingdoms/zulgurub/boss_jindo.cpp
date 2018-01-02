@@ -219,7 +219,7 @@ public:
             {
                 if(pInstance)
                 {
-                    Unit *pJindo = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_JINDO));
+                    Unit *pJindo = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_JINDO)));
                     if(pJindo)
                         DoCast(pJindo, SPELL_HEAL);
                 }

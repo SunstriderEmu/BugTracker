@@ -286,13 +286,13 @@ public:
         uint32 EventProgress_Timer;
         uint32 Phase;
     
-        uint64 aggroTarget;
+        ObjectGuid aggroTarget;
     
         void Reset()
         override {
             IsRunning = false;
             CanSpawn = false;
-            aggroTarget = 0;
+            aggroTarget.Clear();
     
             EventProgress_Timer = 24000;
             Phase = 1;

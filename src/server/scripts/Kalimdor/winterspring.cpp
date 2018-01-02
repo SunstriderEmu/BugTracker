@@ -366,17 +366,13 @@ public:
             completed = false;
             step = 0;
             timer = 0;
-            priestess1 = 0;
-            priestess2 = 0;
-            gem = 0;
-            voiceOfElune = 0;
         }
     
         bool completed;
         uint32 step;
         uint32 timer;
         
-        uint64 priestess1, priestess2, gem, voiceOfElune;
+        ObjectGuid priestess1, priestess2, gem, voiceOfElune;
         
         GameObject* getNearestFire()
         {
@@ -432,10 +428,10 @@ public:
             step = 0;
             timer = 0;
             me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-            priestess1 = 0;
-            priestess2 = 0;
-            gem = 0;
-            voiceOfElune = 0;
+            priestess1.Clear();
+            priestess2.Clear();
+            gem.Clear();
+            voiceOfElune.Clear();
             
             me->RemoveAurasDueToSpell(SPELL_RANSHALLA_WAITING);
         }

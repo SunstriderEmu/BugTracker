@@ -119,7 +119,7 @@ public:
                     float x,y,z;
                     me->GetPosition(x,y,z);
                     plr->SummonCreature(FELMYST, x,y, z+30, me->GetOrientation(), TEMPSUMMON_MANUAL_DESPAWN, 0);
-                    if (Creature *Madrigosa = ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_MADRIGOSA)))
+                    if (Creature *Madrigosa = ObjectAccessor::GetCreature(*me, ObjectGuid(pInstance->GetData64(DATA_MADRIGOSA))))
                         Madrigosa->SetVisible(false);
                 }
             }
@@ -138,8 +138,9 @@ public:
                 pInstance->SetData(DATA_BRUTALLUS_EVENT, IN_PROGRESS);
                 
             if (who->ToPlayer() && !Intro && !IsIntro) {
-                if (Creature *Madrigosa = ObjectAccessor::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0))
-                    Madrigosa->SetVisible(false);
+                if(pInstance)
+                    if (Creature *Madrigosa = ObjectAccessor::GetCreature(*me, ObjectGuid(pInstance->GetData64(DATA_MADRIGOSA))))
+                        Madrigosa->SetVisible(false);
             }
         }
     
@@ -156,14 +157,16 @@ public:
     
         void JustDied(Unit* Killer)
         override {
-            if (Creature *Madrigosa = ObjectAccessor::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0)) {
-                Madrigosa->SetVisible(false);
-                Madrigosa->Respawn();
-                Madrigosa->Kill(Madrigosa);
-                Madrigosa->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-                Madrigosa->SetVisible(true);
-                Madrigosa->SummonCreature(25703, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation(), TEMPSUMMON_MANUAL_DESPAWN, 0);
-            }
+            if(pInstance)
+                if (Creature *Madrigosa = ObjectAccessor::GetCreature(*me, ObjectGuid(pInstance->GetData64(DATA_MADRIGOSA))))
+                {
+                    Madrigosa->SetVisible(false);
+                    Madrigosa->Respawn();
+                    Madrigosa->Kill(Madrigosa);
+                    Madrigosa->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+                    Madrigosa->SetVisible(true);
+                    Madrigosa->SummonCreature(25703, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation(), TEMPSUMMON_MANUAL_DESPAWN, 0);
+                }
     
             DoScriptText(YELL_DEATH, me);
     
@@ -192,19 +195,22 @@ public:
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
     
-            Creature *Madrigosa = ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_MADRIGOSA));
-            if (Madrigosa) {
-                (Madrigosa->ToCreature())->Respawn();
-                Madrigosa->SetKeepActiveTimer(5 * MINUTE*IN_MILLISECONDS);
-                IsIntro = true;
-                Madrigosa->SetMaxHealth(10000000);
-                Madrigosa->SetHealth(me->GetMaxHealth());
-                IntroPhaseTimer = 1000;
-            }
-            else {
-                //Madrigosa not found, end intro
-                error_log("Madrigosa was not found");
-                EndIntro();
+            if (pInstance)
+            {
+                Creature *Madrigosa = ObjectAccessor::GetCreature(*me, ObjectGuid(pInstance->GetData64(DATA_MADRIGOSA)));
+                if (Madrigosa) {
+                    (Madrigosa->ToCreature())->Respawn();
+                    Madrigosa->SetKeepActiveTimer(5 * MINUTE*IN_MILLISECONDS);
+                    IsIntro = true;
+                    Madrigosa->SetMaxHealth(10000000);
+                    Madrigosa->SetHealth(me->GetMaxHealth());
+                    IntroPhaseTimer = 1000;
+                }
+                else {
+                    //Madrigosa not found, end intro
+                    error_log("Madrigosa was not found");
+                    EndIntro();
+                }
             }
         }
     
@@ -220,7 +226,10 @@ public:
     
         void DoIntro()
         {
-            Creature *Madrigosa = ObjectAccessor::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0);
+            if (!pInstance)
+                return;
+
+            Creature *Madrigosa = ObjectAccessor::GetCreature(*me, ObjectGuid(pInstance->GetData64(DATA_MADRIGOSA)));
             if (!Madrigosa)
                 return;
                 
@@ -229,7 +238,8 @@ public:
             switch (IntroPhase) {
             case 0:
                 DoScriptText(YELL_MADR_ICE_BARRIER, Madrigosa);
-                if (GameObject *IceBarrier = GameObject::GetGameObject(*me, pInstance ? pInstance->GetData64(DATA_GO_ICE_BARRIER) : 0)) {
+                if (GameObject *IceBarrier = GameObject::GetGameObject(*me, ObjectGuid(pInstance->GetData64(DATA_GO_ICE_BARRIER)))) 
+                {
                     IceBarrier->SetLootState(GO_READY);
                     IceBarrier->UseDoorOrButton();
                 }
@@ -365,7 +375,8 @@ public:
                 break;
             case 21:
             {
-                if (GameObject *IceBarrier = GameObject::GetGameObject(*me, pInstance ? pInstance->GetData64(DATA_GO_ICE_BARRIER) : 0)) {
+                if (GameObject *IceBarrier = GameObject::GetGameObject(*me, ObjectGuid(pInstance->GetData64(DATA_GO_ICE_BARRIER)))) 
+                {
                     IceBarrier->SetLootState(GO_READY);
                     IceBarrier->UseDoorOrButton();
                 }
@@ -492,7 +503,7 @@ public:
         if (InstanceScript* pInstance = ((InstanceScript*)pPlayer->GetInstanceScript())) {
             if (pInstance->GetData(DATA_BRUTALLUS_EVENT) == DONE)
                 return true;
-            if (Creature *Brutallus = ObjectAccessor::GetCreature(*pPlayer, pInstance ? pInstance->GetData64(DATA_BRUTALLUS) : 0))
+            if (Creature *Brutallus = ObjectAccessor::GetCreature(*pPlayer, ObjectGuid(pInstance->GetData64(DATA_BRUTALLUS))))
                 ((boss_brutallus::boss_brutallusAI*)Brutallus->AI())->StartIntro();
         }
 
@@ -526,7 +537,10 @@ public:
             me->SetSpeedRate(MOVE_WALK, 2.0f);
             me->SetSpeedRate(MOVE_RUN, 2.0f);
     
-            Creature *Madrigosa = ObjectAccessor::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0);
+            if (!pInstance)
+                return;
+
+            Creature *Madrigosa = ObjectAccessor::GetCreature(*me, ObjectGuid(pInstance->GetData64(DATA_MADRIGOSA)));
             if (!Madrigosa)
                 return;
     
@@ -539,7 +553,11 @@ public:
         
         void MovementInform(uint32 type, uint32 id) override
         {
-            if (Creature *Madrigosa = ObjectAccessor::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0)) {
+            if (!pInstance)
+                return;
+
+            if (Creature *Madrigosa = ObjectAccessor::GetCreature(*me, ObjectGuid(pInstance->GetData64(DATA_MADRIGOSA)))) 
+            {
                 me->AddAura(44885, Madrigosa);
                 bornTimer = 10000;
             }
@@ -551,7 +569,10 @@ public:
                 return;
                 
             if (bornTimer <= diff) {
-                if (Creature *Madrigosa = ObjectAccessor::GetCreature(*me, pInstance ? pInstance->GetData64(DATA_MADRIGOSA) : 0)) {
+                if (!pInstance)
+                    return;
+                if (Creature *Madrigosa = ObjectAccessor::GetCreature(*me, ObjectGuid(pInstance->GetData64(DATA_MADRIGOSA))))
+                {
                     Madrigosa->RemoveAurasDueToSpell(44885);
                     Madrigosa->SetVisible(false);
                     float x, y, z;

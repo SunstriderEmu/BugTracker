@@ -80,23 +80,23 @@ public:
         uint32 TimmySpawn_Timer;
         uint32 abominationTimer;
 
-        uint64 serviceEntranceGUID;
-        uint64 gauntletGate1GUID;
-        uint64 ziggurat1GUID;
-        uint64 ziggurat2GUID;
-        uint64 ziggurat3GUID;
-        uint64 ziggurat4GUID;
-        uint64 ziggurat5GUID;
-        uint64 portGauntletGUID;
-        uint64 portSlaugtherGUID;
-        uint64 portElderGUID;
+        ObjectGuid serviceEntranceGUID;
+        ObjectGuid gauntletGate1GUID;
+        ObjectGuid ziggurat1GUID;
+        ObjectGuid ziggurat2GUID;
+        ObjectGuid ziggurat3GUID;
+        ObjectGuid ziggurat4GUID;
+        ObjectGuid ziggurat5GUID;
+        ObjectGuid portGauntletGUID;
+        ObjectGuid portSlaugtherGUID;
+        ObjectGuid portElderGUID;
 
-        uint64 cannonballStacksGUIDs[5];
+        ObjectGuid cannonballStacksGUIDs[5];
 
-        uint64 baronGUID;
-        uint64 ysidaTriggerGUID;
-        //std::set<uint64> crystalsGUID;
-        std::list<uint64> abomnationGUID;
+        ObjectGuid baronGUID;
+        ObjectGuid ysidaTriggerGUID;
+        //std::set<ObjectGuid> crystalsGUID;
+        std::list<ObjectGuid> abomnationGUID;
 
         void Initialize() override
         {
@@ -115,22 +115,6 @@ public:
             SlaugtherSquare_Timer = 0;
             TimmySpawn_Timer = 0;
             abominationTimer = 0;
-
-            serviceEntranceGUID = 0;
-            gauntletGate1GUID = 0;
-            ziggurat1GUID = 0;
-            ziggurat2GUID = 0;
-            ziggurat3GUID = 0;
-            ziggurat4GUID = 0;
-            ziggurat5GUID = 0;
-            portGauntletGUID = 0;
-            portSlaugtherGUID = 0;
-            portElderGUID = 0;
-
-            baronGUID = 0;
-            ysidaTriggerGUID = 0;
-            //crystalsGUID.clear();
-            abomnationGUID.clear();
         }
 
         bool StartSlaugtherSquare()
@@ -147,7 +131,7 @@ public:
         }
 
         //if withRestoreTime true, then newState will be ignored and GO should be restored to original state after 10 seconds
-        void UpdateGoState(uint64 goGuid, uint32 newState, bool withRestoreTime)
+        void UpdateGoState(ObjectGuid goGuid, uint32 newState, bool withRestoreTime)
         {
             if (!goGuid)
                 return;
@@ -201,14 +185,14 @@ public:
         }
 
         void ResetCannonballStacks() {
-            for (uint64 cannonballStacksGUID : cannonballStacksGUIDs) {
+            for (ObjectGuid cannonballStacksGUID : cannonballStacksGUIDs) {
                 if (GameObject *currentStack = instance->GetGameObject(cannonballStacksGUID))
                     currentStack->SwitchDoorOrButton(true);
             }
         }
 
         void ActivateCannonballStacks() {
-            for (uint64 cannonballStacksGUID : cannonballStacksGUIDs) {
+            for (ObjectGuid cannonballStacksGUID : cannonballStacksGUIDs) {
                 if (GameObject *currentStack = instance->GetGameObject(cannonballStacksGUID))
                     currentStack->SwitchDoorOrButton(false);
             }
@@ -273,7 +257,7 @@ public:
                         UpdateGoState(portGauntletGUID, 1, false);
 
                     uint32 count = abomnationGUID.size();
-                    for (uint64 & i : abomnationGUID)
+                    for (ObjectGuid & i : abomnationGUID)
                     {
                         if (Unit* abom = instance->GetCreature(i))
                         {
@@ -312,15 +296,16 @@ public:
                                 if (pGroupie->HasAuraEffect(SPELL_BARON_ULTIMATUM, 0))
                                     pGroupie->RemoveAurasDueToSpell(SPELL_BARON_ULTIMATUM);
 
-                                pGroupie->KilledMonsterCredit(16031, 0);
+                                pGroupie->KilledMonsterCredit(16031, ObjectGuid::Empty);
                                 pGroupie->AreaExploredOrEventHappens(8945);
                             }
                         }
                         else if (player->HasAuraEffect(SPELL_BARON_ULTIMATUM, 0))
                             player->RemoveAurasDueToSpell(SPELL_BARON_ULTIMATUM);
 
-                        if (Unit *temp = ObjectAccessor::GetUnit(*player, GetData64(DATA_BARON))) {
-                            player->KilledMonsterCredit(16031, 0);
+                        if (Unit *temp = ObjectAccessor::GetUnit(*player, ObjectGuid(GetData64(DATA_BARON)))) 
+                        {
+                            player->KilledMonsterCredit(16031, ObjectGuid::Empty);
                             player->AreaExploredOrEventHappens(8945);
                         }
 
@@ -469,7 +454,7 @@ public:
             if (abominationTimer) {
                 if (abominationTimer <= diff) {
                     if (Player *player = GetPlayer()) {
-                        for (uint64 & i : abomnationGUID)
+                        for (ObjectGuid & i : abomnationGUID)
                         {
                             if (Unit* abom = instance->GetCreature(i))
                             {

@@ -123,7 +123,7 @@ public:
                 player->RemoveAurasDueToSpell(SPELL_ARCANE_BUFFET);
                 if (player->HasAuraEffect(SPELL_SPECTRAL_EXHAUSTION)) {
                     player->RemoveAurasDueToSpell(SPELL_SPECTRAL_EXHAUSTION);    // FIXME: If this happens, this is a bug.
-                    TC_LOG_ERROR("scripts", "Sunwell Plateau/Kalecgos: Spectral Blast target (guid %u) had Spectral exhaustion when teleported VIA PORTAL!", player->GetGUIDLow());
+                    TC_LOG_ERROR("scripts", "Sunwell Plateau/Kalecgos: Spectral Blast target (guid %u) had Spectral exhaustion when teleported VIA PORTAL!", player->GetGUID().GetCounter());
                 }
             }
             return true;
@@ -148,10 +148,6 @@ public:
         boss_kalecgosAI(Creature *c) : ScriptedAI(c)
         {
             pInstance = ((InstanceScript*)c->GetInstanceScript());
-            SathGUID = 0;
-            ForceFieldGUID = 0;
-            Wall1GUID = 0;
-            Wall2GUID = 0;
             pulledOnce = false;
             hasEnded = true;
         }
@@ -174,19 +170,19 @@ public:
         bool pulledOnce;
         bool hasEnded;
     
-        uint64 SathGUID;
-        uint64 ForceFieldGUID;
-        uint64 Wall1GUID;
-        uint64 Wall2GUID;
+        ObjectGuid SathGUID;
+        ObjectGuid ForceFieldGUID;
+        ObjectGuid Wall1GUID;
+        ObjectGuid Wall2GUID;
     
         void Reset()
         override {
             if(pInstance)
             {
-                SathGUID = pInstance->GetData64(DATA_SATHROVARR);
-                ForceFieldGUID = pInstance->GetData64(DATA_GO_FORCEFIELD);
-                Wall1GUID = pInstance->GetData64(DATA_GO_KALEC_WALL_1);
-                Wall2GUID = pInstance->GetData64(DATA_GO_KALEC_WALL_2);
+                SathGUID = ObjectGuid(pInstance->GetData64(DATA_SATHROVARR));
+                ForceFieldGUID = ObjectGuid(pInstance->GetData64(DATA_GO_FORCEFIELD));
+                Wall1GUID = ObjectGuid(pInstance->GetData64(DATA_GO_KALEC_WALL_1));
+                Wall2GUID = ObjectGuid(pInstance->GetData64(DATA_GO_KALEC_WALL_2));
             }
     
             Unit *Sath = ObjectAccessor::GetUnit(*me,SathGUID);
@@ -234,11 +230,11 @@ public:
                 me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 me->SetReactState(REACT_PASSIVE);
                 
-                GameObject *Door = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_GO_FORCEFIELD));
+                GameObject *Door = GameObject::GetGameObject(*me, ObjectGuid(pInstance->GetData64(DATA_GO_FORCEFIELD)));
                 if (Door) Door->UseDoorOrButton();
-                GameObject *Wall1 = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_GO_KALEC_WALL_1));
+                GameObject *Wall1 = GameObject::GetGameObject(*me, ObjectGuid(pInstance->GetData64(DATA_GO_KALEC_WALL_1)));
                 if (Wall1) Wall1->UseDoorOrButton();
-                GameObject *Wall2 = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_GO_KALEC_WALL_2));
+                GameObject *Wall2 = GameObject::GetGameObject(*me, ObjectGuid(pInstance->GetData64(DATA_GO_KALEC_WALL_2)));
                 if (Wall2) Wall2->UseDoorOrButton();
             }
             
@@ -376,7 +372,7 @@ public:
             }
         }
         
-        void DeleteFromThreatList(uint64 TargetGUID)
+        void DeleteFromThreatList(ObjectGuid TargetGUID)
         {
             for(auto & itr : me->GetThreatManager().getThreatList())
             {
@@ -410,8 +406,6 @@ public:
         boss_sathrovarrAI(Creature *c) : ScriptedAI(c)
         {
             pInstance = ((InstanceScript*)c->GetInstanceScript());
-            KalecGUID = 0;
-            KalecgosGUID = 0;
         }
     
         InstanceScript *pInstance;
@@ -422,8 +416,8 @@ public:
         uint32 CheckTimer;
         uint32 ResetThreat;
     
-        uint64 KalecGUID;
-        uint64 KalecgosGUID;
+        ObjectGuid KalecGUID;
+        ObjectGuid KalecgosGUID;
     
         bool isEnraged;
         bool isBanished;
@@ -431,13 +425,13 @@ public:
         void Reset()
         override {
             if(pInstance)
-                KalecgosGUID = pInstance->GetData64(DATA_KALECGOS_DRAGON);
+                KalecgosGUID = ObjectGuid(pInstance->GetData64(DATA_KALECGOS_DRAGON));
     
             if(KalecGUID)
             {
                 if(Unit* Kalec = ObjectAccessor::GetUnit(*me, KalecGUID))
                     Kalec->SetDeathState(JUST_DIED);
-                KalecGUID = 0;
+                KalecGUID = ObjectGuid::Empty;
             }
     
             ShadowBoltTimer = 7000 + rand()%3 * 1000;
@@ -504,11 +498,11 @@ public:
             if(pInstance)
                 pInstance->SetData(DATA_KALECGOS_EVENT, DONE);
                 
-            GameObject *Door = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_GO_FORCEFIELD));
+            GameObject *Door = GameObject::GetGameObject(*me, ObjectGuid(pInstance->GetData64(DATA_GO_FORCEFIELD)));
             if (Door) Door->UseDoorOrButton();
-            GameObject *Wall1 = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_GO_KALEC_WALL_1));
+            GameObject *Wall1 = GameObject::GetGameObject(*me, ObjectGuid(pInstance->GetData64(DATA_GO_KALEC_WALL_1)));
             if (Wall1) Wall1->UseDoorOrButton();
-            GameObject *Wall2 = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_GO_KALEC_WALL_2));
+            GameObject *Wall2 = GameObject::GetGameObject(*me, ObjectGuid(pInstance->GetData64(DATA_GO_KALEC_WALL_2)));
             if (Wall2) Wall2->UseDoorOrButton();
                 
             // Remove invisibility auras
@@ -530,7 +524,7 @@ public:
                 }
         }
         
-        void DeleteFromThreatList(uint64 TargetGUID)
+        void DeleteFromThreatList(ObjectGuid TargetGUID)
         {
             for(auto & itr : me->GetThreatManager().getThreatList())
             {
@@ -825,7 +819,7 @@ public:
         uint32 YellTimer;
         uint32 YellSequence;
     
-        uint64 SathGUID;
+        ObjectGuid SathGUID;
     
         bool isEnraged; // if demon is enraged
     
@@ -837,7 +831,7 @@ public:
         void Reset()
         override {
             if(pInstance)
-                SathGUID = pInstance->GetData64(DATA_SATHROVARR);
+                SathGUID = ObjectGuid(pInstance->GetData64(DATA_SATHROVARR));
     
             RevitalizeTimer = 5000;
             HeroicStrikeTimer = 3000;
@@ -983,7 +977,7 @@ class spell_kalecgos_spectral_blast : public SpellScript
         target->RemoveAurasDueToSpell(SPELL_ARCANE_BUFFET); // FIXME: I'm not sure this is blizzlike
         if (target->HasAuraEffect(SPELL_SPECTRAL_EXHAUSTION)) {
             target->RemoveAurasDueToSpell(SPELL_SPECTRAL_EXHAUSTION);    // FIXME: If this happens, this is a bug.
-            TC_LOG_ERROR("scripts", "Sunwell Plateau/Kalecgos: Spectral Blast target (guid %u) had Spectral exhaustion when teleported!", target->GetGUIDLow());
+            TC_LOG_ERROR("scripts", "Sunwell Plateau/Kalecgos: Spectral Blast target (guid %u) had Spectral exhaustion when teleported!", target->GetGUID().GetCounter());
         }
     }
 

@@ -70,10 +70,9 @@ public:
         public:
         mob_mature_netherwing_drakeAI(Creature* c) : ScriptedAI(c)
         {
-            PlayerGUID = 0;
         }
     
-        uint64 PlayerGUID;
+        ObjectGuid PlayerGUID;
     
         bool IsEating;
         bool Evade;
@@ -148,7 +147,7 @@ public:
                         {
                             plr->KilledMonsterCredit(22131, me->GetGUID());
                             Evade = true;
-                            PlayerGUID = 0;
+                            PlayerGUID = ObjectGuid::Empty;
                         }
                     }
                 } else { EatTimer -= diff; }
@@ -208,11 +207,10 @@ public:
         public:
         mob_enslaved_netherwing_drakeAI(Creature* c) : ScriptedAI(c)
         {
-            PlayerGUID = 0;
             Tapped = false;
         }
     
-        uint64 PlayerGUID;
+        ObjectGuid PlayerGUID;
         uint32 FlyTimer;
         bool Tapped;
     
@@ -268,7 +266,7 @@ public:
                     if(plr)
                         DoCast(plr, SPELL_FORCE_OF_NELTHARAKU, true);
     
-                    PlayerGUID = 0;
+                    PlayerGUID.Clear();
                 }
                 me->SetVisible(false);
                 me->SetDisableGravity(false);
@@ -344,7 +342,7 @@ public:
         public:
         mob_dragonmaw_peonAI(Creature* c) : ScriptedAI(c) {}
     
-        uint64 PlayerGUID;
+        ObjectGuid PlayerGUID;
         bool Tapped;
         uint32 PoisonTimer;
         uint32 KickTimer, SunderArmorTimer;
@@ -352,7 +350,7 @@ public:
         void Reset()
         override {
             SetCombatMovementAllowed(true);
-            PlayerGUID = 0;
+            PlayerGUID = ObjectGuid::Empty;
             Tapped = false;
             PoisonTimer = 0;
             KickTimer = 15000;
@@ -858,8 +856,8 @@ public:
         public:
         npc_overlord_morghorAI(Creature *c) : ScriptedAI(c) {}
     
-        uint64 PlayerGUID;
-        uint64 IllidanGUID;
+        ObjectGuid PlayerGUID;
+        ObjectGuid IllidanGUID;
     
         uint32 ConversationTimer;
         uint32 Step;
@@ -868,8 +866,8 @@ public:
     
         void Reset()
         override {
-            PlayerGUID = 0;
-            IllidanGUID = 0;
+            PlayerGUID = ObjectGuid::Empty;
+            IllidanGUID = ObjectGuid::Empty;
     
             ConversationTimer = 0;
             Step = 0;
@@ -941,8 +939,8 @@ public:
                 return 350;
             case 6:
                 Illi->CastSpell(Illi, SPELL_RED_BOLT, TRIGGERED_FULL_MASK);
-                Illi->SetUInt64Value(UNIT_FIELD_TARGET, me->GetGUID());
-                me->SetUInt64Value(UNIT_FIELD_TARGET, IllidanGUID);
+                Illi->SetGuidValue(UNIT_FIELD_TARGET, me->GetGUID());
+                me->SetGuidValue(UNIT_FIELD_TARGET, IllidanGUID);
                 return 2000;
             case 7:
                 DoScriptText(OVERLORD_YELL_2, me);
@@ -966,7 +964,7 @@ public:
                 DoScriptText(LORD_ILLIDAN_SAY_3, Illi);
                 return 4000;
             case 14:
-                Illi->SetUInt64Value(UNIT_FIELD_TARGET, PlayerGUID);
+                Illi->SetGuidValue(UNIT_FIELD_TARGET, PlayerGUID);
                 return 1500;
             case 15:
                 DoScriptText(LORD_ILLIDAN_SAY_4, Illi);
@@ -1006,7 +1004,7 @@ public:
                 me->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
                 return 2000;
             case 24: 
-                me->SetUInt64Value(UNIT_FIELD_TARGET, PlayerGUID);
+                me->SetGuidValue(UNIT_FIELD_TARGET, PlayerGUID);
                 return 5000;
             case 25: 
                 DoScriptText(OVERLORD_SAY_6, me);
@@ -1020,7 +1018,7 @@ public:
             {
                 Unit* Yarzill = me->FindNearestCreature(C_YARZILL, 50);
                 if (Yarzill)
-                    Yarzill->SetUInt64Value(UNIT_FIELD_TARGET, PlayerGUID);
+                    Yarzill->SetGuidValue(UNIT_FIELD_TARGET, PlayerGUID);
     
                 return 500;
             }
@@ -1041,7 +1039,7 @@ public:
             {
                 Unit* Yarzill = me->FindNearestCreature(C_YARZILL, 50);
                 if (Yarzill)
-                    Yarzill->SetUInt64Value(UNIT_FIELD_TARGET, 0);
+                    Yarzill->SetTarget(ObjectGuid::Empty);
     
                 return 5000;
             }
@@ -1382,7 +1380,7 @@ public:
         public:
         npc_lord_illidan_stormrageAI(Creature* c) : ScriptedAI(c) {}
     
-        uint64 PlayerGUID;
+        ObjectGuid PlayerGUID;
     
         uint32 WaveTimer;
         uint32 AnnounceTimer;
@@ -1396,7 +1394,7 @@ public:
     
         void Reset()
         override {
-            PlayerGUID = 0;
+            PlayerGUID = ObjectGuid::Empty;
     
             WaveTimer = 10000;
             AnnounceTimer = 7000;
@@ -1566,10 +1564,9 @@ public:
         public:
         mob_illidari_spawnAI(Creature* c) : ScriptedAI(c)
         {
-            LordIllidanGUID = 0;
         }
     
-        uint64 LordIllidanGUID;
+        ObjectGuid LordIllidanGUID;
         uint32 SpellTimer1, SpellTimer2, SpellTimer3;
         bool Timers;
     
@@ -1691,8 +1688,8 @@ public:
     
         uint8 AnimationCount;
     
-        uint64 LordIllidanGUID;
-        uint64 AggroTargetGUID;
+        ObjectGuid LordIllidanGUID;
+        ObjectGuid AggroTargetGUID;
     
         bool Timers;
     
@@ -1700,13 +1697,13 @@ public:
         override {
             AnimationTimer = 4000;
             AnimationCount = 0;
-            LordIllidanGUID = 0;
-            AggroTargetGUID = 0;
+            LordIllidanGUID.Clear();
+            AggroTargetGUID.Clear();
             Timers = false;
     
             me->AddUnitState(UNIT_STATE_ROOT);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-            me->SetUInt64Value(UNIT_FIELD_TARGET, 0);
+            me->SetGuidValue(UNIT_FIELD_TARGET, ObjectGuid::Empty);
         }
     
         void JustEngagedWith(Unit* who)override {}
@@ -1739,7 +1736,7 @@ public:
             case 5:
                 if(Player* AggroTarget = (ObjectAccessor::GetPlayer(*me, AggroTargetGUID)))
                 {
-                    me->SetUInt64Value(UNIT_FIELD_TARGET, AggroTarget->GetGUID());
+                    me->SetGuidValue(UNIT_FIELD_TARGET, AggroTarget->GetGUID());
                     me->GetThreatManager().AddThreat(AggroTarget, 1);
                     me->HandleEmoteCommand(EMOTE_ONESHOT_POINT);
                 }
@@ -2339,12 +2336,10 @@ public:
             eventTimer = 0;
             step = 0;
             talkId = 0;
-            olumGUID = 0;
-            presenceGUID = 0;
         }
         
-        uint64 olumGUID;
-        uint64 presenceGUID;
+        ObjectGuid olumGUID;
+        ObjectGuid presenceGUID;
         
         uint32 eventTimer;
         int32 talkId;
@@ -2361,8 +2356,8 @@ public:
             eventTimer = 500;
             step = 0;
             talkId = 0;
-            olumGUID = 0;
-            presenceGUID = 0;
+            olumGUID = ObjectGuid::Empty;
+            presenceGUID = ObjectGuid::Empty;
         }
         
         void EndEvent()
@@ -2375,8 +2370,8 @@ public:
             eventTimer = 0;
             step = 0;
             talkId = 0;
-            olumGUID = 0;
-            presenceGUID = 0;
+            olumGUID = ObjectGuid::Empty;
+            presenceGUID = ObjectGuid::Empty;
         }
         
         void OnSpellFinish(Unit* caster, uint32 spellId, Unit* target, bool ok)
@@ -2640,7 +2635,6 @@ public:
         public:
         npc_commander_arcusAI(Creature* c) : ScriptedAI(c), summons(me)
         {
-            playerGUID = 0;
             isEvent = false;
         }
         
@@ -2648,7 +2642,7 @@ public:
         
         bool isEvent;
         
-        uint64 playerGUID;
+        ObjectGuid playerGUID;
         
         uint32 aimedShotTimer;
         uint32 multiShotTimer;
@@ -2728,7 +2722,7 @@ public:
                     player->FailQuest(QUEST_DEADLIEST_TRAP_ALDOR);
             }
     
-            playerGUID = 0;
+            playerGUID.Clear();
             me->SetHomePosition(homeX, homeY, homeZ, homeOri);
             EnterEvadeMode();
             me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
@@ -2826,7 +2820,6 @@ public:
         public:
         npc_commander_hobbAI(Creature* c) : ScriptedAI(c), summons(me)
         {
-            playerGUID = 0;
             isEvent = false;
         }
         
@@ -2834,7 +2827,7 @@ public:
         
         bool isEvent;
         
-        uint64 playerGUID;
+        ObjectGuid playerGUID;
         
         uint32 aimedShotTimer;
         uint32 multiShotTimer;
@@ -2914,7 +2907,7 @@ public:
                     player->FailQuest(QUEST_DEADLIEST_TRAP_SCYER);
             }
     
-            playerGUID = 0;
+            playerGUID = ObjectGuid::Empty;
             me->SetHomePosition(homeX, homeY, homeZ, homeOri);
             EnterEvadeMode();
             me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);

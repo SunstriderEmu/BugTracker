@@ -72,67 +72,41 @@ public:
         uint32 m_auiEncounter[MAX_ENCOUNTER];
         std::string str_data;
 
-        uint64 EmperorGUID;
-        uint64 PhalanxGUID;
+        ObjectGuid EmperorGUID;
+        ObjectGuid PhalanxGUID;
 
-        uint64 GoArena1GUID;
-        uint64 GoArena2GUID;
-        uint64 GoArena3GUID;
-        uint64 GoArena4GUID;
-        uint64 GoShadowLockGUID;
-        uint64 GoShadowMechGUID;
-        uint64 GoShadowGiantGUID;
-        uint64 GoShadowDummyGUID;
-        uint64 GoBarKegGUID;
-        uint64 GoBarKegTrapGUID;
-        uint64 GoBarDoorGUID;
-        uint64 GoTombEnterGUID;
-        uint64 GoTombExitGUID;
-        uint64 GoLyceumGUID;
-        uint64 GoGolemNGUID;
-        uint64 GoGolemSGUID;
-        uint64 GoThoneGUID;
-        uint64 GoChestGUID;
+        ObjectGuid GoArena1GUID;
+        ObjectGuid GoArena2GUID;
+        ObjectGuid GoArena3GUID;
+        ObjectGuid GoArena4GUID;
+        ObjectGuid GoShadowLockGUID;
+        ObjectGuid GoShadowMechGUID;
+        ObjectGuid GoShadowGiantGUID;
+        ObjectGuid GoShadowDummyGUID;
+        ObjectGuid GoBarKegGUID;
+        ObjectGuid GoBarKegTrapGUID;
+        ObjectGuid GoBarDoorGUID;
+        ObjectGuid GoTombEnterGUID;
+        ObjectGuid GoTombExitGUID;
+        ObjectGuid GoLyceumGUID;
+        ObjectGuid GoGolemNGUID;
+        ObjectGuid GoGolemSGUID;
+        ObjectGuid GoThoneGUID;
+        ObjectGuid GoChestGUID;
 
         uint32 BarAleCount;
         uint32 GhostKillCount;
-        uint64 TombBossGUIDs[7];
-        uint64 TombEventStarterGUID;
+        ObjectGuid TombBossGUIDs[7];
+        ObjectGuid TombEventStarterGUID;
         uint32 TombTimer;
         uint32 TombEventCounter;
 
-        void Initialize()
-            override {
-            EmperorGUID = 0;
-            PhalanxGUID = 0;
-
-            GoArena1GUID = 0;
-            GoArena2GUID = 0;
-            GoArena3GUID = 0;
-            GoArena4GUID = 0;
-            GoShadowLockGUID = 0;
-            GoShadowMechGUID = 0;
-            GoShadowGiantGUID = 0;
-            GoShadowDummyGUID = 0;
-            GoBarKegGUID = 0;
-            GoBarKegTrapGUID = 0;
-            GoBarDoorGUID = 0;
-            GoTombEnterGUID = 0;
-            GoTombExitGUID = 0;
-            GoLyceumGUID = 0;
-            GoGolemNGUID = 0;
-            GoGolemSGUID = 0;
-            GoThoneGUID = 0;
-            GoChestGUID = 0;
-
+        void Initialize() override 
+        {
             BarAleCount = 0;
             GhostKillCount = 0;
-            TombEventStarterGUID = 0;
             TombTimer = TIMER_TOMBOFTHESEVEN;
             TombEventCounter = 0;
-
-            for (uint64 & TombBossGUID : TombBossGUIDs)
-                TombBossGUID = 0;
         }
 
         void OnCreatureCreate(Creature *pCreature) override
@@ -170,9 +144,9 @@ public:
             case GO_TOMB_EXIT:
                 GoTombExitGUID = pGo->GetGUID();
                 if (GhostKillCount >= 7)
-                    HandleGameObject(0, true, pGo);
+                    HandleGameObject(ObjectGuid::Empty, true, pGo);
                 else
-                    HandleGameObject(0, false, pGo);
+                    HandleGameObject(ObjectGuid::Empty, false, pGo);
                 break;
             case GO_LYCEUM: GoLyceumGUID = pGo->GetGUID(); break;
             case GO_GOLEM_ROOM_N: GoGolemNGUID = pGo->GetGUID(); break;
@@ -187,7 +161,7 @@ public:
             switch (type)
             {
             case DATA_EVENSTARTER:
-                TombEventStarterGUID = data;
+                TombEventStarterGUID = ObjectGuid(data);
                 if (!TombEventStarterGUID)
                     TombOfSevenReset();//reset
                 else
@@ -343,7 +317,7 @@ public:
             HandleGameObject(GoTombExitGUID, false);//event reseted, close exit door
             HandleGameObject(GoTombEnterGUID, true);//event reseted, open entrance door
 
-            for (uint64 TombBossGUID : TombBossGUIDs)
+            for (ObjectGuid TombBossGUID : TombBossGUIDs)
             {
                 if (Creature* boss = instance->GetCreature(TombBossGUID))
                 {
@@ -361,7 +335,7 @@ public:
                 }
             }
             GhostKillCount = 0;
-            TombEventStarterGUID = 0;
+            TombEventStarterGUID = ObjectGuid::Empty;
             TombEventCounter = 0;
             TombTimer = TIMER_TOMBOFTHESEVEN;
             SetData(TYPE_TOMB_OF_SEVEN, NOT_STARTED);
@@ -382,7 +356,7 @@ public:
                 player->SummonGameObject(GO_CHEST_SEVEN, Position(1265.3, -286.888, -78.2192, 2.23695), G3D::Quat(), 1 * DAY);
             HandleGameObject(GoTombExitGUID, true);//event done, open exit door
             HandleGameObject(GoTombEnterGUID, true);//event done, open entrance door
-            TombEventStarterGUID = 0;
+            TombEventStarterGUID = ObjectGuid::Empty;
             SetData(TYPE_TOMB_OF_SEVEN, DONE);
         }
 

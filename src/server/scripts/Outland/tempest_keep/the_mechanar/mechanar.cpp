@@ -80,7 +80,7 @@ public:
             me->SetVisible(false);
         }
     
-        std::list<uint64> currentGroup;
+        std::list<ObjectGuid> currentGroup;
         uint8 phase;
         uint8 wave; //from 1 to MAX_WAVE
         Unit* target; //wave target

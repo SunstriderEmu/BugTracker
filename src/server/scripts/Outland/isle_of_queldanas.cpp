@@ -234,13 +234,13 @@ public:
         public:
         npc_greengill_slaveAI(Creature* c) : ScriptedAI(c) {}
     
-        uint64 PlayerGUID;
+        ObjectGuid PlayerGUID;
     
         void JustEngagedWith(Unit* pWho) override {}
     
         void Reset()
         override {
-            PlayerGUID = 0;
+            PlayerGUID = ObjectGuid::Empty;
         }
     
         void SpellHit(Unit* pCaster, const SpellInfo* spell)

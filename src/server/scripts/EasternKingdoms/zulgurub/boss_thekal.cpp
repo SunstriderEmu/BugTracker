@@ -129,7 +129,7 @@ public:
                         if(pInstance->GetData(DATA_LORKHANISDEAD))
                         {
                             //Resurrect LorKhan
-                            Unit *pLorKhan = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_LORKHAN));
+                            Unit *pLorKhan = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_LORKHAN)));
                             if(pLorKhan)
                             {
                                 pLorKhan->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
@@ -142,7 +142,7 @@ public:
                         if(pInstance->GetData(DATA_ZATHISDEAD))
                         {
                             //Resurrect Zath
-                            Unit *pZath = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_ZATH));
+                            Unit *pZath = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_ZATH)));
                             if(pZath)
                             {
                                 pZath->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
@@ -326,8 +326,8 @@ public:
             {
                 if(pInstance)
                 {
-                    Unit *pThekal = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_THEKAL));
-                    Unit *pZath = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_ZATH));
+                    Unit *pThekal = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_THEKAL)));
+                    Unit *pZath = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_ZATH)));
     
                     if(!pThekal || !pZath)
                         return;
@@ -363,7 +363,7 @@ public:
                     if(pInstance->GetData(DATA_THEKALISFAKEDEAD))
                     {
                         //Resurrect Thekal
-                        Unit *pThekal = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_THEKAL));
+                        Unit *pThekal = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_THEKAL)));
                         if(pThekal)
                         {
                             pThekal->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
@@ -376,7 +376,7 @@ public:
                     if(pInstance->GetData(DATA_ZATHISDEAD))
                     {
                         //Resurrect Zath
-                        Unit *pZath = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_ZATH));
+                        Unit *pZath = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_ZATH)));
                         if(pZath)
                         {
                             pZath->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
@@ -513,7 +513,7 @@ public:
                     if(pInstance->GetData(DATA_LORKHANISDEAD))
                     {
                         //Resurrect LorKhan
-                        Unit *pLorKhan = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_LORKHAN));
+                        Unit *pLorKhan = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_LORKHAN)));
                         if(pLorKhan)
                         {
                             pLorKhan->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
@@ -526,7 +526,7 @@ public:
                     if(pInstance->GetData(DATA_THEKALISFAKEDEAD))
                     {
                         //Resurrect Thekal
-                        Unit *pThekal = ObjectAccessor::GetUnit((*me), pInstance->GetData64(DATA_THEKAL));
+                        Unit *pThekal = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(DATA_THEKAL)));
                         if(pThekal)
                         {
                             pThekal->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);

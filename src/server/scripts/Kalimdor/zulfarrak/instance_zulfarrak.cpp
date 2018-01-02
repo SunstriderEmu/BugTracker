@@ -103,9 +103,9 @@ public:
     {
         instance_zulfarrak_script(Map* pMap) : InstanceScript(pMap) { Initialize(); };
 
-        uint64 ZumrahGUID;
-        uint64 BlyGUID, WeegliGUID, OroGUID, RavenGUID, MurtaGUID;
-        uint64 EndDoorGUID;
+        ObjectGuid ZumrahGUID;
+        ObjectGuid BlyGUID, WeegliGUID, OroGUID, RavenGUID, MurtaGUID;
+        ObjectGuid EndDoorGUID;
         uint32 PyramidPhase;
 
         void Initialize()
@@ -268,10 +268,11 @@ public:
             }
         }
 
-        std::list<uint64> addsAtBase, movedadds;
+        std::list<ObjectGuid> addsAtBase, movedadds;
 
-        void MoveNPCIfAlive(uint32 entry, float x, float y, float z, float o) {
-            if (Creature* npc = instance->GetCreature(GetData64(entry))) {
+        void MoveNPCIfAlive(uint32 entry, float x, float y, float z, float o) 
+        {
+            if (Creature* npc = instance->GetCreature(ObjectGuid(GetData64(entry)))) {
                 if (npc->IsAlive()) {
                     npc->ClearUnitState(UNIT_STATE_IGNORE_PATHFINDING);
                     npc->AddUnitMovementFlag(MOVEMENTFLAG_WALKING);
@@ -297,13 +298,13 @@ public:
 
         bool IsWaveAllDead()
         {
-            for (uint64 & itr : addsAtBase) {
+            for (ObjectGuid & itr : addsAtBase) {
                 if (Creature* add = instance->GetCreature(itr)) {
                     if (add->IsAlive())
                         return false;
                 }
             }
-            for (uint64 & movedadd : movedadds) {
+            for (ObjectGuid & movedadd : movedadds) {
                 if (Creature* add = instance->GetCreature((movedadd))) {
                     if (add->IsAlive())
                         return false;

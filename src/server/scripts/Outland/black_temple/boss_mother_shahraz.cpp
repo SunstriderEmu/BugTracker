@@ -79,7 +79,7 @@ public:
     
         InstanceScript* pInstance;
     
-        uint64 AttractionTargetGUID[3];
+        ObjectGuid AttractionTargetGUID[3];
         uint32 BeamTimer;
         uint32 BeamCount;
         uint32 CurrentBeam;
@@ -140,7 +140,7 @@ public:
             DoScriptText(SAY_DEATH, me);
     
             //clear attraction visual
-            for (uint64 i : AttractionTargetGUID) 
+            for (ObjectGuid i : AttractionTargetGUID)
                 if (Player* plr = ObjectAccessor::GetPlayer(*me, i)) 
                     plr->RemoveAurasDueToSpell(SPELL_ATTRACTION_VIS);
         }
@@ -180,7 +180,7 @@ public:
             // Only check fatal attraction targets
             if (CheckPlayersUndermapTimer < diff) 
             {
-                for (uint64 & i : AttractionTargetGUID) 
+                for (ObjectGuid & i : AttractionTargetGUID)
                 {
                     if (Player* plr = ObjectAccessor::GetPlayer(*me, i)) 
                     {
@@ -188,7 +188,7 @@ public:
                         if (z < 189.0f)      // Player seems to be undermap (ugly hack, isn't it ?)
                         {
                             DoTeleportPlayer(plr, 945.6173, 198.3479, 192.00, 4.674);
-                            i = 0;
+                            i.Clear();
                             plr->RemoveAurasDueToSpell(SPELL_ATTRACTION_VIS);
                         }
                     }
@@ -274,7 +274,7 @@ public:
                         //remove invalid targets (gm, dead, etc)
                         if(me->CanCreatureAttack(p[i],true) != CAN_ATTACK_RESULT_OK)
                         {
-                            AttractionTargetGUID[i] = 0;
+                            AttractionTargetGUID[i].Clear();
                             p[i]->RemoveAurasDueToSpell(SPELL_ATTRACTION_VIS);
                             continue;
                         }
@@ -286,7 +286,7 @@ public:
                             if(   (!other1 || other1->GetDistance2d(p[i]) > 25)
                                && (!other2 || other2->GetDistance2d(p[i]) > 25) )
                             {
-                                 AttractionTargetGUID[i] = 0;
+                                AttractionTargetGUID[i].Clear();
                                  p[i]->RemoveAurasDueToSpell(SPELL_ATTRACTION_VIS);
                                  continue;
                             }

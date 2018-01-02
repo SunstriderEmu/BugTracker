@@ -77,7 +77,7 @@ public:
     
         InstanceScript* pInstance;
     
-        uint64 TargetGUID;
+        ObjectGuid TargetGUID;
     
         float TargetThreat;
     
@@ -104,7 +104,7 @@ public:
             if(pInstance && me->IsAlive())
                 pInstance->SetData(DATA_GURTOGGBLOODBOILEVENT, NOT_STARTED);
     
-            TargetGUID = 0;
+            TargetGUID = ObjectGuid::Empty;
     
             TargetThreat = 0;
     
@@ -185,7 +185,7 @@ public:
             targets.clear();
         }
     
-        void RevertThreatOnTarget(uint64 guid)
+        void RevertThreatOnTarget(ObjectGuid guid)
         {
             Unit* pUnit = nullptr;
             pUnit = ObjectAccessor::GetUnit((*me), guid);
@@ -321,7 +321,7 @@ public:
                     if(TargetGUID)
                         RevertThreatOnTarget(TargetGUID);
                     DoResetThreat();
-                    TargetGUID = 0;
+                    TargetGUID = ObjectGuid::Empty;
                     Phase1 = true;
                     BloodboilTimer = 10000;
                     BloodboilCount = 0;

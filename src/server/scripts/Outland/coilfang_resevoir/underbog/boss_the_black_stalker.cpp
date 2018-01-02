@@ -53,11 +53,11 @@ public:
         uint32 Levitate_Timer;
         uint32 ChainLightning_Timer;
         uint32 StaticCharge_Timer;
-        uint64 LevitatedTarget;
+        ObjectGuid LevitatedTarget;
         uint32 LevitatedTarget_Timer;
         bool InAir;
         uint32 check_Timer;
-        std::list<uint64> Striders;
+        std::list<ObjectGuid> Striders;
     
         void Reset()
         override {
@@ -66,7 +66,7 @@ public:
             StaticCharge_Timer = 10000;
             SporeStriders_Timer = 10000+rand()%5000;
             check_Timer = 5000;
-            LevitatedTarget = 0;
+            LevitatedTarget = ObjectGuid::Empty;
             LevitatedTarget_Timer = 0;
             Striders.clear();
         }
@@ -88,7 +88,7 @@ public:
     
         void JustDied(Unit *who)
         override {
-            for(uint64 & Strider : Striders)
+            for(ObjectGuid & Strider : Striders)
                 if(Creature *strider = ObjectAccessor::GetCreature(*me, Strider))
                 {
                     strider->SetLootRecipient(nullptr);
@@ -130,13 +130,13 @@ public:
                     {
                         if(!target->HasAuraEffect(SPELL_LEVITATE,0))
                         {
-                            LevitatedTarget = 0;
+                            LevitatedTarget = ObjectGuid::Empty;
                             return;
                         }
                         if(InAir)
                         {
                             target->AddAura(SPELL_SUSPENSION, target);
-                            LevitatedTarget = 0;
+                            LevitatedTarget = ObjectGuid::Empty;
                         }
                         else
                         {
@@ -146,7 +146,7 @@ public:
                         }
                     }
                     else
-                        LevitatedTarget = 0;
+                        LevitatedTarget = ObjectGuid::Empty;
                 }else LevitatedTarget_Timer -= diff;
             }
             if(Levitate_Timer < diff)

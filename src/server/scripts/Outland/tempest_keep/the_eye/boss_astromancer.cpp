@@ -110,7 +110,7 @@ public:
                 {
                     case 0:
                         if(pInstance)
-                            target = ObjectAccessor::GetUnit((*me), pInstance->GetData64(NPC_ASTROMANCER));
+                            target = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(NPC_ASTROMANCER)));
                         break;
                     case 1:
                         target = me;

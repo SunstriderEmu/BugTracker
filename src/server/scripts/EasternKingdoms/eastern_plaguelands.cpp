@@ -266,13 +266,13 @@ public:
         npc_anchorite_truuenAI(Creature* pCreature) : EscortAI(pCreature) { }
     
         uint32 EventTimer;
-        uint64 UterGUID;
+        ObjectGuid UterGUID;
         uint32 uiPhase;
     
         void Reset()
         override {        
             EventTimer = 5000;
-            UterGUID = 0;
+            UterGUID = ObjectGuid::Empty;
             uiPhase = 0;
         }
         

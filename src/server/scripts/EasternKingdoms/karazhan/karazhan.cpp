@@ -159,7 +159,7 @@ public:
     
         InstanceScript *pInstance;
     
-        uint64 ArcanagosGUID;
+        ObjectGuid ArcanagosGUID;
     
         uint32 YellTimer;
         uint32 Step;
@@ -170,7 +170,7 @@ public:
     
         void Reset()
         override {
-            ArcanagosGUID = 0;
+            ArcanagosGUID = ObjectGuid::Empty;
     
             if(pInstance && !pInstance->GetGuidData(DATA_IMAGE_OF_MEDIVH))
             {

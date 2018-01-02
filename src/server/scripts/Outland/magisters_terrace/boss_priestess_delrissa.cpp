@@ -63,14 +63,14 @@ const uint32 AddEntry[8] = {
 };
 
 struct Add {
-    Add(uint32 _entry, uint64 _guid)
+    Add(uint32 _entry, ObjectGuid _guid)
     {
         entry = _entry;
         guid  = _guid;
     }
 
     uint32 entry;
-    uint64 guid;
+    ObjectGuid guid;
 };
 
 std::vector<Add*> Adds;
@@ -218,7 +218,7 @@ public:
 
             pInstance->SetData(DATA_DELRISSA_DEATH_COUNT, 1);
             pInstance->SetData(DATA_DELRISSA_EVENT, DONE);
-            if (GameObject* Door = GameObject::GetGameObject(*me, pInstance->GetData64(DATA_DELRISSA_DOOR)))
+            if (GameObject* Door = GameObject::GetGameObject(*me, ObjectGuid(pInstance->GetData64(DATA_DELRISSA_DOOR))))
                 Door->UseDoorOrButton();
         }
 
@@ -374,7 +374,7 @@ struct boss_priestess_guestAI : public ScriptedAI
         UsedPotion = false;
         if(pInstance)
         {
-            Creature *boss = (ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_DELRISSA)));
+            Creature *boss = (ObjectAccessor::GetCreature(*me, ObjectGuid(pInstance->GetData64(DATA_DELRISSA))));
             if (boss && boss->IsDead())
                 boss->Respawn();
         }
@@ -383,7 +383,7 @@ struct boss_priestess_guestAI : public ScriptedAI
 
     void JustEngagedWith(Unit* who)
     override {
-        Creature* Delrissa = (ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_DELRISSA)));
+        Creature* Delrissa = (ObjectAccessor::GetCreature(*me, ObjectGuid(pInstance->GetData64(DATA_DELRISSA))));
         if(Delrissa)
             ((boss_priestess_delrissa::boss_priestess_delrissaAI*)Delrissa->AI())->SetAddsInCombat(who);
     }
@@ -396,7 +396,7 @@ struct boss_priestess_guestAI : public ScriptedAI
             return;
         }
 
-        Creature* Delrissa = (ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_DELRISSA)));
+        Creature* Delrissa = (ObjectAccessor::GetCreature(*me, ObjectGuid(pInstance->GetData64(DATA_DELRISSA))));
         if(Delrissa)
         {
             ((boss_priestess_delrissa::boss_priestess_delrissaAI*)Delrissa->AI())->KilledLackey();
@@ -415,7 +415,7 @@ struct boss_priestess_guestAI : public ScriptedAI
             return;
         }
 
-        Creature* Delrissa = (ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_DELRISSA)));
+        Creature* Delrissa = (ObjectAccessor::GetCreature(*me, ObjectGuid(pInstance->GetData64(DATA_DELRISSA))));
         if(Delrissa)
             Delrissa->AI()->KilledUnit(victim);
     }
@@ -428,7 +428,7 @@ struct boss_priestess_guestAI : public ScriptedAI
             return;
         }
 
-        Creature* Delrissa = (ObjectAccessor::GetCreature(*me, pInstance->GetData64(DATA_DELRISSA)));
+        Creature* Delrissa = (ObjectAccessor::GetCreature(*me, ObjectGuid(pInstance->GetData64(DATA_DELRISSA))));
         if(Delrissa)
         {
             Group = /*((boss_priestess_delrissa::boss_priestess_delrissaAI*)Delrissa->AI())->*/Adds;
@@ -1068,7 +1068,7 @@ public:
         //Hunter
         boss_garaxxasAI(Creature *c) : boss_priestess_guestAI(c) {}
     
-        //uint64 SliverGUID;
+        //ObjectGuid SliverGUID;
         bool HasSummonedSliver;
     
         uint32 Aimed_Shot_Timer;

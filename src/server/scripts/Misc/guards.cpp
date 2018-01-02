@@ -2660,14 +2660,14 @@ public:
     
         uint32 Exile_Timer;
         uint32 Banish_Timer;
-        uint64 playerGUID;
+        ObjectGuid playerGUID;
         bool CanTeleport;
     
         void Reset()
         override {
             Banish_Timer = 5000;
             Exile_Timer = 8500;
-            playerGUID = 0;
+            playerGUID = ObjectGuid::Empty;
             CanTeleport = false;
         }
     
@@ -2687,7 +2687,7 @@ public:
                         temp->CastSpell(temp,SPELL_EXILE, TRIGGERED_FULL_MASK);
                         temp->CastSpell(temp,SPELL_BANISH_TELEPORT, TRIGGERED_FULL_MASK);
                     }
-                    playerGUID = 0;
+                    playerGUID = ObjectGuid::Empty;
                     Exile_Timer = 8500;
                     CanTeleport = false;
                 }else Exile_Timer -= diff;
@@ -2862,14 +2862,14 @@ public:
     
         uint32 Exile_Timer;
         uint32 Banish_Timer;
-        uint64 playerGUID;
+        ObjectGuid playerGUID;
         bool CanTeleport;
     
         void Reset()
         override {
             Banish_Timer = 5000;
             Exile_Timer = 8500;
-            playerGUID = 0;
+            playerGUID = ObjectGuid::Empty;
             CanTeleport = false;
         }
     
@@ -2889,7 +2889,7 @@ public:
                         temp->CastSpell(temp,SPELL_EXILE, TRIGGERED_FULL_MASK);
                         temp->CastSpell(temp,SPELL_BANISH_TELEPORT, TRIGGERED_FULL_MASK);
                     }
-                    playerGUID = 0;
+                    playerGUID = ObjectGuid::Empty;
                     Exile_Timer = 8500;
                     CanTeleport = false;
                 }else Exile_Timer -= diff;

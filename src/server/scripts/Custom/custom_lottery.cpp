@@ -49,7 +49,7 @@ public:
                     uint32 playerAccountId = player->GetSession()->GetAccountId();
                     QueryResult result = CharacterDatabase.PQuery("SELECT * FROM lottery WHERE accountid = %u OR ip = '%s'", playerAccountId, player->GetSession()->GetRemoteAddress().c_str());
                     if (!result) {
-                        CharacterDatabase.PExecute("INSERT INTO lottery VALUES (%u, %u, %I64u, %u, '%s')", player->GetGUIDLow(), playerAccountId, time(nullptr), player->GetTeam(), player->GetSession()->GetRemoteAddress().c_str());
+                        CharacterDatabase.PExecute("INSERT INTO lottery VALUES (%u, %u, %I64u, %u, '%s')", player->GetGUID().GetCounter(), playerAccountId, time(nullptr), player->GetTeam(), player->GetSession()->GetRemoteAddress().c_str());
                         player->SEND_GOSSIP_MENU_TEXTID(44, me->GetGUID());
                     }
                     else {
@@ -79,7 +79,7 @@ public:
                     Field* fields = result->Fetch();
                     
                     winner = fields[0].GetUInt32();
-                    sCharacterCache->GetCharacterNameByGuid(winner, winner_str);
+                    sCharacterCache->GetCharacterNameByGuid(ObjectGuid(HighGuid::Player, winner), winner_str);
                     
                     oss << "Le gagnant numéro " << num << " est " << winner_str << " !";
                     me->Yell(oss.str().c_str(), LANG_UNIVERSAL, nullptr);

@@ -83,8 +83,8 @@ public:
     
         InstanceScript* pInstance;
         
-        uint64 ashbringerGUID;
-        uint64 fatherGUID;
+        ObjectGuid ashbringerGUID;
+        ObjectGuid fatherGUID;
     
         uint32 Heal_Timer;
         uint32 DivineShield2_Timer;
@@ -111,11 +111,11 @@ public:
             BlessingOfProtection3_Timer = 45000;
             eventTimer = 0;
             step = 0;
-            ashbringerGUID = 0;
-            fatherGUID = 0;
+            ashbringerGUID = ObjectGuid::Empty;
+            fatherGUID = ObjectGuid::Empty;
             
             if(pInstance)
-                pInstance->HandleGameObject(pInstance->GetData64(DATA_DOOR_WHITEMANE), false);
+                pInstance->HandleGameObject(ObjectGuid(pInstance->GetData64(DATA_DOOR_WHITEMANE)), false);
     
         }
     
@@ -152,7 +152,7 @@ public:
             if(!pInstance)
                 return;
                 
-            pInstance->HandleGameObject(pInstance->GetData64(DATA_DOOR_WHITEMANE), true);
+            pInstance->HandleGameObject(ObjectGuid(pInstance->GetData64(DATA_DOOR_WHITEMANE)), true);
         }
     
         void UpdateAI(const uint32 diff)

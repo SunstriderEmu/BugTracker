@@ -46,7 +46,7 @@ public:
                 return false;
 
             if (me->GetDistance(player) >= 5.0f) {
-                TC_LOG_ERROR("scripts", "OLD HILLSBRAD: BUG EXPLOIT ATTEMPT: Player %s (GUID: %u) attempted to activate barrel at a distance of %f yards.", player->GetName().c_str(), player->GetGUIDLow(), me->GetDistance(player));
+                TC_LOG_ERROR("scripts", "OLD HILLSBRAD: BUG EXPLOIT ATTEMPT: Player %s (GUID: %u) attempted to activate barrel at a distance of %f yards.", player->GetName().c_str(), player->GetGUID().GetCounter(), me->GetDistance(player));
                 return false;
             }
 

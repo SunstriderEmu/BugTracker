@@ -52,18 +52,8 @@ public:
         public:
         boss_netherspiteAI(Creature* c) : BossAI(c, DATA_NETHERSPITE_EVENT)
         {
-            pInstance = ((InstanceScript*)c->GetInstanceScript());
-    
-            for(int i=0; i<3; ++i)
-            { 
-                PortalGUID[i] = 0;
-                BeamTarget[i] = 0;
-                BeamerGUID[i] = 0;
-            }
         }
-    
-        InstanceScript* pInstance;
-    
+        
         bool PortalPhase;
         bool Berserk;
         uint32 PhaseTimer; // timer for phase switching
@@ -72,9 +62,9 @@ public:
         uint32 NetherbreathTimer;
         uint32 EmpowermentTimer;
         uint32 PortalTimer; // timer for beam checking
-        uint64 PortalGUID[3]; // guid's of portals
-        uint64 BeamerGUID[3]; // guid's of auxiliary beaming portals
-        uint64 BeamTarget[3]; // guid's of portals' current targets
+        ObjectGuid PortalGUID[3]; // guid's of portals
+        ObjectGuid BeamerGUID[3]; // guid's of auxiliary beaming portals
+        ObjectGuid BeamTarget[3]; // guid's of portals' current targets
         uint32 BuffTimer[3]; // independant buff timer for each portal
     
         bool IsBetween(WorldObject* boss, WorldObject* target, WorldObject* portal) // the in-line checker
@@ -153,8 +143,8 @@ public:
                     portal->DealDamage(portal, portal->GetMaxHealth());
                     portal->RemoveFromWorld();
                 }
-                PortalGUID[i] = 0;
-                BeamTarget[i] = 0;
+                PortalGUID[i] = ObjectGuid::Empty;
+                BeamTarget[i] = ObjectGuid::Empty;
             }
         }
     
@@ -211,7 +201,7 @@ public:
                             beamer->SetVisible(false);
                             beamer->DealDamage(beamer, beamer->GetMaxHealth());
                             beamer->RemoveFromWorld();
-                            BeamerGUID[j] = 0;
+                            BeamerGUID[j].Clear();
                         }
                         // create new one and start beaming on the target
                         if(Creature *beamer = portal->SummonCreature(PortalID[j],portal->GetPositionX(),portal->GetPositionY(),portal->GetPositionZ(),portal->GetOrientation(),TEMPSUMMON_TIMED_DESPAWN,60000))

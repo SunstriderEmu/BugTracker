@@ -89,19 +89,20 @@ public:
     {
         instance_serpentshrine_cavern_script(Map *map) : InstanceScript(map) { Initialize(); };
 
-        uint64 LurkerBelow;
-        uint64 Sharkkis;
-        uint64 Tidalvess;
-        uint64 Caribdis;
-        uint64 LadyVashj;
-        uint64 Karathress;
-        uint64 KarathressEvent_Starter;
-        uint64 LeotherasTheBlind;
-        uint64 LeotherasEventStarter;
-        uint64 SerpentshrineConsole;
+        ObjectGuid LurkerBelow;
+        ObjectGuid Sharkkis;
+        ObjectGuid Tidalvess;
+        ObjectGuid Caribdis;
+        ObjectGuid LadyVashj;
+        ObjectGuid Karathress;
+        ObjectGuid KarathressEvent_Starter;
+        ObjectGuid LeotherasTheBlind;
+        ObjectGuid LeotherasEventStarter;
+        ObjectGuid SerpentshrineConsole;
+        ObjectGuid ControlConsoleGUID;
 
-        uint64 ControlConsole;
-        uint64 BridgePart[3];
+        uint32 ControlConsole;
+        ObjectGuid BridgePart[3];
         uint32 StrangePool;
         uint32 FishingTimer;
         uint32 LurkerSubEvent;
@@ -115,21 +116,6 @@ public:
 
         void Initialize() override
         {
-            LurkerBelow = 0;
-            Sharkkis = 0;
-            Tidalvess = 0;
-            Caribdis = 0;
-            LadyVashj = 0;
-            Karathress = 0;
-            KarathressEvent_Starter = 0;
-            LeotherasTheBlind = 0;
-            LeotherasEventStarter = 0;
-            SerpentshrineConsole = 0;
-
-            ControlConsole = 0;
-            BridgePart[0] = 0;
-            BridgePart[1] = 0;
-            BridgePart[2] = 0;
             StrangePool = 0;
             Water = WATERSTATE_NONE;
 
@@ -260,7 +246,7 @@ public:
             switch (go->GetEntry())
             {
             case 184568:
-                ControlConsole = go->GetGUID();
+                ControlConsoleGUID = go->GetGUID();
                 go->SetKeepActive(true);
                 break;
 
@@ -297,7 +283,7 @@ public:
             }
         }
 
-        void OpenDoor(uint64 DoorGUID, bool open)
+        void OpenDoor(ObjectGuid DoorGUID, bool open)
         {
             if (GameObject *Door = instance->GetGameObject(DoorGUID))
                 Door->SetUInt32Value(GAMEOBJECT_STATE, open ? 0 : 1);
@@ -332,9 +318,9 @@ public:
         void SetData64(uint32 type, uint64 data) override
         {
             if (type == DATA_KARATHRESSEVENT_STARTER)
-                KarathressEvent_Starter = data;
+                KarathressEvent_Starter = ObjectGuid(data);
             if (type == DATA_LEOTHERAS_EVENT_STARTER)
-                LeotherasEventStarter = data;
+                LeotherasEventStarter = ObjectGuid(data);
         }
 
         uint64 GetData64(uint32 identifier) const override

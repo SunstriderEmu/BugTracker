@@ -470,25 +470,21 @@ public:
             pInstance = ((InstanceScript*)creature->GetInstanceScript());
             if(!pInstance)
                 me->DespawnOrUnsummon();
-
-            for (uint64 & OrbDummie : OrbDummies)
-                OrbDummie = 0;
         }
 
         void Reset()
         override {
-            for (uint64 & i : Orb)
-            {
-                i = 0;
-                for (uint64 & OrbDummie : OrbDummies)
-                    if(OrbDummie != 0)
-                    {
-                        //despawn already spawned dummies
-                        if(Creature* dummy = pInstance->instance->GetCreature(OrbDummie))
-                            dummy->DisappearAndDie();
-                        OrbDummie = 0;
-                    }
-            }
+            for (ObjectGuid & i : Orb)
+                i = ObjectGuid::Empty;
+
+            for (ObjectGuid & OrbDummie : OrbDummies)
+                if (OrbDummie != 0)
+                {
+                    //despawn already spawned dummies
+                    if (Creature* dummy = pInstance->instance->GetCreature(OrbDummie))
+                        dummy->DisappearAndDie();
+                    OrbDummie = ObjectGuid::Empty;
+                }
 
             EmpowerCount = 0;
             me->SetDisableGravity(true);
@@ -596,8 +592,8 @@ public:
             
         InstanceScript* pInstance;
     private:
-        uint64 Orb[4]; //orb gobjects
-        uint64 OrbDummies[4]; //Used for some visual effects only
+        ObjectGuid Orb[4]; //orb gobjects
+        ObjectGuid OrbDummies[4]; //Used for some visual effects only
    
         uint8 EmpowerCount;
 
@@ -625,12 +621,12 @@ public:
             SummonList Summons;
 
             bool KiljaedenDeath;
-            uint64 handDeceiver[3];
-            uint64 riftGuid[2];
-            uint64 riftTargets[2];
-            uint64 soldiersGuid[20];
-            uint64 m_EntropiusGuid;
-            uint64 m_PortalGuid;
+            ObjectGuid handDeceiver[3];
+            ObjectGuid riftGuid[2];
+            ObjectGuid riftTargets[2];
+            ObjectGuid soldiersGuid[20];
+            ObjectGuid m_EntropiusGuid;
+            ObjectGuid m_PortalGuid;
             uint32 m_currentAngleFirst;
             uint32 m_currentAngleSecond;
             
@@ -673,7 +669,7 @@ public:
 
                 phase = PHASE_DECEIVERS;
 
-                if (Creature *KalecKJ = pInstance->instance->GetCreature(pInstance->GetData64(DATA_KALECGOS_KJ)))
+                if (Creature *KalecKJ = pInstance->instance->GetCreature(ObjectGuid(pInstance->GetData64(DATA_KALECGOS_KJ))))
                     ((boss_kalecgos_kj::boss_kalecgos_kjAI*)KalecKJ->AI())->ResetOrbs();
 
                 DeceiverDeathCount = 0;
@@ -829,7 +825,7 @@ public:
                             portal->SetStandState(UNIT_STAND_STATE_SIT); //this smoothly stop the explosion effect and just let the smokes continues
                         break;
                     case POINT_SUMMON_SOLDIERS_RIGHT:
-                        for (uint64 i : riftGuid)
+                        for (ObjectGuid i : riftGuid)
                         {
                             if (Creature* rift = pInstance->instance->GetCreature(i))
                             {
@@ -1044,7 +1040,7 @@ public:
                 me->Say(w,LANG_UNIVERSAL,nullptr);
                 //
                 DoZoneInCombat();
-                for (uint64 i : handDeceiver)
+                for (ObjectGuid i : handDeceiver)
                 {
                     if (Creature *hand = pInstance->instance->GetCreature(i))
                     {
@@ -1295,7 +1291,7 @@ public:
             if (pInstance)
                 pInstance->SetData(DATA_KILJAEDEN_EVENT, DONE);
 
-            if (Creature *controller = pInstance->instance->GetCreature(pInstance->GetData64(DATA_KILJAEDEN_CONTROLLER)))
+            if (Creature *controller = pInstance->instance->GetCreature(ObjectGuid(pInstance->GetData64(DATA_KILJAEDEN_CONTROLLER))))
             {
                 controller->SetFaction(FACTION_FRIENDLY);
                 controller->RemoveAllAuras();
@@ -1368,7 +1364,7 @@ public:
         override {
             if (animSpawnTimer)
             {
-                me->SetTarget(0);
+                me->SetTarget(ObjectGuid::Empty);
                 if (animSpawnTimer <= diff)
                 {
                     me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -1447,7 +1443,7 @@ public:
             {
                 case EVENT_KALEC_JOIN:
                     events.CancelEvent(EVENT_KALEC_JOIN);
-                    if (Creature* kalec = pInstance->instance->GetCreature(pInstance->GetData64(DATA_KALECGOS_KJ)))
+                    if (Creature* kalec = pInstance->instance->GetCreature(ObjectGuid(pInstance->GetData64(DATA_KALECGOS_KJ))))
                     {
                         kalec->AI()->Talk(SAY_KALEC_JOIN);
                         kalec->SetVisible(true);
@@ -1527,12 +1523,12 @@ public:
                 case EVENT_ORBS_EMPOWER:
                     if (phase == PHASE_SACRIFICE)
                     {
-                        if (Creature* kalec = pInstance->instance->GetCreature(pInstance->GetData64(DATA_KALECGOS_KJ)))
+                        if (Creature* kalec = pInstance->instance->GetCreature(ObjectGuid(pInstance->GetData64(DATA_KALECGOS_KJ))))
                             ((boss_kalecgos_kj::boss_kalecgos_kjAI*)kalec->AI())->EmpowerOrb(true);
                     }
                     else
                     {
-                        if (Creature* kalec = pInstance->instance->GetCreature(pInstance->GetData64(DATA_KALECGOS_KJ)))
+                        if (Creature* kalec = pInstance->instance->GetCreature(ObjectGuid(pInstance->GetData64(DATA_KALECGOS_KJ))))
                             ((boss_kalecgos_kj::boss_kalecgos_kjAI*)kalec->AI())->EmpowerOrb(false);
 
                     }
@@ -1614,7 +1610,7 @@ public:
                 if(pInstance)
                 {
                     pInstance->SetData(DATA_KILJAEDEN_EVENT, IN_PROGRESS);
-                    if (Creature* Control = pInstance->instance->GetCreature(pInstance->GetData64(DATA_KILJAEDEN_CONTROLLER)))
+                    if (Creature* Control = pInstance->instance->GetCreature(ObjectGuid(pInstance->GetData64(DATA_KILJAEDEN_CONTROLLER))))
                         if (!Control->GetVictim())
                             Control->AI()->AttackStart(victim);
                 }
@@ -1628,7 +1624,7 @@ public:
                 Summons.DespawnAll();
 
                 if(pInstance)
-                    if (Creature* Control = pInstance->instance->GetCreature(pInstance->GetData64(DATA_KILJAEDEN_CONTROLLER)))
+                    if (Creature* Control = pInstance->instance->GetCreature(ObjectGuid(pInstance->GetData64(DATA_KILJAEDEN_CONTROLLER))))
                         ((mob_kiljaeden_controller::mob_kiljaeden_controllerAI*)Control->AI())->DeceiverDeathCount++;
             }
 
@@ -2077,7 +2073,7 @@ public:
             override {
                 if(pInstance)
                 {
-                    if (Creature* kj = pInstance->instance->GetCreature(pInstance->GetData64(DATA_KILJAEDEN)))
+                    if (Creature* kj = pInstance->instance->GetCreature(ObjectGuid(pInstance->GetData64(DATA_KILJAEDEN))))
                         m_kj = kj;
                 }
 

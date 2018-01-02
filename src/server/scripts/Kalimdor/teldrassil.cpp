@@ -63,14 +63,14 @@ public:
         uint32 m_uiPostEventTimer;
         uint32 m_uiPhasePostEvent;
     
-        uint64 AryniaGUID;
+        ObjectGuid AryniaGUID;
     
         void Reset() 
         override { 
             m_uiPostEventTimer = 1000;
             m_uiPhasePostEvent = 0;
     
-            AryniaGUID = 0;
+            AryniaGUID.Clear();
         }
         
         void JustEngagedWith(Unit *pWho) override {}

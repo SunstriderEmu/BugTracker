@@ -78,7 +78,7 @@ public:
     
         uint32 LamentEvent_Timer;
         bool LamentEvent, WickermanEvent;
-        uint64 targetGUID;
+        ObjectGuid targetGUID;
         
         uint8 TalkPhase;
         uint32 TalkTimer;
@@ -95,7 +95,7 @@ public:
     
             LamentEvent_Timer = 5000;
             LamentEvent = false;
-            targetGUID = 0;
+            targetGUID = ObjectGuid::Empty;
             TalkPhase = 0;
             
             if (sGameEventMgr->IsActiveEvent(GAME_EVENT_WICKERMAN_FESTIVAL)) {
