@@ -242,7 +242,7 @@ public:
                 pMidnight->DealDamage(pMidnight, pMidnight->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
         }
 
-        void SetGUID(ObjectGuid guid, int32 data) override
+        void SetGUID(ObjectGuid const& guid, int32 data) override
         {
             if (data == NPC_MIDNIGHT)
                 _midnightGUID = guid;
