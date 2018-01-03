@@ -70,7 +70,7 @@ public:
     class npc_millhouse_manastormAI : public ScriptedAI
     {
         public:
-        npc_millhouse_manastormAI(Creature *c) : ScriptedAI(c)
+        npc_millhouse_manastormAI(Creature *c) : ScriptedAI(c), Init(false) 
         {
             me->AI()->SetCombatMovementAllowed(false);
             instance = ((InstanceScript*)c->GetInstanceScript());
@@ -91,7 +91,6 @@ public:
         {
             EventProgress_Timer = 2000;
             LowHp = false;
-            Init = false;
             hasRewarded = false;
             Phase = 1;
     
