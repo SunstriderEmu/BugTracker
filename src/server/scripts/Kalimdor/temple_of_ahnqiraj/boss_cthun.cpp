@@ -1271,9 +1271,9 @@ public:
                     if (!target->HasAuraEffect(SPELL_DIGESTIVE_ACID, 0))
                     {
                         me->GetMap()->CreatureRelocation(me, target->GetPositionX(), target->GetPositionY(), target->GetPositionZ(), 0);
-                        Unit* p = DoSpawnCreature(MOB_GIANT_PORTAL,0,0,0,0,TEMPSUMMON_CORPSE_DESPAWN, 0);
-                        if (p)
-                            PortalGUID = p->GetGUID();
+                        Unit* _p = DoSpawnCreature(MOB_GIANT_PORTAL,0,0,0,0,TEMPSUMMON_CORPSE_DESPAWN, 0);
+                        if (_p)
+                            PortalGUID = _p->GetGUID();
     
                         GroundRuptureTimer = 500;
                         HamstringTimer = 2000;

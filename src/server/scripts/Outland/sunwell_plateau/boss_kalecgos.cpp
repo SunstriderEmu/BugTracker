@@ -194,11 +194,14 @@ public:
             GameObject *Door = GameObject::GetGameObject(*me, ForceFieldGUID);
             if (Door)
                 Door->UseDoorOrButton();
-            GameObject *Wall1 = GameObject::GetGameObject(*me, Wall1GUID);
-            if (Wall1 && me->IsAlive())
-                Wall1->ResetDoorOrButton();
-            else if (Wall1 && me->IsDead())
-                Wall1->UseDoorOrButton();
+            GameObject* Wall1 = GameObject::GetGameObject(*me, Wall1GUID);
+            if (Wall1)
+            {
+                if (me->IsAlive())
+                    Wall1->ResetDoorOrButton();
+                else
+                    Wall1->UseDoorOrButton();
+            }
             GameObject *Wall2 = GameObject::GetGameObject(*me, Wall2GUID);
             if (Wall2)
                 Wall2->UseDoorOrButton();
@@ -230,12 +233,15 @@ public:
                 me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 me->SetReactState(REACT_PASSIVE);
                 
-                GameObject *Door = GameObject::GetGameObject(*me, ObjectGuid(pInstance->GetData64(DATA_GO_FORCEFIELD)));
-                if (Door) Door->UseDoorOrButton();
-                GameObject *Wall1 = GameObject::GetGameObject(*me, ObjectGuid(pInstance->GetData64(DATA_GO_KALEC_WALL_1)));
-                if (Wall1) Wall1->UseDoorOrButton();
-                GameObject *Wall2 = GameObject::GetGameObject(*me, ObjectGuid(pInstance->GetData64(DATA_GO_KALEC_WALL_2)));
-                if (Wall2) Wall2->UseDoorOrButton();
+                GameObject* door = GameObject::GetGameObject(*me, ObjectGuid(pInstance->GetData64(DATA_GO_FORCEFIELD)));
+                if (door)
+                    door->UseDoorOrButton();
+                GameObject* wall1 = GameObject::GetGameObject(*me, ObjectGuid(pInstance->GetData64(DATA_GO_KALEC_WALL_1)));
+                if (wall1)
+                    wall1->UseDoorOrButton();
+                GameObject* wall2 = GameObject::GetGameObject(*me, ObjectGuid(pInstance->GetData64(DATA_GO_KALEC_WALL_2)));
+                if (wall2) 
+                    wall2->UseDoorOrButton();
             }
             
             // Raid wipe
@@ -274,12 +280,15 @@ public:
         override {
             me->SetStandState(PLAYER_STATE_NONE);
             DoScriptText(SAY_EVIL_AGGRO, me);
-            GameObject *Door = GameObject::GetGameObject(*me, ForceFieldGUID);
-            if(Door) Door->ResetDoorOrButton();
-            GameObject *Wall1 = GameObject::GetGameObject(*me, Wall1GUID);
-            if(Wall1) Wall1->ResetDoorOrButton();
-            GameObject *Wall2 = GameObject::GetGameObject(*me, Wall2GUID);
-            if(Wall2) Wall2->ResetDoorOrButton();
+            GameObject* Door = GameObject::GetGameObject(*me, ForceFieldGUID);
+            if(Door) 
+                Door->ResetDoorOrButton();
+            GameObject* Wall1 = GameObject::GetGameObject(*me, Wall1GUID);
+            if(Wall1) 
+                Wall1->ResetDoorOrButton();
+            GameObject* Wall2 = GameObject::GetGameObject(*me, Wall2GUID);
+            if(Wall2) 
+                Wall2->ResetDoorOrButton();
             DoZoneInCombat();
             CloseDoorsTimer = 5000;
             
