@@ -1516,7 +1516,7 @@ public:
                 return;
             }
     
-            Unit* target = SelectTarget(SELECT_TARGET_TOPAGGRO, 0, 500, false);
+            Unit* target = SelectTarget(SELECT_TARGET_MAXTHREAT, 0, 500, false);
             if (!me->GetVictim())
             {
                 AttackStart(target);

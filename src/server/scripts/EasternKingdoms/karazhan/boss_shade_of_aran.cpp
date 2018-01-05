@@ -160,25 +160,9 @@ public:
     
         void FlameWreathEffect()
         {
-            std::vector<Unit*> targets;
-            std::list<HostileReference *> t_list = me->GetThreatManager().getThreatList();
-    
-            if(!t_list.size())
-                return;
-    
-            //store the threat list in a different container
-            for(auto & itr : t_list)
-            {
-                Unit *target = ObjectAccessor::GetUnit(*me, itr->getUnitGuid());
-                //only on alive players
-                if(target && target->IsAlive() && target->GetTypeId() == TYPEID_PLAYER )
-                    targets.push_back( target);
-            }
-    
-            //cut down to size if we have more than 3 targets
-            while(targets.size() > 3)
-                targets.erase(targets.begin()+rand()%targets.size());
-    
+            std::list<Unit *> targets;
+            SelectTargetList(targets, 3, SELECT_TARGET_RANDOM, 0, 100.0f, true);
+
             uint32 i = 0;
             for(auto & target : targets)
             {

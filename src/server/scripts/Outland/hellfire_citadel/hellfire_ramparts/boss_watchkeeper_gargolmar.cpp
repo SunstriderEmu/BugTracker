@@ -118,7 +118,7 @@ public:
             {
                 DoScriptText(SAY_SURGE, me);
     
-                if (Unit* target = SelectTarget(SELECT_TARGET_FARTHEST, 0))
+                if (Unit* target = SelectTarget(SELECT_TARGET_MAXDISTANCE, 0))
                     DoCast(target,SPELL_SURGE);
     
                 Surge_Timer = urand(10000, 15000);

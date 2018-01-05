@@ -13,8 +13,9 @@ enum {
     SPELL_ENRAGE            = 23537
 };
 
-enum {
-    EV_MANASTORM,
+enum 
+{
+    EV_MANASTORM = 1,
     EV_CHILL,
     EV_BREATH,
     EV_TELEPORT,
@@ -101,7 +102,7 @@ public:
                     
                     for (std::list<Player*>::const_iterator itr = players.begin(); itr != players.end(); itr++) {
                         (*itr)->TeleportTo(me->GetMapId(), x, y, z, (*itr)->GetOrientation(), TELE_TO_NOT_LEAVE_COMBAT);
-                        me->GetHostileRefManager().deleteReference((*itr));
+                        me->GetThreatManager().ClearThreat(*itr);
                     }
                     
                     Talk(SAY_TELEPORT);

@@ -139,7 +139,7 @@ public:
             {
                 //second top aggro target in normal, random target in heroic correct?
                 Unit *target = nullptr;
-                target = HeroicMode ? SelectTarget(SELECT_TARGET_RANDOM,0) : SelectTarget(SELECT_TARGET_TOPAGGRO,1);
+                target = HeroicMode ? SelectTarget(SELECT_TARGET_RANDOM,0) : SelectTarget(SELECT_TARGET_MAXTHREAT,1);
                 if (target)
                     DoCast(target,HeroicMode ? H_SPELL_POLYMORPH : SPELL_POLYMORPH);
                 Sheep_Timer = 15000+rand()%2500;

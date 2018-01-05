@@ -152,12 +152,10 @@ public:
         
         void SetPolarityOnPlayers()
         {
-            Unit* target = nullptr;
-            std::list<HostileReference *> t_list = me->GetThreatManager().getThreatList();
-            for(auto & itr : t_list)
+            for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
             {
-                target = ObjectAccessor::GetUnit(*me, itr->getUnitGuid());
-                if (target && target->GetTypeId() == TYPEID_PLAYER && target->IsAlive())
+                Unit* target = pair.second->GetOther(me);
+                if (target->GetTypeId() == TYPEID_PLAYER && target->IsAlive())
                 {
                     // Remove charges related auras first
                     if (target->HasAuraEffect(SPELL_POSITIVE_CHARGE))

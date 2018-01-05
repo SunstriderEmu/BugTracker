@@ -345,11 +345,11 @@ public:
             Creature* akama = me->GetMap()->GetCreature(akamaGUID);
             if(!akama)
                 return;
-    
-            for(auto itr : me->GetThreatManager().getThreatList())
+
+            for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
             {
-                Player* p = ObjectAccessor::GetPlayer(*me,itr->getUnitGuid());
-                if(p)
+                Unit* unit = pair.second->GetOther(me);
+                if(Player* p = unit->ToPlayer())
                     p->RewardReputation(akama,1.0f);
             }
         }

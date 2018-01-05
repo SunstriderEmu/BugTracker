@@ -191,8 +191,8 @@ public:
             pUnit = ObjectAccessor::GetUnit((*me), guid);
             if(pUnit)
             {
-                if(me->GetThreat(pUnit))
-                    DoModifyThreatPercent(pUnit, -100);
+                if(me->GetThreatManager().GetThreat(pUnit))
+                    ModifyThreatByPercent(pUnit, -100);
                 if(TargetThreat)
                     me->GetThreatManager().AddThreat(pUnit, TargetThreat);
             }
@@ -276,7 +276,7 @@ public:
                 }else FelGeyserTimer -= diff;
     
                 if(me->GetVictim() && me->GetVictim()->IsImmunedToDamage(SPELL_SCHOOL_MASK_ALL))
-                    me->GetThreatManager().modifyThreatPercent(me->GetVictim(),-100);
+                    me->GetThreatManager().ModifyThreatByPercent(me->GetVictim(),-100);
             }
     
             if(PhaseChangeTimer < diff)
@@ -291,7 +291,7 @@ public:
                         //TargetThreat = me->GetThreat(target);
                         TargetGUID = target->GetGUID();
                         /*if(me->GetThreat(target))
-                            DoModifyThreatPercent(target, -100);*/
+                            ModifyThreatByPercent(target, -100);*/
                         me->GetThreatManager().AddThreat(target, 50000000.0f);
                         target->CastSpell(me, SPELL_TAUNT_GURTOGG, TRIGGERED_FULL_MASK);
                         me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
@@ -320,7 +320,7 @@ public:
                 {
                     if(TargetGUID)
                         RevertThreatOnTarget(TargetGUID);
-                    DoResetThreat();
+                    ResetThreatList();
                     TargetGUID = ObjectGuid::Empty;
                     Phase1 = true;
                     BloodboilTimer = 10000;

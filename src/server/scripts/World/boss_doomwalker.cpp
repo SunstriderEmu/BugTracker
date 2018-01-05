@@ -124,8 +124,8 @@ public:
                 DoScriptText(RAND(SAY_OVERRUN_1, SAY_OVERRUN_2), me);
     
                 DoCast(me->GetVictim(),SPELL_OVERRUN);
-                if(me->GetThreat(me->GetVictim()))
-                    DoModifyThreatPercent(me->GetVictim(),-100);    // Reset MT threat
+                if(me->GetThreatManager().GetThreat(me->GetVictim()))
+                    ModifyThreatByPercent(me->GetVictim(),-100);    // Reset MT threat
                 Overrun_Timer = 25000 + rand()%15000;
             }else Overrun_Timer -= diff;
     

@@ -40,8 +40,7 @@ public:
             if (emote == TEXTEMOTE_HUG)
             {
                 char w[50];
-                //TODO translate "Threat against you:
-                snprintf(w, 50, "Menace envers vous : %f", me->GetThreatManager().getThreat(player));
+                snprintf(w, 50, "Threat against you: %f", me->GetThreatManager().GetThreat(player));
                 me->Whisper(w, LANG_UNIVERSAL, player);
             }
         }

@@ -196,7 +196,7 @@ public:
                         me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg +((cinfo->maxdmg/100) * 40)));
                         me->UpdateDamagePhysical(BASE_ATTACK);
                         */
-                        DoResetThreat();
+                        ResetThreatList();
                         PhaseTwo = true;
                     }else Resurrect_Timer -= diff;
                 }
@@ -213,7 +213,7 @@ public:
                         if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0))
                         {
                             DoCast(target,SPELL_CHARGE);
-                            DoResetThreat();
+                            ResetThreatList();
                             AttackStart(target);
                         }
     
@@ -485,8 +485,8 @@ public:
             {
                 DoCast(me->GetVictim(),SPELL_GOUGE);
     
-                if(me->GetThreat(me->GetVictim()))
-                    DoModifyThreatPercent(me->GetVictim(),-100);
+                if(me->GetThreatManager().GetThreat(me->GetVictim()))
+                    ModifyThreatByPercent(me->GetVictim(),-100);
     
                 Gouge_Timer = 17000+rand()%10000;
             }else Gouge_Timer -= diff;

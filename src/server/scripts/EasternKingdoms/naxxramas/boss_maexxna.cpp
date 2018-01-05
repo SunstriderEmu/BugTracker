@@ -145,28 +145,9 @@ public:
     
         void DoCastWebWrap()
         {
-            std::list<HostileReference *> t_list = me->GetThreatManager().getThreatList();
-            std::vector<Unit *> targets;
-    
-            //This spell doesn't work if we only have 1 player on threat list
-            if(t_list.size() < 2)
-                return;
-    
-            //begin + 1 , so we don't target the one with the highest threat
-            auto itr = t_list.begin();
-            std::advance(itr, 1);
-            for( ; itr!= t_list.end(); ++itr)                   //store the threat list in a different container
-            {
-                Unit *target = ObjectAccessor::GetUnit(*me, (*itr)->getUnitGuid());
-                                                                //only on alive players
-                if(target && target->IsAlive() && target->GetTypeId() == TYPEID_PLAYER )
-                    targets.push_back( target);
-            }
-    
-            while(targets.size() > 3)
-                                                                //cut down to size if we have more than 3 targets
-                targets.erase(targets.begin()+rand()%targets.size());
-    
+            std::list<Unit *> targets;
+            SelectTargetList(targets, 2, SELECT_TARGET_RANDOM, 0, 100.0f, true);
+
             int i = 0;
             for(auto itr2 = targets.begin(); itr2 != targets.end(); ++itr2, ++i)
             {

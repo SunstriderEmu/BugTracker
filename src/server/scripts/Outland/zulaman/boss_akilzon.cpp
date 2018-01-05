@@ -389,11 +389,10 @@ public:
                 if(!target) target = me->GetVictim();
                 TargetGUID = target->GetGUID();
                 me->CastSpell(target, SPELL_STATIC_DISRUPTION, TRIGGERED_NONE);
-                /*Unit *target = NULL;
-                std::list<HostileReference *> t_list = me->GetThreatManager().getThreatList();
-                for(std::list<HostileReference *>::iterator itr = t_list.begin(); itr!= t_list.end(); ++itr) {
-                    target = ObjectAccessor::GetUnit(*me, (*itr)->getUnitGuid());
-                    if (target && (target->GetTypeId() == TYPEID_PLAYER || ((Creature*)target)->IsPet()) && !((Creature*)target)->IsTotem() && target->GetDistance2d(me) <= 12 && target != me->GetVictim())
+                /*Unit *target = NULL; 
+                for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
+                    Unit* target = pair.second->GetOther(me);
+                    if ((target->GetTypeId() == TYPEID_PLAYER || ((Creature*)target)->IsPet()) && !((Creature*)target)->IsTotem() && target->GetDistance2d(me) <= 12 && target != me->GetVictim())
                         DoCast(target, SPELL_STATIC_DISRUPTION);
                 }*/
                 me->SetInFront(me->GetVictim());

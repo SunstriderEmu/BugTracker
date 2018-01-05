@@ -127,15 +127,11 @@ struct DragonOfNightmareAI_template : public ScriptedAI
     // Bordel mais permet un seul parcourt de liste au lieu de deux
     void checkIfSomeoneAffectedByMarkOfNatureOrIsTooFar()
     {
-        //récupération de la liste d'aggro
-        std::list<HostileReference*>& threatList = me->GetThreatManager().getThreatList();
-            if (threatList.empty())
-                return;
         // On prends les cibles intéressante (unit et vivantes))
         std::list<Unit*> targets;
-        for (auto & itr : threatList) 
+        for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
         {
-            Unit* unit = ObjectAccessor::GetUnit((*me), itr->getUnitGuid());
+            Unit* unit = pair.second->GetOther(me);
             if (unit && unit->IsAlive() && unit->HasAuraEffect(SPELL_MARK_OF_NATURE,0))
             {
                 //DoCast(unit,SPELL_AURA_OF_NATURE_STUN,true);
@@ -185,24 +181,23 @@ public:
         public:
         SimpleCooldown* SCDTimerUpdateMovement;
         SimpleCooldown* SCDSecondBeforeUpdateVictim;
-        Unit* Target;
+        ObjectGuid targetGUID;
         bool StarUpdateVictimTimer;
-        Creature* Dragon;
+        ObjectGuid DragonGUID;
         
         DreamFogAI(Creature *c) : ScriptedAI(c)
         {
             SCDTimerUpdateMovement = new SimpleCooldown(1000);
             SCDSecondBeforeUpdateVictim = new SimpleCooldown(1000);
-            Dragon=ObjectAccessor::GetCreature(*me,me->GetOwnerGUID());
+            DragonGUID = me->GetOwnerGUID();
             setTargetFromDragon();
         }
-        void JustEngagedWith(Unit *who)override {}
-        
-        void Reset()
-        override {
+
+        void Reset() override 
+        {
             SCDTimerUpdateMovement->reinitCD();
             SCDSecondBeforeUpdateVictim->reinitCD();
-            Target = nullptr;
+            targetGUID.Clear();
                     
             // Jsais plus pouruquoi j'ai set tout ca mais jlai fait et ca marche :p
             me->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 0);
@@ -215,25 +210,17 @@ public:
             //DoCast(me, VISUAL_SPELL_ID_NUAGE_ONIRIQUE, true);
         }
         
-        bool UpdateVictim(bool evade)
-        {
-            // On change pas de victime, on est face à un esprit assez borné!
-            return true;
-        }
-        
-        void DoMeleeAttackIfReady() override
-        {
-            // Borné, mais pacifiste!
-            return;
-        }
-        
         void Instakill(Unit* target)
         {
             target->DealDamage(target, target->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
         }
         
-        void UpdateAI(const uint32 diff)
-        override {   
+        void UpdateAI(const uint32 diff) override 
+        {   
+            if (!UpdateVictim())
+                return;
+
+            Creature* Dragon = ObjectAccessor::GetCreature(*me, DragonGUID);
             if(!Dragon )
             {
                 Dragon=ObjectAccessor::GetCreature(*me,me->GetOwnerGUID());
@@ -242,14 +229,20 @@ public:
             
             if(Dragon->IsDead())
                 Instakill(me);
-            
+
+            Unit* target = ObjectAccessor::GetUnit(*me, targetGUID);
+
             //me->AI()->AttackStart(Cible);
-            if(SCDTimerUpdateMovement->CheckAndUpdate(diff))
-                    me->GetMotionMaster()->MoveFollow(Target,0,0);
-            // Partie très moche a changer. Si l'esprit est trop proche (mais pas assez pour l'aura) alors on le téléporte sur le gars.
-            if(me->GetDistance(Target->GetPositionX(),Target->GetPositionY(),Target->GetPositionZ())<3) // J'ai mis 3 car c'est petit et ca fait un coeur!
+            if (SCDTimerUpdateMovement->CheckAndUpdate(diff))
             {
-                me->Relocate(Target->GetPositionX(),Target->GetPositionY(),Target->GetPositionZ());
+                if(target)
+                    me->GetMotionMaster()->MoveFollow(target, 0, 0);
+            }
+
+            // Partie très moche a changer. Si l'esprit est trop proche (mais pas assez pour l'aura) alors on le téléporte sur le gars.
+            if(target && me->GetDistance2d(target) < 3.0f) // J'ai mis 3 car c'est petit et ca fait un coeur!
+            {
+                me->Relocate(target->GetPositionX(), target->GetPositionY(), target->GetPositionZ());
                 StarUpdateVictimTimer=true;
             }
             // Wait one second before death
@@ -263,16 +256,15 @@ public:
             }
         }
     
-        void setTarget(Unit* target)
-        {
-            Target = target;
-        }
-        
         void setTargetFromDragon()
         {
-            if(!Dragon)
+            if(DragonGUID.IsEmpty())
                 return;
-            setTarget(((DragonOfNightmareAI_template*)Dragon->AI())->SelectTarget(SELECT_TARGET_RANDOM,0));
+            Creature* Dragon = ObjectAccessor::GetCreature(*me, DragonGUID);
+            if (!Dragon)
+                return;
+            Unit* target = ((DragonOfNightmareAI_template*)Dragon->AI())->SelectTarget(SELECT_TARGET_RANDOM, 0);
+            targetGUID = target->GetGUID();
         }
     };
 
@@ -323,7 +315,7 @@ public:
     class shadowSpiritAI : public ScriptedAI
     {
     public:
-        Unit* Lethon;
+        ObjectGuid LethonGUID;
         SimpleCooldown* SCDTimerUpdateMovement;
         SimpleCooldown* SCDFreezeWhenJustSpawn;
         bool canStartMovement;
@@ -345,7 +337,7 @@ public:
             override {
             SCDTimerUpdateMovement->reinitCD();
             SCDFreezeWhenJustSpawn->reinitCD();
-            Lethon = nullptr;
+            LethonGUID.Clear();
             canStartMovement = false;
 
             me->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, 0);
@@ -355,38 +347,18 @@ public:
             DoCast(me, VISUAL_SPELL_SHADOW_SPIRIT, true);
         }
 
-        bool UpdateVictim(bool evade)
+        void UpdateAI(const uint32 diff) override 
         {
-            return true;
-        }
+            if (!UpdateVictim())
+                return;
 
-        void DoMeleeAttackIfReady() override
-        {
-            return;
-        }
-
-        void AttackStart(Unit* who)
-            override {
-            return;
-        }
-
-        void UpdateAI(const uint32 diff)
-            override {
-            if (!Lethon)
+            Unit* Lethon = ObjectAccessor::GetUnit(*me, LethonGUID);
+            if (!Lethon || Lethon->IsDead())
             {
                 // Il n'aime plus la vie
                 me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
                 return;
             }
-
-            if (Lethon->IsDead())
-            {
-                // Il n'aime plus la vie
-                me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-                return;
-            }
-
-
 
             // Checking if the spirit can move
             if (!canStartMovement && SCDFreezeWhenJustSpawn->CheckAndUpdate(diff))
@@ -465,31 +437,20 @@ public:
         
         void CastShadowSpirit()
         {
-            //récupération de la liste d'aggro de Lethon
-            std::list<HostileReference*>& threatList = me->GetThreatManager().getThreatList();
-                if (threatList.empty())
-                    return;
-            // On prends les cibles intéressante (unit et vivantes : Lethon n'est pas nécrophile tention!)
             std::list<Unit*> targets;
-            for (auto & itr : threatList) 
-            {
-                Unit* unit = ObjectAccessor::GetUnit((*me), itr->getUnitGuid());
-                if (unit && unit->IsAlive())
-                    targets.push_back(unit);
-            }
-            // On zigouille les unités interressantes. Enfin facon de parler :p
+            SelectTargetList(targets, 40, SELECT_TARGET_RANDOM, 0, 100.0f);
             
             Creature* ShadowSpirit;
             for(auto & target : targets)
             {
-                DoCast(target,SPELL_STUN_POP_SPIRIT,true); // On les stun 3 secondes, tant pis si pas a portée
+                DoCast(target, SPELL_STUN_POP_SPIRIT, true); // On les stun 3 secondes, tant pis si pas a portée
                 //(uint32 id, float x, float y, float z, float ang,TempSummonType spwtype,uint32 despwtime)
                 // Summon with absolute coordinates
                 ShadowSpirit=me->SummonCreature(ID_MOB_SHADOW_SPIRIT,target->GetPositionX(),target->GetPositionY(),target->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN,TIMER_DESPAWN_SHADOW_SPIRIT); 
                 if(ShadowSpirit)
                 {
                     ShadowSpirit->SetFaction(me->GetFaction());
-                    ((npc_spiritshade::shadowSpiritAI*)ShadowSpirit->AI())->Lethon=me;
+                    ((npc_spiritshade::shadowSpiritAI*)ShadowSpirit->AI())->LethonGUID = me->GetGUID();
                 }
             }
             return;
@@ -500,7 +461,7 @@ public:
         void JustDied(Unit *victim)
         override {
             DragonOfNightmareAI_template::JustDied(victim);
-            me->Yell(TELL_AT_DEATH_LETHON,LANG_UNIVERSAL,nullptr);
+            me->Yell(TELL_AT_DEATH_LETHON, LANG_UNIVERSAL, nullptr);
         }
         
         void UpdateAI(const uint32 diff)
@@ -508,12 +469,12 @@ public:
             DragonOfNightmareAI_template::UpdateAI(diff);
             
             if(SCDAoeShadowBolt->CheckAndUpdate(diff))
-                DoCast(me,SPELL_AOE_SHADOWBOLT_LETHON,true);
+                DoCast(me,SPELL_AOE_SHADOWBOLT_LETHON, true);
             
             if(shouldCast25PrecentSpell(NumSpell25PrecentLeft))
             {
                 CastShadowSpirit();
-                me->Yell(YELL_AT_PHASE_CHANGE_LETHON,LANG_UNIVERSAL,nullptr);
+                me->Yell(YELL_AT_PHASE_CHANGE_LETHON, LANG_UNIVERSAL, nullptr);
             }
             
             if(lowHpYellLeft && me->IsBelowHPPercent(5))
@@ -963,7 +924,7 @@ public:
         SimpleCooldown *SCDMoonFire;
         SimpleCooldown *SCDCurseOfThorns;
         SimpleCooldown *SCDSilence;
-        Creature* Ysondre;
+        ObjectGuid YsondreGUID;
 
         void Instakill(Unit* Target)
         {
@@ -977,8 +938,8 @@ public:
             SCDSilence = new SimpleCooldown(TIMER_SILENCE_DRUID);
         }
 
-        void Reset()
-            override {
+        void Reset() override 
+        {
             SCDMoonFire->resetAtStart();
             SCDCurseOfThorns->resetAtStart();
             SCDSilence->resetAtStart();
@@ -993,14 +954,17 @@ public:
             if (!victim)
                 return;
             // If someone is killed he takes the aura
-            ((DragonOfNightmareAI_template*)Ysondre->AI())->KilledUnit(victim);
+            Creature* Ysondre = ObjectAccessor::GetCreature(*me, YsondreGUID);
+            if(Ysondre)
+                ((DragonOfNightmareAI_template*)Ysondre->AI())->KilledUnit(victim);
         }
 
-        void UpdateAI(const uint32 diff)
-            override {
+        void UpdateAI(const uint32 diff) override 
+        {
             if (!UpdateVictim())
                 return;
 
+            Creature* Ysondre = ObjectAccessor::GetCreature(*me, YsondreGUID);
             if (!Ysondre)
             {
                 Ysondre = ObjectAccessor::GetCreature(*me, me->GetOwnerGUID());
@@ -1095,7 +1059,7 @@ public:
                     if(DruidCreature)
                     {
                         Druid=((mob_dementeddruids::npc_dementeddruidsAI*)DruidCreature->AI());
-                        Druid->Ysondre=me;
+                        Druid->YsondreGUID = me->GetGUID();
                         Druid->AttackStart(Target);
                         DruidCreature->GetThreatManager().AddThreat(Target,6000.0f);
                     }
@@ -1133,17 +1097,11 @@ public:
 };
 
 
-
-
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
-
-
-// Addsc() //
-
 
 void AddSC_boss_dragonsofnightmare()
 {

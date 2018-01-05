@@ -76,17 +76,11 @@ public:
                 //Cast
                 // DoCast(me->GetVictim(),SPELL_CSLUMBER);
                 me->CastSpell(me->GetVictim(),SPELL_CSLUMBER, TRIGGERED_FULL_MASK);
+                me->GetThreatManager().ResetThreat(me->EnsureVictim());
     
                 //Stop attacking target thast asleep and pick new target
                 Cslumber_Timer = 28000;
-    
-                Unit* Target = SelectTarget(SELECT_TARGET_TOPAGGRO, 0);
-    
-                if (!Target || Target == me->GetVictim())
-                    Target = SelectTarget(SELECT_TARGET_RANDOM, 0);
-    
-                if (Target)
-                    me->TauntApply(Target);
+
     
             }else Cslumber_Timer -= diff;
     

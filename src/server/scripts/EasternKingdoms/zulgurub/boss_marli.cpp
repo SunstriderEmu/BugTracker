@@ -164,8 +164,8 @@ public:
                     me->UpdateDamagePhysical(BASE_ATTACK); */
                     DoCast(me->GetVictim(),SPELL_ENVOLWINGWEB);
     
-                    if(me->GetThreat(me->GetVictim()))
-                        DoModifyThreatPercent(me->GetVictim(),-100);
+                    if(me->GetThreatManager().GetThreat(me->GetVictim()))
+                        ModifyThreatByPercent(me->GetVictim(),-100);
     
                     PhaseTwo = true;
                     Transform_Timer = 35000 + rand()%25000;

@@ -66,15 +66,7 @@ public:
             if (Knockaway_Timer < diff)
             {
                 me->CastSpell(me->GetVictim(),SPELL_KNOCKAWAY, TRIGGERED_FULL_MASK);
-    
-                // current aggro target is knocked away pick new target
-                Unit* Target = SelectTarget(SELECT_TARGET_TOPAGGRO, 0);
-    
-                if (!Target || Target == me->GetVictim())
-                    Target = SelectTarget(SELECT_TARGET_TOPAGGRO, 1);
-    
-                if (Target)
-                    me->TauntApply(Target);
+                me->GetThreatManager().ResetThreat(me->EnsureVictim());
     
                 Knockaway_Timer = 23000;
             }

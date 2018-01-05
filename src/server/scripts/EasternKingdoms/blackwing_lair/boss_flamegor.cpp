@@ -72,8 +72,8 @@ public:
             if (WingBuffet_Timer < diff)
             {
                 DoCast(me->GetVictim(),SPELL_WINGBUFFET);
-                if(me->GetThreat(me->GetVictim()))
-                    DoModifyThreatPercent(me->GetVictim(),-75);
+                if(me->GetThreatManager().GetThreat(me->GetVictim()))
+                    ModifyThreatByPercent(me->GetVictim(),-75);
     
                 WingBuffet_Timer = 25000;
             }else WingBuffet_Timer -= diff;

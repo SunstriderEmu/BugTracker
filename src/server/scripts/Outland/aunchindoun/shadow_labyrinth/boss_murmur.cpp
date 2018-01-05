@@ -100,7 +100,7 @@ public:
             // Resonance
             if (Resonance_Timer < diff)
             {
-                if (!me->IsWithinMeleeRange(SelectTarget(SELECT_TARGET_NEAREST,0,20,true)))
+                if (!me->IsWithinMeleeRange(SelectTarget(SELECT_TARGET_MINDISTANCE,0,20,true)))
                     DoCast(me, SPELL_RESONANCE);
                 Resonance_Timer = 5000;
             }else Resonance_Timer -= diff;
@@ -125,9 +125,8 @@ public:
                 // Thundering Storm
                 if(ThunderingStorm_Timer < diff)
                 {
-                    std::list<HostileReference*>& m_threatlist = me->GetThreatManager().getThreatList();
-                    for(auto & i : m_threatlist)
-                        if(Unit* target = ObjectAccessor::GetUnit((*me),i->getUnitGuid()))
+                    for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
+                        if(Unit* target = pair.second->GetOther(me))
                             if(target->IsAlive() && me->GetDistance2d(target) > 35)
                                 DoCast(target, SPELL_THUNDERING_STORM, true);
                     ThunderingStorm_Timer = 15000;
@@ -146,17 +145,6 @@ public:
             // Select nearest most aggro target if top aggro too far
             if(!me->IsAttackReady())
                 return;
-            if(!me->IsWithinMeleeRange(me->GetVictim()))
-            {
-                std::list<HostileReference*>& m_threatlist = me->GetThreatManager().getThreatList();
-                for(auto & i : m_threatlist)
-                    if(Unit* target = ObjectAccessor::GetUnit((*me),i->getUnitGuid()))
-                        if(target->IsAlive() && me->IsWithinMeleeRange(target))
-                        {
-                            me->TauntApply(target);
-                            break;
-                        }
-            }
     
             DoMeleeAttackIfReady();
         }

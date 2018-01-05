@@ -107,11 +107,9 @@ public:
         bool HasTwoPlayersInFront()
         {
             uint8 playersInArc = 0;
-            std::list<HostileReference*> const& threatlist = me->GetThreatManager().getThreatList();
-    
-            for (auto itr : threatlist)
+            for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
             {
-                Unit* unit = itr->getTarget();
+                Unit* unit = pair.second->GetOther(me);
                 if  (   unit->ToPlayer()
                     && me->GetDistance2d(unit) < 8.0f
                     && me->HasInArc(M_PI,unit)

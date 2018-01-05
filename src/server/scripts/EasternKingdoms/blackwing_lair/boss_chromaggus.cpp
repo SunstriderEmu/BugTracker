@@ -240,38 +240,30 @@ public:
             //Affliction_Timer
             if (Affliction_Timer < diff)
             {
-                std::list<HostileReference*> threatlist = me->GetThreatManager().getThreatList();
-                for (auto & i : threatlist)
+                for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
                 {
-                    Unit* pUnit = nullptr;
-                    if (i && i->GetSource())
+                    Unit* pUnit = pair.second->GetOther(me);
+    
+                    //Cast affliction
+                    DoCast(pUnit, RAND(SPELL_BROODAF_BLUE, SPELL_BROODAF_BLACK, SPELL_BROODAF_RED, SPELL_BROODAF_BRONZE, SPELL_BROODAF_GREEN), true);
+    
+                    //Chromatic mutation if target is effected by all afflictions
+                    if (pUnit->HasAuraEffect(SPELL_BROODAF_BLUE,0)
+                        && pUnit->HasAuraEffect(SPELL_BROODAF_BLACK,0)
+                        && pUnit->HasAuraEffect(SPELL_BROODAF_RED,0)
+                        && pUnit->HasAuraEffect(SPELL_BROODAF_BRONZE,0)
+                        && pUnit->HasAuraEffect(SPELL_BROODAF_GREEN,0))
                     {
-                        pUnit = ObjectAccessor::GetUnit((*me), i->getUnitGuid());
+                        //target->RemoveAllAuras();
+                        //DoCast(target,SPELL_CHROMATIC_MUT_1);
     
-                        if (pUnit)
-                        {
-                            //Cast affliction
-                            DoCast(pUnit, RAND(SPELL_BROODAF_BLUE, SPELL_BROODAF_BLACK, SPELL_BROODAF_RED, SPELL_BROODAF_BRONZE, SPELL_BROODAF_GREEN), true);
+                        //Chromatic mutation is causing issues
+                        //Assuming it is caused by a lack of core support for Charm
+                        //So instead we instant kill our target
     
-                            //Chromatic mutation if target is effected by all afflictions
-                            if (pUnit->HasAuraEffect(SPELL_BROODAF_BLUE,0)
-                                && pUnit->HasAuraEffect(SPELL_BROODAF_BLACK,0)
-                                && pUnit->HasAuraEffect(SPELL_BROODAF_RED,0)
-                                && pUnit->HasAuraEffect(SPELL_BROODAF_BRONZE,0)
-                                && pUnit->HasAuraEffect(SPELL_BROODAF_GREEN,0))
-                            {
-                                //target->RemoveAllAuras();
-                                //DoCast(target,SPELL_CHROMATIC_MUT_1);
-    
-                                //Chromatic mutation is causing issues
-                                //Assuming it is caused by a lack of core support for Charm
-                                //So instead we instant kill our target
-    
-                                //WORKAROUND
-                                if (pUnit->GetTypeId() == TYPEID_PLAYER)
-                                    pUnit->CastSpell(pUnit, 5, TRIGGERED_NONE);
-                            }
-                        }
+                        //WORKAROUND
+                        if (pUnit->GetTypeId() == TYPEID_PLAYER)
+                            pUnit->CastSpell(pUnit, 5, TRIGGERED_NONE);
                     }
                 }
     

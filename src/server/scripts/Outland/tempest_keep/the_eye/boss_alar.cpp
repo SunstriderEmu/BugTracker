@@ -237,7 +237,7 @@ public:
                             me->SetHealth(me->GetMaxHealth());
                             me->SetSpeedRate(MOVE_RUN, DefaultMoveSpeedRate);
                             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                            DoResetThreat();
+                            ResetThreatList();
                             DoZoneInCombat();
                             me->CastSpell(me, SPELL_REBIRTH, TRIGGERED_FULL_MASK);
                             MeltArmor_Timer = 60000;
@@ -295,7 +295,7 @@ public:
     
             if(Phase1)
             {
-                if(me->GetThreatManager().getThreatList().empty())
+                if(!me->GetCombatManager().HasPvECombat())
                 {
                     EnterEvadeMode();
                     return;

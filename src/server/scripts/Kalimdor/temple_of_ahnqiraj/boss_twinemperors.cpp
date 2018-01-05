@@ -235,7 +235,7 @@ struct boss_twinemperorsAI : public ScriptedAI
     {
         me->InterruptNonMeleeSpells(false);
         DoStopAttack();
-        DoResetThreat();
+        ResetThreatList();
         DoCast(me, SPELL_TWIN_TELEPORT_VISUAL);
         me->AddUnitState(UNIT_STATE_STUNNED);
         AfterTeleport = true;
@@ -265,7 +265,7 @@ struct boss_twinemperorsAI : public ScriptedAI
                 if(nearu)
                 {
                     AttackStart(nearu);
-                    me->GetThreatManager().addThreat(nearu, 10000);
+                    me->GetThreatManager().AddThreat(nearu, 10000);
                 }
                 return true;
             }
@@ -440,7 +440,7 @@ public:
         void CastSpellOnBug(Creature *target)
         override {
             target->SetFaction(FACTION_MONSTER);
-            ((CreatureAI*)target->AI())->AttackStart(me->GetThreatManager().getHostilTarget());
+            ((CreatureAI*)target->AI())->AttackStart(me->GetVictim());
             SpellInfo *spell = (SpellInfo *)sSpellMgr->GetSpellInfo(SPELL_MUTATE_BUG);
             for (int i=0; i<3; i++)
             {
@@ -585,7 +585,7 @@ public:
             if (ArcaneBurst_Timer < diff)
             {
                 Unit *mvic;
-                if ((mvic=SelectTarget(SELECT_TARGET_NEAREST, 0, NOMINAL_MELEE_RANGE, true))!=nullptr)
+                if ((mvic=SelectTarget(SELECT_TARGET_MINDISTANCE, 0, NOMINAL_MELEE_RANGE, true))!=nullptr)
                 {
                     DoCast(mvic,SPELL_ARCANEBURST);
                     ArcaneBurst_Timer = 5000;

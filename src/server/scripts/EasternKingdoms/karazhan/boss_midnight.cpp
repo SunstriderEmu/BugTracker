@@ -285,17 +285,15 @@ public:
                 if(ChargeTimer < diff)
                 {
                     Unit *target = nullptr;
-                    std::list<HostileReference *> t_list = me->GetThreatManager().getThreatList();
                     std::vector<Unit *> target_list;
-                    for(auto & itr : t_list)
-                    {
-                        target = ObjectAccessor::GetUnit(*me, itr->getUnitGuid());
-                        if(target && target->GetDistance2d(me) > 5)
-                            target_list.push_back(target);
-                        target = nullptr;
-                    }
-                    if(target_list.size())
-                        target = *(target_list.begin()+rand()%target_list.size());
+                    for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
+                        if (Unit* target = pair.second->GetOther(me))
+                        {
+                            if (target->GetDistance2d(me) > 5.0f)
+                                target_list.push_back(target);
+                        }
+                    if (target_list.size())
+                        target = *(target_list.begin() + rand() % target_list.size());
     
                     if (target)
                     {

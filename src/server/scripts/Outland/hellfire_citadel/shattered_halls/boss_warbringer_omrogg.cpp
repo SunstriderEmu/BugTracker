@@ -355,7 +355,7 @@ public:
                 if (Unit *target = SelectTarget(SELECT_TARGET_RANDOM,0))
                 {
                     DoYellForThreat();
-                    DoResetThreat();
+                    ResetThreatList();
                     me->GetThreatManager().AddThreat(target, 0.0f);
                 }
                 ResetThreat_Timer = 35000+rand()%10000;

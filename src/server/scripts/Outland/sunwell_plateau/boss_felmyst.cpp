@@ -347,7 +347,7 @@ public:
                     me->SendMovementFlagUpdate();
 
                     setPhase(PHASE_PULL);
-                    if (Unit *target = SelectTarget(SELECT_TARGET_TOPAGGRO, 0))
+                    if (Unit *target = SelectTarget(SELECT_TARGET_MAXTHREAT, 0))
                     {
                         AttackStart(target);
                         me->GetMotionMaster()->MoveChase(target);
@@ -607,7 +607,7 @@ public:
 
                                 phase = PHASE_GROUND;
 
-                                if (Unit* tank = SelectTarget(SELECT_TARGET_TOPAGGRO, 0, 150.0f, true))
+                                if (Unit* tank = SelectTarget(SELECT_TARGET_MAXTHREAT, 0, 150.0f, true))
                                     me->SetTarget(tank->GetGUID());
 
                                 events.RescheduleEvent(EVENT_ENCAPSULATE, 33000, 0, PHASE_GROUND);

@@ -129,16 +129,13 @@ public:
     
         void HandleColdSlap()
         {
-            auto players = me->GetThreatManager().getThreatList();
-            for(auto itr : players) 
+            for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
             {
-                if (Unit* plr = itr->getTarget()) 
+                Unit* unit = pair.second->GetOther(me);
+                if (unit->IsWithinMeleeRange(me) && unit->IsAttackableByAOE())
                 {
-                    if (plr->IsWithinMeleeRange(me) && plr->IsAttackableByAOE()) 
-                    {
-                        DoCast(plr, SPELL_COLD_SLAP);
-                        plr->CastSpell(plr, SPELL_ICE_SPEAR, TRIGGERED_FULL_MASK);
-                    }
+                    DoCast(unit, SPELL_COLD_SLAP);
+                    unit->CastSpell(unit, SPELL_ICE_SPEAR, true);
                 }
             }
         }
@@ -378,15 +375,12 @@ public:
     
         void HandleIceSpear()
         {
-            auto players = me->GetThreatManager().getThreatList();
-            for (auto itr : players)
+            for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
             {
-                if (Unit* plr = itr->getTarget())
+                Unit* unit = pair.second->GetOther(me);
+                if (unit->IsWithinMeleeRange(me) && unit->IsAttackableByAOE())
                 {
-                    if (plr->IsWithinMeleeRange(me) && plr->IsAttackableByAOE())
-                    {
-                        plr->CastSpell(plr, SPELL_ICE_SPEAR, TRIGGERED_FULL_MASK);
-                    }
+                    unit->CastSpell(unit, SPELL_ICE_SPEAR, true);
                 }
             }
         }

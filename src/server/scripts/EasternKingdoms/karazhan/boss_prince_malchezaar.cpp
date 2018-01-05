@@ -315,32 +315,16 @@ public:
             const SpellInfo *info = sSpellMgr->GetSpellInfo(SPELL_ENFEEBLE_EFFECT);
             if(!info)
                 return;
-    
-            std::list<HostileReference *> t_list = me->GetThreatManager().getThreatList();
-            std::vector<Unit *> targets;
-    
-            if(!t_list.size())
-                return;
-    
-            //begin + 1 , so we don't target the one with the highest threat
-            auto itr = t_list.begin();
-            std::advance(itr, 1);
-            for( ; itr!= t_list.end(); ++itr)                   //store the threat list in a different container
-            {
-                Unit *target = ObjectAccessor::GetUnit(*me, (*itr)->getUnitGuid());
-                                                                //only on alive players
-                if(target && target->IsAlive() && target->GetTypeId() == TYPEID_PLAYER && target != me->GetVictim() )
-                    targets.push_back( target);
-            }
-    
-            //cut down to size if we have more than 5 targets
-            while(targets.size() > 5)
-                targets.erase(targets.begin()+rand()%targets.size());
-    
+
+            std::list<Unit *> targets;
+            SelectTargetList(targets, 5, SELECT_TARGET_RANDOM, 0, [&](Unit* target) {
+                return target->IsAlive() && target->GetTypeId() == TYPEID_PLAYER && target != me->GetVictim();
+            });
+           
             int i = 0;
-            for(auto itr2 = targets.begin(); itr2 != targets.end(); ++itr2, ++i)
+            for(auto itr = targets.begin(); itr != targets.end(); ++itr, ++i)
             {
-                Unit *target = *itr2;
+                Unit *target = *itr;
                 if(target)
                 {
                     enfeeble_targets[i] = target->GetGUID();
@@ -488,10 +472,10 @@ public:
                             if(axe)
                             {
                                 float threat = 1000000.0f;
-                                if(axe->GetVictim() && me->GetThreat(axe->GetVictim()))
+                                if(axe->GetVictim() && me->GetThreatManager().GetThreat(axe->GetVictim()))
                                 {
-                                    threat = axe->GetThreatManager().getThreat(axe->GetVictim());
-                                    axe->GetThreatManager().modifyThreatPercent(axe->GetVictim(), -100);
+                                    threat = axe->GetThreatManager().GetThreat(axe->GetVictim());
+                                    axe->GetThreatManager().ModifyThreatByPercent(axe->GetVictim(), -100);
                                 }
                                 if(target)
                                     axe->GetThreatManager().AddThreat(target, threat);

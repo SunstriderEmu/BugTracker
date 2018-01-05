@@ -228,11 +228,10 @@ public:
                     {
                         TargetInRange = 0;
     
-                        auto i = me->GetThreatManager().getThreatList().begin();
-                        for(; i != me->GetThreatManager().getThreatList().end(); ++i)
+                        for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
                         {
-                            Unit* pUnit = ObjectAccessor::GetUnit(*me, (*i)->getUnitGuid());
-                            if(pUnit && me->IsWithinMeleeRange(pUnit))
+                            Unit* target = pair.second->GetOther(me);
+                            if(target && me->IsWithinMeleeRange(target))
                                 TargetInRange++;
                         }
     

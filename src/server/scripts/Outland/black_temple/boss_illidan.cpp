@@ -501,11 +501,12 @@ public:
 
         void DeleteFromThreatList(ObjectGuid TargetGUID)
         {
-            for (auto & itr : me->GetThreatManager().getThreatList())
+            for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
             {
-                if (itr->getUnitGuid() == TargetGUID)
+                Unit* target = pair.second->GetOther(me);
+                if (target->GetGUID() == TargetGUID)
                 {
-                    itr->removeReference();
+                    pair.second->EndCombat();
                     break;
                 }
             }
@@ -638,7 +639,7 @@ public:
                 Timer[EVENT_FLIGHT_SEQUENCE] = 4000;
                 break;
             case 11://attack
-                DoResetThreat();
+                ResetThreatList();
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE + UNIT_FLAG_NOT_SELECTABLE);
                 me->SetSheath(SHEATH_STATE_MELEE);
                 EnterPhase(PHASE_NORMAL_2);
@@ -675,13 +676,13 @@ public:
             switch (TransformCount)
             {
             case 2:
-                DoResetThreat();
+                ResetThreatList();
                 break;
             case 4:
                 EnterPhase(PHASE_DEMON);
                 break;
             case 7:
-                DoResetThreat();
+                ResetThreatList();
                 break;
             case 9:
                 if (MaievGUID)
@@ -705,7 +706,7 @@ public:
             if (me->GetVictim() && (me->GetVictim()->GetEntry() == AKAMA || me->GetVictim()->GetEntry() == MAIEV_SHADOWSONG))
             {
                 //Reset if no other targets
-                if (me->GetThreatManager().getThreatList().size() == 1)
+                if (me->GetThreatManager().GetThreatListSize() == 1)
                 {
                     EnterEvadeMode();
                     return;
@@ -1061,11 +1062,10 @@ public:
     
         void KillAllElites()
         {
-            std::list<HostileReference*>& threatList = me->GetThreatManager().getThreatList();
             std::vector<Unit*> eliteList;
-            for(auto & itr : threatList)
+            for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
             {
-                Unit* pUnit = ObjectAccessor::GetUnit((*me), itr->getUnitGuid());
+                Unit* pUnit = pair.second->GetOther(me);
                 if(pUnit && pUnit->GetEntry() == ILLIDARI_ELITE)
                     eliteList.push_back(pUnit);
             }
@@ -1583,7 +1583,7 @@ void boss_illidan_stormrage::boss_illidan_stormrageAI::HandleTalkSequence()
         if(GETCRE(Akama, AkamaGUID))
         {
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE + UNIT_FLAG_NOT_SELECTABLE);
-            DoResetThreat();
+            ResetThreatList();
             me->GetThreatManager().AddThreat(Akama, -9999999.0f);
             ((npc_akama_illidan::npc_akama_illidanAI*)Akama->AI())->EnterPhase(PHASE_FIGHT_ILLIDAN);
             EnterPhase(PHASE_NORMAL);
@@ -2042,7 +2042,7 @@ public:
     
         void ChargeCheck()
         {
-            Unit* target = SelectTarget(SELECT_TARGET_FARTHEST, 0, 200, false);
+            Unit* target = SelectTarget(SELECT_TARGET_MAXDISTANCE, 0, 200, false);
             if(target && (!me->IsWithinCombatRange(target, FLAME_CHARGE_DISTANCE)))
             {
                 me->GetThreatManager().AddThreat(target, 5000000.0f);
@@ -2061,7 +2061,7 @@ public:
                 {
                     Glaive->InterruptNonMeleeSpells(true);
                     DoCast(me, SPELL_FLAME_ENRAGE, true);
-                    DoResetThreat();
+                    ResetThreatList();
                     Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0);
                     if(target && target->IsAlive())
                     {
@@ -2470,7 +2470,7 @@ void boss_illidan_stormrage::boss_illidan_stormrageAI::JustSummoned(Creature* su
             summon->SetDeathState(JUST_DIED);
             return;
         }
-        Unit *target = SelectTarget(SELECT_TARGET_TOPAGGRO, 0, 999, true);
+        Unit *target = SelectTarget(SELECT_TARGET_MAXTHREAT, 0, 999, true);
         if (!target || target->HasAuraEffect(SPELL_PARASITIC_SHADOWFIEND, 0)
             || target->HasAuraEffect(SPELL_PARASITIC_SHADOWFIEND2, 0))
             target = SelectTarget(SELECT_TARGET_RANDOM, 0, 999, true);

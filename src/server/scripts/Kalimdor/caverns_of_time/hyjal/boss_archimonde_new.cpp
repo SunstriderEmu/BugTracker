@@ -773,16 +773,12 @@ public:
                     return false;
             }
             
-            std::list<HostileReference*>& threatList = me->GetThreatManager().getThreatList();
-            if (threatList.empty())
-                return false;
-                
             std::list<Unit*> targets;
-            auto itr = threatList.begin();
-            for (; itr != threatList.end(); ++itr) {
-                Unit* unit = ObjectAccessor::GetUnit((*me), (*itr)->getUnitGuid());
-                if (unit && unit->IsAlive())
-                    targets.push_back(unit);
+            for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
+            {
+                Unit* target = pair.second->GetOther(me);
+                if (target && target->IsAlive())
+                    targets.push_back(target);
             }
 
             if (targets.empty())
@@ -794,7 +790,7 @@ public:
                 if (!me->IsWithinDistInMap(target, me->GetAggroRange(target)) && std::fabs(me->GetPositionZ() - target->GetPositionZ()) < 5.0f)
                     return true; // Cast Finger of Death
                 else // This target is closest, he is our new tank
-                    me->GetThreatManager().AddThreat(target, me->GetThreat(me->GetVictim()));
+                    me->GetThreatManager().AddThreat(target, me->GetThreatManager().GetThreat(me->GetVictim()));
             }
 
             return false;

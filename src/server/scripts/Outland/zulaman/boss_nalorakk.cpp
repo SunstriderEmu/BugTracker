@@ -157,7 +157,7 @@ public:
             me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY + 1, 5122);
             me->SetOrientation(1.5f);
             
-            DoResetThreat();
+            ResetThreatList();
         }
     
         void SendAttacker(Unit* target)

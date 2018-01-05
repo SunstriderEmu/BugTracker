@@ -1089,7 +1089,7 @@ public:
             AttackTimer = me->GetAttackTime(BASE_ATTACK);
             me->SetSheath(SHEATH_STATE_MELEE);
 
-            me->SetInCombatState(false); //avoid regen hp when ooc
+            me->setRegeneratingHealth(false); //avoid regen hp when ooc
         }
 
         void MovementInform(uint32 MovementType, uint32 Data)

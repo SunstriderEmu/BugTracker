@@ -256,8 +256,8 @@ public:
                     if (rand()%100 < 60) //60% chance to cast
                     {
                         DoCast(me->GetVictim(),SPELL_PSYCHICSCREAM);
-                        if(me->GetThreat(me->GetVictim()))
-                            DoModifyThreatPercent(me->GetVictim(),-50);
+                        if(me->GetThreatManager().GetThreat(me->GetVictim()))
+                            ModifyThreatByPercent(me->GetVictim(),-50);
                     }
                     //15 seconds until we should cast this again
                     PsychicScream_Timer = 20000;

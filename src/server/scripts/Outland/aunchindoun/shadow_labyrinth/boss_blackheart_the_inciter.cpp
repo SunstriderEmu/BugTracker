@@ -112,15 +112,14 @@ public:
             {
                 DoCast(me, SPELL_INCITE_CHAOS);
     
-                std::list<HostileReference *> t_list = me->GetThreatManager().getThreatList();
-                for(auto & itr : t_list)
+                for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
                 {
-                    Unit* target = ObjectAccessor::GetUnit(*me, itr->getUnitGuid());
+                    Unit* target = pair.second->GetOther(me);
                     if (target && target->GetTypeId() == TYPEID_PLAYER)
-                        target->CastSpell(target,SPELL_INCITE_CHAOS_B, TRIGGERED_FULL_MASK);
+                        target->CastSpell(target,SPELL_INCITE_CHAOS_B, true);
                 }
     
-                DoResetThreat();
+                ResetThreatList();
                 InciteChaos = true;
                 InciteChaos_Timer = 40000;
                 return;

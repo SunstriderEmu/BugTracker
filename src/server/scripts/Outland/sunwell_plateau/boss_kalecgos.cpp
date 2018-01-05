@@ -1,18 +1,3 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*/
 
 /* ScriptData
 SDName: Boss_Kalecgos
@@ -380,19 +365,7 @@ public:
                 break;
             }
         }
-        
-        void DeleteFromThreatList(ObjectGuid TargetGUID)
-        {
-            for(auto & itr : me->GetThreatManager().getThreatList())
-            {
-                if(itr->getUnitGuid() == TargetGUID)
-                {
-                    itr->removeReference();
-                    break;
-                }
-            }
-        }
-    
+            
         void UpdateAI(const uint32 diff) override;
     };
 
@@ -455,13 +428,11 @@ public:
                 pInstance->SetData(DATA_KALECGOS_EVENT, NOT_STARTED);
         }
     
-        void JustEngagedWith(Unit* who)
-        override {
+        void JustEngagedWith(Unit* who) override {
             Creature *Kalec = me->SummonCreature(MOB_KALEC, me->GetPositionX() + 10, me->GetPositionY() + 5, me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 0);
             if(Kalec)
             {
-                KalecGUID = Kalec->GetGUID();
-                me->CombatStart(Kalec);
+                me->EngageWithTarget(Kalec);
                 me->GetThreatManager().AddThreat(Kalec, 100.0f);
             }
             DoScriptText(SAY_SATH_AGGRO, me);
@@ -532,19 +503,7 @@ public:
                         i_pl->RemoveAurasDueToSpell(SPELL_SPECTRAL_REALM_AURA);
                 }
         }
-        
-        void DeleteFromThreatList(ObjectGuid TargetGUID)
-        {
-            for(auto & itr : me->GetThreatManager().getThreatList())
-            {
-                if(itr->getUnitGuid() == TargetGUID)
-                {
-                    itr->removeReference();
-                    break;
-                }
-            }
-        }
-        
+                
         void _DoMeleeAttackIfReady(bool withCorruptionStrike)
         {
             if (withCorruptionStrike)
@@ -560,7 +519,7 @@ public:
                 
             // Check LoS EVERY update, maybe the current target was teleported back
             if (me->GetVictim()->GetPositionZ() >= -65.0f || !me->GetVictim()->IsWithinLOSInMap(me)) {
-                DeleteFromThreatList(me->GetVictim()->GetGUID());
+                me->GetThreatManager().ClearThreat(me->GetVictim());
                 if(KalecGUID) {
                     if(Unit* Kalec = ObjectAccessor::GetUnit(*me, KalecGUID))
                         me->AI()->AttackStart(Kalec);
@@ -619,16 +578,8 @@ public:
             if(ResetThreat < diff)
             {
                 if (( me->GetVictim()->HasAuraEffect(SPELL_SPECTRAL_EXHAUSTION)) && (me->GetVictim()->GetTypeId() == TYPEID_PLAYER))
-                {
-                    for(auto & itr : me->GetThreatManager().getThreatList())
-                    {
-                        if((itr->getUnitGuid()) ==  (me->GetVictim()->GetGUID()))
-                        {
-                            itr->removeReference();
-                            break;
-                        }
-                    }
-                }
+                    me->GetThreatManager().ClearThreat(me->GetVictim());
+
                 ResetThreat = 1000;
             }else ResetThreat -= diff;
     
@@ -710,7 +661,7 @@ void boss_kalecgos::boss_kalecgosAI::UpdateAI(const uint32 diff)
         // Check LoS EVERY update, maybe the current target was teleported in the spectral realm
         if (me->GetVictim()->GetPositionZ() <= 52.5f || !me->GetVictim()->IsWithinLOSInMap(me))
         {
-            DeleteFromThreatList(me->GetVictim()->GetGUID());
+            me->GetThreatManager().ClearThreat(me->GetVictim());
             UpdateVictim();
         }
 
@@ -982,7 +933,7 @@ class spell_kalecgos_spectral_blast : public SpellScript
             target->AddAura(SPELL_SPECTRAL_REALM_AURA, pet);
             pet->Relocate(pet->GetPositionX(), pet->GetPositionY(), pet->GetPositionZ(), pet->GetOrientation());
         }
-        caster->GetThreatManager().modifyThreatPercent(target, -100);  // Reset threat so Kalecgos does not follow the player in spectral realm :)
+        caster->GetThreatManager().ModifyThreatByPercent(target, -100);  // Reset threat so Kalecgos does not follow the player in spectral realm :)
         target->RemoveAurasDueToSpell(SPELL_ARCANE_BUFFET); // FIXME: I'm not sure this is blizzlike
         if (target->HasAuraEffect(SPELL_SPECTRAL_EXHAUSTION)) {
             target->RemoveAurasDueToSpell(SPELL_SPECTRAL_EXHAUSTION);    // FIXME: If this happens, this is a bug.

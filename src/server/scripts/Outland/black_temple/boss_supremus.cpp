@@ -124,15 +124,13 @@ public:
         {
             uint32 maxhealthfound = 0;
             Player* target = nullptr;
-    
-            auto& m_threatlist = me->GetThreatManager().getThreatList();
-            for (auto i : m_threatlist)
+
+            for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
             {
-                if(!i->getUnitGuid().IsPlayer())
+                Player* p = pair.second->GetOther(me)->ToPlayer();
+                if (!p) //ref may not be a player
                     continue;
     
-                me->GetThreatManager().AddThreat(nullptr,0);
-                Player* p = me->GetMap()->GetPlayer(i->getUnitGuid());
                 if(p && me->IsWithinMeleeRange(p))
                 {
                     if(p->GetHealth() > maxhealthfound)
@@ -153,7 +151,7 @@ public:
                 if(me->GetDistance2d(me->GetVictim()) > 40)
                     me->CastSpell(me->GetVictim(),SPELL_CHARGE, TRIGGERED_NONE);
                             
-                DoResetThreat();
+                ResetThreatList();
                 me->GetThreatManager().AddThreat(target, 5000000.0f);
                 DoScriptText(EMOTE_NEW_TARGET, me);
                 SwitchTargetTimer = TIMER_SWITCH_TARGET;
@@ -172,7 +170,7 @@ public:
                 if(me->IsInCombat())
                 {
                     // StopEruptions(); //seems to be non blizz
-                    DoResetThreat();
+                    ResetThreatList();
                     DoZoneInCombat();
                     DoScriptText(EMOTE_PUNCH_GROUND, me);
                 }
@@ -181,7 +179,7 @@ public:
             {
                 currentPhase = 2;
                 PhaseSwitchTimer = TIMER_PHASE_LENGHT;
-                DoResetThreat();
+                ResetThreatList();
                 SwitchTargetTimer = TIMER_SWITCH_TARGET;
                 SummonVolcanoTimer = TIMER_VOLCANO_FIRST;
                 me->SetSpeedRate(MOVE_RUN, 0.9f);

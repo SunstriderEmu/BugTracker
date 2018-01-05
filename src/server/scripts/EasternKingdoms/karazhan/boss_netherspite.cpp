@@ -212,7 +212,7 @@ public:
                     }
                     // aggro target if Red Beam
                     if(j==RED_PORTAL && me->GetVictim() != target && target->GetTypeId() == TYPEID_PLAYER)
-                        me->GetThreatManager().addThreat(target, 100000.0f+me->GetThreat(me->GetVictim()));
+                        me->GetThreatManager().AddThreat(target, 100000.0f+me->GetThreatManager().GetThreat(me->GetVictim()));
                 }
         }
     

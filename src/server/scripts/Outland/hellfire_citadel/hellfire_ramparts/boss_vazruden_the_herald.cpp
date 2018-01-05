@@ -132,7 +132,7 @@ public:
                 events.RescheduleEvent(EVENT_ENTER_LAND_PHASE, 10000, 0, PHASE_DESCENDING); 
                 break;
             case PHASE_LAND:
-                DoResetThreat();
+                ResetThreatList();
                 me->SetCanFly(false, true);
                 DoStartMovement(me->GetVictim()); //re enable combat movement
                 events.RescheduleEvent(EVENT_FIREBALL, urand(5000, 10000));

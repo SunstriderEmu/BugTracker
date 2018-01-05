@@ -659,11 +659,11 @@ public:
                         //Place all units in threat list on outside of stomach
                         Stomach_Map.clear();
     
-                        auto i = me->GetThreatManager().getThreatList().begin();
-                        for (; i != me->GetThreatManager().getThreatList().end(); ++i)
+                        for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
                         {
+                            Unit* target = pair.second->GetOther(me);
                             //Outside stomach
-                            Stomach_Map[(*i)->getUnitGuid()] = false;
+                            Stomach_Map[target->GetGUID()] = false;
                         }
     
                         //Spawn 2 flesh tentacles

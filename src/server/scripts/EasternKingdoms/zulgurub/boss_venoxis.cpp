@@ -121,7 +121,7 @@ public:
                         TargetInRange = 0;
                         for(int i=0; i<10; i++)
                         {
-                            if (Unit* target = SelectTarget(SELECT_TARGET_TOPAGGRO,i))
+                            if (Unit* target = SelectTarget(SELECT_TARGET_MAXTHREAT,i))
                                 if(me->IsWithinMeleeRange(target))
                                     TargetInRange++;
                         }
@@ -159,7 +159,7 @@ public:
                         me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, (cinfo->mindmg +((cinfo->mindmg/100) * 25)));
                         me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, (cinfo->maxdmg +((cinfo->maxdmg/100) * 25)));
                         me->UpdateDamagePhysical(BASE_ATTACK); */
-                        DoResetThreat();
+                        ResetThreatList();
                         PhaseTwo = true;
                     }
     

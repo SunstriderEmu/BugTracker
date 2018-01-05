@@ -162,7 +162,7 @@ class boss_curator : public CreatureScript
                 }
                 case EVENT_HATEFUL_BOLT:
                 {
-                    Unit* target = SelectTarget(SELECT_TARGET_TOPAGGRO, 1);
+                    Unit* target = SelectTarget(SELECT_TARGET_MAXTHREAT, 1);
                     if (target)
                         if(me->CastSpell(target, SPELL_HATEFUL_BOLT) == SPELL_CAST_OK)
                             events.RescheduleEvent(EVENT_HATEFUL_BOLT, 15 * IN_MILLISECONDS, PHASE_NORMAL);

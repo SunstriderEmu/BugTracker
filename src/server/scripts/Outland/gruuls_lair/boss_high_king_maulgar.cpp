@@ -1,18 +1,3 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /* ScriptData
 SDName: Boss_High_King_Maulgar
@@ -732,22 +717,12 @@ public:
             //BlastWave_Timer
             if(BlastWave_Timer < diff)
             {
-                Unit *target = nullptr;
-                std::list<HostileReference *> t_list = me->GetThreatManager().getThreatList();
-                std::vector<Unit *> target_list;
-                for(auto & itr : t_list)
+                Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, [&](Unit* target) { return target->GetDistance2d(me) < 15.0f; });
+                if (target)
                 {
-                    target = ObjectAccessor::GetUnit(*me, itr->getUnitGuid());
-                                                                //15 yard radius minimum
-                    if(target && target->GetDistance2d(me) < 15)
-                        target_list.push_back(target);
-                    target = nullptr;
+                    me->InterruptNonMeleeSpells(false);
+                    DoCast(target, SPELL_BLAST_WAVE);
                 }
-                if(target_list.size())
-                    target = *(target_list.begin()+rand()%target_list.size());
-    
-                me->InterruptNonMeleeSpells(false);
-                DoCast(target, SPELL_BLAST_WAVE);
                 BlastWave_Timer = 60000;
             }else BlastWave_Timer -= diff;
     

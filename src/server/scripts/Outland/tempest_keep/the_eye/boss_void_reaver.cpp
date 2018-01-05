@@ -81,8 +81,8 @@ public:
             BossAI::JustEngagedWith(who);
         }
     
-        void UpdateAI(const uint32 diff)
-        override {
+        void UpdateAI(const uint32 diff) override 
+        {
             if (!UpdateVictim() )
                 return;
             
@@ -96,11 +96,9 @@ public:
                     //DoCast(me->GetVictim(),SPELL_POUNDING); //Not correct, or maybe the spell is not considered as AoE as it should
                     //cast Pounding on ALL the players in ThreatList that are <= 18 yards from Void Reaver
                     //I hope it won't cause freezes...
-                    Unit *target = nullptr;
-                    std::list<HostileReference *> t_list = me->GetThreatManager().getThreatList();
-                    for(auto & itr : t_list)
+                    for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
                     {
-                        target = ObjectAccessor::GetUnit(*me, itr->getUnitGuid());
+                        Unit* target = pair.second->GetOther(me);
                         Creature *cr = target ? target->ToCreature() : nullptr;
                         Player *pl = target ? target->ToPlayer() : nullptr;
                         if (target && (pl || (cr && cr->IsPet())) && target->GetDistance2d(me) <= 18)
@@ -121,34 +119,15 @@ public:
             // Arcane Orb
             if(ArcaneOrb_Timer < diff)
             {
-                //if (!me->IsNonMeleeSpellCast(false))
-                //{
-                    Unit *target = nullptr;
-                    std::list<HostileReference *> t_list = me->GetThreatManager().getThreatList();
-                    std::vector<Unit *> target_list;
-                    for(auto & itr : t_list)
-                    {
-                        target = ObjectAccessor::GetUnit(*me, itr->getUnitGuid());
-                        if (!target)
-                            continue;
-                        
-                                                                    //18 yard radius minimum
-                        if(target && target->GetTypeId() == TYPEID_PLAYER && target->IsAlive() && target->GetDistance2d(me) >= 18)
-                            target_list.push_back(target);
-                        target = nullptr;
-                    }
-                    if(target_list.size())
-                        target = *(target_list.begin()+rand()%target_list.size());
-    
-                    if (target)
-                        me->CastSpell(target->GetPositionX(),target->GetPositionY(),target->GetPositionZ(), SPELL_ARCANE_ORB, TRIGGERED_NONE);
-                    else if (me->GetVictim())   // If no target >= 18 meters, cast Arcane Orb on the tank
-                        me->CastSpell(me->GetVictim()->GetPositionX(),me->GetVictim()->GetPositionY(),me->GetVictim()->GetPositionZ(), SPELL_ARCANE_ORB, TRIGGERED_NONE);
-    
-                    ArcaneOrb_Timer = 3000;
-                //}
-                //else ArcaneOrb_Timer += 300;    // Do it at next update
-            }else ArcaneOrb_Timer -= diff;
+                Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, -18.0f, true);
+                if (target)
+                    me->CastSpell(target, SPELL_ARCANE_ORB);
+                else if (me->GetVictim())   // If no target >= 18 meters, cast Arcane Orb on the tank
+                    me->CastSpell(me->GetVictim(), SPELL_ARCANE_ORB);
+
+                ArcaneOrb_Timer = 3000;
+            } else
+                ArcaneOrb_Timer -= diff;
     
             // Single Target knock back, reduces aggro
             if(KnockAway_Timer < diff)
@@ -158,8 +137,8 @@ public:
                     DoCast(me->GetVictim(),SPELL_KNOCK_AWAY);
     
                     //Drop 25% aggro
-                    if(me->GetThreat(me->GetVictim()))
-                        DoModifyThreatPercent(me->GetVictim(),-25);
+                    if(GetThreat(me, me->GetVictim()))
+                        ModifyThreatByPercent(me->GetVictim(), -25);
     
                     KnockAway_Timer = 30000;
                 //}

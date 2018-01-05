@@ -225,7 +225,7 @@ public:
             case PHASE_LYNX:
             case PHASE_DRAGONHAWK:
                 DoTeleportTo(CENTER_X, CENTER_Y, CENTER_Z, 100);
-                DoResetThreat();
+                ResetThreatList();
 
                 me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY, 0); // TODO: Implement a wrapper for this
                 me->RemoveAurasDueToSpell(Transform[newPhase - 2].unaura);

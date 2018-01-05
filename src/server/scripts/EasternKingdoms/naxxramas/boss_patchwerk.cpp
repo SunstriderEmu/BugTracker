@@ -99,12 +99,9 @@ public:
                 uint32 MostHP = 0;
                 Unit* pMostHPTarget = nullptr;
                 Unit* pTemp = nullptr;
-                auto i = me->GetThreatManager().getThreatList().begin();
-    
-                for (i = me->GetThreatManager().getThreatList().begin(); i!=me->GetThreatManager().getThreatList().end();)
+                for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
                 {
-                    pTemp = ObjectAccessor::GetUnit((*me),(*i)->getUnitGuid());
-                    ++i;
+                    Unit* pTemp = pair.second->GetOther(me);
                     if (pTemp && pTemp->IsAlive() && pTemp->GetHealth() > MostHP && me->GetDistance2d(pTemp) < 5)
                     {
                         MostHP = pTemp->GetHealth();

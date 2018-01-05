@@ -1371,7 +1371,7 @@ public:
                     me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     me->ClearUnitState(UNIT_STATE_STUNNED);
                     DoZoneInCombat();
-                    if (Unit *unit = SelectTarget(SELECT_TARGET_NEAREST, 0, 100.0f, true))
+                    if (Unit *unit = SelectTarget(SELECT_TARGET_MINDISTANCE, 0, 100.0f, true))
                     {
                         AttackStart(unit);
                         animSpawnTimer = 0;
@@ -1800,7 +1800,7 @@ public:
                             else
                             {
                                 DoZoneInCombat();
-                                if (Unit *unit = SelectTarget(SELECT_TARGET_NEAREST, 0, 100.0f, false))
+                                if (Unit *unit = SelectTarget(SELECT_TARGET_MINDISTANCE, 0, 100.0f, false))
                                 {
                                     AttackStart(unit);
                                     me->GetThreatManager().AddThreat(unit, 10000000.0f);

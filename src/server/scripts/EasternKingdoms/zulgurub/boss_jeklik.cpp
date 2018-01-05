@@ -207,7 +207,7 @@ public:
                     else
                     {
                         me->SetUInt32Value(UNIT_FIELD_DISPLAYID,15219);
-                        DoResetThreat();
+                        ResetThreatList();
                         PhaseTwo = true;
                     }
                 }

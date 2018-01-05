@@ -292,12 +292,11 @@ public:
         {
             if (id == MESSAGE_GET_HATED_MANA_USER)
             {
-                std::list<HostileReference*>::iterator i;
-                for (i = me->GetThreatManager().getThreatList().begin(); i != me->GetThreatManager().getThreatList().end(); ++i)
+                for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
                 {
-                    Unit* pUnit = ObjectAccessor::GetUnit((*me), (*i)->getUnitGuid());
-                    if (pUnit->GetPowerType() == POWER_MANA)
-                        return pUnit->GetGUID();
+                    Unit* target = pair.second->GetOther(me);
+                    if (target->GetPowerType() == POWER_MANA)
+                        return target->GetGUID();
                 }
             }
             return 0;

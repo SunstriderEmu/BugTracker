@@ -173,15 +173,15 @@ public:
                 {
                     case 0:
                         me->Relocate(-8340.782227,2083.814453,125.648788,0);
-                        DoResetThreat();
+                        ResetThreatList();
                         break;
                     case 1:
                         me->Relocate(-8341.546875,2118.504639,133.058151,0);
-                        DoResetThreat();
+                        ResetThreatList();
                         break;
                     case 2:
                         me->Relocate(-8318.822266,2058.231201,133.058151,0);
-                        DoResetThreat();
+                        ResetThreatList();
                         break;
                 }
                 DoStopAttack();
@@ -273,7 +273,7 @@ public:
             me->SetVisible(false);
             me->Relocate(bossc->x, bossc->y, bossc->z, bossc->r);
             Invisible = true;
-            DoResetThreat();
+            ResetThreatList();
             DoStopAttack();
     
             switch (atPercent)

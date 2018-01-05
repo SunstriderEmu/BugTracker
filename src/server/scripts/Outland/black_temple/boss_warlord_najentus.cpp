@@ -185,9 +185,9 @@ public:
             if(NeedleSpineTimer < diff)
             {
                 //me->CastSpell(me, SPELL_NEEDLE_SPINE, TRIGGERED_FULL_MASK);
-                std::list<Unit*> target;
-                SelectUnitList(target, 3, SELECT_TARGET_RANDOM, 80.0f, true);
-                for(auto & i : target)
+                std::list<Unit*> targets;
+                SelectTargetList(targets, 3, SELECT_TARGET_RANDOM, 0, 0.0f, true);
+                for(auto & i : targets)
                     me->CastSpell(i, SPELL_NEEDLE_SPINE2, TRIGGERED_FULL_MASK);
                 NeedleSpineTimer = TIMER_NEEDLE_SPINE;
             }else NeedleSpineTimer -= diff;

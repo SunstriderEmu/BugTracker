@@ -151,7 +151,7 @@ public:
                     me->SetUInt32Value(UNIT_FIELD_DISPLAYID,11686);
                     me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                     //me->CombatStop();
-                    DoResetThreat();
+                    ResetThreatList();
                     VanishedOnce = true;
                     Vanish_Timer = 45000;
                     Visible_Timer = 6000;
@@ -192,8 +192,8 @@ public:
                 if(PhaseTwo && Gouge_Timer < diff)
                 {
                     DoCast(me->GetVictim(), SPELL_GOUGE);
-                    if(me->GetThreat(me->GetVictim()))
-                        DoModifyThreatPercent(me->GetVictim(),-80);
+                    if(me->GetThreatManager().GetThreat(me->GetVictim()))
+                        ModifyThreatByPercent(me->GetVictim(),-80);
     
                     Gouge_Timer = 17000+rand()%10000;
                 }else Gouge_Timer -= diff;

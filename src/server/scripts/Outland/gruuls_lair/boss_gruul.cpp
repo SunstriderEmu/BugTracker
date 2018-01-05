@@ -109,19 +109,14 @@ public:
                         case 0:
                         {
                             //Begin the whole ordeal
-                            std::list<HostileReference*>& m_threatlist = me->GetThreatManager().getThreatList();
-    
                             std::vector<Unit*> knockback_targets;
-    
-                            //First limit the list to only players
-                            for(auto & itr : m_threatlist)
+                            for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
                             {
-                                Unit *target = ObjectAccessor::GetUnit(*me, itr->getUnitGuid());
-    
-                                if(target && target->GetTypeId() == TYPEID_PLAYER)
+                                Unit* target = pair.second->GetOther(me);
+                                if (target && target->GetTypeId() == TYPEID_PLAYER) ////First limit the list to only players
                                     knockback_targets.push_back(target);
                             }
-    
+
                             //Now to totally disoriend those players
                             for(auto itr = knockback_targets.begin(); itr!= knockback_targets.end(); ++itr)
                             {
@@ -145,22 +140,18 @@ public:
                         case 1:
                         {
                             //Players are going to get stoned
-                            std::list<HostileReference*>& m_threatlist = me->GetThreatManager().getThreatList();
-    
-                            for(auto & itr : m_threatlist)
+                            for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
                             {
-                                Unit *target = ObjectAccessor::GetUnit(*me, itr->getUnitGuid());
-    
-                                if(target)
+                                if(Unit* target = pair.second->GetOther(me))
                                 {
                                     target->RemoveAurasDueToSpell(SPELL_GRONN_LORDS_GRASP);
-                                    target->CastSpell(target, SPELL_STONED, TRIGGERED_FULL_MASK, nullptr, nullptr, me->GetGUID());
+                                    target->CastSpell(target, SPELL_STONED, true, nullptr, nullptr, me->GetGUID());
                                 }
                             }
     
                             GroundSlamTimer = 5000;
     
-                         break;
+                            break;
                         }
     
                         case 2:
@@ -176,13 +167,9 @@ public:
                         case 3:
                         {
                             //Shatter takes effect
-                            std::list<HostileReference*>& m_threatlist = me->GetThreatManager().getThreatList();
-    
-                            for(auto & itr : m_threatlist)
+                            for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
                             {
-                                Unit *target = ObjectAccessor::GetUnit(*me, itr->getUnitGuid());
-    
-                                if(target)
+                                if (Unit* target = pair.second->GetOther(me))
                                 {
                                     target->RemoveAurasDueToSpell(SPELL_STONED);
     
@@ -223,7 +210,7 @@ public:
                 if (HurtfulStrike_Timer < diff)
                 {
                     Unit* target = nullptr;
-                    target = SelectTarget(SELECT_TARGET_TOPAGGRO,1);
+                    target = SelectTarget(SELECT_TARGET_MAXTHREAT,1);
     
                     if (target && me->IsWithinMeleeRange(me->GetVictim()))
                         DoCast(target,SPELL_HURTFUL_STRIKE);

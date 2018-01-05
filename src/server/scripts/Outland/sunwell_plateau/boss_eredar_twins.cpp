@@ -160,16 +160,17 @@ struct EredarTwin : public ScriptedAI
     //return true if any players in threatlist outside the room
     bool CheckPlayersForFireblast()
     {
-        std::list<HostileReference*>& threatlist = me->GetThreatManager().getThreatList();
-        for (auto itr : threatlist)
-            if (itr->getTarget()->GetDistance(1816.406250, 625.544495, 33.403782) >= 50.0f)
+        for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
+        {
+            Unit* unit = pair.second->GetOther(me);
+            if (unit->GetDistance(1816.406250, 625.544495, 33.403782) >= 50.0f)
                 return true;
-
+        }
         return false;
     }
 
-    void JustDied(Unit* Killer)
-    override {
+    void JustDied(Unit* Killer) override 
+    {
         if (SisterDead)
         {
             DoScriptText(isSacrolash ? SAY_SAC_DEAD : YELL_ALY_DEAD, me);
@@ -198,7 +199,8 @@ struct EredarTwin : public ScriptedAI
 
         me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_HASTE_SPELLS, true);
 
-        if (pInstance) {
+        if (pInstance) 
+        {
             if (pInstance->GetData(DATA_EREDAR_TWINS_EVENT) != DONE) 
             {
                 Unit* Sister = ObjectAccessor::GetUnit((*me), ObjectGuid(pInstance->GetData64(isSacrolash ? DATA_ALYTHESS : DATA_SACROLASH)));
@@ -207,8 +209,8 @@ struct EredarTwin : public ScriptedAI
                     if (Sister->IsDead())
                         (Sister->ToCreature())->Respawn();
                     else {
-                        if(Sister->GetVictim())
-                            me->GetThreatManager().addThreat(Sister->GetVictim(),0.0f);
+                        if (Unit* victim = Sister->GetVictim())
+                            me->EngageWithTarget(victim);
                     }
                 }
             }
@@ -271,7 +273,7 @@ struct EredarTwin : public ScriptedAI
 
             //if no target found pick it ourselves
             if(!target)
-                target = SelectTarget(SELECT_TARGET_TOPAGGRO, 5, 100.0, true, true);
+                target = SelectTarget(SELECT_TARGET_MAXTHREAT, 5, 100.0, true, true);
 
             if(!target)
                 target = me->GetVictim();
@@ -311,22 +313,16 @@ struct EredarTwin : public ScriptedAI
     // Select a random target from top5 threat in sister threat list, except her tank and ours
     Unit* SelectConflagOrNovaTarget(Creature* sister)
     {
-        std::list<HostileReference*>& threatlist = sister->GetThreatManager().getThreatList();
-
         std::list<Unit*> targetList;
-        for (std::list<HostileReference*>::const_iterator itr = threatlist.begin(); itr != threatlist.end(); ++itr)
-        {
-            if (checkTarget((*itr)->getTarget(), true, 100.0f)
-                && (*itr)->getTarget() != me->GetVictim()
-                && (*itr)->getTarget() != sister->GetVictim() )
-            {
-                targetList.push_back((*itr)->getTarget());
-            }
-            if(targetList.size() == 5) //only 5 first at threat (threatlist is ordered by threat)
-                break;
-        }
-
-        if(targetList.size() == 0) return nullptr;
+        sister->AI()->SelectTargetList(targetList, 5, SELECT_TARGET_MAXTHREAT, 0, [&](Unit* target) {
+            return target->GetTypeId() == TYPEID_PLAYER
+                && me->IsWithinCombatRange(target, 100.0f)
+                && target != me->GetVictim()
+                && target != sister->GetVictim();
+        });
+      
+        if(targetList.size() == 0) 
+            return nullptr;
 
         auto itr = targetList.begin();
         std::advance(itr, urand(0, targetList.size() - 1));
@@ -669,7 +665,7 @@ public:
                 if (ChangeTargetTimer <= diff) {
                     if (Creature* sacrolash = me->FindNearestCreature(MOB_LADY_SACROLASH, 100.0f, true))
                     {
-                        DoResetThreat();
+                        ResetThreatList();
                         Unit* target = ((ScriptedAI*)sacrolash->AI())->SelectTarget(SELECT_TARGET_RANDOM, 0, 60.0f, true);
                         if (target) {
                             AttackStart(target);

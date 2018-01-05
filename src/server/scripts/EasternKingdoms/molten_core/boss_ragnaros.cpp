@@ -280,16 +280,15 @@ class Boss_Ragnaros : public CreatureScript
                 {
                     Unit* target = nullptr;
                     float MaxThreat = 0;
-                    std::list<HostileReference*>& m_threatlist = me->GetThreatManager().getThreatList();
-                    for (auto & i : m_threatlist)
+                    for (auto itr : me->GetThreatManager().GetUnsortedThreatList())
                     {
-                        Unit* pUnit = ObjectAccessor::GetUnit((*me), i->getUnitGuid());
-                        if(pUnit && me->IsWithinMeleeRange(pUnit))
+                        Unit* victim = itr->GetVictim();
+                        if(me->IsWithinMeleeRange(victim))
                         {
-                            if (i->getThreat() > MaxThreat)
+                            if (itr->GetThreat() > MaxThreat)
                             {
-                                target = pUnit;
-                                MaxThreat = i->getThreat();
+                                target = victim;
+                                MaxThreat = itr->GetThreat();
                             }
                         }
                     }
@@ -440,20 +439,11 @@ class Boss_Ragnaros : public CreatureScript
                         {  
                             if (!me->IsNonMeleeSpellCast(false))
                             {
-                                std::vector<Unit*> ValidTargets;
-                                std::list<HostileReference*>& m_threatlist = me->GetThreatManager().getThreatList();
-                                for (auto & i : m_threatlist)
-                                {
-                                    Unit* pTarget = ObjectAccessor::GetUnit(*me,i->getUnitGuid());
-                                    if (pTarget && pTarget->GetPowerType() == POWER_MANA && pTarget->IsWithinLOSInMap(me)) //&& maxrange?
-                                        ValidTargets.push_back(pTarget);
-                                }
-                                if (!ValidTargets.empty())
-                                {
-                                    DoScriptText(SAY_HAMMER, me);
-                                    Unit* target = ValidTargets[urand(0, ValidTargets.size() -1)];
-                                    me->CastSpell(target,SPELL_MIGHT_OF_RAGNAROS, TRIGGERED_NONE);
-                                }
+                                std::list<Unit *> ValidTargets;
+                                SelectTargetList(ValidTargets, 10, SELECT_TARGET_RANDOM, 0, [&](Unit* target) {
+                                    return target->IsAlive() && target->GetTypeId() == TYPEID_PLAYER && target->GetPowerType() == POWER_MANA && target->IsWithinLOSInMap(me);
+                                });
+
                                 HammerOfRagnaros_Timer = urand(20000, 30000);
                             }
                         }
@@ -577,13 +567,11 @@ class Son_Of_Flame : public CreatureScript
 
             void DoAoEManaburn()
             {
-                std::list<HostileReference*>& m_threatlist = me->GetThreatManager().getThreatList();
-                auto i = m_threatlist.begin();
-                for (i = m_threatlist.begin(); i!= m_threatlist.end();++i)
+                for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
                 {
-                    Unit* pUnit = ObjectAccessor::GetUnit((*me), (*i)->getUnitGuid());
-                    if(pUnit && pUnit->IsWithinDistInMap(me,MANABURN_RANGE))
-                        pUnit->CastSpell(pUnit, SPELL_MANABURN, TRIGGERED_FULL_MASK);
+                    Unit* target = pair.second->GetOther(me);
+                    if(target && target->IsWithinDistInMap(me, MANABURN_RANGE))
+                        target->CastSpell(target, SPELL_MANABURN, true);
                 }
             }
 

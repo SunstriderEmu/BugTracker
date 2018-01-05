@@ -111,7 +111,13 @@ public:
     
             if (ShadowBoltTimer <= diff)
             {
-                if(Unit* u = SelectTarget(0, 0.0f, 100.0f, true, false, true, 0, 0))
+                Unit* u = SelectTarget(SELECT_TARGET_RANDOM, 0, [&](Unit* target) {
+                    return target->IsAlive()
+                        && target->GetTypeId() == TYPEID_PLAYER
+                        && me->IsWithinCombatRange(target, 100.0f)
+                        && !(target->IsPossessed() || target->IsPossessing());
+                });
+                if(u)
                 {
                     DoCast(u, SPELL_SHADOWBOLT, true);
                     ShadowBoltTimer = TIMER_SHADOW_BOLT;
@@ -287,17 +293,10 @@ public:
         
         bool HasPlayerTarget()
         {
-            Map::PlayerList const &PlayerList = me->GetMap()->GetPlayers();
-            if (PlayerList.isEmpty())
-                return false;
-            for(auto & itr : me->GetThreatManager().getThreatList())
+            for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
             {
-                for(const auto & i : PlayerList)
-                {
-                    if (Player* i_pl = i.GetSource())
-                        if(i_pl->GetGUID() == itr->getUnitGuid())
-                            return true;
-                }
+                if (pair.second->GetOther(me)->GetTypeId() == TYPEID_PLAYER)
+                    return true;
             }
             return false;
         }
@@ -316,7 +315,7 @@ public:
             /*
             if (done_by->GetDisplayId() == 21300) //vengeful spirit
             { 
-                DoModifyThreatPercent(done_by,-100);
+                ModifyThreatByPercent(done_by,-100);
                 damage = 0;
                 if (done_by->GetTypeId() == TYPEID_PLAYER) {
                     WorldPacket data(SMSG_CAST_FAILED, (4+2));              // prepare packet error message
@@ -349,18 +348,14 @@ public:
     
         void SetThreatList(Creature* unit)
         {
-            if(!unit) return;
+            if(!unit) 
+                return;
     
-            std::list<HostileReference*>& m_threatlist = me->GetThreatManager().getThreatList();
-            auto i = m_threatlist.begin();
-            for(i = m_threatlist.begin(); i != m_threatlist.end(); i++)
+            for (auto itr : me->GetThreatManager().GetUnsortedThreatList())
             {
-                Unit* pUnit = ObjectAccessor::GetUnit((*me), (*i)->getUnitGuid());
-                if(pUnit && pUnit->IsAlive())
-                {
-                    float threat = me->GetThreat(pUnit);
-                    unit->GetThreatManager().AddThreat(pUnit, threat + 5000000.0f);
-                }
+                Unit* victim = itr->GetVictim();
+                if (victim->IsAlive())
+                    unit->GetThreatManager().AddThreat(victim, itr->GetThreat() + 5000000.0f);
             }
         }
         
@@ -427,7 +422,16 @@ public:
     
             if(ShadowOfDeathTimer < diff)
             {
-                if (Unit* pShadowVictim = SelectTarget(1, 0.0f, 100.0f, true, true, true, SPELL_SHADOW_OF_DEATH, 1)) {
+                Unit* pShadowVictim = SelectTarget(SELECT_TARGET_RANDOM, 0, [&](Unit* target) {
+                    return target->IsAlive()
+                        && target->GetTypeId() == TYPEID_PLAYER
+                        && me->IsWithinCombatRange(target, 100.0f)
+                        && !target->HasAuraEffect(SPELL_SHADOW_OF_DEATH, 1)
+                        && !(target->IsPossessed() || target->IsPossessing())
+                        && target != me->GetVictim(); //not tank
+                });
+
+                if (pShadowVictim) {
                     if (pShadowVictim->GetGUID().GetCounter() == me->GetVictim()->GetGUID().GetCounter()) //not tank?
                         ShadowOfDeathTimer = 100;       // Delay to next world tick
                     else {
@@ -452,7 +456,7 @@ public:
     
             if(IncinerateTimer < diff)
             {
-                Unit* target = SelectTarget(1, 0.0f, 100.0f, true, false, true, 0, 0);
+                Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true, false);
                 if(!target)
                     target = me->GetVictim();
     
@@ -590,7 +594,7 @@ public:
                 }
             }
             else
-                DoModifyThreatPercent(done_by, -100);
+                ModifyThreatByPercent(done_by, -100);
         }
 
         void SpellHit(Unit *caster, SpellInfo const* spellInfo)
@@ -623,7 +627,14 @@ public:
                 if (Creature* Teron = (ObjectAccessor::GetCreature((*me), TeronGUID)))
                     SetThreatList(Teron);
 
-                if (Unit* u = SelectTarget(0, 0.0f, 100.0f, true, true, true, SPELL_SHADOW_OF_DEATH, 1))
+                Unit* u = SelectTarget(SELECT_TARGET_RANDOM, 0, [&](Unit* target) {
+                    return target->IsAlive()
+                        && target->GetTypeId() == TYPEID_PLAYER
+                        && me->IsWithinCombatRange(target, 100.0f)
+                        && !target->HasAuraEffect(SPELL_SHADOW_OF_DEATH, 1)
+                        && !(target->IsPossessed() || target->IsPossessing());
+                });
+                if (u)
                     me->AI()->AttackStart(u);
 
                 SetAggro = false;
@@ -663,20 +674,14 @@ public:
 
         void SetThreatList(Creature* unit)
         {
-            if (!unit) return;
+            if (!unit) 
+                return;
 
-            std::list<HostileReference*>& m_threatlist = unit->GetThreatManager().getThreatList();
-            auto i = m_threatlist.begin();
-            for (i = m_threatlist.begin(); i != m_threatlist.end(); i++)
+            for (auto itr : me->GetThreatManager().GetUnsortedThreatList())
             {
-                Unit* pUnit = ObjectAccessor::GetUnit((*me), (*i)->getUnitGuid());
-                if (pUnit && pUnit->IsAlive())
-                {
-                    if (pUnit->GetDisplayId() != 21300 && !pUnit->HasAuraEffect(40282, 0)) {
-                        float threat = unit->GetThreatManager().getThreat(pUnit);
-                        me->GetThreatManager().AddThreat(pUnit, threat + 5000000.0f);
-                    }
-                }
+                Unit* victim = itr->GetVictim();
+                if (victim->IsAlive())
+                    unit->GetThreatManager().AddThreat(victim, itr->GetThreat() + 5000000.0f);
             }
         }
 

@@ -92,7 +92,7 @@ public:
             if (done_by->GetGUID() != victimGUID && done_by->GetGUID() != me->GetGUID())
             {
                 damage = 0;
-                DoModifyThreatPercent(done_by, -100);
+                ModifyThreatByPercent(done_by, -100);
             }
         }
 
@@ -291,7 +291,7 @@ public:
                     Unit *victim = nullptr;
                     victim = ObjectAccessor::GetUnit(*me, ObjectGuid(pInstance->GetData64(DATA_LEOTHERAS_EVENT_STARTER)));
                     if(victim)
-                        me->GetThreatManager().addThreat(victim, 1);
+                        me->GetThreatManager().AddThreat(victim, 1);
                     StartEvent();
                 }
             }
@@ -344,7 +344,7 @@ public:
                         if( pUnit_target && pUnit_target->IsAlive())
                         {
                             pUnit->CastSpell(pUnit_target, SPELL_CONSUMING_MADNESS, TRIGGERED_FULL_MASK);
-                            DoModifyThreatPercent(pUnit_target, -100);
+                            ModifyThreatByPercent(pUnit_target, -100);
                         }
                     }
                 }
@@ -420,7 +420,7 @@ public:
                     Unit *newTarget = SelectTarget(SELECT_TARGET_RANDOM, 0);
                     if(newTarget)
                     {
-                        DoResetThreat();
+                        ResetThreatList();
                         me->GetMotionMaster()->Clear();
                         me->GetMotionMaster()->MovePoint(0,newTarget->GetPositionX(),newTarget->GetPositionY(),newTarget->GetPositionZ());
                     }
@@ -438,7 +438,7 @@ public:
                     Whirlwind_Timer =  15000;
     
                 NeedThreatReset = false;
-                DoResetThreat();
+                ResetThreatList();
                 me->GetMotionMaster()->Clear();
                 me->GetMotionMaster()->MoveChase(me->GetVictim());
             }
@@ -504,16 +504,11 @@ public:
                 //Summon Inner Demon
                 if(InnerDemons_Timer < diff)
                 {
-                    std::list<HostileReference *>& ThreatList = me->GetThreatManager().getThreatList();
-                    std::vector<Unit *> TargetList;
-                    for(auto & itr : ThreatList)
-                    {
-                        Unit *tempTarget = ObjectAccessor::GetUnit(*me, itr->getUnitGuid());
-                        if(tempTarget && tempTarget->GetTypeId() == TYPEID_PLAYER && tempTarget->GetGUID() != me->GetVictim()->GetGUID() && TargetList.size()<5)
-                            TargetList.push_back( tempTarget );
-                    }
+                    std::list<Unit*> targetList;
+                    SelectTargetList(targetList, 5, SELECT_TARGET_RANDOM, 0, 100.0f);
+                    
                     SpellInfo *spell = (SpellInfo *)sSpellMgr->GetSpellInfo(SPELL_INSIDIOUS_WHISPER);
-                    for(auto & itr : TargetList)
+                    for(auto & itr : targetList)
                     {
                         if( itr && itr->IsAlive() )
                         {

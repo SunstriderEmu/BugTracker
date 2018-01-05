@@ -276,7 +276,7 @@ struct advisorbase_ai : public ScriptedAI
                 Unit* Target = ObjectAccessor::GetUnit((*me), DelayRes_Target);
                 if (!Target)
                     Target = me->GetVictim();
-                DoResetThreat();
+                ResetThreatList();
                 if(!Target)
                     return;
                 AttackStart(Target);
@@ -805,7 +805,7 @@ public:
     
                         if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
                         {
-                            DoResetThreat();//only healers will be at top threat, so reset(not delete) all players's threat when Kael comes to fight
+                            ResetThreatList();//only healers will be at top threat, so reset(not delete) all players's threat when Kael comes to fight
                             AttackStart(target);
                         }
                         Phase_Timer = 30000;
@@ -1050,7 +1050,7 @@ public:
                                     GravityLapse_Phase = 0;
                                     DoStartMovement(me->GetVictim());
                                     AttackStart(me->GetVictim());
-                                    DoResetThreat();
+                                    ResetThreatList();
                                     break;
                             }
                         }else GravityLapse_Timer -= diff;
@@ -1152,7 +1152,7 @@ public:
             {
                 if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                 {
-                    DoResetThreat();
+                    ResetThreatList();
                     if(target)
                     {
                         me->GetThreatManager().AddThreat(target, 5000000.0f);

@@ -124,8 +124,8 @@ public:
                     target = SelectTarget(SELECT_TARGET_RANDOM,0);
                     if (target && target->GetTypeId() == TYPEID_PLAYER)
                     {
-                        if(me->GetThreat(target))
-                            DoModifyThreatPercent(target, -100);
+                        if(me->GetThreatManager().GetThreat(target))
+                            ModifyThreatByPercent(target, -100);
     
                         switch(rand()%6)
                         {

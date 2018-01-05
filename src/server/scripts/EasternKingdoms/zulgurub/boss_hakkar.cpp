@@ -228,7 +228,7 @@ public:
                         if (AspectOfArlokk_Timer < diff)
                         {
                             DoCast(me,SPELL_ASPECT_OF_ARLOKK);
-                            DoResetThreat();
+                            ResetThreatList();
     
                             AspectOfArlokk_Timer = 10000 + rand()%5000;
                         }else AspectOfArlokk_Timer -= diff;

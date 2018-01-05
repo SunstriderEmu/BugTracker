@@ -210,7 +210,8 @@ public:
             if (phase == PHASE_NONE)
                 return;
                 
-            if (me->GetThreatManager().getThreatList().empty()) {
+            if (!me->GetCombatManager().GetAnyTarget()) 
+            {
                 EnterEvadeMode();
                 return;
             }
@@ -240,8 +241,8 @@ public:
                     if (Creature* summon = me->SummonCreature(23417 + phase, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation(), TEMPSUMMON_DEAD_DESPAWN, 0)) {
                         me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_SUBMERGED);
                         if (summon->AI()) {
-                            //summon->getAI()->attackStart(SelectTarget(SELECT_TARGET_TOPAGGRO, 0));
-                            Unit* target = SelectTarget(SELECT_TARGET_NEAREST,0,200.0f,true);
+                            //summon->getAI()->attackStart(SelectTarget(SELECT_TARGET_MAXTHREAT, 0));
+                            Unit* target = SelectTarget(SELECT_TARGET_MINDISTANCE,0,200.0f,true);
                             summon->AI()->AttackStart(target);
                             essenceGUID = summon->GetGUID();
                             summon->SetSummoner(me);
@@ -426,11 +427,11 @@ public:
             {
                 case EV_FIXATE:
                 {
-                    Unit* target = SelectTarget(SELECT_TARGET_NEAREST, 0, 30.0f, true);
+                    Unit* target = SelectTarget(SELECT_TARGET_MINDISTANCE, 0, 30.0f, true);
 
                     if (target) {
                         target->CastSpell(me, SPELL_FIXATE_TAUNT, TRIGGERED_FULL_MASK);
-                        DoResetThreat();
+                        ResetThreatList();
                         me->GetThreatManager().AddThreat(target, 1000000.0f);
                         
                         if ((rand() % 16) == 0)

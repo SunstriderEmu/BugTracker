@@ -314,13 +314,15 @@ public:
                             //me->SummonCreature(AKAMAID,746.466980f,304.394989f,311.90208f,6.272870f,TEMPSUMMON_DEAD_DESPAWN,0);
                         }
                         DoZoneInCombat(); //be sure to have all players in threat list
-                        for (auto itr : me->GetThreatManager().getThreatList())
+                        for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
                         {
-                            Player* p = ObjectAccessor::GetPlayer(*me, itr->getUnitGuid());
-                            if (p)
+                            Unit* unit = pair.second->GetOther(me);
+                            if (Player* p = unit->ToPlayer())
                                 for (uint8 i = 0; i < 4; i++)
                                     p->RewardReputation(me, 1.0f);
                         }
+
+                        //suicide
                         me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
                         return;
                     }
@@ -859,7 +861,7 @@ public:
                         me->SetVisible(false);
                         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                         DoCast(me,SPELL_VANISH,true); //just for combat log
-                        DoResetThreat();
+                        ResetThreatList();
                         me->AddAura(SPELL_DEADLY_STRIKE,me);
                         changeTargetTimer = 0;
                     }
@@ -882,7 +884,7 @@ public:
                     me->SetVisible(true);
                     me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                     Unit* currentTarget = me->GetVictim();
-                    DoResetThreat();
+                    ResetThreatList();
                     me->GetThreatManager().AddThreat(currentTarget, 1200.0f);
                     DoCast(me,SPELL_VANISH_STUN);
                     return;
@@ -892,7 +894,7 @@ public:
                 {
                      if(Unit* newTarget = GetPoisonTarget())
                      {
-                         DoResetThreat();
+                         ResetThreatList();
                          me->GetThreatManager().AddThreat(newTarget, 999000.0f);
                          AttackStart(newTarget);
                          EnvenomTimer = 4800;

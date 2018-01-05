@@ -103,7 +103,14 @@ public:
     
             if (Holyfire_Timer < diff)
             {
-                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0,80.0f,true,true,false,SPELL_REPENTANCE,1)) //don't select target with repentance
+                Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, [&](Unit* target) {
+                    return target->IsAlive()
+                        && target->GetTypeId() == TYPEID_PLAYER
+                        && me->IsWithinCombatRange(target, 80.0f)
+                        && !target->HasAuraEffect(SPELL_REPENTANCE, 1);
+                });
+
+                if (target) //don't select target with repentance
                     DoCast(target,SPELL_HOLYFIRE);
     
                     Holyfire_Timer = 8000 + rand()%17000; //Anywhere from 8 to 25 seconds, good luck having several of those in a row!

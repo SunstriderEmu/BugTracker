@@ -260,7 +260,8 @@ public:
             if(inferno_Timer < diff)
             {
                 DoCast(me->GetVictim(),HeroicMode ? H_SPELL_INFERNO : SPELL_INFERNO);
-                me->TauntApply(me->GetVictim());
+                ResetThreatList();
+                AddThreat(me->GetVictim(), 1000000.0f);
                 inferno_Timer = 10000;
             }else inferno_Timer -= diff;
     

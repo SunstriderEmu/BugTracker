@@ -803,9 +803,9 @@ public:
                         DoScriptText(SAY_WOLF_HOOD, me);
     
                         DoCast(target, SPELL_LITTLE_RED_RIDING_HOOD, true);
-                        TempThreat = me->GetThreat(target);
+                        TempThreat = me->GetThreatManager().GetThreat(target);
                         if(TempThreat)
-                            DoModifyThreatPercent(target, -100);
+                            ModifyThreatByPercent(target, -100);
                         HoodGUID = target->GetGUID();
                         me->GetThreatManager().AddThreat(target, 1000000.0f);
                         ChaseTimer = 20000;
@@ -821,8 +821,8 @@ public:
                     if(target)
                     {
                         HoodGUID = ObjectGuid::Empty;
-                        if(me->GetThreat(target))
-                            DoModifyThreatPercent(target, -100);
+                        if(me->GetThreatManager().GetThreat(target))
+                            ModifyThreatByPercent(target, -100);
                         me->GetThreatManager().AddThreat(target, TempThreat);
                         TempThreat = 0;
                     }

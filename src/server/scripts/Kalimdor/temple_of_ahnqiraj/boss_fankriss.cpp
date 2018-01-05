@@ -138,8 +138,8 @@ public:
                     {
                         DoCast(target, SPELL_ROOT);
     
-                        if(me->GetThreat(target))
-                            DoModifyThreatPercent(target, -100);
+                        if(me->GetThreatManager().GetThreat(target))
+                            ModifyThreatByPercent(target, -100);
     
                         switch(rand()%3)
                         {

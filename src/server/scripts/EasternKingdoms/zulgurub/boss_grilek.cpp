@@ -66,8 +66,8 @@ public:
     
                 target = SelectTarget(SELECT_TARGET_RANDOM,1);
     
-                if(me->GetThreat(me->GetVictim()))
-                    DoModifyThreatPercent(me->GetVictim(),-50);
+                if(me->GetThreatManager().GetThreat(me->GetVictim()))
+                    ModifyThreatByPercent(me->GetVictim(),-50);
                 if (target)
                     AttackStart(target);
     

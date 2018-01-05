@@ -253,15 +253,11 @@ public:
             if(!SummonedUnit)
                 return;
     
-            std::list<HostileReference*>& m_threatlist = me->GetThreatManager().getThreatList();
-            auto i = m_threatlist.begin();
-            for(i = m_threatlist.begin(); i != m_threatlist.end(); i++)
+            for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
             {
-                Unit* pUnit = ObjectAccessor::GetUnit((*me), (*i)->getUnitGuid());
-                if(pUnit && pUnit->IsAlive())
-                {
-                    SummonedUnit->GetThreatManager().AddThreat(pUnit, 0.1f);
-                }
+                Unit* unit = pair.second->GetOther(me);
+                if (unit && unit->IsAlive())
+                    SummonedUnit->GetThreatManager().AddThreat(unit, 0.1f);
             }
         }
     
@@ -502,7 +498,7 @@ public:
                                     if(Orb)
                                     {
                                         SetThreatList(Orb);
-                                        Unit *target = SelectTarget(SELECT_TARGET_BOTTOMAGGRO,i);
+                                        Unit *target = SelectTarget(SELECT_TARGET_MINTHREAT,i);
                                         if(target)
                                         {
                                             Orb->GetThreatManager().AddThreat(target,1000);
@@ -604,7 +600,7 @@ public:
     
             if(ChangeTargetTimer < diff)
             {
-                DoResetThreat();
+                ResetThreatList();
                 Unit *ntarget = SelectTarget(SELECT_TARGET_RANDOM,0);
                 if (ntarget)
                     StalkTarget(ntarget);

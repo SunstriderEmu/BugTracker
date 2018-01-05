@@ -111,8 +111,8 @@ public:
             {
                 DoCast(me->GetVictim(),SPELL_KNOCKBACK);
                 //Drop 50% aggro
-                if (me->GetThreat(me->GetVictim()))
-                    DoModifyThreatPercent(me->GetVictim(),-50);
+                if (me->GetThreatManager().GetThreat(me->GetVictim()))
+                    ModifyThreatByPercent(me->GetVictim(),-50);
     
                 KnockBack_Timer = 15000 + rand()%15000;
             }else KnockBack_Timer -= diff;

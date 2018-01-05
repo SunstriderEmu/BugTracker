@@ -109,8 +109,8 @@ public:
             {
                 DoCast(me->GetVictim(), SPELL_HEX);
     
-                if(me->GetThreat(me->GetVictim()))
-                    DoModifyThreatPercent(me->GetVictim(),-80);
+                if(me->GetThreatManager().GetThreat(me->GetVictim()))
+                    ModifyThreatByPercent(me->GetVictim(),-80);
     
                 Hex_Timer = 12000 + rand()%8000;
             }else Hex_Timer -= diff;
@@ -139,8 +139,8 @@ public:
                 {
                     DoTeleportPlayer(target, -11583.7783,-1249.4278,77.5471,4.745);
     
-                    if(me->GetThreat(me->GetVictim()))
-                        DoModifyThreatPercent(target,-100);
+                    if(me->GetThreatManager().GetThreat(me->GetVictim()))
+                        ModifyThreatByPercent(target,-100);
     
                     Skeletons = me->SummonCreature(14826, target->GetPositionX()+2, target->GetPositionY(), target->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
                     if(Skeletons)

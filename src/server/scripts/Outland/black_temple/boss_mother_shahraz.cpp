@@ -158,7 +158,7 @@ public:
             }
             Position pos = me->GetFirstWalkableCollisionPosition(40.0f, angle, true);
             std::list<Unit*> targetList;
-            SelectUnitList(targetList, 3, SELECT_TARGET_RANDOM, 120.0f, true, SPELL_SABER_LASH_IMM, 0);
+            SelectTargetList(targetList, 3, SELECT_TARGET_RANDOM, 0, 120.0f, true, true, -SPELL_SABER_LASH_IMM); //exclude players with SPELL_SABER_LASH_IMM
             if(targetList.size() == 2 || targetList.size() == 3)
             {
                 uint8 i = 0;
@@ -219,7 +219,7 @@ public:
             // Cast beam and randomize it every 4 beams
             if(BeamTimer < diff)
             {
-                Unit* target = SelectTarget(0,0.0f,80.0f,true,true,false,SPELL_ATTRACTION_VIS,0);
+                Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 80.0f, true, true, -SPELL_ATTRACTION_VIS); //exclude players with SPELL_ATTRACTION_VIS
                 if(!target)
                     return;
     

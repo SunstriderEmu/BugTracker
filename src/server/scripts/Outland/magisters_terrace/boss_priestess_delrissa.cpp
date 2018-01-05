@@ -447,7 +447,7 @@ struct boss_priestess_guestAI : public ScriptedAI
 
         if(ResetThreatTimer < diff)
         {
-            DoResetThreat();
+            ResetThreatList();
             ResetThreatTimer = 5000 + rand()%15000;
         }else ResetThreatTimer -= diff;
     }
@@ -596,7 +596,7 @@ public:
                 InVanish = true;
                 Vanish_Timer = 30000;
                 Wait_Timer = 10000;
-                DoResetThreat();
+                ResetThreatList();
                 me->GetThreatManager().AddThreat(SelectTarget(SELECT_TARGET_RANDOM, 0), 1000.0f);
             }else Vanish_Timer -= diff;
     
@@ -614,7 +614,7 @@ public:
             if(Gouge_Timer < diff)
             {
                 DoCast(me->GetVictim(), SPELL_GOUGE);
-                DoModifyThreatPercent(me->GetVictim(),-100);
+                ModifyThreatByPercent(me->GetVictim(),-100);
                 Gouge_Timer = 5500;
             }else Gouge_Timer -= diff;
     
@@ -870,7 +870,7 @@ public:
                 if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
                 {
                     DoCast(target, SPELL_POLYMORPH);
-                    DoModifyThreatPercent(target,-100);
+                    ModifyThreatByPercent(target,-100);
                     Polymorph_Timer = 20000;
                 }
             }else Polymorph_Timer -= diff;
@@ -907,22 +907,11 @@ public:
     
             if(Blink_Timer < diff)
             {
-                bool InMeleeRange = false;
-                std::list<HostileReference*>& t_list = me->GetThreatManager().getThreatList();
-                for(auto & itr : t_list)
-                {
-                    if(Unit* target = ObjectAccessor::GetUnit(*me, itr->getUnitGuid()))
-                        //if in melee range
-                        if (target->IsWithinDistInMap(me, 5))
-                        {
-                            InMeleeRange = true;
-                            break;
-                        }
-                }
+                Unit* meleeTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, NOMINAL_MELEE_RANGE);
                 //if anybody is in melee range than escape by blink
-                if(InMeleeRange)
+                if(meleeTarget)
                 {
-                    //DoCast(me, SPELL_BLINK);  //blink does not work on npcs
+                    //DoCast(me, SPELL_BLINK);  //blink does not work on npcs (may be false now... you may want to test it again)
                     float x,y,z;
                     me->GetPosition(x,y,z);
                     x = rand()%2 ? x+10+rand()%10 : x-10-rand()%10;
@@ -997,20 +986,9 @@ public:
     
             if(Intercept_Stun_Timer < diff)
             {
-                bool InMeleeRange = false;
-                std::list<HostileReference*>& t_list = me->GetThreatManager().getThreatList();
-                for(auto & itr : t_list)
-                {
-                    if(Unit* target = ObjectAccessor::GetUnit(*me, itr->getUnitGuid()))
-                                                                //if in melee range
-                        if (target->IsWithinDistInMap(me, 5))
-                    {
-                        InMeleeRange = true;
-                        break;
-                    }
-                }
+                Unit* meleeTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, NOMINAL_MELEE_RANGE);
                 //if nobody is in melee range than try to use Intercept
-                if(!InMeleeRange)
+                if(!meleeTarget)
                     DoCast(SelectTarget(SELECT_TARGET_RANDOM, 0), SPELL_INTERCEPT_STUN);
                 Intercept_Stun_Timer = 10000;
             }else Intercept_Stun_Timer -= diff;
@@ -1140,7 +1118,7 @@ public:
                 if(Freezing_Trap_Timer < diff)
                 {
                     DoCast(me->GetVictim(), SPELL_FREEZING_TRAP);
-                    DoModifyThreatPercent(me->GetVictim(),-100);
+                    ModifyThreatByPercent(me->GetVictim(),-100);
                     Freezing_Trap_Timer = 30000;
                 }else Freezing_Trap_Timer -= diff;
     

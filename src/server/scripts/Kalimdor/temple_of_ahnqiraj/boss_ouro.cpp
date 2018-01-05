@@ -25,7 +25,7 @@
 #define EMERGED_TIMER           90000
 #define SUBMERGED_TIMER         35000 + rand()%10000
 #define SCARABS_SPAWN_TIMER     15000
-#define ANIM_TIMER              2500
+#define ANIM_TIMER              2000
 #define IWANTATANK_TIMER1       8000
 #define IWANTATANK_TIMER2       2000
 #define QUAKE_TIMER             1000
@@ -62,7 +62,7 @@ public:
         uint16 NewTarget_Timer;
         uint8 Phase;
         uint16 Morphed_Timer;
-        bool Morphed;
+        bool Morphed; //currently appearing as a mound
         const CreatureTemplate* cinfo;
         float homeX, homeY, homeZ;
      
@@ -78,20 +78,11 @@ public:
         void Reset()
         override {
             me->SetDisplayId(DISPLAYID_MOUND);
-            me->SetFaction(FACTION_MONSTER);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             DoCast(me,SPELL_SUBMERGE,true);
             ResetAllTimers();
             Phase = PHASE_ANIM_EMERGING;
             Summons.DespawnAll();
-            /* FIXMEDMG
-            if (cinfo)
-            {
-                me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, cinfo->mindmg);
-                me->SetBaseWeaponDamage(BASE_ATTACK, MAXDAMAGE, cinfo->maxdmg);
-                me->UpdateDamagePhysical(BASE_ATTACK);
-            }
-            */
         }
      
         void ResetAllTimers()
@@ -108,30 +99,41 @@ public:
             Morphed_Timer = ANIM_TIMER;
         }
      
-        void JustEngagedWith(Unit *who)
-        override {
+        void JustEngagedWith(Unit *who) override 
+        {
             me->SetDisplayId(DISPLAYID_OURO);
             me->RemoveAurasDueToSpell(SPELL_SUBMERGE);
-            DoCast(me->GetVictim(), SPELL_EMERGE);
+            DoCast(me, SPELL_EMERGE);
             DoZoneInCombat();
         }
      
-        void UpdateAI(const uint32 diff)
-        override {
+        void UpdateAI(const uint32 diff) override 
+        {
             if (me->IsNonMeleeSpellCast(false))
                 return;
      
-            if (!UpdateVictim())
+            if (!me->IsEngaged())
             {
                 if (Quake_Timer < diff)
                 {
                     DoCast(me, SPELL_QUAKE);
                     Quake_Timer = QUAKE_TIMER;
-                }else Quake_Timer -= diff;
+                }
+                else
+                    Quake_Timer -= diff;
                 return;
             }
+            else if (!UpdateVictim(false))
+            {
+                //Update Victim may return false if we got no melee target... we don't want to evade in that case; Only evade when threat list is empty
+                if (!me->GetThreatManager().IsEngaged() || !me->_IsTargetAcceptable(me->GetVictim()) || !me->CanCreatureAttack(me->GetVictim()) == CAN_ATTACK_RESULT_OK)
+                {
+                    EnterEvadeMode(EvadeReason::EVADE_REASON_OTHER);
+                    return;
+                }
+            }
      
-            if ((me->GetHealthPct()) <= 20.0 && !me->HasAuraEffect(SPELL_BERSERK, 0))
+            if (me->HealthBelowPct(20) && !me->HasAuraEffect(SPELL_BERSERK, 0))
             {
                 EnterPhase(PHASE_BERSERK);
             }
@@ -140,7 +142,7 @@ public:
             {
             case PHASE_EMERGED:
      
-                if (GetMeleeVictim())
+                if (GetMeleeVictim()) //if has melee victim, reset the timer
                     IWantATank_Timer = IWANTATANK_TIMER1;
      
                 if (IWantATank_Timer < diff) {
@@ -151,40 +153,40 @@ public:
                 {
                     DoCast(me, SPELL_SWEEP);
                     Sweep_Timer = SWEEP_TIMER;
-                }else Sweep_Timer -= diff;
+                } else Sweep_Timer -= diff;
      
                 if (SandBlast_Timer < diff)
                 {
-                    Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 200, true);
+                    Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 90.0f, true);
                     if (target)
                     {
                         DoCast(target, SPELL_SANDBLAST);
                         SandBlast_Timer = SANDBLAST_TIMER;                
                     }
-                }else SandBlast_Timer -= diff;
+                } else SandBlast_Timer -= diff;
      
                 if (Emerged_Timer < diff)
                 {
                     EnterPhase(PHASE_SUBMERGED);
-                }else Emerged_Timer -= diff;
+                } else Emerged_Timer -= diff;
      
                 DoMeleeAttackIfReady();
                 break;
      
             case PHASE_SUBMERGED:
      
-                if (!Morphed)
+                if (!Morphed && Submerged_Timer > 1000)
                 {
-                    if (Morphed_Timer < diff)
+                    if (Morphed_Timer <= diff)
                     {
                         me->SetDisplayId(DISPLAYID_MOUND);
                         Morphed = true;
                     } else Morphed_Timer -= diff;
+                    return; //don't move yet, still playing anim
                 }
      
-                if (me->GetDistance(homeX,homeY,homeZ) > 150)
+                if (me->GetDistance(homeX,homeY,homeZ) > 150.0f)
                 {
-                    //DoTeleportTo(x,y,z);  //Don't EVER use this again
                     EnterEvadeMode(EvadeReason::EVADE_REASON_OTHER);
                 }
      
@@ -192,10 +194,10 @@ public:
                 {
                     DoCast(me, SPELL_QUAKE);
                     Quake_Timer = QUAKE_TIMER;
-                }else Quake_Timer -= diff;
+                } else Quake_Timer -= diff;
      
                 float x, y, z;
-                if (NewTarget_Timer < diff || !me->GetMotionMaster()->GetDestination(x,y,z) ) //= dont move anymore
+                if (NewTarget_Timer < diff || !me->GetMotionMaster()->GetDestination(x,y,z) ) //= not moving anymore
                 {
                     if (Submerged_Timer > 5000)
                     {
@@ -213,6 +215,7 @@ public:
                     }
                 } else NewTarget_Timer -= diff;
      
+                //stop moving + set correct display id a bit before to avoid the progressive size changing effect. Ouro is currenly submerged so this is not visible.
                 if (Morphed && Submerged_Timer < 1000)
                 {
                     me->SetDisplayId(DISPLAYID_OURO);
@@ -273,7 +276,6 @@ public:
             {
             case PHASE_EMERGED:
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                me->SetFaction(FACTION_MONSTER);
                 break;
             case PHASE_SUBMERGED:
                 Morphed = false;
@@ -282,15 +284,11 @@ public:
                 Submerged_Timer = SUBMERGED_TIMER;
                 SummonMounds(4);
                 me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                me->SetFaction(FACTION_FRIENDLY);
                 NewTarget_Timer = 0;    
                 break;
             case PHASE_ANIM_EMERGING:
-                if (Morphed) //just in case very high time diff, may not be done yet
-                {
-                    me->SetDisplayId(DISPLAYID_OURO);
-                    Morphed = false;
-                }
+                me->SetDisplayId(DISPLAYID_OURO);
+                Morphed = false;
                 me->RemoveAurasDueToSpell(SPELL_SUBMERGE);
                 DoCast(me,SPELL_EMERGE,false);
                 DoGroundRupture();
@@ -299,11 +297,10 @@ public:
                 break;
             case PHASE_BERSERK:
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                me->SetFaction(FACTION_MONSTER);
                 IWantATank_Timer = IWANTATANK_TIMER2;
                 DoCast(me, SPELL_BERSERK);
                 //hack +100% melee damage.
-                /* FIXMEDMG
+                /* FIXMEDMG, should be handled via aura
                 if (cinfo)
                 {
                     me->SetBaseWeaponDamage(BASE_ATTACK, MINDAMAGE, 2 * cinfo->mindmg);
@@ -324,7 +321,7 @@ public:
      
         void JustDied(Unit* /* who */)
         override {
-            Summons.DespawnAll(); //not blizz!§§ becuz else tiziz just onerous
+            Summons.DespawnAll(); //not blizz!§§ but else this is just irksome
         }
      
         void SummonBugs(int amount)
@@ -332,7 +329,7 @@ public:
             for (int i = 0; i < amount; i++)
             {
                 Unit* target = nullptr;
-                target = SelectTarget(SELECT_TARGET_RANDOM, 0, 150,true);
+                target = SelectTarget(SELECT_TARGET_RANDOM, 0, 150, true);
                 if(target)
                 {
                     Creature* Bug = me->SummonCreature(CREATURE_OURO_SCARAB, target->GetPositionX(), target->GetPositionY(),
@@ -349,19 +346,20 @@ public:
         void SummonMounds(int amount)
         {
             for (int i = 0; i < amount; i++)
-                DoSpawnCreature(CREATURE_OURO_MOUND, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, (Submerged_Timer - 5000));
+            {
+                Creature* mound = DoSpawnCreature(CREATURE_OURO_MOUND, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, (Submerged_Timer - 5000));
+                mound->AI()->DoZoneInCombat();
+            }
         }
      
         void DoGroundRupture()
         {
-            std::list<HostileReference*>& m_threatlist = me->GetThreatManager().getThreatList();
-            auto i = m_threatlist.begin();
-            for (i = m_threatlist.begin(); i!= m_threatlist.end();++i)
+            for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
             {
-                Unit* pUnit = ObjectAccessor::GetUnit((*me), (*i)->getUnitGuid());
-                if(pUnit && me->IsWithinMeleeRange(pUnit))
+                Unit* target = pair.second->GetOther(me);
+                if(target && me->IsWithinMeleeRange(target))
                 {
-                   DoCast(pUnit, SPELL_GROUND_RUPTURE, true);
+                   DoCast(target, SPELL_GROUND_RUPTURE, true);
                 }
             }
         }
@@ -374,20 +372,19 @@ public:
             {
                 Unit* target = nullptr;
                 float MaxThreat = 0;
-                std::list<HostileReference*>& m_threatlist = me->GetThreatManager().getThreatList();
-                auto i = m_threatlist.begin();
-                for (i = m_threatlist.begin(); i!= m_threatlist.end();++i)
+                for (auto itr : me->GetThreatManager().GetUnsortedThreatList())
                 {
-                    Unit* pUnit = ObjectAccessor::GetUnit((*me), (*i)->getUnitGuid());
-                    if(pUnit && me->IsWithinMeleeRange(pUnit))
+                    Unit* victim = itr->GetVictim();
+                    if (me->IsWithinMeleeRange(victim))
                     {
-                        if ((*i)->getThreat() > MaxThreat)
+                        if (itr->GetThreat() > MaxThreat)
                         {
-                            target = pUnit;
-                            MaxThreat = (*i)->getThreat();
+                            target = victim;
+                            MaxThreat = itr->GetThreat();
                         }
                     }
                 }
+
                 if (target)
                 {
                     AttackStart(target);
@@ -432,7 +429,7 @@ public:
             Unit* target = nullptr;
             if (NewTarget_Timer < diff || !me->isMoving())
             {
-                target = SelectTarget(SELECT_TARGET_RANDOM, 0, 200,true);
+                target = SelectTarget(SELECT_TARGET_RANDOM, 0, 200.0f, true);
                 NewTarget_Timer = NEWTARGET_TIMER;
             } else NewTarget_Timer -= diff;
      

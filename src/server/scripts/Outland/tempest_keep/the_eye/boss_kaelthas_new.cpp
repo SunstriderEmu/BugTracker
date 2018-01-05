@@ -489,7 +489,7 @@ class boss_kaelthas : public CreatureScript
                         events2.CancelEvent(EVENT_PREFIGHT_PHASE71);
                         Talk(SAY_PHASE4_INTRO2);
                         phase = PHASE_FINAL;
-                        DoResetThreat();
+                        ResetThreatList();
                         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE|UNIT_FLAG_REMOVE_CLIENT_CONTROL);
                         if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
                             AttackStart(target);
@@ -1007,11 +1007,10 @@ class spell_kaelthas_nether_beam : public SpellScriptLoader
             {
                 PreventHitEffect(effIndex);
                                    
-                ThreatContainer::StorageType const & ThreatList = GetCaster()-> GetThreatManager().getThreatList();
                 std::list<Unit*> targetList;
-                for (auto itr : ThreatList)
+                for (auto const& pair : GetCaster()->GetCombatManager().GetPvECombatRefs())
                 {
-                    Unit* target = ObjectAccessor::GetUnit(*GetCaster(), itr->getUnitGuid());
+                    Unit* target = pair.second->GetOther(GetCaster());
                     if (target && target->GetTypeId() == TYPEID_PLAYER)
                         targetList.push_back(target);
                 }

@@ -127,7 +127,7 @@ public:
                 me->SetFaction(FACTION_FRIENDLY);
                 me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 me->SetUInt32Value(UNIT_FIELD_DISPLAYID,11686);  // Invisible Model
-                DoModifyThreatPercent(me->GetVictim(),-99);
+                ModifyThreatByPercent(me->GetVictim(),-99);
     
                 //Summon 10 Illusions attacking random gamers
                 Unit* target = nullptr;

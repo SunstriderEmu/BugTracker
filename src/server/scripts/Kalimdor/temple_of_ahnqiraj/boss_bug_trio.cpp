@@ -98,7 +98,7 @@ public:
             if (Fear_Timer < diff)
             {
                 DoCast(me->GetVictim(),SPELL_FEAR);
-                DoResetThreat();
+                ResetThreatList();
                 Fear_Timer = 20000;
             }else Fear_Timer -= diff;
     
@@ -225,8 +225,8 @@ public:
             if (KnockBack_Timer < diff)
             {
                 DoCast(me->GetVictim(),SPELL_KNOCKBACK);
-                if(me->GetThreat(me->GetVictim()))
-                    DoModifyThreatPercent(me->GetVictim(),-80);
+                if(me->GetThreatManager().GetThreat(me->GetVictim()))
+                    ModifyThreatByPercent(me->GetVictim(),-80);
                 KnockBack_Timer = 15000 + rand()%10000;
             }else KnockBack_Timer -= diff;
     

@@ -247,9 +247,14 @@ public:
                     AttackStart(Dragonmaw);
                 }
     
-                HostileReference* ref = me->GetThreatManager().getOnlineContainer().getReferenceByTarget(caster);
-                if(ref)
-                    ref->removeReference();
+                for (auto itr : me->GetCombatManager().GetPvECombatRefs())
+                {
+                    if (itr.second->GetOther(me) == caster)
+                    {
+                        itr.second->EndCombat();
+                        break;
+                    }
+                }
             }
         }
     

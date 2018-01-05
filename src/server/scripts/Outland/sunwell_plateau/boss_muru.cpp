@@ -423,7 +423,7 @@ public:
                     case 1:
                         me->ClearUnitState(UNIT_STATE_STUNNED);
                         DoZoneInCombat();
-                        AttackStart(SelectTarget(SELECT_TARGET_NEAREST, 0, 100.0f, true));
+                        AttackStart(SelectTarget(SELECT_TARGET_MINDISTANCE, 0, 100.0f, true));
                         me->CastSpell((Unit*)nullptr, SPELL_NEGATIVE_ENERGY_E, TRIGGERED_FULL_MASK);
                         phase = 2;
                         break;
@@ -1142,7 +1142,7 @@ class npc_void_sentinel : public CreatureScript
                     case 0:
                         me->ClearUnitState(UNIT_STATE_STUNNED);
                         DoZoneInCombat();
-                        AttackStart(SelectTarget(SELECT_TARGET_NEAREST, 0, 100.0f, true));
+                        AttackStart(SelectTarget(SELECT_TARGET_MINDISTANCE, 0, 100.0f, true));
                         phase = 1;
                         break;
                 }
@@ -1221,7 +1221,7 @@ class npc_void_spawn : public CreatureScript
                     case 0:
                         me->ClearUnitState(UNIT_STATE_STUNNED);
                         DoZoneInCombat();
-                        AttackStart(SelectTarget(SELECT_TARGET_NEAREST, 0, 100.0f, true));
+                        AttackStart(SelectTarget(SELECT_TARGET_MINDISTANCE, 0, 100.0f, true));
                         phase = 1;
                         break;
                 }
@@ -1286,7 +1286,7 @@ class npc_berserker : public CreatureScript
                 {
                     case 0:
                         DoZoneInCombat();
-                        AttackStart(SelectTarget(SELECT_TARGET_NEAREST, 0, 100.0f, true));
+                        AttackStart(SelectTarget(SELECT_TARGET_MINDISTANCE, 0, 100.0f, true));
                         break;
                 }
             }
@@ -1299,7 +1299,7 @@ class npc_berserker : public CreatureScript
                 if (tempTimer <= diff)
                 {
                     DoZoneInCombat(nullptr, true);
-                    if (Unit* target = SelectTarget(SELECT_TARGET_NEAREST, 0, 100.0f, true))
+                    if (Unit* target = SelectTarget(SELECT_TARGET_MINDISTANCE, 0, 100.0f, true))
                     {
                         AttackStart(target);
                         tempTimer = 0;
@@ -1372,7 +1372,7 @@ class npc_mage : public CreatureScript
                 {
                     case 0:
                         DoZoneInCombat();
-                        AttackStart(SelectTarget(SELECT_TARGET_NEAREST, 0, 100.0f, true));
+                        AttackStart(SelectTarget(SELECT_TARGET_MINDISTANCE, 0, 100.0f, true));
                         break;
                 }
             }
@@ -1385,7 +1385,7 @@ class npc_mage : public CreatureScript
                 if (tempTimer <= diff)
                 {
                     DoZoneInCombat();
-                    if (Unit* target = SelectTarget(SELECT_TARGET_NEAREST, 0, 100.0f, true))
+                    if (Unit* target = SelectTarget(SELECT_TARGET_MINDISTANCE, 0, 100.0f, true))
                     {
                         AttackStart(target);
                         tempTimer = 0;

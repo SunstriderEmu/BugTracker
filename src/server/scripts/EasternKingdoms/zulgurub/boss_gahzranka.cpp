@@ -87,7 +87,7 @@ public:
             if (MassiveGeyser_Timer < diff)
             {
                 DoCast(me->GetVictim(),SPELL_MASSIVEGEYSER);
-                DoResetThreat();
+                ResetThreatList();
     
                 MassiveGeyser_Timer = 22000 + rand()%10000;
             }else MassiveGeyser_Timer -= diff;

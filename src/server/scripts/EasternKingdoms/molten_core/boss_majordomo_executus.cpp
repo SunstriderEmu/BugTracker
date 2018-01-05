@@ -452,7 +452,7 @@ class Mob_FlameWalker_Healer : public CreatureScript
                     case 0:
                         break;
                     case EV_SHADOWBOLT:
-                        if (Unit* target = SelectTarget(SELECT_TARGET_TOPAGGRO, 0, 100.0f, true))
+                        if (Unit* target = SelectTarget(SELECT_TARGET_MAXTHREAT, 0, 100.0f, true))
                             if(me->CastSpell(target, SPELL_SHADOWBOLT) == SPELL_CAST_OK)
                                 events.RescheduleEvent(EV_SHADOWBOLT, urand(8000, 12000));
                         break;

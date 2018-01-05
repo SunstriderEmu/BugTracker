@@ -279,7 +279,7 @@ public:
                         MarkOfHydross_Count = 0;
     
                         DoScriptText(SAY_SWITCH_TO_CLEAN, me);
-                        DoResetThreat();
+                        ResetThreatList();
                         SummonBeams();
     
                         // spawn 4 adds
@@ -346,7 +346,7 @@ public:
                         CorruptedForm = true;
     
                         DoScriptText(SAY_SWITCH_TO_CORRUPT, me);
-                        DoResetThreat();
+                        ResetThreatList();
                         DeSummonBeams();
     
                         // spawn 4 adds

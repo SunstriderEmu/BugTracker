@@ -161,7 +161,7 @@ public:
                     if (me->CastSpell(me->GetVictim(), SPELL_THUNDER_CLAP) == SPELL_CAST_OK)
                     {
                         Talk(TALK_CHANGE_TARGET, me->GetVictim());
-                        DoResetThreat();
+                        ResetThreatList();
                         events.RescheduleEvent(EV_THUNDER_CLAP, urand(25000, 35000));
                     }
                     break;
