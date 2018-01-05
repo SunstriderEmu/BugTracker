@@ -210,12 +210,13 @@ public:
         {
             switch (creature->GetEntry())
             {
-            case 25653:
-                if (Unit* summoner = creature->GetSummoner())
-                {
-                    summoner->RemoveAurasDueToSpell(45838);
-                    summoner->RemoveAurasDueToSpell(45839);
-                }
+            case 25653: //Power of the Blue Flight
+                if(TempSummon* summoned = creature->ToTempSummon())
+                    if (Unit* summoner = summoned->GetSummoner())
+                    {
+                        summoner->RemoveAurasDueToSpell(45838);
+                        summoner->RemoveAurasDueToSpell(45839);
+                    }
                 break;
             }
         }
@@ -523,9 +524,8 @@ public:
                 float x, y, z;
 
                 Commander->GetRandomPoint(Commander, 1.0f, x, y, z);
-                if (Creature *Fiend = Commander->SummonCreature(CREATURE_VOLATILE_FELFIRE_FIEND, x, y, z, Commander->GetOrientation(), TEMPSUMMON_MANUAL_DESPAWN, 0)) {
+                if (TempSummon *Fiend = Commander->SummonCreature(CREATURE_VOLATILE_FELFIRE_FIEND, x, y, z, Commander->GetOrientation(), TEMPSUMMON_MANUAL_DESPAWN, 0)) {
                     //Fiend->MonsterSay("[DEBUG] Fiend!", LANG_UNIVERSAL, NULL);
-                    Fiend->SetSummoner(Commander);
                     Fiend->SetKeepActive(true);
                     Fiend->SetSpeedRate(MOVE_WALK, 5);
                 }

@@ -678,16 +678,10 @@ public:
                 Summons.DespawnAll();
 
                 for(uint8 i = 0; i < 3; ++i)
-                {
-                    if (Creature *hand = me->SummonCreature(CREATURE_HAND_OF_THE_DECEIVER, DeceiverLocations[i][0], DeceiverLocations[i][1], FLOOR_Z, DeceiverLocations[i][2], TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000))
-                    {
-                        hand->SetSummoner(me);
+                    if (TempSummon *hand = me->SummonCreature(CREATURE_HAND_OF_THE_DECEIVER, DeceiverLocations[i][0], DeceiverLocations[i][1], FLOOR_Z, DeceiverLocations[i][2], TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000))
                         handDeceiver[i] = hand->GetGUID();
-                    }
-                }
 
-                if (Creature *anveena = me->SummonCreature(CREATURE_ANVEENA,  me->GetPositionX(), me->GetPositionY(), 60, 0, TEMPSUMMON_DEAD_DESPAWN, 0))
-                    anveena->SetSummoner(me);
+                me->SummonCreature(CREATURE_ANVEENA, me->GetPositionX(), me->GetPositionY(), 60, 0, TEMPSUMMON_DEAD_DESPAWN, 0);
 
                 me->CastSpell(me,SPELL_DESTROY_DRAKES, TRIGGERED_FULL_MASK);
 
@@ -1104,8 +1098,7 @@ public:
                 {
                     me->RemoveAurasDueToSpell(SPELL_ANVEENA_ENERGY_DRAIN);
                     phase = PHASE_NORMAL;
-                    if (Creature *kiljaeden = me->SummonCreature(CREATURE_KILJAEDEN, KJLocation[0], KJLocation[1], KJLocation[2], KJLocation[3], TEMPSUMMON_MANUAL_DESPAWN, 0))
-                        kiljaeden->SetSummoner(me);
+                    me->SummonCreature(CREATURE_KILJAEDEN, KJLocation[0], KJLocation[1], KJLocation[2], KJLocation[3], TEMPSUMMON_MANUAL_DESPAWN, 0);
                 }
             }
     };
@@ -1169,9 +1162,10 @@ public:
             Summons.DespawnAll();
             //destroy at non spawn reset
             if(initDone)
-            {   
-                if(me->GetSummoner() && me->GetSummoner()->ToCreature() && me->GetSummoner()->ToCreature()->AI())
-                    me->GetSummoner()->ToCreature()->AI()->EnterEvadeMode();
+            {
+                if (TempSummon* u = me->ToTempSummon())
+                    if(u->GetSummoner() && u->GetSummoner()->ToCreature() && u->GetSummoner()->ToCreature()->AI())
+                        u->GetSummoner()->ToCreature()->AI()->EnterEvadeMode();
 
                 if(pInstance)
                     pInstance->SetData(DATA_KILJAEDEN_EVENT,NOT_STARTED);
@@ -1481,10 +1475,7 @@ public:
                         sx = ShieldOrbLocations[0][0] + sin(ShieldOrbLocations[i][0]);
                         sy = ShieldOrbLocations[0][1] + sin(ShieldOrbLocations[i][1]);
                         if (Creature* orb = me->SummonCreature(CREATURE_SHIELD_ORB, sx, sy, SHIELD_ORB_Z, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 45000))
-                        {
-                            orb->SetSummoner(me);
                             orb->AI()->DoZoneInCombat();
-                        }
                     }
 
                     events.RescheduleEvent(EVENT_SUMMON_SHILEDORB, urand(25000, 30000));
@@ -1790,21 +1781,24 @@ public:
                         break;
                     case EVENT_STUN:
                         me->ClearUnitState(UNIT_STATE_STUNNED);
-                        if (Unit* summoner = me->GetSummoner())
+                        if (TempSummon* _me = me->ToTempSummon())
                         {
-                            if (summoner->GetEntry() == 25837)
+                            if (Unit* summoner = _me->GetSummoner())
                             {
-                                me->GetMotionMaster()->MovePath(25851); //this path is PATH_TYPE_ONCE
-                                events.CancelEvent(EVENT_STUN);
-                            }
-                            else
-                            {
-                                DoZoneInCombat();
-                                if (Unit *unit = SelectTarget(SELECT_TARGET_MINDISTANCE, 0, 100.0f, false))
+                                if (summoner->GetEntry() == 25837)
                                 {
-                                    AttackStart(unit);
-                                    me->GetThreatManager().AddThreat(unit, 10000000.0f);
+                                    me->GetMotionMaster()->MovePath(25851); //this path is PATH_TYPE_ONCE
                                     events.CancelEvent(EVENT_STUN);
+                                }
+                                else
+                                {
+                                    DoZoneInCombat();
+                                    if (Unit *unit = SelectTarget(SELECT_TARGET_MINDISTANCE, 0, 100.0f, false))
+                                    {
+                                        AttackStart(unit);
+                                        me->GetThreatManager().AddThreat(unit, 10000000.0f);
+                                        events.CancelEvent(EVENT_STUN);
+                                    }
                                 }
                             }
                         }
@@ -2110,8 +2104,9 @@ public:
                     case EVENT_STUN:
                         canAttack = true;
                         me->ClearUnitState(UNIT_STATE_STUNNED);
-                        if (Unit* summoner = me->GetSummoner())
-                            AttackStart(summoner);
+                        if (TempSummon* _me = me->ToTempSummon())
+                            if (Unit* summoner = _me->GetSummoner())
+                                me->GetThreatManager().AddThreat(summoner, 2500); //no idea if this is correct
                         events.CancelEvent(EVENT_STUN);
                         break;
                 }

@@ -69,6 +69,7 @@ enum ReliquaryOfSoulsData {
     PHASE_ANGER                     = 3
 };
 
+//the master creature controling others
 class Boss_reliquary_of_souls : public CreatureScript
 {
 public:
@@ -238,14 +239,13 @@ public:
                     timer = 2500; //2800 avant
                     break;
                 case 2: //summon essence
-                    if (Creature* summon = me->SummonCreature(23417 + phase, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation(), TEMPSUMMON_DEAD_DESPAWN, 0)) {
+                    if (TempSummon* summon = me->SummonCreature(23417 + phase, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation(), TEMPSUMMON_DEAD_DESPAWN, 0)) {
                         me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_SUBMERGED);
                         if (summon->AI()) {
                             //summon->getAI()->attackStart(SelectTarget(SELECT_TARGET_MAXTHREAT, 0));
                             Unit* target = SelectTarget(SELECT_TARGET_MINDISTANCE,0,200.0f,true);
                             summon->AI()->AttackStart(target);
                             essenceGUID = summon->GetGUID();
-                            summon->SetSummoner(me);
                             me->GetMotionMaster()->MoveIdle();
                         }
                     }
@@ -380,10 +380,12 @@ public:
             //me->SetNoCallAssistance(true);
         }
         
-        void EnterEvadeMode(EvadeReason why)
-        override {
-            if (Creature* reliquary = me->GetSummoner()->ToCreature())
-                reliquary->AI()->EnterEvadeMode(why);
+        void EnterEvadeMode(EvadeReason why) override 
+        {
+            if(TempSummon* _me = me->ToTempSummon())
+                if(Unit* summoner = _me->GetSummoner())
+                    if (Creature* reliquary = summoner->ToCreature())
+                        reliquary->AI()->EnterEvadeMode(why);
                 
             CreatureAI::EnterEvadeMode(why);
         }
@@ -499,10 +501,12 @@ public:
            // me->SetNoCallAssistance(true);
         }
         
-        void EnterEvadeMode(EvadeReason why)
-        override {
-            if (Creature* reliquary = me->GetSummoner()->ToCreature())
-                reliquary->AI()->EnterEvadeMode(why);
+        void EnterEvadeMode(EvadeReason why) override 
+        {
+            if (TempSummon* _me = me->ToTempSummon())
+                if (Unit* summoner = _me->GetSummoner())
+                    if (Creature* reliquary = summoner->ToCreature())
+                        reliquary->AI()->EnterEvadeMode(why);
                 
             CreatureAI::EnterEvadeMode(why);
         }
@@ -629,8 +633,10 @@ public:
         
         void EnterEvadeMode(EvadeReason why)
         override {
-            if (Creature* reliquary = me->GetSummoner()->ToCreature())
-                reliquary->AI()->EnterEvadeMode(why);
+            if (TempSummon* _me = me->ToTempSummon())
+                if (Unit* summoner = _me->GetSummoner())
+                    if (Creature* reliquary = summoner->ToCreature())
+                        reliquary->AI()->EnterEvadeMode(why);
                 
             CreatureAI::EnterEvadeMode(why);
         }
@@ -651,8 +657,10 @@ public:
             if(tank) tank->ApplySpellImmune(0, IMMUNITY_ID, SPELL_SPITE_TARGET, false);
             Talk(TALK_ANGER_SAY_DEATH);
 
-            if (Creature* reliquary = me->GetSummoner()->ToCreature())
-                reliquary->AI()->message(DATA_ESSENCE_OF_ANGER_DEATH, 0);
+            if (TempSummon* _me = me->ToTempSummon())
+                if (Unit* summoner = _me->GetSummoner())
+                    if (Creature* reliquary = summoner->ToCreature())
+                        reliquary->AI()->message(DATA_ESSENCE_OF_ANGER_DEATH, 0);
         }
         
         void KilledUnit(Unit* victim)
