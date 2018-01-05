@@ -112,7 +112,7 @@ float Humanoides[6][5] =
     {CREATURE_FURY_MAGE, 1900.85f,    555.99f,    71.30f,    2.57f}
 };
 
-typedef std::map<uint64, uint32> GuidMapCD;
+typedef std::map<ObjectGuid, uint32> GuidMapCD;
 typedef std::set<ObjectGuid> GuidSet;
 
 class npc_blackhole : public CreatureScript
@@ -181,7 +181,7 @@ public:
             switch (id)
             {
                 case 1:
-                    time = guidPlayerCD[data];
+                    time = guidPlayerCD[ObjectGuid(data)];
                     if (time > 0)
                         return true;
                     break;
@@ -281,7 +281,7 @@ public:
                                     else
                                     {
                                         guidPlayerCD[(*i).first] = 0; //cooldown expired, remove aura
-                                        if (Player *plr = sObjectMgr->GetPlayer((*i).first))
+                                        if (Player *plr = ObjectAccessor::FindPlayer((*i).first))
                                             plr->RemoveAurasDueToSpell(SPELL_BLACK_HOLE_EFFECT);
                                     }
                                 }
@@ -296,7 +296,7 @@ public:
                                 {
                                     if ((*i).second > 0)
                                     {
-                                        Player *plr = sObjectMgr->GetPlayer((*i).first);
+                                        Player *plr = ObjectAccessor::FindPlayer((*i).first);
                                         float vcos, vsin;
                                         float angle = me->GetMap()->rand_norm()*2*M_PI;
                                         vcos = cos(angle);

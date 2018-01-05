@@ -1353,7 +1353,7 @@ public:
         
         uint32 SelectRandomBeam()
         {
-            Player *plr = sObjectMgr->GetPlayer(playerGUID);
+            Player *plr = ObjectAccessor::FindPlayer(playerGUID);
             if (!plr)
                 return 0;
     
@@ -1418,7 +1418,7 @@ public:
             uint8 next = beamList.front();
             if (next == prop) {     // Good
                 DoCast(me, GetSpellForBeam(next), true);
-                if (Player *plr = sObjectMgr->GetPlayer(playerGUID))
+                if (Player *plr = ObjectAccessor::FindPlayer(playerGUID))
                     plr->PlaySound(GetSoundForButton(next), false);
                 
                 beamList.pop_front();
@@ -1428,7 +1428,7 @@ public:
                 }
             }
             else {                  // Wrong, hurt player and restart level
-                if (Player *plr = sObjectMgr->GetPlayer(playerGUID)) {
+                if (Player *plr = ObjectAccessor::FindPlayer(playerGUID)) {
                     plr->CastSpell(plr, SPELL_GAME_FAILED, TRIGGERED_FULL_MASK);
                     plr->CastSpell(plr, SPELL_BAD_PRESS, TRIGGERED_FULL_MASK);
                 }
@@ -1443,7 +1443,7 @@ public:
         
         void UpdateAI(uint32 const diff)
         override {
-            Player *summoner = sObjectMgr->GetPlayer(playerGUID);
+            Player *summoner = ObjectAccessor::FindPlayer(playerGUID);
             if (!summoner || !summoner->IsInWorld()) {
                 me->DisappearAndDie();
                 return;
@@ -1809,7 +1809,7 @@ public:
         
         uint32 SelectRandomBeam()
         {
-            Player *plr = sObjectMgr->GetPlayer(playerGUID);
+            Player *plr = ObjectAccessor::FindPlayer(playerGUID);
             if (!plr)
                 return 0;
     
@@ -1874,7 +1874,7 @@ public:
             uint8 next = beamList.front();
             if (next == prop) {     // Good
                 DoCast(me, GetSpellForBeam(next), true);
-                if (Player *plr = sObjectMgr->GetPlayer(playerGUID))
+                if (Player *plr = ObjectAccessor::FindPlayer(playerGUID))
                     plr->PlaySound(GetSoundForButton(next), false);
                 
                 beamList.pop_front();
@@ -1884,7 +1884,7 @@ public:
                 }
             }
             else {                  // Wrong, hurt player and restart level
-                if (Player *plr = sObjectMgr->GetPlayer(playerGUID)) {
+                if (Player *plr = ObjectAccessor::FindPlayer(playerGUID)) {
                     plr->CastSpell(plr, SPELL_GAME_FAILED, TRIGGERED_FULL_MASK);
                     plr->CastSpell(plr, SPELL_BAD_PRESS, TRIGGERED_FULL_MASK);
                 }
@@ -1899,7 +1899,7 @@ public:
         
         void UpdateAI(uint32 const diff)
         override {
-            Player *summoner = sObjectMgr->GetPlayer(playerGUID);
+            Player *summoner = ObjectAccessor::FindPlayer(playerGUID);
             if (!summoner || !summoner->IsInWorld()) {
                 me->DisappearAndDie();
                 return;
