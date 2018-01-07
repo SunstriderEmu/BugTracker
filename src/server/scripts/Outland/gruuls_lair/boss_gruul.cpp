@@ -125,10 +125,13 @@ public:
     
                                 if(target && target2)
                                 {
+                                    CastSpellExtraArgs args;
+                                    args.TriggerFlags = TRIGGERED_FULL_MASK;
+                                    args.SetOriginalCaster(me->GetGUID());
                                     switch(rand()%2)
                                     {
-                                        case 0: target2->CastSpell(target, SPELL_MAGNETIC_PULL, TRIGGERED_FULL_MASK, nullptr, nullptr, me->GetGUID()); break;
-                                        case 1: target2->CastSpell(target, SPELL_KNOCK_BACK, TRIGGERED_FULL_MASK, nullptr, nullptr, me->GetGUID()); break;
+                                        case 0: target2->CastSpell(target, SPELL_MAGNETIC_PULL, args); break;
+                                        case 1: target2->CastSpell(target, SPELL_KNOCK_BACK, args); break;
                                     }
                                 }
                             }
@@ -145,7 +148,10 @@ public:
                                 if(Unit* target = pair.second->GetOther(me))
                                 {
                                     target->RemoveAurasDueToSpell(SPELL_GRONN_LORDS_GRASP);
-                                    target->CastSpell(target, SPELL_STONED, true, nullptr, nullptr, me->GetGUID());
+                                    CastSpellExtraArgs args;
+                                    args.TriggerFlags = TRIGGERED_FULL_MASK;
+                                    args.SetOriginalCaster(target->GetGUID());
+                                    target->CastSpell(target, SPELL_STONED,args);
                                 }
                             }
     
@@ -173,8 +179,12 @@ public:
                                 {
                                     target->RemoveAurasDueToSpell(SPELL_STONED);
     
-                                    if(target->GetTypeId() == TYPEID_PLAYER)
-                                        target->CastSpell(target, SPELL_SHATTER_EFFECT, TRIGGERED_NONE, nullptr, nullptr, me->GetGUID());
+                                    if (target->GetTypeId() == TYPEID_PLAYER)
+                                    {
+                                        CastSpellExtraArgs args;
+                                        args.SetOriginalCaster(target->GetGUID());
+                                        target->CastSpell(target, SPELL_SHATTER_EFFECT, args);
+                                    }
                                 }
     
                             }

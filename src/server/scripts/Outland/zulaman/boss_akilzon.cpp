@@ -305,7 +305,11 @@ public:
                 {
                     if(Cloud->GetDistance2d(*i)>= 6)
                     {
-                        Cloud->CastCustomSpell(*i, 43137, &bp0, NULL, NULL, TRIGGERED_FULL_MASK, 0, 0, me->GetGUID());
+                        CastSpellExtraArgs args;
+                        args.TriggerFlags = TRIGGERED_FULL_MASK;
+                        args.AddSpellBP0(int32(bp0));
+                        args.SetOriginalCaster(me->GetGUID());
+                        Cloud->CastSpell(*i, 43137, args);
                     }
                 }*/
                 Map::PlayerList const& players = pInstance->instance->GetPlayers();
@@ -318,7 +322,13 @@ public:
                     if (Player* plr = player.GetSource()) 
                     {
                         if (Cloud->GetDistance2d(plr) >= 6 && plr->IsAttackableByAOE())
-                            Cloud->CastCustomSpell(plr, 43137, &bp0, nullptr, nullptr, TRIGGERED_FULL_MASK, nullptr, nullptr, me->GetGUID());
+                        {
+                            CastSpellExtraArgs args;
+                            args.TriggerFlags = TRIGGERED_FULL_MASK;
+                            args.AddSpellBP0(int32(bp0));
+                            args.SetOriginalCaster(me->GetGUID());
+                            Cloud->CastSpell(plr, 43137, args);
+                        }
                     }
                 }
                 // visual
@@ -336,7 +346,13 @@ public:
                         trigger->SetHealth(100000);
                         trigger->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                         if (Cloud)
-                            Cloud->CastCustomSpell(trigger, 43137, &bp0, NULL, NULL, TRIGGERED_FULL_MASK, 0, 0, Cloud->GetGUID());
+                        {
+                            CastSpellExtraArgs args;
+                            args.TriggerFlags = TRIGGERED_FULL_MASK;
+                            args.AddSpellBP0(int32(bp0));
+                            args.SetOriginalCaster(Cloud->GetGUID());
+                            Cloud->CastSpell(trigger, 43137, args);
+                        }
                     }
                 }*/
             }

@@ -785,7 +785,10 @@ public:
                             //Set target in stomach
                             Stomach_Map[target->GetGUID()] = true;
                             target->InterruptNonMeleeSpells(false);
-                            target->CastSpell(target, SPELL_MOUTH_TENTACLE, TRIGGERED_FULL_MASK, nullptr, nullptr, me->GetGUID());
+                            CastSpellExtraArgs args;
+                            args.TriggerFlags = TRIGGERED_FULL_MASK;
+                            args.SetOriginalCaster(me->GetGUID());
+                            target->CastSpell(target, SPELL_MOUTH_TENTACLE, args);
                             StomachEnterTarget = target->GetGUID();
                             StomachEnterVisTimer = 3800;
                         }

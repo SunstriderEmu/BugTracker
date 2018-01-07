@@ -439,7 +439,10 @@ public:
                         Unit* pUnit = ObjectAccessor::GetUnit(*me, FlameWreathTarget[i]);
                         if (pUnit && pUnit->GetDistance2d(FWTargPosX[i], FWTargPosY[i]) > 3)
                         {
-                            pUnit->CastSpell(pUnit, 20476, TRIGGERED_FULL_MASK, nullptr, nullptr, me->GetGUID());
+                            CastSpellExtraArgs args;
+                            args.TriggerFlags = TRIGGERED_FULL_MASK;
+                            args.SetOriginalCaster(me->GetGUID());
+                            pUnit->CastSpell(pUnit, 20476, args);
                             pUnit->CastSpell(pUnit, 11027, TRIGGERED_FULL_MASK);
                             FlameWreathTarget[i].Clear();
                         }

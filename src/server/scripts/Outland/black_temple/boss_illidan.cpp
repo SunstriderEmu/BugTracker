@@ -2352,7 +2352,10 @@ public:
                 if(!me->GetVictim()->HasAuraEffect(SPELL_PARASITIC_SHADOWFIEND, 0)
                     && !me->GetVictim()->HasAuraEffect(SPELL_PARASITIC_SHADOWFIEND2, 0))
                 {
-                    me->CastSpell(me->GetVictim(), SPELL_PARASITIC_SHADOWFIEND2, TRIGGERED_FULL_MASK, nullptr, nullptr, IllidanGUID); //do not stack
+                    CastSpellExtraArgs args;
+                    args.TriggerFlags = TRIGGERED_FULL_MASK;
+                    args.SetOriginalCaster(IllidanGUID);
+                    me->CastSpell(me, SPELL_PARASITIC_SHADOWFIEND2, args); //do not stack
                 }
                 me->AttackerStateUpdate(me->GetVictim());
                 me->ResetAttackTimer();

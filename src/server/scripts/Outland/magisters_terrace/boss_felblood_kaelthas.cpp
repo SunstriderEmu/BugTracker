@@ -307,8 +307,13 @@ public:
             {
                 if (Player* i_pl = i->GetSource())
                     if (i_pl->IsAlive() && i_pl->IsAttackableByAOE())
-                    // Knockback into the air
-                        i_pl->CastSpell(i_pl, SPELL_GRAVITY_LAPSE_DOT, TRIGGERED_FULL_MASK, nullptr, nullptr, me->GetGUID());
+                    {
+                        // Knockback into the air
+                        CastSpellExtraArgs args;
+                        args.TriggerFlags = TRIGGERED_FULL_MASK;
+                        args.SetOriginalCaster(me->GetGUID());
+                        i_pl->CastSpell(i_pl, SPELL_GRAVITY_LAPSE_DOT, args);
+                    }
             }
         }
     
@@ -324,7 +329,10 @@ public:
                     if (i_pl->IsAlive() && i_pl->IsAttackableByAOE())
                     {
                         // Also needs an exception in spell system.
-                        i_pl->CastSpell(i_pl, SPELL_GRAVITY_LAPSE_FLY, TRIGGERED_FULL_MASK, nullptr, nullptr, me->GetGUID());
+                        CastSpellExtraArgs args;
+                        args.TriggerFlags = TRIGGERED_FULL_MASK;
+                        args.SetOriginalCaster(me->GetGUID());
+                        i_pl->CastSpell(i_pl, SPELL_GRAVITY_LAPSE_FLY, args);
                         // Use packet hack
                         WorldPacket data(12);
                         data.SetOpcode(SMSG_MOVE_SET_CAN_FLY);

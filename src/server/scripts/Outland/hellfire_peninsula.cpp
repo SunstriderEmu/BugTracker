@@ -2328,7 +2328,7 @@ public:
 
                 //each infernal from a different relay
                 Creature* relay = relaysVector[i % relaysVector.size()];
-                relay->CastSpell(x, y, z, SPELL_INFERNAL_MISSILE, TRIGGERED_FULL_MASK);
+                relay->CastSpell({ x, y, z }, SPELL_INFERNAL_MISSILE, TRIGGERED_FULL_MASK);
             }
         }
 

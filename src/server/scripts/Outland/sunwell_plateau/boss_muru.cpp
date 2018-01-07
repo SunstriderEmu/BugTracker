@@ -452,7 +452,7 @@ public:
                 float rayon = rand() % 25;
                 px = 1816.25f + cos(angle) * rayon;
                 py = 625.484f + sin(angle) * rayon;
-                me->CastSpell(px, py, 71.0f, SPELL_DARKNESS_P2, TRIGGERED_NONE);
+                me->CastSpell({ px, py, 71.0f }, SPELL_DARKNESS_P2);
 
                 Unit* random = SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true);
                 if (!random)
@@ -1129,7 +1129,8 @@ class npc_void_sentinel : public CreatureScript
         override {
             for (uint8 i = 0; i < 6; ++i)
             {
-                me->CastSpell(me->GetPositionX() + ((2 * rand()%1000) / 1000.0f), me->GetPositionY() + ((2 * rand()%1000) / 1000.0f), me->GetPositionZ(), SPELL_SUMMON_VOID_SPAWN, TRIGGERED_NONE);
+                Position pos(me->GetPositionX() + ((2 * rand() % 1000) / 1000.0f), me->GetPositionY() + ((2 * rand() % 1000) / 1000.0f), me->GetPositionZ());
+                me->CastSpell(pos, SPELL_SUMMON_VOID_SPAWN);
             }
         }
 

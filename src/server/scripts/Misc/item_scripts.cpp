@@ -584,7 +584,7 @@ public:
             if (pPlayer->HasItemCount(ITEM_TAINTED_MEAT, 1, false))
             {
                 uint32 spell_id = roll_chance_i(50) ? 29277 : 29278;
-                pPlayer->CastSpell(pPlayer, spell_id, TRIGGERED_FULL_MASK, nullptr);
+                pPlayer->CastSpell(pPlayer, spell_id, true);
                 pPlayer->DestroyItemCount(ITEM_TAINTED_MEAT, 1, true, false);
 
                 return false;

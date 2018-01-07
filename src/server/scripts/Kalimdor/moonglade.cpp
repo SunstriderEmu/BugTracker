@@ -1848,7 +1848,9 @@ public:
             if (Shoot_Timer <= diff)
             {
                 int bp0 = 1100;
-                me->CastCustomSpell(me->GetVictim(), 37770, &bp0, nullptr, nullptr, TRIGGERED_NONE);
+                CastSpellExtraArgs args;
+                args.AddSpellBP0(int32(bp0));
+                me->CastSpell(me->GetVictim(), 37770, args);
                 Shoot_Timer = 3000;
             } else
                 Shoot_Timer -= diff;

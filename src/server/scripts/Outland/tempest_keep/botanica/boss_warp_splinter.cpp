@@ -95,7 +95,11 @@ public:
                         if (me->IsWithinMeleeRange(Warp, 2.5f))
                         {
                             int32 CurrentHP_Treant = (int32)me->GetHealth();
-                            Warp->CastCustomSpell(Warp, SPELL_HEAL_FATHER, &CurrentHP_Treant, nullptr, nullptr, TRIGGERED_FULL_MASK, nullptr, nullptr, me->GetGUID());
+                            CastSpellExtraArgs args;
+                            args.TriggerFlags = TRIGGERED_FULL_MASK;
+                            args.AddSpellBP0(CurrentHP_Treant);
+                            args.SetOriginalCaster(me->GetGUID());
+                            Warp->CastSpell(Warp, SPELL_HEAL_FATHER, args);
                             me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
                             return;
                         }

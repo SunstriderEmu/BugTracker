@@ -496,8 +496,11 @@ public:
                     if(me->GetDistance(me->GetVictim()) < 30)
                     {
                         //me->CastSpell(me->GetVictim(), SPELL_CHAOS_BLAST, TRIGGERED_FULL_MASK);
-                        int damage = 100;
-                        me->CastCustomSpell(me->GetVictim(), SPELL_CHAOS_BLAST, &damage, nullptr, nullptr, TRIGGERED_NONE, nullptr, nullptr, me->GetGUID());
+                        CastSpellExtraArgs args;
+                        args.TriggerFlags = TRIGGERED_FULL_MASK;
+                        args.AddSpellBP0(int32(100));
+                        args.SetOriginalCaster(me->GetGUID());
+                        me->CastSpell(me->GetVictim(), SPELL_CHAOS_BLAST, args);
                     }
                     ChaosBlast_Timer = 3000;
                 }else ChaosBlast_Timer -= diff;
@@ -650,7 +653,10 @@ public:
                 {
                     //me->CastSpell(me->GetVictim(),SPELL_CHAOS_BLAST, TRIGGERED_FULL_MASK);
                     int damage = 100;
-                    me->CastCustomSpell(me->GetVictim(), SPELL_CHAOS_BLAST, &damage, nullptr, nullptr, TRIGGERED_NONE, nullptr, nullptr, me->GetGUID());
+                    CastSpellExtraArgs args;
+                    args.AddSpellBP0(int32(100));
+                    args.SetOriginalCaster(me->GetGUID());
+                    me->CastSpell(me->GetVictim(), SPELL_CHAOS_BLAST, args);
                     ChaosBlast_Timer = 3000;
                 }
              }else ChaosBlast_Timer -= diff;

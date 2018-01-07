@@ -596,7 +596,12 @@ public:
                 SpellCastResult result = SPELL_CAST_OK;
                 Unit* pUnit = ObjectAccessor::GetUnit((*me), i);
                 if (pUnit)
-                    result = SpellCastResult(pUnit->CastSpell(pUnit, spellid, TRIGGERED_FULL_MASK, nullptr, nullptr, me->GetGUID()));
+                {
+                    CastSpellExtraArgs args;
+                    args.TriggerFlags = TRIGGERED_FULL_MASK;
+                    args.SetOriginalCaster(me->GetGUID());
+                    pUnit->CastSpell(pUnit, spellid, args);
+                }
     
                 success = success && result == SPELL_CAST_OK;
             }

@@ -208,9 +208,12 @@ public:
             me->SetSpeedRate(MOVE_WALK, 0.5f);
         }
     
-        void JustDied(Unit* slayer)
-        override {
-            slayer->CastSpell(slayer, SPELL_ENERGY_FEEDBACK, TRIGGERED_FULL_MASK, nullptr, nullptr, me->GetGUID());
+        void JustDied(Unit* slayer) override 
+        {
+            CastSpellExtraArgs args;
+            args.TriggerFlags = TRIGGERED_FULL_MASK;
+            args.SetOriginalCaster(me->GetGUID());
+            slayer->CastSpell(slayer, SPELL_ENERGY_FEEDBACK, args);
         }
     
         void JustEngagedWith(Unit *who)override {}

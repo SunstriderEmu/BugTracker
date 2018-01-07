@@ -90,7 +90,7 @@ public:
             HealSay = false;
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
             //cast red shining
-            me->CastSpell(me, 29152, TRIGGERED_NONE, nullptr);
+            me->CastSpell(me, 29152);
             //set creature health
             me->SetHealth(int(me->GetMaxHealth()*.1));
             me->SetUInt32Value(UNIT_FIELD_BYTES_1, 3);

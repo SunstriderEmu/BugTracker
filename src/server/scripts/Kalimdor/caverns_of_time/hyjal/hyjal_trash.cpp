@@ -1425,7 +1425,7 @@ public:
                 {
                     if(StrikeTimer<diff)
                     {
-                        me->CastSpell(DummyTarget[0],DummyTarget[1],DummyTarget[2],SPELL_GARGOYLE_STRIKE, TRIGGERED_NONE);
+                        me->CastSpell({ DummyTarget[0],DummyTarget[1],DummyTarget[2] }, SPELL_GARGOYLE_STRIKE, TRIGGERED_NONE);
                         StrikeTimer = 2000+rand()%1000;
                     }else StrikeTimer -= diff;
                     }

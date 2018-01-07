@@ -156,10 +156,13 @@ public:
         
         void summonSoul()
         {
-            Creature* rift = getRandomRift();
-
-            if(rift)
-                rift->CastSpell(rift,SPELL_SUMMON_SOUL2, TRIGGERED_FULL_MASK,nullptr,nullptr,me->GetGUID());
+            if (Creature* rift = getRandomRift())
+            {
+                CastSpellExtraArgs args;
+                args.TriggerFlags = TRIGGERED_FULL_MASK;
+                args.SetOriginalCaster(me->GetGUID());
+                rift->CastSpell(rift, SPELL_SUMMON_SOUL2, args);
+            }
         }
 
         void JustDied(Unit* killer)
@@ -522,7 +525,10 @@ public:
             }
             else {
                 int32 bp0 = damage / 2;
-                me->CastCustomSpell(attacker, AURA_OF_DESIRE_DAMAGE, &bp0, nullptr, nullptr, TRIGGERED_FULL_MASK);
+                CastSpellExtraArgs args;
+                args.TriggerFlags = TRIGGERED_FULL_MASK;
+                args.AddSpellBP0(int32(bp0));
+                me->CastSpell(attacker, AURA_OF_DESIRE_DAMAGE, args);
             }
         }
         

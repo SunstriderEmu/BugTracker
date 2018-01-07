@@ -662,10 +662,14 @@ class boss_kaelthas : public CreatureScript
                         me->CastSpell(me, SPELL_ARCANE_DISRUPTION, TRIGGERED_NONE);
                         break;
                     case EVENT_SPELL_MIND_CONTROL:
+                    {
                         if (roll_chance_i(50))
                             Talk(SAY_MINDCONTROL);
-                        me->CastCustomSpell(SPELL_MIND_CONTROL, SPELLVALUE_MAX_TARGETS, 3, me, TRIGGERED_NONE);
+                        CastSpellExtraArgs args;
+                        args.SpellValueOverrides.AddMod(SPELLVALUE_MAX_TARGETS, int32(3));
+                        me->CastSpell(me, SPELL_MIND_CONTROL, args);
                         break;
+                    }
                     case EVENT_SPELL_SUMMON_PHOENIX:
                         Talk(SAY_SUMMON_PHOENIX);
                         me->CastSpell(me, SPELL_PHOENIX, TRIGGERED_NONE);
