@@ -899,6 +899,7 @@ class spell_kaelthas_burn : public SpellScriptLoader
             return new spell_kaelthas_burn_AuraScript();
         }
 };
+*/
 
 class spell_kaelthas_flame_strike : public SpellScriptLoader
 {
@@ -932,7 +933,6 @@ class spell_kaelthas_flame_strike : public SpellScriptLoader
             return new spell_kaelthas_flame_strike_AuraScript();
         }
 };
-*/
 
 class lapseTeleport : public BasicEvent
 {
@@ -1073,7 +1073,7 @@ void AddSC_boss_kaelthas()
     new spell_kaelthas_resurrection();
     new spell_kaelthas_mind_control();
     //NYI new spell_kaelthas_burn();
-    //NYI new spell_kaelthas_flame_strike();
+    new spell_kaelthas_flame_strike();
     new spell_kaelthas_gravity_lapse();
     new spell_kaelthas_nether_beam();
     new spell_kaelthas_summon_nether_vapor();
