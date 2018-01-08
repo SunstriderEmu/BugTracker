@@ -763,7 +763,6 @@ class spell_kaelthas_kael_phase_two : public SpellScriptLoader
         }
 };
 
-/* AuraScript NYI
 class spell_kaelthas_remote_toy : public SpellScriptLoader
 {
     public:
@@ -777,7 +776,12 @@ class spell_kaelthas_remote_toy : public SpellScriptLoader
             {
                 PreventDefaultAction();
                 if (roll_chance_i(66))
-                    GetUnitOwner()->CastSpell(GetUnitOwner(), SPELL_REMOTE_TOY_STUN, TRIGGERED_FULL_MASK);
+                {
+                    CastSpellExtraArgs args;
+                    args.SetTriggerFlags(TRIGGERED_FULL_MASK);
+                    args.SetOriginalCaster(aurEff->GetCasterGUID());
+                    GetUnitOwner()->CastSpell(GetUnitOwner(), SPELL_REMOTE_TOY_STUN, args);
+                }
             }
 
             void Register()
@@ -791,7 +795,7 @@ class spell_kaelthas_remote_toy : public SpellScriptLoader
             return new spell_kaelthas_remote_toy_AuraScript();
         }
 };
-*/
+
 class spell_kaelthas_summon_weapons : public SpellScriptLoader
 {
     public:
@@ -873,7 +877,6 @@ class spell_kaelthas_mind_control : public SpellScriptLoader
         }
 };
 
-/* AuraScript NYI
 class spell_kaelthas_burn : public SpellScriptLoader
 {
     public:
@@ -885,7 +888,7 @@ class spell_kaelthas_burn : public SpellScriptLoader
 
             void HandlePeriodic(AuraEffect const* aurEff)
             {
-                Unit::DealDamage(GetUnitOwner(), GetUnitOwner(), GetUnitOwner()->CountPctFromMaxHealth(5)+1);
+                GetUnitOwner()->DealDamage(GetUnitOwner(), GetUnitOwner()->CountPctFromMaxHealth(5)+1);
             }
 
             void Register()
@@ -899,7 +902,6 @@ class spell_kaelthas_burn : public SpellScriptLoader
             return new spell_kaelthas_burn_AuraScript();
         }
 };
-*/
 
 class spell_kaelthas_flame_strike : public SpellScriptLoader
 {
@@ -1068,11 +1070,11 @@ void AddSC_boss_kaelthas()
 {
     new boss_kaelthas();
     new spell_kaelthas_kael_phase_two();
-    //NYI new spell_kaelthas_remote_toy();
+    new spell_kaelthas_remote_toy();
     new spell_kaelthas_summon_weapons();
     new spell_kaelthas_resurrection();
     new spell_kaelthas_mind_control();
-    //NYI new spell_kaelthas_burn();
+    new spell_kaelthas_burn();
     new spell_kaelthas_flame_strike();
     new spell_kaelthas_gravity_lapse();
     new spell_kaelthas_nether_beam();
