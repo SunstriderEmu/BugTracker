@@ -351,9 +351,8 @@ public:
     
             pet = false;
     
-            Creature* pet = (Creature*)ObjectAccessor::GetUnit(*me, SummonedPet);
-            if(pet)
-                pet->DisappearAndDie();
+            if(Creature* summonPet = (Creature*)ObjectAccessor::GetUnit(*me, SummonedPet))
+                summonPet->DisappearAndDie();
     
             SummonedPet = ObjectGuid::Empty;
     

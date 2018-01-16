@@ -651,7 +651,7 @@ public:
                 if(me->GetDistance(me->GetVictim()) < 30)
                 {
                     //me->CastSpell(me->GetVictim(),SPELL_CHAOS_BLAST, TRIGGERED_FULL_MASK);
-                    int damage = 100;
+                   // int damage = 100;
                     CastSpellExtraArgs args;
                     args.AddSpellBP0(int32(100));
                     args.SetOriginalCaster(me->GetGUID());

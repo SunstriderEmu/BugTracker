@@ -668,7 +668,7 @@ public:
                     DoCast(me, SPELL_BODY_REGEN, true);
                     me->CastSpell(Head, SPELL_FLYING_HEAD, TRIGGERED_FULL_MASK);
                     DoCast(me, SPELL_CONFUSE, false);                     //test
-                    doneBy->ProcDamageAndSpell(me, PROC_FLAG_KILL_AND_GET_XP, PROC_FLAG_KILLED, PROC_EX_NONE, 0);
+                    doneBy->ProcSkillsAndAuras(me, PROC_FLAG_KILL_AND_GET_XP, PROC_FLAG_KILLED, PROC_HIT_NONE, 0);
                     whirlwind = 4000 + (rand()%5)*IN_MILLISECONDS;
                     regen = 0;
                 }
