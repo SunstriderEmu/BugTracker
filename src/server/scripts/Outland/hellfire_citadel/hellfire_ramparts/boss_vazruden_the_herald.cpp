@@ -180,54 +180,56 @@ public:
             if (!UpdateVictim())
                 return;
 
-            switch (events.GetEvent())
-            {
-            case EVENT_FIREBALL:
-            {
-                bool flight = events.IsInPhase(PHASE_FLIGHT);
-                if (Unit *victim = SelectTarget(SELECT_TARGET_RANDOM, 0))
-                    DoCast(victim, SPELL_FIREBALL, flight ? true : false);
 
-                uint32 nextTimer = flight ? 3000 : urand(10000, 15000);
-                events.RescheduleEvent(EVENT_FIREBALL, nextTimer);
-                break;
-            }
-            case EVENT_SWITCH_SIDE:
-                lastWaypoint = lastWaypoint == 1 ? 0 : 1;
-                me->GetMotionMaster()->MovePoint(MOVINFORM_FLIGHT, POSITION_GET_X_Y_Z(&(VazrudenRing[lastWaypoint])), 0.0f, false, true);
+            while (uint32 eventId = events.ExecuteEvent())
+                switch (eventId)
+                {
+                case EVENT_FIREBALL:
+                {
+                    bool flight = events.IsInPhase(PHASE_FLIGHT);
+                    if (Unit *victim = SelectTarget(SELECT_TARGET_RANDOM, 0))
+                        DoCast(victim, SPELL_FIREBALL, flight ? true : false);
 
-                events.RescheduleEvent(EVENT_SWITCH_SIDE, 15 * SECOND * IN_MILLISECONDS, 0, PHASE_FLIGHT);
-                break;
-            case EVENT_CONE_OF_FIRE:
-                DoCast(me->GetVictim(), SPELL_CONE_OF_FIRE);
-                events.RescheduleEvent(EVENT_CONE_OF_FIRE, urand(10000, 15000), 0, PHASE_LAND);
-                break;
-            case EVENT_BELLOWING_ROAR:
-                DoCast(me->GetVictim(), SPELL_BELLOWING_ROAR);
-                events.RescheduleEvent(EVENT_BELLOWING_ROAR, 45000, 0, PHASE_LAND);
-                break;
-            case EVENT_START_DESCENDING:
-                SetPhase(PHASE_DESCENDING);
-                events.CancelEvent(EVENT_START_DESCENDING);
-                break;
-            case EVENT_ENTER_LAND_PHASE:
-                SetPhase(PHASE_LAND);
-                events.CancelEvent(EVENT_ENTER_LAND_PHASE);
-                break;
-            case EVENT_HEALTH_CHECKS:
-            {
-                Creature *Vazruden = me->GetMap()->GetCreature(VazrudenGUID);
-                bool VazrudenBelow40percent = !Vazruden || Vazruden->GetHealthPct() <= 40.0f;
-                bool NazanBelow20percent = me->GetHealthPct() <= 30.0f;
-                if (VazrudenBelow40percent || NazanBelow20percent) {
-                    events.RescheduleEvent(EVENT_START_DESCENDING, 1, 0, PHASE_FLIGHT);
-                    events.CancelEvent(EVENT_HEALTH_CHECKS);
-                } else
-                    events.RescheduleEvent(EVENT_HEALTH_CHECKS, 2000, 0, PHASE_FLIGHT);
+                    uint32 nextTimer = flight ? 3000 : urand(10000, 15000);
+                    events.RescheduleEvent(EVENT_FIREBALL, nextTimer);
+                    break;
+                }
+                case EVENT_SWITCH_SIDE:
+                    lastWaypoint = lastWaypoint == 1 ? 0 : 1;
+                    me->GetMotionMaster()->MovePoint(MOVINFORM_FLIGHT, POSITION_GET_X_Y_Z(&(VazrudenRing[lastWaypoint])), 0.0f, false, true);
 
-                break;
-            }
-            }
+                    events.RescheduleEvent(EVENT_SWITCH_SIDE, 15 * SECOND * IN_MILLISECONDS, 0, PHASE_FLIGHT);
+                    break;
+                case EVENT_CONE_OF_FIRE:
+                    DoCast(me->GetVictim(), SPELL_CONE_OF_FIRE);
+                    events.RescheduleEvent(EVENT_CONE_OF_FIRE, urand(10000, 15000), 0, PHASE_LAND);
+                    break;
+                case EVENT_BELLOWING_ROAR:
+                    DoCast(me->GetVictim(), SPELL_BELLOWING_ROAR);
+                    events.RescheduleEvent(EVENT_BELLOWING_ROAR, 45000, 0, PHASE_LAND);
+                    break;
+                case EVENT_START_DESCENDING:
+                    SetPhase(PHASE_DESCENDING);
+                    events.CancelEvent(EVENT_START_DESCENDING);
+                    break;
+                case EVENT_ENTER_LAND_PHASE:
+                    SetPhase(PHASE_LAND);
+                    events.CancelEvent(EVENT_ENTER_LAND_PHASE);
+                    break;
+                case EVENT_HEALTH_CHECKS:
+                {
+                    Creature *Vazruden = me->GetMap()->GetCreature(VazrudenGUID);
+                    bool VazrudenBelow40percent = !Vazruden || Vazruden->GetHealthPct() <= 40.0f;
+                    bool NazanBelow20percent = me->GetHealthPct() <= 30.0f;
+                    if (VazrudenBelow40percent || NazanBelow20percent) {
+                        events.RescheduleEvent(EVENT_START_DESCENDING, 1, 0, PHASE_FLIGHT);
+                        events.CancelEvent(EVENT_HEALTH_CHECKS);
+                    } else
+                        events.RescheduleEvent(EVENT_HEALTH_CHECKS, 2000, 0, PHASE_FLIGHT);
+
+                    break;
+                }
+                }
 
             if (events.IsInPhase(PHASE_LAND))
             {

@@ -116,27 +116,29 @@ class Boss_Golemagg : public CreatureScript
 
                 events.Update(diff);
 
-                switch (events.GetEvent())
-                {
-                    case EV_PYROBLAST:
-                        me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true), SPELL_PYROBLAST);
-                        events.RescheduleEvent(EV_PYROBLAST, urand(4000, 5000));
-                        break;
-                    case EV_EARTHQUAKE:
-                        me->CastSpell(me->GetVictim(), SPELL_EARTHQUAKE);
-                        events.RescheduleEvent(EV_EARTHQUAKE, urand(3000, 4000));
-                        break;
-                    case EV_ENRAGE:
-                        if (me->GetHealthPct()  < 10.0f)
-                            me->CastSpell(me, SPELL_ENRAGE);
 
-                        events.RescheduleEvent(EV_ENRAGE, 62000);
-                        break;
-                    case EV_BUFF:
-                        me->CastSpell(me, SPELL_BUFF);
-                        events.RescheduleEvent(EV_BUFF, urand(2500, 3000));
-                        break;
-                }
+                while (uint32 eventId = events.ExecuteEvent())
+                    switch (eventId)
+                    {
+                        case EV_PYROBLAST:
+                            me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true), SPELL_PYROBLAST);
+                            events.RescheduleEvent(EV_PYROBLAST, urand(4000, 5000));
+                            break;
+                        case EV_EARTHQUAKE:
+                            me->CastSpell(me->GetVictim(), SPELL_EARTHQUAKE);
+                            events.RescheduleEvent(EV_EARTHQUAKE, urand(3000, 4000));
+                            break;
+                        case EV_ENRAGE:
+                            if (me->GetHealthPct()  < 10.0f)
+                                me->CastSpell(me, SPELL_ENRAGE);
+
+                            events.RescheduleEvent(EV_ENRAGE, 62000);
+                            break;
+                        case EV_BUFF:
+                            me->CastSpell(me, SPELL_BUFF);
+                            events.RescheduleEvent(EV_BUFF, urand(2500, 3000));
+                            break;
+                    }
 
                 DoMeleeAttackIfReady();
             }
@@ -190,20 +192,20 @@ class Mob_Core_Rager : public CreatureScript
 
                 events.Update(diff);
 
-                switch (events.GetEvent())
-                {
-                    case 0:
-                        break;
-                    case EV_MANGLE:
-                        me->CastSpell(me->GetVictim(), SPELL_MANGLE);
-                        events.RescheduleEvent(EV_MANGLE, urand(10000, 11000));
-                        break;
-                    case EV_AEGIS:
-                        me->CastSpell(me, SPELL_AEGIS);
-                        DoScriptText(EMOTE_AEGIS, me);
-                        events.CancelEvent(EV_AEGIS);
-                        break;
-                }
+
+                while (uint32 eventId = events.ExecuteEvent())
+                    switch (eventId)
+                    {
+                        case EV_MANGLE:
+                            me->CastSpell(me->GetVictim(), SPELL_MANGLE);
+                            events.RescheduleEvent(EV_MANGLE, urand(10000, 11000));
+                            break;
+                        case EV_AEGIS:
+                            me->CastSpell(me, SPELL_AEGIS);
+                            DoScriptText(EMOTE_AEGIS, me);
+                            events.CancelEvent(EV_AEGIS);
+                            break;
+                    }
 
                 if (!events.IsInPhase(PHASE_BELOW_50_PERCENT) && me->IsBelowHPPercent(50.0f))
                 {

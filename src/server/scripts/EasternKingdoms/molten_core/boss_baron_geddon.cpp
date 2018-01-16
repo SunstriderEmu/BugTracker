@@ -87,29 +87,29 @@ class Boss_Baron_Geddon : public CreatureScript
 
                 events.Update(diff);
 
-                switch (events.GetEvent())
-                {
-                    case 0:
-                        break;
-                    case EV_INFERNO:
-                        me->CastSpell(me, SPELL_INFERNO);
-                        events.RescheduleEvent(EV_INFERNO, urand(15000, 16000));
-                        break;
-                    case EV_IGNITEMANA:
-                        me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true), SPELL_IGNITEMANA);
-                        events.RescheduleEvent(EV_IGNITEMANA, urand(5000, 6000));
-                        break;
-                    case EV_LIVINGBOMB:
-                        me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true), SPELL_LIVINGBOMB);
-                        events.RescheduleEvent(EV_LIVINGBOMB, 30000);
-                        break;
-                    case EV_ARMAGEDDOM:
-                        me->InterruptNonMeleeSpells(true);
-                        me->CastSpell(me, SPELL_ARMAGEDDOM);
-                        DoScriptText(EMOTE_SERVICE, me);
-                        events.CancelEvent(EV_ARMAGEDDOM);
-                        break;
-                }
+
+                while (uint32 eventId = events.ExecuteEvent())
+                    switch (eventId)
+                    {
+                        case EV_INFERNO:
+                            me->CastSpell(me, SPELL_INFERNO);
+                            events.RescheduleEvent(EV_INFERNO, urand(15000, 16000));
+                            break;
+                        case EV_IGNITEMANA:
+                            me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true), SPELL_IGNITEMANA);
+                            events.RescheduleEvent(EV_IGNITEMANA, urand(5000, 6000));
+                            break;
+                        case EV_LIVINGBOMB:
+                            me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true), SPELL_LIVINGBOMB);
+                            events.RescheduleEvent(EV_LIVINGBOMB, 30000);
+                            break;
+                        case EV_ARMAGEDDOM:
+                            me->InterruptNonMeleeSpells(true);
+                            me->CastSpell(me, SPELL_ARMAGEDDOM);
+                            DoScriptText(EMOTE_SERVICE, me);
+                            events.CancelEvent(EV_ARMAGEDDOM);
+                            break;
+                    }
 
                 if (me->GetHealthPct() <= 2.5f)
                 {

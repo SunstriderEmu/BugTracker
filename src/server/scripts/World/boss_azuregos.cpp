@@ -70,59 +70,60 @@ public:
                 enraged = true;
             }
 
-            switch (events.GetEvent())
-            {
-                case EV_MANASTORM:
+            while (uint32 eventId = events.ExecuteEvent())
+                switch (eventId)
                 {
-                    if (me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0), SPELL_MANASTORM) == SPELL_CAST_OK)
-                        events.RescheduleEvent(EV_MANASTORM, urand(7500, 12500));
-                    break;
-                }
-                case EV_CHILL:
-                {
-                    if (me->CastSpell(me->GetVictim(), SPELL_CHILL) == SPELL_CAST_OK)
-                        events.RescheduleEvent(EV_CHILL, urand(13000, 25000));
-                    break;
-                }
-                case EV_BREATH:
-                {
-                    if (me->CastSpell(me->GetVictim(), SPELL_FROSTBREATH) == SPELL_CAST_OK)
-                        events.RescheduleEvent(EV_BREATH, urand(1000, 15000));
-                    break;
-                }
-                case EV_TELEPORT:
-                {
-                    float x, y, z;
-                    me->GetNearPoint(me, x, y, z, me->GetCombatReach(), 5.0f, 0.0f);
-
-                    std::list<Player*> players;
-                    Trinity::AnyPlayerInObjectRangeCheck check(me, 25.0f);
-                    Trinity::PlayerListSearcher<Trinity::AnyPlayerInObjectRangeCheck> searcher(me, players, check);
-                    Cell::VisitGridObjects(me, searcher, 25.0f);
-                    
-                    for (std::list<Player*>::const_iterator itr = players.begin(); itr != players.end(); itr++) {
-                        (*itr)->TeleportTo(me->GetMapId(), x, y, z, (*itr)->GetOrientation(), TELE_TO_NOT_LEAVE_COMBAT);
-                        me->GetThreatManager().ClearThreat(*itr);
+                    case EV_MANASTORM:
+                    {
+                        if (me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0), SPELL_MANASTORM) == SPELL_CAST_OK)
+                            events.RescheduleEvent(EV_MANASTORM, urand(7500, 12500));
+                        break;
                     }
-                    
-                    Talk(SAY_TELEPORT);
-                    events.RescheduleEvent(EV_TELEPORT, 30000);
+                    case EV_CHILL:
+                    {
+                        if (me->CastSpell(me->GetVictim(), SPELL_CHILL) == SPELL_CAST_OK)
+                            events.RescheduleEvent(EV_CHILL, urand(13000, 25000));
+                        break;
+                    }
+                    case EV_BREATH:
+                    {
+                        if (me->CastSpell(me->GetVictim(), SPELL_FROSTBREATH) == SPELL_CAST_OK)
+                            events.RescheduleEvent(EV_BREATH, urand(1000, 15000));
+                        break;
+                    }
+                    case EV_TELEPORT:
+                    {
+                        float x, y, z;
+                        me->GetNearPoint(me, x, y, z, me->GetCombatReach(), 5.0f, 0.0f);
 
-                    break;
+                        std::list<Player*> players;
+                        Trinity::AnyPlayerInObjectRangeCheck check(me, 25.0f);
+                        Trinity::PlayerListSearcher<Trinity::AnyPlayerInObjectRangeCheck> searcher(me, players, check);
+                        Cell::VisitGridObjects(me, searcher, 25.0f);
+                    
+                        for (std::list<Player*>::const_iterator itr = players.begin(); itr != players.end(); itr++) {
+                            (*itr)->TeleportTo(me->GetMapId(), x, y, z, (*itr)->GetOrientation(), TELE_TO_NOT_LEAVE_COMBAT);
+                            me->GetThreatManager().ClearThreat(*itr);
+                        }
+                    
+                        Talk(SAY_TELEPORT);
+                        events.RescheduleEvent(EV_TELEPORT, 30000);
+
+                        break;
+                    }
+                    case EV_REFLECT:
+                    {
+                        if (me->CastSpell(me, SPELL_REFLECT) == SPELL_CAST_OK)
+                            events.RescheduleEvent(EV_REFLECT, urand(20000, 35000));
+                        break;
+                    }
+                    case EV_CLEAVE:
+                    {
+                        if (me->CastSpell(me->GetVictim(), SPELL_CLEAVE))
+                            events.RescheduleEvent(EV_CLEAVE, 7000);
+                        break;
+                    }
                 }
-                case EV_REFLECT:
-                {
-                    if (me->CastSpell(me, SPELL_REFLECT) == SPELL_CAST_OK)
-                        events.RescheduleEvent(EV_REFLECT, urand(20000, 35000));
-                    break;
-                }
-                case EV_CLEAVE:
-                {
-                    if (me->CastSpell(me->GetVictim(), SPELL_CLEAVE))
-                        events.RescheduleEvent(EV_CLEAVE, 7000);
-                    break;
-                }
-            }
             
             DoMeleeAttackIfReady();
         }

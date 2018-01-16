@@ -108,41 +108,41 @@ class Boss_Sulfuron : public CreatureScript
 
                 events.Update(diff);
 
-                switch (events.GetEvent())
-                {
-                    case 0:
-                        break;
-                    case EV_DEMORALIZINGSHOUT:
-                        me->CastSpell(me->GetVictim(), SPELL_DEMORALIZINGSHOUT);
-                        events.RescheduleEvent(EV_DEMORALIZINGSHOUT, urand(25000, 26000));
-                        break;
-                    case EV_INSPIRE:
+
+                while (uint32 eventId = events.ExecuteEvent())
+                    switch (eventId)
                     {
-                        Creature* target = nullptr;
-                        std::list<Creature*> pList = DoFindFriendlyMissingBuff(45.0f,SPELL_INSPIRE);
-                        if (!pList.empty())
+                        case EV_DEMORALIZINGSHOUT:
+                            me->CastSpell(me->GetVictim(), SPELL_DEMORALIZINGSHOUT);
+                            events.RescheduleEvent(EV_DEMORALIZINGSHOUT, urand(25000, 26000));
+                            break;
+                        case EV_INSPIRE:
                         {
-                            auto i = pList.begin();
-                            advance(i, (rand()%pList.size()));
-                            target = (*i);
+                            Creature* target = nullptr;
+                            std::list<Creature*> pList = DoFindFriendlyMissingBuff(45.0f,SPELL_INSPIRE);
+                            if (!pList.empty())
+                            {
+                                auto i = pList.begin();
+                                advance(i, (rand()%pList.size()));
+                                target = (*i);
+                            }
+
+                            if (target)
+                                me->CastSpell(target, SPELL_INSPIRE);
+
+                            me->CastSpell(me, SPELL_INSPIRE);
+                            events.RescheduleEvent(EV_INSPIRE, urand(20000, 26000));
+                            break;
                         }
-
-                        if (target)
-                            me->CastSpell(target, SPELL_INSPIRE);
-
-                        me->CastSpell(me, SPELL_INSPIRE);
-                        events.RescheduleEvent(EV_INSPIRE, urand(20000, 26000));
-                        break;
+                        case EV_KNOCKDOWN:
+                            me->CastSpell(me->GetVictim(), SPELL_KNOCKDOWN);
+                            events.RescheduleEvent(EV_KNOCKDOWN, 12000, 15000);
+                            break;
+                        case EV_FLAMESPEAR:
+                            me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true), SPELL_FLAMESPEAR);
+                            events.RescheduleEvent(EV_FLAMESPEAR, urand(12000, 16000));
+                            break;
                     }
-                    case EV_KNOCKDOWN:
-                        me->CastSpell(me->GetVictim(), SPELL_KNOCKDOWN);
-                        events.RescheduleEvent(EV_KNOCKDOWN, 12000, 15000);
-                        break;
-                    case EV_FLAMESPEAR:
-                        me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true), SPELL_FLAMESPEAR);
-                        events.RescheduleEvent(EV_FLAMESPEAR, urand(12000, 16000));
-                        break;
-                }
             
                 DoMeleeAttackIfReady();
             }
@@ -195,32 +195,31 @@ class Mob_Flamewaker_Priest : public CreatureScript
 
                 events.Update(diff);
 
-                switch (events.GetEvent())
-                {
-                    case 0:
-                        break;
-                    case EV_DARKSTRIKE:
-                        me->CastSpell(me, SPELL_DARKSTRIKE);
-                        events.RescheduleEvent(EV_DARKSTRIKE, urand(15000, 18000));
-                        break;
-                    case EV_HEAL:
+                while (uint32 eventId = events.ExecuteEvent())
+                    switch (eventId)
                     {
-                        Unit* pUnit = DoSelectLowestHpFriendly(60.0f, 1);
-                        if (pUnit)
-                            me->CastSpell(pUnit, SPELL_HEAL);
+                        case EV_DARKSTRIKE:
+                            me->CastSpell(me, SPELL_DARKSTRIKE);
+                            events.RescheduleEvent(EV_DARKSTRIKE, urand(15000, 18000));
+                            break;
+                        case EV_HEAL:
+                        {
+                            Unit* pUnit = DoSelectLowestHpFriendly(60.0f, 1);
+                            if (pUnit)
+                                me->CastSpell(pUnit, SPELL_HEAL);
 
-                        events.RescheduleEvent(EV_HEAL, urand(15000, 20000));
-                        break;
+                            events.RescheduleEvent(EV_HEAL, urand(15000, 20000));
+                            break;
+                        }
+                        case EV_SHADOWWORDPAIN:
+                            me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true), SPELL_SHADOWWORDPAIN);
+                            events.RescheduleEvent(EV_SHADOWWORDPAIN, 5000, 6000);
+                            break;
+                        case EV_IMMOLATE:
+                            me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true), SPELL_IMMOLATE);
+                            events.RescheduleEvent(EV_IMMOLATE, urand(5000, 6000));
+                            break;
                     }
-                    case EV_SHADOWWORDPAIN:
-                        me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true), SPELL_SHADOWWORDPAIN);
-                        events.RescheduleEvent(EV_SHADOWWORDPAIN, 5000, 6000);
-                        break;
-                    case EV_IMMOLATE:
-                        me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true), SPELL_IMMOLATE);
-                        events.RescheduleEvent(EV_IMMOLATE, urand(5000, 6000));
-                        break;
-                }
             
                 DoMeleeAttackIfReady();
             }

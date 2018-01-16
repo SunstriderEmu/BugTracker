@@ -89,23 +89,23 @@ public:
 
             events.Update(diff);
 
-            switch (events.GetEvent())
-            {
-                case 0:
-                    break;
-                case EV_SHADOWBOLT:
-                    me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0), SPELL_SHADOWBOLT);
-                    events.RescheduleEvent(EV_SHADOWBOLT, 6000);
-                    break;
-                case EV_RAINOFFIRE:
-                    me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0), SPELL_RAINOFFIRE);
-                    events.RescheduleEvent(EV_RAINOFFIRE, urand(5000, 6000));
-                    break;
-                case EV_CURSE:
-                    me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0), SPELL_GEHENNASCURSE);
-                    events.RescheduleEvent(EV_CURSE, urand(28000, 32000));
-                    break;
-            }
+
+            while (uint32 eventId = events.ExecuteEvent())
+                switch (eventId)
+                {
+                    case EV_SHADOWBOLT:
+                        me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0), SPELL_SHADOWBOLT);
+                        events.RescheduleEvent(EV_SHADOWBOLT, 6000);
+                        break;
+                    case EV_RAINOFFIRE:
+                        me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0), SPELL_RAINOFFIRE);
+                        events.RescheduleEvent(EV_RAINOFFIRE, urand(5000, 6000));
+                        break;
+                    case EV_CURSE:
+                        me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0), SPELL_GEHENNASCURSE);
+                        events.RescheduleEvent(EV_CURSE, urand(28000, 32000));
+                        break;
+                }
 
             DoMeleeAttackIfReady();
         }

@@ -544,7 +544,7 @@ class Son_Of_Flame : public CreatureScript
         public:
             enum event
             {
-                EV_MANABURN       = 1
+                EV_MANABURN       = 1,
             };
 
             Son_Of_FlameAI(Creature* creature) : CreatureAI(creature)
@@ -582,15 +582,15 @@ class Son_Of_Flame : public CreatureScript
 
                 events.Update(diff);
             
-                switch (events.GetEvent())
-                {
-                    case 0:
-                        break;
+
+                while (uint32 eventId = events.ExecuteEvent())
+                    switch (eventId)
+                    {
                     case EV_MANABURN:
                         DoAoEManaburn();
                         events.RescheduleEvent(EV_MANABURN, 3000);
                         break;
-                }
+                    }
 
                 DoMeleeAttackIfReady();
             }

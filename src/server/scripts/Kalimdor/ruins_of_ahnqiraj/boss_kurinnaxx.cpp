@@ -101,32 +101,31 @@ public:
                 me->CastSpell(me, SPELL_ENRAGE, TRIGGERED_FULL_MASK);
                 enraged = true;
             }
-            
-            switch (events.GetEvent())
-            {
-            case 0:
-                break;
-            case EV_MORTAL_WOUND:
-                me->CastSpell(me->GetVictim(), SPELL_MORTAL_WOUND);
-                events.RescheduleEvent(EV_MORTAL_WOUND, 2000, 7000);
-                break;
-            case EV_SANDTRAP:
-                me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 3, 200.0f, true), SPELL_SANDTRAP, TRIGGERED_FULL_MASK);
-                events.RescheduleEvent(EV_SANDTRAP, 20000);
-                break;
-            case EV_WIDE_SLASH:
-                me->CastSpell(me->GetVictim(), SPELL_WIDE_SLASH);
-                events.RescheduleEvent(EV_WIDE_SLASH, urand(10000, 15000));
-                break;
-            case EV_TRASH:
-                me->CastSpell(me, SPELL_TRASH);
-                events.RescheduleEvent(EV_TRASH, urand(20000, 25000));
-                break;
-            case EV_SUMMON_PLAYER:
-                me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 3, 150.0f, true), SPELL_SUMMON_PLAYER);
-                events.RescheduleEvent(EV_SUMMON_PLAYER, urand(30000, 40000));
-                break;
-            }
+
+            while (uint32 eventId = events.ExecuteEvent())
+                switch (eventId)
+                {
+                case EV_MORTAL_WOUND:
+                    me->CastSpell(me->GetVictim(), SPELL_MORTAL_WOUND);
+                    events.RescheduleEvent(EV_MORTAL_WOUND, 2000, 7000);
+                    break;
+                case EV_SANDTRAP:
+                    me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 3, 200.0f, true), SPELL_SANDTRAP, TRIGGERED_FULL_MASK);
+                    events.RescheduleEvent(EV_SANDTRAP, 20000);
+                    break;
+                case EV_WIDE_SLASH:
+                    me->CastSpell(me->GetVictim(), SPELL_WIDE_SLASH);
+                    events.RescheduleEvent(EV_WIDE_SLASH, urand(10000, 15000));
+                    break;
+                case EV_TRASH:
+                    me->CastSpell(me, SPELL_TRASH);
+                    events.RescheduleEvent(EV_TRASH, urand(20000, 25000));
+                    break;
+                case EV_SUMMON_PLAYER:
+                    me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 3, 150.0f, true), SPELL_SUMMON_PLAYER);
+                    events.RescheduleEvent(EV_SUMMON_PLAYER, urand(30000, 40000));
+                    break;
+                }
 
             DoMeleeAttackIfReady();
         }

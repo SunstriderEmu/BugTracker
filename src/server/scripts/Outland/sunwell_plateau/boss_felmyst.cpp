@@ -583,86 +583,88 @@ public:
                     break;
             }
 
-            switch (events.GetEvent())
-            {
-                case 0:
-                    break;
-                case EVENT_CLEAVE:
-                    if(me->CastSpell(me->GetVictim(), SPELL_CLEAVE, TRIGGERED_NONE) == SPELL_CAST_OK)
-                        events.RescheduleEvent(EVENT_CLEAVE, urand(5000, 10000), 0, PHASE_GROUND);
-                    break;
-                case EVENT_CORROSION:
-                    if(me->CastSpell(me->GetVictim(), SPELL_CORROSION, TRIGGERED_NONE) == SPELL_CAST_OK)
-                        events.RescheduleEvent(EVENT_CORROSION, urand(20000, 30000), 0, PHASE_GROUND);
-                    break;
-                case EVENT_GAS_NOVA:
-                    if(me->CastSpell(me, SPELL_GAS_NOVA, TRIGGERED_NONE) == SPELL_CAST_OK)
-                        events.RescheduleEvent(EVENT_GAS_NOVA, urand(21000, 26000), 0, PHASE_GROUND);
-                    break;
-                case EVENT_ENCAPSULATE:
-                    if(encapsTargetGUID)
-                        if (Unit* encapsTarget = ObjectAccessor::GetUnit((*me), encapsTargetGUID))
-                            if (me->CastSpell(encapsTarget, SPELL_ENCAPSULATE_CHANNEL, TRIGGERED_NONE) == SPELL_CAST_OK)
-                            {
 
-                                phase = PHASE_GROUND;
-
-                                if (Unit* tank = SelectTarget(SELECT_TARGET_MAXTHREAT, 0, 150.0f, true))
-                                    me->SetTarget(tank->GetGUID());
-
-                                events.RescheduleEvent(EVENT_ENCAPSULATE, 33000, 0, PHASE_GROUND);
-                                events.RescheduleEvent(EVENT_ENCAPS_WARN, 32000, 0, PHASE_GROUND);
-                            }
-                    break;
-                case EVENT_ENCAPS_WARN:
-                    if (Unit* encapsTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 150.0f, true))
-                    {
-                        encapsTargetGUID = encapsTarget->GetGUID();
-                        me->SetTarget(encapsTargetGUID);
-                    }
-
-                    events.CancelEvent(EVENT_ENCAPS_WARN);
-                    break;
-                case EVENT_BERSERK:
-                    if (!me->HasAuraEffect(SPELL_BERSERK))
-                    {
-                        DoScriptText(YELL_BERSERK, me);
-                        me->CastSpell(me, SPELL_BERSERK, TRIGGERED_FULL_MASK);
-                    }
-                    events.RescheduleEvent(EVENT_BERSERK, 10000);
-                    break;
-                case EVENT_DEMONIC_VAPOR:
-                    if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 150, true)) //useless here ? The spell should do the random itself
-                        me->CastSpell(me, SPELL_VAPOR_SELECT, TRIGGERED_FULL_MASK);
-
-                    demonicCount++;
-                    if (demonicCount >= 2)
-                        events.CancelEvent(EVENT_DEMONIC_VAPOR);
-                    else
-                        events.RescheduleEvent(EVENT_DEMONIC_VAPOR, 11000, 0, PHASE_FLIGHT);
-                    break;
-                case EVENT_FOG_CORRUPTION:
+            while (uint32 eventId = events.ExecuteEvent())
+                switch (eventId)
                 {
-                    if (pInstance)
-                    {
-                        switch (chosenLane)
-                        { //related trigger cast their fog via instanceScript, see instance_sunwell_plateau. Y position is given to advance fog progressively
-                            case 0:
-                                pInstance->SetData((direction ? DATA_ACTIVATE_SOUTH_TO_LEFT : DATA_ACTIVATE_SOUTH_TO_RIGHT), (uint32) me->GetPositionY());
-                                break;
-                            case 1:
-                                pInstance->SetData((direction ? DATA_ACTIVATE_CENTER_TO_LEFT : DATA_ACTIVATE_CENTER_TO_RIGHT), (uint32) me->GetPositionY());
-                                break;
-                            case 2:
-                                pInstance->SetData((direction ? DATA_ACTIVATE_NORTH_TO_LEFT : DATA_ACTIVATE_NORTH_TO_RIGHT), (uint32) me->GetPositionY());
-                                break;
-                        }
-                    }
+                    case 0:
+                        break;
+                    case EVENT_CLEAVE:
+                        if(me->CastSpell(me->GetVictim(), SPELL_CLEAVE, TRIGGERED_NONE) == SPELL_CAST_OK)
+                            events.RescheduleEvent(EVENT_CLEAVE, urand(5000, 10000), 0, PHASE_GROUND);
+                        break;
+                    case EVENT_CORROSION:
+                        if(me->CastSpell(me->GetVictim(), SPELL_CORROSION, TRIGGERED_NONE) == SPELL_CAST_OK)
+                            events.RescheduleEvent(EVENT_CORROSION, urand(20000, 30000), 0, PHASE_GROUND);
+                        break;
+                    case EVENT_GAS_NOVA:
+                        if(me->CastSpell(me, SPELL_GAS_NOVA, TRIGGERED_NONE) == SPELL_CAST_OK)
+                            events.RescheduleEvent(EVENT_GAS_NOVA, urand(21000, 26000), 0, PHASE_GROUND);
+                        break;
+                    case EVENT_ENCAPSULATE:
+                        if(encapsTargetGUID)
+                            if (Unit* encapsTarget = ObjectAccessor::GetUnit((*me), encapsTargetGUID))
+                                if (me->CastSpell(encapsTarget, SPELL_ENCAPSULATE_CHANNEL, TRIGGERED_NONE) == SPELL_CAST_OK)
+                                {
 
-                    events.RescheduleEvent(EVENT_FOG_CORRUPTION, 50, 0, PHASE_FLIGHT);
-                    break;
+                                    phase = PHASE_GROUND;
+
+                                    if (Unit* tank = SelectTarget(SELECT_TARGET_MAXTHREAT, 0, 150.0f, true))
+                                        me->SetTarget(tank->GetGUID());
+
+                                    events.RescheduleEvent(EVENT_ENCAPSULATE, 33000, 0, PHASE_GROUND);
+                                    events.RescheduleEvent(EVENT_ENCAPS_WARN, 32000, 0, PHASE_GROUND);
+                                }
+                        break;
+                    case EVENT_ENCAPS_WARN:
+                        if (Unit* encapsTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 150.0f, true))
+                        {
+                            encapsTargetGUID = encapsTarget->GetGUID();
+                            me->SetTarget(encapsTargetGUID);
+                        }
+
+                        events.CancelEvent(EVENT_ENCAPS_WARN);
+                        break;
+                    case EVENT_BERSERK:
+                        if (!me->HasAuraEffect(SPELL_BERSERK))
+                        {
+                            DoScriptText(YELL_BERSERK, me);
+                            me->CastSpell(me, SPELL_BERSERK, TRIGGERED_FULL_MASK);
+                        }
+                        events.RescheduleEvent(EVENT_BERSERK, 10000);
+                        break;
+                    case EVENT_DEMONIC_VAPOR:
+                        if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 150, true)) //useless here ? The spell should do the random itself
+                            me->CastSpell(me, SPELL_VAPOR_SELECT, TRIGGERED_FULL_MASK);
+
+                        demonicCount++;
+                        if (demonicCount >= 2)
+                            events.CancelEvent(EVENT_DEMONIC_VAPOR);
+                        else
+                            events.RescheduleEvent(EVENT_DEMONIC_VAPOR, 11000, 0, PHASE_FLIGHT);
+                        break;
+                    case EVENT_FOG_CORRUPTION:
+                    {
+                        if (pInstance)
+                        {
+                            switch (chosenLane)
+                            { //related trigger cast their fog via instanceScript, see instance_sunwell_plateau. Y position is given to advance fog progressively
+                                case 0:
+                                    pInstance->SetData((direction ? DATA_ACTIVATE_SOUTH_TO_LEFT : DATA_ACTIVATE_SOUTH_TO_RIGHT), (uint32) me->GetPositionY());
+                                    break;
+                                case 1:
+                                    pInstance->SetData((direction ? DATA_ACTIVATE_CENTER_TO_LEFT : DATA_ACTIVATE_CENTER_TO_RIGHT), (uint32) me->GetPositionY());
+                                    break;
+                                case 2:
+                                    pInstance->SetData((direction ? DATA_ACTIVATE_NORTH_TO_LEFT : DATA_ACTIVATE_NORTH_TO_RIGHT), (uint32) me->GetPositionY());
+                                    break;
+                            }
+                        }
+
+                        events.RescheduleEvent(EVENT_FOG_CORRUPTION, 50, 0, PHASE_FLIGHT);
+                        break;
+                    }
                 }
-            }
         }
     };
 
@@ -767,16 +769,18 @@ public:
         override {
             events.Update(diff);
 
-            switch (events.GetEvent())
-            {
-                case 0:
-                    break;
-                case EVENT_DEAD:
-                    events.CancelEvent(EVENT_DEAD);
-                    me->CastSpell((Unit*)nullptr, SPELL_DEAD_SUMMON, TRIGGERED_FULL_MASK);
-                    me->DisappearAndDie();
-                    break;
-            }
+
+            while (uint32 eventId = events.ExecuteEvent())
+                switch (eventId)
+                {
+                    case 0:
+                        break;
+                    case EVENT_DEAD:
+                        events.CancelEvent(EVENT_DEAD);
+                        me->CastSpell((Unit*)nullptr, SPELL_DEAD_SUMMON, TRIGGERED_FULL_MASK);
+                        me->DisappearAndDie();
+                        break;
+                }
         }
     };
 

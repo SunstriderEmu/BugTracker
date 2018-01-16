@@ -122,24 +122,23 @@ public:
             }
 
             events.Update(diff);
-            
-            switch (events.GetEvent())
-            {
-            case 0:
-                break;
-            case EV_CHECK:
-                if (Creature* archimonde = _instance->instance->GetCreature(ObjectGuid(_instance->GetData64(DATA_ARCHIMONDE))))
+
+            while (uint32 eventId = events.ExecuteEvent())
+                switch (eventId)
                 {
-                    if (archimonde->IsBelowHPPercent(2.0f) || archimonde->IsDead())
-                        me->CastSpell(me, SPELL_DENOUEMENT_WISP);
-                    else
-                        me->CastSpell(archimonde, SPELL_ANCIENT_SPARK);
+                case EV_CHECK:
+                    if (Creature* archimonde = _instance->instance->GetCreature(ObjectGuid(_instance->GetData64(DATA_ARCHIMONDE))))
+                    {
+                        if (archimonde->IsBelowHPPercent(2.0f) || archimonde->IsDead())
+                            me->CastSpell(me, SPELL_DENOUEMENT_WISP);
+                        else
+                            me->CastSpell(archimonde, SPELL_ANCIENT_SPARK);
+                    }
+                    
+                    events.RescheduleEvent(EV_CHECK, urand(3000, 10000));
+                    
+                    break;
                 }
-                    
-                events.RescheduleEvent(EV_CHECK, urand(3000, 10000));
-                    
-                break;
-            }
         }
     
     private:
@@ -635,123 +634,122 @@ public:
             }
                 
             events.Update(diff);
-            
-            switch (events.GetEvent())
-            {
-                case 0:
-                    break;
-                case EV_FEAR:
-                    if(me->CastSpell(me->GetVictim(), SPELL_FEAR) == SPELL_CAST_OK)
-                    {
-                        events.RescheduleEvent(EV_FEAR, 42000);
-                        events.SetMinimalDelay(EV_AIR_BURST, 5000);
-                    }
-                    break;
-                case EV_AIR_BURST:
-                    Talk(YELL_AIR_BURST);
-                    if(Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 150.0f, true, true))
-                        if(me->CastSpell(target, SPELL_AIR_BURST) == SPELL_CAST_OK)
-                        {
-                            events.RescheduleEvent(EV_AIR_BURST, urand(25000, 40000));
-                            events.SetMinimalDelay(EV_FEAR, 5000);
-                        }
-                    break;
-                case EV_GRIP_LEGION:
-                    if(me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true), SPELL_GRIP_OF_THE_LEGION) == SPELL_CAST_OK)
-                        events.RescheduleEvent(EV_GRIP_LEGION, urand(5000, 25000));
-                    break;
-                case EV_DOOMFIRE:
-                    {
-                    //spawn towards a random target 20m+ away, or random direction if can't find any
-                    Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, -20.0f, true);
-                    float x, y, z, tX, tY, tZ, angle;
-                    me->GetPosition(x,y,z);
-                    angle = target ? me->GetAngle(target) : rand()%6;
-                    //spawn at 13m
-                    tX = x + cos(angle) * 13;
-                    tY = y + sin(angle) * 13;
 
-                    tZ = z + 1.5f;
-                    me->UpdateGroundPositionZ(tX, tY, tZ);
-                    tZ += 1.0f;
-                    if (me->SummonCreature(CREATURE_DOOMFIRE_TARGETING, tX, tY, tZ, 0, TEMPSUMMON_TIMED_DESPAWN, (rand()%5000 + 15000)))
-                        TC_LOG_DEBUG("misc","[ARCHIMONDE] Spawned Doomfire at %f %f %f", x, y, z);
-                    else
-                        TC_LOG_DEBUG("misc","[ARCHIMONDE] Failed to spawn Doomfire");
-                    Talk(YELL_DOOMFIRE);
-                    
-                    events.RescheduleEvent(EV_DOOMFIRE, 10000);
-                    }
-                    break;
-                case EV_MELEE_CHECK:
-                    if (_canUseFingerOfDeath())
-                        me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0), SPELL_FINGER_OF_DEATH);
-                        
-                    events.RescheduleEvent(EV_MELEE_CHECK, 5000);
-                    break;
-                case EV_NORDRASSIL_CHECK:
-                    if (me->GetDistance(NORDRASSIL_X, NORDRASSIL_Y, NORDRASSIL_Z) < 75.0f)
-                        events.RescheduleEvent(EV_ENRAGE, 1);
-                    else
-                        events.RescheduleEvent(EV_NORDRASSIL_CHECK, 2000);
-                    break;
-                case EV_ENRAGE:
-                    events.ScheduleEvent(EV_ENRAGE_CAST, 2000);
-                    Talk(YELL_ENRAGE);
-                    me->GetMotionMaster()->Clear(false);
-                    me->GetMotionMaster()->MoveIdle();
-                    _enraged = true;
-                    break;
-                case EV_ENRAGE_CAST:
-                    me->CastSpell(me->GetVictim(), SPELL_HAND_OF_DEATH);
-                    events.RescheduleEvent(EV_ENRAGE_CAST, 2000);
-                    break;
-                case EV_UNLEASH_SOULCHARGE:
+            while (uint32 eventId = events.ExecuteEvent())
+                switch (eventId)
                 {
-                    std::list<uint32> unleashSpells;
-                    if (me->HasAuraEffect(SPELL_SOUL_CHARGE_GREEN))
-                        unleashSpells.push_back(SPELL_UNLEASH_SOUL_GREEN);
-                    if (me->HasAuraEffect(SPELL_SOUL_CHARGE_RED))
-                        unleashSpells.push_back(SPELL_UNLEASH_SOUL_RED);
-                    if (me->HasAuraEffect(SPELL_SOUL_CHARGE_YELLOW))
-                        unleashSpells.push_back(SPELL_UNLEASH_SOUL_YELLOW);
-                    
-                    if (unleashSpells.empty()) {
-                        events.RescheduleEvent(EV_UNLEASH_SOULCHARGE, urand(2000, 10000));
+                    case EV_FEAR:
+                        if(me->CastSpell(me->GetVictim(), SPELL_FEAR) == SPELL_CAST_OK)
+                        {
+                            events.RescheduleEvent(EV_FEAR, 42000);
+                            events.SetMinimalDelay(EV_AIR_BURST, 5000);
+                        }
                         break;
-                    }
+                    case EV_AIR_BURST:
+                        Talk(YELL_AIR_BURST);
+                        if(Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 150.0f, true, true))
+                            if(me->CastSpell(target, SPELL_AIR_BURST) == SPELL_CAST_OK)
+                            {
+                                events.RescheduleEvent(EV_AIR_BURST, urand(25000, 40000));
+                                events.SetMinimalDelay(EV_FEAR, 5000);
+                            }
+                        break;
+                    case EV_GRIP_LEGION:
+                        if(me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true), SPELL_GRIP_OF_THE_LEGION) == SPELL_CAST_OK)
+                            events.RescheduleEvent(EV_GRIP_LEGION, urand(5000, 25000));
+                        break;
+                    case EV_DOOMFIRE:
+                        {
+                        //spawn towards a random target 20m+ away, or random direction if can't find any
+                        Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, -20.0f, true);
+                        float x, y, z, tX, tY, tZ, angle;
+                        me->GetPosition(x,y,z);
+                        angle = target ? me->GetAngle(target) : rand()%6;
+                        //spawn at 13m
+                        tX = x + cos(angle) * 13;
+                        tY = y + sin(angle) * 13;
+
+                        tZ = z + 1.5f;
+                        me->UpdateGroundPositionZ(tX, tY, tZ);
+                        tZ += 1.0f;
+                        if (me->SummonCreature(CREATURE_DOOMFIRE_TARGETING, tX, tY, tZ, 0, TEMPSUMMON_TIMED_DESPAWN, (rand()%5000 + 15000)))
+                            TC_LOG_DEBUG("misc","[ARCHIMONDE] Spawned Doomfire at %f %f %f", x, y, z);
+                        else
+                            TC_LOG_DEBUG("misc","[ARCHIMONDE] Failed to spawn Doomfire");
+                        Talk(YELL_DOOMFIRE);
+                    
+                        events.RescheduleEvent(EV_DOOMFIRE, 10000);
+                        }
+                        break;
+                    case EV_MELEE_CHECK:
+                        if (_canUseFingerOfDeath())
+                            me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0), SPELL_FINGER_OF_DEATH);
                         
-                    Trinity::Containers::RandomResize(unleashSpells, 1);
-                    me->CastSpell(me->GetVictim(), unleashSpells.front(), TRIGGERED_FULL_MASK);
-                    
-                    events.RescheduleEvent(EV_UNLEASH_SOULCHARGE, urand(2000, 10000));
-                    switch (unleashSpells.front()) {
-                    case SPELL_UNLEASH_SOUL_GREEN:
-                        me->RemoveSingleAuraFromStack(SPELL_SOUL_CHARGE_GREEN, 0);
+                        events.RescheduleEvent(EV_MELEE_CHECK, 5000);
                         break;
-                    case SPELL_UNLEASH_SOUL_RED:
-                        me->RemoveSingleAuraFromStack(SPELL_SOUL_CHARGE_RED, 0);
+                    case EV_NORDRASSIL_CHECK:
+                        if (me->GetDistance(NORDRASSIL_X, NORDRASSIL_Y, NORDRASSIL_Z) < 75.0f)
+                            events.RescheduleEvent(EV_ENRAGE, 1);
+                        else
+                            events.RescheduleEvent(EV_NORDRASSIL_CHECK, 2000);
                         break;
-                    case SPELL_UNLEASH_SOUL_YELLOW:
-                        me->RemoveSingleAuraFromStack(SPELL_SOUL_CHARGE_YELLOW, 0);
+                    case EV_ENRAGE:
+                        events.ScheduleEvent(EV_ENRAGE_CAST, 2000);
+                        Talk(YELL_ENRAGE);
+                        me->GetMotionMaster()->Clear(false);
+                        me->GetMotionMaster()->MoveIdle();
+                        _enraged = true;
                         break;
-                    }
-                    
-                    break;
-                }
-                case EV_UNDER_10_PERCENT:
-                    me->CastSpell(me, SPELL_HAND_OF_DEATH);
-                    events.RescheduleEvent(EV_UNDER_10_PERCENT, 3000);
-                    break;
-                case EV_UNDER_10_PERCENT2:
-                    for (uint8 i = 0; i < 3; ++i)
+                    case EV_ENRAGE_CAST:
+                        me->CastSpell(me->GetVictim(), SPELL_HAND_OF_DEATH);
+                        events.RescheduleEvent(EV_ENRAGE_CAST, 2000);
+                        break;
+                    case EV_UNLEASH_SOULCHARGE:
                     {
-                        uint8 j = rand()%13;
-                        me->SummonCreature(CREATURE_ANCIENT_WISP, WhispPos[j][0] + ((2 * rand()%1000) / 1000.0f), WhispPos[j][1] + ((2 * rand()%1000) / 1000.0f), WhispPos[j][2], 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
+                        std::list<uint32> unleashSpells;
+                        if (me->HasAuraEffect(SPELL_SOUL_CHARGE_GREEN))
+                            unleashSpells.push_back(SPELL_UNLEASH_SOUL_GREEN);
+                        if (me->HasAuraEffect(SPELL_SOUL_CHARGE_RED))
+                            unleashSpells.push_back(SPELL_UNLEASH_SOUL_RED);
+                        if (me->HasAuraEffect(SPELL_SOUL_CHARGE_YELLOW))
+                            unleashSpells.push_back(SPELL_UNLEASH_SOUL_YELLOW);
+                    
+                        if (unleashSpells.empty()) {
+                            events.RescheduleEvent(EV_UNLEASH_SOULCHARGE, urand(2000, 10000));
+                            break;
+                        }
+                        
+                        Trinity::Containers::RandomResize(unleashSpells, 1);
+                        me->CastSpell(me->GetVictim(), unleashSpells.front(), TRIGGERED_FULL_MASK);
+                    
+                        events.RescheduleEvent(EV_UNLEASH_SOULCHARGE, urand(2000, 10000));
+                        switch (unleashSpells.front()) {
+                        case SPELL_UNLEASH_SOUL_GREEN:
+                            me->RemoveSingleAuraFromStack(SPELL_SOUL_CHARGE_GREEN, 0);
+                            break;
+                        case SPELL_UNLEASH_SOUL_RED:
+                            me->RemoveSingleAuraFromStack(SPELL_SOUL_CHARGE_RED, 0);
+                            break;
+                        case SPELL_UNLEASH_SOUL_YELLOW:
+                            me->RemoveSingleAuraFromStack(SPELL_SOUL_CHARGE_YELLOW, 0);
+                            break;
+                        }
+                    
+                        break;
                     }
-                    events.RescheduleEvent(EV_UNDER_10_PERCENT2, urand(3000, 5000));
-                    break;
-            }
+                    case EV_UNDER_10_PERCENT:
+                        me->CastSpell(me, SPELL_HAND_OF_DEATH);
+                        events.RescheduleEvent(EV_UNDER_10_PERCENT, 3000);
+                        break;
+                    case EV_UNDER_10_PERCENT2:
+                        for (uint8 i = 0; i < 3; ++i)
+                        {
+                            uint8 j = rand()%13;
+                            me->SummonCreature(CREATURE_ANCIENT_WISP, WhispPos[j][0] + ((2 * rand()%1000) / 1000.0f), WhispPos[j][1] + ((2 * rand()%1000) / 1000.0f), WhispPos[j][2], 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000);
+                        }
+                        events.RescheduleEvent(EV_UNDER_10_PERCENT2, urand(3000, 5000));
+                        break;
+                }
             
             DoMeleeAttackIfReady();
         }

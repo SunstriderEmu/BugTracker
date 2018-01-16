@@ -99,19 +99,19 @@ class Boss_Garr : public CreatureScript
             
                 events.Update(diff);
             
-                switch (events.GetEvent())
-                {
-                    case 0:
-                        break;
-                    case EV_ANTIMAGICPULSE:
-                        me->CastSpell(me, SPELL_ANTIMAGICPULSE);
-                        events.RescheduleEvent(EV_ANTIMAGICPULSE, urand(10000, 15000));
-                        break;
-                    case EV_MAGMASHACKLES:
-                        me->CastSpell(me, SPELL_MAGMASHACKLES);
-                        events.RescheduleEvent(EV_MAGMASHACKLES, urand(8000, 12000));
-                        break;
-                }
+
+                while (uint32 eventId = events.ExecuteEvent())
+                    switch (eventId)
+                    {
+                        case EV_ANTIMAGICPULSE:
+                            me->CastSpell(me, SPELL_ANTIMAGICPULSE);
+                            events.RescheduleEvent(EV_ANTIMAGICPULSE, urand(10000, 15000));
+                            break;
+                        case EV_MAGMASHACKLES:
+                            me->CastSpell(me, SPELL_MAGMASHACKLES);
+                            events.RescheduleEvent(EV_MAGMASHACKLES, urand(8000, 12000));
+                            break;
+                    }
             
                 DoMeleeAttackIfReady();
             }
@@ -174,20 +174,20 @@ class Mob_FiresWorn : public CreatureScript
             
                 events.Update(diff);
             
-                switch (events.GetEvent())
-                {
-                    case 0:
-                        break;
-                    case EV_ERUPTION:
-                        me->CastSpell(me->GetVictim(), SPELL_ERUPTION);
-                        events.CancelEvent(EV_ERUPTION);
-                        me->DisappearAndDie();
-                        break;
-                    case EV_IMMOLATE:
-                        me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true), SPELL_IMMOLATE);
-                        events.RescheduleEvent(EV_IMMOLATE, urand(5000, 10000));
-                        break;
-                }
+
+                while (uint32 eventId = events.ExecuteEvent())
+                    switch (eventId)
+                    {
+                        case EV_ERUPTION:
+                            me->CastSpell(me->GetVictim(), SPELL_ERUPTION);
+                            events.CancelEvent(EV_ERUPTION);
+                            me->DisappearAndDie();
+                            break;
+                        case EV_IMMOLATE:
+                            me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true), SPELL_IMMOLATE);
+                            events.RescheduleEvent(EV_IMMOLATE, urand(5000, 10000));
+                            break;
+                    }
 
                 if (me->GetHealth() <= me->GetMaxHealth() * 0.10)
                 {

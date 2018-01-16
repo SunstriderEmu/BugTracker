@@ -82,27 +82,27 @@ public:
             
             events.Update(diff);
             
-            switch (events.GetEvent())
-            {
-                case 0:
-                    break;
-                case EV_LAVABREATH:
-                    me->CastSpell(me->GetVictim(), SPELL_LAVABREATH);
-                    events.RescheduleEvent(EV_LAVABREATH, urand(25000, 30000));
-                    break;
-                case EV_PANIC:
-                    me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0), SPELL_PANIC);
-                    events.RescheduleEvent(EV_PANIC, urand(25000, 30000));
-                    break;
-                case EV_LAVABOMB: // FIXME
-                    me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0), SPELL_LAVABOMB);
-                    events.RescheduleEvent(EV_LAVABOMB, urand(8000, 12000));
-                    break;
-                case EV_FRENZY:
-                    me->CastSpell(me, SPELL_FRENZY);
-                    events.RescheduleEvent(EV_FRENZY, urand(19000, 21000));
-                    break;
-            }
+
+            while (uint32 eventId = events.ExecuteEvent())
+                switch (eventId)
+                {
+                    case EV_LAVABREATH:
+                        me->CastSpell(me->GetVictim(), SPELL_LAVABREATH);
+                        events.RescheduleEvent(EV_LAVABREATH, urand(25000, 30000));
+                        break;
+                    case EV_PANIC:
+                        me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0), SPELL_PANIC);
+                        events.RescheduleEvent(EV_PANIC, urand(25000, 30000));
+                        break;
+                    case EV_LAVABOMB: // FIXME
+                        me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0), SPELL_LAVABOMB);
+                        events.RescheduleEvent(EV_LAVABOMB, urand(8000, 12000));
+                        break;
+                    case EV_FRENZY:
+                        me->CastSpell(me, SPELL_FRENZY);
+                        events.RescheduleEvent(EV_FRENZY, urand(19000, 21000));
+                        break;
+                }
             
             DoMeleeAttackIfReady();
         }

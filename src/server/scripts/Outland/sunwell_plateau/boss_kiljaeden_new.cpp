@@ -1055,17 +1055,19 @@ public:
 
                 events.Update(diff);
             
-                switch (events.GetEvent())
-                {
-                    case 0:
-                        break;
-                    case EVENT_SAY:
-                        if (pInstance->GetData(DATA_MURU_EVENT) != DONE && pInstance->GetData(DATA_KILJAEDEN_EVENT) == NOT_STARTED)
-                            Talk(SAY_KJ_OFFCOMBAT); 
 
-                        events.RescheduleEvent(EVENT_SAY, 20*MINUTE*IN_MILLISECONDS, 30*MINUTE*IN_MILLISECONDS);
-                        break;
-                }
+                while (uint32 eventId = events.ExecuteEvent())
+                    switch (eventId)
+                    {
+                        case 0:
+                            break;
+                        case EVENT_SAY:
+                            if (pInstance->GetData(DATA_MURU_EVENT) != DONE && pInstance->GetData(DATA_KILJAEDEN_EVENT) == NOT_STARTED)
+                                Talk(SAY_KJ_OFFCOMBAT); 
+
+                            events.RescheduleEvent(EVENT_SAY, 20*MINUTE*IN_MILLISECONDS, 30*MINUTE*IN_MILLISECONDS);
+                            break;
+                    }
 
                 if(pInstance && (pInstance->GetData(DATA_MURU_EVENT) != DONE || pInstance->GetData(DATA_KILJAEDEN_EVENT) == DONE))
                     return;
@@ -1433,116 +1435,118 @@ public:
                     setPhase(PHASE_ARMAGEDDON);
             }
 
-            switch (events.GetEvent())
-            {
-                case EVENT_KALEC_JOIN:
-                    events.CancelEvent(EVENT_KALEC_JOIN);
-                    if (Creature* kalec = pInstance->instance->GetCreature(ObjectGuid(pInstance->GetData64(DATA_KALECGOS_KJ))))
-                    {
-                        kalec->AI()->Talk(SAY_KALEC_JOIN);
-                        kalec->SetVisible(true);
-                    }
-                    break;
-                case EVENT_SOUL_FLAY:
-                    if(me->CastSpell(me->GetVictim(), SPELL_SOUL_FLAY) == SPELL_CAST_OK)
-                        events.RescheduleEvent(EVENT_SOUL_FLAY, urand(4000, 5000));
-                    break;
-                case EVENT_LEGION_LIGHTNING:
-                    if (Unit *target = SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true))
-                        if(me->CastSpell(target, SPELL_LEGION_LIGHTNING) == SPELL_CAST_OK)
-                            events.RescheduleEvent(EVENT_LEGION_LIGHTNING, urand(10000, 20000));
-                    break;
-                case EVENT_FIRE_BLOOM:
-                    me->CastSpell(nullptr, SPELL_FIRE_BLOOM);
-                    switch(phase)
-                    {
-                    case PHASE_NORMAL:
-                        events.RescheduleEvent(EVENT_FIRE_BLOOM, 22000);
-                        break;
-                    case PHASE_DARKNESS:
-                    case PHASE_ARMAGEDDON:
-                        events.RescheduleEvent(EVENT_FIRE_BLOOM, urand(40000, 65000));
-                        break;
-                    case PHASE_SACRIFICE:
-                        events.RescheduleEvent(EVENT_FIRE_BLOOM, urand(90000, 105000));
-                        break;
-                    }
-                    break;
-                case EVENT_SUMMON_SHILEDORB:
-                    for (uint8 i = 1; i < phase; ++i)
-                    {
-                        float sx, sy;
-                        sx = ShieldOrbLocations[0][0] + sin(ShieldOrbLocations[i][0]);
-                        sy = ShieldOrbLocations[0][1] + sin(ShieldOrbLocations[i][1]);
-                        if (Creature* orb = me->SummonCreature(CREATURE_SHIELD_ORB, sx, sy, SHIELD_ORB_Z, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 45000))
-                            orb->AI()->DoZoneInCombat();
-                    }
 
-                    events.RescheduleEvent(EVENT_SUMMON_SHILEDORB, urand(25000, 30000));
-                    if (phase == PHASE_SACRIFICE)
-                        events.CancelEvent(EVENT_SUMMON_SHILEDORB);
+            while (uint32 eventId = events.ExecuteEvent())
+                switch (eventId)
+                {
+                    case EVENT_KALEC_JOIN:
+                        events.CancelEvent(EVENT_KALEC_JOIN);
+                        if (Creature* kalec = pInstance->instance->GetCreature(ObjectGuid(pInstance->GetData64(DATA_KALECGOS_KJ))))
+                        {
+                            kalec->AI()->Talk(SAY_KALEC_JOIN);
+                            kalec->SetVisible(true);
+                        }
+                        break;
+                    case EVENT_SOUL_FLAY:
+                        if(me->CastSpell(me->GetVictim(), SPELL_SOUL_FLAY) == SPELL_CAST_OK)
+                            events.RescheduleEvent(EVENT_SOUL_FLAY, urand(4000, 5000));
+                        break;
+                    case EVENT_LEGION_LIGHTNING:
+                        if (Unit *target = SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true))
+                            if(me->CastSpell(target, SPELL_LEGION_LIGHTNING) == SPELL_CAST_OK)
+                                events.RescheduleEvent(EVENT_LEGION_LIGHTNING, urand(10000, 20000));
+                        break;
+                    case EVENT_FIRE_BLOOM:
+                        me->CastSpell(nullptr, SPELL_FIRE_BLOOM);
+                        switch(phase)
+                        {
+                        case PHASE_NORMAL:
+                            events.RescheduleEvent(EVENT_FIRE_BLOOM, 22000);
+                            break;
+                        case PHASE_DARKNESS:
+                        case PHASE_ARMAGEDDON:
+                            events.RescheduleEvent(EVENT_FIRE_BLOOM, urand(40000, 65000));
+                            break;
+                        case PHASE_SACRIFICE:
+                            events.RescheduleEvent(EVENT_FIRE_BLOOM, urand(90000, 105000));
+                            break;
+                        }
+                        break;
+                    case EVENT_SUMMON_SHILEDORB:
+                        for (uint8 i = 1; i < phase; ++i)
+                        {
+                            float sx, sy;
+                            sx = ShieldOrbLocations[0][0] + sin(ShieldOrbLocations[i][0]);
+                            sy = ShieldOrbLocations[0][1] + sin(ShieldOrbLocations[i][1]);
+                            if (Creature* orb = me->SummonCreature(CREATURE_SHIELD_ORB, sx, sy, SHIELD_ORB_Z, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 45000))
+                                orb->AI()->DoZoneInCombat();
+                        }
 
-                    break;
-                case EVENT_SHADOW_SPIKE:
-                    if(me->CastSpell((Unit*)nullptr, SPELL_SHADOW_SPIKE) == SPELL_CAST_OK)
-                        events.CancelEvent(EVENT_SHADOW_SPIKE);
-                    break;
-                case EVENT_FLAME_DART:
-                    if(me->CastSpell((Unit*)nullptr, SPELL_FLAME_DART) == SPELL_CAST_OK)
-                        events.RescheduleEvent(EVENT_FLAME_DART, urand(50000, 65000));
-                    break;
-                case EVENT_DARKNESS:
-                    phaseDarknessCount++;
-                    Talk(EMOTE_KJ_DARKNESS);
-                    if (me->CastSpell((Unit*)nullptr, SPELL_DARKNESS_OF_A_THOUSAND_SOULS) == SPELL_CAST_OK)
-                    {
-                        events.RescheduleEvent(EVENT_DARKNESS, (phase == PHASE_SACRIFICE) ? 28000 : 48000);
-                        events.RescheduleEvent(EVENT_SUMMON_SHILEDORB, urand(9000, 10000));
-                        events.RescheduleEvent(EVENT_FLAME_DART, urand(5000, 20000));
-                        if (phase == PHASE_NORMAL)
-                            events.RescheduleEvent(EVENT_FIRE_BLOOM, 25000);
-                        else if (phaseDarknessCount == 1)
-                            events.RescheduleEvent(EVENT_FIRE_BLOOM, urand(10000, 40000));
+                        events.RescheduleEvent(EVENT_SUMMON_SHILEDORB, urand(25000, 30000));
+                        if (phase == PHASE_SACRIFICE)
+                            events.CancelEvent(EVENT_SUMMON_SHILEDORB);
+
+                        break;
+                    case EVENT_SHADOW_SPIKE:
+                        if(me->CastSpell((Unit*)nullptr, SPELL_SHADOW_SPIKE) == SPELL_CAST_OK)
+                            events.CancelEvent(EVENT_SHADOW_SPIKE);
+                        break;
+                    case EVENT_FLAME_DART:
+                        if(me->CastSpell((Unit*)nullptr, SPELL_FLAME_DART) == SPELL_CAST_OK)
+                            events.RescheduleEvent(EVENT_FLAME_DART, urand(50000, 65000));
+                        break;
+                    case EVENT_DARKNESS:
+                        phaseDarknessCount++;
+                        Talk(EMOTE_KJ_DARKNESS);
+                        if (me->CastSpell((Unit*)nullptr, SPELL_DARKNESS_OF_A_THOUSAND_SOULS) == SPELL_CAST_OK)
+                        {
+                            events.RescheduleEvent(EVENT_DARKNESS, (phase == PHASE_SACRIFICE) ? 28000 : 48000);
+                            events.RescheduleEvent(EVENT_SUMMON_SHILEDORB, urand(9000, 10000));
+                            events.RescheduleEvent(EVENT_FLAME_DART, urand(5000, 20000));
+                            if (phase == PHASE_NORMAL)
+                                events.RescheduleEvent(EVENT_FIRE_BLOOM, 25000);
+                            else if (phaseDarknessCount == 1)
+                                events.RescheduleEvent(EVENT_FIRE_BLOOM, urand(10000, 40000));
+                            else
+                                events.RescheduleEvent(EVENT_FIRE_BLOOM, urand(15000, 20000));
+
+                            me->RemoveAurasDueToSpell(SPELL_ARMAGEDDON_PERIODIC_SUMMON);
+                            if (phase >= PHASE_ARMAGEDDON)
+                                events.RescheduleEvent(EVENT_ARMAGEDDON, 8000);
+                        }
+                        break;
+                    case EVENT_ORBS_EMPOWER:
+                        if (phase == PHASE_SACRIFICE)
+                        {
+                            if (Creature* kalec = pInstance->instance->GetCreature(ObjectGuid(pInstance->GetData64(DATA_KALECGOS_KJ))))
+                                ((boss_kalecgos_kj::boss_kalecgos_kjAI*)kalec->AI())->EmpowerOrb(true);
+                        }
                         else
-                            events.RescheduleEvent(EVENT_FIRE_BLOOM, urand(15000, 20000));
+                        {
+                            if (Creature* kalec = pInstance->instance->GetCreature(ObjectGuid(pInstance->GetData64(DATA_KALECGOS_KJ))))
+                                ((boss_kalecgos_kj::boss_kalecgos_kjAI*)kalec->AI())->EmpowerOrb(false);
 
-                        me->RemoveAurasDueToSpell(SPELL_ARMAGEDDON_PERIODIC_SUMMON);
-                        if (phase >= PHASE_ARMAGEDDON)
-                            events.RescheduleEvent(EVENT_ARMAGEDDON, 8000);
+                        }
+
+                        events.CancelEvent(EVENT_ORBS_EMPOWER);
+                        break;
+                    case EVENT_SINISTER_REFLECTION:
+                        Talk(SAY_KJ_REFLECTION);
+                        me->CastSpell((Unit*)nullptr, SPELL_SINISTER_REFLECTION, TRIGGERED_FULL_MASK);
+
+                        events.CancelEvent(EVENT_SINISTER_REFLECTION);
+                        break;
+                    case EVENT_ARMAGEDDON:
+                    { 
+                        me->CastSpell(me, SPELL_ARMAGEDDON_PERIODIC_SUMMON, TRIGGERED_FULL_MASK);
+
+                        if (phase == PHASE_SACRIFICE)
+                            events.CancelEvent(EVENT_ARMAGEDDON); //timer will be reset uppon EVENT_DARKNESS
+                        else
+                            events.RescheduleEvent(EVENT_ARMAGEDDON, 26000); //about ~15 seconds where KJ don't spawns any new armaggedon area on the ground (checked on retail https://www.youtube.com/watch?v=Xwv_UZDl_AM)
+                        break;
                     }
-                    break;
-                case EVENT_ORBS_EMPOWER:
-                    if (phase == PHASE_SACRIFICE)
-                    {
-                        if (Creature* kalec = pInstance->instance->GetCreature(ObjectGuid(pInstance->GetData64(DATA_KALECGOS_KJ))))
-                            ((boss_kalecgos_kj::boss_kalecgos_kjAI*)kalec->AI())->EmpowerOrb(true);
-                    }
-                    else
-                    {
-                        if (Creature* kalec = pInstance->instance->GetCreature(ObjectGuid(pInstance->GetData64(DATA_KALECGOS_KJ))))
-                            ((boss_kalecgos_kj::boss_kalecgos_kjAI*)kalec->AI())->EmpowerOrb(false);
-
-                    }
-
-                    events.CancelEvent(EVENT_ORBS_EMPOWER);
-                    break;
-                case EVENT_SINISTER_REFLECTION:
-                    Talk(SAY_KJ_REFLECTION);
-                    me->CastSpell((Unit*)nullptr, SPELL_SINISTER_REFLECTION, TRIGGERED_FULL_MASK);
-
-                    events.CancelEvent(EVENT_SINISTER_REFLECTION);
-                    break;
-                case EVENT_ARMAGEDDON:
-                { 
-                    me->CastSpell(me, SPELL_ARMAGEDDON_PERIODIC_SUMMON, TRIGGERED_FULL_MASK);
-
-                    if (phase == PHASE_SACRIFICE)
-                        events.CancelEvent(EVENT_ARMAGEDDON); //timer will be reset uppon EVENT_DARKNESS
-                    else
-                        events.RescheduleEvent(EVENT_ARMAGEDDON, 26000); //about ~15 seconds where KJ don't spawns any new armaggedon area on the ground (checked on retail https://www.youtube.com/watch?v=Xwv_UZDl_AM)
-                    break;
                 }
-            }
         }
     };
 
@@ -1640,19 +1644,21 @@ public:
 
                 events.Update(diff);
             
-                switch (events.GetEvent())
-                {
-                    case 0:
-                        break;
-                    case EVENT_SHADOWBOLT:
-                        me->CastSpell(me, SPELL_SHADOW_BOLT_VOLLEY);
-                        events.RescheduleEvent(EVENT_SHADOWBOLT, 300);
-                        break;
-                    case EVENT_FELFIRE:
-                        if(me->CastSpell(me, SPELL_FELFIRE_PORTAL) == SPELL_CAST_OK)
-                            events.RescheduleEvent(EVENT_FELFIRE, 20000);
-                        break;
-                }
+
+                while (uint32 eventId = events.ExecuteEvent())
+                    switch (eventId)
+                    {
+                        case 0:
+                            break;
+                        case EVENT_SHADOWBOLT:
+                            me->CastSpell(me, SPELL_SHADOW_BOLT_VOLLEY);
+                            events.RescheduleEvent(EVENT_SHADOWBOLT, 300);
+                            break;
+                        case EVENT_FELFIRE:
+                            if(me->CastSpell(me, SPELL_FELFIRE_PORTAL) == SPELL_CAST_OK)
+                                events.RescheduleEvent(EVENT_FELFIRE, 20000);
+                            break;
+                    }
 
                 DoMeleeAttackIfReady();
             }
@@ -1713,15 +1719,16 @@ public:
 
             events.Update(diff);
 
-            switch (events.GetEvent())
-            {
-                case 0:
-                    break;
-                case EVENT_SPAWNFIEND:
-                    me->CastSpell(me, SPELL_SUMMON_FELFIRE_FIEND, TRIGGERED_NONE);
-                    events.CancelEvent(EVENT_SPAWNFIEND);
-                    break;
-            }
+            while (uint32 eventId = events.ExecuteEvent())
+                switch (eventId)
+                {
+                    case 0:
+                        break;
+                    case EVENT_SPAWNFIEND:
+                        me->CastSpell(me, SPELL_SUMMON_FELFIRE_FIEND, TRIGGERED_NONE);
+                        events.CancelEvent(EVENT_SPAWNFIEND);
+                        break;
+                }
         }
     };
 
@@ -1761,7 +1768,7 @@ public:
             void DamageTaken(Unit* /*attacker*/, uint32& damage)
             override {
                 me->CastSpell(me, SPELL_FELFIRE_FISSION);
-                if (!events.IsEventScheduled(EVENT_DIE_F))
+                if (!events.GetNextEventTime(EVENT_DIE_F))
                     events.RescheduleEvent(EVENT_DIE_F, 500);
             }
 
@@ -1775,51 +1782,53 @@ public:
 
                 events.Update(diff);
 
-                switch (events.GetEvent())
-                {
-                    case 0:
-                        break;
-                    case EVENT_STUN:
-                        me->ClearUnitState(UNIT_STATE_STUNNED);
-                        if (TempSummon* _me = me->ToTempSummon())
-                        {
-                            if (Unit* summoner = _me->GetSummoner())
+
+                while (uint32 eventId = events.ExecuteEvent())
+                    switch (eventId)
+                    {
+                        case 0:
+                            break;
+                        case EVENT_STUN:
+                            me->ClearUnitState(UNIT_STATE_STUNNED);
+                            if (TempSummon* _me = me->ToTempSummon())
                             {
-                                if (summoner->GetEntry() == 25837)
+                                if (Unit* summoner = _me->GetSummoner())
                                 {
-                                    me->GetMotionMaster()->MovePath(25851); //this path is PATH_TYPE_ONCE
-                                    events.CancelEvent(EVENT_STUN);
-                                }
-                                else
-                                {
-                                    DoZoneInCombat();
-                                    if (Unit *unit = SelectTarget(SELECT_TARGET_MINDISTANCE, 0, 100.0f, false))
+                                    if (summoner->GetEntry() == 25837)
                                     {
-                                        AttackStart(unit);
-                                        me->GetThreatManager().AddThreat(unit, 10000000.0f);
+                                        me->GetMotionMaster()->MovePath(25851); //this path is PATH_TYPE_ONCE
                                         events.CancelEvent(EVENT_STUN);
+                                    }
+                                    else
+                                    {
+                                        DoZoneInCombat();
+                                        if (Unit *unit = SelectTarget(SELECT_TARGET_MINDISTANCE, 0, 100.0f, false))
+                                        {
+                                            AttackStart(unit);
+                                            me->GetThreatManager().AddThreat(unit, 10000000.0f);
+                                            events.CancelEvent(EVENT_STUN);
+                                        }
                                     }
                                 }
                             }
-                        }
-                        events.RescheduleEvent(EVENT_STUN, 500);
-                        break;
-                    case EVENT_EXPLODE:
-                        if (me->IsWithinMeleeRange(me->GetVictim()))
-                        {
-                            // Explode if it's close enough to it's target
-                            me->CastSpell(me, SPELL_FELFIRE_FISSION);
-                            events.CancelEvent(EVENT_EXPLODE);
-                            if(!events.IsEventScheduled(EVENT_DIE_F))
-                                events.ScheduleEvent(EVENT_DIE_F, 500);
-                        }
-                        events.RescheduleEvent(EVENT_EXPLODE, 2000);
-                        break;
-                    case EVENT_DIE_F:
-                        events.CancelEvent(EVENT_DIE_F);
-                        me->DisappearAndDie();
-                        break;
-                }
+                            events.RescheduleEvent(EVENT_STUN, 500);
+                            break;
+                        case EVENT_EXPLODE:
+                            if (me->IsWithinMeleeRange(me->GetVictim()))
+                            {
+                                // Explode if it's close enough to it's target
+                                me->CastSpell(me, SPELL_FELFIRE_FISSION);
+                                events.CancelEvent(EVENT_EXPLODE);
+                                if(!events.GetNextEventTime(EVENT_DIE_F))
+                                    events.ScheduleEvent(EVENT_DIE_F, 500);
+                            }
+                            events.RescheduleEvent(EVENT_EXPLODE, 2000);
+                            break;
+                        case EVENT_DIE_F:
+                            events.CancelEvent(EVENT_DIE_F);
+                            me->DisappearAndDie();
+                            break;
+                    }
 
                 if (!UpdateVictim())
                     return;
@@ -1870,31 +1879,33 @@ public:
 
                 events.Update(diff);
 
-                switch (events.GetEvent())
-                {
-                    case 0:
-                        break;
-                    case EVENT_VISUAL1:
-                        if (me->CastSpell(me, SPELL_ARMAGEDDON_VISUAL, TRIGGERED_FULL_MASK) == SPELL_CAST_OK)
-                        {
-                            events.CancelEvent(EVENT_VISUAL1);
-                            if (!events.IsEventScheduled(EVENT_TRIGGER))
-                                events.ScheduleEvent(EVENT_TRIGGER, 9000);
-                        }
-                        break;
-                    case EVENT_TRIGGER:
-                        if (me->CastSpell(me, SPELL_ARMAGEDDON_TRIGGER, TRIGGERED_FULL_MASK) == SPELL_CAST_OK)
-                        {
-                            events.CancelEvent(EVENT_TRIGGER);
-                            if (!events.IsEventScheduled(EVENT_DIE))
-                                events.ScheduleEvent(EVENT_DIE, 5000);
-                        }
-                        break;
-                    case EVENT_DIE:
-                        events.CancelEvent(EVENT_DIE);
-                        me->DisappearAndDie();
-                        break;
-                }
+
+                while (uint32 eventId = events.ExecuteEvent())
+                    switch (eventId)
+                    {
+                        case 0:
+                            break;
+                        case EVENT_VISUAL1:
+                            if (me->CastSpell(me, SPELL_ARMAGEDDON_VISUAL, TRIGGERED_FULL_MASK) == SPELL_CAST_OK)
+                            {
+                                events.CancelEvent(EVENT_VISUAL1);
+                                if (!events.GetNextEventTime(EVENT_TRIGGER))
+                                    events.ScheduleEvent(EVENT_TRIGGER, 9000);
+                            }
+                            break;
+                        case EVENT_TRIGGER:
+                            if (me->CastSpell(me, SPELL_ARMAGEDDON_TRIGGER, TRIGGERED_FULL_MASK) == SPELL_CAST_OK)
+                            {
+                                events.CancelEvent(EVENT_TRIGGER);
+                                if (!events.GetNextEventTime(EVENT_DIE))
+                                    events.ScheduleEvent(EVENT_DIE, 5000);
+                            }
+                            break;
+                        case EVENT_DIE:
+                            events.CancelEvent(EVENT_DIE);
+                            me->DisappearAndDie();
+                            break;
+                    }
             }
     };
 
@@ -2020,16 +2031,18 @@ public:
 
                 events.Update(diff);
 
-                switch (events.GetEvent())
-                {
-                    case 0:
-                        break;
-                    case EVENT_SHADOWBOLT_S:
-                        if (Unit* random = SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true))
-                            if(me->CastSpell(random, SPELL_SHADOW_BOLT, TRIGGERED_NONE) == SPELL_CAST_OK)
-                                events.RescheduleEvent(EVENT_SHADOWBOLT_S, urand(500, 1000));
-                        break;
-                }
+
+                while (uint32 eventId = events.ExecuteEvent())
+                    switch (eventId)
+                    {
+                        case 0:
+                            break;
+                        case EVENT_SHADOWBOLT_S:
+                            if (Unit* random = SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true))
+                                if(me->CastSpell(random, SPELL_SHADOW_BOLT, TRIGGERED_NONE) == SPELL_CAST_OK)
+                                    events.RescheduleEvent(EVENT_SHADOWBOLT_S, urand(500, 1000));
+                            break;
+                    }
             }
     };
 
@@ -2097,19 +2110,20 @@ public:
 
                 events.Update(diff);
 
-                switch (events.GetEvent())
-                {
-                    case 0:
-                        break;
-                    case EVENT_STUN:
-                        canAttack = true;
-                        me->ClearUnitState(UNIT_STATE_STUNNED);
-                        if (TempSummon* _me = me->ToTempSummon())
-                            if (Unit* summoner = _me->GetSummoner())
-                                me->GetThreatManager().AddThreat(summoner, 2500); //no idea if this is correct
-                        events.CancelEvent(EVENT_STUN);
-                        break;
-                }
+                while (uint32 eventId = events.ExecuteEvent())
+                    switch (eventId)
+                    {
+                        case 0:
+                            break;
+                        case EVENT_STUN:
+                            canAttack = true;
+                            me->ClearUnitState(UNIT_STATE_STUNNED);
+                            if (TempSummon* _me = me->ToTempSummon())
+                                if (Unit* summoner = _me->GetSummoner())
+                                    me->GetThreatManager().AddThreat(summoner, 2500); //no idea if this is correct
+                            events.CancelEvent(EVENT_STUN);
+                            break;
+                    }
 
                 if (!canAttack)
                     return;

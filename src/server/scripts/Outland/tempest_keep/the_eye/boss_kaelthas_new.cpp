@@ -356,7 +356,7 @@ class boss_kaelthas : public CreatureScript
                     me->RemoveAurasDueToSpell(SPELL_KAEL_FULL_POWER);
                     me->SetReactState(REACT_AGGRESSIVE);
                     me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE|UNIT_FLAG_NON_ATTACKABLE);
-                    events.SetTimer(60000);
+                    //what is this supposed to do? events.SetTimer(60000);
                     events.ScheduleEvent(EVENT_SPELL_FIREBALL, 0);
                     events.ScheduleEvent(EVENT_SPELL_FLAMESTRIKE, 10000);
                     events.ScheduleEvent(EVENT_SPELL_SUMMON_PHOENIX, 20000);

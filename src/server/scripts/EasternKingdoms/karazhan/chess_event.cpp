@@ -685,21 +685,21 @@ public:
                             return true;
                         }
                     }
-                    else if (Creature* neightboor = ObjectAccessor::GetCreature(*me, board[pieceRow+1][pieceCol]->pieceGUID)) {
-                        if (!piece->IsFriendlyTo(neightboor)) {
-                            piece->CastSpell(neightboor, SPELL_CHANGE_FACING, TRIGGERED_NONE);
+                    else if (Creature* _neightboor = ObjectAccessor::GetCreature(*me, board[pieceRow+1][pieceCol]->pieceGUID)) {
+                        if (!piece->IsFriendlyTo(_neightboor)) {
+                            piece->CastSpell(_neightboor, SPELL_CHANGE_FACING, TRIGGERED_NONE);
                             return true;
                         }
                     }
-                    else if (Creature* neightboor = ObjectAccessor::GetCreature(*me, board[pieceRow][pieceCol-1]->pieceGUID)) {
-                        if (!piece->IsFriendlyTo(neightboor)) {
-                            piece->CastSpell(neightboor, SPELL_CHANGE_FACING, TRIGGERED_NONE);
+                    else if (Creature* _neightboor = ObjectAccessor::GetCreature(*me, board[pieceRow][pieceCol-1]->pieceGUID)) {
+                        if (!piece->IsFriendlyTo(_neightboor)) {
+                            piece->CastSpell(_neightboor, SPELL_CHANGE_FACING, TRIGGERED_NONE);
                             return true;
                         }
                     }
-                    else if (Creature* neightboor = ObjectAccessor::GetCreature(*me, board[pieceRow][pieceCol+1]->pieceGUID)) {
-                        if (!piece->IsFriendlyTo(neightboor)) {
-                            piece->CastSpell(neightboor, SPELL_CHANGE_FACING, TRIGGERED_NONE);
+                    else if (Creature* _neightboor = ObjectAccessor::GetCreature(*me, board[pieceRow][pieceCol+1]->pieceGUID)) {
+                        if (!piece->IsFriendlyTo(_neightboor)) {
+                            piece->CastSpell(_neightboor, SPELL_CHANGE_FACING, TRIGGERED_NONE);
                             return true;
                         }
                     }

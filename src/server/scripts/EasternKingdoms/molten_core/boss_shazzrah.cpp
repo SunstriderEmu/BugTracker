@@ -88,10 +88,10 @@ class Boss_Shazzrah : public CreatureScript
 
                 events.Update(diff);
 
-                switch (events.GetEvent())
-                {
-                    case 0:
-                        break;
+
+                while (uint32 eventId = events.ExecuteEvent())
+                    switch (eventId)
+                    {
                     case EV_ARCANEEXPLOSION:
                         me->CastSpell(me->GetVictim(), SPELL_ARCANEEXPLOSION);
                         events.RescheduleEvent(EV_ARCANEEXPLOSION, urand(5000, 6000));
@@ -112,7 +112,7 @@ class Boss_Shazzrah : public CreatureScript
                         me->CastSpell(me, SPELL_GATE_SHAZZRAH);
                         events.RescheduleEvent(EV_GATE_SHAZZRAH, 45000);
                         break;
-                }
+                    }
             
                 DoMeleeAttackIfReady();
             }

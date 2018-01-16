@@ -153,24 +153,23 @@ public:
                 return;
 
             events.Update(diff);
-            switch (events.GetEvent())
-            {
-            case 0:
-                break;
-            case EV_AVATAR:
-                if (me->CastSpell(me, SPELL_AVATAR) == SPELL_CAST_OK)
-                    events.RescheduleEvent(EV_AVATAR, urand(25000, 30000));
-                break;
-            case EV_KNOCK_AWAY:
-                if (me->CastSpell(me->GetVictim(), SPELL_KNOCK_AWAY) == SPELL_CAST_OK)
-                    events.RescheduleEvent(EV_KNOCK_AWAY, urand(20000, 30000));
-                break;
-            case EV_STORM_BOLT:
-                Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0);
-                if (target && me->CastSpell(target, SPELL_STORM_BOLT) == SPELL_CAST_OK)
-                    events.RescheduleEvent(EV_STORM_BOLT, urand(15000,20000));
-                break;
-            }
+            while (uint32 eventId = events.ExecuteEvent())
+                switch (eventId)
+                {
+                case EV_AVATAR:
+                    if (me->CastSpell(me, SPELL_AVATAR) == SPELL_CAST_OK)
+                        events.RescheduleEvent(EV_AVATAR, urand(25000, 30000));
+                    break;
+                case EV_KNOCK_AWAY:
+                    if (me->CastSpell(me->GetVictim(), SPELL_KNOCK_AWAY) == SPELL_CAST_OK)
+                        events.RescheduleEvent(EV_KNOCK_AWAY, urand(20000, 30000));
+                    break;
+                case EV_STORM_BOLT:
+                    Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0);
+                    if (target && me->CastSpell(target, SPELL_STORM_BOLT) == SPELL_CAST_OK)
+                        events.RescheduleEvent(EV_STORM_BOLT, urand(15000,20000));
+                    break;
+                }
             DoMeleeAttackIfReady();
         }
 

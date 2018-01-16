@@ -427,37 +427,38 @@ public:
                 return;
                 
             events.Update(diff);
-            
-            switch (events.GetEvent())
-            {
-                case EV_FIXATE:
-                {
-                    Unit* target = SelectTarget(SELECT_TARGET_MINDISTANCE, 0, 30.0f, true);
 
-                    if (target) {
-                        target->CastSpell(me, SPELL_FIXATE_TAUNT, TRIGGERED_FULL_MASK);
-                        ResetThreatList();
-                        me->GetThreatManager().AddThreat(target, 1000000.0f);
-                        
-                        if ((rand() % 16) == 0)
-                            Talk(TALK_SUFF_SAY_AGGRO);
-                    }
-                    
-                    events.RescheduleEvent(EV_FIXATE, 5000);
-                    break;
-                }
-                case EV_ENRAGE:
-                    if (me->CastSpell(me, SPELL_ENRAGE) == SPELL_CAST_OK)
+            while (uint32 eventId = events.ExecuteEvent())
+                switch (eventId)
+                {
+                    case EV_FIXATE:
                     {
-                        Talk(TALK_SUFF_EMOTE_ENRAGE);
-                        events.RescheduleEvent(EV_ENRAGE, 30000);
+                        Unit* target = SelectTarget(SELECT_TARGET_MINDISTANCE, 0, 30.0f, true);
+
+                        if (target) {
+                            target->CastSpell(me, SPELL_FIXATE_TAUNT, TRIGGERED_FULL_MASK);
+                            ResetThreatList();
+                            me->GetThreatManager().AddThreat(target, 1000000.0f);
+                        
+                            if ((rand() % 16) == 0)
+                                Talk(TALK_SUFF_SAY_AGGRO);
+                        }
+                    
+                        events.RescheduleEvent(EV_FIXATE, 5000);
+                        break;
                     }
-                    break;
-                case EV_SOUL_DRAIN:
-                    if(me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0), SPELL_SOUL_DRAIN) == SPELL_CAST_OK)
-                        events.RescheduleEvent(EV_SOUL_DRAIN, 20000);
-                    break;
-            }
+                    case EV_ENRAGE:
+                        if (me->CastSpell(me, SPELL_ENRAGE) == SPELL_CAST_OK)
+                        {
+                            Talk(TALK_SUFF_EMOTE_ENRAGE);
+                            events.RescheduleEvent(EV_ENRAGE, 30000);
+                        }
+                        break;
+                    case EV_SOUL_DRAIN:
+                        if(me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0), SPELL_SOUL_DRAIN) == SPELL_CAST_OK)
+                            events.RescheduleEvent(EV_SOUL_DRAIN, 20000);
+                        break;
+                }
             
             DoMeleeAttackIfReady();
         }
@@ -570,31 +571,33 @@ public:
                 
             events.Update(diff);
             
-            switch (events.GetEvent())
-            {
-                case 0:
-                    break;
-                case EV_RUNE_SHIELD:
-                    if (me->CastSpell(me, SPELL_RUNE_SHIELD, TRIGGERED_FULL_MASK) == SPELL_CAST_OK)
-                    {
-                        events.SetMinimalDelay(EV_SOUL_SHOCK, 2000);
-                        events.SetMinimalDelay(EV_DEADEN, 2000);
-                        events.RescheduleEvent(EV_RUNE_SHIELD, 15000);
-                    }
-                    break;
-                case EV_SOUL_SHOCK:
-                    if(me->CastSpell(me->GetVictim(), SPELL_SOUL_SHOCK) == SPELL_CAST_OK)
-                        events.RescheduleEvent(EV_SOUL_SHOCK, 6000);
-                    break;
-                case EV_DEADEN:
-                    if (me->CastSpell(me->GetVictim(), SPELL_DEADEN) == SPELL_CAST_OK)
-                    {
-                        events.RescheduleEvent(EV_DEADEN, 30000);
-                        if ((rand() % 2) == 0)
-                            Talk(TALK_DESI_SAY_SPEC);
-                    }
-                    break;
-            }
+
+            while (uint32 eventId = events.ExecuteEvent())
+                switch (eventId)
+                {
+                    case 0:
+                        break;
+                    case EV_RUNE_SHIELD:
+                        if (me->CastSpell(me, SPELL_RUNE_SHIELD, TRIGGERED_FULL_MASK) == SPELL_CAST_OK)
+                        {
+                            events.SetMinimalDelay(EV_SOUL_SHOCK, 2000);
+                            events.SetMinimalDelay(EV_DEADEN, 2000);
+                            events.RescheduleEvent(EV_RUNE_SHIELD, 15000);
+                        }
+                        break;
+                    case EV_SOUL_SHOCK:
+                        if(me->CastSpell(me->GetVictim(), SPELL_SOUL_SHOCK) == SPELL_CAST_OK)
+                            events.RescheduleEvent(EV_SOUL_SHOCK, 6000);
+                        break;
+                    case EV_DEADEN:
+                        if (me->CastSpell(me->GetVictim(), SPELL_DEADEN) == SPELL_CAST_OK)
+                        {
+                            events.RescheduleEvent(EV_DEADEN, 30000);
+                            if ((rand() % 2) == 0)
+                                Talk(TALK_DESI_SAY_SPEC);
+                        }
+                        break;
+                }
             
             DoMeleeAttackIfReady();
         }
@@ -683,37 +686,38 @@ public:
                 return;
                 
             events.Update(diff);
-            
-            switch (events.GetEvent())
-            {
-                case 0:
-                    break;
-                case EV_CHECK_TANK:
-                    if (me->GetVictim() && me->GetVictim()->GetGUID() != tankGUID) {
-                        if (me->CastSpell(me, SPELL_SELF_SEETHE, TRIGGERED_FULL_MASK) == SPELL_CAST_OK)
-                        {
-                            Talk(TALK_ANGER_SAY_BEFORE);
-                            tankGUID = me->GetVictim()->GetGUID();
+
+            while (uint32 eventId = events.ExecuteEvent())
+                switch (eventId)
+                {
+                    case 0:
+                        break;
+                    case EV_CHECK_TANK:
+                        if (me->GetVictim() && me->GetVictim()->GetGUID() != tankGUID) {
+                            if (me->CastSpell(me, SPELL_SELF_SEETHE, TRIGGERED_FULL_MASK) == SPELL_CAST_OK)
+                            {
+                                Talk(TALK_ANGER_SAY_BEFORE);
+                                tankGUID = me->GetVictim()->GetGUID();
+                            }
                         }
-                    }
-                    events.RescheduleEvent(EV_CHECK_TANK, 2000);
-                    break;
-                case EV_SOUL_SCREAM:
-                    if (me->CastSpell(me->GetVictim(), SPELL_SOUL_SCREAM) == SPELL_CAST_OK)
-                    {
-                        if ((rand() % 3) == 0)
+                        events.RescheduleEvent(EV_CHECK_TANK, 2000);
+                        break;
+                    case EV_SOUL_SCREAM:
+                        if (me->CastSpell(me->GetVictim(), SPELL_SOUL_SCREAM) == SPELL_CAST_OK)
+                        {
+                            if ((rand() % 3) == 0)
+                                Talk(TALK_ANGER_SAY_SPEC);
+                            events.RescheduleEvent(EV_SOUL_SCREAM, urand(9000, 11000));
+                        }
+                        break;
+                    case EV_SPITE:
+                        if (me->CastSpell(me, SPELL_SPITE_TARGET) == SPELL_CAST_OK)
+                        {
                             Talk(TALK_ANGER_SAY_SPEC);
-                        events.RescheduleEvent(EV_SOUL_SCREAM, urand(9000, 11000));
-                    }
-                    break;
-                case EV_SPITE:
-                    if (me->CastSpell(me, SPELL_SPITE_TARGET) == SPELL_CAST_OK)
-                    {
-                        Talk(TALK_ANGER_SAY_SPEC);
-                        events.RescheduleEvent(EV_SPITE, 20000);
-                    }
-                    break;
-            }
+                            events.RescheduleEvent(EV_SPITE, 20000);
+                        }
+                        break;
+                }
             
             DoMeleeAttackIfReady();
         }

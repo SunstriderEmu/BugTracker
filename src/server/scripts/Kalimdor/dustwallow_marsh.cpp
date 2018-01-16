@@ -252,40 +252,41 @@ public:
                 return;
 
             events.Update(diff);
-            switch (events.GetEvent())
-            {
-            case 0:
-                break;
-            case EV_FIREBALL:
-                if (me->CastSpell(me->GetVictim(), SPELL_FIREBALL) == SPELL_CAST_OK)
-                    events.RescheduleEvent(EV_FIREBALL, urand(2000, 3500));
-                break;
-            case EV_FIREBLAST:
-                if (me->CastSpell(me->GetVictim(), SPELL_FIREBLAST) == SPELL_CAST_OK)
-                    events.RescheduleEvent(EV_FIREBLAST, urand(15000, 17000));
-                break;
-            case EV_BLIZZARD:
-                if (me->CastSpell(me->GetVictim(), SPELL_BLIZZARD) == SPELL_CAST_OK)
-                    events.RescheduleEvent(EV_BLIZZARD, urand(25000, 28000));
-                break;
-            case EV_TELEPORT:
-            {
-                if (me->GetHealthPct() < 50.0f)
+            while (uint32 eventId = events.ExecuteEvent())
+                switch (eventId)
                 {
-                    me->CastSpell(me->GetVictim(), EV_TELEPORT);
-                    events.CancelEvent(EV_TELEPORT);
-                }
-                else 
+                case 0:
+                    break;
+                case EV_FIREBALL:
+                    if (me->CastSpell(me->GetVictim(), SPELL_FIREBALL) == SPELL_CAST_OK)
+                        events.RescheduleEvent(EV_FIREBALL, urand(2000, 3500));
+                    break;
+                case EV_FIREBLAST:
+                    if (me->CastSpell(me->GetVictim(), SPELL_FIREBLAST) == SPELL_CAST_OK)
+                        events.RescheduleEvent(EV_FIREBLAST, urand(15000, 17000));
+                    break;
+                case EV_BLIZZARD:
+                    if (me->CastSpell(me->GetVictim(), SPELL_BLIZZARD) == SPELL_CAST_OK)
+                        events.RescheduleEvent(EV_BLIZZARD, urand(25000, 28000));
+                    break;
+                case EV_TELEPORT:
                 {
-                    events.RescheduleEvent(EV_TELEPORT, 10000);
+                    if (me->GetHealthPct() < 50.0f)
+                    {
+                        me->CastSpell(me->GetVictim(), EV_TELEPORT);
+                        events.CancelEvent(EV_TELEPORT);
+                    }
+                    else 
+                    {
+                        events.RescheduleEvent(EV_TELEPORT, 10000);
+                    }
+                    break;
                 }
-                break;
-            }
-            case EV_WATER_ELEMENTALS:
-                if (me->CastSpell(me, SPELL_WATER_ELEMENTALS, TRIGGERED_FULL_MASK) == SPELL_CAST_OK)
-                    events.RescheduleEvent(EV_WATER_ELEMENTALS, urand(45000, 55000));
-                break;
-            }
+                case EV_WATER_ELEMENTALS:
+                    if (me->CastSpell(me, SPELL_WATER_ELEMENTALS, TRIGGERED_FULL_MASK) == SPELL_CAST_OK)
+                        events.RescheduleEvent(EV_WATER_ELEMENTALS, urand(45000, 55000));
+                    break;
+                }
             DoMeleeAttackIfReady();
         }
 

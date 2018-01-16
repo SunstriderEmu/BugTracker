@@ -487,19 +487,20 @@ class Mob_Coilfang_Guardian : public CreatureScript
 
                 events.Update(diff);
 
-                switch (events.GetEvent())
-                {
-                    case 0:
-                        break;
-                    case EV_ARCINGSMASH:
-                        me->CastSpell(me->GetVictim(), SPELL_ARCINGSMASH);
-                        events.RescheduleEvent(EV_ARCINGSMASH, urand(10000, 15000));
-                        break;
-                    case EV_HAMSTRING:
-                        me->CastSpell(me->GetVictim(), SPELL_HAMSTRING);
-                        events.RescheduleEvent(EV_HAMSTRING, urand(10000, 15000));
-                        break;
-                }
+                while (uint32 eventId = events.ExecuteEvent())
+                    switch (eventId)
+                    {
+                        case 0:
+                            break;
+                        case EV_ARCINGSMASH:
+                            me->CastSpell(me->GetVictim(), SPELL_ARCINGSMASH);
+                            events.RescheduleEvent(EV_ARCINGSMASH, urand(10000, 15000));
+                            break;
+                        case EV_HAMSTRING:
+                            me->CastSpell(me->GetVictim(), SPELL_HAMSTRING);
+                            events.RescheduleEvent(EV_HAMSTRING, urand(10000, 15000));
+                            break;
+                    }
 
                 DoMeleeAttackIfReady();
             }
@@ -549,22 +550,24 @@ class Mob_Coilfang_Ambusher : public CreatureScript
 
                 events.Update(diff);
 
-                switch (events.GetEvent())
-                {
-                    case 0:
-                        break;
-                    case EV_MULTISHOT:
-                        me->CastSpell(me->GetVictim(), SPELL_SPREAD_SHOT);
 
-                        events.RescheduleEvent(EV_MULTISHOT, urand(5000, 15000));
-                        break;
-                    case EV_SHOOTBOW:
-                        if (!me->HasUnitState(UNIT_STATE_CASTING))
-                            me->CastSpell(me->GetVictim(), SPELL_SHOOT);
+                while (uint32 eventId = events.ExecuteEvent())
+                    switch (eventId)
+                    {
+                        case 0:
+                            break;
+                        case EV_MULTISHOT:
+                            me->CastSpell(me->GetVictim(), SPELL_SPREAD_SHOT);
 
-                        events.RescheduleEvent(EV_SHOOTBOW, urand(2000, 5000));
-                        break;
-                }
+                            events.RescheduleEvent(EV_MULTISHOT, urand(5000, 15000));
+                            break;
+                        case EV_SHOOTBOW:
+                            if (!me->HasUnitState(UNIT_STATE_CASTING))
+                                me->CastSpell(me->GetVictim(), SPELL_SHOOT);
+
+                            events.RescheduleEvent(EV_SHOOTBOW, urand(2000, 5000));
+                            break;
+                    }
 
                 DoMeleeAttackIfReady();
             }

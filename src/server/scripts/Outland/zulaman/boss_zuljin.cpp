@@ -319,80 +319,81 @@ public:
                 setPhase(++phase);
             
             events.Update(diff);
-            
-            switch (events.GetEvent())
-            {
-                case 0:
-                    break;
-                case EV_OVERPOWER_READY:
-                    overpowerReady = true;
-                    events.CancelEvent(EV_OVERPOWER_READY);
-                    break;
-                case EV_WHIRLWIND:
-                    if (me->CastSpell(me, SPELL_WHIRLWIND) == SPELL_CAST_OK)
-                        events.RescheduleEvent(EV_WHIRLWIND, urand(15000, 20000), 0, PHASE_TROLL);
-                    break;
-                case EV_GRIEVOUS_THROW:
-                    if(me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0, 80.0f, true), SPELL_GRIEVOUS_THROW) == SPELL_CAST_OK)
-                        events.RescheduleEvent(EV_GRIEVOUS_THROW, 10000, 0, PHASE_TROLL);
-                    break;
-                case EV_CREEPING_PARA:
-                    if(me->CastSpell(me, SPELL_CREEPING_PARALYSIS) == SPELL_CAST_OK)
-                        events.RescheduleEvent(EV_CREEPING_PARA, 20000, 0, PHASE_BEAR);
-                    break;
-                case EV_CLAW_RAGE:
+
+            while (uint32 eventId = events.ExecuteEvent())
+                switch (eventId)
                 {
-                    Unit* clawRageTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 80.0, true, true);
-                    if (clawRageTarget) {
-                        clawRageTargetGUID = clawRageTarget->GetGUID();
-                        me->GetThreatManager().AddThreat(clawRageTarget, 1000000); // 1.000.000 threat should be enough
-                        me->SetSpeedRate(MOVE_RUN, 1.2f);
-                        events.RescheduleEvent(EV_REINIT_SPEED, 2000, 0, PHASE_LYNX);
-                        me->CastSpell(clawRageTarget, SPELL_CLAW_RAGE_CHARGE);
-                        me->CastSpell(me, SPELL_CLAW_RAGE_TRIGGER, TRIGGERED_FULL_MASK); // Triggers SPELL_CLAW_RAGE_DAMAGE every 500 ms
-                    }
-
-                    //reset claw rage focus after 5.5
-                    events.RescheduleEvent(EV_CLAW_RAGE_RESET, 5500, 0, PHASE_LYNX);
-                    //schedule next claw rage
-                    events.RescheduleEvent(EV_CLAW_RAGE, urand(15000, 20000), 0, PHASE_LYNX);
-                    events.SetMinimalDelay(EV_LYNX_RUSH, 5500);
-                    break;
-                }
-                case EV_CLAW_RAGE_RESET: // reset clawRageTargetGUID, remove threat, disable EV_CLAW_RAGE_RESET event
-                    if (Unit* clawRageTarget = ObjectAccessor::GetUnit(*me, clawRageTargetGUID))
-                        me->GetThreatManager().AddThreat(clawRageTarget, -1000000);
-
-                    clawRageTargetGUID = ObjectGuid::Empty;
-                    events.CancelEvent(EV_CLAW_RAGE_RESET);
-                    break;
-                case EV_LYNX_RUSH:
-                    me->SetSpeedRate(MOVE_RUN, 1.2f);
-                    if(Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 80.0, true, true))
-                        if (me->CastSpell(target, SPELL_LYNX_RUSH_DAMAGE) == SPELL_CAST_OK)
-                        {
-                            events.SetMinimalDelay(EV_CLAW_RAGE, 2000);
-                            events.RescheduleEvent(EV_REINIT_SPEED, 2000);
-                            events.RescheduleEvent(EV_LYNX_RUSH, urand(25000, 30000), 0, PHASE_LYNX);
+                    case 0:
+                        break;
+                    case EV_OVERPOWER_READY:
+                        overpowerReady = true;
+                        events.CancelEvent(EV_OVERPOWER_READY);
+                        break;
+                    case EV_WHIRLWIND:
+                        if (me->CastSpell(me, SPELL_WHIRLWIND) == SPELL_CAST_OK)
+                            events.RescheduleEvent(EV_WHIRLWIND, urand(15000, 20000), 0, PHASE_TROLL);
+                        break;
+                    case EV_GRIEVOUS_THROW:
+                        if(me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0, 80.0f, true), SPELL_GRIEVOUS_THROW) == SPELL_CAST_OK)
+                            events.RescheduleEvent(EV_GRIEVOUS_THROW, 10000, 0, PHASE_TROLL);
+                        break;
+                    case EV_CREEPING_PARA:
+                        if(me->CastSpell(me, SPELL_CREEPING_PARALYSIS) == SPELL_CAST_OK)
+                            events.RescheduleEvent(EV_CREEPING_PARA, 20000, 0, PHASE_BEAR);
+                        break;
+                    case EV_CLAW_RAGE:
+                    {
+                        Unit* clawRageTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, 80.0, true, true);
+                        if (clawRageTarget) {
+                            clawRageTargetGUID = clawRageTarget->GetGUID();
+                            me->GetThreatManager().AddThreat(clawRageTarget, 1000000); // 1.000.000 threat should be enough
+                            me->SetSpeedRate(MOVE_RUN, 1.2f);
+                            events.RescheduleEvent(EV_REINIT_SPEED, 2000, 0, PHASE_LYNX);
+                            me->CastSpell(clawRageTarget, SPELL_CLAW_RAGE_CHARGE);
+                            me->CastSpell(me, SPELL_CLAW_RAGE_TRIGGER, TRIGGERED_FULL_MASK); // Triggers SPELL_CLAW_RAGE_DAMAGE every 500 ms
                         }
-                    break;
-                case EV_FLAME_WHIRL:
-                    if(me->CastSpell(me, SPELL_FLAME_WHIRL) == SPELL_CAST_OK)
-                        events.RescheduleEvent(EV_FLAME_WHIRL, 12000, 0, PHASE_DRAGONHAWK);
-                    break;
-                case EV_PILLAR_OF_FIRE:
-                    if(me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0, 80.0f, true), SPELL_SUMMON_PILLAR) == SPELL_CAST_OK)
-                        events.RescheduleEvent(EV_PILLAR_OF_FIRE, 10000, 0, PHASE_DRAGONHAWK);
-                    break;
-                case EV_FLAME_BREATH:
-                    if(me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0, 80.0f, true), SPELL_FLAME_BREATH) == SPELL_CAST_OK)
-                        events.RescheduleEvent(EV_FLAME_BREATH, 10000, 0, PHASE_DRAGONHAWK);
-                    break;
-                case EV_REINIT_SPEED:
-                    me->SetSpeedRate(MOVE_RUN, 1.0f);
-                    events.CancelEvent(EV_REINIT_SPEED);
-                    break;
-            }
+
+                        //reset claw rage focus after 5.5
+                        events.RescheduleEvent(EV_CLAW_RAGE_RESET, 5500, 0, PHASE_LYNX);
+                        //schedule next claw rage
+                        events.RescheduleEvent(EV_CLAW_RAGE, urand(15000, 20000), 0, PHASE_LYNX);
+                        events.SetMinimalDelay(EV_LYNX_RUSH, 5500);
+                        break;
+                    }
+                    case EV_CLAW_RAGE_RESET: // reset clawRageTargetGUID, remove threat, disable EV_CLAW_RAGE_RESET event
+                        if (Unit* clawRageTarget = ObjectAccessor::GetUnit(*me, clawRageTargetGUID))
+                            me->GetThreatManager().AddThreat(clawRageTarget, -1000000);
+
+                        clawRageTargetGUID = ObjectGuid::Empty;
+                        events.CancelEvent(EV_CLAW_RAGE_RESET);
+                        break;
+                    case EV_LYNX_RUSH:
+                        me->SetSpeedRate(MOVE_RUN, 1.2f);
+                        if(Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 80.0, true, true))
+                            if (me->CastSpell(target, SPELL_LYNX_RUSH_DAMAGE) == SPELL_CAST_OK)
+                            {
+                                events.SetMinimalDelay(EV_CLAW_RAGE, 2000);
+                                events.RescheduleEvent(EV_REINIT_SPEED, 2000);
+                                events.RescheduleEvent(EV_LYNX_RUSH, urand(25000, 30000), 0, PHASE_LYNX);
+                            }
+                        break;
+                    case EV_FLAME_WHIRL:
+                        if(me->CastSpell(me, SPELL_FLAME_WHIRL) == SPELL_CAST_OK)
+                            events.RescheduleEvent(EV_FLAME_WHIRL, 12000, 0, PHASE_DRAGONHAWK);
+                        break;
+                    case EV_PILLAR_OF_FIRE:
+                        if(me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0, 80.0f, true), SPELL_SUMMON_PILLAR) == SPELL_CAST_OK)
+                            events.RescheduleEvent(EV_PILLAR_OF_FIRE, 10000, 0, PHASE_DRAGONHAWK);
+                        break;
+                    case EV_FLAME_BREATH:
+                        if(me->CastSpell(SelectTarget(SELECT_TARGET_RANDOM, 0, 80.0f, true), SPELL_FLAME_BREATH) == SPELL_CAST_OK)
+                            events.RescheduleEvent(EV_FLAME_BREATH, 10000, 0, PHASE_DRAGONHAWK);
+                        break;
+                    case EV_REINIT_SPEED:
+                        me->SetSpeedRate(MOVE_RUN, 1.0f);
+                        events.CancelEvent(EV_REINIT_SPEED);
+                        break;
+                }
             
             DoMeleeAttackIfReady();
         }

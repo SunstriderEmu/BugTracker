@@ -92,23 +92,23 @@ public:
             
             events.Update(diff);
             
-            switch (events.GetEvent())
-            {
-                case 0:
-                    break;
-                case EV_IMPENDINGDOOM:
-                    me->CastSpell(me->GetVictim(), SPELL_IMPENDINGDOOM);
-                    events.RescheduleEvent(EV_IMPENDINGDOOM, urand(15000, 20000));
-                    break;
-                case EV_LUCIFRONCURSE:
-                    me->CastSpell(me->GetVictim(), SPELL_LUCIFRONCURSE);
-                    events.RescheduleEvent(EV_LUCIFRONCURSE, urand(15000, 20000));
-                    break;
-                case EV_SHADOWSHOCK:
-                    me->CastSpell(me->GetVictim(), SPELL_SHADOWSHOCK);
-                    events.RescheduleEvent(EV_SHADOWSHOCK, 4000);
-                    break;
-            }
+
+            while (uint32 eventId = events.ExecuteEvent())
+                switch (eventId)
+                {
+                    case EV_IMPENDINGDOOM:
+                        me->CastSpell(me->GetVictim(), SPELL_IMPENDINGDOOM);
+                        events.RescheduleEvent(EV_IMPENDINGDOOM, urand(15000, 20000));
+                        break;
+                    case EV_LUCIFRONCURSE:
+                        me->CastSpell(me->GetVictim(), SPELL_LUCIFRONCURSE);
+                        events.RescheduleEvent(EV_LUCIFRONCURSE, urand(15000, 20000));
+                        break;
+                    case EV_SHADOWSHOCK:
+                        me->CastSpell(me->GetVictim(), SPELL_SHADOWSHOCK);
+                        events.RescheduleEvent(EV_SHADOWSHOCK, 4000);
+                        break;
+                }
             
             DoMeleeAttackIfReady();
         }
@@ -158,19 +158,19 @@ public:
             
             events.Update(diff);
             
-            switch (events.GetEvent())
-            {
-                case 0:
-                    break;
-                case EV_DOMINATE_MIND:
-                    me->CastSpell(me->GetVictim(), SPELL_DOMINATE_MIND);
-                    events.RescheduleEvent(EV_DOMINATE_MIND, 15000);
-                    break;
-                case EV_CLEAVE:
-                    me->CastSpell(me->GetVictim(), SPELL_CLEAVE);
-                    events.RescheduleEvent(EV_CLEAVE, 6000);
-                    break;
-            }
+
+            while (uint32 eventId = events.ExecuteEvent())
+                switch (eventId)
+                {
+                    case EV_DOMINATE_MIND:
+                        me->CastSpell(me->GetVictim(), SPELL_DOMINATE_MIND);
+                        events.RescheduleEvent(EV_DOMINATE_MIND, 15000);
+                        break;
+                    case EV_CLEAVE:
+                        me->CastSpell(me->GetVictim(), SPELL_CLEAVE);
+                        events.RescheduleEvent(EV_CLEAVE, 6000);
+                        break;
+                }
             
             DoMeleeAttackIfReady();
         }

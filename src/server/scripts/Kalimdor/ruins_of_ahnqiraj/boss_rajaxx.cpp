@@ -153,19 +153,18 @@ public:
 
             events.Update(diff);
 
-            switch (events.GetEvent())
-            {
-                case 0:
-                    break;
-                case EV_THUNDER_CLAP:
-                    if (me->CastSpell(me->GetVictim(), SPELL_THUNDER_CLAP) == SPELL_CAST_OK)
-                    {
-                        Talk(TALK_CHANGE_TARGET, me->GetVictim());
-                        ResetThreatList();
-                        events.RescheduleEvent(EV_THUNDER_CLAP, urand(25000, 35000));
-                    }
-                    break;
-            }
+            while (uint32 eventId = events.ExecuteEvent())
+                switch (eventId)
+                {
+                    case EV_THUNDER_CLAP:
+                        if (me->CastSpell(me->GetVictim(), SPELL_THUNDER_CLAP) == SPELL_CAST_OK)
+                        {
+                            Talk(TALK_CHANGE_TARGET, me->GetVictim());
+                            ResetThreatList();
+                            events.RescheduleEvent(EV_THUNDER_CLAP, urand(25000, 35000));
+                        }
+                        break;
+                }
             
         }
         void Reset ()

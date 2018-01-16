@@ -283,58 +283,57 @@ class Boss_Majordomo : public CreatureScript
             void UpdateAI(uint32 const diff)
             override {
                 events.Update(diff);
-            
-                switch (events.GetEvent())
-                {
-                    case 0:
-                        break;
-                    case EV_CHECK_PHASE:
-                        if (me->GetOwnerGUID() != 0)
-                            setPhase(RAGNAGNA);
-                        else if (isSpawnReady())
-                            setPhase(VISIBLE);
 
-                        events.RescheduleEvent(EV_CHECK_PHASE, 10000);
-                        break;
-                    case EV_DOWN:
-                        me->CastSpell(me, SPELL_TELEPORT, TRIGGERED_FULL_MASK);
-                        setPhase(NOT_VISIBLE);
-                        DoScriptText(SAY_DEFEAT, me);
-                        break;
-                }
+                while (uint32 eventId = events.ExecuteEvent())
+                    switch (eventId)
+                    {
+                        case EV_CHECK_PHASE:
+                            if (me->GetOwnerGUID() != 0)
+                                setPhase(RAGNAGNA);
+                            else if (isSpawnReady())
+                                setPhase(VISIBLE);
+
+                            events.RescheduleEvent(EV_CHECK_PHASE, 10000);
+                            break;
+                        case EV_DOWN:
+                            me->CastSpell(me, SPELL_TELEPORT, TRIGGERED_FULL_MASK);
+                            setPhase(NOT_VISIBLE);
+                            DoScriptText(SAY_DEFEAT, me);
+                            break;
+                    }
 
                 if (!UpdateVictim())
                     return;
 
-                switch (events.GetEvent())
-                {
-                case 0:
-                    break;
-                case EV_REFLECTION:
-                {
-                    uint32 spellID = rand() % 2 ? SPELL_MAGIC_REFLECTION : SPELL_DAMAGE_REFLECTION;
-                    Creature* NagaFriend;
-                    for (ObjectGuid & Summon : Summons)
-                    {
-                        NagaFriend = ObjectAccessor::GetCreature((*me), Summon);
-                        if (NagaFriend && NagaFriend->IsAlive())
-                            me->AddAura(spellID, NagaFriend);
-                    }
-                    me->AddAura(spellID, me);
-                    events.RescheduleEvent(EV_REFLECTION, 30000);
-                    break;
-                }
-                case EV_TELEPORT:
-                    if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true))
-                        me->CastSpell(target, SPELL_TELEPORT, TRIGGERED_FULL_MASK);
 
-                    events.RescheduleEvent(EV_TELEPORT, 30000);
-                    break;
-                case EV_BLASTWAVE:
-                    me->CastSpell(me->GetVictim(), SPELL_BLASTWAVE);
-                    events.RescheduleEvent(EV_BLASTWAVE, urand(3000, 10000));
-                    break;
-                }
+                while (uint32 eventId = events.ExecuteEvent())
+                    switch (eventId)
+                    {
+                    case EV_REFLECTION:
+                    {
+                        uint32 spellID = rand() % 2 ? SPELL_MAGIC_REFLECTION : SPELL_DAMAGE_REFLECTION;
+                        Creature* NagaFriend;
+                        for (ObjectGuid & Summon : Summons)
+                        {
+                            NagaFriend = ObjectAccessor::GetCreature((*me), Summon);
+                            if (NagaFriend && NagaFriend->IsAlive())
+                                me->AddAura(spellID, NagaFriend);
+                        }
+                        me->AddAura(spellID, me);
+                        events.RescheduleEvent(EV_REFLECTION, 30000);
+                        break;
+                    }
+                    case EV_TELEPORT:
+                        if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true))
+                            me->CastSpell(target, SPELL_TELEPORT, TRIGGERED_FULL_MASK);
+
+                        events.RescheduleEvent(EV_TELEPORT, 30000);
+                        break;
+                    case EV_BLASTWAVE:
+                        me->CastSpell(me->GetVictim(), SPELL_BLASTWAVE);
+                        events.RescheduleEvent(EV_BLASTWAVE, urand(3000, 10000));
+                        break;
+                    }
 
                 if (me->GetDistance(RoomCenter.x, RoomCenter.y , RoomCenter.z) > 100)
                     EnterEvadeMode();
@@ -446,22 +445,21 @@ class Mob_FlameWalker_Healer : public CreatureScript
                 }
             
                 events.Update(diff);
-            
-                switch (events.GetEvent())
-                {
-                    case 0:
-                        break;
-                    case EV_SHADOWBOLT:
-                        if (Unit* target = SelectTarget(SELECT_TARGET_MAXTHREAT, 0, 100.0f, true))
-                            if(me->CastSpell(target, SPELL_SHADOWBOLT) == SPELL_CAST_OK)
-                                events.RescheduleEvent(EV_SHADOWBOLT, urand(8000, 12000));
-                        break;
-                    case EV_SHADOWSHOCK:
-                        if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true))
-                            if (me->CastSpell(target, SPELL_SHADOWSHOCK) == SPELL_CAST_OK)
-                                events.RescheduleEvent(EV_SHADOWSHOCK, urand(15000, 25000));
-                        break;
-                }
+
+                while (uint32 eventId = events.ExecuteEvent())
+                    switch (eventId)
+                    {
+                        case EV_SHADOWBOLT:
+                            if (Unit* target = SelectTarget(SELECT_TARGET_MAXTHREAT, 0, 100.0f, true))
+                                if(me->CastSpell(target, SPELL_SHADOWBOLT) == SPELL_CAST_OK)
+                                    events.RescheduleEvent(EV_SHADOWBOLT, urand(8000, 12000));
+                            break;
+                        case EV_SHADOWSHOCK:
+                            if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true))
+                                if (me->CastSpell(target, SPELL_SHADOWSHOCK) == SPELL_CAST_OK)
+                                    events.RescheduleEvent(EV_SHADOWSHOCK, urand(15000, 25000));
+                            break;
+                    }
 
                 DoMeleeAttackIfReady();
             }
@@ -532,20 +530,19 @@ class Mob_FlameWalker_Elite : public CreatureScript
                 }
             
                 events.Update(diff);
-            
-                switch (events.GetEvent())
-                {
-                    case 0:
-                        break;
-                    case EV_BLASTWAVE:
-                        me->CastSpell(me->GetVictim(), SPELL_BLASTWAVE);
-                        events.RescheduleEvent(EV_BLASTWAVE, urand(3000, 10000));
-                        break;
-                    case EV_FIREBLAST:
-                        me->CastSpell(me->GetVictim(), SPELL_FIREBLAST);
-                        events.RescheduleEvent(EV_FIREBLAST, 10000);
-                        break;
-                }
+
+                while (uint32 eventId = events.ExecuteEvent())
+                    switch (eventId)
+                    {
+                        case EV_BLASTWAVE:
+                            me->CastSpell(me->GetVictim(), SPELL_BLASTWAVE);
+                            events.RescheduleEvent(EV_BLASTWAVE, urand(3000, 10000));
+                            break;
+                        case EV_FIREBLAST:
+                            me->CastSpell(me->GetVictim(), SPELL_FIREBLAST);
+                            events.RescheduleEvent(EV_FIREBLAST, 10000);
+                            break;
+                    }
 
                 DoMeleeAttackIfReady();
             }
@@ -591,29 +588,28 @@ class Mob_Hot_Coal : public CreatureScript
             void UpdateAI(uint32 const diff)
             override {
                 events.Update(diff);
-            
-                switch (events.GetEvent())
-                {
-                    case 0:
-                        break;
-                    case EV_COAL:
-                        Map *map = me->GetMap();
-                        Map::PlayerList const &PlayerList = map->GetPlayers();
 
-                        for (const auto & i : PlayerList)
-                        {
-                            if (Player* i_pl = i.GetSource())
-                                if (i_pl->IsAlive() && i_pl->IsAttackableByAOE() && i_pl->GetDistance(CaolLocation.x, CaolLocation.y, CaolLocation.z) <= 8)
-                                {
-                                    me->CastSpell(i_pl, SPELL_HOTCOAL, TRIGGERED_FULL_MASK);
-                                    i_pl->CombatStop(true);
-                                }
-                        }
+                while (uint32 eventId = events.ExecuteEvent())
+                    switch (eventId)
+                    {
+                        case EV_COAL:
+                            Map *map = me->GetMap();
+                            Map::PlayerList const &PlayerList = map->GetPlayers();
 
-                        me->CombatStop(true);
-                        events.RescheduleEvent(EV_COAL, 1000);
-                        break;
-                }
+                            for (const auto & i : PlayerList)
+                            {
+                                if (Player* i_pl = i.GetSource())
+                                    if (i_pl->IsAlive() && i_pl->IsAttackableByAOE() && i_pl->GetDistance(CaolLocation.x, CaolLocation.y, CaolLocation.z) <= 8)
+                                    {
+                                        me->CastSpell(i_pl, SPELL_HOTCOAL, TRIGGERED_FULL_MASK);
+                                        i_pl->CombatStop(true);
+                                    }
+                            }
+
+                            me->CombatStop(true);
+                            events.RescheduleEvent(EV_COAL, 1000);
+                            break;
+                    }
 
             }
 

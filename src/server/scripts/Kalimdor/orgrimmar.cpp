@@ -288,110 +288,111 @@ public:
 
             events.Update(diff);
 
-            switch (events.GetEvent())
-            {
-            case 0:
-                break;
-            case EV_MESSENGER:
-                Creature* eitrigg = me->GetMap()->GetCreature(EitriggGUID);
-                if (!eitrigg)
-                {
-                    //reset
-                    EnterEvadeMode();
-                    return;
-                }
-
-                switch(messengerEventStep)
+            while (uint32 eventId = events.ExecuteEvent())
+                switch (eventId)
                 {
                 case 0:
-                    me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP | UNIT_NPC_FLAG_QUESTGIVER);
-                    me->SetSheath(SHEATH_STATE_UNARMED);
-                    me->SetStandState(UNIT_STAND_STATE_STAND);
-                    events.RescheduleEvent(EV_MESSENGER, 4000);
                     break;
-                case 1:
-                    me->SetWalk(true);
-                    me->GetMotionMaster()->MovePoint(0, 1924.233643, -4136.424805, 40.360466, 4.724128);
-                    events.RescheduleEvent(EV_MESSENGER, 4000);
-                    break;
-                case 2:
-                    Talk(TALK_MESSENGER_EVENT_1);
-                    events.RescheduleEvent(EV_MESSENGER, 4000);
-                    break;
-                case 3:
-                    me->SetStandState(UNIT_STAND_STATE_KNEEL);
-                    events.RescheduleEvent(EV_MESSENGER, 2000);
-                    break;
-                case 4:
-                    Talk(TALK_MESSENGER_EVENT_2);
-                    events.RescheduleEvent(EV_MESSENGER, 2000);
-                    break;
-                case 5:
-                    Talk(TALK_MESSENGER_EVENT_3);
-                    events.RescheduleEvent(EV_MESSENGER, 1000);
-                    break;
-                case 6:
-                    eitrigg->SetWalk(false);
-                    eitrigg->GetMotionMaster()->MovePoint(0, 1924.891846, -4139.466309, 40.405350, 1.598646);
-                    events.RescheduleEvent(EV_MESSENGER, 3000);
-                    break;
-                case 7:
-                    eitrigg->AI()->Talk(TALK_MESSENGER_EVENT_4);
-                    events.RescheduleEvent(EV_MESSENGER, 2000);
-                    break;
-                case 8:
-                    eitrigg->SetStandState(UNIT_STAND_STATE_KNEEL);
-                    events.RescheduleEvent(EV_MESSENGER, 2000);
-                    break;
-                case 9:
-                    Talk(TALK_MESSENGER_EVENT_5);
-                    events.RescheduleEvent(EV_MESSENGER, 5000);
-                    break;
-                case 10:
-                    eitrigg->AI()->Talk(TALK_MESSENGER_EVENT_6);
-                    events.RescheduleEvent(EV_MESSENGER, 2000);
-                    break;
-                case 11:
-                    me->SetWalk(true);
-                    me->GetMotionMaster()->MovePoint(0, 1920.069946, -4126.490234, 42.914200, 1.645362);
-                    me->SetStandState(UNIT_STAND_STATE_STAND);
-                    events.RescheduleEvent(EV_MESSENGER, 7000);
-                    break;
-                case 12:
-                    me->SetOrientation(4.783030);
-                    me->SendMovementFlagUpdate();
-                    events.RescheduleEvent(EV_MESSENGER, 3000);
-                    break;
-                case 13:
-                    eitrigg->SetStandState(UNIT_STAND_STATE_STAND);
-                    events.RescheduleEvent(EV_MESSENGER, 1000);
-                    break;
-                case 14:
-                    Talk(TALK_MESSENGER_EVENT_7);
-                    events.RescheduleEvent(EV_MESSENGER, 4000);
-                    break;
-                case 15:
-                    eitrigg->AI()->Talk(TALK_MESSENGER_EVENT_8);
-                    events.RescheduleEvent(EV_MESSENGER, 3000);
-                    break;
-                case 16:
-                    eitrigg->GetMotionMaster()->MoveTargetedHome();
-                    events.RescheduleEvent(EV_MESSENGER, 2000);
-                    break;
-                case 17:
-                    Talk(TALK_MESSENGER_EVENT_9);
-                    events.RescheduleEvent(EV_MESSENGER, 5000);
-                    break;
-                case 18:
-                    //end, restore initial values
-                    me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP | UNIT_NPC_FLAG_QUESTGIVER);
-                    me->SetStandState(UNIT_STAND_STATE_SIT);
-                    events.CancelEvent(EV_MESSENGER);
+                case EV_MESSENGER:
+                    Creature* eitrigg = me->GetMap()->GetCreature(EitriggGUID);
+                    if (!eitrigg)
+                    {
+                        //reset
+                        EnterEvadeMode();
+                        return;
+                    }
+
+                    switch(messengerEventStep)
+                    {
+                    case 0:
+                        me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP | UNIT_NPC_FLAG_QUESTGIVER);
+                        me->SetSheath(SHEATH_STATE_UNARMED);
+                        me->SetStandState(UNIT_STAND_STATE_STAND);
+                        events.RescheduleEvent(EV_MESSENGER, 4000);
+                        break;
+                    case 1:
+                        me->SetWalk(true);
+                        me->GetMotionMaster()->MovePoint(0, 1924.233643, -4136.424805, 40.360466, 4.724128);
+                        events.RescheduleEvent(EV_MESSENGER, 4000);
+                        break;
+                    case 2:
+                        Talk(TALK_MESSENGER_EVENT_1);
+                        events.RescheduleEvent(EV_MESSENGER, 4000);
+                        break;
+                    case 3:
+                        me->SetStandState(UNIT_STAND_STATE_KNEEL);
+                        events.RescheduleEvent(EV_MESSENGER, 2000);
+                        break;
+                    case 4:
+                        Talk(TALK_MESSENGER_EVENT_2);
+                        events.RescheduleEvent(EV_MESSENGER, 2000);
+                        break;
+                    case 5:
+                        Talk(TALK_MESSENGER_EVENT_3);
+                        events.RescheduleEvent(EV_MESSENGER, 1000);
+                        break;
+                    case 6:
+                        eitrigg->SetWalk(false);
+                        eitrigg->GetMotionMaster()->MovePoint(0, 1924.891846, -4139.466309, 40.405350, 1.598646);
+                        events.RescheduleEvent(EV_MESSENGER, 3000);
+                        break;
+                    case 7:
+                        eitrigg->AI()->Talk(TALK_MESSENGER_EVENT_4);
+                        events.RescheduleEvent(EV_MESSENGER, 2000);
+                        break;
+                    case 8:
+                        eitrigg->SetStandState(UNIT_STAND_STATE_KNEEL);
+                        events.RescheduleEvent(EV_MESSENGER, 2000);
+                        break;
+                    case 9:
+                        Talk(TALK_MESSENGER_EVENT_5);
+                        events.RescheduleEvent(EV_MESSENGER, 5000);
+                        break;
+                    case 10:
+                        eitrigg->AI()->Talk(TALK_MESSENGER_EVENT_6);
+                        events.RescheduleEvent(EV_MESSENGER, 2000);
+                        break;
+                    case 11:
+                        me->SetWalk(true);
+                        me->GetMotionMaster()->MovePoint(0, 1920.069946, -4126.490234, 42.914200, 1.645362);
+                        me->SetStandState(UNIT_STAND_STATE_STAND);
+                        events.RescheduleEvent(EV_MESSENGER, 7000);
+                        break;
+                    case 12:
+                        me->SetOrientation(4.783030);
+                        me->SendMovementFlagUpdate();
+                        events.RescheduleEvent(EV_MESSENGER, 3000);
+                        break;
+                    case 13:
+                        eitrigg->SetStandState(UNIT_STAND_STATE_STAND);
+                        events.RescheduleEvent(EV_MESSENGER, 1000);
+                        break;
+                    case 14:
+                        Talk(TALK_MESSENGER_EVENT_7);
+                        events.RescheduleEvent(EV_MESSENGER, 4000);
+                        break;
+                    case 15:
+                        eitrigg->AI()->Talk(TALK_MESSENGER_EVENT_8);
+                        events.RescheduleEvent(EV_MESSENGER, 3000);
+                        break;
+                    case 16:
+                        eitrigg->GetMotionMaster()->MoveTargetedHome();
+                        events.RescheduleEvent(EV_MESSENGER, 2000);
+                        break;
+                    case 17:
+                        Talk(TALK_MESSENGER_EVENT_9);
+                        events.RescheduleEvent(EV_MESSENGER, 5000);
+                        break;
+                    case 18:
+                        //end, restore initial values
+                        me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP | UNIT_NPC_FLAG_QUESTGIVER);
+                        me->SetStandState(UNIT_STAND_STATE_SIT);
+                        events.CancelEvent(EV_MESSENGER);
+                        break;
+                    }
+                    messengerEventStep++;
                     break;
                 }
-                messengerEventStep++;
-                break;
-            }
         }
 
         bool GossipHello(Player* player) override
