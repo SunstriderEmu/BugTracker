@@ -666,7 +666,7 @@ class boss_kaelthas : public CreatureScript
                         if (roll_chance_i(50))
                             Talk(SAY_MINDCONTROL);
                         CastSpellExtraArgs args;
-                        args.SpellValueOverrides.AddMod(SPELLVALUE_MAX_TARGETS, int32(3));
+                        args.AddSpellMod(SPELLVALUE_MAX_TARGETS, int32(3));
                         me->CastSpell(me, SPELL_MIND_CONTROL, args);
                         break;
                     }
