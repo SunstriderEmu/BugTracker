@@ -64,7 +64,7 @@ public:
         void SpellHitTarget(Unit *target, const SpellInfo *spell)
         override {
             if(target && target->IsAlive() && spell && spell->Id == uint32(SPELL_SONIC_BOOM_EFFECT))
-                me->DealDamage(target, (target->GetHealth()*90)/100, nullptr, SPELL_DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NATURE, spell);
+                Unit::DealDamage(me, target, (target->GetHealth()*90)/100, nullptr, SPELL_DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NATURE, spell);
         }
     
         void UpdateAI(const uint32 diff)

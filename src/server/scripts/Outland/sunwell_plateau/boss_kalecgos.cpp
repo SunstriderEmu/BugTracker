@@ -556,7 +556,7 @@ public:
                     {
                         if(((boss_kalecgos::boss_kalecgosAI*)(Kalecgos->ToCreature())->AI())->isBanished)
                         {
-                            me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                            me->KillSelf();
                             return;
                         }
                         else
@@ -687,7 +687,7 @@ void boss_kalecgos::boss_kalecgosAI::UpdateAI(const uint32 diff)
                 {
                     if (((boss_sathrovarr::boss_sathrovarrAI*)(Sath->ToCreature())->AI())->isBanished)
                     {
-                        Sath->DealDamage(Sath, Sath->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                        Sath->KillSelf();
                         return;
                     }
                     else

@@ -98,7 +98,6 @@ public:
                 //amount of HP within melee distance
                 uint32 MostHP = 0;
                 Unit* pMostHPTarget = nullptr;
-                Unit* pTemp = nullptr;
                 for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
                 {
                     Unit* pTemp = pair.second->GetOther(me);

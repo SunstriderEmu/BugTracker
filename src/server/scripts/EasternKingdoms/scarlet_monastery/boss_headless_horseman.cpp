@@ -268,7 +268,7 @@ public:
                         die = false;
                         Unit *body = ObjectAccessor::GetUnit((*me),bodyGUID);
                         if (body)
-                            body->DealDamage(body, body->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                            body->KillSelf();
     
                         me->SetDeathState(JUST_DIED);
                     }

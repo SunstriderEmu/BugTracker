@@ -888,7 +888,7 @@ class spell_kaelthas_burn : public SpellScriptLoader
 
             void HandlePeriodic(AuraEffect const* aurEff)
             {
-                GetUnitOwner()->DealDamage(GetUnitOwner(), GetUnitOwner()->CountPctFromMaxHealth(5)+1);
+                Unit::DealDamage(GetUnitOwner(), GetUnitOwner(), GetUnitOwner()->CountPctFromMaxHealth(5)+1);
             }
 
             void Register()

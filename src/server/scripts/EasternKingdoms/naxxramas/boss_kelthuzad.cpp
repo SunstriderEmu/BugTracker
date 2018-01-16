@@ -195,7 +195,7 @@ public:
                     //delete creature
                     Unit* pUnit = ObjectAccessor::GetUnit((*me), i);
                     if (pUnit && pUnit->IsAlive())
-                        pUnit->DealDamage(pUnit, pUnit->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                        pUnit->KillSelf();
                     i = ObjectGuid::Empty;
                 }
             }

@@ -642,8 +642,8 @@ public:
     
         void OnSpellFinish(Unit *caster, uint32 spellId, Unit *target, bool ok) 
         override {
-            if(spellId == SPELL_SHADOW_FURY)
-                me->DealDamage(me, me->GetHealth());
+            if (spellId == SPELL_SHADOW_FURY)
+                me->KillSelf();
         }
     
         void UpdateAI(const uint32 diff)

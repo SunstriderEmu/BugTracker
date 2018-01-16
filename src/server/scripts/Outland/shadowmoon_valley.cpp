@@ -408,7 +408,7 @@ public:
                             plr->KilledMonsterCredit(23209, me->GetGUID());
                     }
                     PoisonTimer = 0;
-                    me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                    Unit::DealDamage(me, me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
                 } else PoisonTimer -= diff;
                 
                 return;
@@ -2382,7 +2382,7 @@ public:
         void OnSpellFinish(Unit* caster, uint32 spellId, Unit* target, bool ok)
         override {
             if (spellId == SPELL_OLUM_SACRIFICE) {
-                me->Kill(target);
+                Unit::Kill(me, target);
                 if (Creature* spirit = me->SummonCreature(NPC_OLUM_SPIRIT, target->GetPositionX(), target->GetPositionY(), target->GetPositionZ(), target->GetOrientation(), TEMPSUMMON_TIMED_DESPAWN, 16000)) {
                     spirit->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                     spirit->SetUnitMovementFlags(MOVEMENTFLAG_DISABLE_GRAVITY);

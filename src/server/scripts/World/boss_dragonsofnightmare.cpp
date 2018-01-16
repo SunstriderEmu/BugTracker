@@ -57,11 +57,6 @@ struct DragonOfNightmareAI_template : public ScriptedAI
         DreamFog1=nullptr;
         DreamFog2=nullptr;
     }
-
-    void Instakill(Unit* Target)
-    {
-        Target->DealDamage(Target, Target->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-    }
     
     void Reset()
     override {
@@ -210,11 +205,6 @@ public:
             //DoCast(me, VISUAL_SPELL_ID_NUAGE_ONIRIQUE, true);
         }
         
-        void Instakill(Unit* target)
-        {
-            target->DealDamage(target, target->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-        }
-        
         void UpdateAI(const uint32 diff) override 
         {   
             if (!UpdateVictim())
@@ -227,8 +217,8 @@ public:
                 return;
             }
             
-            if(Dragon->IsDead())
-                Instakill(me);
+            if (Dragon->IsDead())
+                me->KillSelf();
 
             Unit* target = ObjectAccessor::GetUnit(*me, targetGUID);
 
@@ -355,8 +345,7 @@ public:
             Unit* Lethon = ObjectAccessor::GetUnit(*me, LethonGUID);
             if (!Lethon || Lethon->IsDead())
             {
-                // Il n'aime plus la vie
-                me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                me->DisappearAndDie();
                 return;
             }
 
@@ -380,7 +369,7 @@ public:
             {
                 // On donne la vie a lethon puis on se tire une balle in the head
                 DoCast(Lethon, SPELL_HEAL_SHADOW_SPIRIT, true);
-                me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                me->KillSelf();
             }
         }
 
@@ -926,11 +915,6 @@ public:
         SimpleCooldown *SCDSilence;
         ObjectGuid YsondreGUID;
 
-        void Instakill(Unit* Target)
-        {
-            Target->DealDamage(Target, Target->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-        }
-
         npc_dementeddruidsAI(Creature *c) : ScriptedAI(c)
         {
             SCDMoonFire = new SimpleCooldown(TIMER_MOONFIRE_DRUID);
@@ -972,9 +956,7 @@ public:
             }
 
             if (Ysondre->IsDead() || !Ysondre->IsInCombat())
-            {
-                Instakill(me);
-            }
+                me->DisappearAndDie();
 
             if (SCDMoonFire->CheckAndUpdate(diff))
                 DoCast(me->GetVictim(), SPELL_MOONFIRE_DRUID, false);

@@ -55,7 +55,7 @@ public:
                 if (pInstance) {
                     if (GameObject *pIronbarkDoor = me->FindNearestGameObject(179549, 20.0f)) {
                         pIronbarkDoor->SwitchDoorOrButton(true);
-                        me->Kill(me);
+                        me->KillSelf();
                     }
                 }
             }

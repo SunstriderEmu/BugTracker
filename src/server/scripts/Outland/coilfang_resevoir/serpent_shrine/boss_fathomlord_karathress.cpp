@@ -351,11 +351,9 @@ public:
     
             pet = false;
     
-            Creature *Pet = (Creature*)ObjectAccessor::GetUnit(*me, SummonedPet);
-            if( Pet && Pet->IsAlive() )
-            {
-                Pet->DealDamage( Pet, Pet->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false );
-            }
+            Creature* pet = (Creature*)ObjectAccessor::GetUnit(*me, SummonedPet);
+            if(pet)
+                pet->DisappearAndDie();
     
             SummonedPet = ObjectGuid::Empty;
     

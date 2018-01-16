@@ -110,7 +110,7 @@ public:
             if (type == DATA_PRISONERS_EXECUTED && data <= 3)
             {
                 if (Creature* victim = ObjectAccessor::GetCreature(*me, instance->GetGuidData(DATA_FIRST_PRISONER + data - 1)))
-                    me->Kill(victim);
+                    Unit::Kill(me, victim);
 
                 if (data == 1)
                 {

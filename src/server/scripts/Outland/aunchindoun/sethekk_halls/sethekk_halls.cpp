@@ -89,9 +89,7 @@ public:
             {
                 if (!pInstance->GetGuidData(ANZU_SUMMONER_GUID).IsEmpty() && pPlayer->GetGUID() != pInstance->GetGuidData(ANZU_SUMMONER_GUID)) 
                 {      
-                    // Hehe, two different players summoning Anzu ? We aren't going to be friends...
-                    pPlayer->DealDamage(pPlayer, pPlayer->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-
+                    // Two different players summoning Anzu ? Probably abuse
                     if (Creature* secondAnzu = me->FindNearestCreature(NPC_ANZU, 30.0f, true))
                     {
                         if (!hasDespawned) 

@@ -359,7 +359,7 @@ public:
             } else pulseTimer -= diff;
             
             if (suicideTimer <= diff)
-                me->Kill(me);
+                me->KillSelf();
             else
                 suicideTimer -= diff;
             

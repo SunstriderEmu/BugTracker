@@ -642,7 +642,7 @@ public:
             if (pPlayer->GetQuestStatus(QUEST_SMALLEST_CREATURES) == QUEST_STATUS_INCOMPLETE)
             {
                 if (Creature* credit = pPlayer->FindNearestCreature(GREEN_SPOT_GROG_KEG_CREDIT, 5, true)) {
-                    pPlayer->DealDamage(credit, credit->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                    Unit::DealDamage(pPlayer, credit, credit->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
                     credit->Respawn();
                 }
             }
@@ -678,7 +678,7 @@ public:
             if (pPlayer->GetQuestStatus(QUEST_SMALLEST_CREATURES) == QUEST_STATUS_INCOMPLETE)
             {
                 if (Creature* credit = pPlayer->FindNearestCreature(RIPE_MOONSHINE_KEG_CREDIT, 5, true)) {
-                    pPlayer->DealDamage(credit, credit->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                    Unit::DealDamage(pPlayer, credit, credit->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
                     credit->Respawn();
                 }
             }
@@ -713,7 +713,7 @@ public:
             if (pPlayer->GetQuestStatus(QUEST_SMALLEST_CREATURES) == QUEST_STATUS_INCOMPLETE)
             {
                 if (Creature* credit = pPlayer->FindNearestCreature(FERMENTED_SEED_BEER_KEG_CREDIT, 5, true)) {
-                    pPlayer->DealDamage(credit, credit->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                    Unit::DealDamage(pPlayer, credit, credit->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
                     credit->Respawn();
                 }
             }

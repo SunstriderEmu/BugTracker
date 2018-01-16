@@ -608,8 +608,8 @@ public:
                     Spark->GetMotionMaster()->MovePoint(0, -5030.95, -11291.99, 7.97);
                 return 20000;
             case 10:
-                if(Spark)
-                    Spark->DealDamage(Spark,Spark->GetHealth(),nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                if (Spark)
+                    Spark->KillSelf();
                 //DespawnNagaFlag(false);
                 me->SetVisible(false);
             default: return 99999999;

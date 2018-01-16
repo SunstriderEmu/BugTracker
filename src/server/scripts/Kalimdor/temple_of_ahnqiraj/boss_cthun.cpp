@@ -400,7 +400,7 @@ public:
                 //Dead phase
                 case 5:
                 {
-                    me->DealDamage(me, me->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, nullptr, false);
+                    me->KillSelf();
                 }
             }
         }
@@ -983,7 +983,7 @@ void mob_giant_flesh_tentacle::flesh_tentacleAI::UpdateAI(const uint32 diff)
             if (!pUnit || !pUnit->IsAlive() || !pUnit->IsInCombat())
             {
                 Parent.Clear();
-                me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, nullptr, false);
+                me->KillSelf();
                 return;
             }
 
@@ -1036,7 +1036,7 @@ public:
         override {
             Unit* p = ObjectAccessor::GetUnit(*me, PortalGUID);
             if (p)
-                p->DealDamage(p, p->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, nullptr, false);
+                p->KillSelf();
         }
     
         void Reset()
@@ -1062,7 +1062,7 @@ public:
             //KillSelfTimer
             if (KillSelfTimer < diff)
             {
-                me->DealDamage(me, me->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, nullptr, false);
+                me->KillSelf();
     
                 return;
             }else KillSelfTimer -= diff;
@@ -1115,7 +1115,7 @@ public:
         override {
             Unit* p = ObjectAccessor::GetUnit(*me, PortalGUID);
             if (p)
-                p->DealDamage(p, p->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, nullptr, false);
+                p->KillSelf();
         }
     
         void Reset()
@@ -1144,7 +1144,7 @@ public:
                 {
                     Unit* p = ObjectAccessor::GetUnit(*me, PortalGUID);
                     if (p)
-                        p->DealDamage(p, me->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, nullptr, false);
+                        p->KillSelf();
     
                     //Dissapear and reappear at new position
                     me->SetVisible(false);
@@ -1153,7 +1153,7 @@ public:
                     target = SelectTarget(SELECT_TARGET_RANDOM,0);
                     if (!target)
                     {
-                        me->DealDamage(me, me->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, nullptr, false);
+                        me->KillSelf();
                         return;
                     }
     
@@ -1228,7 +1228,7 @@ public:
         override {
             Unit* p = ObjectAccessor::GetUnit(*me, PortalGUID);
             if (p)
-                p->DealDamage(p, p->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, nullptr, false);
+                p->KillSelf();
         }
     
         void Reset()
@@ -1258,7 +1258,7 @@ public:
                 {
                     Unit* p = ObjectAccessor::GetUnit(*me, PortalGUID);
                     if (p)
-                        p->DealDamage(p, me->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, nullptr, false);
+                        p->KillSelf();
     
                     //Disappear and reappear at new position
                     me->SetVisible(false);
@@ -1267,7 +1267,7 @@ public:
                     target = SelectTarget(SELECT_TARGET_RANDOM, 0);
                     if (!target)
                     {
-                        me->DealDamage(me, me->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, nullptr, false);
+                        me->KillSelf();
                         return;
                     }
     
@@ -1347,7 +1347,7 @@ public:
         override {
             Unit* p = ObjectAccessor::GetUnit(*me, PortalGUID);
             if (p)
-                p->DealDamage(p, p->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, nullptr, false);
+                p->KillSelf();
         }
     
         void Reset()

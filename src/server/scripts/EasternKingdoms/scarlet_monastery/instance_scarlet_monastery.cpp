@@ -103,7 +103,7 @@ public:
                     {
                         Creature* add = instance->GetCreature(HorsemanAdd);
                         if (add && add->IsAlive())
-                            add->DealDamage(add, add->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                            add->KillSelf();
                     }
                     HorsemanAdds.clear();
                     GameObject *Shrine = instance->GetGameObject(PumpkinShrineGUID);

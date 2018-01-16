@@ -336,8 +336,8 @@ public:
             for(ObjectGuid i : AddGUID)
             {
                 Unit* Temp = ObjectAccessor::GetUnit((*me),i);
-                if(Temp && Temp->IsAlive())
-                    Temp->DealDamage(Temp, Temp->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                if (Temp && Temp->IsAlive())
+                    Temp->KillSelf();
             }
         }
     

@@ -254,7 +254,7 @@ public:
         void JustDied(Unit* pKiller)
         override {
             if (Creature* ahune = me->FindNearestCreature(NPC_AHUNE, 10.0f, true))
-                me->Kill(ahune);
+                Unit::Kill(me, ahune);
     
             pKiller->SummonGameObject(GO_AHUNE_ICE_CHEST, Position(-96.525841, -200.255798, -1.262261, 4.748316), G3D::Quat(), 1 * DAY);
         }

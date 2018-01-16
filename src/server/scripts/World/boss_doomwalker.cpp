@@ -91,8 +91,8 @@ public:
         
         void MoveInLineOfSight(Unit* pWho)
         override {
-            if (me->GetDistance(pWho) < 100 && pWho->HasAuraEffect(SPELL_MARK_DEATH))
-                me->Kill(pWho);
+            if (me->GetDistance(pWho) < 100.0f && pWho->HasAuraEffect(SPELL_MARK_DEATH))
+                Unit::Kill(me, pWho);
         }
     
         void UpdateAI(const uint32 diff)

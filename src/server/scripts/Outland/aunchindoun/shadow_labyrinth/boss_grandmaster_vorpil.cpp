@@ -82,14 +82,9 @@ public:
     
         void UpdateAI(const uint32 diff)
         override {
-            if(!Vorpil)
+            if(!Vorpil || Vorpil->IsDead())
             {
-                me->DealDamage(me, me->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-                return;
-            }
-            if (Vorpil->IsDead())
-            {
-                me->DealDamage(me, me->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                me->DisappearAndDie();
                 return;
             }
             if(move < diff)
@@ -101,7 +96,7 @@ public:
                         Vorpil->AddAura(new EmpoweringShadowsAura(spell, 0, nullptr, Vorpil, me));
                     Vorpil->SetHealth(Vorpil->GetHealth()+Vorpil->GetMaxHealth()/25);
                     DoCast(me, SPELL_SHADOW_NOVA, true);
-                    me->DealDamage(me, me->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                    me->KillSelf();
                     return;
                 }
                 me->GetMotionMaster()->MoveFollow(Vorpil,0,0);
@@ -204,7 +199,7 @@ public:
                 {
                     Unit *Portal = ObjectAccessor::GetUnit((*me), i);
                     if (Portal && Portal->IsAlive())
-                        Portal->DealDamage(Portal, Portal->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                        Portal->KillSelf();
                     i = ObjectGuid::Empty;
                 }
                 sumportals = false;

@@ -863,7 +863,7 @@ public:
             Cell::VisitGridObjects(me, searcher, 50.0f);
     
             for (auto & trigger : triggers)
-                trigger->Kill(trigger);
+                trigger->KillSelf();
         }
         
         void UpdateAI(uint32 const diff)
@@ -958,7 +958,7 @@ public:
                 Cell::VisitGridObjects(me, searcher, MAX_SEARCHER_DISTANCE);
     
                 for (auto & trigger : triggers)
-                    trigger->Kill(trigger);
+                    trigger->KillSelf();
                     
                 if (Creature *soulgrinder = me->FindNearestCreature(23019, MAX_SEARCHER_DISTANCE, true)) {
                     DoCast(soulgrinder, SPELL_VISUAL_BEAM, true);
@@ -968,7 +968,7 @@ public:
             }
             case 6:
                 if (Creature *soulgrinder = me->FindNearestCreature(23019, 100.0f, true))
-                    me->Kill(soulgrinder);
+                    Unit::Kill(me, soulgrinder);
                 me->RemoveAurasDueToSpell(SPELL_SHADOWFORM_4);
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -3198,7 +3198,7 @@ public:
             if (killHufferTimer) {
                 if (killHufferTimer <= diff) {
                     if (Creature* huffer = ObjectAccessor::GetCreature(*me, hufferGUID)) {
-                        me->Kill(huffer);
+                        Unit::Kill(me, huffer);
                         EnterEvadeMode();
                     }
                     killHufferTimer = 0;

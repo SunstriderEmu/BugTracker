@@ -162,7 +162,7 @@ public:
                 {
                     Madrigosa->SetVisible(false);
                     Madrigosa->Respawn();
-                    Madrigosa->Kill(Madrigosa);
+                    Madrigosa->KillSelf();
                     Madrigosa->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
                     Madrigosa->SetVisible(true);
                     Madrigosa->SummonCreature(25703, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation(), TEMPSUMMON_MANUAL_DESPAWN, 0);
@@ -345,7 +345,7 @@ public:
                 break;
             case 17:
                 DoCast(Madrigosa, SPELL_STOMP);
-                me->Kill(Madrigosa);
+                Unit::Kill(me, Madrigosa);
                 DoScriptText(YELL_MADR_DEATH, Madrigosa);
                 me->SetHealth(me->GetMaxHealth());
                 me->AttackStop();

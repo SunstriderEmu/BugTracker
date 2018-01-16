@@ -325,7 +325,7 @@ public:
         override {
             Creature* kelidan = me->FindNearestCreature(ENTRY_KELIDAN, 50.0f, true);
             if (!kelidan)
-                me->Kill(me);
+                me->DisappearAndDie();
         }
     
         void JustEngagedWith(Unit* who)

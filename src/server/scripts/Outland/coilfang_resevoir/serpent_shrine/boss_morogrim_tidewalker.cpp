@@ -352,7 +352,7 @@ public:
                     DoCast(me->GetVictim(), SPELL_GLOBULE_EXPLOSION);
     
                     //despawn
-                    me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                    me->KillSelf();
                 }
                 Check_Timer = 500;
             }else Check_Timer -= diff;

@@ -996,7 +996,7 @@ public:
                 if(Unit* Romulo = ObjectAccessor::GetUnit(*me, RomuloGUID))
                 {
                     Romulo->SetVisible(false);
-                    Romulo->DealDamage(Romulo, Romulo->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                    Romulo->KillSelf();
                 }
     
                 RomuloGUID = ObjectGuid::Empty;

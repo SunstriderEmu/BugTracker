@@ -289,9 +289,9 @@ public:
         {
             for(ObjectGuid & i : axes)
             {
-                Unit *axe = ObjectAccessor::GetUnit(*me, i);
-                if(axe && axe->IsAlive())
-                    axe->DealDamage(axe, axe->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                Creature* axe = ObjectAccessor::GetCreature(*me, i);
+                if (axe)
+                    axe->DisappearAndDie();
                 i = ObjectGuid::Empty;
             }
         }

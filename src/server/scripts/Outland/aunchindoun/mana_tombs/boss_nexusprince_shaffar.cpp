@@ -212,11 +212,6 @@ public:
         uint32 Apprentice_Timer;
         uint32 ArcaneBolt_Timer;
     
-        void KillSelf()
-        {
-            me->Kill(me);
-        }
-    
         void Reset()
         override {
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -250,7 +245,7 @@ public:
             {
                 if(me->CastSpell(me,SPELL_ETHEREAL_APPRENTICE, TRIGGERED_FULL_MASK) == SPELL_CAST_OK)
                 {
-                    KillSelf();
+                    me->KillSelf();
                     Apprentice_Timer = (HeroicMode ? 10000 : 20000);
                 }
             }else Apprentice_Timer -= diff;
@@ -285,7 +280,7 @@ public:
     
         void EnterEvadeMode(EvadeReason /* why */)
         override {
-            me->Kill(me);
+            me->KillSelf();
         }
     
         void Reset()

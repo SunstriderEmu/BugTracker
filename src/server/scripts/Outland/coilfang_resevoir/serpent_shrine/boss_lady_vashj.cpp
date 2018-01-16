@@ -862,13 +862,13 @@ public:
                                 Vashj->AddAura(new VashjSurgeAura(spell, i, nullptr, Vashj, Vashj));
                             }
                         }
-                        me->DealDamage(me, me->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                        me->KillSelf();
                     }
                 }
                 if(((boss_lady_vashj::boss_lady_vashjAI*)(Vashj->ToCreature())->AI())->InCombat == false || ((boss_lady_vashj::boss_lady_vashjAI*)(Vashj->ToCreature())->AI())->Phase != 2 || Vashj->IsDead())
                 {
                     //call Unsummon()
-                    me->DealDamage(me, me->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                    me->DisappearAndDie();
                 }
                 move = 1000;
             }else move -= diff;

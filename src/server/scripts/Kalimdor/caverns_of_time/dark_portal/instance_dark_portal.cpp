@@ -199,10 +199,10 @@ public:
                         {
                             if (medivh->IsAlive())
                             {
-                                medivh->DealDamage(medivh, medivh->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                                medivh->KillSelf();
                                 // Despawn current boss
                                 if (currentBoss) {
-                                    currentBoss->DealDamage(currentBoss, medivh->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                                    currentBoss->KillSelf();
                                     currentBoss->DespawnOrUnsummon();
                                 }
                                 Encounter[0] = FAIL;

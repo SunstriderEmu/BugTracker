@@ -131,18 +131,11 @@ public:
         {
             for(int i=0; i<3; ++i)
             {
-                if(Creature *portal = ObjectAccessor::GetCreature(*me, PortalGUID[i]))
-                {
-                    portal->SetVisible(false);
-                    portal->DealDamage(portal, portal->GetMaxHealth());
-                    portal->RemoveFromWorld();
-                }
-                if(Creature *portal = ObjectAccessor::GetCreature(*me, BeamerGUID[i]))
-                {
-                    portal->SetVisible(false);
-                    portal->DealDamage(portal, portal->GetMaxHealth());
-                    portal->RemoveFromWorld();
-                }
+                if(Creature* portal = ObjectAccessor::GetCreature(*me, PortalGUID[i]))
+                    portal->DisappearAndDie();
+                if(Creature* beamer = ObjectAccessor::GetCreature(*me, BeamerGUID[i]))
+                    beamer->DisappearAndDie();
+
                 PortalGUID[i] = ObjectGuid::Empty;
                 BeamTarget[i] = ObjectGuid::Empty;
             }
@@ -198,9 +191,7 @@ public:
                         if(Creature *beamer = ObjectAccessor::GetCreature(*portal, BeamerGUID[j]))
                         {
                             beamer->CastSpell(target, PortalBeam[j], TRIGGERED_NONE);
-                            beamer->SetVisible(false);
-                            beamer->DealDamage(beamer, beamer->GetMaxHealth());
-                            beamer->RemoveFromWorld();
+                            beamer->DisappearAndDie();
                             BeamerGUID[j].Clear();
                         }
                         // create new one and start beaming on the target

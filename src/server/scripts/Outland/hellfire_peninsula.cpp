@@ -1302,11 +1302,11 @@ public:
                     return 2000;
                 case 12:
                     if (pAmb)
-                        pAmb->DealDamage(pAmb, pAmb->GetHealth(), nullptr, DIRECT_DAMAGE);
+                        Unit::DealDamage(pAmb, pAmb, pAmb->GetHealth(), nullptr, DIRECT_DAMAGE);
                     return 1500;
                 case 13:
                     if (pEsc)
-                        pEsc->DealDamage(pEsc, pEsc->GetHealth(), nullptr, DIRECT_DAMAGE);
+                        Unit::DealDamage(pEsc, pEsc, pEsc->GetHealth(), nullptr, DIRECT_DAMAGE);
                 case 14:
                     me->AI()->AttackStart(pAmb);
                 case 15:
@@ -1319,7 +1319,7 @@ public:
                     return 6000;
                 case 17:
                     if (pAmb)
-                        pAmb->DealDamage(pAmb, pAmb->GetHealth(), nullptr, DIRECT_DAMAGE);
+                        Unit::DealDamage(pAmb, pAmb, pAmb->GetHealth(), nullptr, DIRECT_DAMAGE);
                     return 1000;
                 case 18:
                     if (pEsc)
@@ -1344,7 +1344,7 @@ public:
                         me->CastSpell(pKrun, SPELL_HOLYFIRE, TRIGGERED_NONE);
                     return 3000;
                 case 24:
-                    me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE);
+                    Unit::DealDamage(me, me, me->GetHealth(), nullptr, DIRECT_DAMAGE);
                 default:
                     return 0;
             }

@@ -84,7 +84,7 @@ public:
             {
                 if(i && !i->IsGameMaster())
                 {
-                    me->DealDamage(i, 500000, nullptr, SPELL_DIRECT_DAMAGE, SPELL_SCHOOL_MASK_FIRE, nullptr, false);
+                    Unit::DealDamage(me, i, i->GetMaxHealth(), nullptr, SPELL_DIRECT_DAMAGE, SPELL_SCHOOL_MASK_FIRE, nullptr, false);
                 }
             }
         }

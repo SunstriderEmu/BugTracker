@@ -309,7 +309,7 @@ public:
                         if (pInstance)
                         {
                             if (Creature* VoiceTrigger = (ObjectAccessor::GetCreature(*me, ObjectGuid(pInstance->GetData64(DATA_BLOOD_ELF_COUNCIL_VOICE)))))
-                                VoiceTrigger->DealDamage(VoiceTrigger, VoiceTrigger->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                                VoiceTrigger->KillSelf();
                             pInstance->SetData(DATA_ILLIDARICOUNCILEVENT, DONE);
                             //me->SummonCreature(AKAMAID,746.466980f,304.394989f,311.90208f,6.272870f,TEMPSUMMON_DEAD_DESPAWN,0);
                         }
@@ -323,13 +323,13 @@ public:
                         }
 
                         //suicide
-                        me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                        me->KillSelf();
                         return;
                     }
 
                     Creature* pMember = (ObjectAccessor::GetCreature(*me, Council[DeathCount]));
                     if (pMember && pMember->IsAlive())
-                        pMember->DealDamage(pMember, pMember->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                        pMember->KillSelf();
 
                     ++DeathCount;
                     EndEventTimer = 500;

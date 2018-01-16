@@ -1641,7 +1641,7 @@ void boss_illidan_stormrage::boss_illidan_stormrageAI::HandleTalkSequence()
         }
         break;
     case 22: // Kill ourself.
-        me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+        me->KillSelf();
         break;
     default:
         break;
@@ -2012,6 +2012,7 @@ public:
     }
 };
 
+//TODO: immune to banish!
 class mob_flame_of_azzinoth : public CreatureScript
 {
 public:
@@ -2085,23 +2086,11 @@ public:
             if(!UpdateVictim())
                 return;
                 
-            // If a warlock ban a Flame of Azzinoth, remove ban aura and instakill him (he won't do it twice)
-            if (me->HasAuraEffect(710) || me->HasAuraEffect(18647)) {
-                if (me->HasAuraEffect(710)) {
-                    if (Aura* aur = me->GetAura(710, 0)) {
-                        if (Player* plr = (aur->GetCaster())->ToPlayer())
-                            plr->DealDamage(plr, plr->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-                    }
-                    me->RemoveAurasDueToSpell(710);
-                }
-                else {
-                    if (Aura* aur = me->GetAura(18647, 0)) {
-                        if (Player* plr = (aur->GetCaster())->ToPlayer())
-                            plr->DealDamage(plr, plr->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-                    }
-                    me->RemoveAurasDueToSpell(18647);
-                }
-            }
+            //HACK: If a warlock ban a Flame of Azzinoth, remove ban aura 
+            if (me->HasAuraEffect(710))
+                me->RemoveAurasDueToSpell(710);
+            if(me->HasAuraEffect(18647))
+                me->RemoveAurasDueToSpell(18647);
     
             if(FlameBlastTimer < diff)
             {
@@ -2153,10 +2142,10 @@ public:
     
         void Reset()
         override {
-            if(pInstance)
+            if (pInstance)
                 IllidanGUID = ObjectGuid(pInstance->GetData64(DATA_ILLIDANSTORMRAGE));
             else
-                me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                me->KillSelf();
     
             CageTrapGUID.Clear();
             Active = false;
@@ -2203,7 +2192,7 @@ public:
             {
                 if(DespawnTimer <= diff)
                 {
-                    me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                    me->KillSelf();
                     return;
                 } else DespawnTimer -= diff;
             }

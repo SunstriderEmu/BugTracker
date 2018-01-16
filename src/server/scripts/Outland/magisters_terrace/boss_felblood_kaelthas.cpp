@@ -135,7 +135,7 @@ public:
                 {
                     Unit *qUnit = player->SummonCreature(25042, player->GetPositionX(), player->GetPositionY(), player->GetPositionZ() - 10, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
                     if (qUnit)
-                        player->DealDamage(qUnit, qUnit->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                        Unit::DealDamage(player, player, qUnit->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
                 }
             }
             return true;
@@ -599,8 +599,8 @@ public:
         override {
             me->AddUnitState(UNIT_STATE_IGNORE_PATHFINDING);
     
-            if(DespawnTimer < diff)
-                me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+            if (DespawnTimer < diff)
+                me->KillSelf();
             else DespawnTimer -= diff;
     
             if(!UpdateVictim())
@@ -690,7 +690,7 @@ public:
                         if(boss->IsDead() || !boss->IsInCombat())
                         {
                             end = true;
-                            me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_FIRE, nullptr, false);//temphack, hellfire is not damaging self
+                            me->KillSelf(); //temphack, hellfire is not damaging self
                         }
                     }
                 }
@@ -705,7 +705,7 @@ public:
                 if(!phase)
                 {
                     DoCast(me, SPELL_PHOENIX_BURN);
-                    me->DealDamage(me, 1500, nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_FIRE, nullptr, false);//temphack, hellfire is not damaging self
+                    Unit::DealDamage(me, me, 1500, nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_FIRE, nullptr, false);//temphack, hellfire is not damaging self
                 }
                 else
                 {
@@ -763,7 +763,7 @@ public:
                         bird->GetMotionMaster()->MoveChase(boss->GetVictim());
                     }
                 }
-                me->DealDamage(me, me->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                me->KillSelf();
             }else HatchTimer -= diff;
         }
     };
@@ -809,7 +809,7 @@ public:
             if(FlameStrikeTimer < diff)
             {
                 DoCast(me, Heroic ? SPELL_FLAMESTRIKE1_HEROIC : SPELL_FLAMESTRIKE1_NORMAL, true);
-                me->DealDamage(me, me->GetMaxHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                me->KillSelf();
             }else FlameStrikeTimer -= diff;
         }
     };

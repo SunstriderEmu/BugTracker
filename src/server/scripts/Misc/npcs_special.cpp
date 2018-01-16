@@ -1396,7 +1396,7 @@ public:
             
             if (me->GetDistance2d(pWho) < 3 && pWho->IsHostileTo(me)) {
                 DoCast(pWho, SPELL_DETONATION);     // Explode and deal damage to pWho
-                me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, nullptr, false);      // Diseappear
+                Unit::DealDamage(me, me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, nullptr, false);      // Diseappear
                 me->DespawnOrUnsummon();
             }
         }
@@ -2062,8 +2062,8 @@ public:
         override {
             me->GetMotionMaster()->MoveFollow(me->GetOwner(), PET_FOLLOW_DIST, me->GetFollowAngle());
             
-            if (rand()%5 == 0)
-                me->Kill(me);
+            if (rand() % 5 == 0)
+                me->KillSelf();
         }
         
         void UpdateAI(uint32 const diff)

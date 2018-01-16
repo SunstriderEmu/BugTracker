@@ -239,7 +239,7 @@ public:
             _JustDied();
             DoScriptText(SAY_DEATH, me);
             if (Unit* pMidnight = ObjectAccessor::GetUnit(*me, _midnightGUID))
-                pMidnight->DealDamage(pMidnight, pMidnight->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                pMidnight->KillSelf();
         }
 
         void SetGUID(ObjectGuid const& guid, int32 data) override
@@ -287,10 +287,10 @@ public:
                     Unit *target = nullptr;
                     std::vector<Unit *> target_list;
                     for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
-                        if (Unit* target = pair.second->GetOther(me))
+                        if (Unit* _target = pair.second->GetOther(me))
                         {
-                            if (target->GetDistance2d(me) > 5.0f)
-                                target_list.push_back(target);
+                            if (_target->GetDistance2d(me) > 5.0f)
+                                target_list.push_back(_target);
                         }
                     if (target_list.size())
                         target = *(target_list.begin() + rand() % target_list.size());

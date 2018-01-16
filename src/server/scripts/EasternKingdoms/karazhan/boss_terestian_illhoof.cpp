@@ -200,10 +200,10 @@ public:
         override {
             if(checkTimer <= diff)
             {
-                if(SacrificeGUID)
-                    if(Unit* Sacrifice = ObjectAccessor::GetUnit((*me),SacrificeGUID))
-                        if(!Sacrifice->IsAlive())
-                            me->Kill(me);
+                if (SacrificeGUID)
+                    if (Unit* Sacrifice = ObjectAccessor::GetUnit((*me), SacrificeGUID))
+                        if (!Sacrifice->IsAlive())
+                            me->KillSelf();
                 checkTimer = 1000;
             } else checkTimer -= diff;
         }

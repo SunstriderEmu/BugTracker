@@ -319,11 +319,10 @@ public:
                 if(i)
                 {
                     //delete creature
-                    Unit* pUnit = ObjectAccessor::GetUnit((*me), i);
-                    if (pUnit && pUnit->IsAlive())
-                    {
-                        pUnit->DealDamage(pUnit, pUnit->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
-                    }
+                    Creature* creature = ObjectAccessor::GetCreature((*me), i);
+                    if (creature && creature->IsAlive())
+                        creature->DisappearAndDie();
+
                     i = ObjectGuid::Empty;
                 }
             }
@@ -387,7 +386,7 @@ public:
                 pUnit = ObjectAccessor::GetUnit((*me), Demon);
     
                 if (pUnit)
-                    pUnit->DealDamage(pUnit, pUnit->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                    pUnit->KillSelf();
             }
             if (pInstance)
                 pInstance->SetData(DATA_LEOTHERASTHEBLINDEVENT, DONE);

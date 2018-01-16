@@ -206,7 +206,7 @@ public:
                             DoScriptText(SAY_ASH_7, father);
                             father->DisappearAndDie();
                         }
-                        me->Kill(me);
+                        me->KillSelf();
                         eventTimer = 0;
                         alternative = false;
                         break;

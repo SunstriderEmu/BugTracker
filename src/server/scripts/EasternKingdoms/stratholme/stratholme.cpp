@@ -198,7 +198,7 @@ public:
                     if (Unit* pTemp = ObjectAccessor::GetUnit(*me,Tagger))
                     {
                         (pTemp)->ToPlayer()->KilledMonsterCredit(ENTRY_RESTLESS, me->GetGUID());
-                        me->Kill(me);
+                        me->KillSelf();
                     }
                 }else Die_Timer -= diff;
             }
@@ -270,7 +270,7 @@ public:
             {
                 if (Die_Timer < diff)
                 {
-                    me->DealDamage(me, me->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                    me->KillSelf();
                 }else Die_Timer -= diff;
             }
     
@@ -415,7 +415,7 @@ public:
             if (Creature *acolyte = pWho->FindNearestCreature(NPC_THUZADIN_ACOLYTE, 15.0f, true))
                 return;
                 
-            me->Kill(me);
+            me->KillSelf();
         }
         
         void UpdateAI (uint32 const diff) 

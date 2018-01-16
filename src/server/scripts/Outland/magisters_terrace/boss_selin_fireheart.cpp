@@ -184,8 +184,8 @@ public:
             {
                 //Creature* pCrystal = (ObjectAccessor::GetCreature(*me, FelCrystals[i]));
                 Creature* pCrystal = (ObjectAccessor::GetCreature(*me, Crystal));
-                if( pCrystal && pCrystal->IsAlive())
-                    pCrystal->DealDamage(pCrystal, pCrystal->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                if (pCrystal && pCrystal->IsAlive())
+                    pCrystal->KillSelf();
             }
         }
     
@@ -318,9 +318,8 @@ public:
     
                                 DoScriptText(SAY_EMPOWERED, me);
     
-                                if( CrystalChosen->IsAlive() )
-                                    // Use Deal Damage to kill it, not setDeathState.
-                                    CrystalChosen->DealDamage(CrystalChosen, CrystalChosen->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+                                if (CrystalChosen->IsAlive())
+                                    CrystalChosen->KillSelf();
                                 CrystalGUID = ObjectGuid::Empty;
     
                                 me->GetMotionMaster()->Clear();
