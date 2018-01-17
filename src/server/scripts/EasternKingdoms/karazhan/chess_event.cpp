@@ -685,21 +685,21 @@ public:
                             return true;
                         }
                     }
-                    else if (Creature* _neightboor = ObjectAccessor::GetCreature(*me, board[pieceRow+1][pieceCol]->pieceGUID)) {
-                        if (!piece->IsFriendlyTo(_neightboor)) {
-                            piece->CastSpell(_neightboor, SPELL_CHANGE_FACING, TRIGGERED_NONE);
+                    else if (Creature* neightboor2 = ObjectAccessor::GetCreature(*me, board[pieceRow+1][pieceCol]->pieceGUID)) {
+                        if (!piece->IsFriendlyTo(neightboor2)) {
+                            piece->CastSpell(neightboor2, SPELL_CHANGE_FACING, TRIGGERED_NONE);
                             return true;
                         }
                     }
-                    else if (Creature* _neightboor = ObjectAccessor::GetCreature(*me, board[pieceRow][pieceCol-1]->pieceGUID)) {
-                        if (!piece->IsFriendlyTo(_neightboor)) {
-                            piece->CastSpell(_neightboor, SPELL_CHANGE_FACING, TRIGGERED_NONE);
+                    else if (Creature* neightboor3 = ObjectAccessor::GetCreature(*me, board[pieceRow][pieceCol-1]->pieceGUID)) {
+                        if (!piece->IsFriendlyTo(neightboor3)) {
+                            piece->CastSpell(neightboor3, SPELL_CHANGE_FACING, TRIGGERED_NONE);
                             return true;
                         }
                     }
-                    else if (Creature* _neightboor = ObjectAccessor::GetCreature(*me, board[pieceRow][pieceCol+1]->pieceGUID)) {
-                        if (!piece->IsFriendlyTo(_neightboor)) {
-                            piece->CastSpell(_neightboor, SPELL_CHANGE_FACING, TRIGGERED_NONE);
+                    else if (Creature* neightboor4 = ObjectAccessor::GetCreature(*me, board[pieceRow][pieceCol+1]->pieceGUID)) {
+                        if (!piece->IsFriendlyTo(neightboor4)) {
+                            piece->CastSpell(neightboor4, SPELL_CHANGE_FACING, TRIGGERED_NONE);
                             return true;
                         }
                     }
