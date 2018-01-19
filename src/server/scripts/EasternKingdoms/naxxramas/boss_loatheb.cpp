@@ -140,7 +140,7 @@ public:
             }
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             me->Yell(SAY_DEATH,LANG_UNIVERSAL,nullptr);
             DoPlaySoundToSet(me,SOUND_DEATH);

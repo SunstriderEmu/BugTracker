@@ -123,7 +123,7 @@ public:
                 Talk(SAY_SLAY);
         }
     
-        void JustDied(Unit* Killer) override 
+        void JustDied(Unit* /*Killer*/) override 
         {
             Talk(SAY_DEATH);
             removeAdds();

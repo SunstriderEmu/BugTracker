@@ -228,7 +228,7 @@ public:
             }
         }
     
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             if(Creature* akama = me->GetMap()->GetCreature(akamaGUID))
                 akama->AI()->message(AkamaMessages::MESSAGE_SHADE_DIED,0);

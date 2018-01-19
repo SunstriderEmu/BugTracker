@@ -183,7 +183,7 @@ public:
             summoned->CastSpell(summoned,SPELL_SOUL_FREED, TRIGGERED_NONE);
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             if (Tagged)
                 me->SummonCreature(ENTRY_FREED, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation(), TEMPSUMMON_TIMED_DESPAWN, 300000);
@@ -247,7 +247,7 @@ public:
                 Tagged = true;
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             if (Tagged)
             {

@@ -93,7 +93,7 @@ public:
             DoCast(me,SPELL_BAT_FORM);
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             DoScriptText(SAY_DEATH, me);
     

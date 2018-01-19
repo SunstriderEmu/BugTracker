@@ -226,7 +226,7 @@ public:
                 pInstance->SetData(DATA_AKILZONEVENT, IN_PROGRESS);
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             me->Yell(SAY_ONDEATH,LANG_UNIVERSAL,nullptr);
             DoPlaySoundToSet(me, SOUND_ONDEATH);

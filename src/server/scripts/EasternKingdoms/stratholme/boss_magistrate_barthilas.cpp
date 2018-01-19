@@ -84,7 +84,7 @@ public:
             ScriptedAI::MoveInLineOfSight(who);
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_HUMAN);
         }

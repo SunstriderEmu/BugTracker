@@ -124,11 +124,9 @@ public:
             }
         }
     
-        void DamageTaken(Unit* done_by, uint32 &damage)
-        override 
-        
+        void DamageTaken(Unit* done_by, uint32 &damage) override 
         {
-            if(done_by->GetEntry() != NPC_MALCHEZAAR)
+            if(done_by && done_by->GetEntry() != NPC_MALCHEZAAR)
                 damage = 0;
         }
     };

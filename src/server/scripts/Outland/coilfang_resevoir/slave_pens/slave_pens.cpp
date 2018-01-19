@@ -188,7 +188,7 @@ public:
             me->GetCreatureListWithEntryInGrid(list, CREATURE_SLAVE, distance);
         }
     
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             std::list<Creature*> slavesList;
             GetSlaves(slavesList,20.0f);

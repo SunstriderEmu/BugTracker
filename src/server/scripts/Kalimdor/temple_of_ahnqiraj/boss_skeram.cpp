@@ -115,7 +115,7 @@ public:
             }
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             if (!IsImage)
                 DoScriptText(SAY_DEATH, me);

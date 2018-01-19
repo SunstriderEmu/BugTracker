@@ -337,7 +337,7 @@ public:
             {
                 Encounters[0] = data;
                 if (data == DONE)
-                    ((InstanceMap *)instance)->PermBindAllPlayers(GetPlayer());
+                    ((InstanceMap *)instance)->PermBindAllPlayers();
             }
             break;
             case DATA_BRUTALLUS_EVENT:     Encounters[1] = data; break;

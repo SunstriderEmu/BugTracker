@@ -75,7 +75,7 @@ public:
     
         void DamageTaken(Unit* pDoneBy, uint32 &damage)
         override {
-            if( pDoneBy->GetTypeId() == TYPEID_PLAYER )
+            if(pDoneBy && pDoneBy->GetTypeId() == TYPEID_PLAYER)
                 if (damage >= me->GetHealth() && (pDoneBy)->ToPlayer()->GetQuestStatus(11180) == QUEST_STATUS_INCOMPLETE)
                     me->CastSpell(pDoneBy, SPELL_SUMMON_RESTLESS_APPARITION, TRIGGERED_NONE);
         }
@@ -534,13 +534,15 @@ public:
         void JustEngagedWith(Unit* pWho) override {}
     
         void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
-        override {
+        override
+        {
             if (uiDamage > me->GetHealth() || ((me->GetHealth() - uiDamage)*100 / me->GetMaxHealth() < 20))
             {
                 uiDamage = 0;
     
-                if (Player* pPlayer = pDoneBy->GetCharmerOrOwnerPlayerOrPlayerItself())
-                    pPlayer->GroupEventHappens(QUEST_MISSING_DIPLO_PT16, me);
+                if(pDoneBy)
+                    if (Player* pPlayer = pDoneBy->GetCharmerOrOwnerPlayerOrPlayerItself())
+                        pPlayer->GroupEventHappens(QUEST_MISSING_DIPLO_PT16, me);
     
                 DoScriptText(EMOTE_SURRENDER, me);
                 EnterEvadeMode();

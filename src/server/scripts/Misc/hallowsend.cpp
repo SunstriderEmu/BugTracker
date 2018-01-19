@@ -313,7 +313,10 @@ public:
             DoScriptText(YELL_DEATH, me, nullptr);
             
             // Summon Jack-o-lantern
-            killer->SummonGameObject(GOB_JACKOLANTERN, me->GetPosition(), G3D::Quat(), 600000);
+            if(killer)
+                killer->SummonGameObject(GOB_JACKOLANTERN, me->GetPosition(), G3D::Quat(), 600000);
+            else
+                me->SummonGameObject(GOB_JACKOLANTERN, me->GetPosition(), G3D::Quat(), 600000);
             
             despawnTimer = 0;
             

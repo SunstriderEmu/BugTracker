@@ -59,7 +59,7 @@ public:
                 pInstance->SetData(TYPE_AKU_MAI, IN_PROGRESS);
         }
         
-        void JustDied(Unit* pKiller)
+        void JustDied(Unit* /*pKiller*/)
         override {
             if (pInstance)
                 pInstance->SetData(TYPE_AKU_MAI, DONE);

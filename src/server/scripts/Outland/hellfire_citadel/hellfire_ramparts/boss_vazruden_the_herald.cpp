@@ -526,9 +526,9 @@ public:
 
         void JustDied(Unit* who) override 
         {
-            who = who->GetCharmerOrOwnerPlayerOrPlayerItself();
+            who = who ? who->GetCharmerOrOwnerPlayerOrPlayerItself() : nullptr;
             if (Creature *herald = me->FindNearestCreature(NPC_VAZRUDEN_HERALD, 150.0f, true))
-                herald->AI()->message(boss_vazruden_the_herald::MESSAGE_SENTRY_DIED, who->GetGUID());
+                herald->AI()->message(boss_vazruden_the_herald::MESSAGE_SENTRY_DIED, who ? who->GetGUID(): 0);
         }
 
         void UpdateAI(const uint32 diff) override 

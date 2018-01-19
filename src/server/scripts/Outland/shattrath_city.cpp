@@ -156,13 +156,13 @@ public:
     
         void DamageTaken(Unit *done_by, uint32 &damage)
         override {
-            if( done_by->GetTypeId() == TYPEID_PLAYER )
+            if(done_by && done_by->GetTypeId() == TYPEID_PLAYER )
                 if( (me->GetHealth()-damage)*100 / me->GetMaxHealth() < 20 )
-            {
-                (done_by->ToPlayer())->GroupEventHappens(QUEST_10004,me);
-                damage = 0;
-                EnterEvadeMode();
-            }
+                {
+                    (done_by->ToPlayer())->GroupEventHappens(QUEST_10004,me);
+                    damage = 0;
+                    EnterEvadeMode();
+                }
         }
     
         void UpdateAI(const uint32 diff)

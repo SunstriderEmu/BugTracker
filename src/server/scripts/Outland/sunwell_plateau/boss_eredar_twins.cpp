@@ -169,7 +169,7 @@ struct EredarTwin : public ScriptedAI
         return false;
     }
 
-    void JustDied(Unit* Killer) override 
+    void JustDied(Unit* /*Killer*/) override 
     {
         if (SisterDead)
         {

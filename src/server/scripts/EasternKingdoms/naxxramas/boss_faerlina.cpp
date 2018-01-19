@@ -93,7 +93,7 @@ public:
             }
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             DoScriptText(SAY_DEATH, me);
         }

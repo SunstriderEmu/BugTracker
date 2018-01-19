@@ -129,7 +129,7 @@ public:
                 //Take 0 damage
                 damage = 0;
     
-                if (done_by->GetTypeId() == TYPEID_PLAYER && done_by->GetGUID() == PlayerGUID)
+                if (done_by && done_by->GetTypeId() == TYPEID_PLAYER && done_by->GetGUID() == PlayerGUID)
                 {
                     (done_by->ToPlayer())->AttackStop();
                     (done_by->ToPlayer())->AreaExploredOrEventHappens(1640);
@@ -190,7 +190,7 @@ public:
                 //Take 0 damage
                 damage = 0;
     
-                if (done_by->GetTypeId() == TYPEID_PLAYER)
+                if (done_by && done_by->GetTypeId() == TYPEID_PLAYER)
                 {
                     (done_by->ToPlayer())->AttackStop();
                     (done_by->ToPlayer())->AreaExploredOrEventHappens(1447);

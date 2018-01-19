@@ -49,8 +49,8 @@ public:
     
         void JustEngagedWith(Unit *who) override { }
     
-        void DamageTaken(Unit *done_by, uint32 &damage)
-        override {
+        void DamageTaken(Unit* done_by, uint32 &damage) override 
+        {
             if( me->GetHealth() <= damage )
                 me->CastSpell(me,SPELL_SUMMON_SPIRE_SPIDERLING, TRIGGERED_FULL_MASK);
         }

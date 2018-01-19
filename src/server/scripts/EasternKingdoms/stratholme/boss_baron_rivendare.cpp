@@ -120,7 +120,7 @@ public:
                  summoned->AI()->AttackStart(target);
         }
     
-         void JustDied(Unit* Killer) override
+         void JustDied(Unit* /*Killer*/) override
          {
              if (pInstance)
                  pInstance->SetData(TYPE_BARON,DONE);

@@ -48,7 +48,7 @@ public:
         override {
         }
     
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             if (pInstance)
                 pInstance->SetData(DATA_GHOSTKILL, 1);
@@ -127,7 +127,7 @@ public:
         override {
         }
     
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             if (pInstance)
                 pInstance->SetData(DATA_GHOSTKILL, 1);
@@ -208,7 +208,7 @@ public:
         override {
         }
         
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             if (pInstance)
                 pInstance->SetData(DATA_GHOSTKILL, 1);
@@ -301,7 +301,7 @@ public:
         override {
         }
         
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             if (pInstance)
                 pInstance->SetData(DATA_GHOSTKILL, 1);
@@ -395,7 +395,7 @@ public:
         override {
         }
         
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             if (pInstance)
                 pInstance->SetData(DATA_GHOSTKILL, 1);
@@ -497,7 +497,7 @@ public:
         override {
         }
         
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             if (pInstance)
                 pInstance->SetData(DATA_GHOSTKILL, 1);

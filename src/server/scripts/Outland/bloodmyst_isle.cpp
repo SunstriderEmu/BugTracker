@@ -60,7 +60,7 @@ public:
             {
                 case 0:
                     spawnCreatureID = 17681;
-                    if (pKiller->GetTypeId() == TYPEID_PLAYER)
+                    if (pKiller && pKiller->GetTypeId() == TYPEID_PLAYER)
                         (pKiller)->ToPlayer()->KilledMonsterCredit(spawnCreatureID, me->GetGUID());
                     break;
                 case 1:

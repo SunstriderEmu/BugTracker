@@ -1381,7 +1381,7 @@ public:
         
         void JustEngagedWith(Unit* pWho) override {}
         
-        void JustDied(Unit* pKiller)
+        void JustDied(Unit* /*pKiller*/)
         override {
             me->DespawnOrUnsummon();
         }

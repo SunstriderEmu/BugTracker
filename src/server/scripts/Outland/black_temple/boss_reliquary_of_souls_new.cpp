@@ -165,7 +165,7 @@ public:
             }
         }
 
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             if (instance) {
                 instance->SetData(DATA_RELIQUARYOFSOULSEVENT, DONE);
@@ -413,7 +413,7 @@ public:
             me->CastSpell(me, ESSENCE_OF_SUFFERING_PASSIVE2, TRIGGERED_FULL_MASK);
         }
         
-        void JustDied(Unit* victim)
+        void JustDied(Unit* /*victim*/)
         override {
             Talk(TALK_SUFF_SAY_SLAY);
         }
@@ -484,7 +484,8 @@ public:
         //Debugging 
         void JustDied(Unit* killer) 
         override {
-            TC_LOG_ERROR("scripts","essence of desire died killed by a %s (guid : %u)",killer->ToCreature() ? "creature" : "player",killer->GetGUID().GetCounter());
+            if(killer)
+                TC_LOG_ERROR("scripts","essence of desire died killed by a %s (guid : %u)", killer->ToCreature() ? "creature" : "player",killer->GetGUID().GetCounter());
         }
 
         enum events {
@@ -524,7 +525,8 @@ public:
                 me->RemoveAllAuras();
                 Talk(TALK_DESI_SAY_RECAP);
             }
-            else {
+            else if (attacker) 
+            {
                 int32 bp0 = damage / 2;
                 CastSpellExtraArgs args;
                 args.TriggerFlags = TRIGGERED_FULL_MASK;
@@ -660,7 +662,7 @@ public:
             me->CastSpell(me, AURA_OF_ANGER, TRIGGERED_FULL_MASK);
         }
         
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             Player* tank = ObjectAccessor::GetPlayer(*me,tankGUID);
             if(tank) tank->ApplySpellImmune(0, IMMUNITY_ID, SPELL_SPITE_TARGET, false);
@@ -760,7 +762,7 @@ public:
             me->DisappearAndDie();
         }
 
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             
             Creature* reliquary = me->GetMap()->GetCreature(reliquaryGUID);

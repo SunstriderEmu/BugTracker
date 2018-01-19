@@ -138,7 +138,7 @@ public:
     
         void DamageTaken(Unit* pDoneBy, uint32 & damage)
         override {
-            if (pDoneBy->GetTypeId() == TYPEID_PLAYER && (me->GetHealth() - damage)*100 / me->GetMaxHealth() < 30)
+            if (pDoneBy && pDoneBy->GetTypeId() == TYPEID_PLAYER && (me->GetHealth() - damage)*100 / me->GetMaxHealth() < 30)
             {
                 if (!bReset && (pDoneBy)->ToPlayer()->GetQuestStatus(9918) == QUEST_STATUS_INCOMPLETE)
                 {
@@ -1115,6 +1115,9 @@ public:
         
         void JustDied(Unit* pKiller)
         override {
+            if (!pKiller)
+                return;
+
             if (!pKiller->ToPlayer())
                 return;
     

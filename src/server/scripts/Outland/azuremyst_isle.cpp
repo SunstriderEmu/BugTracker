@@ -417,7 +417,7 @@ public:
                 me->SetFaction(80);
         }
     
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             if (_playerGUID)
             {

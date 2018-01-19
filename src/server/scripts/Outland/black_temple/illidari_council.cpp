@@ -463,7 +463,7 @@ struct boss_illidari_councilAI : public ScriptedAI
                     else
                     {
                         pUnit->LowerPlayerDamageReq(damage);
-                        pUnit->Kill(pUnit, false);
+                        Unit::Kill(pUnit, pUnit, false);
                     }
                 }
         }

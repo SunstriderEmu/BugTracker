@@ -141,7 +141,7 @@ public:
 
         void UpdateAI(const uint32 diff) override;
 
-        void JustDied(Unit* killer) override;
+        void JustDied(Unit* /*killer*/) override;
     };
 
     CreatureAI* GetAI(Creature* creature) const override
@@ -913,7 +913,7 @@ public:
             }
         }
     
-        void JustDied(Unit* pKiller)
+        void JustDied(Unit* /*pKiller*/)
         override {
             //Switch
             if( pInst )
@@ -995,7 +995,7 @@ void mob_giant_flesh_tentacle::flesh_tentacleAI::UpdateAI(const uint32 diff)
     DoMeleeAttackIfReady();
 }
 
-void mob_giant_flesh_tentacle::flesh_tentacleAI::JustDied(Unit* killer)
+void mob_giant_flesh_tentacle::flesh_tentacleAI::JustDied(Unit* /*killer*/)
 {
     if (!Parent)
     {

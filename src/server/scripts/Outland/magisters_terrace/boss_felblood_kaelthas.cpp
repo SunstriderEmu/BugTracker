@@ -670,7 +670,7 @@ public:
     
         void JustEngagedWith(Unit* who) override {}
     
-        void JustDied(Unit* slayer)
+        void JustDied(Unit* /*slayer*/)
         override {
             if (end)
                 return;

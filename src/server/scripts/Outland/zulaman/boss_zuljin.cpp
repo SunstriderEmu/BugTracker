@@ -183,7 +183,7 @@ public:
             Talk(YELL_KILL);
         }
         
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             summons.DespawnEntry(CREATURE_COLUMN_OF_FIRE);
             

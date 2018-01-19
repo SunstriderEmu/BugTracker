@@ -107,7 +107,7 @@ public:
             DoScriptText(SAY_AGGRO, me, nullptr);
         }
     
-        void JustDied(Unit* killer) override
+        void JustDied(Unit* /*killer*/) override
         {
             if (_playerGUID && !Completed )
             {

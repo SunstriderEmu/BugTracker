@@ -103,7 +103,7 @@ public:
             me->SetFaction(FACTION_CREATURE);
         }
     
-        void JustDied(Unit* pKiller)
+        void JustDied(Unit* /*pKiller*/)
         override {
             me->SetFaction(FACTION_CREATURE);
         }
@@ -446,7 +446,7 @@ public:
 
         void JustDied(Unit* pKiller) override
         {
-            if (pKiller->GetTypeId() == TYPEID_PLAYER)
+            if (pKiller && pKiller->GetTypeId() == TYPEID_PLAYER)
             {
                 Creature* Summoner;
                 Summoner = (ObjectAccessor::GetCreature((*me), summonerGuid));
@@ -584,7 +584,7 @@ public:
             ++KillCount;
         }
     
-        void JustDied(Unit* pKiller)
+        void JustDied(Unit* /*pKiller*/)
         override {
             if (PlayerGUID)
             {
@@ -771,7 +771,7 @@ public:
             pSummoned->AI()->AttackStart(me);
         }
     
-        void JustDied(Unit* pKiller)
+        void JustDied(Unit* /*pKiller*/)
         override {
             if (PlayerGUID && !Completed)
             {

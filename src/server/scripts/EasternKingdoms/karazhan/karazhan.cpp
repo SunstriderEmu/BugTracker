@@ -584,20 +584,20 @@ public:
             castedShield = true;
         }
 
-        void JustDied(Unit* who) override 
+        void JustDied(Unit* /*who*/) override 
         {
             DoCast(me, ANOMALY_SPELL_LOOSE_MANA, true);
         }
     
         //cannot die if we havent casted our mana shield
-        void DamageTaken(Unit* pKiller, uint32 &damage)
-        override {
+        void DamageTaken(Unit* pKiller, uint32 &damage) override 
+        {
             if(!castedShield && damage >= me->GetHealth())
                 damage = me->GetHealth()-1; //down to 1 hp
         }
       
-        void UpdateAI(const uint32 diff)
-        override {                
+        void UpdateAI(const uint32 diff) override 
+        {                
             if(!UpdateVictim())
                 return;
     

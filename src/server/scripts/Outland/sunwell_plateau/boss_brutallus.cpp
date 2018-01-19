@@ -155,7 +155,7 @@ public:
                 ScriptedAI::EnterEvadeMode(why);
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             if(pInstance)
                 if (Creature *Madrigosa = ObjectAccessor::GetCreature(*me, ObjectGuid(pInstance->GetData64(DATA_MADRIGOSA))))
@@ -404,7 +404,7 @@ public:
         
         void DamageTaken(Unit* doneBy, uint32& damage)
         override {
-            if ((Intro || IsIntro) && doneBy->ToPlayer())
+            if ((Intro || IsIntro) && (doneBy && doneBy->ToPlayer()))
                 damage = 0;
                 
             if ((Intro || IsIntro) && damage >= me->GetHealth())

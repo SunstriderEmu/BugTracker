@@ -483,7 +483,7 @@ public:
                     Phase = PHASE_NORMAL_MAIEV;
                 damage = 0;
             }
-            if (done_by->GetGUID() == MaievGUID)
+            if (done_by && done_by->GetGUID() == MaievGUID)
                 done_by->GetThreatManager().AddThreat(me, -(3 * (float)damage) / 4); // do not let maiev tank him
         }
 
@@ -1056,7 +1056,7 @@ public:
     
         void DamageTaken(Unit *done_by, uint32 &damage)
         override {
-            if(damage > me->GetHealth() || done_by->GetGUID() != IllidanGUID)
+            if(damage > me->GetHealth() || (done_by && done_by->GetGUID() != IllidanGUID))
                 damage = 0;
         }
     
@@ -1833,7 +1833,7 @@ public:
     
         void DamageTaken(Unit *done_by, uint32 &damage)
         override {
-            if(done_by->GetGUID() != IllidanGUID )
+            if(done_by && done_by->GetGUID() != IllidanGUID )
                 damage = 0;
             else
             {

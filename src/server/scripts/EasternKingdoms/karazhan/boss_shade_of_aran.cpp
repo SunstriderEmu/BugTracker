@@ -460,7 +460,7 @@ public:
             if (!DrinkInturrupted && Drinking && damage)
                 DrinkInturrupted = true;
     
-            if (pAttacker->ToCreature() && pAttacker->GetEntry() == 16524)
+            if (pAttacker && pAttacker->ToCreature() && pAttacker->GetEntry() == 16524)
                 damage = 0;
         }
     

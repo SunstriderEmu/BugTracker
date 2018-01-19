@@ -138,7 +138,7 @@ public:
             DoCast(me, SPELL_SW_RADIANCE);
         }
         
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             //remove loot for the first protector
             if (me->GetDefaultMovementType() == WAYPOINT_MOTION_TYPE)

@@ -810,6 +810,9 @@ public:
     
         void DamageTaken(Unit *done_by, uint32 &damage)
         override {
+            if (!done_by)
+                return;
+
             if (done_by->ToPlayer() && done_by->ToPlayer()->IsGameMaster())
                 return;
             if(done_by->GetGUID() != SathGUID)

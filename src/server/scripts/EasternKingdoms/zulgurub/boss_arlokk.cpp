@@ -90,7 +90,7 @@ public:
             DoScriptText(SAY_AGGRO, me);
         }
     
-        void JustDied(Unit* Killer) override
+        void JustDied(Unit* /*Killer*/) override
         {
             DoScriptText(SAY_DEATH, me);
             me->SetUInt32Value(UNIT_FIELD_DISPLAYID,15218);

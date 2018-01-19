@@ -78,7 +78,7 @@ public:
     
         void JustDied(Unit* pKiller)
         override {
-            if (pKiller->GetTypeId() == TYPEID_PLAYER)
+            if (pKiller && pKiller->GetTypeId() == TYPEID_PLAYER)
                 (pKiller)->ToPlayer()->KilledMonsterCredit(19995, me->GetGUID());
         }
     };
@@ -3239,7 +3239,8 @@ public:
     
         void JustDied(Unit* killer)
         override {
-            killer->SummonGameObject(185567, Position(2694.32, 5525.05, 1.18, 0), G3D::Quat(), 60000);
+            Unit* summoner = killer ? killer : me;
+            summoner->SummonGameObject(185567, Position(2694.32, 5525.05, 1.18, 0), G3D::Quat(), 60000);
         }
     };
 
@@ -3302,9 +3303,10 @@ public:
         
         void JustEngagedWith(Unit* who) override {}
         
-        void JustDied(Unit* killer)
-        override {
-            killer->CastSpell(killer, 37466, TRIGGERED_FULL_MASK);
+        void JustDied(Unit* killer) override 
+        {
+            if(killer)
+                killer->CastSpell(killer, 37466, TRIGGERED_FULL_MASK);
         }
         
         void UpdateAI(uint32 const diff)

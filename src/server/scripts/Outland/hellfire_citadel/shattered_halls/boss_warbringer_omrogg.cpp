@@ -263,7 +263,7 @@ public:
             }
         }
     
-        void JustDied(Unit* Killer) override 
+        void JustDied(Unit* /*Killer*/) override 
         {
             if (LeftHead && RightHead)
             {

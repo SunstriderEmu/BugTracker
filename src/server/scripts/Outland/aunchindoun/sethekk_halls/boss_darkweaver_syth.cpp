@@ -83,7 +83,7 @@ public:
             _JustEngagedWith();
         }
     
-        void JustDied(Unit* Killer) override 
+        void JustDied(Unit* /*Killer*/) override 
         {
             DoScriptText(SAY_DEATH, me);
             

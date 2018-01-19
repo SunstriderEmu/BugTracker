@@ -499,7 +499,7 @@ public:
     
         void SummonedCreatureDespawn(Creature *summon) override {summons.Despawn(summon);}
     
-        void JustDied(Unit* Killer) override
+        void JustDied(Unit* /*Killer*/) override
         {
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -1118,7 +1118,7 @@ public:
             me->AddUnitMovementFlag(MOVEMENTFLAG_WALKING);
         }
     
-        void JustDied(Unit* pKiller)
+        void JustDied(Unit* /*pKiller*/)
         override {
             DoScriptText(SAY_THALADRED_DEATH, me);
         }
@@ -1216,7 +1216,7 @@ public:
             me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             DoScriptText(SAY_SANGUINAR_DEATH, me);
         }
@@ -1290,7 +1290,7 @@ public:
             advisorbase_ai::Reset();
         }
     
-        void JustDied(Unit* pKiller)
+        void JustDied(Unit* /*pKiller*/)
         override {
             DoScriptText(SAY_CAPERNIAN_DEATH, me);
         }
@@ -1418,7 +1418,7 @@ public:
             advisorbase_ai::Reset();
         }
     
-        void JustDied(Unit* pKiller)
+        void JustDied(Unit* /*pKiller*/)
         override {
              DoScriptText(SAY_TELONICUS_DEATH, me);
         }

@@ -300,7 +300,7 @@ public:
             DoZoneInCombat();
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             if(pInstance)
                 pInstance->SetData(DATA_NALORAKKEVENT, DONE);

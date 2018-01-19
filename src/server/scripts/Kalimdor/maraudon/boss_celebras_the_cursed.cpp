@@ -49,7 +49,7 @@ public:
             CorruptForces_Timer = 30000;
         }
     
-        void JustDied(Unit* Killer) override
+        void JustDied(Unit* /*Killer*/) override
         {
             me->SummonCreature(13716, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 600000);
         }

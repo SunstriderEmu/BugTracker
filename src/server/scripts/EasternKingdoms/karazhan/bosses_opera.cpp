@@ -129,7 +129,7 @@ public:
     
         void SummonTito();                                      // See below
     
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             DoScriptText(SAY_DOROTHEE_DEATH, me);
     
@@ -250,7 +250,7 @@ public:
                 DoCast(me, SPELL_BURNING_STRAW, true);
         }
     
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             DoScriptText(SAY_STRAWMAN_DEATH, me);
     
@@ -351,7 +351,7 @@ public:
             ScriptedAI::MoveInLineOfSight(who);
         }
     
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             DoScriptText(SAY_TINHEAD_DEATH, me);
     
@@ -453,7 +453,7 @@ public:
             DoScriptText(SAY_ROAR_AGGRO, me);
         }
     
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             DoScriptText(SAY_ROAR_DEATH, me);
     
@@ -537,7 +537,7 @@ public:
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
         }
     
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             _JustDied();
             DoScriptText(SAY_CRONE_DEATH, me);
@@ -599,7 +599,7 @@ public:
     
         void JustEngagedWith(Unit* who) override {}
     
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             if(DorotheeGUID)
             {
@@ -779,7 +779,7 @@ public:
             DoScriptText(SAY_WOLF_AGGRO, me);
         }
     
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override 
         {
             _JustDied();
@@ -932,14 +932,14 @@ void Resurrect(Creature* target)
     }
 };
 
-void KillLovers(Creature* creature, Creature* creatureLover, Unit* killer){
-    
+void KillLovers(Creature* creature, Creature* creatureLover, Unit* killer)
+{
     creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-    killer->Kill(creature, false);
+    Unit::Kill(killer, creature, false);
     if(creatureLover)
     {
         creatureLover->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        killer->Kill(creatureLover, false);
+        Unit::Kill(killer, creatureLover, false);
     }
 }
 
@@ -1040,7 +1040,7 @@ public:
     
         void DamageTaken(Unit* done_by, uint32 &damage) override;
     
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             _JustDied();
             DoScriptText(SAY_JULIANNE_DEATH02, me);
@@ -1132,7 +1132,7 @@ public:
             ScriptedAI::MoveInLineOfSight(who);
         }
     
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             DoScriptText(SAY_ROMULO_DEATH, me);
         }
@@ -1153,7 +1153,10 @@ public:
 
 void boss_julianne::boss_julianneAI::DamageTaken(Unit* done_by, uint32 &damage)
 {
-    if (damage < me->GetHealth() || done_by == me || done_by->GetGUID() == RomuloGUID)
+    if (damage < me->GetHealth())
+        return;
+
+    if (done_by && (done_by == me || done_by->GetGUID() == RomuloGUID))
         return;
 
     if (Phase == PHASE_JULIANNE)
@@ -1299,7 +1302,10 @@ void boss_julianne::boss_julianneAI::UpdateAI(const uint32 diff)
 
 void boss_romulo::boss_romuloAI::DamageTaken(Unit* done_by, uint32 &damage)
 {
-    if (damage < me->GetHealth() || done_by == me || done_by->GetGUID() == JulianneGUID)
+    if (damage < me->GetHealth())
+        return;
+
+    if(done_by && (done_by == me || done_by->GetGUID() == JulianneGUID))
         return;
 
     if (!IsFakingDeath)

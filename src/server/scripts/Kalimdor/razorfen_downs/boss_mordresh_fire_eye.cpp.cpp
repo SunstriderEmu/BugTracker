@@ -92,7 +92,7 @@ public:
             phase = 1;
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             if(pInstance)
                 pInstance->SetData(DATA_MORDRESH_FIRE_EYE, DONE);

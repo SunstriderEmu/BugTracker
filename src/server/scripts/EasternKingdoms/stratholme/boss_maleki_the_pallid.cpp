@@ -60,7 +60,7 @@ public:
         override {
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             if (pInstance)
                 pInstance->SetData(TYPE_PALLID,IN_PROGRESS);

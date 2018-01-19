@@ -513,7 +513,7 @@ public:
             summoned->AI()->AttackStart(me);
         }
     
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             if (_playerGUID && !complete)
             {

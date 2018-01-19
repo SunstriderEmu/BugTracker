@@ -56,7 +56,7 @@ public:
                 pInstance->SetData(TYPE_GELIHAST, IN_PROGRESS);
         }
     
-        void JustDied(Unit* pKiller)
+        void JustDied(Unit* /*pKiller*/)
         override {
             if (pInstance)
                 pInstance->SetData(TYPE_GELIHAST, DONE);

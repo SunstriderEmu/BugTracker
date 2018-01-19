@@ -80,7 +80,7 @@ public:
             DoScriptText(SAY_BLAU_SLAY, me);
         }
 
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             DoScriptText(SAY_BLAU_DEATH, me);
         }
@@ -186,7 +186,7 @@ public:
             }
         }
 
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             DoScriptText(SAY_RIVE_DEATH, me);
         }
@@ -256,7 +256,7 @@ public:
             DoScriptText(SAY_KORT_SLAY, me);
         }
 
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             DoScriptText(SAY_KORT_DEATH, me);
         }
@@ -361,7 +361,7 @@ public:
             DoScriptText(SAY_ZELI_SLAY, me);
         }
 
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             DoScriptText(SAY_ZELI_DEATH, me);
         }

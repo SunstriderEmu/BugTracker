@@ -58,7 +58,7 @@ public:
     
         void JustDied(Unit* Killer)
         override {
-            if( Killer->GetTypeId() == TYPEID_PLAYER )
+            if(Killer && Killer->GetTypeId() == TYPEID_PLAYER)
                 if( (Killer->ToPlayer())->GetQuestStatus(QUEST_590) == QUEST_STATUS_INCOMPLETE )
                     (Killer->ToPlayer())->AreaExploredOrEventHappens(QUEST_590);
         }

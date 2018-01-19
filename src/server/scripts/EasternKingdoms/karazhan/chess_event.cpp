@@ -1151,7 +1151,7 @@ public:
             }
         }
 
-        void JustDied(Unit* pKiller) override 
+        void JustDied(Unit* /*pKiller*/) override 
         {
             if(ObjectGuid guid = pInstance->GetGuidData(DATA_CHESS_ECHO_OF_MEDIVH))
                 if(Creature* medivh = me->GetMap()->GetCreature(guid))

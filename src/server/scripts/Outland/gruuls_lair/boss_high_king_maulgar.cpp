@@ -149,7 +149,7 @@ public:
             }
         }
     
-        void JustDied(Unit* Killer) override
+        void JustDied(Unit* /*Killer*/) override
         {
             DoScriptText(SAY_DEATH, me);
             _JustDied();
@@ -320,7 +320,7 @@ public:
             }
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             if(pInstance)
             {
@@ -437,7 +437,7 @@ public:
             }
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             if(pInstance)
             {
@@ -556,7 +556,7 @@ public:
             }
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             if(pInstance)
             {
@@ -660,7 +660,7 @@ public:
             }
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             if(pInstance)
             {

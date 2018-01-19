@@ -256,7 +256,9 @@ public:
             if (Creature* ahune = me->FindNearestCreature(NPC_AHUNE, 10.0f, true))
                 Unit::Kill(me, ahune);
     
-            pKiller->SummonGameObject(GO_AHUNE_ICE_CHEST, Position(-96.525841, -200.255798, -1.262261, 4.748316), G3D::Quat(), 1 * DAY);
+            Unit* summoner = pKiller ? pKiller : me;
+            summoner->SummonGameObject(GO_AHUNE_ICE_CHEST, Position(-96.525841, -200.255798, -1.262261, 4.748316), G3D::Quat(), 1 * DAY);
+
         }
         
         void UpdateAI(uint32 const diff)
@@ -304,7 +306,7 @@ public:
         
         void JustEngagedWith(Unit* pWho) override {}
         
-        void JustDied(Unit* pKiller)
+        void JustDied(Unit* /*pKiller*/)
         override {
             if (pInstance)
                 pInstance->DoRemoveAurasDueToSpellOnPlayers(SPELL_HAILSTONE_CHILL);

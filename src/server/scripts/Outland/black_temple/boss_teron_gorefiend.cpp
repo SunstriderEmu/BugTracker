@@ -583,6 +583,9 @@ public:
 
         void DamageTaken(Unit* done_by, uint32 &damage)
             override {
+            if (!done_by)
+                return;
+
             // can only be damaged by players in spirit form
             if (done_by->GetDisplayId() != 21300) {
                 damage = 0;

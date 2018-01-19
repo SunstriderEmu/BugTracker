@@ -105,7 +105,7 @@ public:
                 me->Say("Silence! I kill you!",LANG_UNIVERSAL, NULL);
         }*/
     
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             DoScriptText(EMOTE_ABORT, me);
     
@@ -1011,7 +1011,7 @@ public:
     
         bool Completed;
     
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             if (_playerGUID)
             {
@@ -1154,7 +1154,7 @@ public:
             }
         }
     
-        void JustDied(Unit* pKiller)
+        void JustDied(Unit* /*pKiller*/)
         override {
             Player* pPlayer = GetPlayerForEscort();
             if (pPlayer && pPlayer->GetQuestStatus(QUEST_MARK_V_IS_ALIVE) == QUEST_STATUS_INCOMPLETE)

@@ -35,11 +35,13 @@ public:
         boss_death_knight_darkreaverAI(Creature *c) : ScriptedAI(c) {}
     
         void Reset()
-        override {
+        override 
+        {
         }
     
         void DamageTaken(Unit *done_by, uint32 &damage)
-        override {
+        override 
+        {
             if (me->GetHealth() <= damage)
             {
                 me->CastSpell(me,23261, TRIGGERED_FULL_MASK);   //Summon Darkreaver's Fallen Charger

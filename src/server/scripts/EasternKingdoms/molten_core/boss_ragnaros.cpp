@@ -303,7 +303,7 @@ class Boss_Ragnaros : public CreatureScript
 
             void DamageTaken(Unit* who, uint32& /* Damage */)
             override {  
-                if (who->HasUnitState(UNIT_STATE_MELEE_ATTACKING) && rand()%100 < MELTWEAPON_CHANCE)
+                if (who && who->HasUnitState(UNIT_STATE_MELEE_ATTACKING) && rand()%100 < MELTWEAPON_CHANCE)
                     me->CastSpell(who, SPELL_MELT_WEAPON, TRIGGERED_FULL_MASK);
             }
  

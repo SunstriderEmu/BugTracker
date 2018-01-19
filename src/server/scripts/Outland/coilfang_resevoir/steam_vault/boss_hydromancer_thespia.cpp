@@ -78,7 +78,7 @@ public:
                 pInstance->SetData(TYPE_HYDROMANCER_THESPIA, NOT_STARTED);
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             DoScriptText(SAY_DEAD, me);
     

@@ -350,7 +350,7 @@ public:
             }
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             if(pInstance)
                 pInstance->SetData(DATA_HALAZZIEVENT, DONE);

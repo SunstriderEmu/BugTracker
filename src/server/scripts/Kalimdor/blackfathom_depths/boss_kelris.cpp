@@ -68,7 +68,7 @@ public:
                 pInstance->SetData(TYPE_KELRIS, IN_PROGRESS);
         }
         
-        void JustDied(Unit* pKiller)
+        void JustDied(Unit* /*pKiller*/)
         override {
             DoScriptText(SAY_DEATH, me);
             if (pInstance)

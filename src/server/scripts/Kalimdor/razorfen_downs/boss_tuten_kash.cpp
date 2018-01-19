@@ -58,7 +58,7 @@ public:
                 pInstance->SetData(DATA_TUTEN_KASH_EVENT, IN_PROGRESS);
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             if(pInstance)
                 pInstance->SetData(DATA_TUTEN_KASH_EVENT, DONE);

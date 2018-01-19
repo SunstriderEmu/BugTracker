@@ -140,9 +140,10 @@ public:
         
         void DamageTaken(Unit *pSource, uint32 &damage)
         override {
-            if (damage > me->GetHealth()) {
+            if (damage > me->GetHealth()) 
+            {
                 damage = 0;
-                message(MESSAGE_STOP_DUEL,PlayerGUID);
+                message(MESSAGE_STOP_DUEL, PlayerGUID);
             }
         }
     

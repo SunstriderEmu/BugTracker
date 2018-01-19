@@ -21,7 +21,7 @@ struct hyjal_trashAI : public EscortAI
 
     void MovementInform(uint32 MovementType, uint32 Data) override;
 
-    void JustDied(Unit* killer) override;
+    void JustDied(Unit* /*killer*/) override;
 
     void DamageTaken(Unit *done_by, uint32 &damage) override;
 

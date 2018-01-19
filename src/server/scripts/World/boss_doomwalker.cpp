@@ -79,7 +79,7 @@ public:
             me->AddAura(SPELL_MARK_DEATH, pVictim);
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             DoScriptText(SAY_DEATH, me);
         }

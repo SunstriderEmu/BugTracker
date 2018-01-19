@@ -325,7 +325,7 @@ public:
             }
         }
     
-        void JustDied(Unit* victim)
+        void JustDied(Unit* /*victim*/)
         override {
             if(pInstance)
                 pInstance->SetData(DATA_HEXLORDEVENT, DONE);

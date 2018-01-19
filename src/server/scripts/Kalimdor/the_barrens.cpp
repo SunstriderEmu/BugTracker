@@ -1081,7 +1081,7 @@ public:
             completed = false;
         }
         
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             if (!completed) {
                 if (Player* player = GetPlayerForEscort())

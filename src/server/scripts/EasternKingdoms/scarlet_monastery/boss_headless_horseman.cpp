@@ -580,7 +580,7 @@ public:
             }
         }
     
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             me->StopMoving();
             //me->GetMotionMaster()->MoveIdle();    test
@@ -668,7 +668,8 @@ public:
                     DoCast(me, SPELL_BODY_REGEN, true);
                     me->CastSpell(Head, SPELL_FLYING_HEAD, TRIGGERED_FULL_MASK);
                     DoCast(me, SPELL_CONFUSE, false);                     //test
-                    doneBy->ProcSkillsAndAuras(me, PROC_FLAG_KILL_AND_GET_XP, PROC_FLAG_KILLED, PROC_HIT_NONE, 0);
+                    if(doneBy)
+                        doneBy->ProcSkillsAndAuras(me, PROC_FLAG_KILL_AND_GET_XP, PROC_FLAG_KILLED, PROC_HIT_NONE, 0);
                     whirlwind = 4000 + (rand()%5)*IN_MILLISECONDS;
                     regen = 0;
                 }
@@ -882,7 +883,7 @@ public:
             }
         }
     
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             if (!sprouted)
                 Despawn();

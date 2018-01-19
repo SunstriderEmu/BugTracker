@@ -54,7 +54,7 @@ public:
     
         void JustDied(Unit* pKiller)
         override {
-            if (pKiller->GetTypeId() == TYPEID_PLAYER)
+            if (pKiller && pKiller->GetTypeId() == TYPEID_PLAYER)
                 DoSpawnCreature(11064, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN, 60000);
         }
     };

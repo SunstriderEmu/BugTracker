@@ -165,7 +165,7 @@ struct hyjalAI : public EscortAI
 
     void UpdateAI(const uint32 diff) override;                       // Called to summon waves, check for boss deaths and to cast our spells.
 
-    void JustDied(Unit* killer) override;                             // Called on death, informs the raid that they have failed.
+    void JustDied(Unit* /*killer*/) override;                             // Called on death, informs the raid that they have failed.
 
     void SetFaction(uint32 _faction)                        // Set the faction to either Alliance or Horde in Hyjal
     {

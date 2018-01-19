@@ -78,7 +78,7 @@ public:
                 pInstance->SetData(DATA_KURINNAXX_EVENT, NOT_STARTED);
         }
         
-        void JustDied(Unit* pKiller)
+        void JustDied(Unit* /*pKiller*/)
         override {
             if (pInstance)
                 pInstance->SetData(DATA_KURINNAXX_EVENT, DONE);

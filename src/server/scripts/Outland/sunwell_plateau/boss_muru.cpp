@@ -1027,7 +1027,7 @@ public:
         uint32 phase;
         uint32 phaseTimer;
 
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             me->CastSpell(me,SPELL_DARKFIEND_DEATH_VISUAL, TRIGGERED_FULL_MASK); //Visuel effect on death
         }
@@ -1125,7 +1125,7 @@ class npc_void_sentinel : public CreatureScript
             me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_HASTE_SPELLS, true);
         }
 
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             for (uint8 i = 0; i < 6; ++i)
             {

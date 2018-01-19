@@ -61,7 +61,7 @@ public:
             DoScriptText(SAY_DUHAST, me);
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             for(uint8 i = 0; i < 10; i++) {
                 if (Creature *temp = me->SummonCreature(C_MINDLESS_UNDEAD,3969.35,-3391.87,119.11,5.91,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,1800000))

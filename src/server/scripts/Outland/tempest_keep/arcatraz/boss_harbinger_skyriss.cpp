@@ -108,7 +108,7 @@ public:
             ScriptedAI::MoveInLineOfSight(who);
         }
     
-        void JustDied(Unit* Killer) override 
+        void JustDied(Unit* /*Killer*/) override 
         {
             DoScriptText(SAY_DEATH, me);
             _JustDied();

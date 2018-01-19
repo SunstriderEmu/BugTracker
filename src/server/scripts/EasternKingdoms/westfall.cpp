@@ -105,7 +105,7 @@ public:
             complete = false;
         }
     
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             if (_playerGUID && !complete)
             {

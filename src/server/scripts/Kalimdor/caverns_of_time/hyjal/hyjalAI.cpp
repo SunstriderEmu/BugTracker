@@ -949,7 +949,7 @@ void hyjalAI::SetData(uint32 type, uint32 data, Unit* setter)
     Wipe = true;
 }
 
-void hyjalAI::JustDied(Unit* killer)
+void hyjalAI::JustDied(Unit* /*killer*/)
 {
     if(IsDummy)return;
     me->Respawn();

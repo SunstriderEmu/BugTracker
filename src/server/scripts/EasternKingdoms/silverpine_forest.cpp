@@ -314,7 +314,7 @@ public:
             }
         }
     
-        void JustDied(Unit* pKiller) override
+        void JustDied(Unit* /*pKiller*/) override
         {
             if (PlayerGUID)
             {

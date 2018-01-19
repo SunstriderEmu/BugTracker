@@ -86,7 +86,7 @@ public:
                 pInstance->SetData(TYPE_MEKGINEER_STEAMRIGGER, NOT_STARTED);
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             DoScriptText(SAY_DEATH, me);
     

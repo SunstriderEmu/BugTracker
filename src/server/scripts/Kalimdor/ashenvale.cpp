@@ -144,7 +144,7 @@ public:
             summoned->AI()->AttackStart(me);
         }
     
-        void JustDied(Unit* killer) override
+        void JustDied(Unit* /*killer*/) override
         {
             if (_playerGUID && !Completed)
             {
@@ -271,7 +271,7 @@ public:
             summoned->AI()->AttackStart(me);
         }
     
-        void JustDied(Unit* killer) override
+        void JustDied(Unit* /*killer*/) override
         {
             if (_playerGUID)
             {
@@ -439,7 +439,7 @@ public:
             m_completed = false;
         }
     
-        void JustDied(Unit* pKiller) override
+        void JustDied(Unit* /*pKiller*/) override
         {
             Player* pPlayer = GetPlayerForEscort();
             if (HasEscortState(STATE_ESCORT_ESCORTING) && !m_completed)
@@ -611,7 +611,7 @@ public:
             tauntedSatyr = false;
         }
         
-        void JustDied(Unit* killer) override
+        void JustDied(Unit* /*killer*/) override
         {
             Player* player = GetPlayerForEscort();
             if (HasEscortState(STATE_ESCORT_ESCORTING)) {

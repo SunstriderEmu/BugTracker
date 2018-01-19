@@ -96,7 +96,7 @@ public:
                 summoned->GetThreatManager().AddThreat(target,0.0f);
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             DoScriptText(SAY_DEATH, me);
         }

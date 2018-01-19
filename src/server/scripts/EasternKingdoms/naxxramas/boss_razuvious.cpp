@@ -91,7 +91,7 @@ public:
             }
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             DoPlaySoundToSet(me, SOUND_DEATH);
         }

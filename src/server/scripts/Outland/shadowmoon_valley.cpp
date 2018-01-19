@@ -1238,7 +1238,7 @@ public:
                else error_log("TSCR ERROR: Coilskar Assassin couldn't be summmoned");
            }
     
-           void JustDied(Unit* killer)
+           void JustDied(Unit* /*killer*/)
            override {
                if (_playerGUID && !Completed)
                {
@@ -1811,16 +1811,16 @@ public:
         override {
             if(slayer)
                 switch(slayer->GetTypeId())
-            {
-                case TYPEID_UNIT:
-                    if((slayer->ToCreature())->IsPet() && ((Pet*)slayer)->GetOwner()->GetTypeId() == TYPEID_PLAYER)
-                        ((Pet*)slayer)->GetOwner()->ToPlayer()->GroupEventHappens(QUEST_BATTLE_OF_THE_CRIMSON_WATCH, me);
-                    break;
+                {
+                    case TYPEID_UNIT:
+                        if((slayer->ToCreature())->IsPet() && ((Pet*)slayer)->GetOwner()->GetTypeId() == TYPEID_PLAYER)
+                            ((Pet*)slayer)->GetOwner()->ToPlayer()->GroupEventHappens(QUEST_BATTLE_OF_THE_CRIMSON_WATCH, me);
+                        break;
     
-                case TYPEID_PLAYER:
-                    (slayer->ToPlayer())->GroupEventHappens(QUEST_BATTLE_OF_THE_CRIMSON_WATCH, me);
-                    break;
-            }
+                    case TYPEID_PLAYER:
+                        (slayer->ToPlayer())->GroupEventHappens(QUEST_BATTLE_OF_THE_CRIMSON_WATCH, me);
+                        break;
+                }
     
             if(Creature* LordIllidan = (ObjectAccessor::GetCreature(*me, LordIllidanGUID)))
             {
@@ -1897,7 +1897,7 @@ public:
     
         void JustEngagedWith(Unit *who)override {}
     
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             // always spawn spirit on death
             // if totem around

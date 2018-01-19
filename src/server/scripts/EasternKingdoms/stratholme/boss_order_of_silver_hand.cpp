@@ -114,7 +114,7 @@ public:
                         pInstance->SetData(TYPE_SH_VICAR, 2);
                         break;
                 }
-                if(pInstance->GetData(TYPE_SH_QUEST) && Killer->GetTypeId() == TYPEID_PLAYER) {
+                if(Killer && pInstance->GetData(TYPE_SH_QUEST) && Killer->GetTypeId() == TYPEID_PLAYER) {
                     if (Group *pGroup = (Killer->ToPlayer())->GetGroup()) {
                         for(GroupReference *itr = pGroup->GetFirstMember(); itr != nullptr; itr = itr->next()) {
                             Player* pGroupie = itr->GetSource();

@@ -56,7 +56,7 @@ public:
         override {
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             me->SummonCreature(12238,28.067,61.875,-123.405,4.67,TEMPSUMMON_TIMED_DESPAWN,600000);
         }

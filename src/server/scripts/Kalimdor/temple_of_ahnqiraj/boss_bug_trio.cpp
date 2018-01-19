@@ -69,7 +69,7 @@ public:
             VemDead = false;
         }
     
-        void JustDied(Unit* Killer) override
+        void JustDied(Unit* /*Killer*/) override
         {
             if(pInstance)
             {
@@ -188,7 +188,7 @@ public:
             Enraged = false;
         }
     
-        void JustDied(Unit* Killer) override
+        void JustDied(Unit* /*Killer*/) override
         {
             if(pInstance)
             {
@@ -281,7 +281,7 @@ public:
             Death = false;
         }
     
-        void JustDied(Unit* killer) override
+        void JustDied(Unit* /*killer*/) override
         {
             if(pInstance)
             {

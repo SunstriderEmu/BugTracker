@@ -204,7 +204,7 @@ public:
             CheckLootable();
         }
 
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
             override {
             DoScriptText(SAY_DEATH, me);
 
@@ -388,7 +388,7 @@ struct boss_priestess_guestAI : public ScriptedAI
             ((boss_priestess_delrissa::boss_priestess_delrissaAI*)Delrissa->AI())->SetAddsInCombat(who);
     }
 
-    void JustDied(Unit* killer)
+    void JustDied(Unit* /*killer*/)
     override {
         if(!pInstance)
         {

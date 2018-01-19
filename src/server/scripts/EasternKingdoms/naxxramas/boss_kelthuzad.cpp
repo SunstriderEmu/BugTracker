@@ -213,7 +213,7 @@ public:
                 DoScriptText(SAY_SLAY2, me);
         }
     
-        void JustDied(Unit* Killer) override
+        void JustDied(Unit* /*Killer*/) override
         {
             DoScriptText(SAY_DEATH, me);
             for (ObjectGuid i : GuardiansOfIcecrown)

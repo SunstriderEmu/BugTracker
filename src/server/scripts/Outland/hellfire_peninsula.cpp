@@ -418,7 +418,7 @@ public:
             pSummoned->AI()->AttackStart(me);
         }
     
-        void JustDied(Unit* pKiller)
+        void JustDied(Unit* /*pKiller*/)
         override {
             if (!HasEscortState(STATE_ESCORT_ESCORTING))
                 return;
@@ -1545,7 +1545,7 @@ public:
             }
         }
     
-        void JustDied(Unit* pWho)
+        void JustDied(Unit* /*pWho*/)
         override {
             if (Creature* pColonel = me->FindNearestCreature(NPC_COLONEL_JULES, 15.0f, true))
             {
@@ -1644,7 +1644,7 @@ public:
             }
         }
         
-        void JustDied(Unit* pWho)
+        void JustDied(Unit* /*pWho*/)
         override {
             me->RemoveCorpse();
         }
@@ -1720,7 +1720,7 @@ public:
         
         void JustEngagedWith(Unit* who) override {}
         
-        void JustDied(Unit* pWho)
+        void JustDied(Unit* /*pWho*/)
         override {
             me->RemoveCorpse();
         }

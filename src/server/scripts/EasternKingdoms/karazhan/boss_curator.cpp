@@ -100,8 +100,8 @@ class boss_curator : public CreatureScript
             DoZoneInCombat();
         }
 
-        void DamageTaken(Unit* /*attacker*/, uint32& /*damage*/)
-        override {
+        void DamageTaken(Unit* /*attacker*/, uint32& /*damage*/) override 
+        {
             if(me->HealthBelowPct(15) && !_infused)
             {
                 _infused = true;

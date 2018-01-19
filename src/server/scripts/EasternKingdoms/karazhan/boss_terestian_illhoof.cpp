@@ -82,7 +82,7 @@ public:
                 Terestian->GetThreatManager().AddThreat(who, 1.0f);
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             if(pInstance)
             {

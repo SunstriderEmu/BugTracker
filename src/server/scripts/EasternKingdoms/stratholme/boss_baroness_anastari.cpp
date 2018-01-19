@@ -58,7 +58,7 @@ public:
             //Possess_Timer = 35000;
         }
     
-         void JustDied(Unit* Killer) override
+         void JustDied(Unit* /*Killer*/) override
          {
              if (pInstance)
                  pInstance->SetData(TYPE_BARONESS,IN_PROGRESS);

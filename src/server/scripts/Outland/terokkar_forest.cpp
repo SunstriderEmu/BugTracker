@@ -95,31 +95,31 @@ public:
     
         void DamageTaken(Unit *done_by, uint32 &damage)
         override {
-            if( done_by->GetTypeId() == TYPEID_PLAYER )
+            if(done_by && done_by->GetTypeId() == TYPEID_PLAYER )
                 if( (me->GetHealth()-damage)*100 / me->GetMaxHealth() < 30 )
-            {
-                if( Group* pGroup = (done_by->ToPlayer())->GetGroup() )
                 {
-                    for(GroupReference *itr = pGroup->GetFirstMember(); itr != nullptr; itr = itr->next())
+                    if( Group* pGroup = (done_by->ToPlayer())->GetGroup() )
                     {
-                        Player *pGroupie = itr->GetSource();
-                        if( pGroupie &&
-                            (pGroupie->GetQuestStatus(QUEST_DONTKILLTHEFATONE) == QUEST_STATUS_INCOMPLETE ||
-                            pGroupie->GetReqKillOrCastCurrentCount(QUEST_DONTKILLTHEFATONE, 18260) == 10 ))
+                        for(GroupReference *itr = pGroup->GetFirstMember(); itr != nullptr; itr = itr->next())
                         {
-                            pGroupie->AreaExploredOrEventHappens(QUEST_DONTKILLTHEFATONE);
-                            if( !CanDoQuest )
-                                CanDoQuest = true;
+                            Player *pGroupie = itr->GetSource();
+                            if( pGroupie &&
+                                (pGroupie->GetQuestStatus(QUEST_DONTKILLTHEFATONE) == QUEST_STATUS_INCOMPLETE ||
+                                pGroupie->GetReqKillOrCastCurrentCount(QUEST_DONTKILLTHEFATONE, 18260) == 10 ))
+                            {
+                                pGroupie->AreaExploredOrEventHappens(QUEST_DONTKILLTHEFATONE);
+                                if( !CanDoQuest )
+                                    CanDoQuest = true;
+                            }
                         }
+                    } else
+                    if( (done_by->ToPlayer())->GetQuestStatus(QUEST_DONTKILLTHEFATONE) == QUEST_STATUS_INCOMPLETE ||
+                        (done_by->ToPlayer())->GetReqKillOrCastCurrentCount(QUEST_DONTKILLTHEFATONE, 18260) == 10 )
+                    {
+                        (done_by->ToPlayer())->AreaExploredOrEventHappens(QUEST_DONTKILLTHEFATONE);
+                        CanDoQuest = true;
                     }
-                } else
-                if( (done_by->ToPlayer())->GetQuestStatus(QUEST_DONTKILLTHEFATONE) == QUEST_STATUS_INCOMPLETE ||
-                    (done_by->ToPlayer())->GetReqKillOrCastCurrentCount(QUEST_DONTKILLTHEFATONE, 18260) == 10 )
-                {
-                    (done_by->ToPlayer())->AreaExploredOrEventHappens(QUEST_DONTKILLTHEFATONE);
-                    CanDoQuest = true;
                 }
-            }
         }
     
         void UpdateAI(const uint32 diff)
@@ -216,7 +216,7 @@ public:
     
         void DamageTaken(Unit *done_by, uint32 &damage)
         override {
-            if (done_by->GetTypeId() == TYPEID_PLAYER)
+            if (done_by && done_by->GetTypeId() == TYPEID_PLAYER)
                 if (me->GetHealth() <= damage)
                     if (rand()%100 < 75)
                         //Summon Lots of Wood Mights
@@ -259,7 +259,7 @@ public:
     
         void JustDied(Unit* Killer)
         override {
-            if( Killer->GetTypeId() == TYPEID_PLAYER )
+            if(Killer && Killer->GetTypeId() == TYPEID_PLAYER)
             {
                 if( (Killer->ToPlayer())->GetQuestStatus(10873) == QUEST_STATUS_INCOMPLETE )
                 {
@@ -533,7 +533,7 @@ public:
     
         void JustEngagedWith(Unit* who)override {}
     
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             if (_playerGUID)
             {

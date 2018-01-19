@@ -96,7 +96,7 @@ public:
                 Talk(SAY_AGGRO);
         }
 
-        /* LK only
+#ifdef LICH_KING
         void DamageTaken(Unit* attacker, uint32& damage) override
         {
             if (me->HealthBelowPctDamaged(40, damage) && !HasCastIceblock)
@@ -105,7 +105,7 @@ public:
                 HasCastIceblock = true;
             }
         }
-        */
+#endif
 
         void UpdateAI(uint32 diff) override
         {

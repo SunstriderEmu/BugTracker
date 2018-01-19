@@ -77,7 +77,7 @@ public:
                 me->SetDisplayId(15733);
         }
     
-        void JustDied(Unit* Victim) override
+        void JustDied(Unit* /*Victim*/) override
         {
             summons.DespawnAll();
         }

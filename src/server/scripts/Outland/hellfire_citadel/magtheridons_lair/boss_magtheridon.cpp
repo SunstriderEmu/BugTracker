@@ -278,7 +278,7 @@ public:
             DoScriptText(SAY_PLAYER_KILLED, me);
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             if(pInstance)
                 pInstance->SetData(DATA_MAGTHERIDON_EVENT, DONE);

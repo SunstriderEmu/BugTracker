@@ -131,7 +131,7 @@ public:
             DoScriptText(RAND(SAY_PLAYERKILL_1, SAY_PLAYERKILL_2), me);
         }
         
-        void JustDied(Unit* pKiller)
+        void JustDied(Unit* /*pKiller*/)
         override {
             DoScriptText(SAY_DEATH, me);
             

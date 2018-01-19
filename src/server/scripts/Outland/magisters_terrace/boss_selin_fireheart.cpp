@@ -233,7 +233,7 @@ public:
             }
         }
     
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             DoScriptText(SAY_DEATH, me);
     
@@ -359,7 +359,7 @@ public:
         void MoveInLineOfSight(Unit* who) override {}
         void UpdateAI(const uint32 diff) override {}
     
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             me->RemoveAurasDueToSpell(SPELL_MANA_RAGE);
             if(InstanceScript* pInstance = ((InstanceScript*)me->GetInstanceScript()))

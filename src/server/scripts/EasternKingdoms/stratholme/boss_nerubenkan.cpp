@@ -66,7 +66,7 @@ public:
         override {
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             if (pInstance)
                 pInstance->SetData(TYPE_NERUB,IN_PROGRESS);

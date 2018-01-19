@@ -146,7 +146,7 @@ public:
     
         void JustDied(Unit* Killer)
         override {
-            if (Killer->GetEntry() == me->GetEntry())
+            if (Killer && Killer->GetEntry() == me->GetEntry())
                 return;
     
             DoScriptText(SAY_DEATH, me);

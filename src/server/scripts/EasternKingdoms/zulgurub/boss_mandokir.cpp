@@ -305,7 +305,7 @@ public:
     
         void JustEngagedWith(Unit *who) override {}
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             if(pInstance)
                 pInstance->SetData(DATA_OHGAN_DEATH, 0);

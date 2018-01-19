@@ -200,7 +200,7 @@ public:
                         me->RemoveAurasDueToSpell(SPELL_WARLORDS_RAGE_PROC);
         }
     
-        void JustDied(Unit* Killer)
+        void JustDied(Unit* /*Killer*/)
         override {
             DoScriptText(SAY_DEATH, me);
     

@@ -47,9 +47,9 @@ public:
     
         void DamageTaken(Unit* done_by, uint32& damage) override
         {
-            if (done_by->GetTypeId() == TYPEID_PLAYER)
+            if (done_by && done_by->GetTypeId() == TYPEID_PLAYER)
                 attackers[done_by->GetGUID()] = 8000;
-            else if (done_by->ToCreature() && done_by->ToCreature()->IsPet()) {
+            else if (done_by && done_by->ToCreature() && done_by->ToCreature()->IsPet()) {
                 if (Unit* owner = done_by->ToCreature()->GetOwner())
                     attackers[owner->GetGUID()] = 8000;
             }

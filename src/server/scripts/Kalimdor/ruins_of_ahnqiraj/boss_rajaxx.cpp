@@ -175,7 +175,7 @@ public:
                 instance->SetData(DATA_RAJAXX_EVENT, NOT_STARTED);
         }
         
-        void JustDied(Unit* killer)
+        void JustDied(Unit* /*killer*/)
         override {
             Talk(TALK_DEATH);
         }
