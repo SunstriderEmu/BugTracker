@@ -50,13 +50,6 @@ EndScriptData */
 #define SAY_FREE                -1548019
 #define SAY_DEATH               -1548020
 
-class InsidiousAura : public Aura {
-public:
-    InsidiousAura(SpellInfo *spell, uint32 eff, int32 *bp, Unit *target, Unit *caster) : Aura(spell, eff, bp, target, caster, nullptr)
-    {}
-};
-
-
 class mob_inner_demon : public CreatureScript
 {
 public:
@@ -83,7 +76,7 @@ public:
         void JustDied(Unit *victim)
             override {
             Unit* pUnit = ObjectAccessor::GetUnit((*me), victimGUID);
-            if (pUnit && pUnit->HasAuraEffect(SPELL_INSIDIOUS_WHISPER, 0))
+            if (pUnit && pUnit->HasAura(SPELL_INSIDIOUS_WHISPER))
                 pUnit->RemoveAurasDueToSpell(SPELL_INSIDIOUS_WHISPER);
         }
 
@@ -469,7 +462,7 @@ public:
                     if(SwitchToDemon_Timer < diff)
                     {
                         //switch to demon form
-                        me->RemoveAurasDueToSpell(SPELL_WHIRLWIND,nullptr);
+                        me->RemoveAurasDueToSpell(SPELL_WHIRLWIND);
                         me->SetUInt32Value(UNIT_FIELD_DISPLAYID, MODEL_DEMON);
                         DoScriptText(SAY_SWITCH_TO_DEMON, me);
                         me->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_DISPLAY  , 0);
@@ -509,24 +502,20 @@ public:
                     std::list<Unit*> targetList;
                     SelectTargetList(targetList, 5, SELECT_TARGET_RANDOM, 0, 100.0f);
                     
-                    SpellInfo *spell = (SpellInfo *)sSpellMgr->GetSpellInfo(SPELL_INSIDIOUS_WHISPER);
-                    for(auto & itr : targetList)
+                    for(auto & randomTarget : targetList)
                     {
-                        if( itr && itr->IsAlive() )
+                        if(randomTarget && randomTarget->IsAlive() )
                         {
-                            Creature * demon = me->ToCreature()->SummonCreature(INNER_DEMON_ID, itr->GetPositionX()+10, itr->GetPositionY()+10, itr->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
+                            Creature * demon = me->ToCreature()->SummonCreature(INNER_DEMON_ID, randomTarget->GetPositionX()+5, randomTarget->GetPositionY()+5, randomTarget->GetPositionZ()+1, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                             if(demon)
                             {
-                                ((ScriptedAI *)demon->AI())->AttackStart( itr );
-                                ((mob_inner_demon::mob_inner_demonAI *)demon->AI())->victimGUID = itr->GetGUID();
+                                demon->EngageWithTarget(randomTarget);
+                                ((mob_inner_demon::mob_inner_demonAI *)demon->AI())->victimGUID = randomTarget->GetGUID();
     
-                                for (int i=0; i<3; i++)
-                                {
-                                    if (!spell->Effects[i].Effect)
-                                        continue;
-                                    itr->AddAura(new InsidiousAura(spell, i, nullptr, itr, itr));
-                                }
-                                if( InnderDemon_Count > 4 ) InnderDemon_Count = 0;
+                                demon->CastSpell(randomTarget, SPELL_INSIDIOUS_WHISPER, true);
+
+                                if( InnderDemon_Count > 4 ) 
+                                    InnderDemon_Count = 0;
     
                                 //Safe storing of creatures
                                 InnderDemon[InnderDemon_Count] = demon->GetGUID();

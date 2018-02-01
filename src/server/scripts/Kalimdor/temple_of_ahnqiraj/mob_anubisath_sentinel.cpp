@@ -1,18 +1,3 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /* ScriptData
 SDName: mob_anubisath_sentinel
@@ -66,24 +51,6 @@ class NearbyAQSentinel
         }
     private:
         Unit const* i_obj;
-};
-
-struct aqsentinelAI;
-class SentinelAbilityAura : public Aura
-{
-    public:
-        ~SentinelAbilityAura() override;
-        Unit* GetTriggerTarget() const;
-        SentinelAbilityAura(Creature* abilityOwner, SpellInfo *spell, uint32 ability, uint32 eff);
-    protected:
-        Creature* aOwner;
-        int32 currentBasePoints;
-        uint32 abilityId;
-};
-
-enum AQSentinelMessage
-{
-    MESSAGE_GET_HATED_MANA_USER,
 };
 
 class mob_anubisath_sentinel : public CreatureScript
@@ -248,14 +215,7 @@ public:
     
         void GainSentinelAbility(uint32 id)
         {
-            const SpellInfo *spell = sSpellMgr->GetSpellInfo(id);
-            for (int i=0; i<3; i++)
-            {
-                if (!spell->Effects[i].Effect)
-                    continue;
-                auto a = new SentinelAbilityAura(me, (SpellInfo *)spell, id, i);
-                me->AddAura(a);
-            }
+            me->AddAura(id, me);
             if (id == SPELL_KNOCK_BUFF)
             {
                 me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_TAUNT, true);
@@ -287,20 +247,6 @@ public:
                 ((mob_anubisath_sentinel::aqsentinelAI*)sent->AI())->GainSentinelAbility(ability);
             }
         }
-    
-        uint64 message(uint32 id, uint64 data) override
-        {
-            if (id == MESSAGE_GET_HATED_MANA_USER)
-            {
-                for (auto const& pair : me->GetCombatManager().GetPvECombatRefs())
-                {
-                    Unit* target = pair.second->GetOther(me);
-                    if (target->GetPowerType() == POWER_MANA)
-                        return target->GetGUID();
-                }
-            }
-            return 0;
-        }
     };
 
     CreatureAI* GetAI(Creature* creature) const override
@@ -314,40 +260,3 @@ void AddSC_mob_anubisath_sentinel()
 {
     new mob_anubisath_sentinel();
 }
-
-SentinelAbilityAura::~SentinelAbilityAura() {}
-Unit* SentinelAbilityAura::GetTriggerTarget() const
-{
-    switch (abilityId)
-    {
-        case SPELL_KNOCK_BUFF:
-        case SPELL_THUNDER_BUFF:
-        case SPELL_MSTRIKE_BUFF:
-        case SPELL_STORM_BUFF:
-            return aOwner->GetVictim();
-        case SPELL_MANAB_BUFF:
-        {
-            if (!aOwner->AI())
-                return nullptr;
-
-            ObjectGuid guid = ObjectGuid(aOwner->AI()->message(MESSAGE_GET_HATED_MANA_USER, 0));
-            Unit* target = ObjectAccessor::GetUnit(*aOwner, guid);
-            return target;
-        }
-        case SPELL_MENDING_BUFF:
-        case SPELL_REFLECTAF_BUFF:
-        case SPELL_REFLECTSFr_BUFF:
-        case SPELL_THORNS_BUFF:
-        default:
-            return aOwner;
-    }
-}
-
-SentinelAbilityAura::SentinelAbilityAura(Creature* abilityOwner, SpellInfo *spell, uint32 ability, uint32 eff)
-: Aura(spell, eff, nullptr, abilityOwner, abilityOwner, nullptr)
-{
-    aOwner = abilityOwner;
-    abilityId = ability;
-    currentBasePoints = 0;
-}
-

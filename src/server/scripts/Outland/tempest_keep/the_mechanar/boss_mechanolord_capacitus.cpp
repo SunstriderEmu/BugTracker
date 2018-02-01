@@ -158,14 +158,14 @@ public:
                 if (target->GetTypeId() == TYPEID_PLAYER && target->IsAlive())
                 {
                     // Remove charges related auras first
-                    if (target->HasAuraEffect(SPELL_POSITIVE_CHARGE))
+                    if (target->HasAura(SPELL_POSITIVE_CHARGE))
                         target->RemoveAurasDueToSpell(SPELL_POSITIVE_CHARGE);
-                    else if (target->HasAuraEffect(SPELL_NEGATIVE_CHARGE))
+                    else if (target->HasAura(SPELL_NEGATIVE_CHARGE))
                         target->RemoveAurasDueToSpell(SPELL_NEGATIVE_CHARGE);
                         
-                    if (target->HasAuraEffect(SPELL_POSCHARGE_INCDMG))
+                    if (target->HasAura(SPELL_POSCHARGE_INCDMG))
                         target->RemoveAurasDueToSpell(SPELL_POSCHARGE_INCDMG);
-                    else if (target->HasAuraEffect(SPELL_NEGCHARGE_INCDMG))
+                    else if (target->HasAura(SPELL_NEGCHARGE_INCDMG))
                         target->RemoveAurasDueToSpell(SPELL_NEGCHARGE_INCDMG);
                         
                     target->CastSpell(target, RAND(SPELL_POSITIVE_CHARGE, SPELL_NEGATIVE_CHARGE), TRIGGERED_FULL_MASK);     // Random : positive or negative
@@ -184,14 +184,14 @@ public:
             for(const auto & player : players)
             {
                 if (Player* target = player.GetSource()) {
-                    if (target->HasAuraEffect(SPELL_POSITIVE_CHARGE))
+                    if (target->HasAura(SPELL_POSITIVE_CHARGE))
                         target->RemoveAurasDueToSpell(SPELL_POSITIVE_CHARGE);
-                    else if (target->HasAuraEffect(SPELL_NEGATIVE_CHARGE))
+                    else if (target->HasAura(SPELL_NEGATIVE_CHARGE))
                         target->RemoveAurasDueToSpell(SPELL_NEGATIVE_CHARGE);
                         
-                    if (target->HasAuraEffect(SPELL_POSCHARGE_INCDMG))
+                    if (target->HasAura(SPELL_POSCHARGE_INCDMG))
                         target->RemoveAurasDueToSpell(SPELL_POSCHARGE_INCDMG);
-                    else if (target->HasAuraEffect(SPELL_NEGCHARGE_INCDMG))
+                    else if (target->HasAura(SPELL_NEGCHARGE_INCDMG))
                         target->RemoveAurasDueToSpell(SPELL_NEGCHARGE_INCDMG);
                 }
             }
@@ -218,29 +218,29 @@ public:
                                 Player* pGroupGuy = groupItr->GetSource();
                                 
                                 if (pGroupGuy && pGroupGuy->GetGUID() != plr->GetGUID() && pGroupGuy->GetDistance(plr) <= 10) {   // Check distance
-                                    if (plr->HasAuraEffect(SPELL_POSITIVE_CHARGE) && pGroupGuy->HasAuraEffect(SPELL_POSITIVE_CHARGE)) {         // Same charge, positive
+                                    if (plr->HasAura(SPELL_POSITIVE_CHARGE) && pGroupGuy->HasAura(SPELL_POSITIVE_CHARGE)) {         // Same charge, positive
                                         deserveModDmg = true;
-                                        if (!pGroupGuy->HasAuraEffect(SPELL_POSCHARGE_INCDMG))        // Only apply if players hasn't it already (don't need to have a player with +500% damage lol)
+                                        if (!pGroupGuy->HasAura(SPELL_POSCHARGE_INCDMG))        // Only apply if players hasn't it already (don't need to have a player with +500% damage lol)
                                             plr->AddAura(SPELL_POSCHARGE_INCDMG, pGroupGuy);
                                     }
-                                    else if (plr->HasAuraEffect(SPELL_NEGATIVE_CHARGE) && pGroupGuy->HasAuraEffect(SPELL_NEGATIVE_CHARGE)) {    // Same charge, negative
+                                    else if (plr->HasAura(SPELL_NEGATIVE_CHARGE) && pGroupGuy->HasAura(SPELL_NEGATIVE_CHARGE)) {    // Same charge, negative
                                         deserveModDmg = true;
-                                        if (!pGroupGuy->HasAuraEffect(SPELL_NEGCHARGE_INCDMG))        // Only apply if players hasn't it already
+                                        if (!pGroupGuy->HasAura(SPELL_NEGCHARGE_INCDMG))        // Only apply if players hasn't it already
                                             plr->AddAura(SPELL_NEGCHARGE_INCDMG, pGroupGuy);
                                     }
                                     
-                                    if (plr->HasAuraEffect(SPELL_POSITIVE_CHARGE) && pGroupGuy->HasAuraEffect(SPELL_NEGATIVE_CHARGE)) {         // Different charges, plr has +
+                                    if (plr->HasAura(SPELL_POSITIVE_CHARGE) && pGroupGuy->HasAura(SPELL_NEGATIVE_CHARGE)) {         // Different charges, plr has +
                                         plr->CastSpell(plr, SPELL_POSCHARGE_DAMAGE, TRIGGERED_FULL_MASK);
                                     }
-                                    else if (plr->HasAuraEffect(SPELL_NEGATIVE_CHARGE) && pGroupGuy->HasAuraEffect(SPELL_POSITIVE_CHARGE)) {    // Different charges, plr has -
+                                    else if (plr->HasAura(SPELL_NEGATIVE_CHARGE) && pGroupGuy->HasAura(SPELL_POSITIVE_CHARGE)) {    // Different charges, plr has -
                                         plr->CastSpell(plr, SPELL_NEGCHARGE_DAMAGE, TRIGGERED_FULL_MASK);
                                     }
                                 }
                                 
                                 if (pGroupGuy && !deserveModDmg) {      // You don't deserve +100% damage aura !
-                                    if (pGroupGuy->HasAuraEffect(SPELL_NEGCHARGE_INCDMG))
+                                    if (pGroupGuy->HasAura(SPELL_NEGCHARGE_INCDMG))
                                         pGroupGuy->RemoveAurasDueToSpell(SPELL_NEGCHARGE_INCDMG);
-                                    else if (pGroupGuy->HasAuraEffect(SPELL_POSCHARGE_INCDMG))
+                                    else if (pGroupGuy->HasAura(SPELL_POSCHARGE_INCDMG))
                                         pGroupGuy->RemoveAurasDueToSpell(SPELL_POSCHARGE_INCDMG);
                                 }
                             }

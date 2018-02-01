@@ -2087,9 +2087,9 @@ public:
                 return;
                 
             //HACK: If a warlock ban a Flame of Azzinoth, remove ban aura 
-            if (me->HasAuraEffect(710))
+            if (me->HasAura(710))
                 me->RemoveAurasDueToSpell(710);
-            if(me->HasAuraEffect(18647))
+            if(me->HasAura(18647))
                 me->RemoveAurasDueToSpell(18647);
     
             if(FlameBlastTimer < diff)

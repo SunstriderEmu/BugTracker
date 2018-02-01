@@ -184,7 +184,7 @@ public:
                             if (Water == WATERSTATE_SCALDING)
                             {
 
-                                if (!pPlayer->HasAuraEffect(SPELL_SCALDINGWATER))
+                                if (!pPlayer->HasAura(SPELL_SCALDINGWATER))
                                 {
                                     pPlayer->CastSpell(pPlayer, SPELL_SCALDINGWATER, TRIGGERED_FULL_MASK);
                                 }

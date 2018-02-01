@@ -299,7 +299,7 @@ public:
         override {
             if (pWho->GetTypeId() == TYPEID_PLAYER)
             {
-                if (pWho->HasAuraEffect(36904))
+                if (pWho->HasAura(36904))
                 {
                     DoScriptText(SAY_DARANELLE, me, pWho);
                     //TODO: Move the below to updateAI and run if this statement == true
@@ -592,7 +592,7 @@ public:
             
             Player *plr = reinterpret_cast<Player*>(pWho);
             if (plr->GetQuestStatus(QUEST_WHISPERS_RAVEN_GOD) == QUEST_STATUS_INCOMPLETE) {
-                if (plr->HasAuraEffect(37642))
+                if (plr->HasAura(37642))
                     plr->KilledMonsterCredit(me->GetEntry(), me->GetGUID());
             }
         }
@@ -2381,7 +2381,7 @@ public:
             else
                 felFlamesTimer -= diff;
                 
-            if (me->IsBelowHPPercent(50) && !me->HasAuraEffect(SPELL_ENRAGE))
+            if (me->IsBelowHPPercent(50) && !me->HasAura(SPELL_ENRAGE))
                 DoCast(me, SPELL_ENRAGE);
                 
             DoMeleeAttackIfReady();

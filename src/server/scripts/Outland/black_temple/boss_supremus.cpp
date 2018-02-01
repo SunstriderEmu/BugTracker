@@ -113,10 +113,10 @@ public:
             for(auto cGUID : summons)
             {
                 Creature* volcano = me->GetMap()->GetCreature(cGUID);
-                if(volcano && volcano->HasAuraEffect(SPELL_VOLCANIC_ERUPTION, 0))
-                    volcano->RemoveAura(SPELL_VOLCANIC_ERUPTION, 0); //remove visual
-                if(volcano && volcano->HasAuraEffect(SPELL_VOLCANIC_GEYSER,0))
-                    volcano->RemoveAura(SPELL_VOLCANIC_GEYSER,0); //remove damage effect
+                if(volcano && volcano->HasAura(SPELL_VOLCANIC_ERUPTION))
+                    volcano->RemoveAura(SPELL_VOLCANIC_ERUPTION); //remove visual
+                if(volcano && volcano->HasAura(SPELL_VOLCANIC_GEYSER))
+                    volcano->RemoveAura(SPELL_VOLCANIC_GEYSER); //remove damage effect
             }
         }
     
@@ -308,9 +308,15 @@ public:
             if(!supremus) 
                 return;
             
-            Unit* currentTarget;
-            if( !(currentTarget = supremus->AI()->SelectTarget(SELECT_TARGET_RANDOM, 0, 20.0f, 100.0f, true)) ) //take target between 20 and 100 yards
-                currentTarget = supremus->AI()->SelectTarget(SELECT_TARGET_RANDOM, 0, 0.0f, 100.0f, true); //if not target found, skip minimum limit
+            Unit* currentTarget = SelectTarget(SELECT_TARGET_RANDOM, 0, [&](Unit* target) {  //take target between 20 and 100 yards
+                return target->IsAlive()
+                    && target->GetTypeId() == TYPEID_PLAYER
+                    && me->IsWithinCombatRange(target, 100.0f)
+                    && !me->IsWithinCombatRange(target, 20.0f);
+            });
+
+            if(!currentTarget)
+                currentTarget = supremus->AI()->SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true); //if not target found, skip minimum limit
     
             if(currentTarget)
             {

@@ -356,8 +356,44 @@ public:
     };
 };
 
+class spell_black_temple_curse_of_the_bleakheart : public SpellScriptLoader
+{
+public:
+    spell_black_temple_curse_of_the_bleakheart() : SpellScriptLoader("spell_black_temple_curse_of_the_bleakheart") { }
+
+    class spell_black_temple_curse_of_the_bleakheart_AuraScript : public AuraScript
+    {
+        PrepareAuraScript(spell_black_temple_curse_of_the_bleakheart_AuraScript);
+
+        void CalcPeriodic(AuraEffect const* /*effect*/, bool& isPeriodic, int32& amplitude)
+        {
+            isPeriodic = true;
+            amplitude = 5000;
+        }
+
+        void Update(AuraEffect const* effect)
+        {
+            PreventDefaultAction();
+            if (roll_chance_i(20))
+                GetUnitOwner()->CastSpell(GetUnitOwner(), SPELL_CHEST_PAINS, true);
+        }
+
+        void Register()
+        {
+            DoEffectCalcPeriodic += AuraEffectCalcPeriodicFn(spell_black_temple_curse_of_the_bleakheart_AuraScript::CalcPeriodic, EFFECT_0, SPELL_AURA_DUMMY);
+            OnEffectPeriodic += AuraEffectPeriodicFn(spell_black_temple_curse_of_the_bleakheart_AuraScript::Update, EFFECT_0, SPELL_AURA_DUMMY);
+        }
+    };
+
+    AuraScript* GetAuraScript() const
+    {
+        return new spell_black_temple_curse_of_the_bleakheart_AuraScript();
+    }
+};
+
 void AddSC_instance_black_temple()
 {
     new instance_black_temple();
+    new spell_black_temple_curse_of_the_bleakheart();
 }
 

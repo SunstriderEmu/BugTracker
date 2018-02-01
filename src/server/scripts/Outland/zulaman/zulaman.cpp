@@ -563,7 +563,7 @@ public:
             } else MightyBlowTimer -= diff;
             
             if (me->GetHealth() <= me->GetMaxHealth()/5.0f) {   // Cast Frenzy at 20% health
-                if (!me->HasAuraEffect(SPELL_FRENZY))
+                if (!me->HasAura(SPELL_FRENZY))
                     DoCast(me, SPELL_FRENZY, true);
             }
             

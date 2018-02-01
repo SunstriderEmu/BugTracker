@@ -91,7 +91,7 @@ public:
         
         void MoveInLineOfSight(Unit* pWho)
         override {
-            if (me->GetDistance(pWho) < 100.0f && pWho->HasAuraEffect(SPELL_MARK_DEATH))
+            if (me->GetDistance(pWho) < 100.0f && pWho->HasAura(SPELL_MARK_DEATH))
                 Unit::Kill(me, pWho);
         }
     
@@ -139,7 +139,7 @@ public:
     
                 //remove enrage before casting earthquake because enrage + earthquake = 16000dmg over 8sec and all dead
                 if (InEnrage)
-                    me->RemoveAura(SPELL_ENRAGE, 0);
+                    me->RemoveAura(SPELL_ENRAGE);
     
                 DoCast(me,SPELL_EARTHQUAKE);
                 Quake_Timer = 30000 + rand()%25000;

@@ -185,7 +185,7 @@ public:
                     {
                         if (Player* plr = player.GetSource())
                         {
-                            if (plr->HasAuraEffect(SPELL_FOG_CHARM))
+                            if (plr->HasAura(SPELL_FOG_CHARM))
                                 plr->CastSpell(plr, SPELL_SOUL_SEVER, TRIGGERED_FULL_MASK);
                         }
                     }
@@ -626,7 +626,7 @@ public:
                         events.CancelEvent(EVENT_ENCAPS_WARN);
                         break;
                     case EVENT_BERSERK:
-                        if (!me->HasAuraEffect(SPELL_BERSERK))
+                        if (!me->HasAura(SPELL_BERSERK))
                         {
                             DoScriptText(YELL_BERSERK, me);
                             me->CastSpell(me, SPELL_BERSERK, TRIGGERED_FULL_MASK);

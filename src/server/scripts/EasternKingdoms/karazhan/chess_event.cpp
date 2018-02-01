@@ -1287,7 +1287,7 @@ public:
 
         virtual bool GossipHello(Player* player) override
         {
-            if (player->HasAuraEffect(SPELL_RECENTLY_INGAME))
+            if (player->HasAura(SPELL_RECENTLY_INGAME))
                 return true;
 
             if (!pInstance)

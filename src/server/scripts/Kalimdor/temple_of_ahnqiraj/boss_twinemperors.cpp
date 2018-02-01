@@ -396,15 +396,6 @@ struct boss_twinemperorsAI : public ScriptedAI
     }
 };
 
-class BugAura : public Aura
-{
-    public:
-        BugAura(SpellInfo *spell, uint32 eff, int32 *bp, Unit *target, Unit *caster) : Aura(spell, eff, bp, target, caster, nullptr)
-            {}
-};
-
-
-
 class boss_veknilash : public CreatureScript
 {
 public:
@@ -441,13 +432,7 @@ public:
         override {
             target->SetFaction(FACTION_MONSTER);
             ((CreatureAI*)target->AI())->AttackStart(me->GetVictim());
-            SpellInfo *spell = (SpellInfo *)sSpellMgr->GetSpellInfo(SPELL_MUTATE_BUG);
-            for (int i=0; i<3; i++)
-            {
-                if (!spell->Effects[i].Effect)
-                    continue;
-                target->AddAura(new BugAura(spell, i, nullptr, target, target));
-            }
+            me->AddAura(SPELL_MUTATE_BUG, target);
             target->SetHealth(target->GetMaxHealth());
         }
     
@@ -538,13 +523,7 @@ public:
         void CastSpellOnBug(Creature *target)
         override {
             target->SetFaction(FACTION_MONSTER);
-            SpellInfo *spell = (SpellInfo *)sSpellMgr->GetSpellInfo(SPELL_EXPLODEBUG);
-            for (int i=0; i<3; i++)
-            {
-                if (!spell->Effects[i].Effect)
-                    continue;
-                target->AddAura(new BugAura(spell, i, nullptr, target, target));
-            }
+            me->AddAura(SPELL_EXPLODEBUG, target);
             target->SetHealth(target->GetMaxHealth());
         }
     

@@ -3,6 +3,7 @@
 #include "def_the_eye.h"
 #include "WorldPacket.h"
 #include "Opcodes.h"
+#include "SpellAuraEffects.h"
 
 //BUGS:
 /* BUGS:
@@ -776,12 +777,7 @@ class spell_kaelthas_remote_toy : public SpellScriptLoader
             {
                 PreventDefaultAction();
                 if (roll_chance_i(66))
-                {
-                    CastSpellExtraArgs args;
-                    args.SetTriggerFlags(TRIGGERED_FULL_MASK);
-                    args.SetOriginalCaster(aurEff->GetCasterGUID());
-                    GetUnitOwner()->CastSpell(GetUnitOwner(), SPELL_REMOTE_TOY_STUN, args);
-                }
+                    GetUnitOwner()->CastSpell(GetUnitOwner(), SPELL_REMOTE_TOY_STUN, aurEff->GetCasterGUID());
             }
 
             void Register()
@@ -805,7 +801,7 @@ class spell_kaelthas_summon_weapons : public SpellScriptLoader
         {
             PrepareSpellScript(spell_kaelthas_summon_weapons_SpellScript);
 
-            void HandleScriptEffect(SpellEffIndex effIndex) 
+            void HandleScriptEffect(SpellEffIndex effIndex, int32& /*damage*/)
             {
                 PreventHitEffect(effIndex);
                 for (uint32 i = SPELL_SUMMON_WEAPONA; i <= SPELL_SUMMON_WEAPONG; ++i)
@@ -974,7 +970,7 @@ class spell_kaelthas_gravity_lapse : public SpellScriptLoader
                 return true;
             }
 
-            void HandleScriptEffect(SpellEffIndex effIndex)
+            void HandleScriptEffect(SpellEffIndex effIndex, int32& /*damage*/)
             {
                 PreventHitEffect(effIndex);
                 if (_currentSpellId < SPELL_GRAVITY_LAPSE_TELEPORT1+25)
@@ -1009,7 +1005,7 @@ class spell_kaelthas_nether_beam : public SpellScriptLoader
         {
             PrepareSpellScript(spell_kaelthas_nether_beam_SpellScript);
 
-            void HandleScriptEffect(SpellEffIndex effIndex)
+            void HandleScriptEffect(SpellEffIndex effIndex, int32& /*damage*/)
             {
                 PreventHitEffect(effIndex);
                                    
@@ -1047,7 +1043,7 @@ class spell_kaelthas_summon_nether_vapor : public SpellScriptLoader
         {
             PrepareSpellScript(spell_kaelthas_summon_nether_vapor_SpellScript);
 
-            void HandleScriptEffect(SpellEffIndex effIndex)
+            void HandleScriptEffect(SpellEffIndex effIndex, int32& /*damage*/)
             {
                 PreventHitEffect(effIndex);
                 for (uint32 i = 0; i < 5; ++i)

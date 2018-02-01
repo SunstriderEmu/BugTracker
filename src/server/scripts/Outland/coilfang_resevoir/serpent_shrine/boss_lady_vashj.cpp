@@ -127,14 +127,6 @@ float ShieldGeneratorChannelPos[4][4] =
     {49.3126f, -943.398f, 42.5501f, 2.40174f}
 };
 
-//Lady Vashj AI
-class VashjSurgeAura : public Aura
-{
-    public:
-        VashjSurgeAura(SpellInfo *spell, uint32 eff, int32 *bp, Unit *target, Unit *caster) : Aura(spell, eff, bp, target, caster, nullptr)
-        {}
-};
-
 class boss_lady_vashj : public CreatureScript
 {
 public:
@@ -851,18 +843,8 @@ public:
                     me->GetMotionMaster()->MovePoint(0, MIDDLE_X, MIDDLE_Y, MIDDLE_Z);
                     if(me->GetDistance(MIDDLE_X, MIDDLE_Y, MIDDLE_Z) < 3)
                     {
-                        SpellInfo *spell = (SpellInfo *)sSpellMgr->GetSpellInfo(SPELL_SURGE);
-                        if( spell )
-                        {
-                            for(uint32 i = 0;i<3;i++)
-                            {
-                                if (!spell->Effects[i].Effect)
-                                    continue;
-    
-                                Vashj->AddAura(new VashjSurgeAura(spell, i, nullptr, Vashj, Vashj));
-                            }
-                        }
-                        me->KillSelf();
+                        me->CastSpell(Vashj, SPELL_SURGE, true);
+                        me->KillSelf(); //spell should already kill us
                     }
                 }
                 if(((boss_lady_vashj::boss_lady_vashjAI*)(Vashj->ToCreature())->AI())->InCombat == false || ((boss_lady_vashj::boss_lady_vashjAI*)(Vashj->ToCreature())->AI())->Phase != 2 || Vashj->IsDead())

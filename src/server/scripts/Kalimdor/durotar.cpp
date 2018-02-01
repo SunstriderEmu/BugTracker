@@ -58,7 +58,7 @@ public:
         void MovementInform(uint32, uint32 id)
         override {
             if (id == 0) {
-                if (!me->HasAuraEffect(SPELL_BUFF_SLEEP))
+                if (!me->HasAura(SPELL_BUFF_SLEEP))
                     DoCast(me, SPELL_BUFF_SLEEP);
                 workCount = 0;
             }

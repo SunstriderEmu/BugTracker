@@ -54,7 +54,7 @@ public:
         
         void SpellHit(Unit* who, const SpellInfo*)
         override {
-            if (who->HasAuraEffect(SPELL_MARK_OF_FROST) && !who->HasAuraEffect(SPELL_AURA_OF_FROST))
+            if (who->HasAura(SPELL_MARK_OF_FROST) && !who->HasAura(SPELL_AURA_OF_FROST))
                 who->CastSpell(me, SPELL_AURA_OF_FROST, TRIGGERED_FULL_MASK);
         }
 

@@ -80,7 +80,7 @@ public:
             if (pInstance->GetData(TYPE_MEDIVH) == IN_PROGRESS)
                 me->CastSpell(me,SPELL_CHANNEL, TRIGGERED_FULL_MASK);
             else if (me->HasAuraEffect(SPELL_CHANNEL,0))
-                me->RemoveAura(SPELL_CHANNEL,0);
+                me->RemoveAura(SPELL_CHANNEL);
     
             me->CastSpell(me,SPELL_PORTAL_RUNE, TRIGGERED_FULL_MASK);
         }
@@ -232,8 +232,8 @@ public:
                         DoScriptText(SAY_WIN, me);
                         Check_Timer = 0;
                         
-                        if (me->HasAuraEffect(SPELL_CHANNEL,0))
-                            me->RemoveAura(SPELL_CHANNEL,0);
+                        if (me->HasAura(SPELL_CHANNEL))
+                            me->RemoveAura(SPELL_CHANNEL);
                             
                         //TODO: start the post-event here
                         pInstance->SetData(TYPE_MEDIVH, DONE);

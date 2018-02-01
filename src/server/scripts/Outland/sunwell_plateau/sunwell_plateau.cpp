@@ -490,7 +490,7 @@ public:
                 cleaveTimer -= diff;
                 
             if (meltArmorTimer <= diff) {
-                if (!me->GetVictim()->HasAuraEffect(SPELL_MELT_ARMOR)) {
+                if (!me->GetVictim()->HasAura(SPELL_MELT_ARMOR)) {
                     DoCast(me->GetVictim(), SPELL_MELT_ARMOR);
                 }
                 meltArmorTimer = 10000+rand()%5000;

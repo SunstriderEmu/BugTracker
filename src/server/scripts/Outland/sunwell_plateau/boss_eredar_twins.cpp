@@ -410,7 +410,12 @@ public:
                 uint32 lifeTime = 10000+rand()%2000;
                 for(int i = 0; i < 3; i++)
                 {
-                    target = SelectTarget(SELECT_TARGET_RANDOM, 1, 10.0f, 50.0f, true);
+                    target = SelectTarget(SELECT_TARGET_RANDOM, 1, [&](Unit* target) {  //take target between 10 and 50 yards
+                        return target->IsAlive()
+                            && target->GetTypeId() == TYPEID_PLAYER
+                            && me->IsWithinCombatRange(target, 50.0f)
+                            && !me->IsWithinCombatRange(target, 10.0f);
+                    });
                     if (!target)
                         target = SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0, true);
                     summon = DoSpawnCreature(MOB_SHADOW_IMAGE, 0, 0, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, lifeTime);
@@ -648,7 +653,7 @@ public:
     
         void UpdateAI(const uint32 diff)
         override {
-            if(!me->HasAuraEffect(SPELL_IMAGE_VISUAL))
+            if(!me->HasAura(SPELL_IMAGE_VISUAL))
                 DoCast(me, SPELL_IMAGE_VISUAL);
     
             switch(type)

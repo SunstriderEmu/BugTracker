@@ -46,12 +46,6 @@ float VoidPortalCoords[5][3] =
     {-261.4533f, -297.3298f, 17.1f}
 };
 
-class EmpoweringShadowsAura: public Aura
-{
-    public:
-        EmpoweringShadowsAura(SpellInfo *spell, uint32 eff, int32 *bp, Unit *target, Unit *caster) : Aura(spell, eff, bp, target, caster, nullptr) {}
-};
-
 class mob_voidtraveler : public CreatureScript
 {
 public:
@@ -91,12 +85,10 @@ public:
             {
                 if(sacrificed)
                 {
-                    SpellInfo *spell = (SpellInfo *)sSpellMgr->GetSpellInfo(HeroicMode?H_SPELL_EMPOWERING_SHADOWS:SPELL_EMPOWERING_SHADOWS);
-                    if( spell )
-                        Vorpil->AddAura(new EmpoweringShadowsAura(spell, 0, nullptr, Vorpil, me));
-                    Vorpil->SetHealth(Vorpil->GetHealth()+Vorpil->GetMaxHealth()/25);
+                    uint32 spellId = HeroicMode ? H_SPELL_EMPOWERING_SHADOWS : SPELL_EMPOWERING_SHADOWS;
+                    me->CastSpell(Vorpil, spellId);
                     DoCast(me, SPELL_SHADOW_NOVA, true);
-                    me->KillSelf();
+                    me->KillSelf(); //spell should already kill us
                     return;
                 }
                 me->GetMotionMaster()->MoveFollow(Vorpil,0,0);

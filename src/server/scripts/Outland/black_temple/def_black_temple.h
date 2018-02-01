@@ -39,5 +39,10 @@ enum eTypes
     DATA_RELIQUARY_OF_SOULS         = 28
 };
 
+enum MiscIds
+{
+    SPELL_CHEST_PAINS = 41356,
+};
+
 #endif
 

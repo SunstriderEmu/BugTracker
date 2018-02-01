@@ -218,9 +218,9 @@ public:
         virtual bool GossipHello(Player* pPlayer) override
         {
             Creature* screecher = nullptr;
-            if (screecher = me->FindNearestCreature(5307, 2.0f, false))
+            if ((screecher = me->FindNearestCreature(5307, 2.0f, false)))
                 screecher->RemoveCorpse();
-            else if (screecher = me->FindNearestCreature(5308, 2.0f, false))
+            else if ((screecher = me->FindNearestCreature(5308, 2.0f, false)))
                 screecher->RemoveCorpse();
 
             pPlayer->SEND_GOSSIP_MENU_TEXTID(2039, me->GetGUID() );

@@ -97,7 +97,7 @@ public:
 
         bool GossipHello(Player* player) override
         {
-            if (player->HasAuraEffect(SPELL_SPECTRAL_EXHAUSTION))
+            if (player->HasAura(SPELL_SPECTRAL_EXHAUSTION))
                 player->GetSession()->SendNotification(GO_FAILED);
             else {
                 player->CastSpell(player, SPELL_SPECTRAL_REALM_TELEPORT, TRIGGERED_FULL_MASK);
@@ -106,7 +106,7 @@ public:
                     player->AddAura(SPELL_SPECTRAL_REALM_AURA, player->GetPet());
                 }
                 player->RemoveAurasDueToSpell(SPELL_ARCANE_BUFFET);
-                if (player->HasAuraEffect(SPELL_SPECTRAL_EXHAUSTION)) {
+                if (player->HasAura(SPELL_SPECTRAL_EXHAUSTION)) {
                     player->RemoveAurasDueToSpell(SPELL_SPECTRAL_EXHAUSTION);    // FIXME: If this happens, this is a bug.
                     TC_LOG_ERROR("scripts", "Sunwell Plateau/Kalecgos: Spectral Blast target (guid %u) had Spectral exhaustion when teleported VIA PORTAL!", player->GetGUID().GetCounter());
                 }
@@ -499,7 +499,7 @@ public:
             for(i = PlayerList.begin(); i != PlayerList.end(); ++i)
                 if(Player* i_pl = i->GetSource()) {
                     i_pl->RemoveAurasDueToSpell(SPELL_AGONY_CURSE);
-                    if(i_pl->HasAuraEffect(SPELL_SPECTRAL_REALM_AURA))
+                    if(i_pl->HasAura(SPELL_SPECTRAL_REALM_AURA))
                         i_pl->RemoveAurasDueToSpell(SPELL_SPECTRAL_REALM_AURA);
                 }
         }
@@ -527,7 +527,7 @@ public:
             }
                 
             // If tank has not the aura anymore, maybe he was teleported back -> start attack on Kalecgos human form
-            if (me->GetVictim()->GetTypeId() == TYPEID_PLAYER && !me->GetVictim()->HasAuraEffect(SPELL_SPECTRAL_REALM_AURA)) {
+            if (me->GetVictim()->GetTypeId() == TYPEID_PLAYER && !me->GetVictim()->HasAura(SPELL_SPECTRAL_REALM_AURA)) {
                 if(KalecGUID) {
                     if(Unit* Kalec = ObjectAccessor::GetUnit(*me, KalecGUID))
                         me->AI()->AttackStart(Kalec);
@@ -577,7 +577,7 @@ public:
     
             if(ResetThreat < diff)
             {
-                if (( me->GetVictim()->HasAuraEffect(SPELL_SPECTRAL_EXHAUSTION)) && (me->GetVictim()->GetTypeId() == TYPEID_PLAYER))
+                if (( me->GetVictim()->HasAura(SPELL_SPECTRAL_EXHAUSTION)) && (me->GetVictim()->GetTypeId() == TYPEID_PLAYER))
                     me->GetThreatManager().ClearThreat(me->GetVictim());
 
                 ResetThreat = 1000;
@@ -839,7 +839,7 @@ public:
             for(i = PlayerList.begin(); i != PlayerList.end(); ++i)
                 if(Player* i_pl = i->GetSource()) {
                     i_pl->RemoveAurasDueToSpell(SPELL_AGONY_CURSE);
-                    if(i_pl->HasAuraEffect(SPELL_SPECTRAL_REALM_AURA))
+                    if(i_pl->HasAura(SPELL_SPECTRAL_REALM_AURA))
                         i_pl->RemoveAurasDueToSpell(SPELL_SPECTRAL_REALM_AURA);
                 }
         }
@@ -920,7 +920,7 @@ class spell_kalecgos_spectral_blast : public SpellScript
         targets.remove_if(SpectralBlastSelector(GetCaster()));
     }
 
-    void HandleDummy(SpellEffIndex /*effIndex*/)
+    void HandleDummy(SpellEffIndex /*effIndex*/, int32& /*damage*/)
     {
         Unit* caster = GetCaster();
         Unit* target = GetHitUnit();
@@ -938,7 +938,7 @@ class spell_kalecgos_spectral_blast : public SpellScript
         }
         caster->GetThreatManager().ModifyThreatByPercent(target, -100);  // Reset threat so Kalecgos does not follow the player in spectral realm :)
         target->RemoveAurasDueToSpell(SPELL_ARCANE_BUFFET); // FIXME: I'm not sure this is blizzlike
-        if (target->HasAuraEffect(SPELL_SPECTRAL_EXHAUSTION)) {
+        if (target->HasAura(SPELL_SPECTRAL_EXHAUSTION)) {
             target->RemoveAurasDueToSpell(SPELL_SPECTRAL_EXHAUSTION);    // FIXME: If this happens, this is a bug.
             TC_LOG_ERROR("scripts", "Sunwell Plateau/Kalecgos: Spectral Blast target (guid %u) had Spectral exhaustion when teleported!", target->GetGUID().GetCounter());
         }
@@ -967,7 +967,7 @@ class spell_kalecgos_spectral_realm_trigger : public SpellScript
         });
     }
 
-    void HandleDummy(SpellEffIndex /*effIndex*/)
+    void HandleDummy(SpellEffIndex /*effIndex*/, int32& /*damage*/)
     {
         Unit* target = GetHitUnit();
         target->CastSpell(target, SPELL_SPECTRAL_REALM_TELEPORT, true);

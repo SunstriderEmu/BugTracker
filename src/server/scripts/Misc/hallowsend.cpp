@@ -57,7 +57,7 @@ public:
             if (!caster->ToPlayer())
                 return false;
                 
-            if (!me->HasAuraEffect(42074))
+            if (!me->HasAura(42074))
                 return false;
     
             if (spellId == 42339) {
@@ -467,7 +467,7 @@ public:
         bool sOnDummyEffect(Unit* caster, uint32 spellId, uint32 effIndex)
         override {
             if (spellId == SPELL_THROW_FLAME) {
-                if (me->HasAuraEffect(SPELL_FIRE_SMOKE))
+                if (me->HasAura(SPELL_FIRE_SMOKE))
                     me->RemoveAurasDueToSpell(SPELL_FIRE_SMOKE);
     
                 stackCount++;
@@ -489,7 +489,7 @@ public:
                     DoCast(me, SPELL_FIRE_SMOKE);
                 }
                 else
-                    me->RemoveSingleAuraFromStack(SPELL_FIRE_GROW, 0);
+                    me->RemoveSingleAuraFromStack(SPELL_FIRE_GROW);
             }
             
             return true;
@@ -497,7 +497,7 @@ public:
         
         void UpdateAI(uint32 const diff)
         override {
-            if (!me->HasAuraEffect(SPELL_FIRE))
+            if (!me->HasAura(SPELL_FIRE))
                 return;
             
             if (checkEventTimer <= diff) {

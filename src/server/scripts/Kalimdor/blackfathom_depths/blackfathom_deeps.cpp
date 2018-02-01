@@ -17,7 +17,7 @@ public:
 
         bool GossipHello(Player* p) override
         {
-            if (!p->HasAuraEffect(SPELL_BLESSING_OF_BLACKFATHOM))
+            if (!p->HasAura(SPELL_BLESSING_OF_BLACKFATHOM))
                 p->AddAura(SPELL_BLESSING_OF_BLACKFATHOM, p);
             return true;
         }

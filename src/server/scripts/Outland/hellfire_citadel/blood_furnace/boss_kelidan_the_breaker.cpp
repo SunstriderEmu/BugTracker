@@ -47,13 +47,6 @@ const float ShadowmoonChannelers[5][4]=
     {316,-109.0f,-24.6f,1.257f}
 };
 
-class BurningNovaAura : public Aura
-{
-    public:
-        BurningNovaAura(SpellInfo *spell, uint32 eff, Unit *target, Unit *caster) : Aura(spell, eff, nullptr, target, caster, nullptr){}
-};
-
-
 class boss_kelidan_the_breaker : public CreatureScript
 {
 public:
@@ -106,7 +99,7 @@ public:
         
         void MoveInLineOfSight(Unit* who) override 
         {
-            if (me->HasAuraEffect(SPELL_EVOCATION))
+            if (me->HasAura(SPELL_EVOCATION))
                 return;
         }
     
@@ -236,7 +229,7 @@ public:
     
             if (Corruption_Timer < diff)
             {
-                DoCast(me,SPELL_CORRUPTION);
+                DoCastSelf(SPELL_CORRUPTION);
                 Corruption_Timer = 30000+rand()%20000;
             }else Corruption_Timer -=diff;
     
@@ -247,15 +240,7 @@ public:
     
                 DoScriptText(SAY_NOVA, me);
     
-                if(SpellInfo *nova = (SpellInfo*)sSpellMgr->GetSpellInfo(SPELL_BURNING_NOVA))
-                {
-                    for(uint32 i = 0; i < 3; ++i)
-                        if(nova->Effects[i].Effect == SPELL_EFFECT_APPLY_AURA)
-                        {
-                            Aura *Aur = new BurningNovaAura(nova, i, me, me);
-                            me->AddAura(Aur);
-                        }
-                }
+                DoCastSelf(SPELL_BURNING_NOVA);
     
                 if (HeroicMode)
                     DoTeleportAll(me->GetPositionX(),me->GetPositionY(),me->GetPositionZ(),me->GetOrientation());

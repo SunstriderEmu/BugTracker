@@ -575,7 +575,7 @@ public:
         void SpellHitTarget(Unit* unit, const SpellInfo* spell)
         override {
             if (spell->Id == SPELL_CONFLAGRATION) {
-                if (unit->HasAuraEffect(SPELL_CONFLAGRATION))
+                if (unit->HasAura(SPELL_CONFLAGRATION))
                     SaySound(SAY_CONFLAGRATION,unit);
             }
         }
@@ -669,7 +669,7 @@ public:
                     me->CastSpell(Head, SPELL_FLYING_HEAD, TRIGGERED_FULL_MASK);
                     DoCast(me, SPELL_CONFUSE, false);                     //test
                     if(doneBy)
-                        doneBy->ProcSkillsAndAuras(me, PROC_FLAG_KILL_AND_GET_XP, PROC_FLAG_KILLED, PROC_HIT_NONE, 0);
+                        Unit::ProcSkillsAndAuras(doneBy, me, PROC_FLAG_KILL, PROC_FLAG_NONE, PROC_SPELL_TYPE_MASK_ALL, PROC_SPELL_PHASE_NONE, PROC_HIT_NONE, nullptr, nullptr, nullptr);
                     whirlwind = 4000 + (rand()%5)*IN_MILLISECONDS;
                     regen = 0;
                 }

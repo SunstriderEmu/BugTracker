@@ -106,7 +106,7 @@ public:
                 }
         }
     
-        void JustDied(Unit */*victim*/)
+        void JustDied(Unit* /*victim*/)
         override {
             DoScriptText(SAY_DEATH, me);
         }

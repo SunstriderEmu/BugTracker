@@ -267,7 +267,7 @@ class Boss_Lurker_Below : public CreatureScript
                         if (!UpdateVictim(false)) //false to avoid boss reseting when all targets are out of rang
                         {
                             //Update Victim may return false if we got no melee target... we don't want to evade in that case; Only evade when threat list is empty
-                            if (!me->GetThreatManager().IsEngaged() || !me->_IsTargetAcceptable(me->GetVictim()) || !me->CanCreatureAttack(me->GetVictim()) == CAN_ATTACK_RESULT_OK)
+                            if (!me->GetThreatManager().IsEngaged() || !me->_IsTargetAcceptable(me->GetVictim()) || me->CanCreatureAttack(me->GetVictim()) != CAN_ATTACK_RESULT_OK)
                             {
                                 EnterEvadeMode(EvadeReason::EVADE_REASON_OTHER);
                                 return;

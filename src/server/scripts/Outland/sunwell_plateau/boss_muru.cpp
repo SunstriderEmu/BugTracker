@@ -201,7 +201,7 @@ public:
                 switch (phase)
                 {
                     case 0:
-                        me->RemoveAura(SPELL_BLACKHOLE_SPAWN2, 1);
+                        me->RemoveAura(SPELL_BLACKHOLE_SPAWN2);
                         me->CastSpell((Unit*)nullptr, SPELL_BLACKHOLE_VISUAL2, TRIGGERED_FULL_MASK);
                         me->ClearUnitState(UNIT_STATE_STUNNED);
                         DoZoneInCombat();
@@ -1317,7 +1317,7 @@ class npc_berserker : public CreatureScript
 
             if (FuryTimer <= diff)
             {
-                if (!me->HasAuraEffect(SPELL_FLURRY))
+                if (!me->HasAura(SPELL_FLURRY))
                 {
                     me->InterruptNonMeleeSpells(false);
                     me->CastSpell(me, SPELL_FLURRY, TRIGGERED_NONE);
@@ -1403,7 +1403,7 @@ class npc_mage : public CreatureScript
 
             if (FuryTimer <= diff)
             {
-                if (!me->HasAuraEffect(SPELL_SPELL_FURY))
+                if (!me->HasAura(SPELL_SPELL_FURY))
                 {
                     me->InterruptNonMeleeSpells(false);
                     me->CastSpell(me, SPELL_SPELL_FURY, TRIGGERED_NONE);

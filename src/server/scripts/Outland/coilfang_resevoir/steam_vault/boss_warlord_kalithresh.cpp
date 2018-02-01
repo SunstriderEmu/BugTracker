@@ -215,7 +215,7 @@ public:
     
             if (Rage_Timer < diff)
             {
-                if (Aura* aur = me->GetAura(36453, 0))
+                if (Aura* aur = me->GetAura(36453))
                 {
                     if (aur->GetStackAmount() < 10)
                     {

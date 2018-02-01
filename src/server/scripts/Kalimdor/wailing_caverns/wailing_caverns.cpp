@@ -210,8 +210,8 @@ public:
                                 me->ClearUnitState(UNIT_STATE_ROOT);
                                 DoScriptText(SAY_CAVERNS_PURIFIED, me);
                                 pInstance->SetData(TYPE_NARALEX_PART2, DONE);
-                                if (me->HasAuraEffect(SPELL_SERPENTINE_CLEANSING))
-                                    me->RemoveAura(SPELL_SERPENTINE_CLEANSING, 0);
+                                if (me->HasAura(SPELL_SERPENTINE_CLEANSING))
+                                    me->RemoveAura(SPELL_SERPENTINE_CLEANSING);
                             }
                         break;
                         case TYPE_NARALEX_PART3:
@@ -275,8 +275,8 @@ public:
                                 eventTimer = 3000;
                                 if (Creature* naralex = pInstance->instance->GetCreature(ObjectGuid(pInstance->GetData64(DATA_NARALEX))))
                                 {
-                                    if (me->HasAuraEffect(SPELL_NARALEXS_AWAKENING))
-                                        me->RemoveAura(SPELL_NARALEXS_AWAKENING, 0);
+                                    if (me->HasAura(SPELL_NARALEXS_AWAKENING))
+                                        me->RemoveAura(SPELL_NARALEXS_AWAKENING);
                                     naralex->SetStandState(UNIT_STAND_STATE_STAND);
                                     DoScriptText(SAY_I_AM_AWAKE, naralex);
                                 }

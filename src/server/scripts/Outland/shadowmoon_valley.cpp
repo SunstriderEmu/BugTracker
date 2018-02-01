@@ -2115,7 +2115,7 @@ public:
         void UpdateAI(uint32 const diff)
         override {
             if (Creature *pTarget = me->FindNearestCreature(21207, 30.0f)) {
-                if (!pTarget->HasAuraEffect(36384))
+                if (!pTarget->HasAura(36384))
                     DoCast(pTarget, 36384);
             }
         }

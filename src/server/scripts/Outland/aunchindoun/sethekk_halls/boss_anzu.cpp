@@ -52,7 +52,7 @@ public:
             hasSummoned66 = false;
             hasSummoned33 = false;
             
-            if (me->HasAuraEffect(SPELL_BANISH))
+            if (me->HasAura(SPELL_BANISH))
                 me->RemoveAurasDueToSpell(SPELL_BANISH);
                 
             _Reset();
@@ -63,7 +63,7 @@ public:
             if (!UpdateVictim())
                 return;
                 
-            if (me->HasAuraEffect(SPELL_BANISH))
+            if (me->HasAura(SPELL_BANISH))
                 return;
                 
             if (chargeTimer <= diff) 

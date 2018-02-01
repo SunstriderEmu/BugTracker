@@ -1,0 +1,1 @@
+UPDATE spell_template_override SET customAttributesFlags = 0 WHERE category IS NOT NULL AND dispel IS NOT NULL AND mechanic IS NOT NULL AND attributes IS NOT NULL AND customAttributesFlags IS NULL;

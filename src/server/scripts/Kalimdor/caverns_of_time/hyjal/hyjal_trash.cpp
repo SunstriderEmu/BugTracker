@@ -159,7 +159,7 @@ hyjal_trashAI::hyjal_trashAI(Creature *c) : EscortAI(c), cannibalism(false)
 
 void hyjal_trashAI::DamageTaken(Unit *done_by, uint32 &damage)
 {
-    if(done_by && done_by->GetTypeId() == TYPEID_PLAYER || (done_by->GetTypeId() == TYPEID_UNIT && (done_by->ToCreature())->IsPet()))
+    if(done_by && (done_by->GetTypeId() == TYPEID_PLAYER || (done_by->GetTypeId() == TYPEID_UNIT && done_by->ToCreature()->IsPet())))
     {
         damageTaken += damage;
         if(pInstance)

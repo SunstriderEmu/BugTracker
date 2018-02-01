@@ -131,10 +131,10 @@ struct DragonOfNightmareAI_template : public ScriptedAI
             {
                 //DoCast(unit,SPELL_AURA_OF_NATURE_STUN,true);
                 unit->CastSpell(unit,SPELL_AURA_OF_NATURE_STUN, TRIGGERED_FULL_MASK);
-                unit->RemoveAura(SPELL_MARK_OF_NATURE,0,nullptr);
+                unit->RemoveAura(SPELL_MARK_OF_NATURE);
 
                 if(me->GetDistance2d(unit->GetPositionX(),unit->GetPositionY())>100)
-                    DoCast(unit,SPELL_TELEPORT_IN_FRONT,true);
+                    DoCast(unit, SPELL_TELEPORT_IN_FRONT, true);
             }
         }
         return;
@@ -737,7 +737,8 @@ public:
         }
         
         void Reset()
-        override {
+        override 
+        {
             resetShadesPointer();
             // reset phase
             lowHpYellLeft = 1;
@@ -747,7 +748,7 @@ public:
             SCDBellowingGroar->resetAtStart();
             SCDBanish->resetAtStart();
             
-            me->RemoveAurasDueToSpellByCancel(SPELL_BANISH_TAERAR);
+            me->RemoveAurasDueToSpell(SPELL_BANISH_TAERAR);
             DragonOfNightmareAI_template::Reset();
         }
         
@@ -771,7 +772,7 @@ public:
             {
                 if(SCDBanish->CheckAndUpdate(diff) || checkIfAllShadesAreDead())
                 {
-                    me->RemoveAurasDueToSpellByCancel(SPELL_BANISH_TAERAR);
+                    me->RemoveAurasDueToSpell(SPELL_BANISH_TAERAR);
                     SCDBanish->resetAtStart();
                     isBanished = false;
                 }

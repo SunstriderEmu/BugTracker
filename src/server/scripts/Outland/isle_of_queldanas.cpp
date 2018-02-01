@@ -248,7 +248,7 @@ public:
             if(!pCaster)
                 return;
     
-            if(pCaster->GetTypeId() == TYPEID_PLAYER && spell->Id == ORB && !me->HasAuraEffect(ENRAGE))
+            if(pCaster->GetTypeId() == TYPEID_PLAYER && spell->Id == ORB && !me->HasAura(ENRAGE))
             {
                 PlayerGUID = pCaster->GetGUID();
                 if(PlayerGUID)

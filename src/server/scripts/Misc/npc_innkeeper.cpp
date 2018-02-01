@@ -57,7 +57,7 @@ public:
             if (me->IsQuestGiver())
                 player->PrepareQuestMenu( me->GetGUID() );
 
-            if (isHalloweenEventActive()&& !player->GetAura(SPELL_TRICK_OR_TREATED,0))
+            if (isHalloweenEventActive()&& !player->GetAura(SPELL_TRICK_OR_TREATED))
             {
                 char const* localizedEntry;
                 switch (player->GetSession()->GetSessionDbcLocale())
@@ -83,7 +83,7 @@ public:
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
-            if (action == GOSSIP_ACTION_INFO_DEF+HALLOWEEN_EVENTID && isHalloweenEventActive() && !player->GetAura(SPELL_TRICK_OR_TREATED,0))
+            if (action == GOSSIP_ACTION_INFO_DEF+HALLOWEEN_EVENTID && isHalloweenEventActive() && !player->GetAura(SPELL_TRICK_OR_TREATED))
             {
                 player->CLOSE_GOSSIP_MENU();
                 player->CastSpell(player, SPELL_TRICK_OR_TREATED, TRIGGERED_FULL_MASK);

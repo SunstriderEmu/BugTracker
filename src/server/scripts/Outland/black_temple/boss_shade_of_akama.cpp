@@ -130,11 +130,7 @@ enum AkamaMessages {
     MESSAGE_SHADE_DIED,
 };
 
-
-
 struct npc_akamaAI;
-
-
 
 class boss_shade_of_akama : public CreatureScript
 {
@@ -173,7 +169,7 @@ public:
         {
             // InCombat stays true -- TODO: InCombat variable has been removed, this is probably broken
             waitingForReset = true;
-            me->RemoveAllAurasExcept(SPELL_VERTEX_SHADE_BLACK);
+            me->RemoveAllAurasExceptType(SPELL_AURA_DUMMY); //keep SPELL_VERTEX_SHADE_BLACK
             me->GetThreatManager().ClearAllThreat();
             me->CombatStop();
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -234,7 +230,8 @@ public:
                 akama->AI()->message(AkamaMessages::MESSAGE_SHADE_DIED,0);
     
             summons.DespawnAll();
-            if(pInstance) pInstance->SetData(DATA_SHADEOFAKAMAEVENT, DONE);
+            if(pInstance) 
+                pInstance->SetData(DATA_SHADEOFAKAMAEVENT, DONE);
         }
     
         void JustSummoned(Creature *summon) 
@@ -306,7 +303,7 @@ public:
                 Sorcerer->AI()->message(ChannelerMessages::MESSAGE_SHADE_GUID,me->GetGUID());
                 Sorcerer->SetGuidValue(UNIT_FIELD_TARGET, me->GetGUID());
                 channelers.push_back(Sorcerer->GetGUID());
-                //avoir channelers packing
+                //avoid channelers packing
                 /*
                 float x,y,z;
                 Sorcerer->GetRandomContactPoint(me,x,y,z,0,20.0f);
@@ -350,12 +347,12 @@ public:
             {
                 Unit* unit = pair.second->GetOther(me);
                 if(Player* p = unit->ToPlayer())
-                    p->RewardReputation(akama,1.0f);
+                    p->RewardReputation(akama, 1.0f);
             }
         }
     
-        uint64 message(uint32 id, uint64 data)
-        override {
+        uint64 message(uint32 id, uint64 data) override 
+        {
             switch(id)
             {
             case MESSAGE_SELECTABLE_CHANNELERS:
@@ -372,11 +369,8 @@ public:
             return 0;
         }
     
-        void UpdateAI(const uint32 diff)
-        override {
-            if(!me->IsInCombat())
-                return;
-    
+        void UpdateAI(const uint32 diff) override 
+        {
             if(waitingForReset)
             {
                 if(waitingForResetTimer < diff)
@@ -387,8 +381,11 @@ public:
                 return;
             }
     
-            if(isBanished)
+            if(isBanished && pInstance)
             {
+                if (pInstance->GetData(DATA_SHADEOFAKAMAEVENT) != IN_PROGRESS)
+                    return;
+
                 if(defenderTimer < diff)
                 {
                     SummonDefender();
@@ -458,27 +455,13 @@ public:
             return 0;     
         }
     
-        bool HasMyStack(Creature* c)
+        bool ShadeHasMyStack(Creature* c)
         {
-            Aura* myStack = c->GetAuraByCasterSpell(SPELL_SHADE_SOUL_CHANNEL,me->GetGUID());
+            Aura* myStack = c->GetAura(SPELL_SHADE_SOUL_CHANNEL, me->GetGUID());
             if(myStack)
                 return true;
             else
                 return false;
-        }
-    
-        void RemoveMyStackIfAny(Creature* shade)
-        {
-            Aura* myStack = shade->GetAuraByCasterSpell(SPELL_SHADE_SOUL_CHANNEL,me->GetGUID());
-            if(myStack)
-                myStack->SetRemoveMode(AURA_REMOVE_BY_DEFAULT);
-        }
-    
-        void JustDied(Unit* /* killer */)
-        override {
-            Creature* shade = me->GetMap()->GetCreature(shadeGUID);
-            if(shade)
-                RemoveMyStackIfAny(shade);
         }
     
         void AttackStart(Unit* /* who */) override {}
@@ -496,11 +479,10 @@ public:
                 if(!shade)
                     return;
     
-                if(HasMyStack(shade) && me->IsNonMeleeSpellCast(false))
+                if(ShadeHasMyStack(shade) && me->IsNonMeleeSpellCast(false))
                     return;
     
                 me->CastStop();
-                RemoveMyStackIfAny(shade);
     
                 if(me->GetDistance2d(shade) < 20.0f && me->IsWithinLOSInMap(shade))
                 {
@@ -889,7 +871,6 @@ public:
                     }
                 outroProgress = 0; // Outro end
                 break;
-    
             }
         }
     
@@ -915,7 +896,6 @@ public:
 
         }
 
-
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
@@ -926,9 +906,7 @@ public:
             }
 
             return true;
-
         }
-
     };
 
     CreatureAI* GetAI(Creature* creature) const override
@@ -937,17 +915,47 @@ public:
     }
 };
 
+// 40401 - Shade Soul Channel - Remove 1 stack of the slow aura (40520) when removing from target
+class spell_shade_of_akama_shade_soul_channel : public SpellScriptLoader
+{
+public:
+    spell_shade_of_akama_shade_soul_channel() : SpellScriptLoader("spell_shade_of_akama_shade_soul_channel") { }
 
+    class spell_shade_of_akama_shade_soul_channel_AuraScript : public AuraScript
+    {
+        PrepareAuraScript(spell_shade_of_akama_shade_soul_channel_AuraScript)
 
+        void HandleEffectApply(AuraEffect const* aurEff, AuraEffectHandleModes /*mode*/)
+        {
+            if (Unit* caster = GetCaster())
+                caster->SetFacingToObject(GetTarget());
+        }
+
+        void HandleEffectRemove(AuraEffect const* aurEff, AuraEffectHandleModes /*mode*/)
+        {
+            if (Aura* aura = GetTarget()->GetAura(GetSpellInfo()->Effects[EFFECT_1].TriggerSpell))
+                aura->ModStackAmount(-1);
+        }
+
+        void Register()
+        {
+            AfterEffectApply += AuraEffectApplyFn(spell_shade_of_akama_shade_soul_channel_AuraScript::HandleEffectApply, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+            AfterEffectRemove += AuraEffectRemoveFn(spell_shade_of_akama_shade_soul_channel_AuraScript::HandleEffectRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+        }
+    };
+
+    AuraScript* GetAuraScript() const
+    {
+        return new spell_shade_of_akama_shade_soul_channel_AuraScript();
+    }
+};
 
 void AddSC_boss_shade_of_akama()
 {
     new boss_shade_of_akama();
-
     new mob_ashtongue_channeler();
-
     new mob_ashtongue_sorcerer();
-
     new npc_akama_shade();
+    new spell_shade_of_akama_shade_soul_channel();
 }
 

@@ -1638,7 +1638,7 @@ public:
                 }
 
                 // Gain Shadow Infusion
-                if (me->IsBetweenHPPercent(20, 25) && !me->HasAuraEffect(SPELL_SHADOW_INFUSION))
+                if (me->IsBetweenHPPercent(20, 25) && !me->HasAura(SPELL_SHADOW_INFUSION))
                     if (rand()%2)
                         me->CastSpell(me, SPELL_SHADOW_INFUSION, TRIGGERED_FULL_MASK);
 
@@ -2267,6 +2267,39 @@ public:
     }
 };
 
+class spell_shield_of_the_blue : public SpellScriptLoader
+{
+public:
+    spell_shield_of_the_blue() : SpellScriptLoader("spell_shield_of_the_blue") { }
+
+    class spell_shield_of_the_blue_SpellScript : public SpellScript
+    {
+        PrepareSpellScript(spell_shield_of_the_blue_SpellScript);
+
+        void HandleScriptEffect(SpellEffIndex effIndex, int32& /*damage*/)
+        {
+            if (effIndex == EFFECT_0)
+            {
+                if (Unit* target = GetHitUnit())
+                {
+                    target->RemoveAurasDueToSpell(45641); //Fire Bloom
+                    target->RemoveAurasDueToSpell(45737); //Flame Dart
+                }
+            }
+         }
+
+        void Register() override
+        {
+            OnEffectHitTarget += SpellEffectFn(spell_shield_of_the_blue_SpellScript::HandleScriptEffect, EFFECT_0, SPELL_EFFECT_SCRIPT_EFFECT);
+        }
+    };
+
+    SpellScript* GetSpellScript() const override
+    {
+        return new spell_shield_of_the_blue_SpellScript();
+    }
+};
+
 void AddSC_boss_kiljaeden_new()
 {
     new OrbOfTheBlueFlight();
@@ -2279,4 +2312,5 @@ void AddSC_boss_kiljaeden_new()
     new mob_armageddon();
     new mob_shield_orb();
     new mob_sinster_reflection();
+    new spell_shield_of_the_blue();
 }

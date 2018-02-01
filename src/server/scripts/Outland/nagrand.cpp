@@ -161,8 +161,8 @@ public:
     
         void JustEngagedWith(Unit* pWho)
         override {
-            if (me->HasAuraEffect(SPELL_VISUAL_SLEEP))
-                me->RemoveAura(SPELL_VISUAL_SLEEP,0);
+            if (me->HasAura(SPELL_VISUAL_SLEEP))
+                me->RemoveAura(SPELL_VISUAL_SLEEP);
     
             if (!me->IsStandState())
                 me->SetUInt32Value(UNIT_FIELD_BYTES_1, PLAYER_STATE_NONE);

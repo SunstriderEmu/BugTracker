@@ -600,14 +600,14 @@ public:
                 ModifyThreatByPercent(done_by, -100);
         }
 
-        void SpellHit(Unit *caster, SpellInfo const* spellInfo)
-            override {
-            if (caster->GetDisplayId() != 21300)
-                me->RemoveAurasByCasterSpell(spellInfo->Id, caster->GetGUID());
+        void SpellHit(Unit *caster, SpellInfo const* spellInfo) override 
+        {
+            if (caster->GetDisplayId() != 21300) //Vengeful Spirit
+                me->RemoveAura(spellInfo->Id, caster->GetGUID());
         }
 
-        void UpdateAI(const uint32 diff)
-            override {
+        void UpdateAI(const uint32 diff) override 
+        {
             if (ResetCheckTimer <= diff) {
                 if (Creature *pTeron = pInstance->instance->GetCreature(TeronGUID)) {
                     if (!pTeron->IsInCombat())

@@ -2115,7 +2115,8 @@ public:
         
         void SpellHit(Unit* caster, SpellInfo const* spell)
         override {
-            if (spell->Id == 46054 && me->HasAuraEffect(34832) && caster->ToPlayer()) {
+            if (spell->Id == 46054 && me->HasAura(34832) && caster->ToPlayer()) 
+            {
                 caster->ToPlayer()->KilledMonsterCredit(me->GetEntry(), me->GetGUID());
                 unauraTimer = 1;
             }

@@ -60,7 +60,7 @@ public:
     
         void MoveInLineOfSight(Unit* pWho)
         override {
-            if (pWho->HasAuraEffect(16468))
+            if (pWho->HasAura(16468))
             {
                 if (pWho->GetTypeId() == TYPEID_PLAYER && me->IsWithinDistInMap(pWho, 15) && pWho->isInAccessiblePlaceFor(me))
                 {

@@ -83,7 +83,7 @@ public:
     
         uint32 lastHourDone;
     
-        std::multimap<uint32,FireworkEvent*> eventMap;
+        std::multimap<uint32,FireworkEvent> eventMap;
         
         void Reset() override {
             me->GetPosition(gridStartX,gridStartY,gridZ);
@@ -105,9 +105,8 @@ public:
             if(morphY < -MORPH_MAX || morphY > MORPH_MAX)
                 morphY = MORPH_MAX;
             
-            auto  event = new FireworkEvent(spellorGobId,size,posX,posY,ori,morphX,morphY);
-    
-            eventMap.insert(std::make_pair(time,event));
+            FireworkEvent event(spellorGobId,size,posX,posY,ori,morphX,morphY);
+            eventMap.insert(std::make_pair(time, std::move(event)));
     
             if(time > endTime)
                 endTime = time;
@@ -137,25 +136,25 @@ public:
             realPositionY = gridStartY + posY * cellSize;
         }
     
-        void ExecEvent(FireworkEvent* event)
+        void ExecEvent(FireworkEvent const& event)
         {
             float x,y,z;
-            GetTargetCoords(event->posX,event->posY,x,y);
+            GetTargetCoords(event.posX,event.posY,x,y);
             z = gridZ;
             me->UpdateAllowedPositionZ(x, y, z);
-            if(event->spellorGobId < 100000) //if it's a spell
-            {    
-                if(Creature* c = me->SummonCreature(CREATURE_LAUNCHER,x,y,z,event->ori,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,6000))
+            if(event.spellorGobId < 100000) //if it's a spell
+            {
+                if (Creature* c = me->SummonCreature(CREATURE_LAUNCHER, x, y, z, event.ori, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 6000))
                 {
                     c->SetDisplayId(11686); //invisible model
                     c->SetDisableGravity(true);
-                    c->SetFloatValue(OBJECT_FIELD_SCALE_X, event->size);
-                    c->CastSpell(c,event->spellorGobId, TRIGGERED_FULL_MASK);
+                    c->SetFloatValue(OBJECT_FIELD_SCALE_X, event.size);
+                    c->CastSpell(c, event.spellorGobId, TRIGGERED_FULL_MASK);
                 }
             } else {
-                if(GameObject* gob = me->SummonGameObject(event->spellorGobId,Position(x,y,z,event->ori), G3D::Quat(event->morphX,event->morphY,0,0),0))
+                if (GameObject* gob = me->SummonGameObject(event.spellorGobId, Position(x, y, z, event.ori), G3D::Quat(event.morphX, event.morphY, 0, 0), 0))
                 {
-                    gob->SetFloatValue(OBJECT_FIELD_SCALE_X, event->size);
+                    gob->SetFloatValue(OBJECT_FIELD_SCALE_X, event.size);
                     Map* map = me->GetMap();
                     map->RemoveFromMap(gob,false); 
                     gob->SetMap(map);
@@ -169,13 +168,13 @@ public:
         {
             for (auto itr : eventMap)
             {
-                if(itr.second->spellorGobId > 100000) //only needed for gobjects
+                if(itr.second.spellorGobId > 100000) //only needed for gobjects
                     ExecEvent(itr.second);
             }
         }
     
-        void UpdateAI(uint32 const diff)
-        override {
+        void UpdateAI(uint32 const diff) override 
+        {
             if(!eventStarted)
             {
                 uint32 currentHour = time(nullptr) / HOUR;
@@ -191,25 +190,23 @@ public:
     
             currentTime += diff;
     
-            for (auto it1 = eventMap.cbegin(), it2 = it1, end = eventMap.cend(); it1 != end; it1 = it2)
+            for (auto itr = eventMap.cbegin(); itr != eventMap.cend(); itr++)
             {
+                uint32 eventsTime = itr->first;
                 //not yet time
-                if(currentTime < it1->first)
+                if(currentTime < eventsTime)
                     break;
     
                 // skip if already done
-                if(lastEventTime >= it1->first) 
-                {
-                    it2++;
+                if(lastEventTime >= eventsTime)
                     continue;
-                }
                 
-                lastEventTime = it1->first;
-                do
-                {
-                    ExecEvent(it2->second);
-                    ++it2;
-                } while (it2->first == it1->first);
+                //do all event stored for this time
+                auto range = eventMap.equal_range(eventsTime);
+                for (auto i = range.first; i != range.second; ++i)
+                    ExecEvent(i->second);
+
+                lastEventTime = eventsTime;
             }
     
             if(currentTime > endTime)

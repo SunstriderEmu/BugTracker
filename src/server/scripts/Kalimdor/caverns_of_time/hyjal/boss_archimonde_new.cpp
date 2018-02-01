@@ -177,7 +177,7 @@ public:
             me->SetReactState(REACT_PASSIVE);
 
             if (_lifeTime < 500)
-                me->RemoveAura(SPELL_DOOMFIRE_VISUAL, 0); //esthetic
+                me->RemoveAura(SPELL_DOOMFIRE_VISUAL); //esthetic
 
             if(_archimondeGUID)
             { 
@@ -707,11 +707,11 @@ public:
                     case EV_UNLEASH_SOULCHARGE:
                     {
                         std::list<uint32> unleashSpells;
-                        if (me->HasAuraEffect(SPELL_SOUL_CHARGE_GREEN))
+                        if (me->HasAura(SPELL_SOUL_CHARGE_GREEN))
                             unleashSpells.push_back(SPELL_UNLEASH_SOUL_GREEN);
-                        if (me->HasAuraEffect(SPELL_SOUL_CHARGE_RED))
+                        if (me->HasAura(SPELL_SOUL_CHARGE_RED))
                             unleashSpells.push_back(SPELL_UNLEASH_SOUL_RED);
-                        if (me->HasAuraEffect(SPELL_SOUL_CHARGE_YELLOW))
+                        if (me->HasAura(SPELL_SOUL_CHARGE_YELLOW))
                             unleashSpells.push_back(SPELL_UNLEASH_SOUL_YELLOW);
                     
                         if (unleashSpells.empty()) {
@@ -725,13 +725,13 @@ public:
                         events.RescheduleEvent(EV_UNLEASH_SOULCHARGE, urand(2000, 10000));
                         switch (unleashSpells.front()) {
                         case SPELL_UNLEASH_SOUL_GREEN:
-                            me->RemoveSingleAuraFromStack(SPELL_SOUL_CHARGE_GREEN, 0);
+                            me->RemoveSingleAuraFromStack(SPELL_SOUL_CHARGE_GREEN);
                             break;
                         case SPELL_UNLEASH_SOUL_RED:
-                            me->RemoveSingleAuraFromStack(SPELL_SOUL_CHARGE_RED, 0);
+                            me->RemoveSingleAuraFromStack(SPELL_SOUL_CHARGE_RED);
                             break;
                         case SPELL_UNLEASH_SOUL_YELLOW:
-                            me->RemoveSingleAuraFromStack(SPELL_SOUL_CHARGE_YELLOW, 0);
+                            me->RemoveSingleAuraFromStack(SPELL_SOUL_CHARGE_YELLOW);
                             break;
                         }
                     

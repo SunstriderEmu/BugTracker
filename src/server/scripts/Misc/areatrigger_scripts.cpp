@@ -319,7 +319,7 @@ public:
         if (player->GetQuestStatus(10607) != QUEST_STATUS_INCOMPLETE)
             return true;
 
-        if (!player->HasAuraEffect(37466))
+        if (!player->HasAura(37466))
             return true;
 
         uint32 credit = 0;

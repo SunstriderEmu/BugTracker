@@ -2342,7 +2342,7 @@ public:
         Position const infernalTargets = { -252.23f, 1094.34f, 41.67f };
         static uint32 const NPC_SIEGE_BREAKER = 18946;
 
-        void HandleHit(SpellEffIndex i)
+        void HandleHit(SpellEffIndex i, int32& /*damage*/)
         {
             //should be two ? // for (uint8 i : { 0, 1 })
                 GetCaster()->SummonCreature(NPC_SIEGE_BREAKER, *(GetExplTargetDest()), TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30 * SECOND * IN_MILLISECONDS);
