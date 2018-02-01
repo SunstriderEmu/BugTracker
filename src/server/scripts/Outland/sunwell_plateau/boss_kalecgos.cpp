@@ -982,6 +982,35 @@ class spell_kalecgos_spectral_realm_trigger : public SpellScript
     }
 };
 
+// 44866 - Kalecgos spectral blast - remove main target from effect 1 and 2
+// not sure it's still needed with spell_kalecgos_spectral_blast script
+class spell_kalecgos_spectral_blast2 : public SpellScriptLoader
+{
+public:
+    spell_kalecgos_spectral_blast2() : SpellScriptLoader("spell_kalecgos_spectral_blast2") { }
+
+    class spell_kalecgos_spectral_blast_SpellScript : public SpellScript
+    {
+        PrepareSpellScript(spell_kalecgos_spectral_blast_SpellScript);
+
+        void FilterTargets(std::list<WorldObject*>& unitList)
+        {
+            unitList.remove(GetExplTargetWorldObject());
+        }
+
+        void Register() override
+        {
+            OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_kalecgos_spectral_blast_SpellScript::FilterTargets, EFFECT_1, TARGET_UNIT_DEST_AREA_ALLY);
+            OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_kalecgos_spectral_blast_SpellScript::FilterTargets, EFFECT_2, TARGET_UNIT_DEST_AREA_ALLY);
+        }
+    };
+
+    SpellScript* GetSpellScript() const override
+    {
+        return new spell_kalecgos_spectral_blast_SpellScript();
+    }
+};
+
 void AddSC_boss_kalecgos()
 {
     new boss_kalecgos();
@@ -991,4 +1020,5 @@ void AddSC_boss_kalecgos()
 
     RegisterSpellScript(spell_kalecgos_spectral_blast);
     RegisterSpellScript(spell_kalecgos_spectral_realm_trigger);
+    new spell_kalecgos_spectral_blast2();
 }
