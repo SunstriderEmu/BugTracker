@@ -1,18 +1,3 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /*
 TODO:
@@ -932,13 +917,15 @@ public:
                 pInstance->SetData(DATA_CHESS_GAME_PHASE, PVE_FINISHED);
 
             if (chessPhase == NOTSTARTED)
-                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Nous souhaitons jouer une partie contre vous !", GOSSIP_SENDER_MAIN, MEDIVH_GOSSIP_START_PVE);
+                //player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Nous souhaitons jouer une partie contre vous !", GOSSIP_SENDER_MAIN, MEDIVH_GOSSIP_START_PVE);
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "We want to play against you!", GOSSIP_SENDER_MAIN, MEDIVH_GOSSIP_START_PVE);
 
             if (chessPhase == INPROGRESS_PVE || chessPhase == INPROGRESS_PVP)
-                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Nous souhaitons recommencer.", GOSSIP_SENDER_MAIN, MEDIVH_GOSSIP_RESTART);
-                
+                //player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Nous souhaitons recommencer.", GOSSIP_SENDER_MAIN, MEDIVH_GOSSIP_RESTART);
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "We want to start again.", GOSSIP_SENDER_MAIN, MEDIVH_GOSSIP_RESTART);
+
             if (chessPhase == PVE_FINISHED)
-                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Nous souhaitons jouer entre nous.", GOSSIP_SENDER_MAIN, MEDIVH_GOSSIP_START_PVP);
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "We want to play between us.", GOSSIP_SENDER_MAIN, MEDIVH_GOSSIP_START_PVP);
 
             player->SEND_GOSSIP_MENU_TEXTID(20015, me->GetGUID());
             
@@ -1045,10 +1032,10 @@ public:
 
         ChessOrientationType currentOrientation;
 
-        void EnterEvadeMode(EvadeReason /* why */)
-            override {
+        void EnterEvadeMode(EvadeReason /* why */) override 
+        {
             // Just stay in place
-            me->RemoveAllAuras();
+            //me->RemoveAllAuras();
             Reset();
         }
 
@@ -1080,8 +1067,10 @@ public:
         ((npc_echo_of_medivh::npc_echo_of_medivhAI*)medivh->AI())->HandleShowDebug(me);
         }*/
 
-        void Reset()
-            override {
+        void Reset() override 
+        {
+            me->SetReactState(REACT_PASSIVE);
+
             Heal_Timer = 7000;
             NextMoveTimer = 4000 + rand() % 1000; // wait 4.5s for first moves
 
@@ -1181,10 +1170,8 @@ public:
 
         void MoveInLineOfSight(Unit* who) override {}
 
-        void UpdateAI(const uint32 diff)
-            override {
-            me->SetReactState(REACT_PASSIVE);
-
+        void UpdateAI(const uint32 diff) override 
+        {
             if (!pInstance)
                 return;
 
