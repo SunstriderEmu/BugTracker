@@ -993,9 +993,11 @@ public:
     {
         PrepareSpellScript(spell_kalecgos_spectral_blast_SpellScript);
 
-        void FilterTargets(std::list<WorldObject*>& unitList)
+        void FilterTargets(std::list<WorldObject*>& targets)
         {
-            unitList.remove(GetExplTargetWorldObject());
+            if (ObjectGuid guid = GetSpell()->m_targets.GetOrigUnitTargetGUID())
+                if (Unit* u = ObjectAccessor::GetUnit(*GetCaster(), guid))
+                    targets.remove(u);
         }
 
         void Register() override

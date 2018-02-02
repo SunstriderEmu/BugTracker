@@ -1416,13 +1416,78 @@ public:
     }
 };
 
+// 37476, 37474 - Cleave, target unit in front, front left and front right
+class spell_chess_cleave : public SpellScript
+{
+    PrepareSpellScript(spell_chess_cleave);
+
+    void FilterTargets(std::list<WorldObject*>& targets)
+    {
+        for (auto itr = targets.begin(); itr != targets.end();) 
+        {
+            if (!GetCaster()->HasInArc(M_PI / 2 + 0.2f, (*itr)) || (*itr)->GetExactDistance2d(GetCaster()->GetPositionX(), GetCaster()->GetPositionY()) > 9.0f)
+                itr = targets.erase(itr);
+            else
+                itr++;
+        }
+    }
+
+    void Register() override
+    {
+        OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_chess_cleave::FilterTargets, EFFECT_0, TARGET_SRC_CASTER);
+    }
+};
+
+// 37454, 37461, 37453, 37459 - target units up to 3 cases in front
+class spell_chess_3_front : public SpellScript
+{
+    PrepareSpellScript(spell_chess_3_front);
+
+    void FilterTargets(std::list<WorldObject*>& targets)
+    {
+        for (auto itr = targets.begin(); itr != targets.end();)
+        {
+            if (!GetCaster()->HasInArc(M_PI / 3, (*itr)) || (*itr)->GetExactDistance2d(GetCaster()->GetPositionX(), GetCaster()->GetPositionY()) > 18.0f)
+                itr = targets.erase(itr);
+            else
+                ++itr;
+        }
+    }
+
+    void Register() override
+    {
+        OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_chess_3_front::FilterTargets, EFFECT_0, TARGET_UNIT_CONE_ENTRY);
+    }
+};
+
+// 37413, 37406 - target unit directly in front
+class spell_chess_front : public SpellScript
+{
+    PrepareSpellScript(spell_chess_front);
+
+    void FilterTargets(std::list<WorldObject*>& targets)
+    {
+        for (auto itr = targets.begin(); itr != targets.end();)
+        {
+            if (!GetCaster()->HasInArc(M_PI / 3, (*itr)) || (*itr)->GetExactDistance2d(GetCaster()->GetPositionX(), GetCaster()->GetPositionY()) > 5.2f)
+                itr = targets.erase(itr);
+            else
+                itr++;
+        }
+    }
+
+    void Register() override
+    {
+        OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_chess_front::FilterTargets, EFFECT_0, TARGET_UNIT_CONE_ENTRY);
+    }
+};
 
 void AddSC_chess_event()
 {
-
     new npc_chesspiece();
-
     new npc_echo_of_medivh();
-    
     new chess_move_trigger();
+    RegisterSpellScript(spell_chess_cleave);
+    RegisterSpellScript(spell_chess_3_front);
+    RegisterSpellScript(spell_chess_front);
 }
