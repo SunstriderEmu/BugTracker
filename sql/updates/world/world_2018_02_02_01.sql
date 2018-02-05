@@ -1,0 +1,10 @@
+REPLACE INTO spell_script_names VALUES (-34914, "spell_pri_vampiric_touch");
+REPLACE INTO spell_script_names VALUES (15286, "spell_pri_vampiric_embrace");
+UPDATE spell_proc SET SpellFamilyMask = 0, SpellFamilyName = 0, SpellPhaseMask = 2, AttributesMask = 2 WHERE SpellId = 15286;
+REPLACE INTO spell_script_names VALUES (40438, "spell_pri_item_t6_trinket");
+REPLACE INTO spell_script_names VALUES (26169, "spell_pri_aq_3p_bonus");
+REPLACE INTO spell_template_override (entry, attributesEx3, Comment) VALUES (26170,  0x20000000, "AQ priest set, add SPELL_ATTR3_NO_DONE_BONUS to Oracular heal");
+REPLACE INTO spell_script_names VALUES (39372, "spell_item_frozen_shadoweave");
+UPDATE spell_proc SET SpellFamilyMask = 0, SpellFamilyName = 0, AttributesMask = 2 WHERE SpellId = 39372;
+REPLACE INTO spell_script_names VALUES (28809, "spell_pri_t3_4p_bonus");
+UPDATE spell_proc SET SpellFamilyMask = 4096, AttributesMask = 2 WHERE SpellId = 28809;
