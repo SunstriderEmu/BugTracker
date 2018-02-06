@@ -1016,6 +1016,36 @@ public:
     }
 };
 
+/* 41469 - Seal of Command
+41459 - Seal of Blood */
+/*TC class spell_illidari_council_seal : public AuraScript
+{
+    PrepareAuraScript(spell_illidari_council_seal);
+
+    bool Validate(SpellInfo const* ) override
+    {
+        return ValidateSpellInfo(
+            {
+                SPELL_SEAL_OF_COMMAND,
+                SPELL_SEAL_OF_BLOOD
+            });
+    }
+
+    void OnRemove(AuraEffect const* aurEff, AuraEffectHandleModes)
+    {
+        Unit* target = GetTarget();
+        if (target->IsInWorld() && target->IsAlive())
+        {
+            uint32 spellId = aurEff->GetId() == SPELL_SEAL_OF_COMMAND ? SPELL_SEAL_OF_BLOOD : SPELL_SEAL_OF_COMMAND;
+            target->CastSpell(target, spellId, true);
+        }
+    }
+
+    void Register() override
+    {
+        OnEffectRemove += AuraEffectRemoveFn(spell_illidari_council_seal::OnRemove, EFFECT_2, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+    }
+};*/
 
 void AddSC_boss_illidari_council()
 {
