@@ -45,5 +45,3 @@ REPLACE INTO spell_template_override (entry, SpellFamilyName, Comment) VALUES (3
 REPLACE INTO spell_script_names VALUES (-20185, "spell_pal_judgement_of_light_heal");
 REPLACE INTO spell_script_names VALUES (-20186, "spell_pal_judgement_of_wisdom_mana");
 
-
--- check avec les familyspellflags 2 et 3
