@@ -75,8 +75,8 @@ struct DragonOfNightmareAI_template : public ScriptedAI
     
     void JustDied(Unit *victim)
     override {
-        DreamFog1=nullptr;
-        DreamFog2=nullptr;
+        DreamFog1 = nullptr;
+        DreamFog2 = nullptr;
     }
     
     void CastSeepingFog()
@@ -547,8 +547,8 @@ public:
         void KilledUnit(Unit *victim)
         override {
             DragonOfNightmareAI_template::KilledUnit(victim);
-            Creature* Mushroom=me->SummonCreature(CREATURE_MUSHROOM, victim->GetPositionX(), victim->GetPositionY(), victim->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, TIMER_MUSHROOM_SPAWN); 
-            if(Mushroom) // Bagger bagger bagger bagger Mushroom! Mushroom!
+            Creature* Mushroom = me->SummonCreature(CREATURE_MUSHROOM, victim->GetPositionX(), victim->GetPositionY(), victim->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, TIMER_MUSHROOM_SPAWN);
+            if (Mushroom) // Bagger bagger bagger bagger Mushroom! Mushroom!
             {
                     Mushroom->AI()->message(0,1); //set Stop to true
                     Mushroom->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -1005,8 +1005,8 @@ public:
             SCDLightningWave=new SimpleCooldown(TIMER_LITHGNING_WAVE_YSONDRE);
         }
         
-        void JustDied(Unit *victim)
-        override {
+        void JustDied(Unit *victim) override 
+        {
             me->Yell(TELL_AT_DEATH_YSONDRE,LANG_UNIVERSAL,nullptr);
             DragonOfNightmareAI_template::JustDied(victim);
         }

@@ -257,8 +257,8 @@ public:
         void JustEngagedWith(Unit *who) override { }
         void MoveInLineOfSight(Unit *who) override { }
     
-        void JustDied(Unit* Killer)
-        override {
+        void JustDied(Unit* Killer) override 
+        {
             if(Killer && Killer->GetTypeId() == TYPEID_PLAYER)
             {
                 if( (Killer->ToPlayer())->GetQuestStatus(10873) == QUEST_STATUS_INCOMPLETE )
