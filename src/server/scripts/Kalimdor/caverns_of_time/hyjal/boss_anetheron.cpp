@@ -5,10 +5,11 @@
 
 enum Spells
 {
-    SPELL_CARRION_SWARM  = 31306,
-    SPELL_SLEEP          = 31298,
-    SPELL_VAMPIRIC_AURA  = 38196,
-    SPELL_INFERNO        = 31299
+    SPELL_CARRION_SWARM         = 31306,
+    SPELL_SLEEP                 = 31298,
+    SPELL_VAMPIRIC_AURA         = 38196,
+    SPELL_VAMPIRIC_AURA_HEAL    = 31285,
+    SPELL_INFERNO               = 31299
 };
 
 enum Timers
@@ -269,10 +270,48 @@ public:
     }
 };
 
+class spell_anetheron_vampiric_aura : public SpellScriptLoader
+{
+public:
+    spell_anetheron_vampiric_aura() : SpellScriptLoader("spell_anetheron_vampiric_aura") { }
+
+    class spell_anetheron_vampiric_aura_AuraScript : public AuraScript
+    {
+        PrepareAuraScript(spell_anetheron_vampiric_aura_AuraScript);
+
+        bool Validate(SpellInfo const* /*spellInfo*/) override
+        {
+            return ValidateSpellInfo({ SPELL_VAMPIRIC_AURA_HEAL });
+        }
+
+        void HandleProc(AuraEffect const* aurEff, ProcEventInfo& eventInfo)
+        {
+            PreventDefaultAction();
+            DamageInfo* damageInfo = eventInfo.GetDamageInfo();
+            if (!damageInfo || !damageInfo->GetDamage())
+                return;
+
+            Unit* actor = eventInfo.GetActor();
+            CastSpellExtraArgs args(aurEff);
+            args.AddSpellMod(SPELLVALUE_BASE_POINT0, damageInfo->GetDamage() * 3);
+            actor->CastSpell(actor, SPELL_VAMPIRIC_AURA_HEAL, args);
+        }
+
+        void Register() override
+        {
+            OnEffectProc += AuraEffectProcFn(spell_anetheron_vampiric_aura_AuraScript::HandleProc, EFFECT_0, SPELL_AURA_DUMMY);
+        }
+    };
+
+    AuraScript* GetAuraScript() const override
+    {
+        return new spell_anetheron_vampiric_aura_AuraScript();
+    }
+};
 
 void AddSC_boss_anetheron()
 {
     new boss_anetheron();
-
     new mob_towering_infernal();
+    new spell_anetheron_vampiric_aura();
 }

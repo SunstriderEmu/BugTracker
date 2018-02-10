@@ -1,0 +1,51 @@
+REPLACE INTO spell_script_names VALUES (-9799, "spell_pal_eye_for_an_eye");
+REPLACE INTO spell_script_names VALUES (12328, "spell_warr_sweeping_strikes");
+REPLACE INTO spell_script_names VALUES (18765, "spell_warr_sweeping_strikes");
+REPLACE INTO spell_script_names VALUES (35429, "spell_warr_sweeping_strikes");
+REPLACE INTO spell_script_names VALUES (24658, "spell_item_unstable_power");
+REPLACE INTO spell_script_names VALUES (24661, "spell_item_restless_strength");
+REPLACE INTO spell_script_names VALUES (28764, "spell_gen_adaptive_warding");
+REPLACE INTO spell_script_names VALUES (27539, "spell_gen_obsidian_armor");
+REPLACE INTO spell_script_names VALUES (28305, "spell_pri_mana_leech");
+REPLACE INTO spell_script_names VALUES (33493, "spell_mark_of_malice");
+REPLACE INTO spell_script_names VALUES (21063, "spell_twisted_reflection");
+REPLACE INTO spell_script_names VALUES (38196, "spell_anetheron_vampiric_aura");
+REPLACE INTO spell_script_names VALUES (39446, "spell_item_aura_of_madness");
+replace into `broadcast_text` (`ID`, `Language`, `MaleText`, `FemaleText`, `EmoteID0`, `EmoteID1`, `EmoteID2`, `EmoteDelay0`, `EmoteDelay1`, `EmoteDelay2`, `SoundId`, `Unk1`, `Unk2`) values('21954','0','This is madness!','This is madness!','0','0','0','0','0','0','0','0','1');
+UPDATE spell_proc SET SpellTypeMask = 0x1 WHERE SpellId = 46569;
+REPLACE INTO spell_script_names VALUES (45481, "spell_item_sunwell_exalted_caster_neck");
+UPDATE spell_proc SET SpellTypeMask = 0x1 WHERE SpellId IN (45481, 45482, 45483);
+UPDATE spell_proc SET SpellTypeMask = 0x2 WHERE SpellId IN (45484);
+REPLACE INTO spell_script_names VALUES (45482, "spell_item_sunwell_exalted_melee_neck");
+REPLACE INTO spell_script_names VALUES (45483, "spell_item_sunwell_exalted_tank_neck");
+REPLACE INTO spell_script_names VALUES (45484, "spell_item_sunwell_exalted_healer_neck");
+
+-- remove some incorrect overrides
+DELETE FROM spell_template_override WHERE entry = 45054;
+UPDATE spell_proc SET ProcFlags = 0, SpellTypeMask = 0x1 WHERE SpellId = 45054;
+REPLACE INTO spell_script_names VALUES (43820, "spell_item_charm_witch_doctor");
+REPLACE INTO spell_script_names VALUES (27522, "spell_item_mana_drain");
+REPLACE INTO spell_script_names VALUES (46939, "spell_item_mana_drain");
+REPLACE INTO spell_script_names VALUES (17619, "spell_item_alchemists_stone");
+UPDATE spell_proc SET SpellTypeMask = 0x7, ProcFlags = ProcFlags | 0x400, SpellPhaseMask = 0x2 WHERE SpellId IN (17619);
+
+UPDATE spell_proc SET Cooldown = Cooldown * 1000 WHERE Cooldown IN (90, 60, 45, 30, 20, 10, 6, 3, 1);
+-- lightning overloads spell ranks
+replace into `spell_ranks` (`first_spell_id`, `spell_id`, `rank`) values('45284','45284','1');
+replace into `spell_ranks` (`first_spell_id`, `spell_id`, `rank`) values('45284','45286','2');
+replace into `spell_ranks` (`first_spell_id`, `spell_id`, `rank`) values('45284','45287','3');
+replace into `spell_ranks` (`first_spell_id`, `spell_id`, `rank`) values('45284','45288','4');
+replace into `spell_ranks` (`first_spell_id`, `spell_id`, `rank`) values('45284','45289','5');
+replace into `spell_ranks` (`first_spell_id`, `spell_id`, `rank`) values('45284','45290','6');
+replace into `spell_ranks` (`first_spell_id`, `spell_id`, `rank`) values('45284','45291','7');
+replace into `spell_ranks` (`first_spell_id`, `spell_id`, `rank`) values('45284','45292','8');
+replace into `spell_ranks` (`first_spell_id`, `spell_id`, `rank`) values('45284','45293','9');
+replace into `spell_ranks` (`first_spell_id`, `spell_id`, `rank`) values('45284','45294','10');
+replace into `spell_ranks` (`first_spell_id`, `spell_id`, `rank`) values('45284','45295','11');
+replace into `spell_ranks` (`first_spell_id`, `spell_id`, `rank`) values('45284','45296','12');
+replace into `spell_ranks` (`first_spell_id`, `spell_id`, `rank`) values('45297','45297','1');
+replace into `spell_ranks` (`first_spell_id`, `spell_id`, `rank`) values('45297','45298','2');
+replace into `spell_ranks` (`first_spell_id`, `spell_id`, `rank`) values('45297','45299','3');
+replace into `spell_ranks` (`first_spell_id`, `spell_id`, `rank`) values('45297','45300','4');
+replace into `spell_ranks` (`first_spell_id`, `spell_id`, `rank`) values('45297','45301','5');
+replace into `spell_ranks` (`first_spell_id`, `spell_id`, `rank`) values('45297','45302','6');
