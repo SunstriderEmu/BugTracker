@@ -1434,7 +1434,7 @@ class spell_chess_cleave : public SpellScript
 
     void Register() override
     {
-        OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_chess_cleave::FilterTargets, EFFECT_0, TARGET_SRC_CASTER);
+        OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_chess_cleave::FilterTargets, EFFECT_0, TARGET_UNIT_SRC_AREA_ENTRY);
     }
 };
 

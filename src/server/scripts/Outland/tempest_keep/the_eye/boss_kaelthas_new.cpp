@@ -1052,7 +1052,7 @@ class spell_kaelthas_summon_nether_vapor : public SpellScriptLoader
 
             void Register() override
             {
-                OnEffectHitTarget += SpellEffectFn(spell_kaelthas_summon_nether_vapor_SpellScript::HandleScriptEffect, EFFECT_0, SPELL_EFFECT_SCRIPT_EFFECT);
+                OnEffectHitTarget += SpellEffectFn(spell_kaelthas_summon_nether_vapor_SpellScript::HandleScriptEffect, EFFECT_1, SPELL_AURA_MOD_INCREASE_HEALTH_PERCENT);
             }
         };
 

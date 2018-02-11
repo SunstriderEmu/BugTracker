@@ -1704,114 +1704,6 @@ private:
     Player* _owner;
 };
 
-class spell_kaelthas_gravity_lapse : public SpellScriptLoader
-{
-public:
-    spell_kaelthas_gravity_lapse() : SpellScriptLoader("spell_kaelthas_gravity_lapse") { }
-
-    class spell_kaelthas_gravity_lapse_SpellScript : public SpellScript
-    {
-        PrepareSpellScript(spell_kaelthas_gravity_lapse_SpellScript);
-
-        bool Load() override
-        {
-            _currentSpellId = SPELL_GRAVITY_LAPSE_TELEPORT1;
-            return true;
-        }
-
-        void HandleScriptEffect(SpellEffIndex effIndex)
-        {
-            PreventHitEffect(effIndex);
-            if (_currentSpellId < SPELL_GRAVITY_LAPSE_TELEPORT1 + 25)
-                if (Player* target = GetHitPlayer())
-                {
-                    GetCaster()->CastSpell(target, _currentSpellId++, TRIGGERED_FULL_MASK);
-                    target->m_Events.AddEvent(new lapseTeleport(target), target->m_Events.CalculateTime(1));
-                }
-        }
-
-        void Register() override
-        {
-            OnEffectHitTarget += SpellEffectFn(spell_kaelthas_gravity_lapse_SpellScript::HandleScriptEffect, EFFECT_0, SPELL_EFFECT_SCRIPT_EFFECT);
-        }
-
-    private:
-        uint32 _currentSpellId;
-    };
-
-    SpellScript* GetSpellScript() const override
-    {
-        return new spell_kaelthas_gravity_lapse_SpellScript();
-    }
-};
-
-class spell_kaelthas_nether_beam : public SpellScriptLoader
-{
-public:
-    spell_kaelthas_nether_beam() : SpellScriptLoader("spell_kaelthas_nether_beam") { }
-
-    class spell_kaelthas_nether_beam_SpellScript : public SpellScript
-    {
-        PrepareSpellScript(spell_kaelthas_nether_beam_SpellScript);
-
-        void HandleScriptEffect(SpellEffIndex effIndex)
-        {
-            PreventHitEffect(effIndex);
-
-            ThreatContainer::StorageType const & ThreatList = GetCaster()->GetThreatManager().getThreatList();
-            std::list<Unit*> targetList;
-            for (auto itr : ThreatList)
-            {
-                Unit* target = ObjectAccessor::GetUnit(*GetCaster(), itr->getUnitGuid());
-                if (target && target->GetTypeId() == TYPEID_PLAYER)
-                    targetList.push_back(target);
-            }
-
-            Trinity::Containers::RandomResize(targetList, 5);
-            for (std::list<Unit*>::const_iterator itr = targetList.begin(); itr != targetList.end(); ++itr)
-                GetCaster()->CastSpell(*itr, SPELL_NETHER_BEAM_DAMAGE, TRIGGERED_FULL_MASK);
-        }
-
-        void Register() override
-        {
-            OnEffectHitTarget += SpellEffectFn(spell_kaelthas_nether_beam_SpellScript::HandleScriptEffect, EFFECT_0, SPELL_EFFECT_SCRIPT_EFFECT);
-        }
-    };
-
-    SpellScript* GetSpellScript() const override
-    {
-        return new spell_kaelthas_nether_beam_SpellScript();
-    }
-};
-
-class spell_kaelthas_summon_nether_vapor : public SpellScriptLoader
-{
-public:
-    spell_kaelthas_summon_nether_vapor() : SpellScriptLoader("spell_kaelthas_summon_nether_vapor") { }
-
-    class spell_kaelthas_summon_nether_vapor_SpellScript : public SpellScript
-    {
-        PrepareSpellScript(spell_kaelthas_summon_nether_vapor_SpellScript);
-
-        void HandleScriptEffect(SpellEffIndex effIndex)
-        {
-            PreventHitEffect(effIndex);
-            for (uint32 i = 0; i < 5; ++i)
-                GetCaster()->SummonCreature(NPC_NETHER_VAPOR, GetCaster()->GetPositionX() + 6 * cos(i / 5.0f * 2 * M_PI), GetCaster()->GetPositionY() + 6 * sin(i / 5.0f * 2 * M_PI), GetCaster()->GetPositionZ() + 7.0f + i, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 30000);
-        }
-
-        void Register() override
-        {
-            OnEffectHitTarget += SpellEffectFn(spell_kaelthas_summon_nether_vapor_SpellScript::HandleScriptEffect, EFFECT_0, SPELL_EFFECT_SCRIPT_EFFECT);
-        }
-    };
-
-    SpellScript* GetSpellScript() const override
-    {
-        return new spell_kaelthas_summon_nether_vapor_SpellScript();
-    }
-};
-
 void AddSC_boss_kaelthas()
 {
     new boss_kaelthas();
@@ -1822,9 +1714,5 @@ void AddSC_boss_kaelthas()
     new mob_kael_flamestrike();
     new mob_phoenix_tk();
     new mob_phoenix_egg_tk();
-
-    new spell_kaelthas_gravity_lapse();
-    new spell_kaelthas_nether_beam();
-    new spell_kaelthas_summon_nether_vapor();
 }
 #endif
