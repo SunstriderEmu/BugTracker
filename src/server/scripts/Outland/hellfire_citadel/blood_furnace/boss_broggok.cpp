@@ -235,10 +235,10 @@ public:
             for (auto itr : attackers)
                 if (Creature* prisoner = me->GetMap()->GetCreature(itr))
                 {
-                    prisoner->SetInCombatWithZone();
+                    prisoner->AI()->DoZoneInCombat();
                     prisoner->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
                     prisoner->SetImmuneToAll(false);
-                    prisoner->SetInCombatWithZone();
+                    prisoner->AI()->DoZoneInCombat();
                 }
         }
 
@@ -275,7 +275,7 @@ public:
                 instance->SetData(DATA_ACTIVATE_CELL, DATA_DOOR_4);
                 me->SetReactState(REACT_AGGRESSIVE);
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                me->SetInCombatWithZone();
+                me->AI()->DoZoneInCombat();
                 me->SetImmuneToAll(false);
                 return;
             }
