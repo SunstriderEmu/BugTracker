@@ -51,6 +51,7 @@ EndContentData */
 
 #include "PetAI.h"
 #include "Pet.h"
+#include "SpellHistory.h"
 
 /*########
 # npc_chicken_cluck
@@ -929,14 +930,14 @@ public:
             if(me->IsQuestGiver())
                 player->PrepareQuestMenu( me->GetGUID() );
 
-            if( player->HasSpellCooldown(SPELL_INT) ||
-                player->HasSpellCooldown(SPELL_ARM) ||
-                player->HasSpellCooldown(SPELL_DMG) ||
-                player->HasSpellCooldown(SPELL_RES) ||
-                player->HasSpellCooldown(SPELL_STR) ||
-                player->HasSpellCooldown(SPELL_AGI) ||
-                player->HasSpellCooldown(SPELL_STM) ||
-                player->HasSpellCooldown(SPELL_SPI) )
+            if( player->GetSpellHistory()->HasCooldown(SPELL_INT) ||
+                player->GetSpellHistory()->HasCooldown(SPELL_ARM) ||
+                player->GetSpellHistory()->HasCooldown(SPELL_DMG) ||
+                player->GetSpellHistory()->HasCooldown(SPELL_RES) ||
+                player->GetSpellHistory()->HasCooldown(SPELL_STR) ||
+                player->GetSpellHistory()->HasCooldown(SPELL_AGI) ||
+                player->GetSpellHistory()->HasCooldown(SPELL_STM) ||
+                player->GetSpellHistory()->HasCooldown(SPELL_SPI) )
                 player->SEND_GOSSIP_MENU_TEXTID(7393, me->GetGUID());
             else
             {
@@ -954,51 +955,39 @@ public:
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             uint32 const sender = player->PlayerTalkClass->GetGossipOptionSender(gossipListId);
             ClearGossipMenuFor(player);
+            uint32 spellId = 0;
             switch(sender)
             {
-                case GOSSIP_SENDER_MAIN:
-                    SendAction_npc_sayge(player, me, action);
-                    break;
                 case GOSSIP_SENDER_MAIN+1:
-                    me->CastSpell(player, SPELL_DMG, TRIGGERED_NONE);
-                    player->AddSpellCooldown(SPELL_DMG,0,time(nullptr) + 7200);
-                    SendAction_npc_sayge(player, me, action);
+                    spellId = SPELL_DMG;
                     break;
                 case GOSSIP_SENDER_MAIN+2:
-                    me->CastSpell(player, SPELL_RES, TRIGGERED_NONE);
-                    player->AddSpellCooldown(SPELL_RES,0,time(nullptr) + 7200);
-                    SendAction_npc_sayge(player, me, action);
+                    spellId = SPELL_RES;
                     break;
                 case GOSSIP_SENDER_MAIN+3:
-                    me->CastSpell(player, SPELL_ARM, TRIGGERED_NONE);
-                    player->AddSpellCooldown(SPELL_ARM,0,time(nullptr) + 7200);
-                    SendAction_npc_sayge(player, me, action);
+                    spellId = SPELL_ARM;
                     break;
                 case GOSSIP_SENDER_MAIN+4:
-                    me->CastSpell(player, SPELL_SPI, TRIGGERED_NONE);
-                    player->AddSpellCooldown(SPELL_SPI,0,time(nullptr) + 7200);
-                    SendAction_npc_sayge(player, me, action);
+                    spellId = SPELL_SPI;
                     break;
                 case GOSSIP_SENDER_MAIN+5:
-                    me->CastSpell(player, SPELL_INT, TRIGGERED_NONE);
-                    player->AddSpellCooldown(SPELL_INT,0,time(nullptr) + 7200);
-                    SendAction_npc_sayge(player, me, action);
+                    spellId = SPELL_INT;
                     break;
                 case GOSSIP_SENDER_MAIN+6:
-                    me->CastSpell(player, SPELL_STM, TRIGGERED_NONE);
-                    player->AddSpellCooldown(SPELL_STM,0,time(nullptr) + 7200);
-                    SendAction_npc_sayge(player, me, action);
+                    spellId = SPELL_STM;
                     break;
                 case GOSSIP_SENDER_MAIN+7:
-                    me->CastSpell(player, SPELL_STR, TRIGGERED_NONE);
-                    player->AddSpellCooldown(SPELL_STR,0,time(nullptr) + 7200);
-                    SendAction_npc_sayge(player, me, action);
+                    spellId = SPELL_STR;
                     break;
                 case GOSSIP_SENDER_MAIN+8:
-                    me->CastSpell(player, SPELL_AGI, TRIGGERED_NONE);
-                    player->AddSpellCooldown(SPELL_AGI,0,time(nullptr) + 7200);
-                    SendAction_npc_sayge(player, me, action);
+                    spellId = SPELL_AGI;
                     break;
+            }
+            SendAction_npc_sayge(player, me, action);
+            if (spellId)
+            {
+                me->CastSpell(player, spellId, TRIGGERED_NONE);
+                player->GetSpellHistory()->AddCooldown(spellId, 0, std::chrono::hours(2));
             }
             return true;
 
@@ -1542,7 +1531,7 @@ public:
                         me->DisappearAndDie();
     
                     if (me->GetOwner() && me->GetOwner()->ToPlayer()) {
-                        me->GetOwner()->ToPlayer()->SendCooldownEvent(sSpellMgr->GetSpellInfo(4074));
+                        me->GetOwner()->ToPlayer()->GetSpellHistory()->SendCooldownEvent(sSpellMgr->GetSpellInfo(4074));
                     }
                 }
             }
