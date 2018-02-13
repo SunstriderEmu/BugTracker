@@ -1,0 +1,1 @@
+UPDATE spell_proc SET SpellPhaseMask = `SpellPhaseMask`|0x2 WHERE ProcFlags & ( 0x00040000 | 0x00080000 );
