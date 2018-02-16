@@ -31,8 +31,10 @@ public:
    {
    public:
         npc_lakkaAI(Creature* creature) : ScriptedAI(creature)
-        {}
-
+        {
+            creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
+            creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_NPC);
+        }
 
         virtual bool GossipHello(Player* player) override
         {
@@ -46,7 +48,6 @@ public:
 
         }
 
-
         virtual bool GossipSelect(Player* player, uint32 menuId, uint32 gossipListId) override
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
@@ -59,7 +60,6 @@ public:
             return true;
 
         }
-
     };
 
     CreatureAI* GetAI(Creature* creature) const override
@@ -67,7 +67,6 @@ public:
         return new npc_lakkaAI(creature);
     }
 };
-
 
 bool hasDespawned = false;
 
