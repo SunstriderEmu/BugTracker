@@ -1,0 +1,1 @@
+REPLACE INTO spell_script_names VALUES (26374, "spell_gen_elune_candle");
