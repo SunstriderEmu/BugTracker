@@ -260,6 +260,7 @@ public:
             case 12:
                 arca->GetMotionMaster()->MovePoint(0, -11010.82,-1761.18, 156.47);
                 arca->SetKeepActive(true);
+                arca->SetFarVisible(true);
                 arca->InterruptNonMeleeSpells(true);
                 arca->SetSpeedRate(MOVE_FLIGHT, 2.0f);
                 return 10000;

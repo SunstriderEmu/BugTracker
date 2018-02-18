@@ -2001,7 +2001,7 @@ public:
 
             if (LAST_POINT == 0)
             {
-                TC_LOG_ERROR("scripts", "DarkPortalEventControllerAI couldnt get last point for path %u", pathId);
+                TC_LOG_ERROR("scripts", "DarkPortalEventControllerAI couldn't get last point for path %u", pathId);
                 LAST_POINT = 1; //maybe we can recover from this, consider second point as last point
             }
         }
@@ -2071,6 +2071,7 @@ public:
             if (Creature* c = me->SummonCreature(summonInfo.npcId, summonPos, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30 * SECOND * IN_MILLISECONDS))
             {
                 c->SetKeepActiveTimer(3 * MINUTE * IN_MILLISECONDS); //force active for a while so that creatures can get to their position
+                c->SetFarVisible(true);
                 c->SetHomePosition(summonInfo.pos);
                 summonInfo.guid = c->GetGUID();
                 summonInfo.dead = false;

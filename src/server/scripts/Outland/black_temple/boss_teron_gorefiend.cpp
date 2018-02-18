@@ -534,6 +534,7 @@ public:
         {
             pInstance = ((InstanceScript*)c->GetInstanceScript());
             me->SetKeepActive(5 * MINUTE*IN_MILLISECONDS);
+            me->SetFarVisible(true);
         }
 
         InstanceScript* pInstance;

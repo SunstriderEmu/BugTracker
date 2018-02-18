@@ -512,6 +512,7 @@ void hyjalAI::SummonCreature(uint32 entry, float Base[4][3])
 
         pCreature->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
         pCreature->SetKeepActive(true);
+        pCreature->SetFarVisible(true);
         switch(entry)
         {
             case NECROMANCER:
@@ -1100,6 +1101,7 @@ void hyjalAI::DoOverrun(uint32 faction, const uint32 diff)
                     ((hyjal_trashAI*)pUnit->AI())->IsOverrun = true;
                     ((hyjal_trashAI*)pUnit->AI())->OverrunType = i;
                     pUnit->SetKeepActive(true);
+                    pUnit->SetFarVisible(true);
                 }
             }
             for(uint8 i = 0; i < 3; i++)//summon 3 abominations
@@ -1112,6 +1114,7 @@ void hyjalAI::DoOverrun(uint32 faction, const uint32 diff)
                     ((hyjal_trashAI*)pUnit->AI())->IsOverrun = true;
                     ((hyjal_trashAI*)pUnit->AI())->OverrunType = i;
                     pUnit->SetKeepActive(true);
+                    pUnit->SetFarVisible(true);
                 }
             }
             for(uint8 i = 0; i < 5; i++)//summon 5 gargoyles
@@ -1124,6 +1127,7 @@ void hyjalAI::DoOverrun(uint32 faction, const uint32 diff)
                     ((hyjal_trashAI*)pUnit->AI())->IsOverrun = true;
                     ((hyjal_trashAI*)pUnit->AI())->OverrunType = i;
                     pUnit->SetKeepActive(true);
+                    pUnit->SetFarVisible(true);
                 }
             }
             break;
@@ -1141,6 +1145,7 @@ void hyjalAI::DoOverrun(uint32 faction, const uint32 diff)
                     ((hyjal_trashAI*)pUnit->AI())->IsOverrun = true;
                     ((hyjal_trashAI*)pUnit->AI())->OverrunType = i;
                     pUnit->SetKeepActive(true);
+                    pUnit->SetFarVisible(true);
                 }
             }
             for(uint8 i = 0; i < 25; i++)//summon 25 ghouls
@@ -1153,6 +1158,7 @@ void hyjalAI::DoOverrun(uint32 faction, const uint32 diff)
                     ((hyjal_trashAI*)pUnit->AI())->IsOverrun = true;
                     ((hyjal_trashAI*)pUnit->AI())->OverrunType = i;
                     pUnit->SetKeepActive(true);
+                    pUnit->SetFarVisible(true);
                 }
             }
             for(uint8 i = 0; i < 5; i++)//summon 5 abominations
@@ -1165,6 +1171,7 @@ void hyjalAI::DoOverrun(uint32 faction, const uint32 diff)
                     ((hyjal_trashAI*)pUnit->AI())->IsOverrun = true;
                     ((hyjal_trashAI*)pUnit->AI())->OverrunType = i;
                     pUnit->SetKeepActive(true);
+                    pUnit->SetFarVisible(true);
                 }
             }
             break;

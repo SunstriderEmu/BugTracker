@@ -201,6 +201,7 @@ public:
                 if (Madrigosa) {
                     (Madrigosa->ToCreature())->Respawn();
                     Madrigosa->SetKeepActiveTimer(5 * MINUTE*IN_MILLISECONDS);
+                    Madrigosa->SetFarVisible(true);
                     IsIntro = true;
                     Madrigosa->SetMaxHealth(10000000);
                     Madrigosa->SetHealth(me->GetMaxHealth());

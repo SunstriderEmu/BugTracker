@@ -112,6 +112,7 @@ public:
             me->SetUnitMovementFlags(MOVEMENTFLAG_DISABLE_GRAVITY);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             me->SetKeepActive(false);
+            me->SetFarVisible(true);
         }
     
         void JustEngagedWith(Unit *who)

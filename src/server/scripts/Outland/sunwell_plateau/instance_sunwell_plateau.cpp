@@ -176,8 +176,14 @@ public:
             case 24850: Kalecgos_Dragon = pCreature->GetGUID(); break;
             case 24891: Kalecgos_Human = pCreature->GetGUID(); break;
             case 24892: Sathrovarr = pCreature->GetGUID(); break;
-            case 24882: Brutallus = pCreature->GetGUID(); pCreature->SetKeepActive(true); break;
-            case 24895: Madrigosa = pCreature->GetGUID(); pCreature->SetKeepActive(true); break;
+            case 24882: Brutallus = pCreature->GetGUID(); 
+                pCreature->SetKeepActive(true);
+                pCreature->SetFarVisible(true);
+                break;
+            case 24895: Madrigosa = pCreature->GetGUID(); 
+                pCreature->SetKeepActive(true); 
+                pCreature->SetFarVisible(true);
+                break;
             case 25038: Felmyst = pCreature->GetGUID(); break;
             case 25166: Alythess = pCreature->GetGUID(); break;
             case 25165: Sacrolash = pCreature->GetGUID(); break;
@@ -188,9 +194,13 @@ public:
             case 25608: KilJaedenController = pCreature->GetGUID(); break;
             case 26046: Anveena = pCreature->GetGUID(); break;
             case 25319: KalecgosKJ = pCreature->GetGUID(); break;
-            case 25357: FlightLeft = pCreature->GetGUID(); pCreature->SetKeepActive(true); break;
-            case 25358: FlightRight = pCreature->GetGUID(); pCreature->SetKeepActive(true); break;
-            case 25837: CommanderGUID = pCreature->GetGUID(); pCreature->SetKeepActive(true); break;
+            case 25357: 
+                FlightLeft = pCreature->GetGUID(); 
+                pCreature->SetKeepActive(true);
+                pCreature->SetFarVisible(true);
+                break;
+            case 25358: FlightRight = pCreature->GetGUID(); pCreature->SetKeepActive(true); pCreature->SetFarVisible(true); break;
+            case 25837: CommanderGUID = pCreature->GetGUID(); pCreature->SetKeepActive(true); pCreature->SetFarVisible(true); break;
             case 19871: BarrierTriggerGUID = pCreature->GetGUID(); break;
             case 23472: //fog triggers
                 //TC_LOG_INFO("PositionX: %f", pCreature->GetPositionX());
@@ -253,6 +263,7 @@ public:
             case 188119:
                 IceBarrier = pGo->GetGUID();
                 pGo->SetKeepActive(true);
+                pGo->SetFarVisible(true);
                 break;
             }
         }
@@ -503,6 +514,7 @@ public:
                 if (Creature *Bringer1 = Commander->SummonCreature(MOB_SOULBINDER, x, y, z, Commander->GetOrientation(), TEMPSUMMON_MANUAL_DESPAWN, 0)) {
                     //Bringer1->Say("[DEBUG] First bringer!", LANG_UNIVERSAL);
                     Bringer1->SetKeepActive(true);
+                    Bringer1->SetFarVisible(true);
                     Bringer1->SetSpeedRate(MOVE_WALK, 3.5);
                     Bringer1->GetMotionMaster()->MovePath(25851, false); //this path is PATH_TYPE_ONCE
                 }
@@ -511,6 +523,7 @@ public:
                 if (Creature *Bringer2 = Commander->SummonCreature(MOB_DEATHBRINGER, x, y, z, Commander->GetOrientation(), TEMPSUMMON_MANUAL_DESPAWN, 0)) {
                     //Bringer2->Say("[DEBUG] Second bringer!", LANG_UNIVERSAL);
                     Bringer2->SetKeepActive(true);
+                    Bringer2->SetFarVisible(true);
                     Bringer2->SetSpeedRate(MOVE_WALK, 3.5);
                     Bringer2->GetMotionMaster()->MovePath(25851, false); //this path is PATH_TYPE_ONCE
                 }
@@ -527,6 +540,7 @@ public:
                 if (TempSummon *Fiend = Commander->SummonCreature(CREATURE_VOLATILE_FELFIRE_FIEND, x, y, z, Commander->GetOrientation(), TEMPSUMMON_MANUAL_DESPAWN, 0)) {
                     //Fiend->MonsterSay("[DEBUG] Fiend!", LANG_UNIVERSAL, NULL);
                     Fiend->SetKeepActive(true);
+                    Fiend->SetFarVisible(true);
                     Fiend->SetSpeedRate(MOVE_WALK, 5);
                 }
 

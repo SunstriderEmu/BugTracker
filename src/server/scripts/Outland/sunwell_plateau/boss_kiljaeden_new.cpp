@@ -491,6 +491,7 @@ public:
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
             me->SetKeepActive(30 * MINUTE*IN_MILLISECONDS);
+            me->SetFarVisible(true);
             Searched = false;
             me->SetVisible(false);
             me->SetReactState(REACT_PASSIVE);
@@ -539,6 +540,7 @@ public:
             }
             orb->SetUInt32Value(GAMEOBJECT_FACTION, 35);
             orb->SetKeepActive(true);
+            orb->SetFarVisible(true);
             orb->Refresh();
         }
 

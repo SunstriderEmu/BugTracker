@@ -436,6 +436,7 @@ public:
         void JustEngagedWith(Unit *who)
             override {
             me->SetKeepActive(true);
+            me->SetFarVisible(true);
             DoZoneInCombat();
         }
 
@@ -1023,6 +1024,7 @@ public:
             me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
             me->SetSheath(SHEATH_STATE_UNARMED);
             me->SetKeepActive(false);
+            me->SetFarVisible(true);
             if (pInstance->GetData(DATA_ILLIDARICOUNCILEVENT) != DONE)
                 me->SetVisible(false);
             else
@@ -1290,6 +1292,7 @@ public:
             {
             case 0:
                 me->SetKeepActive(true);
+                me->SetFarVisible(true);
                 me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
                 introDone = true;
                 Timer = 4000;

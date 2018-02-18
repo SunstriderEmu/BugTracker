@@ -248,24 +248,29 @@ public:
             case 184568:
                 ControlConsoleGUID = go->GetGUID();
                 go->SetKeepActive(true);
+                go->SetFarVisible(true);
                 break;
 
             case 184203:
                 BridgePart[0] = go->GetGUID();
                 go->SetKeepActive(true);
+                go->SetFarVisible(true);
                 break;
 
             case 184204:
                 BridgePart[1] = go->GetGUID();
                 go->SetKeepActive(true);
+                go->SetFarVisible(true);
                 break;
 
             case 184205:
                 BridgePart[2] = go->GetGUID();
                 go->SetKeepActive(true);
+                go->SetFarVisible(true);
                 break;
             case 185114:
                 SerpentshrineConsole = go->GetGUID();
+                go->SetFarVisible(true);
                 break;
             case GAMEOBJECT_FISHINGNODE_ENTRY://no way checking if fish is hooked, so we create a timed event
             {

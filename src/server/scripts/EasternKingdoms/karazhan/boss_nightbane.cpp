@@ -99,6 +99,7 @@ public:
             me->SetDisableGravity(true);
             me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
             me->SetKeepActive(30*MINUTE*IN_MILLISECONDS);
+            me->SetFarVisible(true);
     
             me->AddUnitState(UNIT_STATE_IGNORE_PATHFINDING);
     

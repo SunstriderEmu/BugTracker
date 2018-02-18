@@ -1761,6 +1761,7 @@ public:
         void Reset()
         override {
             me->SetKeepActive(5 * MINUTE*IN_MILLISECONDS);
+            me->SetFarVisible(true);
             despawnTimer = 300000; // 5 min
             DoCast(me, 31963, true);
             HandleAOE();

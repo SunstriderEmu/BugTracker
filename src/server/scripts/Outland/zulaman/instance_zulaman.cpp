@@ -410,6 +410,7 @@ public:
                         if (Creature *pWarrior = plr->SummonCreature(24225, 227.153259, 1477.462524, 25.917961, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 600000)) {
                             warriorsList.push_back(pWarrior);
                             pWarrior->SetKeepActive(true);
+                            pWarrior->SetFarVisible(true);
                             pWarrior->SetSpeedRate(MOVE_WALK, 3);
                             pWarrior->GetMotionMaster()->MovePath(24225, false); //this path is PATH_TYPE_ONCE
                         }
@@ -423,6 +424,7 @@ public:
                         if (Creature *pEagle = plr->SummonCreature(24159, 336.942902, 1395.780396, 74.461060, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 600000)) {
                             eaglesList.push_back(pEagle);
                             pEagle->SetKeepActive(true);
+                            pEagle->SetFarVisible(true);
                             pEagle->SetSpeedRate(MOVE_WALK, 3);
                             pEagle->GetMotionMaster()->MovePath(24159, false); //this path is PATH_TYPE_ONCE
                         }

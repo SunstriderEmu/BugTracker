@@ -193,6 +193,7 @@ public:
             DoScriptText(YELL_BEGIN, me, nullptr);
             
             me->SetKeepActive(5 * MINUTE*IN_MILLISECONDS);
+            me->SetFarVisible(true);
         }
         
         uint32 cleaveTimer;

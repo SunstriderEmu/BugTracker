@@ -207,6 +207,7 @@ public:
             me->SetDisableGravity(true);
             me->GetMotionMaster()->MovePoint(1, -1204.845581, -12465.271484, 94.779945, false);
             me->SetKeepActive(true);
+            me->SetFarVisible(true);
             landed = false;
         }
         

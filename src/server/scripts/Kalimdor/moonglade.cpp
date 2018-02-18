@@ -999,7 +999,11 @@ public:
             {
                 Creature* cre = me->SummonCreature(NIGHTMARE, i.x, i.y, i.z, i.o, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 120000);
                 if (cre)
+                {
                     cre->SetKeepActive(true);
+                    cre->SetFarVisible(true);
+                }
+
     //            cre->AddThreat(me, 0.1f);
     //            cre->AI()->AttackStart(me);
             }
@@ -1374,6 +1378,7 @@ public:
                 if (cre)
                 {
                     cre->SetKeepActive(true);
+                    cre->SetFarVisible(true);
                     cre->AddUnitState(UNIT_STATE_IGNORE_PATHFINDING);
                     EranikusGUID = cre->GetGUID();
                 }
@@ -1395,6 +1400,7 @@ public:
                 if (tyr)
                 {
                     tyr->SetKeepActive(true);
+                    cre->SetFarVisible(true);
                     TyrandeGUID = tyr->GetGUID();
                 }
                 for (int i = 0; i < 8; i++)
@@ -1403,6 +1409,7 @@ public:
                     if (cre)
                     {
                         cre->SetKeepActive(true);
+                        cre->SetFarVisible(true);
                         PriestessGUIDs[i] = cre->GetGUID();
                         cre->AddUnitState(UNIT_STATE_IGNORE_PATHFINDING);
                         cre->SetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID, 9695);

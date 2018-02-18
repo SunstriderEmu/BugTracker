@@ -89,6 +89,7 @@ public:
             currentEvent = 0;
             eventProgress = 0;
             me->SetKeepActive(30 * MINUTE*IN_MILLISECONDS);
+            me->SetFarVisible(true);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
             me->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);   // I don't know if flags are reloaded from template in case NPC is respawned after death
         }

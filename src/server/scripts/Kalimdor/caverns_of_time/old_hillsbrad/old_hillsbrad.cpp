@@ -260,7 +260,7 @@ public:
         npc_thrall_old_hillsbradAI(Creature *c) : EscortAI(c)
         {
             pInstance = ((InstanceScript*)c->GetInstanceScript());
-            me->SetKeepActive(30 * MINUTE*IN_MILLISECONDS);
+            me->SetFarVisible(true);
 
             AddWaypoint(0, 2230.91, 118.765, 82.2947);
             AddWaypoint(1, 2230.33, 114.980, 82.2946);
@@ -425,6 +425,7 @@ public:
             if (!pInstance)
                 return;
     
+            me->SetKeepActive(30 * MINUTE*IN_MILLISECONDS);
             switch( i )
             {
                 case 8:
