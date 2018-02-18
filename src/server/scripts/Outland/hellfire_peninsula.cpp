@@ -2362,15 +2362,16 @@ public:
 };
 enum WatchCommanderLeonus
 {
-    SAY_COVER = 0,
-    EVENT_LEONUS_TALK = 1,
-    EVENT_INFERNAL_RAIN_ATTACK = 2,
-    EVENT_FEAR_CONTROLLER_CAST = 3,
-    EVENT_ACTIVE_FALSE = 4,
-    NPC_INFERNAL_RAIN = 18729,
-    SPELL_INFERNAL_RAIN = 33814,
-    NPC_FEAR_CONTROLLER = 19393,
-    DATA_ACTIVE = 1,
+    SAY_COVER                   = 0,
+    EVENT_START                 = 1,
+    EVENT_LEONUS_TALK           = 2,
+    EVENT_INFERNAL_RAIN_ATTACK  = 3,
+    EVENT_FEAR_CONTROLLER_CAST  = 4,
+    EVENT_ACTIVE_FALSE          = 5,
+    NPC_INFERNAL_RAIN           = 18729,
+    SPELL_INFERNAL_RAIN         = 33814,
+    NPC_FEAR_CONTROLLER         = 19393,
+    DATA_ACTIVE                 = 1,
 };
 
 struct npc_watch_commander_leonus : public ScriptedAI
@@ -2380,9 +2381,7 @@ struct npc_watch_commander_leonus : public ScriptedAI
     void Reset() override
     {
         _events.Reset();
-        _events.RescheduleEvent(EVENT_LEONUS_TALK, 2min, 10min);
-        _events.RescheduleEvent(EVENT_INFERNAL_RAIN_ATTACK, _events.GetTimeUntilEvent(EVENT_LEONUS_TALK));
-        _events.RescheduleEvent(EVENT_FEAR_CONTROLLER_CAST, _events.GetTimeUntilEvent(EVENT_LEONUS_TALK));
+        _events.ScheduleEvent(EVENT_START, 2min, 10min);
     }
 
     void SetData(uint32 /*type*/, uint32 data, Unit* /*setter*/) override
@@ -2405,6 +2404,11 @@ struct npc_watch_commander_leonus : public ScriptedAI
         {
             switch (eventId)
             {
+            case EVENT_START:
+                _events.ScheduleEvent(EVENT_LEONUS_TALK, 1s);
+                _events.ScheduleEvent(EVENT_INFERNAL_RAIN_ATTACK, 1s);
+                _events.ScheduleEvent(EVENT_FEAR_CONTROLLER_CAST, 1s);
+                break;
             case EVENT_LEONUS_TALK:
                 Talk(SAY_COVER);
                 me->HandleEmoteCommand(EMOTE_ONESHOT_SHOUT);
