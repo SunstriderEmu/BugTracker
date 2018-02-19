@@ -190,10 +190,8 @@ public:
     }
 };
 
-
 void AddSC_boss_the_black_stalker()
 {
-
     new boss_the_black_stalker();
 }
 

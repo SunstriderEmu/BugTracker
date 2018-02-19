@@ -43,6 +43,7 @@ void AddSC_boss_warlord_kalithresh();
 void AddSC_instance_steam_vault();
 void AddSC_boss_hungarfen();
 void AddSC_boss_the_black_stalker();
+void AddSC_instance_underbog();
 void AddSC_eversong_woods();
 void AddSC_ghostlands();
 void AddSC_boss_gruul();
@@ -162,6 +163,7 @@ void AddOutlandScripts()
     AddSC_instance_steam_vault();
     AddSC_boss_hungarfen();
     AddSC_boss_the_black_stalker();
+    AddSC_instance_underbog();
     AddSC_eversong_woods();
     AddSC_ghostlands();
     AddSC_boss_gruul();

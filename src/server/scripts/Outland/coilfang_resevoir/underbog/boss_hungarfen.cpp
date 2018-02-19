@@ -164,12 +164,9 @@ public:
     }
 };
 
-
 void AddSC_boss_hungarfen()
 {
-
     new boss_hungarfen();
-
     new mob_underbog_mushroom();
 }
 
