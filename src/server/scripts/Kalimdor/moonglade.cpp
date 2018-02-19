@@ -1400,7 +1400,7 @@ public:
                 if (tyr)
                 {
                     tyr->SetKeepActive(true);
-                    cre->SetFarVisible(true);
+                    tyr->SetFarVisible(true);
                     TyrandeGUID = tyr->GetGUID();
                 }
                 for (int i = 0; i < 8; i++)
