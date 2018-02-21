@@ -1,0 +1,1 @@
+REPLACE INTO spell_template_override (entry, AttributesEx2, Comment) VALUES (7720, 0x4, 'Allow Ritual of Summoning Effect to target out of los');
