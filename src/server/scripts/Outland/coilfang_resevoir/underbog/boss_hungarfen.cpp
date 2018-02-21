@@ -98,8 +98,11 @@ public:
 };
 
 
+//Triggers 31689 to close enemies and do some damage
 #define SPELL_SPORE_CLOUD       34168
+//applies mushroom model
 #define SPELL_PUTRID_MUSHROOM   31690
+//modify model scale
 #define SPELL_GROW              31698
 
 class mob_underbog_mushroom : public CreatureScript
@@ -122,9 +125,9 @@ public:
             Stop = false;
             Grow_Timer = 0;
             Shrink_Timer = 20000;
-    
-            DoCast(me,SPELL_PUTRID_MUSHROOM,true);
-            DoCast(me,SPELL_SPORE_CLOUD,true);
+
+            DoCast(me, SPELL_PUTRID_MUSHROOM, true);
+            DoCast(me, SPELL_SPORE_CLOUD, true);
         }
     
         void MoveInLineOfSight(Unit *who) override { return; }
