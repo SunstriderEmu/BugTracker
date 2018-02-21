@@ -156,7 +156,7 @@ public:
             case 2: angle = 3*M_PI/4;  break;
             case 3: angle = M_PI/4;    break;
             }
-            Position pos = me->GetFirstWalkableCollisionPosition(40.0f, angle, true);
+            Position pos = me->GetFirstWalkableCollisionPosition(40.0f, angle);
             std::list<Unit*> targetList;
             SelectTargetList(targetList, 3, SELECT_TARGET_RANDOM, 0, 120.0f, true, true, -SPELL_SABER_LASH_IMM); //exclude players with SPELL_SABER_LASH_IMM
             if(targetList.size() == 2 || targetList.size() == 3)
