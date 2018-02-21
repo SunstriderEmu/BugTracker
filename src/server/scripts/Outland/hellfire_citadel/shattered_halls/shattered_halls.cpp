@@ -65,18 +65,13 @@ public:
             _Reset();
 
             // _Reset() resets the loot mode, so we add them again, if any
-            /*
             uint32 prisonersExecuted = instance->GetData(DATA_PRISONERS_EXECUTED);
             if (prisonersExecuted == 0)
                 me->AddLootMode(LOOT_MODE_HARD_MODE_3);
             if (prisonersExecuted <= 1)
                 me->AddLootMode(LOOT_MODE_HARD_MODE_2);
             if (prisonersExecuted <= 2)
-            {
-                //me->AddLootMode(LOOT_MODE_HARD_MODE_1);
-                me->loot.RemoveItem(31716);
-             }
-            */
+                me->AddLootMode(LOOT_MODE_HARD_MODE_1);
 
             if (instance->GetBossState(DATA_KARGATH) == DONE)
                 me->SetImmuneToPC(false);
@@ -129,12 +124,12 @@ public:
                 case 3:
                     //me->RemoveLootMode(LOOT_MODE_HARD_MODE_1);
                     me->YellToMap("[PH] You're too late! I killed them all.");
-                    me->loot.RemoveItem(31716);
+                    me->RemoveLootMode(LOOT_MODE_HARD_MODE_1);
                 case 2:
-                    //me->RemoveLootMode(LOOT_MODE_HARD_MODE_2);
+                    me->RemoveLootMode(LOOT_MODE_HARD_MODE_2);
                     me->YellToMap("[PH] I killed the second hostage! In fifteen minutes, I will kill the last.");
                 case 1:
-                    //me->RemoveLootMode(LOOT_MODE_HARD_MODE_3);
+                    me->RemoveLootMode(LOOT_MODE_HARD_MODE_3);
                     me->YellToMap("[PH] The first hostage is dead! In 10 minutes, I will kill a second!", LANG_UNIVERSAL);
                 default:
                     break;

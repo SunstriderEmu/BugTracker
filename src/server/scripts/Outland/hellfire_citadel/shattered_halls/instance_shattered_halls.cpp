@@ -157,34 +157,6 @@ public:
             }
         }
 
-        // This is a hack. Actually, LootMgr should be able to dynamically change loot table depending on the amount of prisoners killed.
-        void RewardAllPlayersInMapForQuest()
-        {
-            Map::PlayerList const& players = instance->GetPlayers();
-
-            if (!players.isEmpty())
-            {
-                for (const auto & player : players)
-                {
-                    if (Player* plr = player.GetSource()) {
-                        if (plr->GetQuestStatus(10884) == QUEST_STATUS_INCOMPLETE) {
-                            plr->CompleteQuest(10884);      // Directly complete quest, so we are sure it is
-                            // Now, we try to give the quest item, that looks more blizzlike that way
-                            ItemPosCountVec dest;
-                            uint8 msg = plr->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 31716, 1);
-                            if (msg == EQUIP_ERR_OK) {
-                                Item* item = plr->StoreNewItem(dest, 31716, true);
-                                if (item)
-                                    plr->SendNewItem(item, 1, false, true);
-                            }
-                            else
-                                plr->SendEquipError(msg, nullptr, nullptr);
-                        }
-                    }
-                }
-            }
-        }
-
         void CastSpellOnAllPlayersInMap(uint32 spellid)
         {
             Map::PlayerList const& players = instance->GetPlayers();
