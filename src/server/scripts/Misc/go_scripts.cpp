@@ -887,8 +887,8 @@ public:
         bool GossipHello(Player* pPlayer) override
         {
             pPlayer->SendLoot(me->GetGUID(), LOOT_CORPSE);
-            me->SummonCreature(NPC_HIVE_AMBUSHER, me->GetPositionX() + 1, me->GetPositionY(), me->GetPositionZ(), me->GetAngle(pPlayer), TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 60000);
-            me->SummonCreature(NPC_HIVE_AMBUSHER, me->GetPositionX(), me->GetPositionY() + 1, me->GetPositionZ(), me->GetAngle(pPlayer), TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 60000);
+            me->SummonCreature(NPC_HIVE_AMBUSHER, me->GetPositionX() + 1, me->GetPositionY(), me->GetPositionZ(), me->GetAbsoluteAngle(pPlayer), TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 60000);
+            me->SummonCreature(NPC_HIVE_AMBUSHER, me->GetPositionX(), me->GetPositionY() + 1, me->GetPositionZ(), me->GetAbsoluteAngle(pPlayer), TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 60000);
             return true;
         }
     };

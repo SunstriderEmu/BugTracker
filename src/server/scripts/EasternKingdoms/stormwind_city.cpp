@@ -243,7 +243,7 @@ public:
             {
                 if (emote == TEXTEMOTE_SALUTE)
                 {
-                    me->SetOrientation(me->GetAngle(player));
+                    me->SetOrientation(me->GetAbsoluteAngle(player));
                     me->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE);
                 }
                 if (emote == TEXTEMOTE_WAVE)

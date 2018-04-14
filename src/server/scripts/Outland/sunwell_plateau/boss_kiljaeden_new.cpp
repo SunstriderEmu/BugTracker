@@ -969,7 +969,7 @@ public:
 
                         if(Creature* portal = pInstance->GetSingleCreatureFromStorage(NPC_BOSS_PORTAL))
                         {
-                            pSummoned->SetOrientation(pSummoned->GetAngle(aOutroLocations[5].m_fX, aOutroLocations[5].m_fY)); //velen talk position
+                            pSummoned->SetOrientation(pSummoned->GetAbsoluteAngle(aOutroLocations[5].m_fX, aOutroLocations[5].m_fY)); //velen talk position
                             pSummoned->SendMovementFlagUpdate();
                         }
                         break;

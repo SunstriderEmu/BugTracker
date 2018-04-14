@@ -328,7 +328,7 @@ void spectate(Player* player, ObjectGuid targetGuid, Creature *mobArena)
         target->GetContactPoint(player, x, y, z);
 
         target->GetBattleground()->AddSpectator(player->GetGUID());
-        player->TeleportTo(target->GetMapId(), x, y, z, player->GetAngle(target), TELE_TO_GM_MODE);
+        player->TeleportTo(target->GetMapId(), x, y, z, player->GetAbsoluteAngle(target), TELE_TO_GM_MODE);
         player->SetSpectate(true);
     }
 }

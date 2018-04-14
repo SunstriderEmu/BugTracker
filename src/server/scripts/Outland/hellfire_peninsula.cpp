@@ -880,8 +880,8 @@ public:
             float fX, fY, fZ;
             me->GetNearPoint(me, fX, fY, fZ, 0.0f, 7.0f, fAngle);
             uint32 uiTime = TIME_TOTAL - (uiSpawnButtressTimer * uiButtressCount);
-            me->SummonCreature(NPC_BUTTRESS, fX, fY, fZ, me->GetAngle(fX, fY), TEMPSUMMON_TIMED_DESPAWN, uiTime);
-            me->SummonCreature(NPC_BUTTRESS_SPAWNER, fX, fY, fZ, me->GetAngle(fX, fY), TEMPSUMMON_TIMED_DESPAWN, uiTime);
+            me->SummonCreature(NPC_BUTTRESS, fX, fY, fZ, me->GetAbsoluteAngle(fX, fY), TEMPSUMMON_TIMED_DESPAWN, uiTime);
+            me->SummonCreature(NPC_BUTTRESS_SPAWNER, fX, fY, fZ, me->GetAbsoluteAngle(fX, fY), TEMPSUMMON_TIMED_DESPAWN, uiTime);
         }
     
         void DoSpawnDemon()
@@ -1451,7 +1451,7 @@ public:
             if (!pColonel)
                 return 0;
     
-            colonel = me->GetAngle(pColonel->GetPositionX(), pColonel->GetPositionY());
+            colonel = me->GetAbsoluteAngle(pColonel->GetPositionX(), pColonel->GetPositionY());
     
             switch(step)
             {

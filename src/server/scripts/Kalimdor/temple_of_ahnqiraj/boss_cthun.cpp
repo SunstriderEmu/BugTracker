@@ -319,7 +319,7 @@ public:
                             me->SetGuidValue(UNIT_FIELD_TARGET, target->GetGUID());
     
                             //Face our target
-                            DarkGlareAngle = me->GetAngle(target);
+                            DarkGlareAngle = me->GetAbsoluteAngle(target);
                             DarkGlareTickTimer = 1000;
                             DarkGlareTick = 0;
                             ClockWise = rand()%2;
