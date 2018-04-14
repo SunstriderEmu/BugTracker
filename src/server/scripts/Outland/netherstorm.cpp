@@ -1365,7 +1365,7 @@ public:
     
         void MoveInLineOfSight(Unit *pWho)
         override {
-            if (!pWho->isCharmedOwnedByPlayerOrPlayer())
+            if (!pWho->IsCharmedOwnedByPlayerOrPlayer())
                 return;
     
             if (me->IsWithinDistInMap(pWho, 4.0f, false))
