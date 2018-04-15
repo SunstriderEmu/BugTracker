@@ -291,7 +291,7 @@ public:
                     if(i_pl->IsAlive() && i_pl->IsAttackableByAOE())
                     {
                         i_pl->CastSpell(i_pl, SPELL_TELEPORT_CENTER, TRIGGERED_FULL_MASK);
-                        me->GetNearPoint(me,x,y,z,5,5,0);
+                        me->GetNearPoint(me,x,y,z,5,0);
                         i_pl->TeleportTo(me->GetMapId(),x,y,LOCATION_Z,i_pl->GetOrientation());
                     }
             }
