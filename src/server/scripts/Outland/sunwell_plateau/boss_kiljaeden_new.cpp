@@ -2175,7 +2175,7 @@ public:
                             Timer[1] = urand(4000, 6000);
                         }
 
-                        if (me->IsWithinMeleeRange(me->GetVictim(), 6))
+                        if (me->IsWithinCombatRange(me->GetVictim(), 6))
                         {
                             if (Timer[2] <= diff)
                             {

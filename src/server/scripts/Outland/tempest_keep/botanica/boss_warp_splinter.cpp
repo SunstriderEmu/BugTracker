@@ -92,7 +92,7 @@ public:
                 {
                     if (Unit *Warp = (Unit*)ObjectAccessor::GetUnit(*me, WarpGuid))
                     {
-                        if (me->IsWithinMeleeRange(Warp, 2.5f))
+                        if (me->IsWithinCombatRange(Warp, 2.5f))
                         {
                             int32 CurrentHP_Treant = (int32)me->GetHealth();
                             CastSpellExtraArgs args;
