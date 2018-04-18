@@ -42,16 +42,16 @@ static Location spawnLocations[]=
 static Location AkamaWP[]=
 {
     // intro event
-    {515.32f,  400.793f, M_PI,  112.784f},
+    {515.32f,  400.793f, float(M_PI), 112.784f},
     // outro event
-    {482.35f,  401.163f, 0.000f, 112.784f},
-    {469.35f,  400.880f, 0.000f, 118.540f}
+    {482.35f,  401.163f, 0.000f,      112.784f},
+    {469.35f,  400.880f, 0.000f,      118.540f}
 };
 
 // Brokens summoning coords
 static Location BrokenCoords[]=
 {
-    {541.376f, 401.440f, M_PI  ,  112.784f}, // The place where akama channels
+    {541.376f, 401.440f, float(M_PI),   112.784f}, // The place where akama channels
     {534.130f, 352.395f, 2.164f,        112.784f}, // Behind a 'pillar' which is behind the east alcove
     {499.621f, 341.535f, 1.653f,        112.784f}, // East Alcove
     {499.151f, 461.036f, 4.771f,        112.784f}, // West Alcove
