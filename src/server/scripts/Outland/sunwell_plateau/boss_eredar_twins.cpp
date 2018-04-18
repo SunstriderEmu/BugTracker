@@ -263,43 +263,50 @@ struct EredarTwin : public ScriptedAI
         //Shadow Nova is cast by Sacrolash OR by Alythess with her sister dead
         if(ConflagOrShadowNovaTimer < diff)
         {
-            bool doConflag = !isSacrolash ^ SisterDead; //false = nova
-            Unit* target = nullptr;
-
-            //pick a target within the top5 top aggro of our sister, OUR tank excepted
-            if(!SisterDead)
-                if(Creature* Sister = ObjectAccessor::GetCreature((*me), ObjectGuid(pInstance->GetData64(isSacrolash ? DATA_ALYTHESS : DATA_SACROLASH))))
-                    target = SelectConflagOrNovaTarget(Sister);
-
-            //if no target found pick it ourselves
-            if(!target)
-                target = SelectTarget(SELECT_TARGET_MAXTHREAT, 5, 100.0, true, true);
-
-            if(!target)
-                target = me->GetVictim();
-
-            //cast it then do emotes/yells
-            if(target && DoCast(target, doConflag ? SPELL_CONFLAGRATION : SPELL_SHADOW_NOVA) == SPELL_CAST_OK)
+            if (!(me->IsNonMeleeSpellCast(false)))
             {
-                if(doConflag)
+                bool doConflag = !isSacrolash ^ SisterDead; //false = nova
+                Unit* target = nullptr;
+
+                //pick a target within the top5 top aggro of our sister, OUR tank excepted
+                if (!SisterDead)
+                    if (Creature* Sister = ObjectAccessor::GetCreature((*me), ObjectGuid(pInstance->GetData64(isSacrolash ? DATA_ALYTHESS : DATA_SACROLASH))))
+                        target = SelectConflagOrNovaTarget(Sister);
+
+                //if no target found pick it ourselves
+                if (!target)
+                    target = SelectTarget(SELECT_TARGET_MAXTHREAT, 5, 100.0, true, true);
+
+                if (!target)
+                    target = me->GetVictim();
+
+                //cast it then do emotes/yells
+                if (target && DoCast(target, doConflag ? SPELL_CONFLAGRATION : SPELL_SHADOW_NOVA) == SPELL_CAST_OK)
                 {
-                    DoScriptText(EMOTE_CONFLAGRATION, me, target);
-                    if(!isSacrolash) //only Alythess yell for Conflag
-                        DoScriptText(YELL_CANFLAGRATION, me);
-                } else {
-                    DoScriptText(EMOTE_SHADOW_NOVA, me, target);
-                    if(isSacrolash) //only Sacrolash yell for Shadow Nova
-                        DoScriptText(YELL_SHADOW_NOVA, me);
+                    if (doConflag)
+                    {
+                        DoScriptText(EMOTE_CONFLAGRATION, me, target);
+                        if (!isSacrolash) //only Alythess yell for Conflag
+                            DoScriptText(YELL_CANFLAGRATION, me);
+                    }
+                    else {
+                        DoScriptText(EMOTE_SHADOW_NOVA, me, target);
+                        if (isSacrolash) //only Sacrolash yell for Shadow Nova
+                            DoScriptText(YELL_SHADOW_NOVA, me);
+                    }
+                    ConflagOrShadowNovaTimer = 30000;
                 }
-                ConflagOrShadowNovaTimer = 30000;
             }
         } else ConflagOrShadowNovaTimer -= diff;
 
         if (CheckFBTimer <= diff) {
-            if (CheckPlayersForFireblast())
-                DoCast(me, SPELL_FIREBLAST);
-                
-            CheckFBTimer = 400;
+            if (!(me->IsNonMeleeSpellCast(false)))
+            {
+                if (CheckPlayersForFireblast())
+                    DoCast(me, SPELL_FIREBLAST);
+
+                CheckFBTimer = 400;
+            }
         } else CheckFBTimer -= diff;
 
         if (EnrageTimer < diff && !Enraged)
@@ -397,9 +404,12 @@ public:
     
             if(ConfoundingblowTimer < diff)
             {
-                if(Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
-                    if(DoCast(target, SPELL_CONFOUNDING_BLOW) == SPELL_CAST_OK)
-                        ConfoundingblowTimer = 20000 + (rand()%2000);
+                if (!(me->IsNonMeleeSpellCast(false)))
+                {
+                    if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
+                        if (DoCast(target, SPELL_CONFOUNDING_BLOW) == SPELL_CAST_OK)
+                            ConfoundingblowTimer = 20000 + (rand() % 2000);
+                }
     
             }else ConfoundingblowTimer -=diff;
     
@@ -429,8 +439,11 @@ public:
     
             if(ShadowbladesTimer < diff)
             {
-                if(DoCast(me, SPELL_SHADOW_BLADES) == SPELL_CAST_OK)
-                    ShadowbladesTimer = 10000;
+                if (!(me->IsNonMeleeSpellCast(false)))
+                {
+                    if (DoCast(me, SPELL_SHADOW_BLADES) == SPELL_CAST_OK)
+                        ShadowbladesTimer = 10000;
+                }
             }else ShadowbladesTimer -=diff;
     
             DoMeleeAttackIfReady();

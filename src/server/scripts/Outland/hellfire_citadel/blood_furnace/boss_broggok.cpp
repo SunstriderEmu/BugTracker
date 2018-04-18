@@ -162,7 +162,7 @@ public:
             {
                 if (GameObject* pFrontDoor = me->FindNearestGameObject(GO_PRISON_DOOR_04, 60.0f))
                 {
-                    me->SetOrientation(me->GetAngle(pFrontDoor->GetPositionX(), pFrontDoor->GetPositionY()));
+                    me->SetOrientation(me->GetAbsoluteAngle(pFrontDoor->GetPositionX(), pFrontDoor->GetPositionY()));
                     me->SendMovementFlagUpdate();
                 }
             }

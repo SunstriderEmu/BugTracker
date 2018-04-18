@@ -969,7 +969,7 @@ public:
 
                         if(Creature* portal = pInstance->GetSingleCreatureFromStorage(NPC_BOSS_PORTAL))
                         {
-                            pSummoned->SetOrientation(pSummoned->GetAngle(aOutroLocations[5].m_fX, aOutroLocations[5].m_fY)); //velen talk position
+                            pSummoned->SetOrientation(pSummoned->GetAbsoluteAngle(aOutroLocations[5].m_fX, aOutroLocations[5].m_fY)); //velen talk position
                             pSummoned->SendMovementFlagUpdate();
                         }
                         break;
@@ -2175,7 +2175,7 @@ public:
                             Timer[1] = urand(4000, 6000);
                         }
 
-                        if (me->IsWithinMeleeRange(me->GetVictim(), 6))
+                        if (me->IsWithinCombatRange(me->GetVictim(), 6))
                         {
                             if (Timer[2] <= diff)
                             {

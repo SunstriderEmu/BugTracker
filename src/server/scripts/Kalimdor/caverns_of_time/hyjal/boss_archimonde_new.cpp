@@ -664,7 +664,7 @@ public:
                         Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, -20.0f, true);
                         float x, y, z, tX, tY, tZ, angle;
                         me->GetPosition(x,y,z);
-                        angle = target ? me->GetAngle(target) : rand()%6;
+                        angle = target ? me->GetAbsoluteAngle(target) : rand()%6;
                         //spawn at 13m
                         tX = x + cos(angle) * 13;
                         tY = y + sin(angle) * 13;

@@ -146,7 +146,7 @@ public:
             Phase = 3;
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             pAttumen->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-            float angle = me->GetAngle(pAttumen);
+            float angle = me->GetAbsoluteAngle(pAttumen);
             float distance = me->GetDistance2d(pAttumen);
             float newX = me->GetPositionX() + cos(angle)*(distance/2) ;
             float newY = me->GetPositionY() + sin(angle)*(distance/2) ;

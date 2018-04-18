@@ -92,7 +92,7 @@ public:
                 {
                     if (Unit *Warp = (Unit*)ObjectAccessor::GetUnit(*me, WarpGuid))
                     {
-                        if (me->IsWithinMeleeRange(Warp, 2.5f))
+                        if (me->IsWithinCombatRange(Warp, 2.5f))
                         {
                             int32 CurrentHP_Treant = (int32)me->GetHealth();
                             CastSpellExtraArgs args;
@@ -193,7 +193,7 @@ public:
     
                 float X = Treant_Spawn_Pos_X + TREANT_SPAWN_DIST * cos(angle);
                 float Y = Treant_Spawn_Pos_Y + TREANT_SPAWN_DIST * sin(angle);
-                float O = - me->GetAngle(X,Y);
+                float O = - me->GetAbsoluteAngle(X,Y);
     
                 if(Creature *pTreant = me->SummonCreature(CREATURE_TREANT,treant_pos[i][0],treant_pos[i][1],treant_pos[i][2],O,TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN,25000))
                     ((mob_warp_splinter_treant::mob_treantAI*)pTreant->AI())->WarpGuid = me->GetGUID();

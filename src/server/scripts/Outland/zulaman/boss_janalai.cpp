@@ -74,9 +74,9 @@ float JanalainPos[1][3] =
 float FireWallCoords[4][4] =
 {
     {-10.13f, 1149.27f, 19.0f, 3.1415f},
-    {-33.93f, 1123.90f, 19.0f, 0.5f*M_PI},
+    {-33.93f, 1123.90f, 19.0f, float(0.5f*M_PI)},
     {-54.80f, 1150.08f, 19.0f, 0.0f},
-    {-33.93f, 1175.68f, 19.0f, 1.5f*M_PI}
+    {-33.93f, 1175.68f, 19.0f, float(1.5f*M_PI)}
 };
 
 float hatcherway[2][5][3] =

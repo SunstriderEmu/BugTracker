@@ -443,8 +443,8 @@ public:
                 return;
     
             //Calculate the angle to Pathaleon
-            angle_dawnforge = me->GetAngle(pathaleon->GetPositionX(), pathaleon->GetPositionY());
-            angle_ardonis = ardonis->GetAngle(pathaleon->GetPositionX(), pathaleon->GetPositionY());
+            angle_dawnforge = me->GetAbsoluteAngle(pathaleon->GetPositionX(), pathaleon->GetPositionY());
+            angle_ardonis = ardonis->GetAbsoluteAngle(pathaleon->GetPositionX(), pathaleon->GetPositionY());
     
             //Turn Dawnforge and update
             me->SetOrientation(angle_dawnforge);
@@ -468,8 +468,8 @@ public:
                 if (!player)
                     return;
     
-                angle_dawnforge = me->GetAngle(ardonis->GetPositionX(), ardonis->GetPositionY());
-                angle_ardonis = ardonis->GetAngle(me->GetPositionX(), me->GetPositionY());
+                angle_dawnforge = me->GetAbsoluteAngle(ardonis->GetPositionX(), ardonis->GetPositionY());
+                angle_ardonis = ardonis->GetAbsoluteAngle(me->GetPositionX(), me->GetPositionY());
     
                 //Turn Dawnforge and update
                 me->SetOrientation(angle_dawnforge);
@@ -1365,7 +1365,7 @@ public:
     
         void MoveInLineOfSight(Unit *pWho)
         override {
-            if (!pWho->isCharmedOwnedByPlayerOrPlayer())
+            if (!pWho->IsCharmedOwnedByPlayerOrPlayer())
                 return;
     
             if (me->IsWithinDistInMap(pWho, 4.0f, false))

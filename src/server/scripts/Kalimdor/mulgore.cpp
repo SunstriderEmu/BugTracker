@@ -140,7 +140,7 @@ public:
                     {
                     Unit *plr = ObjectAccessor::GetUnit((*me),player);
                     if(plr)
-                        me->SetOrientation(me->GetAngle(plr));
+                        me->SetOrientation(me->GetAbsoluteAngle(plr));
                     me->HandleEmoteCommand(EMOTE_STATE_USESTANDING);    //eat
                     WorldPacket data;
                     me->BuildHeartBeatMsg(&data);
@@ -176,7 +176,7 @@ public:
                     if(plr && plr->GetQuestStatus(11129) == QUEST_STATUS_INCOMPLETE)
                         plr->CompleteQuest(11129);
                     float x, y, z, z2, angle;
-                    angle = me->GetAngle(-2146, -430);
+                    angle = me->GetAbsoluteAngle(-2146, -430);
                     me->GetPosition(x,y,z);
                     x = x + 40*cos(angle);
                     y = y + 40*sin(angle);

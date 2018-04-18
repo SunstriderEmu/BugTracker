@@ -1,18 +1,3 @@
-/* Copyright (C) 2006 - 2008 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /* ScriptData
 SDName: Npcs_Special
@@ -1436,16 +1421,18 @@ public:
         ObjectGuid playerGUID;
         
         void JustEngagedWith(Unit *pWho) override {}
+
         void Reset()
-        override {
+        override 
+        {
             me->GetMotionMaster()->MoveFollow(me->GetOwner(), PET_FOLLOW_DIST, me->GetFollowAngle());
             MorphTimer = 0;
             playerGUID = ObjectGuid::Empty;
         }
         
         void UpdateAI(uint32 const diff)
-        override {
-            PetAI::Minipet_DistanceCheck(diff);
+        override 
+        {
             if (MorphTimer) {
                 if (Player *plr = ObjectAccessor::GetPlayer(*me, playerGUID))
                     me->SetInFront(plr);
@@ -1458,6 +1445,7 @@ public:
                 else
                     MorphTimer -= diff;
             }
+            PetAI::UpdateAI(diff);
         }
 
         virtual void ReceiveEmote(Player* pPlayer, uint32 emote) override
@@ -1564,24 +1552,27 @@ public:
         npc_pet_bombAI(Creature *c) : PetAI(c) {}
         
         void Reset()
-        override {
+        override 
+        {
             me->GetMotionMaster()->MoveFollow(me->GetOwner(), PET_FOLLOW_DIST, me->GetFollowAngle());
         }
         
         void JustEngagedWith(Unit *pWho)
-        override {
+        override 
+        {
             me->GetMotionMaster()->MoveChase(pWho);
         }
         
         void UpdateAI(uint32 const diff)
-        override {        
-            PetAI::Minipet_DistanceCheck(diff);
+        override 
+        {        
             if (me->GetVictim()) {
                 if (me->IsWithinDistInMap(me->GetVictim(), 3.0f)) {
                     me->CastSpell(me->GetVictim(), SPELL_MALFUNCTION_EXPLOSION, TRIGGERED_NONE);
                     me->DisappearAndDie();
                 }
             }
+            PetAI::UpdateAI(diff);
         }
     };
 
@@ -2049,7 +2040,8 @@ public:
         void JustEngagedWith(Unit* who) override {}
         
         void OnSpellFinish(Unit* caster, uint32 spellId, Unit* target, bool ok)
-        override {
+        override 
+        {
             me->GetMotionMaster()->MoveFollow(me->GetOwner(), PET_FOLLOW_DIST, me->GetFollowAngle());
             
             if (rand() % 5 == 0)
@@ -2057,8 +2049,8 @@ public:
         }
         
         void UpdateAI(uint32 const diff)
-        override {
-            PetAI::Minipet_DistanceCheck(diff);
+        override 
+        {
             if (animTimer <= diff) {
                 me->GetMotionMaster()->MoveIdle();
                 me->CastSpell(me, 45255, TRIGGERED_NONE);
@@ -2066,6 +2058,8 @@ public:
             }
             else
                 animTimer -= diff;
+
+            PetAI::UpdateAI(diff);
         }
     };
 
@@ -2113,7 +2107,8 @@ public:
         }
         
         void UpdateAI(uint32 const diff)
-        override {
+        override 
+        {
             if (auraTimer) {
                 if (auraTimer <= diff) {
                     DoCast(me, 34832, true);
@@ -2147,8 +2142,7 @@ public:
 ## npc_egbert
 ######*/
 
-//todo, make use of 40670 instead
-
+//todo, make use of spell 40670 instead
 class npc_egbert : public CreatureScript
 {
 public:
@@ -2170,7 +2164,8 @@ public:
         float whatever;
         
         void Reset()
-        override {
+        override 
+        {
             if(owner)
             {
                 me->GetMotionMaster()->MoveFollow(owner, PET_FOLLOW_DIST, me->GetFollowAngle());
@@ -2182,8 +2177,8 @@ public:
         }
         
         void UpdateAI(uint32 const diff)
-        override {
-            PetAI::Minipet_DistanceCheck(diff);
+        override 
+        {
             if (owner && following && me->GetDistance(owner) < 10)
                 following = false;
     
@@ -2211,6 +2206,8 @@ public:
                     me->GetMotionMaster()->MovePoint(0,newX,newY,newZ);
                 }
             }
+
+            PetAI::UpdateAI(diff);
         }
     };
 
@@ -2248,7 +2245,8 @@ public:
         bool sleeping;
         
         void Reset()
-        override {
+        override 
+        {
             restingTimer = PANDA_SLEEP_TIMER;
             sleeping = false;
             if(owner)
@@ -2256,9 +2254,8 @@ public:
         }
         
         void UpdateAI(uint32 const diff)
-        override {   
-            PetAI::Minipet_DistanceCheck(diff);
-    
+        override 
+        {   
             //stop sleeping if too far
             if(owner && sleeping && me->GetDistance(owner) > 20)
             {
@@ -2283,10 +2280,11 @@ public:
                 {           
                     sleeping = true;
                     me->GetMotionMaster()->MoveIdle();
-                    me->CastSpell(me,SPELL_SLEEP, TRIGGERED_FULL_MASK);
+                    me->CastSpell(me, SPELL_SLEEP, true);
                     restingTimer = PANDA_SLEEP_TIMER;
                 } else restingTimer -= diff;
-            }     
+            }
+            PetAI::UpdateAI(diff);
         }
     };
 
@@ -2334,8 +2332,8 @@ public:
         uint32 deathRayTimer;
         uint32 deathRayCheckTimer;
         
-        void Reset()
-        override {
+        void Reset() override 
+        {
             sleeping = false;
             me->RemoveFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_FEIGN_DEATH);
             restingTimer = WILLY_SLEEP_TIMER;
@@ -2347,10 +2345,8 @@ public:
                 me->GetMotionMaster()->MoveFollow(owner, PET_FOLLOW_DIST, me->GetFollowAngle());
         }
         
-        void UpdateAI(uint32 const diff)
-        override {   
-            PetAI::Minipet_DistanceCheck(diff);
-    
+        void UpdateAI(uint32 const diff) override 
+        {   
             //stop sleeping if too far
             if(owner && sleeping && me->GetDistance(owner) > 20)
             {
@@ -2389,7 +2385,7 @@ public:
                     {
                         if (Unit* critter = FindACritterToNuke())
                         {
-                            me->CastSpell(critter,SPELL_DEATHRAY, TRIGGERED_NONE);
+                            me->CastSpell(critter, SPELL_DEATHRAY);
                             target = critter;
                             deathRayTimer = DEATHRAY_TIMER;
                             restingTimer = WILLY_SLEEP_TIMER;
@@ -2410,6 +2406,8 @@ public:
                     } else deathRayDurationTimer -= diff;
                 }
             }     
+
+            PetAI::UpdateAI(diff);
         }
     
         Unit* FindACritterToNuke()
