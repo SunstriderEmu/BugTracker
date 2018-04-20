@@ -1,0 +1,1 @@
+UPDATE creature SET spawnMask = 1 WHERE map IN (36, 429, 90, 532, 530);
