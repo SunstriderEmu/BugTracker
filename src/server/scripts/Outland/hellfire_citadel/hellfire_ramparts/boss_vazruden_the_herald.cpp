@@ -127,7 +127,7 @@ public:
                 DoScriptText(EMOTE, me);
                 events.CancelEvent(EVENT_FIREBALL);
                 //EVENT_ENTER_LAND_PHASE is triggered when MOVINFORM_CENTER is reached
-                me->GetMotionMaster()->MovePoint(MOVINFORM_CENTER, POSITION_GET_X_Y_Z(&VazrudenMiddle), 0.0f, false, true);
+                me->GetMotionMaster()->MovePoint(MOVINFORM_CENTER, POSITION_GET_X_Y_Z(&VazrudenMiddle), false, {}, true);
                 //this shouldn't be needed but lets add this event here so that we still go to land phase if movement inform fails for some reason
                 events.RescheduleEvent(EVENT_ENTER_LAND_PHASE, 10000, 0, PHASE_DESCENDING); 
                 break;
@@ -196,7 +196,7 @@ public:
                 }
                 case EVENT_SWITCH_SIDE:
                     lastWaypoint = lastWaypoint == 1 ? 0 : 1;
-                    me->GetMotionMaster()->MovePoint(MOVINFORM_FLIGHT, POSITION_GET_X_Y_Z(&(VazrudenRing[lastWaypoint])), 0.0f, false, true);
+                    me->GetMotionMaster()->MovePoint(MOVINFORM_FLIGHT, POSITION_GET_X_Y_Z(&(VazrudenRing[lastWaypoint])), false, {}, true);
 
                     events.RescheduleEvent(EVENT_SWITCH_SIDE, 15 * SECOND * IN_MILLISECONDS, 0, PHASE_FLIGHT);
                     break;
@@ -463,7 +463,7 @@ public:
                     {
                         me->GetMotionMaster()->Clear();
                         me->SetWalk(false);
-                        me->GetMotionMaster()->MovePoint(0, POSITION_GET_X_Y_Z(&VazrudenMiddle), 0.0f, false, true);
+                        me->GetMotionMaster()->MovePoint(0, POSITION_GET_X_Y_Z(&VazrudenMiddle), false, {}, true);
                         checkTimer = 1000;
                     }
                     else {

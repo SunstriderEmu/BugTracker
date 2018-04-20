@@ -522,7 +522,7 @@ class boss_kaelthas : public CreatureScript
                         for (uint8 i = 0; i < 2; ++i)
                             if (Creature* trigger = me->SummonCreature(WORLD_TRIGGER, triggersPos[i], TEMPSUMMON_TIMED_DESPAWN, 60 * SECOND))
                                 trigger->CastSpell(me, SPELL_NETHERBEAM1+i, TRIGGERED_NONE);
-                        me->GetMotionMaster()->MovePoint(POINT_AIR, me->GetPositionX(), me->GetPositionY(), 76.0f, false, true);
+                        me->GetMotionMaster()->MovePoint(POINT_AIR, me->GetPositionX(), me->GetPositionY(), 76.0f, false, {}, true);
                         me->CastSpell(me, SPELL_GROW, TRIGGERED_FULL_MASK);
                         break;
                     case EVENT_SCENE_4:
@@ -609,7 +609,7 @@ class boss_kaelthas : public CreatureScript
                     case EVENT_SCENE_16:
                         summons.DespawnEntry(WORLD_TRIGGER);
                         me->RemoveAurasDueToSpell(52241); // WRONG VISUAL, ZOMG!
-                        me->GetMotionMaster()->MovePoint(POINT_START_LAST_PHASE, me->GetHomePosition(), false, true);
+                        me->GetMotionMaster()->MovePoint(POINT_START_LAST_PHASE, me->GetHomePosition(), false, {}, true);
                         break;
                 }
 
@@ -682,7 +682,7 @@ class boss_kaelthas : public CreatureScript
                             events.Reset();
                             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                             me->SetReactState(REACT_PASSIVE);
-                            me->GetMotionMaster()->MovePoint(POINT_MIDDLE, me->GetHomePosition(), true, true); 
+                            me->GetMotionMaster()->MovePoint(POINT_MIDDLE, me->GetHomePosition(), true, {}, true);
                             me->ClearUnitState(UNIT_STATE_MELEE_ATTACKING);
                             me->SendMeleeAttackStop();
                             break;

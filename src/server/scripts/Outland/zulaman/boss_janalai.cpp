@@ -549,7 +549,7 @@ public:
                 if(WaitTimer)
                 {
                     me->GetMotionMaster()->Clear();
-                    me->GetMotionMaster()->MovePoint(0,hatcherway[side][waypoint][0],hatcherway[side][waypoint][1],hatcherway[side][waypoint][2]);
+                    me->GetMotionMaster()->MovePoint(0, hatcherway[side][waypoint][0], hatcherway[side][waypoint][1], hatcherway[side][waypoint][2]);
                     waypoint++;
                     WaitTimer = 0;
                 }

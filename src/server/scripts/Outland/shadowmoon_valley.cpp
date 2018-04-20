@@ -2705,7 +2705,7 @@ public:
             DoScriptText(COMMANDER_ARCUS_SAY1, me, nullptr);
             me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
             me->RemoveUnitMovementFlag(MOVEFLAG_WALK);
-            me->GetMotionMaster()->MovePoint(0, -3098.666748, 682.178040, -18.633110, true);
+            me->GetMotionMaster()->MovePoint(0, -3098.666748, 682.178040, -18.633110);
             
             for (auto & i : defendersPosAldor)
                 me->SummonCreature(NPC_DEFENDER_ALDOR, i[0], i[1], i[2], 0, TEMPSUMMON_MANUAL_DESPAWN, 0);
@@ -2890,7 +2890,7 @@ public:
             DoScriptText(COMMANDER_HOBB_SAY1, me, nullptr);
             me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
             me->RemoveUnitMovementFlag(MOVEFLAG_WALK);
-            me->GetMotionMaster()->MovePoint(0, -4072.696777, 1071.352295, 30.769413, true);
+            me->GetMotionMaster()->MovePoint(0, -4072.696777, 1071.352295, 30.769413);
             
             for (auto & i : defendersPosScyer)
                 me->SummonCreature(NPC_DEFENDER_SCYER, i[0], i[1], i[2], 0, TEMPSUMMON_MANUAL_DESPAWN, 0);

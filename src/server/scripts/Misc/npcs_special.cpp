@@ -1849,7 +1849,7 @@ public:
         override {
             /*if (Creature* target = summoned->SelectNearestTarget(30.0f))
                 summoned->AI()->AttackStart(target);*/
-            summoned->GetMotionMaster()->MovePoint(0, 7539.403809, -2841.265381, 457.147766/*, false*/);
+            summoned->GetMotionMaster()->MovePoint(0, 7539.403809, -2841.265381, 457.147766, true, {}, true);
         }
         
         void DoSpawnWave(uint32 pStep)
