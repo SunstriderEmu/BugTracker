@@ -1,0 +1,13 @@
+REPLACE INTO spell_bonus_data VALUES (116,   0.8142, 0, 0, 0, "Mage - Frost bolt");
+REPLACE INTO spell_bonus_data VALUES (205,   0.8142, 0, 0, 0, "Mage - Frost bolt");
+REPLACE INTO spell_bonus_data VALUES (837,   0.8142, 0, 0, 0, "Mage - Frost bolt");
+REPLACE INTO spell_bonus_data VALUES (7322,  0.8142, 0, 0, 0, "Mage - Frost bolt");
+REPLACE INTO spell_bonus_data VALUES (8406,  0.8142, 0, 0, 0, "Mage - Frost bolt");
+REPLACE INTO spell_bonus_data VALUES (8407,  0.8142, 0, 0, 0, "Mage - Frost bolt");
+REPLACE INTO spell_bonus_data VALUES (8408,  0.8142, 0, 0, 0, "Mage - Frost bolt");
+REPLACE INTO spell_bonus_data VALUES (10179, 0.8142, 0, 0, 0, "Mage - Frost bolt");
+REPLACE INTO spell_bonus_data VALUES (10180, 0.8142, 0, 0, 0, "Mage - Frost bolt");
+REPLACE INTO spell_bonus_data VALUES (10181, 0.8142, 0, 0, 0, "Mage - Frost bolt");
+REPLACE INTO spell_bonus_data VALUES (25304, 0.8142, 0, 0, 0, "Mage - Frost bolt");
+REPLACE INTO spell_bonus_data VALUES (27071, 0.8142, 0, 0, 0, "Mage - Frost bolt");
+REPLACE INTO spell_bonus_data VALUES (27072, 0.8142, 0, 0, 0, "Mage - Frost bolt");
