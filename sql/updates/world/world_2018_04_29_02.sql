@@ -1,0 +1,1 @@
+REPLACE INTO spell_bonus_data VALUES (467, 0.0, 0.0, 0.0, 0.01, "Druid - Lacerate ($AP*0.05/number of ticks)");
