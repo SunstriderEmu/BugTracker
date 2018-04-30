@@ -1,0 +1,1 @@
+REPLACE INTO spell_bonus_data VALUES (9007, 0.0, 0.0, 0.0, 0.03, "Druid - Pounce bleed");
