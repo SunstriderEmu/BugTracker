@@ -1,0 +1,1 @@
+REPLACE INTO spell_script_names VALUES (-1454, "spell_warl_life_tap");
