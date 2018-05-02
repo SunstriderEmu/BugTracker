@@ -1,0 +1,1 @@
+REPLACE INTO spell_bonus_data VALUES (779, 0, 0, 0.07, -1, "Druid - Swipe (Bear)");
