@@ -1,0 +1,1 @@
+REPLACE INTO spell_bonus_data VALUES (42223, 0.2865, -1, -1, -1, "Rain of fire triggered spell");
