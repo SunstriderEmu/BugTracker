@@ -1,0 +1,1 @@
+REPLACE INTO spell_bonus_data VALUES (1120, -1, 0.428, -1, -1, "Drain soul");
