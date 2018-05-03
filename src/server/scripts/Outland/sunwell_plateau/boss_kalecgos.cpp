@@ -36,7 +36,7 @@ enum Quotes
     SAY_SATH_ENRAGE         = -1580016
 };
 
-enum SpellIds
+enum Spells
 {
     AURA_SUNWELL_RADIANCE       =   45769,
     SPELL_SPECTRAL_EXHAUSTION    =   44867,

@@ -3,7 +3,7 @@
 
 #include "def_sunwell_plateau.h"
 
-enum SpellIds
+enum Spells
 {
     /* Hand of the Deceiver's spells and cosmetics */
     SPELL_SHADOW_BOLT_VOLLEY                            = 45770, // ~30 yard range Shadow Bolt Volley for ~2k(?) damage
