@@ -1,0 +1,1 @@
+REPLACE INTO spell_bonus_data VALUES (603, -1, 2.0, -1, -1, "Curse of Doom");
