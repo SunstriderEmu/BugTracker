@@ -4,6 +4,11 @@ SDName: Bosses_Opera
 SD%Complete: 90
 SDComment: Oz, Hood, and RAJ event implemented. RAJ event requires more testing.
 SDCategory: Karazhan
+
+TODO: Add ambiance sounds:
+9357 - A_BarnesHoodAmbience
+9358 - A_BarnesOzAmbience
+9359 - A_BarnesRajAmbience
 EndScriptData */
 
 
