@@ -450,7 +450,7 @@ public:
 };
 
 // This is used to sort by distance in order to see who is the closest target, when checking for Finger of Death
-struct TargetDistanceOrder : public std::binary_function<const Unit, const Unit, bool>
+struct TargetDistanceOrder 
 {
     const Unit* MainTarget;
     TargetDistanceOrder(const Unit* Target) : MainTarget(Target) {};

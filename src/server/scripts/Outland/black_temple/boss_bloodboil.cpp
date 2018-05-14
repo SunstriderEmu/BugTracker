@@ -49,7 +49,7 @@ enum Spells
 #define COORD_Z_HOME                64.0f
 
 //This is used to sort the players by distance in preparation for the Bloodboil cast.
-struct ObjectDistanceOrderReversed : public std::binary_function<const WorldObject, const WorldObject, bool>
+struct ObjectDistanceOrderReversed 
 {
     const Unit* m_pSource;
     ObjectDistanceOrderReversed(const Unit* pSource) : m_pSource(pSource) {};

@@ -298,7 +298,7 @@ public:
                                     {
                                         Player *plr = ObjectAccessor::FindPlayer((*i).first);
                                         float vcos, vsin;
-                                        float angle = me->GetMap()->rand_norm()*2*M_PI;
+                                        float angle = rand_norm()*2*M_PI;
                                         vcos = cos(angle);
                                         vsin = sin(angle);
                                         
