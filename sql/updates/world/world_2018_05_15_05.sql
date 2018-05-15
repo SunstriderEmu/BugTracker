@@ -1,0 +1,1 @@
+REPLACE INTO spell_bonus_data VALUES (18220, 0.96, -1, -1, -1, "Dark Pact");
