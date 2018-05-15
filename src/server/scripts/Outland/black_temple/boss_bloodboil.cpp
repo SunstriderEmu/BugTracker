@@ -60,7 +60,6 @@ struct ObjectDistanceOrderReversed
     }
 };
 
-
 class boss_gurtogg_bloodboil : public CreatureScript
 {
 public:
