@@ -1,0 +1,3 @@
+-- Blackout
+DELETE FROM spell_proc WHERE SpellId IN (15268, 15323, 15324, 15325, 15326);
+REPLACE INTO spell_proc VALUES (-15268, 32, 6, 0, 0x00010000, 1, 2, 0, 0, 0, 0, 0, 0);
