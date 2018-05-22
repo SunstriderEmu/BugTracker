@@ -1,0 +1,13 @@
+DELETE FROM spell_affect WHERE entry = 14523 AND effectId = 0;
+DELETE FROM spell_affect WHERE effectId = 0 and entry IN (
+19596,
+19616,
+19617,
+19618,
+19619,
+19620);
+REPLACE INTO spell_affect VALUES (24457, 0, 0x80000000);
+REPLACE INTO spell_affect VALUES (24461, 0, 0x80000000);
+REPLACE INTO spell_affect VALUES (22804, 0, 0x100000 |  0x10000000 | 0x80000000);
+REPLACE INTO spell_affect VALUES (27204, 0, 0xFFFFFFFF);
+REPLACE INTO spell_affect VALUES (12288, 1, 0x8);
