@@ -170,7 +170,7 @@ public:
                     case 2:
                         if (Creature* father = me->SummonCreature(16440, 1113.977295, 1399.238403, 30.307175, 6.281954, TEMPSUMMON_MANUAL_DESPAWN, 0)) {
                             fatherGUID = father->GetGUID();
-                            father->GetMotionMaster()->MovePoint(0, 1149.960205, 1398.409058, 32.250179, 6.261882 );
+                            father->GetMotionMaster()->MovePoint(0, 1149.960205, 1398.409058, 32.250179, false, 6.261882 );
                         }
                         
                         eventTimer = 18000;

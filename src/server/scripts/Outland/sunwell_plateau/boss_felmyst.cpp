@@ -395,7 +395,7 @@ public:
                         break;
                     case 2:
                         me->SetHomePosition(1464.726440, 606.836243, 72.818344, 0);
-                        me->GetMotionMaster()->MovePoint(0, 1464.726440, 606.836243, 72.818344,false);
+                        me->GetMotionMaster()->MovePoint(0, 1464.726440, 606.836243, 72.818344, false);
                         introPhaseTimer = 6000;
                         introPhase++;
                         break;

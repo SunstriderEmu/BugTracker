@@ -312,7 +312,7 @@ public:
                         break;
                     case 1:
                         me->SetWalk(true);
-                        me->GetMotionMaster()->MovePoint(0, 1924.233643, -4136.424805, 40.360466, 4.724128);
+                        me->GetMotionMaster()->MovePoint(0, 1924.233643, -4136.424805, 40.360466, true, 4.724128);
                         events.RescheduleEvent(EV_MESSENGER, 4000);
                         break;
                     case 2:
@@ -333,7 +333,7 @@ public:
                         break;
                     case 6:
                         eitrigg->SetWalk(false);
-                        eitrigg->GetMotionMaster()->MovePoint(0, 1924.891846, -4139.466309, 40.405350, 1.598646);
+                        eitrigg->GetMotionMaster()->MovePoint(0, 1924.891846, -4139.466309, 40.405350, true, 1.598646);
                         events.RescheduleEvent(EV_MESSENGER, 3000);
                         break;
                     case 7:
@@ -354,7 +354,7 @@ public:
                         break;
                     case 11:
                         me->SetWalk(true);
-                        me->GetMotionMaster()->MovePoint(0, 1920.069946, -4126.490234, 42.914200, 1.645362);
+                        me->GetMotionMaster()->MovePoint(0, 1920.069946, -4126.490234, 42.914200, true, 1.645362);
                         me->SetStandState(UNIT_STAND_STATE_STAND);
                         events.RescheduleEvent(EV_MESSENGER, 7000);
                         break;
