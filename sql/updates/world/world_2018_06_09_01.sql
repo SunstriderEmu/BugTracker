@@ -1,4 +1,4 @@
-ALTER TABLE `world`.`quest_details`   
+ALTER TABLE `quest_details`   
   ADD COLUMN `VerifiedBuild` SMALLINT(5) UNSIGNED NULL AFTER `EmoteDelay4`;
 
 -- Quest "Kobold Camp Cleanup"
