@@ -230,7 +230,7 @@ public:
                 DoCast(me, SPELL_HEAD_LANDS, true);
                 DoCast(me, SPELL_HEAD, false);
                 SaySound(SAY_LOST_HEAD);
-                me->GetMotionMaster()->Clear(false);
+                me->GetMotionMaster()->Clear();
                 me->GetMotionMaster()->MoveChase(caster->GetVictim());
             }
         }
@@ -244,7 +244,7 @@ public:
                     wait = 1000;
                     if (!me->GetVictim())
                         return;
-                    me->GetMotionMaster()->Clear(false);
+                    me->GetMotionMaster()->Clear();
                     me->GetMotionMaster()->MoveFleeing(me->GetVictim());
                 }
                 else
@@ -635,7 +635,7 @@ public:
                 me->SetHealth(me->GetMaxHealth());
                 SaySound(SAY_REJOINED);
                 DoCast(me, SPELL_HEAD);
-                caster->GetMotionMaster()->Clear(false);
+                caster->GetMotionMaster()->Clear();
                 caster->GetMotionMaster()->MoveFollow(me, 6, rand()%6);
                 for (auto itr : caster->GetThreatManager().GetUnsortedThreatList())
                 {
@@ -714,7 +714,7 @@ public:
                     else {
                         if (wp_reached) {
                             wp_reached = false;
-                            me->GetMotionMaster()->Clear(false);
+                            me->GetMotionMaster()->Clear();
                             me->GetMotionMaster()->MovePoint(id, FlightPoint[id].x, FlightPoint[id].y, FlightPoint[id].z);
                         }
                     }

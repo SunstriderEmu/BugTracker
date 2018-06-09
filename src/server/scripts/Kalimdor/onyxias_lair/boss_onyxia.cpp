@@ -136,7 +136,7 @@ public:
                 me->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
                 me->SetDisableGravity(true);
                 me->SetHover(true);
-                me->GetMotionMaster()->Clear(false);
+                me->GetMotionMaster()->Clear();
                 me->GetMotionMaster()->MoveIdle();
                 DoScriptText(SAY_PHASE_2_TRANS, me);
             }

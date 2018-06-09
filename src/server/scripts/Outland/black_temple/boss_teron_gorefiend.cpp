@@ -97,7 +97,7 @@ public:
             MoveTimer = 1000;
             ShadowBoltTimer = TIMER_SHADOW_BOLT;
     
-            me->GetMotionMaster()->Clear(false);
+            me->GetMotionMaster()->Clear();
             me->GetMotionMaster()->MovePoint(0, me->GetPositionX(), me->GetPositionY(), me->GetPositionZ() + 7);
         }
     
@@ -268,7 +268,7 @@ public:
                     if(pInstance)
                         pInstance->SetData(DATA_TERONGOREFIENDEVENT, IN_PROGRESS);
     
-                    me->GetMotionMaster()->Clear(false);
+                    me->GetMotionMaster()->Clear();
                     //me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                     DoScriptText(SAY_INTRO, me);
                     me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_TALK);

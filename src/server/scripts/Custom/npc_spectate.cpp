@@ -267,7 +267,7 @@ void spectate(Player* player, ObjectGuid targetGuid, Creature *mobArena)
         // stop flight if need
         if (player->IsInFlight())
         {
-            player->GetMotionMaster()->MovementExpired();
+            player->GetMotionMaster()->Clear(MOTION_PRIORITY_NORMAL);
             player->CleanupAfterTaxiFlight();
         }
         // save only in non-flight case

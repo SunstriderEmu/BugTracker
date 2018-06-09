@@ -219,7 +219,7 @@ public:
                 if (Morphed && Submerged_Timer < 1000)
                 {
                     me->SetDisplayId(DISPLAYID_OURO);
-                    me->GetMotionMaster()->Clear(true);
+                    me->GetMotionMaster()->Clear();
                     Morphed = false;
                 }
      

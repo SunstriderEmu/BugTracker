@@ -768,7 +768,7 @@ public:
                     }
                     else if(fleeing)
                     {
-                        me->GetMotionMaster()->MovementExpired(false);
+                        me->GetMotionMaster()->Clear();
                         PlayerGUID = ObjectGuid::Empty;
                         fleeing = false;
                     }

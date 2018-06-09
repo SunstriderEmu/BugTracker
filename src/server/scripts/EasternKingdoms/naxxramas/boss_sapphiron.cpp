@@ -112,7 +112,7 @@ public:
                             phase = 2;
                             me->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
                             me->SetDisableGravity(true);
-                            me->GetMotionMaster()->Clear(false);
+                            me->GetMotionMaster()->Clear();
                             me->GetMotionMaster()->MoveIdle();
                             me->SetHover(true);
                             Icebolt_Timer = 4000;
@@ -150,7 +150,7 @@ public:
                             phase = 1;
                             me->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
                             me->SetDisableGravity(false);
-                            me->GetMotionMaster()->Clear(false);
+                            me->GetMotionMaster()->Clear();
                             me->GetMotionMaster()->MoveChase(me->GetVictim());
                             me->SetHover(true);
                             land_Timer = 0;

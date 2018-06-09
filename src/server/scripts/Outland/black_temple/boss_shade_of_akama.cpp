@@ -488,7 +488,7 @@ public:
                 {
                     if(me->isMoving())
                     {
-                        me->GetMotionMaster()->Clear(false);
+                        me->GetMotionMaster()->Clear();
                         me->GetMotionMaster()->MoveIdle();
                     }
                     me->CastSpell(shade, SPELL_SHADE_SOUL_CHANNEL, TRIGGERED_NONE);

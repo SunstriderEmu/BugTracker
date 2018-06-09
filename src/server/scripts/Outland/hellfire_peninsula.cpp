@@ -1819,12 +1819,12 @@ public:
                 lastPathNodeID = lastPointID;
 
                 //set path type as WP_PATH_TYPE_ONCE
-                MovementGenerator* movGen = me->GetMotionMaster()->GetMotionSlot(MOTION_SLOT_ACTIVE);
-                if (WaypointMovementGenerator<Creature>* wpMovGen = dynamic_cast<WaypointMovementGenerator<Creature>*>(movGen))
+                MovementGenerator* baseGenerator = me->GetMotionMaster()->GetCurrentMovementGenerator();
+                WaypointMovementGenerator<Creature>* movGenerator = dynamic_cast<WaypointMovementGenerator<Creature>*>(baseGenerator);
+                if (movGenerator)
+                    movGenerator->SetPathType(WaypointPathType::WP_PATH_TYPE_ONCE);
+                else 
                 {
-                    wpMovGen->SetPathType(WaypointPathType::WP_PATH_TYPE_ONCE);
-                }
-                else {
                     TC_LOG_ERROR("scripts", "DarkPortalEventDemonAI, cannot set path type to WP_PATH_TYPE_ONCE.");
                 }
                 break;
@@ -1864,10 +1864,9 @@ public:
     void UpdateAI(const uint32 diff)
         override
     {
-        //todo: this check on timer ?
         if (!reachedHome
-            && me->GetMotionMaster()->GetMotionSlotType(MOTION_SLOT_ACTIVE) != WAYPOINT_MOTION_TYPE 
-            && me->GetMotionMaster()->GetMotionSlotType(MOTION_SLOT_ACTIVE) != HOME_MOTION_TYPE 
+            && me->GetMotionMaster()->GetCurrentMovementGeneratorType(MOTION_SLOT_ACTIVE) != WAYPOINT_MOTION_TYPE
+            && me->GetMotionMaster()->GetCurrentMovementGeneratorType(MOTION_SLOT_ACTIVE) != HOME_MOTION_TYPE
             && !me->IsInCombat())
         {
             me->GetMotionMaster()->MoveTargetedHome();

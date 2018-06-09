@@ -696,7 +696,7 @@ public:
                     case EV_ENRAGE:
                         events.ScheduleEvent(EV_ENRAGE_CAST, 2000);
                         Talk(YELL_ENRAGE);
-                        me->GetMotionMaster()->Clear(false);
+                        me->GetMotionMaster()->Clear();
                         me->GetMotionMaster()->MoveIdle();
                         _enraged = true;
                         break;

@@ -875,7 +875,7 @@ public:
                 switch (Event)
                 {
                 case EVENT_SHADOW_BLAST:
-                    me->GetMotionMaster()->Clear(false);
+                    me->GetMotionMaster()->Clear();
                     if (!me->IsWithinDistInMap(me->GetVictim(), 50) || !me->IsWithinLOSInMap(me->GetVictim()))
                         me->GetMotionMaster()->MoveChase(me->GetVictim(), 30);
                     else
@@ -1627,7 +1627,7 @@ void boss_illidan_stormrage::boss_illidan_stormrageAI::HandleTalkSequence()
                 float x, y, z;
                 me->GetPosition(x, y, z);
                 x += 10; y += 10;
-                Akama->GetMotionMaster()->Clear(false);
+                Akama->GetMotionMaster()->Clear();
                 //Akama->GetMotionMaster()->MoveIdle();
                 Akama->Relocate(x, y, z);
                 Akama->MonsterMoveWithSpeed(x, y, z, 0); //Illidan must not die until Akama arrives.
@@ -1755,7 +1755,7 @@ void boss_illidan_stormrage::boss_illidan_stormrageAI::EnterPhase(PhaseIllidan N
         me->RemoveAllAuras();
         me->InterruptNonMeleeSpells(false);
         me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE + UNIT_FLAG_NOT_SELECTABLE);
-        me->GetMotionMaster()->Clear(false);
+        me->GetMotionMaster()->Clear();
         me->AttackStop();
         me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
         break;
@@ -1767,7 +1767,7 @@ void boss_illidan_stormrage::boss_illidan_stormrageAI::EnterPhase(PhaseIllidan N
             me->RemoveAllAuras();
             me->InterruptNonMeleeSpells(false);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            me->GetMotionMaster()->Clear(false);
+            me->GetMotionMaster()->Clear();
             me->AttackStop();
         }
         else //land
@@ -1884,7 +1884,7 @@ public:
                     Timer[EVENT_MAIEV_STEALTH] = 0;
                 }
                 me->InterruptNonMeleeSpells(false);
-                me->GetMotionMaster()->Clear(false);
+                me->GetMotionMaster()->Clear();
                 me->AttackStop();
                 me->SetGuidValue(UNIT_FIELD_TARGET, IllidanGUID);
                 MaxTimer = 0;
@@ -1913,7 +1913,7 @@ public:
         {
             me->AttackStop();
             me->InterruptNonMeleeSpells(false);
-            me->GetMotionMaster()->Clear(false);
+            me->GetMotionMaster()->Clear();
             DoTeleportTo(x, y, z);
             DoCast(me, SPELL_TELEPORT_VISUAL, true);
         }

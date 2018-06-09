@@ -372,7 +372,7 @@ public:
                 {
                     if(waitTimer < diff)
                     {
-                        (*me).GetMotionMaster()->MovementExpired();
+                        (*me).GetMotionMaster()->Clear(MOTION_PRIORITY_NORMAL);
                         (*me).GetMotionMaster()->MovePoint(MovePhase,NalorakkWay[MovePhase][0],NalorakkWay[MovePhase][1],NalorakkWay[MovePhase][2]);
                         waitTimer = 0;
                     } else { waitTimer -= diff; }

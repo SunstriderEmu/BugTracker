@@ -252,7 +252,7 @@ public:
                             //are we already channeling? Doesn't work very well, find better check?
                             if (!me->GetUInt32Value(UNIT_CHANNEL_SPELL))
                             {
-                                //me->GetMotionMaster()->MovementExpired();
+                                //me->GetMotionMaster()->Clear(MOTION_PRIORITY_NORMAL);
                                 //me->GetMotionMaster()->MoveIdle();
     
                                 DoCast(me,HeroicMode ? H_SPELL_REPAIR : SPELL_REPAIR, true);
@@ -261,7 +261,7 @@ public:
                         }
                         else
                         {
-                            //me->GetMotionMaster()->MovementExpired();
+                            //me->GetMotionMaster()->Clear(MOTION_PRIORITY_NORMAL);
                             //me->GetMotionMaster()->MoveFollow(pMekgineer,0,0);
                         }
                     }

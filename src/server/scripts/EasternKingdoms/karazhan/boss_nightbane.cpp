@@ -192,7 +192,7 @@ public:
             me->InterruptSpell(CURRENT_GENERIC_SPELL);
             me->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
             me->SetDisableGravity(true);
-            me->GetMotionMaster()->Clear(false);
+            me->GetMotionMaster()->Clear();
             me->GetMotionMaster()->MovePoint(0,IntroWay[2][0],IntroWay[2][1],IntroWay[2][2]);
     
             Flying = true;
@@ -368,7 +368,7 @@ public:
                 {
                     Talk(YELL_LAND_PHASE);
     
-                    me->GetMotionMaster()->Clear(false);
+                    me->GetMotionMaster()->Clear();
                     me->GetMotionMaster()->MovePoint(3,IntroWay[3][0],IntroWay[3][1],IntroWay[3][2]);
     
                     Flying = true;

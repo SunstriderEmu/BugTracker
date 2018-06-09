@@ -277,7 +277,7 @@ public:
                     }
     
                     if (me->GetDistance(protector) <= 15.0f) {
-                        me->GetMotionMaster()->MovementExpired(false);
+                        me->GetMotionMaster()->Clear();
                         me->StopMoving();
                         me->AddUnitState(UNIT_STATE_ROOT);
                         DoCast(protector, SPELL_ACTIVATE_PROTEC);

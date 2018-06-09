@@ -450,11 +450,11 @@ public:
         void MovementInform(uint32 type, uint32 id)
         override {
             if (id == 0) {
-                me->GetMotionMaster()->MovementExpired();
+                me->GetMotionMaster()->Clear(MOTION_PRIORITY_NORMAL);
                 me->GetMotionMaster()->MovePoint(1, 227.822556, 1402.593384, 37.555401);
             }
             else if (id == 1) {
-                me->GetMotionMaster()->MovementExpired();
+                me->GetMotionMaster()->Clear(MOTION_PRIORITY_NORMAL);
                 me->DespawnOrUnsummon(1); //despawn at next update, otherwise may cause crash when deleting waypoint movement generator immediately (this function is called from there)
             }
         }

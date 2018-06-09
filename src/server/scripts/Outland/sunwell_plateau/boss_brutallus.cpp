@@ -268,7 +268,7 @@ public:
                 break;
             case 3:
             {
-                Madrigosa->GetMotionMaster()->Clear(false);
+                Madrigosa->GetMotionMaster()->Clear();
                 Madrigosa->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
                 Madrigosa->SetDisableGravity(true);
                 IntroPhaseTimer = 500;

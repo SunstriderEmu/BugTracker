@@ -220,7 +220,7 @@ public:
                     Temp = ObjectAccessor::GetCreature((*me),i);
                     if (Temp && Temp->IsAlive())
                     {
-                        (*Temp).GetMotionMaster()->Clear(true);
+                        (*Temp).GetMotionMaster()->Clear();
                         Temp->DespawnOrUnsummon();
                     }
     

@@ -362,7 +362,7 @@ public:
                     me->SetDisableGravity(true);
                     me->SetSwim(true);
                     me->SetSpeedRate(MOVE_RUN, 0.85f, true);
-                    me->GetMotionMaster()->MovementExpired();
+                    me->GetMotionMaster()->Clear(MOTION_PRIORITY_NORMAL);
                     me->GetMotionMaster()->MovePoint(CurrWP, WPs[CurrWP][0], WPs[CurrWP][1], WPs[CurrWP][2]);
                     Escape = true;
                 } else Teleport_Timer -= diff;
