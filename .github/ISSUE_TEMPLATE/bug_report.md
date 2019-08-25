@@ -16,7 +16,7 @@ Steps to reproduce the behavior:
 2. 
 3. 
 
-Please ids of affected creatures / items / quests with a link to the relevant wowhead-like page.
+Please include ids of affected creatures / items / quests with a link to the relevant wowhead-like page.
 
 **Expected behavior**
 A clear and concise description of what you expected to happen.
