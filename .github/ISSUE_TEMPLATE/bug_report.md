@@ -10,6 +10,9 @@ assignees: ''
 **Describe the bug**
 <!--- A clear and concise description of what the bug is. -->
 
+**Character name**
+<!---Character on which the issue occurred if applicable. -->
+
 **To Reproduce**
 <!--- Steps to reproduce the behavior. Note that providing as much details as possible will help us fix it faster! -->
 1. Cast X on target affected by ...
